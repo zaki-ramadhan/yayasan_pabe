@@ -60,7 +60,7 @@ export default function AdminLayout({ children }) {
               <div className="relative w-9 h-9 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-700 shadow-xs flex items-center justify-center">
                 <Image
                   src="/logo_yayasan_GSM.png"
-                  alt="Logo YGSM"
+                  alt="Logo Yayasan PABE"
                   width={36}
                   height={36}
                   className="w-full h-full object-contain rounded-sm"
@@ -71,7 +71,7 @@ export default function AdminLayout({ children }) {
                   Portal Yayasan
                 </span>
                 <span className="text-[11px] text-slate-400">
-                  Yayasan Generasi Sejahtera Mandiri
+                  Yayasan PABE
                 </span>
               </div>
             </Link>

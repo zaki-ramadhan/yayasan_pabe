@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;
-  const session = request.cookies.get("ygsm_session")?.value;
+  const session = request.cookies.get("pabe_session")?.value || request.cookies.get("ygsm_session")?.value;
 
   // 1. Guard client portal pages (/donatur/*)
   if (pathname.startsWith("/donatur")) {

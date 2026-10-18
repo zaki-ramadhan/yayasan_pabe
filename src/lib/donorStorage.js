@@ -1,8 +1,8 @@
 "use client";
 
-const INVOICES_STORAGE_KEY = "ygsm_donor_invoices";
-const USER_PRAYERS_KEY = "ygsm_user_prayers";
-export const PRAYER_SUBMITTED_EVENT = "ygsm_prayer_submitted";
+const INVOICES_STORAGE_KEY = "pabe_donor_invoices";
+const USER_PRAYERS_KEY = "pabe_user_prayers";
+export const PRAYER_SUBMITTED_EVENT = "pabe_prayer_submitted";
 
 /**
  * Simpan data tagihan donatur lokal untuk melacak status penulisan doa.
@@ -17,7 +17,7 @@ export function saveDonorInvoice({
 }) {
   if (typeof window === "undefined" || !invoiceId) return;
   try {
-    const raw = localStorage.getItem(INVOICES_STORAGE_KEY);
+    const raw = localStorage.getItem(INVOICES_STORAGE_KEY) || localStorage.getItem("ygsm_donor_invoices");
     const list = raw ? JSON.parse(raw) : [];
     const existingIndex = list.findIndex((item) => item.invoiceId === invoiceId);
 
@@ -60,7 +60,7 @@ export function getPendingDonationForCampaign(campaignSlug, customInvoicesRaw = 
     const raw =
       customInvoicesRaw !== null
         ? customInvoicesRaw
-        : localStorage.getItem(INVOICES_STORAGE_KEY);
+        : localStorage.getItem(INVOICES_STORAGE_KEY) || localStorage.getItem("ygsm_donor_invoices");
     if (!raw) return null;
 
     const list = JSON.parse(raw);
@@ -126,7 +126,7 @@ function markCampaignPrayerAsSubmitted(campaignSlug) {
 export function hasCampaignPrayerBeenSubmitted(campaignSlug) {
   if (typeof window === "undefined" || !campaignSlug) return false;
   try {
-    const raw = localStorage.getItem(USER_PRAYERS_KEY);
+    const raw = localStorage.getItem(USER_PRAYERS_KEY) || localStorage.getItem("ygsm_user_prayers");
     if (!raw) return false;
     const list = JSON.parse(raw);
     return Array.isArray(list) && list.includes(campaignSlug);

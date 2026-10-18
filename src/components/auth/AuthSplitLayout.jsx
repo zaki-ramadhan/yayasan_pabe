@@ -21,7 +21,7 @@ export function AuthSplitLayout({ children }) {
 
         {/* Mobile Copyright */}
         <div className="w-full max-w-md mx-auto pt-6 text-center text-xs text-slate-500 lg:hidden">
-          © {new Date().getFullYear()} Yayasan Generasi Sejahtera Mandiri
+          © {new Date().getFullYear()} Yayasan PABE
         </div>
       </div>
     </div>

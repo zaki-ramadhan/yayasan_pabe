@@ -11,14 +11,14 @@ export function AuthMobileHeader() {
         <div className="relative w-8 h-8 rounded-lg bg-white p-0.5 shadow-xs shrink-0 flex items-center justify-center overflow-hidden border border-slate-200">
           <Image
             src="/logo_yayasan_GSM.png"
-            alt="Logo YGSM"
+            alt="Logo Yayasan PABE"
             fill
             sizes="32px"
             className="object-contain"
           />
         </div>
         <span className="font-semibold text-xs text-slate-900">
-          YGSM
+          Yayasan PABE
         </span>
       </Link>
 

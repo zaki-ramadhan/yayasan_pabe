@@ -2,11 +2,11 @@ import { DonorLayoutClient } from "@/components/donor/DonorLayoutClient";
 
 export const metadata = {
   title: {
-    default: "Portal Donatur | Yayasan Generasi Sejahtera Mandiri",
-    template: "%s | Portal Donatur YGSM",
+    default: "Portal Donatur | Yayasan PABE",
+    template: "%s | Portal Donatur Yayasan PABE",
   },
   description:
-    "Area aman kelola donasi, riwayat ZISWAF, dan profil donatur Yayasan Generasi Sejahtera Mandiri.",
+    "Area aman kelola donasi, riwayat ZISWAF, dan profil donatur Yayasan PABE.",
   robots: {
     index: false,
     follow: false,

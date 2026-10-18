@@ -4,9 +4,11 @@ import { useSyncExternalStore } from "react";
 import { AUTH_STORAGE_KEY, loginUser } from "@/services/authService";
 
 function subscribeAuth(callback) {
+  window.addEventListener("pabe_auth_change", callback);
   window.addEventListener("ygsm_auth_change", callback);
   window.addEventListener("storage", callback);
   return () => {
+    window.removeEventListener("pabe_auth_change", callback);
     window.removeEventListener("ygsm_auth_change", callback);
     window.removeEventListener("storage", callback);
   };
@@ -14,7 +16,7 @@ function subscribeAuth(callback) {
 
 function getAuthSnapshot() {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(AUTH_STORAGE_KEY);
+  return localStorage.getItem(AUTH_STORAGE_KEY) || localStorage.getItem("ygsm_auth_user");
 }
 
 function getAuthServerSnapshot() {

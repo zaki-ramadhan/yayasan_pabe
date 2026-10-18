@@ -129,7 +129,7 @@ export function DonorProfileCover({ profile, onUpdateImage, isUpdating = false }
               </div>
 
               <p className="text-sm font-medium text-slate-600">
-                {profile?.title || "Donatur & Muzakki Tetap YGSM"}
+                {profile?.title || "Donatur & Muzakki Tetap Yayasan PABE"}
               </p>
 
               {profile?.bio && (

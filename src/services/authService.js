@@ -21,7 +21,7 @@ export const DEMO_USERS = [
     id: "USR-001",
     name: "Drs. H. M. Fauzan, M.Pd",
     username: "superadmin",
-    email: "superadmin@ygsm.or.id",
+    email: "superadmin@pabe.or.id",
     role: USER_ROLES.SUPER_ADMIN,
     title: "Ketua Dewan Pengurus Yayasan",
     phone: "0811-2233-4455",
@@ -33,7 +33,7 @@ export const DEMO_USERS = [
     id: "USR-002",
     name: "Ust. Rian Ramadhan",
     username: "admin.program",
-    email: "admin.program@ygsm.or.id",
+    email: "admin.program@pabe.or.id",
     role: USER_ROLES.ADMIN,
     title: "Kepala Divisi Program & Operasional",
     phone: "0812-3344-5566",
@@ -45,7 +45,7 @@ export const DEMO_USERS = [
     id: "USR-003",
     name: "Hj. Annisa Fitriani, S.E., Ak.",
     username: "finance",
-    email: "finance@ygsm.or.id",
+    email: "finance@pabe.or.id",
     role: USER_ROLES.FINANCE,
     title: "Bendahara & Rekonsiliasi ZISWAF",
     phone: "0813-4455-6677",
@@ -79,8 +79,8 @@ export const DEMO_USERS = [
   },
 ];
 
-export const AUTH_STORAGE_KEY = "ygsm_auth_user";
-const REMEMBER_KEY = "ygsm_remember_identifier";
+export const AUTH_STORAGE_KEY = "pabe_auth_user";
+const REMEMBER_KEY = "pabe_remember_identifier";
 
 export function getInitials(name = "") {
   if (!name) return "U";
@@ -129,7 +129,7 @@ export function formatSocialUser({
 export function getStoredUser() {
   if (typeof window === "undefined") return null;
   try {
-    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY) || localStorage.getItem("ygsm_auth_user");
     if (!raw) return null;
     return JSON.parse(raw);
   } catch {
@@ -139,14 +139,20 @@ export function getStoredUser() {
 
 export function loginUser(user) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-  localStorage.setItem("ygsm_auth_session", JSON.stringify(user));
+  const userJson = JSON.stringify(user);
+  localStorage.setItem(AUTH_STORAGE_KEY, userJson);
+  localStorage.setItem("ygsm_auth_user", userJson);
+  localStorage.setItem("pabe_auth_session", userJson);
+  localStorage.setItem("ygsm_auth_session", userJson);
+  sessionStorage.setItem("pabe_just_logged_in", user.name || "Donatur");
   sessionStorage.setItem("ygsm_just_logged_in", user.name || "Donatur");
   
   // Set session cookie for Next.js edge middleware and server-side route guards
-  const sessionId = encodeURIComponent(user.id || user.email || "ygsm-user");
+  const sessionId = encodeURIComponent(user.id || user.email || "pabe-user");
+  document.cookie = `pabe_session=${sessionId}; path=/; max-age=604800; SameSite=Lax`;
   document.cookie = `ygsm_session=${sessionId}; path=/; max-age=604800; SameSite=Lax`;
 
+  window.dispatchEvent(new Event("pabe_auth_change"));
   window.dispatchEvent(new Event("ygsm_auth_change"));
   window.dispatchEvent(new Event("storage"));
 }
@@ -161,11 +167,15 @@ export function redirectToGoogleOAuth(callbackUrl = "/") {
 export function logoutUser() {
   if (typeof window === "undefined") return;
   localStorage.removeItem(AUTH_STORAGE_KEY);
+  localStorage.removeItem("ygsm_auth_user");
+  localStorage.removeItem("pabe_auth_session");
   localStorage.removeItem("ygsm_auth_session");
+  sessionStorage.removeItem("pabe_just_logged_in");
   sessionStorage.removeItem("ygsm_just_logged_in");
   sessionStorage.removeItem("zakat_calculator_state");
 
   // Invalidate session cookie immediately
+  document.cookie = "pabe_session=; path=/; max-age=0; SameSite=Lax";
   document.cookie = "ygsm_session=; path=/; max-age=0; SameSite=Lax";
 
   // Trigger server logout if available
@@ -173,6 +183,7 @@ export function logoutUser() {
     fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
   } catch {}
 
+  window.dispatchEvent(new Event("pabe_auth_change"));
   window.dispatchEvent(new Event("ygsm_auth_change"));
   window.dispatchEvent(new Event("storage"));
 }

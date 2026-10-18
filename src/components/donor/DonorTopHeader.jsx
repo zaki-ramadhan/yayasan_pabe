@@ -20,7 +20,7 @@ export function DonorTopHeader({ currentUser }) {
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-slate-200 bg-white text-xs font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-50 transition-colors shadow-2xs"
-          title="Kembali ke Beranda Utama Yayasan GSM"
+          title="Kembali ke Beranda Utama Yayasan PABE"
         >
           <Home className="w-3.5 h-3.5 text-slate-500" />
           <span className="hidden sm:inline">Ke Website Utama</span>

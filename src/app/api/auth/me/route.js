@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export async function GET(request) {
-  const sessionId = request.cookies.get("ygsm_session")?.value;
+  const sessionId = request.cookies.get("pabe_session")?.value || request.cookies.get("ygsm_session")?.value;
 
   if (!sessionId) {
     return NextResponse.json(
@@ -35,6 +35,7 @@ export async function GET(request) {
         { success: false, authenticated: false, message: "Pengguna tidak ditemukan." },
         { status: 401 }
       );
+      response.cookies.delete("pabe_session");
       response.cookies.delete("ygsm_session");
       return response;
     }

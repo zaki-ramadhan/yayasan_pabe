@@ -4,7 +4,7 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export const metadata = {
   title: "Daftar Akun Baru",
-  description: "Daftar akun donatur Yayasan Generasi Sejahtera Mandiri untuk mulai menyalurkan infaq dan sedekah terpercaya.",
+  description: "Daftar akun donatur Yayasan PABE untuk mulai menyalurkan infaq dan sedekah terpercaya.",
 };
 
 export default function RegisterPage() {

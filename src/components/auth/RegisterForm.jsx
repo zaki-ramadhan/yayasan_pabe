@@ -114,7 +114,7 @@ export function RegisterForm() {
 
       loginUser(newUser);
       setIsLoading(false);
-      toast.success("Pendaftaran berhasil! Selamat datang di Yayasan Generasi Sejahtera Mandiri.");
+      toast.success("Pendaftaran berhasil! Selamat datang di Yayasan PABE.");
       router.push(redirectUrl || getRedirectPathForRole(newUser.role));
     }, 700);
   };

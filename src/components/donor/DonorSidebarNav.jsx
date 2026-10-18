@@ -85,12 +85,12 @@ export function DonorSidebarNav({
               "flex items-center group transition-all",
               isCollapsed ? "justify-center w-full" : "gap-2.5 w-full"
             )}
-            title="Kembali ke Beranda Utama Yayasan GSM"
+            title="Kembali ke Beranda Utama Yayasan PABE"
           >
             <div className="relative w-8.5 h-8.5 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
               <Image
                 src="/logo_yayasan_GSM.png"
-                alt="Logo YGSM"
+                alt="Logo Yayasan PABE"
                 width={34}
                 height={34}
                 className="w-full h-full object-contain rounded-xs"
@@ -99,7 +99,7 @@ export function DonorSidebarNav({
             {!isCollapsed && (
               <div className="min-w-0 flex-1 truncate">
                 <span className="font-medium text-sm block text-slate-950 leading-tight group-hover:text-primary transition-colors truncate">
-                  Yayasan GSM
+                  Yayasan PABE
                 </span>
                 <span className="text-xs font-normal text-slate-500 block truncate">
                   Kembali ke Beranda
@@ -272,7 +272,7 @@ export function DonorSidebarNav({
                     {displayName}
                   </p>
                   <p className="text-xs font-normal text-slate-500 truncate leading-tight">
-                    {currentUser.email || "donatur@ygsm.or.id"}
+                    {currentUser.email || "donatur@pabe.or.id"}
                   </p>
                 </div>
               </Link>

@@ -120,6 +120,7 @@ export function LoginForm() {
         };
 
         loginUser(defaultDonor);
+        sessionStorage.removeItem("pabe_just_logged_in");
         sessionStorage.removeItem("ygsm_just_logged_in");
         setIsLoading(false);
         toast.success(`Selamat datang, ${defaultDonor.name}!`);
@@ -128,6 +129,7 @@ export function LoginForm() {
       }
 
       loginUser(foundUser);
+      sessionStorage.removeItem("pabe_just_logged_in");
       sessionStorage.removeItem("ygsm_just_logged_in");
       setIsLoading(false);
       toast.success(`Selamat datang kembali, ${foundUser.name}! (${foundUser.title})`);
@@ -145,6 +147,7 @@ export function LoginForm() {
     setTimeout(() => {
       const fbUser = simulateSocialAuth("facebook");
       loginUser(fbUser);
+      sessionStorage.removeItem("pabe_just_logged_in");
       sessionStorage.removeItem("ygsm_just_logged_in");
       setIsFacebookLoading(false);
       toast.success(`Berhasil masuk dengan Facebook: ${fbUser.name}`);

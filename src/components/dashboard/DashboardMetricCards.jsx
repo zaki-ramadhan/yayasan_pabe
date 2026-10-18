@@ -59,7 +59,7 @@ export function DashboardMetricCards({ userRole, stats }) {
         <DashboardMetricCard
           label="Status Keaktifan"
           value={<span className="text-emerald-600">Relawan Aktif</span>}
-          subtitle="Terdaftar resmi di YGSM"
+          subtitle="Terdaftar resmi di Yayasan PABE"
           statusColor="slate"
         />
       </div>

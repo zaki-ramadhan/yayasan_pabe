@@ -23,11 +23,11 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </Button>
 
-        <Link href="/" className="flex items-center gap-2" title="Kembali ke Beranda Utama Yayasan GSM">
+        <Link href="/" className="flex items-center gap-2" title="Kembali ke Beranda Utama Yayasan PABE">
           <div className="relative w-8 h-8 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
             <Image
               src="/logo_yayasan_GSM.png"
-              alt="Logo YGSM"
+              alt="Logo Yayasan PABE"
               width={32}
               height={32}
               className="w-full h-full object-contain rounded-xs"
@@ -35,7 +35,7 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
           </div>
           <div>
             <span className="font-medium text-sm block text-slate-950 leading-tight">
-              Yayasan GSM
+              Yayasan PABE
             </span>
             <span className="text-xs font-normal text-slate-500 block">
               Beranda Utama

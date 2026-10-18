@@ -36,7 +36,7 @@ export function DonorHistoryDashboard() {
     // Only check after component mounts on client
     const timer = setTimeout(() => {
       if (!isAuthenticated && typeof window !== "undefined") {
-        const stored = localStorage.getItem("ygsm_auth_user");
+        const stored = localStorage.getItem("pabe_auth_user") || localStorage.getItem("ygsm_auth_user");
         if (!stored) {
           router.replace("/login?redirect=/donatur/riwayat");
         }

@@ -8,6 +8,7 @@ export async function POST() {
     message: "Sesi berhasil diakhiri.",
   });
 
+  response.cookies.delete("pabe_session");
   response.cookies.delete("ygsm_session");
   return response;
 }

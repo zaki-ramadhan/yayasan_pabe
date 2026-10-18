@@ -146,8 +146,8 @@ export async function getDonorHistory({
           : d.donationType === "INFAK_SUBUH"
           ? "Sedekah Subuh Berkah"
           : d.donationType === "WAKAF"
-          ? "Wakaf Produktif YGSM"
-          : "Sedekah Umum YGSM");
+          ? "Wakaf Produktif PABE"
+          : "Sedekah Umum PABE");
 
       return {
         id: d.id,

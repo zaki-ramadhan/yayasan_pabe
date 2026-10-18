@@ -179,9 +179,14 @@ export async function GET(request) {
           <script>
             try {
               const session = ${sessionJson};
-              localStorage.setItem('ygsm_auth_user', JSON.stringify(session));
-              localStorage.setItem('ygsm_auth_session', JSON.stringify(session));
+              const jsonStr = JSON.stringify(session);
+              localStorage.setItem('pabe_auth_user', jsonStr);
+              localStorage.setItem('ygsm_auth_user', jsonStr);
+              localStorage.setItem('pabe_auth_session', jsonStr);
+              localStorage.setItem('ygsm_auth_session', jsonStr);
+              sessionStorage.setItem('pabe_just_logged_in', session.name || 'Donatur');
               sessionStorage.setItem('ygsm_just_logged_in', session.name || 'Donatur');
+              window.dispatchEvent(new Event('pabe_auth_change'));
               window.dispatchEvent(new Event('ygsm_auth_change'));
               window.dispatchEvent(new Event('storage'));
               window.location.replace('${targetUrl}');
@@ -198,13 +203,15 @@ export async function GET(request) {
     });
 
     // Set secure session cookie
-    response.cookies.set("ygsm_session", userId, {
+    const cookieOpts = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 30, // 30 days
       path: "/",
-    });
+    };
+    response.cookies.set("pabe_session", userId, cookieOpts);
+    response.cookies.set("ygsm_session", userId, cookieOpts);
 
     return response;
   } catch (err) {

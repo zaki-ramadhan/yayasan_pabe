@@ -22,7 +22,7 @@ export function AuthVisualPanel() {
         {/* Base Photographic Background Image */}
         <Image
           src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1600&auto=format&fit=crop&q=80"
-          alt="Kegiatan Sosial Yayasan Generasi Sejahtera Mandiri"
+          alt="Kegiatan Sosial Yayasan PABE"
           fill
           sizes="(max-width: 1200px) 50vw, 40vw"
           className="object-cover object-center brightness-[0.45] contrast-[1.05] saturate-60"
@@ -63,7 +63,7 @@ export function AuthVisualPanel() {
           {/* Generous Spacing Before Copyright */}
           <div className="mt-10 sm:mt-12 lg:mt-14 xl:mt-16 text-center">
             <p className="text-[11px] sm:text-xs text-slate-400 font-normal">
-              © {new Date().getFullYear()} Yayasan Generasi Sejahtera Mandiri
+              © {new Date().getFullYear()} Yayasan PABE
             </p>
           </div>
         </div>

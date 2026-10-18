@@ -44,7 +44,7 @@ export async function GET() {
           channel: (d.paymentChannel || "qris").toUpperCase(),
           date: d.createdAt.toISOString(),
           status: d.status,
-          campaignTitle: d.campaign?.title || "Sedekah Umum YGSM",
+          campaignTitle: d.campaign?.title || "Sedekah Umum PABE",
         }))
       : RECENT_TRANSACTIONS;
 
