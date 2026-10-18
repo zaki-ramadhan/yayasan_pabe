@@ -14,7 +14,7 @@ export function AboutBankAccounts() {
         <div className="hidden md:flex md:col-span-5 relative w-full h-72 sm:h-80 md:h-96 items-center justify-center p-2">
           <Image
             src="/img/bank_account_cards.png"
-            alt="Kartu Rekening Resmi YGSM BSI, BCA, Mandiri"
+            alt="Kartu Rekening Resmi Yayasan PABE BSI, BCA, Mandiri"
             fill
             className="object-contain drop-shadow-xl md:rotate-[-20deg] md:scale-130 md:translate-x-15 md:translate-y-5 transition-transform"
             sizes="(max-width: 768px) 100vw, 40vw"

@@ -9,9 +9,9 @@ import {
 } from "@/services/distributionService";
 
 export const metadata = {
-  title: "Distribusi - YGSM",
+  title: "Distribusi - Yayasan PABE",
   description:
-    "Laporan keuangan audit independen, grafik distribusi penyaluran berkala, dan kepatuhan syariah Yayasan Generasi Sejahtera Mandiri.",
+    "Laporan keuangan audit independen, grafik distribusi penyaluran berkala, dan kepatuhan syariah Yayasan PABE.",
 };
 
 export default async function DistribusiPage() {

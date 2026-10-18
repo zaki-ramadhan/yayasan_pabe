@@ -15,7 +15,7 @@ export function AboutHeader({ volunteerCount = 14 }) {
       <div className="relative h-40 sm:h-52 lg:h-60 w-full bg-slate-900 overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1588072432836-e10032774350?w=1600&auto=format&fit=crop&q=80"
-          alt="Kegiatan Pembinaan Santri Yayasan Generasi Sejahtera Mandiri"
+          alt="Kegiatan Pembinaan Santri Yayasan PABE"
           fill
           sizes="100vw"
           className="object-cover opacity-85"
@@ -31,7 +31,7 @@ export function AboutHeader({ volunteerCount = 14 }) {
           <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-white shadow-md p-1.5 shrink-0 flex items-center justify-center overflow-hidden">
             <Image
               src="/logo_yayasan_GSM.png"
-              alt="Logo Resmi Yayasan Generasi Sejahtera Mandiri (YGSM)"
+              alt="Logo Resmi Yayasan PABE"
               fill
               sizes="(max-width: 640px) 96px, 112px"
               className="object-contain p-1"
@@ -55,7 +55,7 @@ export function AboutHeader({ volunteerCount = 14 }) {
               </Button>
             </Link>
             <a
-              href={`https://wa.me/${ORG_PROFILE.contacts.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent("Assalamu'alaikum YGSM, mohon info program yayasan.")}`}
+              href={`https://wa.me/${ORG_PROFILE.contacts.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent("Assalamu'alaikum Yayasan PABE, mohon info program yayasan.")}`}
               target="_blank"
               rel="noopener noreferrer"
             >

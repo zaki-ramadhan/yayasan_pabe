@@ -12,16 +12,18 @@ import { NavUserDropdown } from "@/components/nav/NavUserDropdown";
 import { NavMobileDrawer } from "@/components/nav/NavMobileDrawer";
 
 function subscribeAuth(callback) {
+  window.addEventListener("pabe_auth_change", callback);
   window.addEventListener("ygsm_auth_change", callback);
   window.addEventListener("storage", callback);
   return () => {
+    window.removeEventListener("pabe_auth_change", callback);
     window.removeEventListener("ygsm_auth_change", callback);
     window.removeEventListener("storage", callback);
   };
 }
 
 function getAuthSnapshot() {
-  return localStorage.getItem("ygsm_auth_user");
+  return localStorage.getItem("pabe_auth_user") || localStorage.getItem("ygsm_auth_user");
 }
 
 function getAuthServerSnapshot() {
@@ -38,8 +40,11 @@ export function Navbar() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const justLoggedInName = sessionStorage.getItem("ygsm_just_logged_in");
+    const justLoggedInName =
+      sessionStorage.getItem("pabe_just_logged_in") ||
+      sessionStorage.getItem("ygsm_just_logged_in");
     if (justLoggedInName) {
+      sessionStorage.removeItem("pabe_just_logged_in");
       sessionStorage.removeItem("ygsm_just_logged_in");
       toast.success(`Selamat datang, ${justLoggedInName}! Berhasil masuk ke akun.`);
     }
@@ -59,12 +64,12 @@ export function Navbar() {
           <Link
             href="/"
             className="flex items-center gap-2 sm:gap-2.5 select-none focus:outline-none"
-            title="Beranda Yayasan Generasi Sejahtera Mandiri"
+            title="Beranda Yayasan PABE"
           >
             <div className="relative w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-md overflow-hidden shrink-0 border border-slate-300 shadow-2xs bg-white flex items-center justify-center p-0.5">
               <Image
                 src="/logo_yayasan_GSM.png"
-                alt="Logo Yayasan Generasi Sejahtera Mandiri"
+                alt="Logo Yayasan PABE"
                 width={32}
                 height={32}
                 className="w-full h-full object-contain rounded-sm select-none pointer-events-none"
@@ -72,11 +77,8 @@ export function Navbar() {
               />
             </div>
             <div className="flex flex-col leading-tight select-none">
-              <span className="font-semibold text-[11px] sm:text-[11.5px] text-slate-950 tracking-tight">
-                Yayasan Generasi
-              </span>
-              <span className="font-semibold text-[11px] sm:text-[11.5px] text-slate-700 tracking-tight">
-                Sejahtera Mandiri
+              <span className="font-bold text-xs sm:text-sm text-slate-900 tracking-tight">
+                Yayasan PABE
               </span>
             </div>
           </Link>

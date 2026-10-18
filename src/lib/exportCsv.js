@@ -5,7 +5,7 @@
  * @param {Array<object>} transactions - Array of transaction objects
  * @param {string} filename - Desired output filename
  */
-export function exportTransactionsToCsv(transactions = [], filename = "laporan-transaksi-ygsm.csv") {
+export function exportTransactionsToCsv(transactions = [], filename = "laporan-transaksi-pabe.csv") {
   if (!transactions || transactions.length === 0) return;
 
   const headers = [

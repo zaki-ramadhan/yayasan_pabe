@@ -10,7 +10,7 @@ export function VolunteerSuccessCard() {
         Jazakumullahu Khairan Katsiran
       </h3>
       <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-        Terima kasih atas niat mulia Anda untuk bergabung sebagai Relawan YGSM. Tim koordinator kami akan menghubungi nomor WhatsApp Anda saat ada aksi kemanusiaan di wilayah Anda.
+        Terima kasih atas niat mulia Anda untuk bergabung sebagai Relawan Yayasan PABE. Tim koordinator kami akan menghubungi nomor WhatsApp Anda saat ada aksi kemanusiaan di wilayah Anda.
       </p>
     </div>
   );

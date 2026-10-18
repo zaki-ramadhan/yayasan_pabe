@@ -1,4 +1,3 @@
-import Image from "next/image";
 
 const DEFAULT_PAYMENT_LOGOS = [
   { name: "QRIS", src: "/img/payments/qris.png", alt: "QRIS Nasional" },
@@ -36,13 +35,12 @@ export function FooterPaymentLogos({ logos = DEFAULT_PAYMENT_LOGOS }) {
             title={m.name}
             className="w-[72px] sm:w-[80px] h-9 sm:h-10 rounded-md bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center hover:bg-slate-50 transition-colors shrink-0 p-2"
           >
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={`${m.src}?v=2`}
               alt={m.alt}
-              width={64}
-              height={28}
               className="max-h-5 sm:max-h-6 w-auto max-w-full object-contain select-none pointer-events-none"
-              unoptimized
+              loading="lazy"
             />
           </div>
         ))}

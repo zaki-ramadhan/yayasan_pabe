@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
   const article = await getArticleBySlug(slug);
   if (!article) return { title: "Artikel Tidak Ditemukan" };
   return {
-    title: `${article.title} | YGSM`,
+    title: `${article.title} | Yayasan PABE`,
     description: article.excerpt,
   };
 }
@@ -138,7 +138,7 @@ export default async function ArticleDetailPage({ params }) {
               Salurkan Sedekah &amp; Doa Terbaik Anda
             </h3>
             <p className="text-xs sm:text-sm text-slate-200 max-w-xl leading-relaxed">
-              Dukung program pembinaan santri Al-Qur&apos;an dan kemandirian dhuafa bersama YGSM.
+              Dukung program pembinaan santri Al-Qur&apos;an dan kemandirian dhuafa bersama Yayasan PABE.
             </p>
           </div>
 

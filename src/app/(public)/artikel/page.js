@@ -4,8 +4,8 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { ArticleCatalog } from "@/components/modules/ArticleCatalog";
 
 export const metadata = {
-  title: "Artikel & Kabar Lapangan - YGSM",
-  description: "Kumpulan artikel edukasi fiqih zakat, sedekah subuh, dan kabar penyaluran bantuan YGSM.",
+  title: "Artikel & Kabar Lapangan - Yayasan PABE",
+  description: "Kumpulan artikel edukasi fiqih zakat, sedekah subuh, dan kabar penyaluran bantuan Yayasan PABE.",
 };
 
 export default async function ArtikelIndexPage() {

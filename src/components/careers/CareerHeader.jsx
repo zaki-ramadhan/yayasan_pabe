@@ -25,7 +25,7 @@ export function CareerHeader({
 			<div className="absolute inset-0 z-0 pointer-events-none">
 				<Image
 					src="/img/texture_overlay_4.jpeg"
-					alt="Latar Belakang Karier YGSM"
+					alt="Latar Belakang Karier Yayasan PABE"
 					fill
 					priority
 					sizes="100vw"

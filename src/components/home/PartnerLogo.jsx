@@ -1,4 +1,3 @@
-import Image from "next/image";
 
 /**
  * Atom: Satu pill logo mitra.
@@ -17,13 +16,12 @@ export function PartnerLogo({ partner }) {
       className="h-14 px-5 rounded-xl border border-slate-200 bg-white flex items-center justify-center shrink-0"
     >
       {partner.logo ? (
-        <Image
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
           src={`${partner.logo}?v=2`}
           alt={partner.name}
-          width={80}
-          height={36}
           className="max-h-8 w-auto max-w-[80px] object-contain select-none pointer-events-none"
-          unoptimized
+          loading="lazy"
         />
       ) : (
         <span className="text-xs sm:text-sm font-semibold text-slate-700 whitespace-nowrap tracking-tight">

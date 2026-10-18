@@ -21,7 +21,7 @@ export function FloatingWhatsApp() {
   }
 
   const cleanPhone = ORG_PROFILE.contacts.whatsapp.replace(/\D/g, "");
-  const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent("Assalamu'alaikum YGSM, mohon info program yayasan.")}`;
+  const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent("Assalamu'alaikum Yayasan PABE, mohon info program yayasan.")}`;
 
   return (
     <div className="fixed bottom-6 right-6 z-40 print:hidden animate-in fade-in slide-in-from-bottom-4 duration-300">

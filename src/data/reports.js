@@ -10,7 +10,7 @@ export const AUDIT_REPORTS = [
     beneficiaryCount: 14250,
     operationalRatio: "8.8%",
     pdfUrl: "#",
-    summary: "Laporan hasil audit independen atas laporan keuangan YGSM per 31 Desember 2025 dengan opini WTP. Rasio operasional terjaga sangat sehat di bawah batas maksimal regulasi BAZNAS dan Kemenag RI.",
+    summary: "Laporan hasil audit independen atas laporan keuangan PABE per 31 Desember 2025 dengan opini WTP. Rasio operasional terjaga sangat sehat di bawah batas maksimal regulasi BAZNAS dan Kemenag RI.",
   },
   {
     id: "rep-2024",

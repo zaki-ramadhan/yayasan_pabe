@@ -8,7 +8,7 @@ import { FooterPaymentLogos } from "./footer/FooterPaymentLogos";
 import { FooterBottomBar } from "./footer/FooterBottomBar";
 
 export function Footer() {
-  const whatsappUrl = `https://wa.me/6281234567890?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan GSM, saya ingin bertanya seputar donasi & ZISWAF.")}`;
+  const whatsappUrl = `https://wa.me/6281234567890?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan PABE, saya ingin bertanya seputar donasi & ZISWAF.")}`;
 
   return (
     <footer className="relative z-40 overflow-hidden bg-slate-950 text-white pt-12 pb-8 border-t border-slate-800">
@@ -25,14 +25,14 @@ export function Footer() {
               <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-700 shadow-xs flex items-center justify-center">
                 <Image
                   src="/logo_yayasan_GSM.png"
-                  alt="Logo Yayasan Generasi Sejahtera Mandiri"
+                  alt="Logo Yayasan PABE"
                   width={44}
                   height={44}
                   className="w-full h-full object-contain rounded-sm"
                 />
               </div>
               <span className="font-semibold text-base sm:text-lg text-white tracking-tight leading-snug">
-                Yayasan Generasi Sejahtera Mandiri
+                Yayasan PABE
               </span>
             </div>
 

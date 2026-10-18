@@ -80,7 +80,7 @@ export function HomeHero({ defaultCampaignSlug }) {
             </h1>
 
             <p className="text-base text-slate-800 leading-relaxed max-w-xl font-normal">
-              Yayasan Generasi Sejahtera Mandiri mengelola dan menyalurkan dana amanah untuk pembinaan hafalan Al-Qur&apos;an, kemandirian anak yatim, dan bantuan kemanusiaan secara transparan.
+              Yayasan PABE mengelola dan menyalurkan dana amanah untuk pembinaan hafalan Al-Qur&apos;an, kemandirian anak yatim, dan bantuan kemanusiaan secara transparan.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">

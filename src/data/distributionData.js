@@ -96,7 +96,7 @@ export const SYARIAH_COMPLIANCE_DATA = {
   title: "SK Dewan Pengawas Syariah",
   description:
     "Sebagai lembaga amil zakat dan sosial berbasis syariah, kami berkomitmen menjalankan program sesuai prinsip Islam. Surat Keputusan (SK) Dewan Pengawas Syariah ini menjadi dasar legalitas dan rujukan pengawasan syariah atas seluruh aktivitas kami.",
-  skNumber: "SK-DPS/YGSM/01/2026",
+  skNumber: "SK-DPS/PABE/01/2026",
   shariaBoardChairman: "Dr. KH. Abdullah Syukri, M.A.",
   effectiveDate: "01 Januari 2026 - 31 Desember 2026",
   legalFoundation: "DSN-MUI No. 138/DSN-MUI/IX/2020 & Regulasi Kemenag RI",

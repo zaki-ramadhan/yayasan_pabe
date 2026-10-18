@@ -3,7 +3,7 @@ import { FinancialLedgerDashboard } from "@/components/reports/FinancialLedgerDa
 
 export const metadata = {
   title: "Laporan Keuangan & Arus Kas Donasi",
-  description: "Transparansi penerimaan donasi, penyaluran program mustahik, dan saldo kas Yayasan Generasi Sejahtera Mandiri.",
+  description: "Transparansi penerimaan donasi, penyaluran program mustahik, dan saldo kas Yayasan PABE.",
 };
 
 export default async function LaporanPage() {

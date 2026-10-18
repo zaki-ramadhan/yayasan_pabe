@@ -3,8 +3,8 @@ import { VolunteerPerksList } from "@/components/volunteer/VolunteerPerksList";
 import { PageHeader } from "@/components/shared/PageHeader";
 
 export const metadata = {
-  title: "Gabung Jadi Relawan Aksi - YGSM",
-  description: "Daftarkan diri Anda sebagai relawan aksi kemanusiaan dan pendidikan santri tahfidz YGSM.",
+  title: "Gabung Jadi Relawan Aksi - Yayasan PABE",
+  description: "Daftarkan diri Anda sebagai relawan aksi kemanusiaan dan pendidikan santri tahfidz Yayasan PABE.",
 };
 
 export default function VolunteerPage() {

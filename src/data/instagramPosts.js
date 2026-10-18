@@ -35,7 +35,7 @@ export const INSTAGRAM_POSTS = [
     id: "ig-3",
     imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&auto=format&fit=crop&q=80",
     alt: "Transparansi dan Laporan Akuntabilitas Hasil Audit KAP",
-    caption: "Komitmen amanah dan keterbukaan publik. Hasil audit independen tahunan Yayasan GSM kembali meraih opini WTP.",
+    caption: "Komitmen amanah dan keterbukaan publik. Hasil audit independen tahunan Yayasan PABE kembali meraih opini WTP.",
     date: "14 Sep 2026",
     likes: 890,
     comments: 48,

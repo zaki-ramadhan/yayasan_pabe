@@ -100,9 +100,9 @@ export async function getInstagramAccount() {
   }
 
   return {
-    username: (INSTAGRAM_ACCOUNT.username || "generasisejahteramandiri").replace("@", ""),
-    handle: (INSTAGRAM_ACCOUNT.username || "generasisejahteramandiri").replace("@", ""),
-    displayName: INSTAGRAM_ACCOUNT.displayName || "Yayasan Generasi Sejahtera Mandiri",
+    username: (INSTAGRAM_ACCOUNT.username || "yayasanpabe").replace("@", ""),
+    handle: (INSTAGRAM_ACCOUNT.username || "yayasanpabe").replace("@", ""),
+    displayName: INSTAGRAM_ACCOUNT.displayName || "Yayasan PABE",
     avatarUrl: null,
     profileUrl: INSTAGRAM_ACCOUNT.profileUrl || "https://www.instagram.com",
     messageUrl: "https://www.instagram.com/direct/inbox/",

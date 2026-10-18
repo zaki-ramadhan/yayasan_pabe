@@ -107,13 +107,13 @@ export async function getDistributionRecords() {
         return {
           id: `DIST-${dateStr.slice(0, 4)}-00${idx + 1}`,
           title: u.title,
-          location: u.campaign?.location || "Wilayah Binaan YGSM",
+          location: u.campaign?.location || "Wilayah Binaan PABE",
           date: dateStr,
           beneficiaries: `${formatNumber(beneficiaryEstimated)}+ Jiwa`,
           value: Number(u.disbursedAmount || 25000000),
           status: "SELESAI",
           image: (u.images && u.images[0]) || u.campaign?.bannerUrl || "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=800&auto=format&fit=crop&q=80",
-          pj: "Tim Penyaluran & Logistik YGSM",
+          pj: "Tim Penyaluran & Logistik PABE",
           notes: u.content,
         };
       });

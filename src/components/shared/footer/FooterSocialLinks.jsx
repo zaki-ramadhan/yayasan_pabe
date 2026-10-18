@@ -13,7 +13,7 @@ import {
  * @param {string} [props.whatsappUrl] - Custom WhatsApp consultation URL
  */
 export function FooterSocialLinks({ whatsappUrl }) {
-  const defaultWa = `https://wa.me/6281234567890?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan GSM, saya ingin bertanya seputar donasi & ZISWAF.")}`;
+  const defaultWa = `https://wa.me/6281234567890?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan PABE, saya ingin bertanya seputar donasi & ZISWAF.")}`;
   const wa = whatsappUrl || defaultWa;
 
   return (
