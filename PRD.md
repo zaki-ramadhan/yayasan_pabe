@@ -1,14 +1,14 @@
 # PRD & Technical Specification: Platform Filantropi Digital
-## Yayasan Generasi Sejahtera Mandiri
+## Yayasan PABE
 
-Dokumen ini merupakan panduan spesifikasi produk, arsitektur teknis, dan cetak biru implementasi (*single source of truth*) untuk membangun platform filantropi dan crowdfunding digital Yayasan Generasi Sejahtera Mandiri (mengadopsi seluruh fitur, alur kerja, dan keunggulan beqicharity.com ke dalam arsitektur modern Next.js).
+Dokumen ini merupakan panduan spesifikasi produk, arsitektur teknis, dan cetak biru implementasi (*single source of truth*) untuk membangun platform filantropi dan crowdfunding digital Yayasan PABE (mengadopsi seluruh fitur, alur kerja, dan keunggulan beqicharity.com ke dalam arsitektur modern Next.js).
 
 ---
 
 ## 1. Project Overview & Brand Identity
 
 ### 1.1 Entitas & Misi
-- **Nama Lembaga:** Yayasan Generasi Sejahtera Mandiri (YGSM).
+- **Nama Lembaga:** Yayasan PABE.
 - **Fokus Gerakan:** Pendidikan & Dakwah Al-Qur'an, Kemandirian Santri/Yatim, Zakat-Infak-Sedekah-Wakaf (ZISWAF), Tanggap Bencana & Pemberdayaan Ekonomi Umat.
 - **Visi Digital:** Membangun platform filantropi modern berbasis web yang transparan, akuntabel, mobile-friendly, dan memiliki konversi donasi tinggi.
 - **Bahasa & Internasionalisasi:**
@@ -115,7 +115,7 @@ yayasan_generasi_sejahtera_mandiri/
 3. **Kategori Cepat:** Card icon 8 pilar: *Donasi Rutin, ZIS, Santri, Infrastruktur, Pangan & Air, Pemberdayaan, Kemanusiaan, Bencana Alam*.
 4. **Grid Program Pilihan:**
    - Thumbnail 16:9, badge kategori, judul program (maksimal 2 baris truncate).
-   - Penyelenggara: *Yayasan Generasi Sejahtera Mandiri* (verified checkmark).
+   - Penyelenggara: *Yayasan PABE* (verified checkmark).
    - Progress bar capaian target (`Rp terkumpul` vs `Target` atau status open-ended).
    - Avatar stack donatur + counter jumlah donatur (`150+ donatur`).
    - Tombol CTA card: *Donasi Sekarang*.
@@ -160,7 +160,7 @@ Alur transaksi 4 langkah pada satu layar tanpa redirect berulang:
 3. **Langkah 3 - Pilihan Channel Pembayaran:**
    - **Virtual Account Otomatis:** Bank Syariah Indonesia (BSI), Mandiri, BRI, BNI, Permata, CIMB.
    - **QRIS & E-Wallet:** QRIS Real-time (BCA, GoPay, OVO, ShopeePay, DANA, LinkAja).
-   - **Transfer Bank Manual:** Rekening resmi Yayasan Generasi Sejahtera Mandiri dengan kode unik 3 digit verifikasi otomatis.
+   - **Transfer Bank Manual:** Rekening resmi Yayasan PABE dengan kode unik 3 digit verifikasi otomatis.
 4. **Langkah 4 - Keamanan & Submit:**
    - Cloudflare Turnstile bot verification (ringan, tanpa captcha membingungkan).
    - Tombol submit: `Lanjut Pembayaran` dengan animasi state loading & pencegahan double-click.
@@ -389,7 +389,7 @@ Modul pada `src/app/(admin)/dashboard/`:
 Untuk mengerjakan proyek ini dengan AI, jalankan instruksi secara bertahap mengikuti urutan berikut:
 
 ### Tahap 1: Setup Basis Desain, Tema & Layout Utama
-> *Buatkan komponen layout utama untuk Yayasan Generasi Sejahtera Mandiri menggunakan Tailwind CSS v4 di Next.js App Router. Buat Navbar responsif dengan logo, menu Program (dropdown), Artikel, Informasi, tombol ganti bahasa (ID/EN/AR), tombol CTA Donasi Sekarang, serta Mobile Bottom Navigation (Home, Artikel, Donasi, Rutin, Login). Gunakan token warna Ocean Blue (#0ea5e9, #0284c7) dan Slate (#0f172a).*
+> *Buatkan komponen layout utama untuk Yayasan PABE menggunakan Tailwind CSS v4 di Next.js App Router. Buat Navbar responsif dengan logo, menu Program (dropdown), Artikel, Informasi, tombol ganti bahasa (ID/EN/AR), tombol CTA Donasi Sekarang, serta Mobile Bottom Navigation (Home, Artikel, Donasi, Rutin, Login). Gunakan token warna Ocean Blue (#0ea5e9, #0284c7) dan Slate (#0f172a).*
 
 ### Tahap 2: Halaman Beranda (Landing Page)
 > *Implementasikan halaman beranda (src/app/(public)/page.js) dengan komponen Hero Banner Carousel program darurat, Live Counter metrik dampak donasi, Grid Icon 8 Kategori Program, Grid Campaign Card crowdfunding dengan progress bar dan jumlah donatur, Feed Penyaluran Berita dengan filter tab, serta Popup Modal Tanggap Darurat.*

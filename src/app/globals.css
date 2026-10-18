@@ -61,6 +61,7 @@ html[data-scroll-locked] {
 }
 
 /* Custom Driver.js Popover Styling (Clean, Neutral, Accessible, No Bold Spam) */
+.driver-popover.pabe-driver-popover,
 .driver-popover.ygsm-driver-popover {
   background-color: #ffffff;
   color: #0f172a;
@@ -72,6 +73,7 @@ html[data-scroll-locked] {
   font-family: inherit;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-title,
 .driver-popover.ygsm-driver-popover .driver-popover-title {
   font-size: 16px;
   font-weight: 500;
@@ -80,6 +82,7 @@ html[data-scroll-locked] {
   margin-bottom: 6px;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-description,
 .driver-popover.ygsm-driver-popover .driver-popover-description {
   font-size: 14px;
   font-weight: 400;
@@ -87,12 +90,14 @@ html[data-scroll-locked] {
   line-height: 1.5;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-progress-text,
 .driver-popover.ygsm-driver-popover .driver-popover-progress-text {
   font-size: 13px;
   font-weight: 400;
   color: #64748b;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-close-btn,
 .driver-popover.ygsm-driver-popover .driver-popover-close-btn {
   color: #94a3b8;
   font-size: 20px;
@@ -102,10 +107,12 @@ html[data-scroll-locked] {
   transition: color 0.15s ease;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-close-btn:hover,
 .driver-popover.ygsm-driver-popover .driver-popover-close-btn:hover {
   color: #0f172a;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-footer-btn,
 .driver-popover.ygsm-driver-popover .driver-popover-footer-btn {
   font-size: 14px;
   font-weight: 500;
@@ -114,50 +121,59 @@ html[data-scroll-locked] {
   transition: all 0.15s ease;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-prev-btn,
 .driver-popover.ygsm-driver-popover .driver-popover-prev-btn {
   background-color: #f8fafc;
   color: #334155;
   border: 1px solid #cbd5e1;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-prev-btn:hover,
 .driver-popover.ygsm-driver-popover .driver-popover-prev-btn:hover {
   background-color: #f1f5f9;
   color: #0f172a;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-next-btn,
 .driver-popover.ygsm-driver-popover .driver-popover-next-btn {
   background-color: #1d4ed8;
   color: #ffffff;
   border: 1px solid #1d4ed8;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-next-btn:hover,
 .driver-popover.ygsm-driver-popover .driver-popover-next-btn:hover {
   background-color: #1e40af;
 }
 
 /* Explicit, clearly visible tooltip arrow (ekor) with matching slate border */
+.driver-popover.pabe-driver-popover .driver-popover-arrow,
 .driver-popover.ygsm-driver-popover .driver-popover-arrow {
   border-width: 8px;
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-arrow-side-bottom,
 .driver-popover.ygsm-driver-popover .driver-popover-arrow-side-bottom {
   border-bottom-color: #ffffff;
   bottom: 100%;
   filter: drop-shadow(0 -1.5px 0.5px #cbd5e1);
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-arrow-side-top,
 .driver-popover.ygsm-driver-popover .driver-popover-arrow-side-top {
   border-top-color: #ffffff;
   top: 100%;
   filter: drop-shadow(0 1.5px 0.5px #cbd5e1);
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-arrow-side-left,
 .driver-popover.ygsm-driver-popover .driver-popover-arrow-side-left {
   border-left-color: #ffffff;
   left: 100%;
   filter: drop-shadow(1.5px 0 0.5px #cbd5e1);
 }
 
+.driver-popover.pabe-driver-popover .driver-popover-arrow-side-right,
 .driver-popover.ygsm-driver-popover .driver-popover-arrow-side-right {
   border-right-color: #ffffff;
   right: 100%;

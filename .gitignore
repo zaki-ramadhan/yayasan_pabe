@@ -25,6 +25,10 @@
 !AGENTS.md
 !CLAUDE.md
 
+# private & confidential documents (legal, internal assets, bank statements)
+/private-docs/
+/private/
+
 # misc & os
 .DS_Store
 Thumbs.db

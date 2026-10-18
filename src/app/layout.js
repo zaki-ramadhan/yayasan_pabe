@@ -16,29 +16,29 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: {
-    default: "Yayasan GSM - Donasi & ZISWAF",
-    template: "%s | Yayasan GSM",
+    default: "Yayasan PABE - Donasi & ZISWAF",
+    template: "%s | Yayasan PABE",
   },
   description:
-    "Platform resmi donasi, zakat, infak, sedekah, dan wakaf Yayasan Generasi Sejahtera Mandiri. Transparan, amanah, dan terpercaya.",
+    "Platform resmi donasi, zakat, infak, sedekah, dan wakaf Yayasan PABE. Transparan, amanah, dan terpercaya.",
   keywords: [
     "donasi online",
     "zakat online",
     "sedekah subuh",
     "wakaf",
-    "yayasan generasi sejahtera mandiri",
+    "yayasan pabe",
     "kalkulator zakat",
   ],
-  authors: [{ name: "Yayasan Generasi Sejahtera Mandiri" }],
+  authors: [{ name: "Yayasan PABE" }],
   icons: {
     icon: "/logo_yayasan_GSM.png",
     shortcut: "/logo_yayasan_GSM.png",
     apple: "/logo_yayasan_GSM.png",
   },
   openGraph: {
-    title: "Yayasan Generasi Sejahtera Mandiri",
+    title: "Yayasan PABE",
     description: "Salurkan kepedulian Anda untuk masa depan santri, dakwah Al-Qur'an, dan aksi kemanusiaan.",
-    siteName: "YGSM Filantropi",
+    siteName: "Yayasan PABE Filantropi",
     locale: "id_ID",
     type: "website",
   },

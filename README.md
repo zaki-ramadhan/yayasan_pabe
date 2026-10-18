@@ -1,6 +1,6 @@
-# Yayasan Generasi Sejahtera Mandiri (YGSM)
+# Yayasan PABE
 
-Dokumentasi ringkasan proyek platform web donasi, ZISWAF, dan filantropi digital Yayasan Generasi Sejahtera Mandiri.
+Dokumentasi ringkasan proyek platform web donasi, ZISWAF, dan filantropi digital Yayasan PABE.
 
 ---
 
@@ -34,6 +34,17 @@ Website ini dibangun untuk memfasilitasi penghimpunan dan pengelolaan dana Zakat
 
 ---
 
+## Folder Dokumen Privat (Aset Internal)
+
+Dokumen legal, keuangan, dan identitas yayasan yang bersifat privat ditempatkan pada folder root:
+- `/private-docs/legal/`: Akta Notaris, SK Kemenkumham, NPWP, Surat Izin Operasional Dinsos.
+- `/private-docs/keuangan/`: Rekening koran, laporan audit akuntan publik, berkas PBB/rekening listrik.
+- `/private-docs/identitas/`: KTP/KK Dewan Pembina & Pengurus, dokumen KYC Payment Gateway.
+
+*Seluruh isi direktori `/private-docs/` diabaikan oleh `.gitignore` sehingga aman dari commit git.*
+
+---
+
 ## Status Pengerjaan
 
 - **Antarmuka & User Flow:** Seluruh halaman publik, katalog program, modul checkout donasi, kalkulator zakat, hingga halaman invoice selesai dibangun dan responsif di semua perangkat.
@@ -41,4 +52,4 @@ Website ini dibangun untuk memfasilitasi penghimpunan dan pengelolaan dana Zakat
 
 ---
 
-*Hak Cipta © Yayasan Generasi Sejahtera Mandiri. Repositori ini bersifat privat dan dikembangkan khusus untuk kebutuhan internal yayasan.*
+*Hak Cipta © Yayasan PABE. Repositori ini bersifat privat dan dikembangkan khusus untuk kebutuhan internal yayasan.*

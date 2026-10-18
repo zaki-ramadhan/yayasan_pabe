@@ -1,5 +1,5 @@
 {
-  "name": "yayasan_generasi_sejahtera_mandiri",
+  "name": "yayasan-pabe",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
     "db:seed": "node prisma/seed.js"
   },
   "dependencies": {
@@ -41,6 +43,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "prisma": "^7.10.0",
