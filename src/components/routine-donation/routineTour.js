@@ -13,7 +13,7 @@ export function startRoutineTour() {
     stagePadding: 8,
     stageRadius: 6,
     popoverOffset: 16,
-    popoverClass: "ygsm-driver-popover",
+    popoverClass: "pabe-driver-popover",
     steps: [
       {
         element: "#tour-donor-identity",

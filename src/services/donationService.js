@@ -41,7 +41,7 @@ donationStore.set("INV-2026-DEMO", {
 
 export async function createDonation({
   campaignId = null,
-  campaignTitle = "Sedekah Umum YGSM",
+  campaignTitle = "Sedekah Umum PABE",
   campaignSlug = "",
   donationType = "CAMPAIGN",
   amount,
@@ -182,7 +182,7 @@ export async function getDonationByInvoiceId(invoiceId, token = null) {
       if (!effectiveAccessToken) {
         effectiveAccessToken = crypto
           .createHash("sha256")
-          .update(`${dbDonation.invoiceId}_ygsm_salt`)
+          .update(`${dbDonation.invoiceId}_pabe_salt`)
           .digest("hex")
           .slice(0, 32);
 
@@ -204,7 +204,7 @@ export async function getDonationByInvoiceId(invoiceId, token = null) {
         accessToken: effectiveAccessToken,
         isAuthorized,
         campaignId: dbDonation.campaignId,
-        campaignTitle: dbDonation.campaign?.title || "Sedekah Umum YGSM",
+        campaignTitle: dbDonation.campaign?.title || "Sedekah Umum PABE",
         campaignSlug: dbDonation.campaign?.slug || "",
         campaignImage: dbDonation.campaign?.bannerUrl || null,
         donationType: dbDonation.donationType,
@@ -236,7 +236,7 @@ export async function getDonationByInvoiceId(invoiceId, token = null) {
     if (!effectiveAccessToken) {
       effectiveAccessToken = crypto
         .createHash("sha256")
-        .update(`${fallbackDonation.invoiceId}_ygsm_salt`)
+        .update(`${fallbackDonation.invoiceId}_pabe_salt`)
         .digest("hex")
         .slice(0, 32);
       fallbackDonation.accessToken = effectiveAccessToken;
@@ -293,7 +293,7 @@ export async function updateDonationPrayer({ invoiceId, prayer, isAnonymous }) {
         id: updatedDb.id,
         invoiceId: updatedDb.invoiceId,
         campaignId: updatedDb.campaignId,
-        campaignTitle: updatedDb.campaign?.title || "Sedekah Umum YGSM",
+        campaignTitle: updatedDb.campaign?.title || "Sedekah Umum PABE",
         campaignSlug: updatedDb.campaign?.slug || "",
         amount: updatedDb.amount,
         donorName: updatedDb.donorName,
@@ -369,7 +369,7 @@ export async function getRecentDonations(limit = 10) {
         channel: (d.paymentChannel || "qris").toUpperCase(),
         date: d.createdAt.toISOString(),
         status: d.status,
-        campaignTitle: d.campaign?.title || "Sedekah Umum YGSM",
+        campaignTitle: d.campaign?.title || "Sedekah Umum PABE",
       }));
     }
   } catch (error) {

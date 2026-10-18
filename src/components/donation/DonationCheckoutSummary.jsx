@@ -30,7 +30,7 @@ export function DonationCheckoutSummary({
                   <SafeImage
                     src={campaign.bannerUrl}
                     alt={campaign.title}
-                    fallbackText="Program YGSM"
+                    fallbackText="Program PABE"
                   />
                 </div>
               )}

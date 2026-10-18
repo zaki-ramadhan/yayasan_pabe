@@ -35,14 +35,14 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
         <div className="flex flex-col items-center justify-center py-2 space-y-3 text-center">
           <div className="p-3 bg-white rounded-lg border border-slate-200 shadow-2xs">
             <QRCodeSVG
-              value={`00020101021226600016ID.CO.YGSM.WWW01189360099900000123450215INV${donation.invoiceId}520458125303360540${donation.totalAmount}5802ID5912YGSM_CHARITY6007JAKARTA6304ABCD`}
+              value={`00020101021226600016ID.CO.PABE.WWW01189360099900000123450215INV${donation.invoiceId}520458125303360540${donation.totalAmount}5802ID5912PABE_CHARITY6007JAKARTA6304ABCD`}
               size={190}
               level="M"
             />
           </div>
           <div className="space-y-0.5">
             <span className="text-base font-semibold text-slate-900 block">
-              YAYASAN GENERASI SEJAHTERA MANDIRI
+              YAYASAN PABE
             </span>
             <span className="text-xs text-slate-500 block">NMID: ID102003948201</span>
           </div>

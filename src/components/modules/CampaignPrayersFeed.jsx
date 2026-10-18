@@ -25,7 +25,7 @@ function subscribePendingDonation(callback) {
 }
 
 function getInvoicesSnapshot() {
-  return localStorage.getItem("ygsm_donor_invoices") || "[]";
+  return localStorage.getItem("pabe_donor_invoices") || localStorage.getItem("ygsm_donor_invoices") || "[]";
 }
 
 function getServerInvoicesSnapshot() {

@@ -14,7 +14,7 @@ export const CAMPAIGNS = [
     "location": "Bogor, Jawa Barat",
     "bannerUrl": "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80",
     "excerpt": "Dukung 50 santri yatim dan dhuafa menyelesaikan hafalan Al-Qur'an dengan fasilitas beasiswa mondok penuh.",
-    "story": "Pendidikan Al-Qur'an adalah fondasi peradaban umat. Di Pesantren Binaan Yayasan Generasi Sejahtera Mandiri, terdapat 50 santri yatim dan dhuafa yang bertekad menyelesaikan hafalan 30 juz Al-Qur'an sekaligus menempuh pendidikan formal.\n\nKebutuhan beasiswa mencakup:\n1. Biaya asrama dan konsumsi pangan bergizi para santri.\n2. Kitab, mushaf Al-Qur'an, dan buku pelajaran formal.\n3. Tunjangan guru pembimbing hafalan (Asatidz).\n4. Layanan kesehatan berkala untuk para santri.\n\nSetiap ayat yang mereka baca dan hafal akan mengalirkan pahala jariyah tanpa henti bagi para donatur. Mari bersama lahirkan generasi Qur'ani yang sejahtera dan mandiri.",
+    "story": "Pendidikan Al-Qur'an adalah fondasi peradaban umat. Di Pesantren Binaan Yayasan PABE, terdapat 50 santri yatim dan dhuafa yang bertekad menyelesaikan hafalan 30 juz Al-Qur'an sekaligus menempuh pendidikan formal.\n\nKebutuhan beasiswa mencakup:\n1. Biaya asrama dan konsumsi pangan bergizi para santri.\n2. Kitab, mushaf Al-Qur'an, dan buku pelajaran formal.\n3. Tunjangan guru pembimbing hafalan (Asatidz).\n4. Layanan kesehatan berkala untuk para santri.\n\nSetiap ayat yang mereka baca dan hafal akan mengalirkan pahala jariyah tanpa henti bagi para donatur. Mari bersama lahirkan generasi Qur'ani yang sejahtera dan mandiri.",
     "updates": [
       {
         "id": "upd-001",
@@ -165,7 +165,7 @@ export const CAMPAIGNS = [
     "location": "Sumatera Barat",
     "bannerUrl": "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&q=80",
     "excerpt": "Penyaluran cepat dapur umum, air bersih, perlengkapan bayi, dan posko medis untuk warga terdampak banjir.",
-    "story": "Banjir bandang dan longsor melanda pemukiman warga, merusak ratusan rumah dan memutus akses logistik dasar. Ratusan keluarga terpaksa mengungsi di tempat darurat dengan keterbatasan makanan, air bersih, dan obat-obatan.\n\nTim Siaga Bencana YGSM telah berada di lokasi untuk mendirikan:\n- Dapur Umum Mandiri (500 porsi makan hangat/hari).\n- Distribusi paket sembako, selimut, dan hygiene kit.\n- Posko pengobatan gratis dan pertolongan pertama.\n- Pengadaan tandon air bersih di titik pengungsian utama.\n\nBantuan Anda sangat mendesak untuk meringankan duka saudara-saudara kita di lokasi bencana.",
+    "story": "Banjir bandang dan longsor melanda pemukiman warga, merusak ratusan rumah dan memutus akses logistik dasar. Ratusan keluarga terpaksa mengungsi di tempat darurat dengan keterbatasan makanan, air bersih, dan obat-obatan.\n\nTim Siaga Bencana PABE telah berada di lokasi untuk mendirikan:\n- Dapur Umum Mandiri (500 porsi makan hangat/hari).\n- Distribusi paket sembako, selimut, dan hygiene kit.\n- Posko pengobatan gratis dan pertolongan pertama.\n- Pengadaan tandon air bersih di titik pengungsian utama.\n\nBantuan Anda sangat mendesak untuk meringankan duka saudara-saudara kita di lokasi bencana.",
     "updates": [
       {
         "id": "upd-003",
@@ -307,7 +307,7 @@ export const CAMPAIGNS = [
     "location": "Nasional",
     "bannerUrl": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=800&q=80",
     "excerpt": "Salurkan zakat profesi Anda untuk program produktif permodalan usaha tanpa riba bagi keluarga fakir miskin.",
-    "story": "Zakat adalah pilar penyuci harta sekaligus instrumen keadilan sosial. YGSM mengelola dana zakat maal dan zakat profesi sesuai syariat Islam dan regulasi BAZNAS untuk dialokasikan kepada 8 asnaf prioritas.\n\nMelalui program Zakat Produktif:\n- Mustahik mendapatkan modal usaha alat kerja (bukan pinjaman).\n- Pendampingan keterampilan usaha dan pembukuan sederhana.\n- Monitoring berkala hingga mustahik mandiri dan bertransformasi menjadi muzakki.",
+    "story": "Zakat adalah pilar penyuci harta sekaligus instrumen keadilan sosial. Yayasan PABE mengelola dana zakat maal dan zakat profesi sesuai syariat Islam dan regulasi BAZNAS untuk dialokasikan kepada 8 asnaf prioritas.\n\nMelalui program Zakat Produktif:\n- Mustahik mendapatkan modal usaha alat kerja (bukan pinjaman).\n- Pendampingan keterampilan usaha dan pembukuan sederhana.\n- Monitoring berkala hingga mustahik mandiri dan bertransformasi menjadi muzakki.",
     "updates": [
       {
         "id": "upd-004",
@@ -449,7 +449,7 @@ export const CAMPAIGNS = [
     "location": "Lebak, Banten",
     "bannerUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
     "excerpt": "Hadirkan senyuman dan kebahagiaan anak-anak yatim dengan paket perlengkapan sekolah, santunan uang saku, dan gizi.",
-    "story": "Rasulullah SAW bersabda: \"Aku dan orang yang menanggung anak yatim (kedudukannya) di surga seperti ini,\" seraya mengisyaratkan jari telunjuk dan jari tengahnya. (HR. Bukhari).\n\nProgram Santunan Yatim Ceria YGSM menyasar 100 anak yatim piatu di pelosok Banten dengan bantuan berupa:\n1. Paket tas, sepatu, dan seragam sekolah baru.\n2. Santunan biaya SPP dan uang saku bulanan.\n3. Paket makanan bernutrisi tinggi dan susu.",
+    "story": "Rasulullah SAW bersabda: \"Aku dan orang yang menanggung anak yatim (kedudukannya) di surga seperti ini,\" seraya mengisyaratkan jari telunjuk dan jari tengahnya. (HR. Bukhari).\n\nProgram Santunan Yatim Ceria PABE menyasar 100 anak yatim piatu di pelosok Banten dengan bantuan berupa:\n1. Paket tas, sepatu, dan seragam sekolah baru.\n2. Santunan biaya SPP dan uang saku bulanan.\n3. Paket makanan bernutrisi tinggi dan susu.",
     "updates": [
       {
         "id": "upd-004-1",
@@ -732,7 +732,7 @@ export const CAMPAIGNS = [
     "location": "Tangerang, Banten",
     "bannerUrl": "https://images.unsplash.com/photo-1556742044-3c52d6e88c62?auto=format&fit=crop&w=800&q=80",
     "excerpt": "Bantu pedagang kecil keluar dari jerat rentenir melalui bantuan sarana gerobak usaha dan modal bergulir syariah.",
-    "story": "Banyak pedagang kaki lima dan pedagang keliling terpaksa meminjam kepada rentenir dengan bunga mencekik karena ketiadaan akses perbankan formal.\n\nProgram Gerobak Berkah YGSM memberikan:\n1. Hibah gerobak usaha aluminium yang kokoh dan higienis.\n2. Modal kerja awal tanpa bunga dan tanpa agunan.\n3. Pelatihan pencatatan keuangan harian dan strategi jualan online.",
+    "story": "Banyak pedagang kaki lima dan pedagang keliling terpaksa meminjam kepada rentenir dengan bunga mencekik karena ketiadaan akses perbankan formal.\n\nProgram Gerobak Berkah PABE memberikan:\n1. Hibah gerobak usaha aluminium yang kokoh dan higienis.\n2. Modal kerja awal tanpa bunga dan tanpa agunan.\n3. Pelatihan pencatatan keuangan harian dan strategi jualan online.",
     "updates": [
       {
         "id": "upd-006",
@@ -1015,7 +1015,7 @@ export const CAMPAIGNS = [
     "location": "Sukabumi, Jawa Barat",
     "bannerUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
     "excerpt": "Layanan cek kesehatan gratis, imunisasi, vitamin, dan paket makanan tinggi protein untuk 200 balita dhuafa.",
-    "story": "Kekurangan asupan gizi pada anak di usia emas berpotensi menimbulkan stunting dan gangguan kesehatan jangka panjang.\n\nMelalui Mobil Klinik Keliling YGSM:\n- Pemeriksaan medis berkala oleh dokter relawan.\n- Pemberian paket telur, susu formula khusus, biskuit gizi, dan suplemen mikronutrien.\n- Edukasi sanitasi keluarga dan cara memasak makanan bergizi seimbang.",
+    "story": "Kekurangan asupan gizi pada anak di usia emas berpotensi menimbulkan stunting dan gangguan kesehatan jangka panjang.\n\nMelalui Mobil Klinik Keliling PABE:\n- Pemeriksaan medis berkala oleh dokter relawan.\n- Pemberian paket telur, susu formula khusus, biskuit gizi, dan suplemen mikronutrien.\n- Edukasi sanitasi keluarga dan cara memasak makanan bergizi seimbang.",
     "updates": [
       {
         "id": "upd-007",
@@ -1156,7 +1156,7 @@ export const CAMPAIGNS = [
     "location": "Jakarta & Jawa Barat",
     "bannerUrl": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80",
     "excerpt": "Bebaskan biaya kuliah 20 mahasiswa yatim berprestasi di perguruan tinggi negeri hingga lulus sarjana.",
-    "story": "Banyak pemuda berprestasi dari keluarga yatim dhuafa terpaksa mengubur impian kuliah karena ketiadaan biaya semesteran dan biaya hidup di perantauan.\n\nProgram Beasiswa Sarjana YGSM membiayai:\n1. Uang Kuliah Tunggal (UKT) penuh hingga semester 8.\n2. Uang saku living cost dan akomodasi asrama mahasiswa.\n3. Pembinaan kepemimpinan, kepenulisan, dan keislaman.",
+    "story": "Banyak pemuda berprestasi dari keluarga yatim dhuafa terpaksa mengubur impian kuliah karena ketiadaan biaya semesteran dan biaya hidup di perantauan.\n\nProgram Beasiswa Sarjana PABE membiayai:\n1. Uang Kuliah Tunggal (UKT) penuh hingga semester 8.\n2. Uang saku living cost dan akomodasi asrama mahasiswa.\n3. Pembinaan kepemimpinan, kepenulisan, dan keislaman.",
     "updates": [
       {
         "id": "upd-009-1",
@@ -1446,7 +1446,7 @@ export const CAMPAIGNS = [
         "id": "upd-011-1",
         "date": "2026-08-12",
         "title": "Penutupan Posko Medis & Penyaluran Paket Sembako Terakhir",
-        "content": "Posko medis relawan YGSM telah resmi menyelesaikan masa tugas dan menyalurkan sisa bantuan logistik tahap akhir kepada warga hunian sementara.",
+        "content": "Posko medis relawan PABE telah resmi menyelesaikan masa tugas dan menyalurkan sisa bantuan logistik tahap akhir kepada warga hunian sementara.",
         "disbursedAmount": 51200000,
         "images": [
           "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&q=80"
@@ -1494,7 +1494,7 @@ export const CAMPAIGNS = [
     "location": "Cianjur, Jawa Barat",
     "bannerUrl": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80",
     "excerpt": "Investasikan tabungan akhirat Anda melalui wakaf abadi pembebasan lahan seluas 1.200 m² untuk asrama santriwati yatim dhuafa.",
-    "story": "Wakaf tanah dan fasilitas pendidikan adalah salah satu amalan yang pahalanya terus mengalir bahkan setelah seorang insan berpulang.\n\nPesantren Tahfidz Putri YGSM membutuhkan perluasan area asrama agar dapat menampung 80 santriwati dhuafa dari berbagai pelosok Indonesia.",
+    "story": "Wakaf tanah dan fasilitas pendidikan adalah salah satu amalan yang pahalanya terus mengalir bahkan setelah seorang insan berpulang.\n\nPesantren Tahfidz Putri PABE membutuhkan perluasan area asrama agar dapat menampung 80 santriwati dhuafa dari berbagai pelosok Indonesia.",
     "updates": [
       {
         "id": "upd-012-1",
@@ -1537,7 +1537,7 @@ export const CAMPAIGNS = [
     "location": "Nasional",
     "bannerUrl": "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80",
     "excerpt": "Dukung pengadaan 100 set mushaf Al-Qur'an Braille lengkap 30 juz agar sahabat difabel netra dapat menghafal kalam Ilahi dengan mandiri.",
-    "story": "Membaca Al-Qur'an adalah hak setiap insan muslim tanpa terkecuali. Sayangnya, mushaf Al-Qur'an Braille masih sangat terbatas ketersediaannya dan memiliki biaya cetak yang cukup tinggi.\n\nMelalui program ini, YGSM memfasilitasi 100 set Al-Qur'an Braille standar Kemenag untuk disalurkan ke panti asuhan difabel dan komunitas tahfidz netra.",
+    "story": "Membaca Al-Qur'an adalah hak setiap insan muslim tanpa terkecuali. Sayangnya, mushaf Al-Qur'an Braille masih sangat terbatas ketersediaannya dan memiliki biaya cetak yang cukup tinggi.\n\nMelalui program ini, Yayasan PABE memfasilitasi 100 set Al-Qur'an Braille standar Kemenag untuk disalurkan ke panti asuhan difabel dan komunitas tahfidz netra.",
     "updates": [
       {
         "id": "upd-013-1",

@@ -1,4 +1,4 @@
-const DRAFT_KEY = "ygsm_donation_draft";
+const DRAFT_KEY = "pabe_donation_draft";
 
 /**
  * Simpan draft form donasi ke sessionStorage sebelum redirect login.

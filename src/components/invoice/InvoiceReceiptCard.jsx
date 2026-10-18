@@ -123,7 +123,7 @@ export function InvoiceReceiptCard({
                   />
                 ) : (
                   <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-md bg-slate-200 shrink-0 flex items-center justify-center text-slate-500 text-xs font-medium">
-                    YGSM
+                    PABE
                   </div>
                 )}
                 <p className="text-xs sm:text-sm font-medium text-slate-900 line-clamp-2 leading-snug">

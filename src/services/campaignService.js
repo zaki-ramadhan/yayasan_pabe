@@ -9,7 +9,7 @@ function formatCampaignFromDb(c) {
     const isAnon = Boolean(d.isAnonymous);
     const rawEmail = isAnon
       ? "hamba.allah***@gmail.com"
-      : (d.donorEmail || (d.donorName ? `${d.donorName.toLowerCase().replace(/[^a-z0-9]/g, ".")}@gmail.com` : "donatur@ygsm.id"));
+      : (d.donorEmail || (d.donorName ? `${d.donorName.toLowerCase().replace(/[^a-z0-9]/g, ".")}@gmail.com` : "donatur@pabe.id"));
 
     return {
       id: d.id,
@@ -261,7 +261,7 @@ export async function getCampaignDonationsPaginated({ campaignSlug, skip = 0, li
       const isAnon = Boolean(d.isAnonymous);
       const rawEmail = isAnon
         ? "hamba.allah***@gmail.com"
-        : (d.donorEmail || (d.donorName ? `${d.donorName.toLowerCase().replace(/[^a-z0-9]/g, ".")}@gmail.com` : "donatur@ygsm.id"));
+        : (d.donorEmail || (d.donorName ? `${d.donorName.toLowerCase().replace(/[^a-z0-9]/g, ".")}@gmail.com` : "donatur@pabe.id"));
 
       return {
         id: d.id,
@@ -515,7 +515,7 @@ export async function getCampaignUpdates() {
           imageCaptions: u.imageCaptions || [],
           spentAmount: u.spentAmount || 0,
           beneficiaryCount: u.beneficiaryCount || 0,
-          location: u.location || "Wilayah Binaan YGSM",
+          location: u.location || "Wilayah Binaan PABE",
           spentBreakdown: u.spentBreakdown || [],
           campaign: u.campaign,
         };

@@ -3,7 +3,7 @@ import { isCampaignClosed } from "@/lib/formatters";
 import { RoutineDonationForm } from "@/components/routine-donation/RoutineDonationForm";
 
 export const metadata = {
-  title: "Donasi Rutin Otomatis (Sedekah Subuh & Bulanan) - YGSM",
+  title: "Donasi Rutin Otomatis (Sedekah Subuh & Bulanan) - Yayasan PABE",
   description: "Atur jadwal sedekah subuh, infak jumat, atau donasi bulanan rutin untuk santri tahfidz dan yatim dhuafa.",
 };
 

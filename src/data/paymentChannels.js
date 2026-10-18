@@ -8,7 +8,7 @@ export const PAYMENT_CHANNELS = [
       "Buka aplikasi mobile banking atau e-wallet (BCA Mobile, Livin, GoPay, OVO, Dana, ShopeePay, dll).",
       "Pilih menu 'Scan' atau 'Bayar QRIS'.",
       "Arahkan kamera ke kode QR yang tertera.",
-      "Periksa nama penerima: YAYASAN GENERASI SEJAHTERA MANDIRI.",
+      "Periksa nama penerima: YAYASAN PABE.",
       "Konfirmasi pembayaran dan simpan bukti transaksi.",
     ],
   },
@@ -35,7 +35,7 @@ export const PAYMENT_CHANNELS = [
     fee: 1000,
     instructions: [
       "Buka aplikasi Livin' by Mandiri > Bayar > Multipayment.",
-      "Pilih penyedia jasa / masukkan kode perusahaan YGSM.",
+      "Pilih penyedia jasa / masukkan kode perusahaan PABE.",
       "Masukkan nomor Virtual Account Anda.",
       "Konfirmasi nominal pembayaran dan masukkan PIN Livin.",
     ],
@@ -49,7 +49,7 @@ export const PAYMENT_CHANNELS = [
     fee: 1000,
     instructions: [
       "Buka BSI Mobile > Bayar > Institusi / Virtual Account.",
-      "Masukkan kode nama institusi YGSM atau nomor Virtual Account.",
+      "Masukkan kode nama institusi PABE atau nomor Virtual Account.",
       "Periksa rincian donasi, masukkan kata sandi & PIN transaksi.",
     ],
   },

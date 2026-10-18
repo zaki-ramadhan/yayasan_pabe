@@ -97,7 +97,7 @@ export function InvoiceDisplay({ donation }) {
   const campaignImage = donation.campaignImage || matchedCampaign?.bannerUrl;
 
   const shareText = encodeURIComponent(
-    `Saya baru saja berdonasi untuk "${donation.campaignTitle}" melalui Yayasan Generasi Sejahtera Mandiri. Mari bersama dukung generasi Qur'ani dan kaum dhuafa!`
+    `Saya baru saja berdonasi untuk "${donation.campaignTitle}" melalui Yayasan PABE. Mari bersama dukung generasi Qur'ani dan kaum dhuafa!`
   );
 
   return (

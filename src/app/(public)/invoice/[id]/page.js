@@ -8,7 +8,7 @@ export async function generateMetadata({ params }) {
   const { id } = await params;
   return {
     title: `Instruksi Pembayaran Donasi #${id}`,
-    description: "Selesaikan pembayaran donasi Anda melalui QRIS atau Virtual Account YGSM.",
+    description: "Selesaikan pembayaran donasi Anda melalui QRIS atau Virtual Account Yayasan PABE.",
   };
 }
 
@@ -17,7 +17,7 @@ export default async function InvoicePage({ params, searchParams }) {
   const { token } = (await searchParams) || {};
 
   const cookieStore = await cookies();
-  const cookieToken = cookieStore.get(`ygsm_inv_${id}`)?.value || null;
+  const cookieToken = cookieStore.get(`pabe_inv_${id}`)?.value || cookieStore.get(`ygsm_inv_${id}`)?.value || null;
 
   if (!token && cookieToken) {
     redirect(`/invoice/${id}?token=${cookieToken}`);

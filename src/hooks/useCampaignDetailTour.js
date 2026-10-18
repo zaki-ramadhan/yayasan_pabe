@@ -3,7 +3,7 @@
 import { useEffect, useCallback } from "react";
 import { startCampaignDetailTour } from "@/components/campaign/campaignDetailTour";
 
-const TOUR_KEY = "ygsm_tour_campaign_seen";
+const TOUR_KEY = "pabe_tour_campaign_seen";
 const AUTOSTART_DELAY_MS = 900;
 
 /**

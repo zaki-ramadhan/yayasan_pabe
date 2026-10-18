@@ -39,7 +39,7 @@ export function CampaignTransactionItem({ item }) {
             {item.name || "Hamba Allah"}
           </span>
           <span className="text-xs text-slate-600 block mt-0.5 font-normal truncate">
-            {maskEmail(item.email || (isAnon ? "hamba.allah***@gmail.com" : "donatur@ygsm.id"))}
+            {maskEmail(item.email || (isAnon ? "hamba.allah***@gmail.com" : "donatur@pabe.id"))}
           </span>
         </div>
       </div>

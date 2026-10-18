@@ -30,7 +30,7 @@ function subscribePrayers(callback) {
   return () => window.removeEventListener("storage", callback);
 }
 function getPrayersSnapshot() {
-  return localStorage.getItem("ygsm_user_prayers") || "[]";
+  return localStorage.getItem("pabe_user_prayers") || localStorage.getItem("ygsm_user_prayers") || "[]";
 }
 function getPrayersServerSnapshot() {
   return "[]";
@@ -237,7 +237,7 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           campaignId: campaign?.id || null,
-          campaignTitle: campaign?.title || "Sedekah Umum YGSM",
+          campaignTitle: campaign?.title || "Sedekah Umum PABE",
           campaignSlug: campaign?.slug || "",
           donationType: "CAMPAIGN",
           amount,

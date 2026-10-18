@@ -2,9 +2,9 @@
 
 import { useState, useMemo, useCallback, useSyncExternalStore } from "react";
 
-const AMINED_STORAGE_KEY = "ygsm_amined_prayers";
-const AMIN_COUNTS_KEY = "ygsm_prayer_amin_counts";
-const SYNC_EVENT = "ygsm_prayer_amin_sync";
+const AMINED_STORAGE_KEY = "pabe_amined_prayers";
+const AMIN_COUNTS_KEY = "pabe_prayer_amin_counts";
+const SYNC_EVENT = "pabe_prayer_amin_sync";
 
 function subscribe(callback) {
   window.addEventListener("storage", callback);
@@ -16,11 +16,11 @@ function subscribe(callback) {
 }
 
 function getAminedSnapshot() {
-  return localStorage.getItem(AMINED_STORAGE_KEY) || "[]";
+  return localStorage.getItem(AMINED_STORAGE_KEY) || localStorage.getItem("ygsm_amined_prayers") || "[]";
 }
 
 function getCountsSnapshot() {
-  return localStorage.getItem(AMIN_COUNTS_KEY) || "{}";
+  return localStorage.getItem(AMIN_COUNTS_KEY) || localStorage.getItem("ygsm_prayer_amin_counts") || "{}";
 }
 
 function getServerSnapshot() {

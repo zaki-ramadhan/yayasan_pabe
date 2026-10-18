@@ -102,7 +102,7 @@ export function startCampaignDetailTour(hasDonations = false) {
     stagePadding: 6,
     stageRadius: 8,
     popoverOffset: 12,
-    popoverClass: "ygsm-driver-popover",
+    popoverClass: "pabe-driver-popover",
     onDestroyed: () => activateTab("detail"),
     steps: validSteps,
   });

@@ -39,12 +39,14 @@ export async function POST(request) {
     const response = NextResponse.json({ success: true, data: donation }, { status: 201 });
 
     if (donation.accessToken && donation.invoiceId) {
-      response.cookies.set(`ygsm_inv_${donation.invoiceId}`, donation.accessToken, {
+      const invOpts = {
         path: "/",
         maxAge: 24 * 60 * 60,
         sameSite: "lax",
         httpOnly: true,
-      });
+      };
+      response.cookies.set(`pabe_inv_${donation.invoiceId}`, donation.accessToken, invOpts);
+      response.cookies.set(`ygsm_inv_${donation.invoiceId}`, donation.accessToken, invOpts);
     }
 
     return response;

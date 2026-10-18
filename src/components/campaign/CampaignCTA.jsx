@@ -6,16 +6,18 @@ import Image from "next/image";
 import { isCampaignClosed } from "@/lib/formatters";
 
 function subscribeAuth(callback) {
+  window.addEventListener("pabe_auth_change", callback);
   window.addEventListener("ygsm_auth_change", callback);
   window.addEventListener("storage", callback);
   return () => {
+    window.removeEventListener("pabe_auth_change", callback);
     window.removeEventListener("ygsm_auth_change", callback);
     window.removeEventListener("storage", callback);
   };
 }
 
 function getAuthSnapshot() {
-  return localStorage.getItem("ygsm_auth_user");
+  return localStorage.getItem("pabe_auth_user") || localStorage.getItem("ygsm_auth_user");
 }
 
 function getAuthServerSnapshot() {

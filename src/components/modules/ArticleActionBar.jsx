@@ -5,9 +5,9 @@ import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
 import { cn } from "@/lib/utils";
 
-const LIKE_STORAGE_KEY = "ygsm_liked_articles";
-const DISLIKE_STORAGE_KEY = "ygsm_disliked_articles";
-const SYNC_EVENT = "ygsm_article_reaction_sync";
+const LIKE_STORAGE_KEY = "pabe_liked_articles";
+const DISLIKE_STORAGE_KEY = "pabe_disliked_articles";
+const SYNC_EVENT = "pabe_article_reaction_sync";
 
 function subscribeReactions(callback) {
 	window.addEventListener("storage", callback);
@@ -19,11 +19,11 @@ function subscribeReactions(callback) {
 }
 
 function getLikesSnapshot() {
-	return localStorage.getItem(LIKE_STORAGE_KEY) || "[]";
+	return localStorage.getItem(LIKE_STORAGE_KEY) || localStorage.getItem("ygsm_liked_articles") || "[]";
 }
 
 function getDislikesSnapshot() {
-	return localStorage.getItem(DISLIKE_STORAGE_KEY) || "[]";
+	return localStorage.getItem(DISLIKE_STORAGE_KEY) || localStorage.getItem("ygsm_disliked_articles") || "[]";
 }
 
 function getServerSnapshot() {

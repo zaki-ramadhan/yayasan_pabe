@@ -203,7 +203,7 @@ export function VolunteerForm() {
       </div>
 
       <Button type="submit" disabled={loading} className="w-full h-11 font-semibold">
-        {loading ? "Mengirim Pendaftaran..." : "Daftar Sebagai Relawan YGSM"}
+        {loading ? "Mengirim Pendaftaran..." : "Daftar sebagai relawan PABE"}
       </Button>
     </form>
   );
