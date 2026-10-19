@@ -37,11 +37,13 @@ export function ZakatResultPanel({
       toast({
         title: "Hasil Perhitungan Disimpan",
         description: "Rincian zakat aktif di sesi Anda dan telah disalin ke papan klip.",
+        variant: "success",
       });
     } catch {
       toast({
         title: "Hasil Perhitungan Disimpan",
         description: "Rincian zakat aktif tersimpan di sesi browser Anda.",
+        variant: "success",
       });
     }
   };
