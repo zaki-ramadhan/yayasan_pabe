@@ -1,13 +1,12 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   logoutUser,
   loginUser,
-  DEMO_USERS,
   USER_ROLES,
 } from "@/services/authService";
 import { AdminUserProfile } from "@/components/admin/AdminUserProfile";
@@ -24,7 +23,8 @@ function subscribeAuth(callback) {
 }
 
 function getAuthSnapshot() {
-  return localStorage.getItem("ygsm_auth_user");
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("ygsm_auth_user") || localStorage.getItem("pabe_auth_user");
 }
 
 function getAuthServerSnapshot() {
@@ -36,7 +36,34 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
 
   const userJson = useSyncExternalStore(subscribeAuth, getAuthSnapshot, getAuthServerSnapshot);
-  const currentUser = userJson ? JSON.parse(userJson) : DEMO_USERS[0];
+  let currentUser = null;
+  if (userJson) {
+    try {
+      currentUser = JSON.parse(userJson);
+    } catch {
+      currentUser = null;
+    }
+  }
+
+  const isAdmin = Boolean(currentUser && currentUser.role && currentUser.role !== USER_ROLES.DONOR);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("ygsm_auth_user") || localStorage.getItem("pabe_auth_user");
+      if (!stored) {
+        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+        return;
+      }
+      try {
+        const parsed = JSON.parse(stored);
+        if (!parsed || parsed.role === USER_ROLES.DONOR) {
+          router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+        }
+      } catch {
+        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      }
+    }
+  }, [pathname, router]);
 
   const handleRoleSwitch = (targetUser) => {
     loginUser(targetUser);
@@ -46,6 +73,17 @@ export default function AdminLayout({ children }) {
     logoutUser();
     router.push("/");
   };
+
+  if (!currentUser || !isAdmin) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 text-center">
+        <div className="space-y-3 max-w-sm">
+          <div className="w-10 h-10 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm font-medium text-slate-300">Memverifikasi hak akses administrator...</p>
+        </div>
+      </div>
+    );
+  }
 
   const userRole = currentUser?.role || USER_ROLES.SUPER_ADMIN;
 

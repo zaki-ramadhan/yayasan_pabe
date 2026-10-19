@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { CareerHeader } from "@/components/careers/CareerHeader";
 import { CareerFilterBar } from "@/components/careers/CareerFilterBar";
 import { CareerMasterList } from "@/components/careers/CareerMasterList";
@@ -10,10 +10,22 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 
 export default function KarierPage() {
+  const [vacancies, setVacancies] = useState(CAREER_VACANCIES);
   const [searchQuery, setSearchQuery] = useState("");
   const [location, setLocation] = useState("Semua Lokasi");
   const [type, setType] = useState("Semua Tipe");
   const [department, setDepartment] = useState("Semua Divisi");
+
+  useEffect(() => {
+    fetch("/api/careers")
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+          setVacancies(res.data);
+        }
+      })
+      .catch((err) => console.warn("Failed to fetch vacancies:", err));
+  }, []);
 
   // Debounced search query (300ms) for performance and smooth filtering
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -28,7 +40,8 @@ export default function KarierPage() {
 
   // Filtered vacancies logic with debounced search matching
   const filteredJobs = useMemo(() => {
-    return CAREER_VACANCIES.filter((job) => {
+    return vacancies.filter((job) => {
+
       // Debounced search matching
       if (debouncedSearchQuery.trim()) {
         const query = debouncedSearchQuery.toLowerCase();

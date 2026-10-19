@@ -1,20 +1,14 @@
 import { NextResponse } from "next/server";
 import { updateDonorPassword } from "@/services/donorService";
+import { requireAuth } from "@/lib/serverAuth";
 
 export async function PUT(request) {
+  const { user: authUser, errorResponse } = await requireAuth(request);
+  if (errorResponse) return errorResponse;
+
   try {
     const body = await request.json();
-    const { email, oldPassword, newPassword } = body;
-
-    if (!email) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Email pengguna diperlukan.",
-        },
-        { status: 400 }
-      );
-    }
+    const { oldPassword, newPassword } = body;
 
     if (!newPassword || newPassword.length < 6) {
       return NextResponse.json(
@@ -26,8 +20,9 @@ export async function PUT(request) {
       );
     }
 
+    // Always enforce the authenticated user's email
     const result = await updateDonorPassword({
-      userEmail: email,
+      userEmail: authUser.email,
       oldPassword,
       newPassword,
     });

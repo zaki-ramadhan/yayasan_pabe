@@ -4,12 +4,17 @@ import {
   getDonorDashboardOverview,
   getDonorMonthlyTrend,
 } from "@/services/donorService";
+import { requireAuth } from "@/lib/serverAuth";
+import { USER_ROLES } from "@/services/authService";
 
 export async function GET(request) {
+  const { user: authUser, errorResponse } = await requireAuth(request);
+  if (errorResponse) return errorResponse;
+
   try {
     const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get("email") || "";
-    const userName = searchParams.get("name") || "";
+    const requestedEmail = searchParams.get("email");
+    const requestedName = searchParams.get("name");
     const mode = searchParams.get("mode") || "";
     const year = searchParams.get("year") || "";
     const search = searchParams.get("search") || "";
@@ -18,15 +23,10 @@ export async function GET(request) {
     const page = searchParams.get("page") || "1";
     const limit = searchParams.get("limit") || "25";
 
-    if (!userEmail && !userName) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Parameter identitas pengguna (email/name) diperlukan.",
-        },
-        { status: 400 }
-      );
-    }
+    // Strict Scope: Regular users can only access their own donations (Anti-IDOR)
+    const isAdmin = authUser.role && authUser.role !== USER_ROLES.DONOR;
+    const userEmail = (isAdmin && requestedEmail) ? requestedEmail : authUser.email;
+    const userName = (isAdmin && requestedName) ? requestedName : authUser.name;
 
     if (mode === "trend") {
       const data = await getDonorMonthlyTrend({

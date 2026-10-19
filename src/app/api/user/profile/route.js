@@ -1,23 +1,23 @@
 import { NextResponse } from "next/server";
 import { getDonorProfile, updateDonorProfile } from "@/services/donorService";
+import { requireAuth } from "@/lib/serverAuth";
+import { USER_ROLES } from "@/services/authService";
 
 export async function GET(request) {
+  const { user: authUser, errorResponse } = await requireAuth(request);
+  if (errorResponse) return errorResponse;
+
   try {
     const { searchParams } = new URL(request.url);
-    const userEmail = searchParams.get("email") || "";
-    const userId = searchParams.get("id") || "";
+    const requestedEmail = searchParams.get("email");
+    const requestedId = searchParams.get("id");
 
-    if (!userEmail && !userId) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Parameter identitas pengguna (email/id) diperlukan.",
-        },
-        { status: 400 }
-      );
-    }
+    // Only internal admins can inspect other users; normal users can only access their own profile
+    const isAdmin = authUser.role && authUser.role !== USER_ROLES.DONOR;
+    const targetEmail = (isAdmin && requestedEmail) ? requestedEmail : authUser.email;
+    const targetId = (isAdmin && requestedId) ? requestedId : authUser.id;
 
-    const data = await getDonorProfile({ userEmail, userId });
+    const data = await getDonorProfile({ userEmail: targetEmail, userId: targetId });
 
     return NextResponse.json({
       success: true,
@@ -36,19 +36,12 @@ export async function GET(request) {
 }
 
 export async function PUT(request) {
+  const { user: authUser, errorResponse } = await requireAuth(request);
+  if (errorResponse) return errorResponse;
+
   try {
     const body = await request.json();
-    const { email, profileData } = body;
-
-    if (!email) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Email pengguna diperlukan untuk memperbarui profil.",
-        },
-        { status: 400 }
-      );
-    }
+    const { profileData } = body;
 
     if (!profileData || typeof profileData !== "object") {
       return NextResponse.json(
@@ -60,8 +53,9 @@ export async function PUT(request) {
       );
     }
 
+    // Always scope to the authenticated user's email (Anti-IDOR)
     const updatedUser = await updateDonorProfile({
-      userEmail: email,
+      userEmail: authUser.email,
       profileData,
     });
 

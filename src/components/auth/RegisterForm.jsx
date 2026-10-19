@@ -10,7 +10,15 @@ import { SocialAuthGroup } from "@/components/auth/SocialAuthGroup";
 import { AuthFormHeader } from "@/components/auth/AuthFormHeader";
 import { AuthNoticeBanner } from "@/components/auth/AuthNoticeBanner";
 import { AuthDivider } from "@/components/auth/AuthDivider";
-import { USER_ROLES, loginUser, getRedirectPathForRole, simulateSocialAuth, redirectToGoogleOAuth } from "@/services/authService";
+import { AuthPasswordInput } from "@/components/auth/AuthPasswordInput";
+import {
+  USER_ROLES,
+  loginUser,
+  registerWithServer,
+  getRedirectPathForRole,
+  simulateSocialAuth,
+  redirectToGoogleOAuth,
+} from "@/services/authService";
 import { sanitizeEmail, sanitizePhone, validateEmail, validatePhone, stripEmojis } from "@/lib/security";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +28,7 @@ export function RegisterForm() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(true);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -76,7 +85,14 @@ export function RegisterForm() {
       newErrors.phone = phoneResult.error;
     }
 
-    // 4. Terms agreement
+    // 4. Password validation
+    if (!password) {
+      newErrors.password = "Kata sandi wajib diisi.";
+    } else if (password.length < 6) {
+      newErrors.password = "Kata sandi minimal 6 karakter.";
+    }
+
+    // 5. Terms agreement
     if (!agreeTerms) {
       newErrors.agreeTerms = "Anda harus menyetujui Ketentuan Akad & Kebijakan Privasi.";
     }
@@ -85,7 +101,7 @@ export function RegisterForm() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -95,28 +111,26 @@ export function RegisterForm() {
     }
 
     setIsLoading(true);
-    setTimeout(() => {
+    try {
       const formattedName = username
         .replace(/[._]/g, " ")
         .replace(/\b\w/g, (l) => l.toUpperCase());
 
-      const newUser = {
-        id: `USR-${Date.now()}`,
+      const user = await registerWithServer({
         username: username.trim().toLowerCase(),
         name: formattedName,
         email: email.trim().toLowerCase(),
-        role: USER_ROLES.DONOR,
-        title: "Donatur / Muzakki",
         phone: phone.trim(),
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-        initials: username.substring(0, 2).toUpperCase(),
-      };
+        password,
+      });
 
-      loginUser(newUser);
       setIsLoading(false);
       toast.success("Pendaftaran berhasil! Selamat datang di Yayasan PABE.");
-      router.push(redirectUrl || getRedirectPathForRole(newUser.role));
-    }, 700);
+      router.push(redirectUrl || getRedirectPathForRole(user.role));
+    } catch (err) {
+      setIsLoading(false);
+      toast.error(err.message || "Gagal mendaftarkan akun. Silakan coba lagi.");
+    }
   };
 
   const handleGoogleSignUp = () => {
@@ -242,6 +256,25 @@ export function RegisterForm() {
           />
           {errors.phone && (
             <p className="text-xs text-rose-600 font-medium mt-1">{errors.phone}</p>
+          )}
+        </div>
+
+        {/* 4. Kata Sandi */}
+        <div className="space-y-1.5">
+          <label className="block text-sm font-semibold text-slate-800">
+            Kata sandi <span className="text-rose-500">*</span>
+          </label>
+          <AuthPasswordInput
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+            }}
+            placeholder="Minimal 6 karakter"
+            error={errors.password}
+          />
+          {errors.password && (
+            <p className="text-xs text-rose-600 font-medium mt-1">{errors.password}</p>
           )}
         </div>
 

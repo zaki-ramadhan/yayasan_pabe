@@ -15,6 +15,7 @@ import { ForgotPasswordDialog } from "@/components/auth/ForgotPasswordDialog";
 import {
   USER_ROLES,
   loginUser,
+  loginWithServer,
   getRedirectPathForRole,
   findUserByIdentifier,
   getRememberedIdentifier,
@@ -87,7 +88,7 @@ export function LoginForm() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -97,44 +98,28 @@ export function LoginForm() {
     }
 
     setIsLoading(true);
-    setTimeout(() => {
+    try {
       if (rememberMe) {
         setRememberedIdentifier(identifier.trim());
       } else {
         setRememberedIdentifier("");
       }
 
-      const foundUser = findUserByIdentifier(identifier.trim());
+      const user = await loginWithServer({
+        identifier: identifier.trim(),
+        password,
+        rememberMe,
+      });
 
-      if (!foundUser) {
-        const defaultDonor = {
-          id: `USR-${Date.now()}`,
-          name: identifier.includes("@") ? identifier.split("@")[0] : identifier,
-          username: identifier.includes("@") ? identifier.split("@")[0].toLowerCase() : identifier.toLowerCase(),
-          email: identifier.includes("@") ? identifier.toLowerCase() : `${identifier.toLowerCase()}@example.com`,
-          role: USER_ROLES.DONOR,
-          title: "Donatur Terdaftar",
-          phone: "0812-3456-7890",
-          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-          initials: identifier.slice(0, 2).toUpperCase(),
-        };
-
-        loginUser(defaultDonor);
-        sessionStorage.removeItem("pabe_just_logged_in");
-        sessionStorage.removeItem("ygsm_just_logged_in");
-        setIsLoading(false);
-        toast.success(`Selamat datang, ${defaultDonor.name}!`);
-        router.push(redirectUrl || getRedirectPathForRole(defaultDonor.role));
-        return;
-      }
-
-      loginUser(foundUser);
       sessionStorage.removeItem("pabe_just_logged_in");
       sessionStorage.removeItem("ygsm_just_logged_in");
       setIsLoading(false);
-      toast.success(`Selamat datang kembali, ${foundUser.name}! (${foundUser.title})`);
-      router.push(redirectUrl || getRedirectPathForRole(foundUser.role));
-    }, 600);
+      toast.success(`Selamat datang kembali, ${user.name}!`);
+      router.push(redirectUrl || getRedirectPathForRole(user.role));
+    } catch (err) {
+      setIsLoading(false);
+      toast.error(err.message || "Gagal masuk ke akun. Silakan periksa kembali kredensial Anda.");
+    }
   };
 
   const handleGoogleLogin = () => {

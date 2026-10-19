@@ -8,7 +8,15 @@ export async function POST() {
     message: "Sesi berhasil diakhiri.",
   });
 
-  response.cookies.delete("pabe_session");
-  response.cookies.delete("ygsm_session");
+  const clearOpts = {
+    path: "/",
+    maxAge: 0,
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  };
+
+  response.cookies.set("pabe_session", "", clearOpts);
+  response.cookies.set("ygsm_session", "", clearOpts);
   return response;
 }

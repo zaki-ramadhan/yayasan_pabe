@@ -146,15 +146,64 @@ export function loginUser(user) {
   localStorage.setItem("ygsm_auth_session", userJson);
   sessionStorage.setItem("pabe_just_logged_in", user.name || "Donatur");
   sessionStorage.setItem("ygsm_just_logged_in", user.name || "Donatur");
-  
-  // Set session cookie for Next.js edge middleware and server-side route guards
-  const sessionId = encodeURIComponent(user.id || user.email || "pabe-user");
-  document.cookie = `pabe_session=${sessionId}; path=/; max-age=604800; SameSite=Lax`;
-  document.cookie = `ygsm_session=${sessionId}; path=/; max-age=604800; SameSite=Lax`;
 
   window.dispatchEvent(new Event("pabe_auth_change"));
   window.dispatchEvent(new Event("ygsm_auth_change"));
   window.dispatchEvent(new Event("storage"));
+}
+
+/**
+ * Authenticates user via server API route and sets secure HttpOnly session cookies.
+ * @param {object} params
+ * @param {string} params.identifier
+ * @param {string} params.password
+ * @param {boolean} [params.rememberMe]
+ * @returns {Promise<object>}
+ */
+export async function loginWithServer({ identifier, password, rememberMe = false }) {
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ identifier, password, rememberMe }),
+  });
+
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || "Gagal masuk ke akun.");
+  }
+
+  loginUser(data.data);
+  return data.data;
+}
+
+/**
+ * Registers a new donor user via server API route and sets secure HttpOnly session cookies.
+ * @param {object} params
+ * @param {string} params.username
+ * @param {string} params.name
+ * @param {string} params.email
+ * @param {string} params.phone
+ * @param {string} params.password
+ * @returns {Promise<object>}
+ */
+export async function registerWithServer({ username, name, email, phone, password }) {
+  const res = await fetch("/api/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, name, email, phone, password }),
+  });
+
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || "Gagal mendaftarkan akun baru.");
+  }
+
+  loginUser(data.data);
+  return data.data;
 }
 
 export function redirectToGoogleOAuth(callbackUrl = "/") {

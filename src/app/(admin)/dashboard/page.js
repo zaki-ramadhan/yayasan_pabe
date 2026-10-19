@@ -53,8 +53,9 @@ export default function AdminDashboardPage() {
 
       {/* Role-Specific Workflows & Panels */}
       {userRole === USER_ROLES.DONOR ? (
-        <DonorDashboardView />
+        <DonorDashboardView currentUser={currentUser} />
       ) : userRole === USER_ROLES.VOLUNTEER ? (
+
         <VolunteerDashboardView />
       ) : (
         <AdminDashboardView userRole={userRole} stats={stats} />

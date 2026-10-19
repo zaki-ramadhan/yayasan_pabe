@@ -6,7 +6,7 @@ import { CareerApplyButton } from "./CareerApplyButton";
  * @param {string} [props.applyUrl]
  * @param {string} props.deadline
  */
-export function CareerDetailCta({ applyUrl, deadline }) {
+export function CareerDetailCta({ applyUrl, deadline, onApply }) {
   return (
     <div className="pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
       <div>
@@ -20,8 +20,10 @@ export function CareerDetailCta({ applyUrl, deadline }) {
       <CareerApplyButton
         url={applyUrl}
         label="Lamar Sekarang"
+        onClick={onApply}
         fullWidthMobile
       />
     </div>
   );
 }
+

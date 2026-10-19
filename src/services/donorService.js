@@ -10,12 +10,16 @@ function hashPassword(password) {
 }
 
 function verifyPassword(password, storedHash) {
-  if (!storedHash) return true;
+  if (!password || !storedHash) return false;
   const [salt, key] = storedHash.split(":");
   if (!salt || !key) return false;
-  const keyBuffer = Buffer.from(key, "hex");
-  const derivedKey = crypto.scryptSync(password, salt, 64);
-  return crypto.timingSafeEqual(keyBuffer, derivedKey);
+  try {
+    const keyBuffer = Buffer.from(key, "hex");
+    const derivedKey = crypto.scryptSync(password, salt, 64);
+    return crypto.timingSafeEqual(keyBuffer, derivedKey);
+  } catch {
+    return false;
+  }
 }
 
 function buildUserWhereClause(userEmail, userName) {
@@ -354,7 +358,10 @@ export async function updateDonorPassword({ userEmail, oldPassword, newPassword 
     throw new Error("Pengguna tidak ditemukan.");
   }
 
-  if (user.passwordHash && oldPassword) {
+  if (user.passwordHash) {
+    if (!oldPassword) {
+      throw new Error("Kata sandi saat ini wajib diisi untuk mengubah kata sandi.");
+    }
     const isValid = verifyPassword(oldPassword, user.passwordHash);
     if (!isValid) {
       throw new Error("Kata sandi saat ini tidak cocok.");

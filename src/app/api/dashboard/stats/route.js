@@ -2,10 +2,29 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { CAMPAIGNS } from "@/data/campaigns";
 import { RECENT_TRANSACTIONS, VOLUNTEER_APPLICANTS } from "@/data/adminMockData";
+import { requireAuth } from "@/lib/serverAuth";
+import { USER_ROLES } from "@/services/authService";
 
-export async function GET() {
+export async function GET(request) {
+  // Enforce staff/admin roles only (Anti-Data Leak)
+  const { user: authUser, errorResponse } = await requireAuth(request, [
+    USER_ROLES.SUPER_ADMIN,
+    USER_ROLES.ADMIN,
+    USER_ROLES.FINANCE,
+    USER_ROLES.VOLUNTEER,
+  ]);
+  if (errorResponse) return errorResponse;
+
   try {
-    const [donationAgg, campaignList, recentDonations, volunteerList, volunteerCount] = await Promise.all([
+    const [
+      donationAgg,
+      campaignList,
+      recentDonations,
+      volunteerList,
+      volunteerCount,
+      jobAppCount,
+      recentJobApps,
+    ] = await Promise.all([
       prisma.donation.aggregate({
         where: { status: "PAID" },
         _sum: { amount: true },
@@ -31,10 +50,18 @@ export async function GET() {
         take: 5,
       }),
       prisma.volunteer.count(),
+      prisma.jobApplication.count().catch(() => 0),
+      prisma.jobApplication
+        .findMany({
+          orderBy: { createdAt: "desc" },
+          take: 5,
+          include: { vacancy: { select: { title: true } } },
+        })
+        .catch(() => []),
     ]);
 
-    const totalDonations = donationAgg._sum.amount || 148500000;
-    const paidCount = donationAgg._count.id || 1240;
+    const totalDonations = donationAgg._sum.amount ?? 148500000;
+    const paidCount = donationAgg._count.id ?? 1240;
 
     const formattedDonations = recentDonations.length > 0
       ? recentDonations.map((d) => ({
@@ -70,6 +97,16 @@ export async function GET() {
         }))
       : CAMPAIGNS.slice(0, 5);
 
+    const formattedJobApps = recentJobApps.map((app) => ({
+      id: app.id,
+      name: app.fullName,
+      email: app.email,
+      phone: app.phone,
+      position: app.vacancy?.title || "Staff Yayasan",
+      status: app.status,
+      date: app.createdAt.toISOString(),
+    }));
+
     return NextResponse.json({
       success: true,
       data: {
@@ -77,11 +114,14 @@ export async function GET() {
         transactionCount: paidCount,
         activeCampaignsCount: campaignList.length || CAMPAIGNS.length,
         volunteerCount: volunteerCount || 348,
+        jobApplicationCount: jobAppCount,
         recentTransactions: formattedDonations,
         volunteerApplicants: formattedVolunteers,
+        jobApplications: formattedJobApps,
         campaigns: formattedCampaigns,
       },
     });
+
   } catch (error) {
     console.warn("Dashboard stats fallback:", error.message);
     return NextResponse.json({

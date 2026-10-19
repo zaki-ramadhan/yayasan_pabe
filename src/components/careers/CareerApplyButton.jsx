@@ -16,7 +16,24 @@ export function CareerApplyButton({
   label = "Lamar Posisi Ini",
   fullWidthMobile = false,
   className = "",
+  onClick,
 }) {
+  if (onClick) {
+    return (
+      <Button
+        type="button"
+        onClick={onClick}
+        className={cn(
+          "h-9 sm:h-10 px-4 sm:px-5 text-sm font-medium rounded-lg shrink-0 cursor-pointer bg-primary hover:bg-primary-hover text-white",
+          fullWidthMobile && "w-full sm:w-auto",
+          className
+        )}
+      >
+        {label}
+      </Button>
+    );
+  }
+
   return (
     <Button
       asChild
@@ -36,3 +53,4 @@ export function CareerApplyButton({
     </Button>
   );
 }
+
