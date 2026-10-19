@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
 import {
   Dialog,
@@ -27,6 +28,30 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Restore draft when modal opens
+  useEffect(() => {
+    if (!isOpen || !job?.id) return;
+    try {
+      const saved = sessionStorage.getItem(`career_draft_${job.id}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object") {
+          setFormData((prev) => ({ ...prev, ...parsed }));
+        }
+      }
+    } catch {}
+  }, [isOpen, job?.id]);
+
+  // Auto-save draft on input
+  useEffect(() => {
+    if (!job?.id) return;
+    try {
+      if (formData.fullName || formData.email || formData.phone || formData.coverLetter) {
+        sessionStorage.setItem(`career_draft_${job.id}`, JSON.stringify(formData));
+      }
+    } catch {}
+  }, [formData, job?.id]);
 
   if (!job) return null;
 
@@ -95,6 +120,9 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
       }
 
       setIsSuccess(true);
+      try {
+        sessionStorage.removeItem(`career_draft_${job.id}`);
+      } catch {}
       toast.success("Lamaran berhasil dikirim ke database HRD!");
     } catch (error) {
       toast.error(error.message || "Terjadi kendala saat mengirimkan lamaran.");
