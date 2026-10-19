@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 
-export default function RootLoading() {
+export default function HomeLoading() {
   return (
     <div className="space-y-10 sm:space-y-12 pb-14 animate-pulse">
       {/* 1. Hero Section with Quick Donate Card */}
@@ -86,4 +86,3 @@ export default function RootLoading() {
     </div>
   );
 }
-
