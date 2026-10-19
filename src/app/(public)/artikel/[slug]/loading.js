@@ -37,9 +37,12 @@ export default function ArtikelDetailLoading() {
       </div>
 
       {/* Related Articles Skeleton */}
-      <div className="space-y-4 pt-6 border-t border-slate-200">
-        <Skeleton className="h-6 w-36 rounded" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="space-y-3 pt-6 border-t border-slate-200">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-6 w-36 rounded" />
+          <Skeleton className="h-4 w-28 rounded" />
+        </div>
+        <div className="grid grid-cols-1 gap-3">
           {[1, 2].map((i) => (
             <ArticleCardSkeleton key={i} />
           ))}

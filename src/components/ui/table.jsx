@@ -219,22 +219,28 @@ export function TableEmptyRow({
   );
 }
 
-/**
- * Komponen mandiri baris skeleton loader tabel
- */
-export function TableSkeletonRows({ rows = 5, colSpan = 5, height = "h-4" }) {
+export function TableSkeletonRows({
+  rows = 5,
+  colSpan,
+  columns = colSpan || 5,
+  height = "h-4",
+  cellWidths = ["w-8", "w-36", "w-24", "w-48", "w-28", "w-24", "w-16"],
+}) {
   return (
     <>
       {Array.from({ length: rows }).map((_, rIdx) => (
         <TableRow key={rIdx} className="hover:bg-transparent">
-          <TableCell colSpan={colSpan} className="py-4 px-3.5 sm:px-4">
-            <div
-              className={cn(
-                "w-full bg-slate-200/80 rounded animate-pulse",
-                height
-              )}
-            />
-          </TableCell>
+          {Array.from({ length: columns }).map((_, cIdx) => (
+            <TableCell key={cIdx} className="py-3.5 px-3.5 sm:px-4">
+              <div
+                className={cn(
+                  "bg-slate-200/80 rounded animate-pulse",
+                  height,
+                  cellWidths[cIdx % cellWidths.length] || "w-full"
+                )}
+              />
+            </TableCell>
+          ))}
         </TableRow>
       ))}
     </>

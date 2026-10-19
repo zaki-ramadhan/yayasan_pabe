@@ -2,7 +2,7 @@
 
 import {
   DonorCard,
-  DonorListSkeleton,
+  DonorReportListSkeleton,
   DonorEmptyText,
 } from "@/components/donor/DonorDashboardPrimitives";
 import { DonorReportItem } from "@/components/donor/DonorReportItem";
@@ -16,7 +16,7 @@ export function DonorRecentReportsCard({ recentReports = [], isLoading = false }
     >
       <div className="space-y-3">
         {isLoading ? (
-          <DonorListSkeleton count={2} height="h-20" />
+          <DonorReportListSkeleton count={2} />
         ) : recentReports.length === 0 ? (
           <DonorEmptyText message="Belum ada kabar penyaluran dari program yang Anda dukung" />
         ) : (

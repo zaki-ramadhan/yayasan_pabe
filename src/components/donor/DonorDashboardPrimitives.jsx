@@ -160,31 +160,55 @@ export function DonorListItem({ children, className = "" }) {
 }
 
 /**
- * Skeleton loader list berulang
+ * Skeleton loader list berulang untuk transaksi & donasi rutin
  */
-export function DonorListSkeleton({ count = 2, height = "h-12" }) {
+export function DonorListSkeleton({ count = 2 }) {
 	return (
-		<div className="space-y-2.5">
-			{Array.from(
-				{
-					length: count,
-				},
-			).map(
-				(
-					_,
-					idx,
-				) => (
-					<div
-						key={
-							idx
-						}
-						className={cn(
-							"bg-white rounded-md border border-slate-300/80 animate-pulse",
-							height,
-						)}
-					/>
-				),
-			)}
+		<div className="space-y-2.5 animate-pulse">
+			{Array.from({ length: count }).map((_, idx) => (
+				<div
+					key={idx}
+					className="p-3 rounded-md border border-slate-200 bg-white flex items-center justify-between gap-2.5"
+				>
+					<div className="min-w-0 flex-1 space-y-1.5">
+						<div className="h-4 w-40 max-w-[70%] bg-slate-200 rounded" />
+						<div className="h-3 w-24 bg-slate-200 rounded" />
+					</div>
+					<div className="text-right shrink-0 space-y-1">
+						<div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
+						<div className="h-3 w-12 bg-slate-200 rounded ml-auto" />
+					</div>
+				</div>
+			))}
+		</div>
+	);
+}
+
+/**
+ * Skeleton loader untuk daftar laporan penyaluran
+ */
+export function DonorReportListSkeleton({ count = 2 }) {
+	return (
+		<div className="space-y-3 animate-pulse">
+			{Array.from({ length: count }).map((_, idx) => (
+				<div
+					key={idx}
+					className="p-4 rounded-md border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+				>
+					<div className="space-y-2 min-w-0 flex-1">
+						<div className="flex items-center gap-2">
+							<div className="h-5 w-24 bg-slate-200 rounded" />
+							<div className="h-3.5 w-20 bg-slate-200 rounded" />
+						</div>
+						<div className="h-4 w-48 bg-slate-200 rounded" />
+						<div className="space-y-1">
+							<div className="h-3.5 w-full bg-slate-200 rounded" />
+							<div className="h-3.5 w-4/5 bg-slate-200 rounded" />
+						</div>
+					</div>
+					<div className="h-4 w-20 bg-slate-200 rounded shrink-0 self-start sm:self-center" />
+				</div>
+			))}
 		</div>
 	);
 }

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { AuthFormSkeleton } from "@/components/auth/AuthFormSkeleton";
 
 export const metadata = {
   title: "Masuk ke Akun",
@@ -10,7 +11,7 @@ export const metadata = {
 export default function LoginPage() {
   return (
     <AuthSplitLayout mode="login">
-      <Suspense fallback={<div className="h-64 flex items-center justify-center text-slate-400 text-sm">Memuat formulir...</div>}>
+      <Suspense fallback={<AuthFormSkeleton mode="login" />}>
         <LoginForm />
       </Suspense>
     </AuthSplitLayout>
