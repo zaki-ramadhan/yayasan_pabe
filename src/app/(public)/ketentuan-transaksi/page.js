@@ -1,4 +1,4 @@
-import { PageHeader } from "@/components/shared/PageHeader";
+import { InformationHeroHeader } from "@/components/shared/InformationHeroHeader";
 import { TransactionLimitTable } from "@/components/transaction-terms/TransactionLimitTable";
 import {
   VA_TRANSACTION_LIMITS,
@@ -13,25 +13,31 @@ export const metadata = {
 
 export default function KetentuanTransaksiPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-5">
-      {/* Centered Page Header */}
-      <PageHeader
-        align="center"
+    <div className="w-full">
+      <InformationHeroHeader
+        badge={
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            Panduan Donatur
+          </span>
+        }
         title="Ketentuan Transaksi"
-        description="Transaksi dilakukan sesuai dengan batas minimum dan maksimum yang telah ditetapkan."
+        description="Informasi batas minimum dan maksimum transaksi donasi via Virtual Account dan QRIS guna mengedukasi donatur dan mencegah kekeliruan nominal transfer."
+        imageAlt="Latar Belakang Ketentuan Transaksi Yayasan PABE"
       />
 
-      {/* Table 1: Virtual Account (VA) */}
-      <TransactionLimitTable
-        title="Virtual Account (VA)"
-        items={VA_TRANSACTION_LIMITS}
-      />
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6 sm:space-y-8">
+        {/* Table 1: Virtual Account (VA) */}
+        <TransactionLimitTable
+          title="Virtual Account (VA)"
+          items={VA_TRANSACTION_LIMITS}
+        />
 
-      {/* Table 2: E-Wallet & QRIS */}
-      <TransactionLimitTable
-        title="E-Wallet & QRIS"
-        items={EWALLET_QRIS_TRANSACTION_LIMITS}
-      />
-    </main>
+        {/* Table 2: E-Wallet & QRIS */}
+        <TransactionLimitTable
+          title="E-Wallet & QRIS"
+          items={EWALLET_QRIS_TRANSACTION_LIMITS}
+        />
+      </main>
+    </div>
   );
 }

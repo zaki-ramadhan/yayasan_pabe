@@ -7,7 +7,7 @@ export function ZakatEmptyState({ className }) {
   return (
     <div
       className={cn(
-        "h-full min-h-[360px] flex flex-col items-center justify-center p-8 rounded-lg bg-slate-50/70 border border-slate-200 text-center space-y-2",
+        "h-full min-h-[360px] flex flex-col items-center justify-center p-8 rounded-lg bg-white border border-slate-200 text-center space-y-2 shadow-xs",
         className
       )}
     >

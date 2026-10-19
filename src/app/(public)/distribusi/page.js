@@ -22,28 +22,26 @@ export default async function DistribusiPage() {
   ]);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 lg:space-y-10">
-      {/* Top Header - Sesuai gaya Laporan Keuangan (Align Tengah) */}
-      <DistributionHeader
-        title="Distribusi"
-        description="Transparansi audit keuangan independen, dinamika rekam jejak penyaluran bantuan berkala, serta kepatuhan fatwa Dewan Pengawas Syariah demi menjaga amanah umat secara profesional dan akuntabel."
-      />
+    <div className="w-full">
+      <DistributionHeader />
 
-      {/* Grid 2 Kolom: Baris 1 = 2 Laporan Chart, Baris 2 = 1 Laporan Chart Center X */}
-      <div className="space-y-8 lg:space-y-10">
-        {/* Row 1: Section 1 & Section 2 Berdampingan (2 Kolom) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 pb-8 sm:pb-10 border-b border-slate-200">
-          <DistributionAuditSection auditData={auditData} />
-          <DistributionTrendSection trendData={trendData} />
-        </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 lg:space-y-10">
+        {/* Grid 2 Kolom: Baris 1 = 2 Laporan Chart, Baris 2 = 1 Laporan Chart Center X */}
+        <div className="space-y-8 lg:space-y-10">
+          {/* Row 1: Section 1 & Section 2 Berdampingan (2 Kolom) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 pb-8 sm:pb-10 border-b border-slate-200">
+            <DistributionAuditSection auditData={auditData} />
+            <DistributionTrendSection trendData={trendData} />
+          </div>
 
-        {/* Row 2: Section 3 Berada di Tengah Sumbu X */}
-        <div className="flex justify-center">
-          <div className="w-full max-w-2xl">
-            <DistributionSyariahSection syariahData={syariahData} />
+          {/* Row 2: Section 3 Berada di Tengah Sumbu X */}
+          <div className="flex justify-center">
+            <div className="w-full max-w-2xl">
+              <DistributionSyariahSection syariahData={syariahData} />
+            </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

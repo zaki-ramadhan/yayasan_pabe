@@ -2,12 +2,20 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function KetentuanTransaksiLoading() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-5 animate-pulse">
-      {/* Centered Page Header */}
-      <div className="space-y-2 text-center max-w-xl mx-auto py-2">
-        <Skeleton className="h-8 sm:h-9 w-64 mx-auto rounded-lg" />
-        <Skeleton className="h-4 sm:h-5 w-full max-w-md mx-auto rounded" />
+    <div className="w-full animate-pulse">
+      {/* Hero Header Banner - Centered Dark Theme */}
+      <div className="relative w-full bg-slate-950 border-b border-slate-800 pt-10 sm:pt-14 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto text-center space-y-3">
+          <Skeleton className="h-6 w-36 bg-neutral-800 mx-auto rounded-full" />
+          <Skeleton className="h-8 sm:h-10 w-64 bg-neutral-800 mx-auto rounded-lg" />
+          <div className="space-y-1.5 pt-1">
+            <Skeleton className="h-4 sm:h-5 w-full max-w-xl bg-neutral-800 mx-auto rounded" />
+            <Skeleton className="h-4 sm:h-5 w-3/4 max-w-md bg-neutral-800 mx-auto rounded" />
+          </div>
+        </div>
       </div>
+
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6 sm:space-y-8">
 
       {/* Table 1: Virtual Account (VA) */}
       <div className="rounded-lg border border-slate-200 bg-white shadow-2xs overflow-hidden">
@@ -59,5 +67,6 @@ export default function KetentuanTransaksiLoading() {
         </div>
       </div>
     </main>
-  );
+  </div>
+);
 }

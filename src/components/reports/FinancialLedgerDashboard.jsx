@@ -28,18 +28,21 @@ export function FinancialLedgerDashboard({
   nextDistributionDate = "25 Sep 2026",
   financialDetails,
   cashFlowDetails,
+  hideHeader = false,
 }) {
   return (
     <div className="space-y-10">
       {/* Top Header */}
-      <div className="space-y-1.5 border-b border-slate-200 pb-5">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight">
-          Dashboard Transparansi Keuangan
-        </h1>
-        <p className="text-sm sm:text-base text-slate-600 font-normal">
-          Ringkasan laporan keseluruhan donasi masuk, penyaluran program amanah, dan saldo kas yayasan.
-        </p>
-      </div>
+      {!hideHeader && (
+        <div className="space-y-1.5 border-b border-slate-200 pb-5">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight">
+            Dashboard Transparansi Keuangan
+          </h1>
+          <p className="text-sm sm:text-base text-slate-600 font-normal">
+            Ringkasan laporan keseluruhan donasi masuk, penyaluran program amanah, dan saldo kas yayasan.
+          </p>
+        </div>
+      )}
 
       {/* Section 1: Grand Total Keseluruhan */}
       <section className="space-y-4">

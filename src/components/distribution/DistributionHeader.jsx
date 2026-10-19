@@ -1,26 +1,25 @@
+import { InformationHeroHeader } from "@/components/shared/InformationHeroHeader";
+
 /**
- * Molecule component: Top page header for Distribusi page
- * Symmetrical and identical style to Laporan Keuangan header.
- * @param {object} props
- * @param {string} [props.title="Distribusi"]
- * @param {string} [props.description]
+ * Top hero header for Distribusi page delegating to InformationHeroHeader
  */
 export function DistributionHeader({
-  title = "Distribusi",
+  title = "Distribusi Program & Bantuan",
   description = "Transparansi audit keuangan independen, dinamika rekam jejak penyaluran bantuan berkala, serta kepatuhan fatwa Dewan Pengawas Syariah demi menjaga amanah umat secara profesional dan akuntabel.",
+  badge = (
+    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+      Transparansi Penyaluran
+    </span>
+  ),
+  className = "",
 }) {
   return (
-    <div className="border-b border-slate-200 pb-5 text-center">
-      <div className="max-w-3xl mx-auto space-y-1.5">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight">
-          {title}
-        </h1>
-        {description && (
-          <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
-            {description}
-          </p>
-        )}
-      </div>
-    </div>
+    <InformationHeroHeader
+      title={title}
+      description={description}
+      badge={badge}
+      className={className}
+      imageAlt="Latar Belakang Distribusi Penyaluran Yayasan PABE"
+    />
   );
 }
