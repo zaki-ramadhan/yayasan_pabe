@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useSyncExternalStore, useId } from "react";
+import { useState, useMemo, useSyncExternalStore, useId, useRef, useEffect } from "react";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
 import { cn } from "@/lib/utils";
@@ -43,6 +43,28 @@ export function ArticleActionBar({
 	const [likes, setLikes] = useState(initialLikes);
 	const [dislikes, setDislikes] = useState(initialDislikes);
 	const targetSlug = slug || articleId;
+	const reactionDebounceRef = useRef(null);
+
+	useEffect(() => {
+		return () => {
+			if (reactionDebounceRef.current) {
+				clearTimeout(reactionDebounceRef.current);
+			}
+		};
+	}, []);
+
+	const scheduleServerReaction = (targetArticleSlug, type) => {
+		if (reactionDebounceRef.current) {
+			clearTimeout(reactionDebounceRef.current);
+		}
+		reactionDebounceRef.current = setTimeout(() => {
+			fetch("/api/articles/reaction", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ slug: targetArticleSlug, type }),
+			}).catch(() => {});
+		}, 400);
+	};
 
 	const storedLikesRaw = useSyncExternalStore(subscribeReactions, getLikesSnapshot, getServerSnapshot);
 	const storedDislikesRaw = useSyncExternalStore(subscribeReactions, getDislikesSnapshot, getServerSnapshot);
@@ -98,11 +120,7 @@ export function ArticleActionBar({
 			}
 
 			if (nextLiked && targetSlug) {
-				fetch("/api/articles/reaction", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ slug: targetSlug, type: "like" }),
-				}).catch(() => {});
+				scheduleServerReaction(targetSlug, "like");
 			}
 
 			window.dispatchEvent(
@@ -155,11 +173,7 @@ export function ArticleActionBar({
 			}
 
 			if (nextDisliked && targetSlug) {
-				fetch("/api/articles/reaction", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ slug: targetSlug, type: "dislike" }),
-				}).catch(() => {});
+				scheduleServerReaction(targetSlug, "dislike");
 			}
 
 			window.dispatchEvent(

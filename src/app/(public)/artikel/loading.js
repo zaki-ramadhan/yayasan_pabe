@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
 
 export default function ArtikelCatalogLoading() {
   return (
@@ -18,28 +19,10 @@ export default function ArtikelCatalogLoading() {
         </div>
       </div>
 
-      {/* Horizontal Mini Cards Grid - 2 columns */}
+      {/* Horizontal Cards Grid - 2 columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
         {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div
-            key={i}
-            className="p-3.5 sm:p-4 bg-white border border-slate-300 rounded-xl flex flex-col sm:flex-row gap-3.5 sm:gap-4 items-stretch"
-          >
-            {i % 2 !== 0 && (
-              <Skeleton className="w-full sm:w-36 md:w-40 h-40 sm:h-auto sm:min-h-[140px] rounded-lg shrink-0" />
-            )}
-            <div className="flex-1 space-y-2 py-1 flex flex-col justify-between">
-              <div className="space-y-2">
-                <Skeleton className="h-3.5 w-20 rounded" />
-                <Skeleton className="h-4.5 w-full rounded" />
-                <Skeleton className="h-3.5 w-5/6 rounded" />
-              </div>
-              <div className="pt-2 border-t border-slate-100 flex items-center gap-2">
-                <Skeleton className="h-3 w-16 rounded" />
-                <Skeleton className="h-3 w-28 rounded" />
-              </div>
-            </div>
-          </div>
+          <ArticleCardSkeleton key={i} />
         ))}
       </div>
     </div>

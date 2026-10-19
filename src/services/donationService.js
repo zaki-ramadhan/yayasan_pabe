@@ -163,7 +163,7 @@ export async function createDonation({
   return donationData;
 }
 
-export async function getDonationByInvoiceId(invoiceId, token = null) {
+export async function getDonationByInvoiceId(invoiceId, token = null, sessionUser = null) {
   if (!invoiceId) return null;
 
   try {
@@ -180,9 +180,10 @@ export async function getDonationByInvoiceId(invoiceId, token = null) {
 
       let effectiveAccessToken = dbDonation.accessToken;
       if (!effectiveAccessToken) {
+        const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "ygsm_inv_secure_salt_key";
         effectiveAccessToken = crypto
           .createHash("sha256")
-          .update(`${dbDonation.invoiceId}_pabe_salt`)
+          .update(`${dbDonation.invoiceId}_${secretSalt}`)
           .digest("hex")
           .slice(0, 32);
 
@@ -196,7 +197,13 @@ export async function getDonationByInvoiceId(invoiceId, token = null) {
         }
       }
 
-      const isAuthorized = Boolean(token && token === effectiveAccessToken);
+      const isOwner = Boolean(
+        sessionUser?.email &&
+        dbDonation.donorEmail &&
+        sessionUser.email.toLowerCase() === dbDonation.donorEmail.toLowerCase()
+      );
+      const isStaff = Boolean(sessionUser?.role && sessionUser.role !== "DONOR");
+      const isAuthorized = Boolean((token && token === effectiveAccessToken) || isOwner || isStaff);
 
       return {
         id: dbDonation.id,
@@ -234,15 +241,22 @@ export async function getDonationByInvoiceId(invoiceId, token = null) {
   if (fallbackDonation) {
     let effectiveAccessToken = fallbackDonation.accessToken;
     if (!effectiveAccessToken) {
+      const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "ygsm_inv_secure_salt_key";
       effectiveAccessToken = crypto
         .createHash("sha256")
-        .update(`${fallbackDonation.invoiceId}_pabe_salt`)
+        .update(`${fallbackDonation.invoiceId}_${secretSalt}`)
         .digest("hex")
         .slice(0, 32);
       fallbackDonation.accessToken = effectiveAccessToken;
     }
 
-    const isAuthorized = Boolean(token && token === effectiveAccessToken);
+    const isOwner = Boolean(
+      sessionUser?.email &&
+      fallbackDonation.donorEmail &&
+      sessionUser.email.toLowerCase() === fallbackDonation.donorEmail.toLowerCase()
+    );
+    const isStaff = Boolean(sessionUser?.role && sessionUser.role !== "DONOR");
+    const isAuthorized = Boolean((token && token === effectiveAccessToken) || isOwner || isStaff);
     return {
       ...fallbackDonation,
       accessToken: effectiveAccessToken,

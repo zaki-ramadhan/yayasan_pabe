@@ -25,7 +25,7 @@ function formatCampaignFromDb(c) {
         ? d.createdAt.toISOString()
         : d.createdAt,
       prayer: d.prayer || "",
-      aminCount: 0,
+      aminCount: Number(d.aminCount || 0),
       isAnonymous: isAnon,
     };
   });

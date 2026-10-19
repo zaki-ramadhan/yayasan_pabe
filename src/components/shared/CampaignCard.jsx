@@ -24,7 +24,7 @@ export function CampaignCard({
   return (
     <div className={cn("flex flex-col h-full w-full rounded-xl border border-slate-300 bg-white overflow-hidden", className)}>
       {/* Visual Header / Thumbnail with SafeImage & Category RibbonBadge */}
-      <Link href={`/campaign/${campaign.slug}`} className="block relative aspect-video w-full bg-slate-100 overflow-hidden border-b border-slate-200 group">
+      <Link href={`/campaign/${campaign.slug}`} className="block relative aspect-video w-full bg-slate-100 overflow-hidden border-b border-slate-200">
         <SafeImage
           src={campaign.bannerUrl}
           alt={campaign.title}
@@ -40,8 +40,8 @@ export function CampaignCard({
         )}
       </Link>
 
-      {/* Content Area */}
-      <div className="flex flex-col flex-1 p-4 sm:p-5 space-y-2.5">
+      {/* Content Area (Upper Body): Preserves original spacious padding */}
+      <div className="flex flex-col flex-1 px-4 sm:px-5 pt-4 sm:pt-5 pb-3 space-y-2.5">
         {/* Title (Uniform 2-line height) */}
         <h3 className="text-base sm:text-lg font-semibold text-slate-950 leading-snug line-clamp-2 min-h-[2.6rem] flex items-start">
           <HighlightText text={campaign.title} highlight={highlightQuery} />
@@ -107,53 +107,52 @@ export function CampaignCard({
             </div>
           )}
         </div>
+      </div>
 
-        {/* Footer Meta: Donor Count with Users Icon & CTA */}
-        <div className="pt-3 border-t border-slate-200 flex items-center justify-between gap-3 text-sm">
+      {/* Footer Area: Tightened side & bottom margins for balanced full-width button */}
+      <div className="px-3.5 sm:px-4 pb-3 sm:pb-3.5 pt-2.5 border-t border-slate-200/80 space-y-2.5">
+        {/* Symmetrical Meta Row: Identical font size, no wrap */}
+        <div className="flex items-center justify-between gap-3 text-xs sm:text-sm">
+          {/* Donor Count */}
           <div className="flex items-center gap-1.5 min-w-0">
-            <Users className="w-4 h-4 text-slate-600 shrink-0" />
-            <span className="text-sm text-slate-800 font-semibold truncate">
-              <strong className="text-slate-950 font-semibold">{totalDonors}</strong> donatur
+            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
+            <span className="text-slate-600 font-normal truncate">
+              <strong className="text-slate-900 font-medium">{totalDonors}</strong> donatur
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0">
-            <span
-              className={cn(
-                "text-sm font-semibold flex items-center gap-1.5 shrink-0",
-                isClosed ? "text-slate-600" : "text-slate-900"
-              )}
-            >
-              <Clock className="w-4 h-4 text-slate-600 shrink-0 stroke-[2]" />
-              <span>
-                {isClosed
-                  ? "Selesai"
-                  : campaign.endDate && daysLeft !== null
-                  ? `${daysLeft} hr`
-                  : "-"}
+          {/* Time Indicator */}
+          <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
+            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0 stroke-[1.75]" />
+            {isClosed ? (
+              <span className="text-slate-500 font-normal">Selesai</span>
+            ) : campaign.endDate && daysLeft !== null ? (
+              <span className="text-slate-600 font-normal">
+                <strong className="text-slate-900 font-medium">{daysLeft}</strong> hari lagi
               </span>
-            </span>
-
-            <Link href={`/campaign/${campaign.slug}`}>
-              {isClosed ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-8.5 px-3.5 rounded-md text-sm font-medium border-slate-300 text-slate-700 bg-white hover:bg-slate-100 shadow-none cursor-pointer"
-                >
-                  Lihat Detail
-                </Button>
-              ) : (
-                <Button
-                  size="sm"
-                  className="h-8.5 px-4 rounded-md text-sm font-semibold bg-primary hover:bg-primary-hover text-white shadow-none cursor-pointer"
-                >
-                  Donasi
-                </Button>
-              )}
-            </Link>
+            ) : (
+              <span className="text-slate-400 font-normal">-</span>
+            )}
           </div>
         </div>
+
+        {/* Full-Width CTA Button: Static colors without hover transitions */}
+        <Link href={`/campaign/${campaign.slug}`} className="block w-full">
+          {isClosed ? (
+            <Button
+              variant="outline"
+              className="w-full h-8.5 sm:h-9 rounded-lg text-xs sm:text-sm font-normal border-slate-300 text-slate-700 bg-white hover:bg-white hover:text-slate-700 hover:border-slate-300 shadow-none cursor-pointer transition-none"
+            >
+              Lihat Detail
+            </Button>
+          ) : (
+            <Button
+              className="w-full h-8.5 sm:h-9 rounded-lg text-xs sm:text-sm font-medium bg-primary hover:bg-primary text-white hover:text-white shadow-none cursor-pointer transition-none"
+            >
+              Donasi Sekarang
+            </Button>
+          )}
+        </Link>
       </div>
     </div>
   );

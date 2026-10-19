@@ -112,7 +112,7 @@ export function RoutineDonationForm({ campaigns = [] }) {
     return sum + val;
   }, 0);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // 1. Validasi Identitas (Anti-bocor, anti-emoji & verifikasi format seluler)
@@ -164,13 +164,51 @@ export function RoutineDonationForm({ campaigns = [] }) {
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      setIsSubmitting(true);
+      const payloadPrograms = selectedPrograms.map((p) => {
+        const camp = activeCampaigns.find((c) => c.id === p.campaignId) || activeCampaigns[0];
+        const nominal = p.customAmount
+          ? parseInt(p.customAmount.replace(/\D/g, ""), 10) || 0
+          : p.amount;
+
+        return {
+          campaignId: p.campaignId,
+          programTitle: camp?.title || "Program Kebaikan Rutin",
+          amount: p.routineType === "REMINDER_ONLY" ? 0 : nominal,
+          frequency: p.frequency,
+          routineType: p.routineType,
+          selectedDay: p.selectedDay,
+          monthlyDate: p.monthlyDate,
+          reminderTime: p.reminderTime,
+        };
+      });
+
+      const res = await fetch("/api/routine-donations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          donorName: isAnonymous ? "Hamba Allah" : `${salutation ? salutation + " " : ""}${fullName}`.trim(),
+          donorPhone: whatsapp,
+          isAnonymous,
+          programs: payloadPrograms,
+        }),
+      });
+
+      const result = await res.json();
+      if (!res.ok || !result.success) {
+        throw new Error(result.message || "Gagal mengaktifkan jadwal donasi rutin.");
+      }
+
       setIsSubmitted(true);
-      toast.success("Jadwal donasi rutin Anda berhasil diaktifkan!");
-    }, 600);
+      toast.success(result.message || "Jadwal donasi rutin Anda berhasil diaktifkan!");
+    } catch (err) {
+      toast.error(err.message || "Terjadi kendala saat menyimpan jadwal donasi rutin.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
 
   if (isSubmitted) {
     return (

@@ -24,8 +24,13 @@ export function FloatingWhatsApp() {
   const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent("Assalamu'alaikum Yayasan PABE, mohon info program yayasan.")}`;
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 print:hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+    <div
+      id="floating-whatsapp"
+      data-testid="floating-whatsapp"
+      className="fixed bottom-6 right-6 z-40 print:hidden animate-in fade-in slide-in-from-bottom-4 duration-300"
+    >
       <a
+
         href={waUrl}
         target="_blank"
         rel="noopener noreferrer"

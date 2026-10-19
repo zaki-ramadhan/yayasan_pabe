@@ -5,6 +5,12 @@ import {
   updateDonationPrayer,
 } from "@/services/donationService";
 import { getCampaignDonationsPaginated } from "@/services/campaignService";
+import {
+  validateDonationAmount,
+  validateName,
+  validatePhone,
+} from "@/lib/security";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function GET(request) {
   try {
@@ -34,7 +40,46 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
+    const rateLimitBlocked = checkRateLimit(request, {
+      action: "donation_create",
+      limit: 20,
+      windowMs: 60000,
+    });
+    if (rateLimitBlocked) return rateLimitBlocked;
+
     const body = await request.json();
+
+    // 1. Enforce Server-Side Amount Validation
+    const amountVal = validateDonationAmount(body.amount);
+    if (!amountVal.isValid) {
+      return NextResponse.json(
+        { success: false, message: amountVal.message },
+        { status: 400 }
+      );
+    }
+
+    // 2. Validate Donor Name if not anonymous
+    if (!body.isAnonymous) {
+      const nameVal = validateName(body.donorName);
+      if (!nameVal.isValid) {
+        return NextResponse.json(
+          { success: false, message: nameVal.message },
+          { status: 400 }
+        );
+      }
+    }
+
+    // 3. Validate Phone if supplied
+    if (body.donorPhone) {
+      const phoneVal = validatePhone(body.donorPhone);
+      if (!phoneVal.isValid) {
+        return NextResponse.json(
+          { success: false, message: phoneVal.message },
+          { status: 400 }
+        );
+      }
+    }
+
     const donation = await createDonation(body);
     const response = NextResponse.json({ success: true, data: donation }, { status: 201 });
 

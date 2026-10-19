@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { CampaignCard } from "@/components/shared/CampaignCard";
 import { SectionHeader } from "@/components/shared/SectionHeader";
+import { BrowseAllCampaignsCard } from "@/components/home/BrowseAllCampaignsCard";
 import { isCampaignClosed } from "@/lib/formatters";
 
 /**
@@ -33,17 +32,11 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
               <CampaignCard campaign={camp} showDescription={false} priority={index === 0} />
             </div>
           ))}
-        </div>
 
-        <div className="text-center pt-2">
-          <Link href="/program">
-            <Button
-              variant="outline"
-              className="h-10 px-6 text-sm font-medium border-slate-300 text-slate-900 bg-white hover:bg-slate-50 shadow-xs"
-            >
-              Lihat Seluruh Program ({totalCount})
-            </Button>
-          </Link>
+          {/* 6th Slot: Dedicated Card to Browse All Programs */}
+          <div className="w-full sm:w-[calc(50%-4px)] lg:w-[calc((100%-16px)/3)] flex">
+            <BrowseAllCampaignsCard totalCount={totalCount} />
+          </div>
         </div>
       </div>
     </section>

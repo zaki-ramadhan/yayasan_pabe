@@ -6,8 +6,8 @@ export function CampaignCardSkeleton() {
       {/* Thumbnail Skeleton */}
       <Skeleton className="aspect-video w-full rounded-none" />
 
-      {/* Content Skeleton */}
-      <div className="p-5 sm:p-6 space-y-4 flex-1 flex flex-col">
+      {/* Content Skeleton: Preserves upper spacing */}
+      <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3 space-y-2.5 flex-1 flex flex-col">
         {/* Category & Location */}
         <div className="flex justify-between items-center">
           <Skeleton className="h-4 w-24" />
@@ -27,19 +27,22 @@ export function CampaignCardSkeleton() {
         </div>
 
         {/* Progress Bar Skeleton */}
-        <div className="space-y-2 pt-3 mt-auto">
+        <div className="space-y-2 pt-2 mt-auto">
           <Skeleton className="h-2 w-full rounded-md" />
           <div className="flex justify-between items-center">
             <Skeleton className="h-4 w-28" />
             <Skeleton className="h-4 w-20" />
           </div>
         </div>
+      </div>
 
-        {/* Footer */}
-        <div className="pt-3.5 border-t border-slate-100 flex justify-between items-center">
+      {/* Footer Skeleton: Tightened side & bottom margins */}
+      <div className="px-3.5 sm:px-4 pb-3 sm:pb-3.5 pt-2.5 border-t border-slate-100 space-y-2.5">
+        <div className="flex justify-between items-center">
           <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-8 w-16 rounded-md" />
+          <Skeleton className="h-4 w-20" />
         </div>
+        <Skeleton className="h-8.5 sm:h-9 w-full rounded-lg" />
       </div>
     </div>
   );

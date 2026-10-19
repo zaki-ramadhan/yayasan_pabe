@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
 
 export default function ArtikelDetailLoading() {
   return (
@@ -40,23 +41,7 @@ export default function ArtikelDetailLoading() {
         <Skeleton className="h-6 w-36 rounded" />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[1, 2].map((i) => (
-            <div
-              key={i}
-              className="p-3.5 bg-white border border-slate-300 rounded-xl flex flex-col sm:flex-row gap-3.5 items-stretch"
-            >
-              <Skeleton className="w-full sm:w-28 md:w-32 h-28 sm:h-auto sm:min-h-[100px] rounded-lg shrink-0" />
-              <div className="flex-1 space-y-2 py-1 flex flex-col justify-between">
-                <div className="space-y-1.5">
-                  <Skeleton className="h-3 w-16 rounded" />
-                  <Skeleton className="h-4 w-full rounded" />
-                  <Skeleton className="h-3 w-4/5 rounded" />
-                </div>
-                <div className="pt-2 border-t border-slate-100 flex items-center gap-2">
-                  <Skeleton className="h-3 w-14 rounded" />
-                  <Skeleton className="h-3 w-20 rounded" />
-                </div>
-              </div>
-            </div>
+            <ArticleCardSkeleton key={i} />
           ))}
         </div>
       </div>
