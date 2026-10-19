@@ -7,6 +7,7 @@ import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { sanitizePrayer } from "@/lib/security";
 import { markPrayerSubmitted } from "@/lib/donorStorage";
+import { safeFetch } from "@/lib/safeFetch";
 import { cn } from "@/lib/utils";
 
 export function PostDonationPrayerForm({
@@ -43,7 +44,7 @@ export function PostDonationPrayerForm({
     setErrorMessage("");
 
     try {
-      const res = await fetch("/api/donations", {
+      const res = await safeFetch("/api/donations", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -51,6 +52,7 @@ export function PostDonationPrayerForm({
           prayer: cleanPrayer,
           isAnonymous,
         }),
+        timeoutMs: 12000,
       });
 
       const json = await res.json();

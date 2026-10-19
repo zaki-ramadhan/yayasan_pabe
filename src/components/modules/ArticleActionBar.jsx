@@ -3,6 +3,8 @@
 import { useState, useMemo, useSyncExternalStore, useId, useRef, useEffect } from "react";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
+import { toast } from "@/hooks/use-toast";
+import { safeFetch } from "@/lib/safeFetch";
 import { cn } from "@/lib/utils";
 
 const LIKE_STORAGE_KEY = "pabe_liked_articles";
@@ -57,12 +59,27 @@ export function ArticleActionBar({
 		if (reactionDebounceRef.current) {
 			clearTimeout(reactionDebounceRef.current);
 		}
-		reactionDebounceRef.current = setTimeout(() => {
-			fetch("/api/articles/reaction", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ slug: targetArticleSlug, type }),
-			}).catch(() => {});
+		reactionDebounceRef.current = setTimeout(async () => {
+			try {
+				const res = await safeFetch("/api/articles/reaction", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ slug: targetArticleSlug, type }),
+				});
+				if (!res.ok) {
+					toast({
+						variant: "destructive",
+						title: "Gagal Menyimpan Reaksi",
+						description: "Koneksi terputus. Reaksi Anda belum tersimpan di server.",
+					});
+				}
+			} catch {
+				toast({
+					variant: "destructive",
+					title: "Gagal Menyimpan Reaksi",
+					description: "Koneksi internet bermasalah. Reaksi belum tersimpan.",
+				});
+			}
 		}, 400);
 	};
 

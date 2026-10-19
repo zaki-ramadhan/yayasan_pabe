@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useSyncExternalStore } from "react";
+import { safeFetch } from "@/lib/safeFetch";
 
 const AMINED_STORAGE_KEY = "pabe_amined_prayers";
 const AMIN_COUNTS_KEY = "pabe_prayer_amin_counts";
@@ -91,11 +92,12 @@ export function usePrayersSync(initialDonors = []) {
         })
       );
 
-      // Sinkronisasi permanen ke backend & database PostgreSQL
-      fetch("/api/donations/amin", {
+      // Sinkronisasi permanen ke backend & database PostgreSQL via safeFetch dengan timeout 8s
+      safeFetch("/api/donations/amin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ donationId: donorId, action: "increment" }),
+        timeoutMs: 8000,
       }).catch(() => {});
     } catch {
       // Ignore storage errors

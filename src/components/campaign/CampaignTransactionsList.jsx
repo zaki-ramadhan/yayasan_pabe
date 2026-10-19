@@ -4,8 +4,10 @@ import { useState, useCallback, useMemo } from "react";
 import { Loader2 } from "lucide-react";
 import { DateStickyBadge } from "@/components/shared/DateStickyBadge";
 import { CampaignTransactionItem } from "@/components/campaign/CampaignTransactionItem";
+import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
 import { getDateKey, getDateBadgeLabel } from "@/lib/dateUtils";
 import { useScrollLoadMore } from "@/hooks/useScrollLoadMore";
+import { safeFetch } from "@/lib/safeFetch";
 
 const INITIAL_PAGE_SIZE = 12;
 const BATCH_SIZE = 10;
@@ -18,6 +20,7 @@ export function CampaignTransactionsList({
   const [donorList, setDonorList] = useState(donors);
   const [visibleCount, setVisibleCount] = useState(INITIAL_PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState(false);
 
   const sortedDonors = useMemo(() => {
     return [...donorList].sort(
@@ -59,7 +62,8 @@ export function CampaignTransactionsList({
 
     if (canFetchRemote) {
       setIsLoadingMore(true);
-      fetch(`/api/donations?campaignSlug=${encodeURIComponent(campaignSlug)}&skip=${donorList.length}&limit=20`)
+      setLoadMoreError(false);
+      safeFetch(`/api/donations?campaignSlug=${encodeURIComponent(campaignSlug)}&skip=${donorList.length}&limit=20`)
         .then((res) => res.json())
         .then((json) => {
           if (json?.success && Array.isArray(json?.data?.donations)) {
@@ -69,9 +73,14 @@ export function CampaignTransactionsList({
               return [...prev, ...newItems.filter((item) => !existingIds.has(item.id))];
             });
             setVisibleCount((prev) => prev + (newItems.length || BATCH_SIZE));
+          } else {
+            setLoadMoreError(true);
           }
         })
-        .catch((err) => console.warn("Gagal memuat riwayat donasi tambahan:", err))
+        .catch((err) => {
+          console.warn("Gagal memuat riwayat donasi tambahan:", err);
+          setLoadMoreError(true);
+        })
         .finally(() => setIsLoadingMore(false));
     }
   }, [isLoadingMore, hasMore, hasLocalMore, canFetchRemote, donorList.length, campaignSlug]);
@@ -124,6 +133,16 @@ export function CampaignTransactionsList({
         {isLoadingMore && (
           <div className="flex justify-center py-4">
             <Loader2 className="w-[18px] h-[18px] text-primary animate-spin" />
+          </div>
+        )}
+
+        {loadMoreError && (
+          <div className="pt-2">
+            <DataFetchErrorState
+              compact
+              description="Gagal memuat transaksi berikutnya. Periksa koneksi Anda."
+              onRetry={handleLoadMore}
+            />
           </div>
         )}
       </div>

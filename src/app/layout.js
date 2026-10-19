@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/toast";
+import { OfflineStatusBanner } from "@/components/shared/OfflineStatusBanner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -59,6 +60,7 @@ export default function RootLayout({ children }) {
         className="min-h-full flex flex-col bg-surface text-slate-900 font-sans"
         suppressHydrationWarning
       >
+        <OfflineStatusBanner />
         <Toaster />
         {children}
       </body>

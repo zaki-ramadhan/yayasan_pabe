@@ -12,6 +12,8 @@ import {
 import { DonorCard } from "@/components/donor/DonorDashboardPrimitives";
 import { DonorTrendChartCanvas } from "@/components/donor/DonorTrendChartCanvas";
 import { DonorTopCategoryCards } from "@/components/donor/DonorTopCategoryCards";
+import { safeFetch } from "@/lib/safeFetch";
+import { toast } from "@/hooks/use-toast";
 
 export function DonorMonthlyTrendChart({
   initialMonthlyTrend = [],
@@ -48,14 +50,18 @@ export function DonorMonthlyTrendChart({
         year: newYear,
       });
 
-      const res = await fetch(`/api/user/donations?${params.toString()}`);
+      const res = await safeFetch(`/api/user/donations?${params.toString()}`);
       const json = await res.json();
 
       if (json.success && json.data?.monthlyTrend) {
         setMonthlyTrend(json.data.monthlyTrend);
       }
     } catch (err) {
-      console.error("Gagal memuat tren tahunan donatur:", err);
+      toast({
+        title: "Koneksi Bermasalah",
+        description: err.message || "Gagal memuat tren tahunan donatur.",
+        variant: "destructive",
+      });
     } finally {
       setIsYearLoading(false);
     }

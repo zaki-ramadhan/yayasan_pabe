@@ -10,6 +10,7 @@ import { DashboardMetricCards } from "@/components/dashboard/DashboardMetricCard
 import { DonorDashboardView } from "@/components/dashboard/DonorDashboardView";
 import { VolunteerDashboardView } from "@/components/dashboard/VolunteerDashboardView";
 import { AdminDashboardView } from "@/components/dashboard/AdminDashboardView";
+import { safeFetch } from "@/lib/safeFetch";
 
 function subscribeAuth(callback) {
   window.addEventListener("ygsm_auth_change", callback);
@@ -36,7 +37,7 @@ export default function AdminDashboardPage() {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    fetch("/api/dashboard/stats")
+    safeFetch("/api/dashboard/stats", { timeoutMs: 10000 })
       .then((res) => res.json())
       .then((res) => {
         if (res.success && res.data) {

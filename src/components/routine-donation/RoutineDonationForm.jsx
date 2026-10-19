@@ -12,6 +12,7 @@ import { RoutineProgramItem } from "@/components/routine-donation/RoutineProgram
 import { RoutineSummaryCard } from "@/components/routine-donation/RoutineSummaryCard";
 import { RoutineSuccessView } from "@/components/routine-donation/RoutineSuccessView";
 import { startRoutineTour } from "./routineTour";
+import { safeFetch } from "@/lib/safeFetch";
 
 export function RoutineDonationForm({ campaigns = [] }) {
   const [salutation, setSalutation] = useState("Bapak");
@@ -184,7 +185,7 @@ export function RoutineDonationForm({ campaigns = [] }) {
         };
       });
 
-      const res = await fetch("/api/routine-donations", {
+      const res = await safeFetch("/api/routine-donations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

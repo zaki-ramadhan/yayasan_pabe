@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Plus, Download, CalendarClock, CheckCircle, Clock } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -20,6 +20,8 @@ import {
   TableEmptyRow,
   useTableSort,
 } from "@/components/ui/table";
+import { safeFetch } from "@/lib/safeFetch";
+import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
 
 export function DonorDashboardView({ currentUser: propUser }) {
   const { currentUser: hookUser } = useCurrentUser();
@@ -28,51 +30,60 @@ export function DonorDashboardView({ currentUser: propUser }) {
   const [schedules, setSchedules] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
-  useEffect(() => {
+  const loadDonorData = useCallback(async () => {
     if (!currentUser?.email && !currentUser?.name) return;
 
     setIsLoading(true);
-    const params = new URLSearchParams({
-      mode: "dashboard",
-      email: currentUser.email || "",
-      name: currentUser.name || "",
-    });
+    setFetchError(null);
+    try {
+      const params = new URLSearchParams({
+        mode: "dashboard",
+        email: currentUser.email || "",
+        name: currentUser.name || "",
+      });
 
-    fetch(`/api/user/donations?${params.toString()}`)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success && json.data) {
-          if (Array.isArray(json.data.routineDonations)) {
-            setSchedules(
-              json.data.routineDonations.map((sch) => ({
-                id: sch.id,
-                program: sch.programTitle || sch.campaign?.title || "Donasi Rutin",
-                nominal: sch.amount,
-                freq: formatRoutineSchedule(sch),
-                status: sch.status || "ACTIVE",
-                reminderTime: sch.reminderTime || "05:00",
-              }))
-            );
-          }
+      const res = await safeFetch(`/api/user/donations?${params.toString()}`);
+      const json = await res.json();
 
-          if (Array.isArray(json.data.recentItems)) {
-            setTransactions(
-              json.data.recentItems.map((tx) => ({
-                id: tx.invoiceId,
-                date: tx.paidAt || tx.createdAt,
-                program: tx.campaign?.title || tx.donationType || "Donasi Umum",
-                amount: tx.amount,
-                channel: (tx.paymentChannel || "QRIS").toUpperCase(),
-                status: tx.status,
-              }))
-            );
-          }
+      if (json.success && json.data) {
+        if (Array.isArray(json.data.routineDonations)) {
+          setSchedules(
+            json.data.routineDonations.map((sch) => ({
+              id: sch.id,
+              program: sch.programTitle || sch.campaign?.title || "Donasi Rutin",
+              nominal: sch.amount,
+              freq: formatRoutineSchedule(sch),
+              status: sch.status || "ACTIVE",
+              reminderTime: sch.reminderTime || "05:00",
+            }))
+          );
         }
-      })
-      .catch((err) => console.warn("Failed to load donor live data:", err))
-      .finally(() => setIsLoading(false));
-  }, [currentUser?.email, currentUser?.name]);
+
+        if (Array.isArray(json.data.recentItems)) {
+          setTransactions(
+            json.data.recentItems.map((tx) => ({
+              id: tx.invoiceId,
+              date: tx.paidAt || tx.createdAt,
+              program: tx.campaign?.title || tx.donationType || "Donasi Umum",
+              amount: tx.amount,
+              channel: (tx.paymentChannel || "QRIS").toUpperCase(),
+              status: tx.status,
+            }))
+          );
+        }
+      }
+    } catch (err) {
+      setFetchError(err.message || "Gagal memuat data dasbor donatur. Silakan periksa koneksi internet.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    loadDonorData();
+  }, [loadDonorData]);
 
   const paidTransactions = transactions.filter((t) => t.status === "PAID");
 
@@ -102,7 +113,14 @@ export function DonorDashboardView({ currentUser: propUser }) {
           </Link>
         </div>
 
-        {schedules.length === 0 ? (
+        {fetchError ? (
+          <DataFetchErrorState
+            title="Gagal Memuat Jadwal Rutin"
+            message={fetchError}
+            onRetry={loadDonorData}
+            compact
+          />
+        ) : schedules.length === 0 ? (
           <div className="p-6 text-center border border-dashed border-slate-200 rounded-xl space-y-2">
             <CalendarClock className="w-8 h-8 text-slate-400 mx-auto" />
             <p className="text-sm font-medium text-slate-700">Belum ada jadwal donasi rutin aktif</p>
@@ -195,7 +213,18 @@ export function DonorDashboardView({ currentUser: propUser }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedTransactions.length === 0 ? (
+              {fetchError ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="p-4">
+                    <DataFetchErrorState
+                      title="Gagal Memuat Riwayat Transaksi"
+                      message={fetchError}
+                      onRetry={loadDonorData}
+                      compact
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : sortedTransactions.length === 0 ? (
                 <TableEmptyRow colSpan={6} message={isLoading ? "Memuat riwayat transaksi..." : "Belum ada transaksi donasi"} />
               ) : (
                 sortedTransactions.map((tx) => (

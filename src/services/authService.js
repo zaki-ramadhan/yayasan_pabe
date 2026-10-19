@@ -1,4 +1,4 @@
-// Authentication Service with Multi-Role Role-Based Access Control (RBAC)
+import { safeFetch } from "@/lib/safeFetch";
 
 export const USER_ROLES = {
   SUPER_ADMIN: "SUPER_ADMIN",
@@ -161,12 +161,13 @@ export function loginUser(user) {
  * @returns {Promise<object>}
  */
 export async function loginWithServer({ identifier, password, rememberMe = false }) {
-  const res = await fetch("/api/auth/login", {
+  const res = await safeFetch("/api/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ identifier, password, rememberMe }),
+    timeoutMs: 15000,
   });
 
   const data = await res.json();
@@ -189,12 +190,13 @@ export async function loginWithServer({ identifier, password, rememberMe = false
  * @returns {Promise<object>}
  */
 export async function registerWithServer({ username, name, email, phone, password }) {
-  const res = await fetch("/api/auth/register", {
+  const res = await safeFetch("/api/auth/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ username, name, email, phone, password }),
+    timeoutMs: 15000,
   });
 
   const data = await res.json();
@@ -229,7 +231,7 @@ export function logoutUser() {
 
   // Trigger server logout if available
   try {
-    fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+    safeFetch("/api/auth/logout", { method: "POST", timeoutMs: 5000 }).catch(() => {});
   } catch {}
 
   window.dispatchEvent(new Event("pabe_auth_change"));

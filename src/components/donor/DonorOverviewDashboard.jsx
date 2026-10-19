@@ -11,6 +11,8 @@ import { DonorCategoryDonutCard } from "@/components/donor/DonorCategoryDonutCar
 import { DonorRecentTransactionsCard } from "@/components/donor/DonorRecentTransactionsCard";
 import { DonorMonthlyTargetCard } from "@/components/donor/DonorMonthlyTargetCard";
 import { DonorRoutineDonationsCard } from "@/components/donor/DonorRoutineDonationsCard";
+import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
+import { safeFetch } from "@/lib/safeFetch";
 
 const MONTH_NAMES = [
 	"Jan",
@@ -44,6 +46,7 @@ export function DonorOverviewDashboard({ currentUser }) {
 		routineDonations: [],
 	});
 	const [isLoading, setIsLoading] = useState(true);
+	const [fetchError, setFetchError] = useState(null);
 
 	// Initial fetch data dashboard menyeluruh untuk pengguna saat ini
 	const fetchDashboardData = useCallback(async () => {
@@ -54,6 +57,7 @@ export function DonorOverviewDashboard({ currentUser }) {
 			return;
 
 		setIsLoading(true);
+		setFetchError(null);
 		try {
 			const params =
 				new URLSearchParams(
@@ -69,7 +73,7 @@ export function DonorOverviewDashboard({ currentUser }) {
 				);
 
 			const res =
-				await fetch(
+				await safeFetch(
 					`/api/user/donations?${params.toString()}`,
 				);
 			const json =
@@ -82,12 +86,15 @@ export function DonorOverviewDashboard({ currentUser }) {
 				setDashboardData(
 					json.data,
 				);
+			} else {
+				setFetchError(json.message || "Gagal memuat data donatur.");
 			}
 		} catch (err) {
 			console.error(
 				"Gagal memuat data dashboard donatur:",
 				err,
 			);
+			setFetchError(err.message || "Koneksi terputus saat mengambil data donasi.");
 		} finally {
 			setIsLoading(
 				false,
@@ -109,8 +116,19 @@ export function DonorOverviewDashboard({ currentUser }) {
 
 	return (
 		<div className="space-y-4 sm:space-y-5">
-			{/* Banner Promosi Cepat: HANYA muncul jika belum pernah berdonasi */}
+			{/* Banner Error Sinkronisasi: Mencegah salah sangka data kosong */}
+			{fetchError && !isLoading && (
+				<DataFetchErrorState
+					title="Gangguan Koneksi Riwayat Donasi"
+					description="Tidak dapat menyinkronkan data donasi terbaru Anda ke server. Silakan periksa jaringan dan coba lagi."
+					onRetry={fetchDashboardData}
+					compact
+				/>
+			)}
+
+			{/* Banner Promosi Cepat: HANYA muncul jika belum pernah berdonasi dan tidak error */}
 			{!isLoading &&
+				!fetchError &&
 				metrics.totalTransactions ===
 					0 && (
 					<CampaignCTA

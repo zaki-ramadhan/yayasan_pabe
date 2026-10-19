@@ -18,6 +18,7 @@ import {
 import { getStoredUser } from "@/services/authService";
 import { saveDonationDraft, loadDonationDraft, clearDonationDraft } from "@/lib/donationDraft";
 import { saveDonorInvoice } from "@/lib/donorStorage";
+import { safeFetch } from "@/lib/safeFetch";
 import { NominalPresetsPicker } from "@/components/donation/NominalPresetsPicker";
 import { PaymentChannelPicker } from "@/components/donation/PaymentChannelPicker";
 import { DonorIdentitySection } from "@/components/donation/DonorIdentitySection";
@@ -232,7 +233,7 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
       const idempotencyKey = generateIdempotencyKey();
       const sanitizedPrayer = prayer.trim().replace(/\s+/g, " ");
 
-      const res = await fetch("/api/donations", {
+      const res = await safeFetch("/api/donations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

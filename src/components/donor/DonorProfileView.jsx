@@ -8,6 +8,7 @@ import { DonorProfileCover } from "@/components/donor/DonorProfileCover";
 import { DonorProfileForm } from "@/components/donor/DonorProfileForm";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { safeFetch } from "@/lib/safeFetch";
 
 export function DonorProfileView() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export function DonorProfileView() {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/user/profile?email=${encodeURIComponent(currentUser.email)}`);
+      const res = await safeFetch(`/api/user/profile?email=${encodeURIComponent(currentUser.email)}`);
       const json = await res.json();
 
       if (json.success && json.data) {
@@ -64,13 +65,14 @@ export function DonorProfileView() {
   const handleUpdateProfile = async (profileData) => {
     if (!currentUser?.email) throw new Error("Sesi login berakhir.");
 
-    const res = await fetch("/api/user/profile", {
+    const res = await safeFetch("/api/user/profile", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: currentUser.email,
         profileData,
       }),
+      timeoutMs: 12000,
     });
 
     const json = await res.json();
@@ -116,7 +118,7 @@ export function DonorProfileView() {
   const handleUpdatePassword = async ({ oldPassword, newPassword }) => {
     if (!currentUser?.email) throw new Error("Sesi login berakhir.");
 
-    const res = await fetch("/api/user/password", {
+    const res = await safeFetch("/api/user/password", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -124,6 +126,7 @@ export function DonorProfileView() {
         oldPassword,
         newPassword,
       }),
+      timeoutMs: 12000,
     });
 
     const json = await res.json();

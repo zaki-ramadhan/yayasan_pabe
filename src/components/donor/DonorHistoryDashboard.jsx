@@ -7,7 +7,9 @@ import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { DonorSummaryCards } from "@/components/donor/DonorSummaryCards";
 import { DonorTransactionTable } from "@/components/donor/DonorTransactionTable";
+import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
 import { useDebounce } from "@/hooks/useDebounce";
+import { safeFetch } from "@/lib/safeFetch";
 
 export function DonorHistoryDashboard() {
   const router = useRouter();
@@ -30,6 +32,7 @@ export function DonorHistoryDashboard() {
   const [sortOrder, setSortOrder] = useState("desc");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isTableLoading, setIsTableLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
   const debouncedSearch = useDebounce(search, 350);
 
@@ -52,6 +55,7 @@ export function DonorHistoryDashboard() {
       if (!currentUser?.email && !currentUser?.name) return;
 
       setIsTableLoading(true);
+      setFetchError(null);
       try {
         const params = new URLSearchParams({
           email: currentUser.email || "",
@@ -63,16 +67,19 @@ export function DonorHistoryDashboard() {
           limit: String(currentLimit),
         });
 
-        const res = await fetch(`/api/user/donations?${params.toString()}`);
+        const res = await safeFetch(`/api/user/donations?${params.toString()}`);
         const json = await res.json();
 
         if (json.success && json.data) {
           setMetrics(json.data.metrics);
           setItems(json.data.items);
           setPagination(json.data.pagination);
+        } else {
+          setFetchError(json.message || "Gagal memuat riwayat donasi.");
         }
       } catch (err) {
         console.error("Gagal memuat riwayat donasi:", err);
+        setFetchError(err.message || "Koneksi terputus saat mengambil data donasi.");
       } finally {
         setIsInitialLoading(false);
         setIsTableLoading(false);
@@ -112,6 +119,16 @@ export function DonorHistoryDashboard() {
     <div className="space-y-2.5">
       {/* 3 Metric Cards Strip (Hanya skeleton pada initial loading) */}
       <DonorSummaryCards metrics={metrics} isLoading={isInitialLoading} />
+
+      {/* Error state if fetch failed */}
+      {fetchError && !isInitialLoading && (
+        <DataFetchErrorState
+          compact
+          title="Gangguan Koneksi Riwayat Donasi"
+          description="Gagal memuat riwayat transaksi donasi. Silakan periksa jaringan dan coba lagi."
+          onRetry={() => fetchHistory(pagination.currentPage, pagination.limit)}
+        />
+      )}
 
       {/* Transaction Table */}
       <DonorTransactionTable

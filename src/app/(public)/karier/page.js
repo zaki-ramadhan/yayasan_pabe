@@ -8,6 +8,7 @@ import { CareerDetailPanel } from "@/components/careers/CareerDetailPanel";
 import { CAREER_VACANCIES } from "@/data/careers";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
+import { safeFetch } from "@/lib/safeFetch";
 
 export default function KarierPage() {
   const [vacancies, setVacancies] = useState(CAREER_VACANCIES);
@@ -17,7 +18,7 @@ export default function KarierPage() {
   const [department, setDepartment] = useState("Semua Divisi");
 
   useEffect(() => {
-    fetch("/api/careers")
+    safeFetch("/api/careers", { timeoutMs: 8000 })
       .then((res) => res.json())
       .then((res) => {
         if (res.success && Array.isArray(res.data) && res.data.length > 0) {

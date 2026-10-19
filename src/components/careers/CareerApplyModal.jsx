@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { sanitizeInput } from "@/lib/security";
+import { safeFetch } from "@/lib/safeFetch";
 
 export function CareerApplyModal({ isOpen, onClose, job }) {
   const [formData, setFormData] = useState({
@@ -73,7 +74,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/careers/apply", {
+      const response = await safeFetch("/api/careers/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -85,6 +86,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
           resumeUrl: formData.resumeUrl.trim(),
           coverLetter: coverLetterTrimmed,
         }),
+        timeoutMs: 15000,
       });
 
       const result = await response.json();

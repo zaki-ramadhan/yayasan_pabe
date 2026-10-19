@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { VolunteerSuccessCard } from "@/components/volunteer/VolunteerSuccessCard";
 import { getStoredUser } from "@/services/authService";
+import { safeFetch } from "@/lib/safeFetch";
 import {
   sanitizeName,
   sanitizePhone,
@@ -25,6 +27,8 @@ const INTEREST_OPTIONS = [
   "Pendampingan Wirausaha Yatim",
 ];
 
+const DRAFT_STORAGE_KEY = "pabe_volunteer_draft";
+
 export function VolunteerForm() {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -35,22 +39,54 @@ export function VolunteerForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Restore draft if user refreshed the page or experienced disconnect
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(DRAFT_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.fullName) setFullName(parsed.fullName);
+        if (parsed.phone) setPhone(parsed.phone);
+        if (parsed.email) setEmail(parsed.email);
+        if (parsed.city) setCity(parsed.city);
+        if (parsed.interest) setInterest(parsed.interest);
+        if (parsed.motivation) setMotivation(parsed.motivation);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Auto-save draft on every change
+  useEffect(() => {
+    try {
+      if (fullName || phone || email || city || motivation) {
+        sessionStorage.setItem(
+          DRAFT_STORAGE_KEY,
+          JSON.stringify({ fullName, phone, email, city, interest, motivation })
+        );
+      }
+    } catch {
+      // ignore
+    }
+  }, [fullName, phone, email, city, interest, motivation]);
+
   useEffect(() => {
     const user = getStoredUser();
     if (!user) return;
 
     queueMicrotask(() => {
       if (user.name && user.name !== "Pengguna Google" && user.name !== "Pengguna Facebook") {
-        setFullName(user.name);
+        setFullName((prev) => prev || user.name);
       }
       if (user.phone && user.phone !== "-") {
         const cleanPhone = sanitizePhone(user.phone);
         if (cleanPhone) {
-          setPhone(cleanPhone);
+          setPhone((prev) => prev || cleanPhone);
         }
       }
       if (user.email && !user.email.endsWith("@google.user") && !user.email.endsWith("@facebook.user")) {
-        setEmail(user.email);
+        setEmail((prev) => prev || user.email);
       }
     });
   }, []);
@@ -86,7 +122,7 @@ export function VolunteerForm() {
 
     try {
       setLoading(true);
-      const res = await fetch("/api/volunteers", {
+      const res = await safeFetch("/api/volunteers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -104,6 +140,7 @@ export function VolunteerForm() {
         throw new Error(json.message || "Gagal mengirim pendaftaran.");
       }
 
+      sessionStorage.removeItem(DRAFT_STORAGE_KEY);
       setIsSubmitted(true);
       toast.success(json.message || "Pendaftaran relawan berhasil dikirim!");
     } catch (err) {
