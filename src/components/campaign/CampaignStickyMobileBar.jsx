@@ -16,12 +16,12 @@ export function CampaignStickyMobileBar({ campaign }) {
 
       <div className="flex-1 max-w-xs">
         {isClosed ? (
-          <Button disabled className="w-full font-medium h-11 bg-slate-200 text-slate-500 cursor-not-allowed shadow-none">
+          <Button disabled className="w-full font-normal h-11 bg-slate-200 text-slate-600 cursor-not-allowed shadow-none">
             Penggalangan Dana Ditutup
           </Button>
         ) : (
           <Link href={`/campaign/${campaign.slug}/donate`} className="block w-full">
-            <Button className="w-full font-medium h-11 bg-primary hover:bg-primary-hover text-white cursor-pointer">
+            <Button className="w-full font-normal h-11 bg-primary hover:bg-primary-hover text-white cursor-pointer">
               Donasi Sekarang
             </Button>
           </Link>

@@ -15,9 +15,9 @@ export function SidebarTourButton({ slug, hasDonations }) {
       type="button"
       onClick={startTour}
       aria-label="Panduan halaman program"
-      className="inline-flex items-center justify-center h-12 w-12 shrink-0 rounded-lg border border-sky-200 bg-sky-50 hover:bg-sky-100 text-sky-700 transition-colors cursor-pointer shadow-xs"
+      className="inline-flex items-center justify-center h-10.5 w-10.5 shrink-0 rounded-lg border border-sky-200 bg-sky-50 hover:bg-sky-100 text-sky-700 transition-colors cursor-pointer shadow-xs"
     >
-      <HelpCircle className="w-5 h-5" />
+      <HelpCircle className="w-4.5 h-4.5" />
     </button>
   );
 }

@@ -1,18 +1,8 @@
 import { User } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
+import { formatClockTime } from "@/lib/dateUtils";
 import { maskEmail } from "@/lib/security";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-
-function formatTimeOnly(dateInput) {
-  if (!dateInput) return "Baru saja";
-  const date = new Date(dateInput);
-  if (isNaN(date.getTime())) return "Baru saja";
-  const wibTime = new Date(date.getTime() + (7 * 60 + date.getTimezoneOffset()) * 60000);
-  const hours = String(wibTime.getHours()).padStart(2, "0");
-  const minutes = String(wibTime.getMinutes()).padStart(2, "0");
-  const seconds = String(wibTime.getSeconds()).padStart(2, "0");
-  return `${hours}:${minutes}:${seconds} WIB`;
-}
 
 /**
  * Individual donation transaction row item
@@ -44,13 +34,13 @@ export function CampaignTransactionItem({ item }) {
         </div>
       </div>
 
-      {/* Right: Donation Amount & Time Details */}
+      {/* Right: Donation Amount & Time */}
       <div className="text-right shrink-0">
         <span className="text-xs sm:text-sm font-medium text-slate-950 block">
           {formatRupiah(item.amount)}
         </span>
-        <span className="text-xs text-slate-600 block mt-0.5 font-normal">
-          {formatTimeOnly(item.date)}
+        <span className="text-xs text-slate-600 block mt-0.5 font-normal tabular-nums">
+          {formatClockTime(item.date, { withSeconds: true })}
         </span>
       </div>
     </div>

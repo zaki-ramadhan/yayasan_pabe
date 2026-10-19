@@ -90,10 +90,18 @@ export function usePrayersSync(initialDonors = []) {
           detail: { donorId },
         })
       );
+
+      // Sinkronisasi permanen ke backend & database PostgreSQL
+      fetch("/api/donations/amin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ donationId: donorId, action: "increment" }),
+      }).catch(() => {});
     } catch {
       // Ignore storage errors
     }
   }, []);
+
 
   const addNewPrayer = useCallback((newDonor) => {
     setSubmittedPrayers((prev) => [newDonor, ...prev]);

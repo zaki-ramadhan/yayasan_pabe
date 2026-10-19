@@ -16,13 +16,15 @@ import { PrayerInputBar } from "@/components/modules/PrayerInputBar";
 import { usePrayersSync } from "@/hooks/usePrayersSync";
 import { getStoredUser } from "@/services/authService";
 import { PRAYER_SORT_OPTIONS } from "@/data/sortOptions";
+import { DateStickyBadge } from "@/components/shared/DateStickyBadge";
+import { getDateKey, getDateBadgeLabel } from "@/lib/dateUtils";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 5;
 
 
 
-export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug }) {
+export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClosed = false }) {
   const { donors, aminedSet, handleToggleAmin } = usePrayersSync(initialDonors);
   const [sortBy, setSortBy] = useState("terbaru");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -49,6 +51,31 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug }) {
     return allPrayers.slice(0, visibleCount).reverse();
   }, [allPrayers, visibleCount]);
 
+  // Sisipkan pemisah tanggal ala WhatsApp saat terjadi pergantian hari
+  const prayersWithSeparators = useMemo(() => {
+    const items = [];
+    let lastDateKey = null;
+
+    for (const donor of displayPrayers) {
+      const dateKey = getDateKey(donor.date);
+      if (dateKey !== lastDateKey) {
+        items.push({
+          type: "date_badge",
+          id: `date-badge-${dateKey}-${donor.id}`,
+          label: getDateBadgeLabel(donor.date),
+        });
+        lastDateKey = dateKey;
+      }
+      items.push({
+        type: "prayer",
+        id: donor.id,
+        donor,
+      });
+    }
+
+    return items;
+  }, [displayPrayers]);
+
   // Reset pagination when sort changes
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
@@ -62,7 +89,7 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug }) {
     if (!el) return;
     el.scrollTop = el.scrollHeight;
     initialScrollDone.current = true;
-  }, [displayPrayers]);
+  }, [prayersWithSeparators]);
 
   // After loading more, preserve scroll position to prevent jump
   useLayoutEffect(() => {
@@ -155,35 +182,57 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug }) {
 
 
 
-      {/* Scrollable chat container — newest at bottom, oldest at top */}
-      <div
-        ref={scrollRef}
-        className="max-h-[380px] overflow-y-auto pr-1"
-        style={{ scrollbarWidth: "thin", scrollbarColor: "#cbd5e1 transparent" }}
-      >
-        {/* Loader di dalam scroll container, paling atas — persis seperti WhatsApp */}
-        {isLoadingMore && (
-          <div className="flex justify-center py-3">
-            <Loader2 className="w-[18px] h-[18px] text-primary animate-spin" />
+      {/* Chat Room Container ala Telegram / WhatsApp */}
+      <div className="relative rounded-2xl border border-slate-300 overflow-hidden shadow-xs bg-slate-900 flex flex-col">
+        {/* Authentic Wallpaper Background (Original image without direct filter) */}
+        <div
+          className="absolute inset-0 pointer-events-none bg-cover bg-center"
+          style={{
+            backgroundImage: "url('/img/wallpaper_chat.jpeg')",
+          }}
+        />
+        {/* Dark overlay layer to dim wallpaper smoothly */}
+        <div className="absolute inset-0 pointer-events-none bg-slate-950/40" />
+
+        {/* Scrollable chat container — increased height for more forum room */}
+        <div
+          ref={scrollRef}
+          className="relative z-10 max-h-[480px] overflow-y-auto px-3.5 py-4 space-y-4"
+          style={{ scrollbarWidth: "thin", scrollbarColor: "#94a3b8 transparent" }}
+        >
+          {/* Loader di dalam scroll container, paling atas — persis seperti WhatsApp */}
+          {isLoadingMore && (
+            <div className="flex justify-center py-3">
+              <Loader2 className="w-[18px] h-[18px] text-primary animate-spin" />
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {prayersWithSeparators.map((item) =>
+              item.type === "date_badge" ? (
+                <DateStickyBadge key={item.id} label={item.label} className="py-0.5" />
+              ) : (
+                <PrayerChatBubble
+                  key={item.id}
+                  donor={item.donor}
+                  isAmined={aminedSet.has(item.donor.id)}
+                  onToggleAmin={handleToggleAmin}
+                  isOwn={Boolean(currentUser?.id && item.donor.id === currentUser.id)}
+                />
+              )
+            )}
+          </div>
+        </div>
+
+        {/* Input bar transparent seamlessly docked without background — sembunyikan jika program ditutup */}
+        {!isClosed && (
+          <div
+            id="tour-prayer-input"
+            className="relative z-10 p-2 sm:px-2.5 sm:pb-2.5 sm:pt-1 bg-transparent"
+          >
+            <PrayerInputBar onSend={handleSend} />
           </div>
         )}
-
-        <div className="space-y-5">
-          {displayPrayers.map((donor) => (
-            <PrayerChatBubble
-              key={donor.id}
-              donor={donor}
-              isAmined={aminedSet.has(donor.id)}
-              onToggleAmin={handleToggleAmin}
-              isOwn={Boolean(currentUser?.id && donor.id === currentUser.id)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Input bar */}
-      <div id="tour-prayer-input">
-        <PrayerInputBar onSend={handleSend} />
       </div>
     </div>
   );

@@ -232,3 +232,31 @@ export function formatCompactNumber(num) {
   return String(num);
 }
 
+/**
+ * Formats a raw numeric string with 3-digit dot thousand separator (e.g. 10000 -> 10.000)
+ * Sanitizes leading zeros, spaces, and non-digit characters.
+ * @param {string|number} value
+ * @returns {string}
+ */
+export function formatThousandsInput(value) {
+  if (value === null || value === undefined || value === "") return "";
+  const cleaned = String(value).replace(/\D/g, "");
+  if (!cleaned) return "";
+  const integer = parseInt(cleaned, 10);
+  if (isNaN(integer)) return "";
+  return new Intl.NumberFormat("id-ID").format(integer);
+}
+
+/**
+ * Parses a thousand-separated string back to a clean primitive integer.
+ * @param {string|number} value
+ * @returns {number}
+ */
+export function parseThousandsToNumber(value) {
+  if (typeof value === "number") return isNaN(value) ? 0 : Math.round(value);
+  if (!value || typeof value !== "string") return 0;
+  const digitsOnly = value.replace(/\D/g, "");
+  return digitsOnly ? parseInt(digitsOnly, 10) : 0;
+}
+
+

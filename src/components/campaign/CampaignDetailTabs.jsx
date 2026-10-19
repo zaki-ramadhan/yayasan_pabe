@@ -8,7 +8,7 @@ import { CampaignDonationGrowthChart } from "./CampaignDonationGrowthChart";
 import { CampaignTransactionsList } from "./CampaignTransactionsList";
 
 const TAB_TRIGGER_CLASS =
-  "rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary pb-3 px-1 text-sm sm:text-base text-slate-700 hover:text-slate-950 transition-colors shrink-0";
+  "rounded-none border-t-0 border-x-0 border-b-2 border-transparent bg-transparent data-[state=active]:bg-transparent data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none shadow-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0 pb-3 px-4 sm:px-5 text-sm sm:text-base font-medium text-slate-700 hover:text-slate-950 transition-colors shrink-0";
 
 /**
  * Controlled editorial tabs for campaign detail.
@@ -32,7 +32,7 @@ export function CampaignDetailTabs({
 }) {
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-      <TabsList className="w-full justify-start border-b border-slate-300 pb-0 rounded-none bg-transparent h-auto p-0 gap-6 overflow-x-auto flex-nowrap">
+      <TabsList className="w-full justify-start border-b border-slate-300 pb-0 rounded-none bg-transparent h-auto p-0 gap-0 overflow-x-auto flex-nowrap">
         <TabsTrigger
           id="tour-tab-detail"
           data-tour-tab="detail"

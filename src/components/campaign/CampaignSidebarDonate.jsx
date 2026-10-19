@@ -91,34 +91,16 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 
 				{/* Donation CTA or Closed State */}
 				{isClosed ? (
-					<div className="space-y-3 pt-1">
+					<div className="space-y-2 pt-1">
 						<Button
 							size="lg"
 							disabled
-							className="w-full text-base font-semibold h-12 rounded-lg bg-slate-200 text-slate-500 cursor-not-allowed shadow-none"
+							className="w-full text-base font-normal h-10.5 rounded-lg bg-slate-200 text-slate-600 cursor-not-allowed shadow-none"
 						>
-							Penggalangan
-							Dana
-							Ditutup
+							Penggalangan Dana Ditutup
 						</Button>
-						<p className="text-xs text-slate-600 text-center leading-relaxed px-1">
-							Masa
-							penggalangan
-							dana
-							untuk
-							program
-							ini
-							telah
-							berakhir.
-							Terima
-							kasih
-							atas
-							kepedulian
-							dan
-							donasi
-							yang
-							telah
-							disalurkan.
+						<p className="text-sm text-slate-700 text-center leading-relaxed px-1">
+							Program telah selesai. Terima kasih atas kepedulian Anda.
 						</p>
 					</div>
 				) : (
@@ -130,7 +112,7 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 							>
 								<Button
 									size="lg"
-									className="w-full text-base font-semibold h-12 shadow-xs rounded-lg bg-primary hover:bg-primary-hover text-white cursor-pointer"
+									className="w-full text-base font-normal h-10.5 shadow-xs rounded-lg bg-primary hover:bg-primary-hover text-white cursor-pointer"
 								>
 									Donasi Sekarang
 								</Button>
@@ -161,6 +143,7 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 				campaignSlug={
 					campaign.slug
 				}
+				isClosed={isClosed}
 			/>
 		</div>
 	);
