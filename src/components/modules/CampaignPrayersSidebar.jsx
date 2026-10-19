@@ -197,7 +197,7 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClo
         {/* Scrollable chat container — increased height for more forum room */}
         <div
           ref={scrollRef}
-          className="relative z-10 max-h-[480px] overflow-y-auto px-3.5 py-4 space-y-4"
+          className="relative z-10 min-h-[440px] max-h-[580px] sm:max-h-[620px] overflow-y-auto px-3.5 py-4 space-y-4"
           style={{ scrollbarWidth: "thin", scrollbarColor: "#94a3b8 transparent" }}
         >
           {/* Loader di dalam scroll container, paling atas — persis seperti WhatsApp */}
