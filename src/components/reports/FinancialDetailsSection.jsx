@@ -78,7 +78,7 @@ export function FinancialDetailsSection({ data }) {
         <div className="lg:col-span-8 flex flex-col h-full">
           <FinancialCategoryBarChart
             data={filteredMonthlyData}
-            categories={categories}
+            categories={data?.categories}
           />
         </div>
         <div className="lg:col-span-4 flex flex-col h-full">
