@@ -8,6 +8,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:brave": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:seed": "node prisma/seed.js"
@@ -41,13 +47,15 @@
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4",
     "babel-plugin-react-compiler": "1.0.0",
     "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "prisma": "^7.10.0",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "vitest": "^5.0.5"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

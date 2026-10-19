@@ -76,6 +76,7 @@ model Donation {
   donorAvatar    String?
   isAnonymous    Boolean   @default(false)
   prayer         String?
+  aminCount      Int       @default(0)
   status         String    @default("PENDING") // PENDING, PAID, EXPIRED, CANCELLED
   paidAt         DateTime?
   expiredAt      DateTime
@@ -204,3 +205,49 @@ model RoutineDonation {
   @@index([status])
   @@index([campaignId])
 }
+
+model JobVacancy {
+  id               String           @id @default(cuid())
+  jobCode          String           @unique
+  title            String
+  department       String
+  location         String
+  type             String           @default("Penuh Waktu (Full-time)")
+  workplace        String           @default("On-site")
+  experience       String           @default("1 - 3 tahun")
+  publishedDate    String
+  deadline         String
+  overview         String
+  responsibilities String[]         @default([])
+  requirements     String[]         @default([])
+  benefits         String[]         @default([])
+  applyUrl         String?
+  isActive         Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  applications     JobApplication[]
+
+  @@index([department])
+  @@index([location])
+  @@index([isActive])
+}
+
+model JobApplication {
+  id           String     @id @default(cuid())
+  vacancyId    String
+  vacancy      JobVacancy @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+  fullName     String
+  email        String
+  phone        String
+  linkedinUrl  String?
+  portfolioUrl String?
+  coverLetter  String
+  resumeUrl    String?
+  status       String     @default("PENDING") // PENDING, REVIEWED, SHORTLISTED, REJECTED
+  createdAt    DateTime   @default(now())
+
+  @@index([vacancyId])
+  @@index([email])
+  @@index([status])
+}
+
