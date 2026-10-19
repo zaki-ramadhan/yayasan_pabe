@@ -1,53 +1,20 @@
 "use client";
 
-import { useState, useMemo, useCallback, useSyncExternalStore } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { PRAYER_SORT_OPTIONS } from "@/data/sortOptions";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import { PrayerCard } from "@/components/modules/PrayerCard";
-import { PostDonationPrayerForm } from "@/components/donation/PostDonationPrayerForm";
-import { getPendingDonationForCampaign, PRAYER_SUBMITTED_EVENT } from "@/lib/donorStorage";
 import { usePrayersSync } from "@/hooks/usePrayersSync";
 import { useScrollLoadMore } from "@/hooks/useScrollLoadMore";
-import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 6;
 
-
-
-function subscribePendingDonation(callback) {
-  window.addEventListener(PRAYER_SUBMITTED_EVENT, callback);
-  window.addEventListener("storage", callback);
-  return () => {
-    window.removeEventListener(PRAYER_SUBMITTED_EVENT, callback);
-    window.removeEventListener("storage", callback);
-  };
-}
-
-function getInvoicesSnapshot() {
-  return localStorage.getItem("pabe_donor_invoices") || localStorage.getItem("ygsm_donor_invoices") || "[]";
-}
-
-function getServerInvoicesSnapshot() {
-  return "[]";
-}
-
-export function CampaignPrayersFeed({ initialDonors = [], campaignSlug, campaignTitle }) {
-  const { donors, aminedSet, handleToggleAmin, addNewPrayer } = usePrayersSync(initialDonors);
+export function CampaignPrayersFeed({ initialDonors = [] }) {
+  const { donors, aminedSet, handleToggleAmin } = usePrayersSync(initialDonors);
   const [sortBy, setSortBy] = useState("terbaru");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  const invoicesRaw = useSyncExternalStore(
-    subscribePendingDonation,
-    getInvoicesSnapshot,
-    getServerInvoicesSnapshot
-  );
-
-  const pendingDonation = useMemo(() => {
-    if (!campaignSlug) return null;
-    return getPendingDonationForCampaign(campaignSlug, invoicesRaw);
-  }, [campaignSlug, invoicesRaw]);
 
   const sortedDonors = useMemo(() => {
     const list = [...donors];
@@ -75,7 +42,7 @@ export function CampaignPrayersFeed({ initialDonors = [], campaignSlug, campaign
 
   const scrollRef = useScrollLoadMore({ onLoadMore: loadMore, threshold: 80 });
 
-  if (prayersOnly.length === 0 && !pendingDonation) {
+  if (prayersOnly.length === 0) {
     return (
       <div className="text-center py-12 text-slate-500 text-sm sm:text-base">
         Belum ada data
@@ -110,48 +77,25 @@ export function CampaignPrayersFeed({ initialDonors = [], campaignSlug, campaign
         </div>
       </div>
 
-      {/* Post-Donation Prayer Form */}
-      {pendingDonation && (
-        <div id="tour-prayer-input">
-        <PostDonationPrayerForm
-          invoiceId={pendingDonation.invoiceId}
-          campaignSlug={campaignSlug}
-          donorName={pendingDonation.donorName}
-          defaultAnonymous={pendingDonation.isAnonymous}
-          onSuccess={(data) => {
-            if (addNewPrayer) {
-              addNewPrayer({
-                id: data.id || `prayer-${Date.now()}`,
-                name: data.isAnonymous ? "Hamba Allah" : (data.donorName || pendingDonation.donorName || "Donatur"),
-                amount: data.amount || 0,
-                date: new Date().toISOString(),
-                prayer: data.prayer,
-                aminCount: 0,
-                isAnonymous: Boolean(data.isAnonymous),
-              });
-            }
-          }}
-        />
-        </div>
-      )}
-
-      {/* Scrollable prayer grid — scroll ke bawah untuk load lebih */}
+      {/* Scrollable prayer list feed — 2 column unified divided grid on md */}
       <div
         ref={scrollRef}
-        className="max-h-[460px] sm:max-h-[500px] overflow-y-auto pr-2 pt-3 pb-3"
+        className="max-h-[480px] sm:max-h-[520px] overflow-y-auto pr-1 sm:pr-1.5 pt-1 pb-2"
         style={{ scrollbarWidth: "thin", scrollbarColor: "#cbd5e1 transparent" }}
       >
         {visiblePrayers.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 sm:gap-y-7 gap-x-3.5 sm:gap-x-4">
+          <div className="bg-slate-200/80 border border-slate-300 rounded-xl sm:rounded-2xl shadow-2xs overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-[1px]">
             {visiblePrayers.map((donor) => (
               <PrayerCard
                 key={donor.id}
                 donor={donor}
                 isAmined={aminedSet.has(donor.id)}
                 onToggleAmin={handleToggleAmin}
-                isCompact={false}
               />
             ))}
+            {visiblePrayers.length % 2 !== 0 && (
+              <div className="hidden md:block bg-white" aria-hidden="true" />
+            )}
           </div>
         ) : (
           <div className="text-center py-12 text-slate-500 text-sm sm:text-base">
@@ -161,11 +105,10 @@ export function CampaignPrayersFeed({ initialDonors = [], campaignSlug, campaign
 
         {/* Loading indicator di dalam scroll area */}
         {isLoadingMore && (
-          <div className="flex justify-center py-4">
+          <div className="flex justify-center py-3">
             <Loader2 className="w-[18px] h-[18px] text-primary animate-spin" />
           </div>
         )}
-
       </div>
     </div>
   );

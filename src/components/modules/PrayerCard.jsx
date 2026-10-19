@@ -3,6 +3,8 @@
 import { formatDate } from "@/lib/formatters";
 import { PrayerAvatar } from "@/components/modules/PrayerAvatar";
 import { PrayerAminButton } from "@/components/modules/PrayerAminButton";
+import { maskEmail } from "@/lib/security";
+import { cn } from "@/lib/utils";
 
 /**
  * Helper to compute humanized relative time
@@ -25,50 +27,56 @@ export function getRelativeTime(dateString) {
   return formatDate(dateString);
 }
 
-export function PrayerCard({ donor, isAmined, onToggleAmin, isCompact = false }) {
+export function PrayerCard({ donor, isAmined, onToggleAmin, className }) {
   const cleanPrayer = (donor.prayer || "").replace(/\s+/g, " ").trim();
+  const displayedEmail = donor.email ? maskEmail(donor.email) : null;
 
   return (
     <article
-      className={`relative bg-white rounded-xl sm:rounded-2xl border border-slate-300 shadow-2xs hover:border-slate-400 transition-all flex flex-col justify-between ${
-        isCompact ? "pt-6 pb-4 px-4" : "pt-6.5 pb-4.5 px-4.5 sm:px-5"
-      }`}
+      className={cn(
+        "bg-white px-4 sm:px-5 py-3.5 sm:py-4 flex items-start gap-3 sm:gap-3.5",
+        className
+      )}
     >
-      {/* Floating Top-Left Avatar */}
-      <div className="absolute -top-3.5 left-4">
-        <PrayerAvatar name={donor.name} size="md" />
-      </div>
+      {/* Avatar donatur */}
+      <PrayerAvatar name={donor.name} size="md" className="mt-0.5 shrink-0" />
 
-      {/* Prayer Message Body with 3-line max constraint */}
-      <div className="space-y-1.5">
-        <p
-          className={`text-slate-800 leading-relaxed font-normal break-words line-clamp-3 ${
-            isCompact ? "text-xs sm:text-sm" : "text-sm sm:text-base"
-          }`}
-        >
-          &ldquo;{cleanPrayer}&rdquo;
-        </p>
-      </div>
+      {/* Konten Doa & Aksi */}
+      <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
+        <div>
+          {/* Header Identitas Donatur: Nama & Email Terproteksi */}
+          <div className="min-w-0">
+            <h4 className="font-semibold text-slate-900 text-xs sm:text-sm truncate">
+              {donor.name}
+            </h4>
+            {displayedEmail && (
+              <span className="text-[11px] sm:text-xs text-slate-500 block truncate mt-0.5 font-normal">
+                {displayedEmail}
+              </span>
+            )}
+          </div>
 
-      {/* Card Footer with Divider */}
-      <div className="pt-2.5 mt-2.5 border-t border-slate-200 flex items-center justify-between gap-2 text-xs sm:text-sm">
-        <div className="min-w-0 flex-1">
-          <h4 className="font-medium text-slate-900 truncate text-xs sm:text-sm line-clamp-1">
-            {donor.name}
-          </h4>
-          <span className="text-[11px] sm:text-xs text-slate-500 block truncate mt-0.5">
-            {getRelativeTime(donor.date)}
-          </span>
+          {/* Isi Teks Doa */}
+          <p className="mt-2 text-xs sm:text-sm text-slate-800 leading-relaxed font-normal break-words">
+            &ldquo;{cleanPrayer}&rdquo;
+          </p>
         </div>
 
-        {/* Interactive Aamiin Action Button */}
-        <PrayerAminButton
-          donorId={donor.id}
-          donorName={donor.name}
-          aminCount={donor.aminCount}
-          isAmined={isAmined}
-          onToggleAmin={onToggleAmin}
-        />
+        {/* Footer: Keterangan Waktu di Kiri, Tombol Aamiin di Kanan */}
+        <div className="mt-3 flex items-center justify-between gap-2">
+          <span className="text-[11px] sm:text-xs text-slate-500 font-normal whitespace-nowrap">
+            {getRelativeTime(donor.date)}
+          </span>
+
+          <PrayerAminButton
+            donorId={donor.id}
+            donorName={donor.name}
+            aminCount={donor.aminCount}
+            isAmined={isAmined}
+            onToggleAmin={onToggleAmin}
+            variant="reaction"
+          />
+        </div>
       </div>
     </article>
   );

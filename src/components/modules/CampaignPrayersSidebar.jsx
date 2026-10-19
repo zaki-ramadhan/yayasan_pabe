@@ -4,7 +4,7 @@
 
 import { useMemo, useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Check, Loader2 } from "lucide-react";
+import { ChevronDown, Check, Loader2, Lock } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -18,6 +18,8 @@ import { getStoredUser } from "@/services/authService";
 import { PRAYER_SORT_OPTIONS } from "@/data/sortOptions";
 import { DateStickyBadge } from "@/components/shared/DateStickyBadge";
 import { getDateKey, getDateBadgeLabel } from "@/lib/dateUtils";
+import { validatePrayer } from "@/lib/security";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 5;
@@ -122,13 +124,21 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClo
   }, [loadMore]);
 
   const handleSend = (text) => {
+    if (isClosed) return;
     const trimmed = (text || "").trim();
-    if (!trimmed) return;
+    const prayerValidation = validatePrayer(trimmed);
+    if (!prayerValidation.isValid) {
+      toast.error(prayerValidation.message);
+      return;
+    }
     const user = getStoredUser();
     const donateUrl = `/campaign/${campaignSlug}/donate?prayer=${encodeURIComponent(trimmed)}`;
+
     if (!user) {
+      toast.info("Masuk akun dan selesaikan donasi untuk menitipkan doa.");
       router.push(`/login?redirect=${encodeURIComponent(donateUrl)}&reason=donation_requires_login`);
     } else {
+      toast.info("Lanjutkan donasi terlebih dahulu untuk menitipkan doa.");
       router.push(donateUrl);
     }
   };
@@ -224,8 +234,15 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClo
           </div>
         </div>
 
-        {/* Input bar transparent seamlessly docked without background — sembunyikan jika program ditutup */}
-        {!isClosed && (
+        {/* Footer input / Closed state lock banner */}
+        {isClosed ? (
+          <div className="relative z-10 p-2 sm:px-2.5 sm:pb-2.5 sm:pt-1">
+            <div className="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900/90 border border-slate-700/80 backdrop-blur-md rounded-full text-slate-300 text-xs sm:text-sm shadow-sm select-none text-center">
+              <Lock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span>Program telah selesai · Pengiriman doa telah ditutup</span>
+            </div>
+          </div>
+        ) : (
           <div
             id="tour-prayer-input"
             className="relative z-10 p-2 sm:px-2.5 sm:pb-2.5 sm:pt-1 bg-transparent"
