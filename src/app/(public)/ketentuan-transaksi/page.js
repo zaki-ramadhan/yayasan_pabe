@@ -15,11 +15,6 @@ export default function KetentuanTransaksiPage() {
   return (
     <div className="w-full">
       <InformationHeroHeader
-        badge={
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Panduan Donatur
-          </span>
-        }
         title="Ketentuan Transaksi"
         description="Informasi batas minimum dan maksimum transaksi donasi via Virtual Account dan QRIS guna mengedukasi donatur dan mencegah kekeliruan nominal transfer."
         imageAlt="Latar Belakang Ketentuan Transaksi Yayasan PABE"

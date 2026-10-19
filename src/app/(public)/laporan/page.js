@@ -13,11 +13,6 @@ export default async function LaporanPage() {
   return (
     <div className="w-full">
       <InformationHeroHeader
-        badge={
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Akuntabilitas Publik
-          </span>
-        }
         title="Laporan Akuntabilitas & Keuangan"
         description="Transparansi mutasi dana donatur, pembiayaan program mustahik, dan saldo kas riil Yayasan PABE yang dikelola secara profesional dan amanah."
         imageAlt="Latar Belakang Laporan Keuangan Yayasan PABE"

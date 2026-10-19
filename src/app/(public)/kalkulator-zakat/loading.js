@@ -6,7 +6,6 @@ export default function KalkulatorZakatLoading() {
       {/* Hero Header Banner - Centered Dark Theme */}
       <div className="relative w-full bg-slate-950 border-b border-slate-800 pt-10 sm:pt-14 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-3">
-          <Skeleton className="h-6 w-44 bg-neutral-800 mx-auto rounded-full" />
           <Skeleton className="h-8 sm:h-10 w-64 bg-neutral-800 mx-auto rounded-lg" />
           <div className="space-y-1.5 pt-1">
             <Skeleton className="h-4 sm:h-5 w-full max-w-2xl bg-neutral-800 mx-auto rounded" />
