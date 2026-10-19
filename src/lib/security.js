@@ -116,14 +116,68 @@ export function validateEmail(email, isRequired = false) {
 }
 
 /**
- * Sanitasi doa atau pesan donatur (tanpa emoji, tanpa tag HTML, maksimal 200 karakter).
+ * Sanitasi doa atau pesan donatur (mendukung emoji ekspresif, tanpa tag HTML, maksimal 200 karakter).
  */
 export function sanitizePrayer(input) {
   if (typeof input !== "string") return "";
-  return stripEmojis(input)
+  return input
     .replace(/<[^>]*>?/gm, "")
     .replace(/\s{2,}/g, " ")
     .slice(0, 200);
+}
+
+export const PRAYER_LIMITS = {
+  MIN_LENGTH: 5,
+  MAX_LENGTH: 150,
+};
+
+/**
+ * Menghitung jumlah karakter visual nyata (Grapheme Cluster).
+ * Memastikan 1 emoji (termasuk emoji majemuk / bertanda) tepat dihitung sebagai 1 karakter.
+ */
+export function countGraphemes(input) {
+  if (typeof input !== "string" || !input) return 0;
+  if (typeof Intl !== "undefined" && Intl.Segmenter) {
+    const segmenter = new Intl.Segmenter("id", { granularity: "grapheme" });
+    return [...segmenter.segment(input)].length;
+  }
+  return [...input].length;
+}
+
+/**
+ * Memeriksa apakah teks doa mengandung kata atau huruf yang bermakna (bukan hanya simbol/emoji saja).
+ */
+export function hasMeaningfulText(input) {
+  if (typeof input !== "string") return false;
+  return /[a-zA-ZÀ-ÿ]{2,}/.test(input);
+}
+
+/**
+ * Validasi doa atau pesan donatur (minimal 5 karakter visual, wajib ada kata/kalimat, maksimal 150 karakter).
+ */
+export function validatePrayer(prayer, isRequired = false, minLength = PRAYER_LIMITS.MIN_LENGTH, maxLength = PRAYER_LIMITS.MAX_LENGTH) {
+  const clean = sanitizePrayer(prayer).trim();
+  if (!clean) {
+    if (isRequired) {
+      const msg = "Untaian doa kebaikan wajib diisi.";
+      return { isValid: false, valid: false, message: msg, error: msg, sanitized: "" };
+    }
+    return { isValid: true, valid: true, message: "", error: "", sanitized: "" };
+  }
+  const visualLength = countGraphemes(clean);
+  if (visualLength < minLength) {
+    const msg = `Untaian doa minimal ${minLength} karakter agar bermakna (contoh: "Semoga berkah & lekas sembuh").`;
+    return { isValid: false, valid: false, message: msg, error: msg, sanitized: clean };
+  }
+  if (!hasMeaningfulText(clean)) {
+    const msg = "Untaian doa wajib mengandung kata atau kalimat doa, bukan hanya deretan emoji atau simbol.";
+    return { isValid: false, valid: false, message: msg, error: msg, sanitized: clean };
+  }
+  if (visualLength > maxLength) {
+    const msg = `Untaian doa maksimal ${maxLength} karakter.`;
+    return { isValid: false, valid: false, message: msg, error: msg, sanitized: clean.slice(0, maxLength) };
+  }
+  return { isValid: true, valid: true, message: "", error: "", sanitized: clean };
 }
 
 export function generateIdempotencyKey() {

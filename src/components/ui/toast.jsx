@@ -11,12 +11,18 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-slate-800 bg-slate-900 text-white shadow-slate-950/30",
-        info: "border-blue-700 bg-blue-600 text-white shadow-blue-950/25",
-        success: "border-emerald-700 bg-emerald-600 text-white shadow-emerald-950/25",
-        destructive: "border-rose-700 bg-rose-600 text-white shadow-rose-950/25",
-        error: "border-rose-700 bg-rose-600 text-white shadow-rose-950/25",
-        warning: "border-amber-700 bg-amber-600 text-white shadow-amber-950/25",
+        default:
+          "border-slate-800 bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-slate-950/30",
+        info:
+          "border-blue-800 bg-gradient-to-r from-blue-700 to-blue-800 text-white shadow-blue-950/25",
+        success:
+          "border-emerald-800 bg-gradient-to-r from-emerald-700 to-emerald-800 text-white shadow-emerald-950/25",
+        destructive:
+          "border-rose-800 bg-gradient-to-r from-rose-700 to-rose-800 text-white shadow-rose-950/25",
+        error:
+          "border-rose-800 bg-gradient-to-r from-rose-700 to-rose-800 text-white shadow-rose-950/25",
+        warning:
+          "border-amber-800 bg-gradient-to-r from-amber-700 to-amber-800 text-white shadow-amber-950/25",
       },
     },
     defaultVariants: {

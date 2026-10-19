@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { NominalGridPicker } from "@/components/donation/NominalGridPicker";
 import { formatRupiah } from "@/lib/formatters";
+import { DONATION_LIMITS } from "@/lib/security";
 import { getStoredUser } from "@/services/authService";
 
 const PRESET_AMOUNTS = [25000, 50000, 100000];
@@ -96,7 +97,8 @@ export function QuickDonateBar({ defaultCampaignSlug = "beasiswa-santri-penghafa
           </label>
           <CurrencyInput
             autoFocus
-            min={10000}
+            min={DONATION_LIMITS.MIN_AMOUNT}
+            max={DONATION_LIMITS.MAX_AMOUNT}
             placeholder="10.000"
             value={customAmount}
             onChange={handleCustomChange}

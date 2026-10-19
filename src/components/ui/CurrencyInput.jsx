@@ -6,7 +6,8 @@ export function CurrencyInput({
   value,
   onChange,
   min = 0,
-  maxDigits = 14,
+  max,
+  maxDigits,
   placeholder = "0",
   className,
   autoFocus = false,
@@ -15,14 +16,17 @@ export function CurrencyInput({
   disabled = false,
   ...props
 }) {
+  const effectiveMaxDigits = maxDigits ?? (max ? String(max).length : 11);
   const numericVal = typeof value === "number" ? value : parseInt(String(value || "").replace(/\D/g, ""), 10) || 0;
   const displayVal = numericVal > 0 ? formatNumber(numericVal) : "";
 
   const handleChange = (e) => {
     const raw = e.target.value.replace(/\D/g, "");
-    // Abaikan jika sudah melebihi batas panjang digit, jangan ubah angka jadi 999999999
-    if (raw.length > maxDigits) return;
+    // Abaikan jika sudah melebihi batas panjang digit
+    if (raw.length > effectiveMaxDigits) return;
     const parsed = raw ? parseInt(raw, 10) : 0;
+    // Cegah input melebihi nilai maksimal yang ditentukan
+    if (max !== undefined && max > 0 && parsed > max) return;
     const finalRaw = parsed > 0 ? String(parsed) : (raw === "" ? "" : "0");
     onChange(parsed, finalRaw);
   };
@@ -30,6 +34,8 @@ export function CurrencyInput({
   const handleBlur = (e) => {
     if (min > 0 && String(value || "").trim() !== "" && numericVal < min) {
       onChange(min, String(min));
+    } else if (max !== undefined && max > 0 && numericVal > max) {
+      onChange(max, String(max));
     }
     if (typeof props.onBlur === "function") {
       props.onBlur(e);
