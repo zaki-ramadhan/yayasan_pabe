@@ -22,14 +22,12 @@ export function FinancialDetailsSection({ data }) {
     { id: "2025", label: "Tahun 2025" },
   ];
 
-  const monthlyData = data?.monthlyData || [];
-  const categories = data?.categories || [];
-
   // Filter bulanan sesuai tahun aktif
   const filteredMonthlyData = useMemo(() => {
-    if (selectedYear === "all") return monthlyData;
-    return monthlyData.filter((item) => item.year === selectedYear);
-  }, [monthlyData, selectedYear]);
+    const list = data?.monthlyData || [];
+    if (selectedYear === "all") return list;
+    return list.filter((item) => item.year === selectedYear);
+  }, [data?.monthlyData, selectedYear]);
 
   // Hitung ulang distribusi kategori jika tahun tertentu dipilih
   const filteredDistribution = useMemo(() => {
@@ -37,6 +35,7 @@ export function FinancialDetailsSection({ data }) {
       return data.categoryDistribution;
     }
 
+    const categories = data?.categories || [];
     const catSums = {};
     filteredMonthlyData.forEach((row) => {
       categories.forEach((cat) => {
@@ -58,7 +57,7 @@ export function FinancialDetailsSection({ data }) {
       })
       .filter((c) => c.value > 0)
       .sort((a, b) => b.value - a.value);
-  }, [data?.categoryDistribution, filteredMonthlyData, categories, selectedYear]);
+  }, [data, filteredMonthlyData, selectedYear]);
 
   return (
     <section className="space-y-4">

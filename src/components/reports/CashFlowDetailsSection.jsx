@@ -22,13 +22,12 @@ export function CashFlowDetailsSection({ data }) {
     { id: "2025", label: "Tahun 2025" },
   ];
 
-  const monthlyData = data?.monthlyData || [];
-
   // Filter data bulanan sesuai tahun
   const filteredMonthlyData = useMemo(() => {
-    if (selectedYear === "all") return monthlyData;
-    return monthlyData.filter((item) => item.year === selectedYear);
-  }, [monthlyData, selectedYear]);
+    const list = data?.monthlyData || [];
+    if (selectedYear === "all") return list;
+    return list.filter((item) => item.year === selectedYear);
+  }, [data?.monthlyData, selectedYear]);
 
   // Hitung ulang total Cash In & Cash Out jika tahun tertentu dipilih
   const filteredTotals = useMemo(() => {
@@ -44,7 +43,7 @@ export function CashFlowDetailsSection({ data }) {
     });
 
     return { cashIn, cashOut };
-  }, [data?.totals, filteredMonthlyData, selectedYear]);
+  }, [data, filteredMonthlyData, selectedYear]);
 
   return (
     <section className="space-y-4">

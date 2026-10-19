@@ -71,7 +71,7 @@ export default function KarierPage() {
 
       return true;
     });
-  }, [debouncedSearchQuery, location, type, department]);
+  }, [vacancies, debouncedSearchQuery, location, type, department]);
 
   // Active job calculation
   const activeJob = useMemo(() => {
