@@ -7,6 +7,7 @@ import {
 	Image as ImageIcon,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { SafeImage } from "@/components/ui/safe-image";
 import { HighlightText } from "@/components/shared/HighlightText";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
@@ -74,14 +75,12 @@ export function ArticleCard({
 						</div>
 
 						{/* Title */}
-						<Link href={`/artikel/${article.slug}`}>
-							<h2 className="text-base sm:text-lg font-semibold text-slate-950 hover:text-primary hover:underline transition-colors leading-snug line-clamp-2">
-								<HighlightText
-									text={article.title}
-									highlight={highlightQuery}
-								/>
-							</h2>
-						</Link>
+						<h2 className="text-base sm:text-lg font-semibold text-slate-950 leading-snug line-clamp-2">
+							<HighlightText
+								text={article.title}
+								highlight={highlightQuery}
+							/>
+						</h2>
 
 						{/* Excerpt */}
 						<p className="text-xs sm:text-sm text-slate-700 line-clamp-2 leading-relaxed">
@@ -151,6 +150,16 @@ export function ArticleCard({
 						variant="icon"
 						align="end"
 					/>
+
+					<Link href={`/artikel/${article.slug}`} className="inline-block">
+						<Button
+							variant="outline"
+							size="sm"
+							className="h-7 sm:h-8 px-2.5 sm:px-3 text-xs font-semibold rounded-lg border-slate-300 text-slate-700 hover:text-primary hover:border-primary bg-white shadow-2xs cursor-pointer ml-1"
+						>
+							Baca Artikel
+						</Button>
+					</Link>
 				</div>
 			</div>
 		</Card>

@@ -24,7 +24,7 @@ export function CampaignCard({
   return (
     <div className={cn("flex flex-col h-full w-full rounded-xl border border-slate-300 bg-white overflow-hidden", className)}>
       {/* Visual Header / Thumbnail with SafeImage & Category RibbonBadge */}
-      <Link href={`/campaign/${campaign.slug}`} className="block relative aspect-video w-full bg-slate-100 overflow-hidden border-b border-slate-200">
+      <div className="relative aspect-video w-full bg-slate-100 overflow-hidden border-b border-slate-200">
         <SafeImage
           src={campaign.bannerUrl}
           alt={campaign.title}
@@ -38,7 +38,7 @@ export function CampaignCard({
             </RibbonBadge>
           </div>
         )}
-      </Link>
+      </div>
 
       {/* Content Area (Upper Body): Preserves original spacious padding */}
       <div className="flex flex-col flex-1 px-4 sm:px-5 pt-4 sm:pt-5 pb-3 space-y-2.5">
