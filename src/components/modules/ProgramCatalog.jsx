@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import { Loader2 } from "lucide-react";
 import { CATEGORIES } from "@/data/categories";
 import { PROGRAM_SORT_OPTIONS } from "@/data/sortOptions";
 import { useCatalogState } from "@/hooks/useCatalogState";
@@ -8,9 +10,8 @@ import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 import { CatalogSearchBar } from "@/components/shared/CatalogSearchBar";
 import { CategoryTabs } from "@/components/shared/CategoryTabs";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { Pagination } from "@/components/ui/pagination";
 
-const ITEMS_PER_PAGE = 9;
+const BATCH_SIZE = 6;
 
 function filterCampaign(campaign, { category, searchQuery, categories }) {
   if (category !== "all" && category !== "semua") {
@@ -50,21 +51,71 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
     searchQuery,
     debouncedSearchQuery,
     sortBy,
-    currentPage,
     isPending,
     isDebouncing,
     categoryCounts,
-    paginatedItems,
-    totalPages,
+    filteredItems,
     handlers,
   } = useCatalogState({
     items: initialCampaigns,
     filterFn: filterCampaign,
     sortFn: sortCampaigns,
-    itemsPerPage: ITEMS_PER_PAGE,
+    itemsPerPage: 100, // Ambil dataset terfilter utuh, slicing diatur via visibleCount infinite scroll
     categories,
     syncUrlCategory: true,
   });
+
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const sentinelRef = useRef(null);
+
+  const [prevFilter, setPrevFilter] = useState({
+    selectedCategory,
+    debouncedSearchQuery,
+    sortBy,
+  });
+
+  if (
+    prevFilter.selectedCategory !== selectedCategory ||
+    prevFilter.debouncedSearchQuery !== debouncedSearchQuery ||
+    prevFilter.sortBy !== sortBy
+  ) {
+    setPrevFilter({ selectedCategory, debouncedSearchQuery, sortBy });
+    setVisibleCount(BATCH_SIZE);
+  }
+
+  const hasMore = visibleCount < filteredItems.length;
+  const visibleItems = useMemo(
+    () => filteredItems.slice(0, visibleCount),
+    [filteredItems, visibleCount]
+  );
+
+  const handleLoadMore = useCallback(() => {
+    if (isLoadingMore || !hasMore) return;
+    setIsLoadingMore(true);
+    setTimeout(() => {
+      setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, filteredItems.length));
+      setIsLoadingMore(false);
+    }, 450);
+  }, [isLoadingMore, hasMore, filteredItems.length]);
+
+  // Observer pada elemen sentinel di bawah grid
+  useEffect(() => {
+    if (!hasMore || isLoadingMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          handleLoadMore();
+        }
+      },
+      { rootMargin: "150px" }
+    );
+    const el = sentinelRef.current;
+    if (el) observer.observe(el);
+    return () => {
+      if (el) observer.unobserve(el);
+    };
+  }, [hasMore, isLoadingMore, handleLoadMore]);
 
   return (
     <div className="space-y-6">
@@ -92,10 +143,10 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
             <CampaignCardSkeleton key={n} />
           ))}
         </div>
-      ) : paginatedItems.length > 0 ? (
+      ) : visibleItems.length > 0 ? (
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-2">
-            {paginatedItems.map((camp, index) => (
+            {visibleItems.map((camp, index) => (
               <CampaignCard
                 key={camp.id}
                 campaign={camp}
@@ -105,12 +156,23 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
             ))}
           </div>
 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlers.onPageChange}
-            className="mt-3"
-          />
+          {/* Sentinel trigger untuk memuat lebih banyak program saat discroll */}
+          <div ref={sentinelRef} className="h-4 w-full pointer-events-none" />
+
+          {/* Loading Indicator saat infinite scroll berlangsung */}
+          {isLoadingMore && (
+            <div className="flex items-center justify-center gap-2.5 py-8 text-sm text-slate-600">
+              <Loader2 className="w-5 h-5 text-primary animate-spin" />
+              <span className="font-medium">Memuat program kebaikan lainnya...</span>
+            </div>
+          )}
+
+          {/* Keterangan akhir saat semua program telah dimuat */}
+          {!hasMore && filteredItems.length > BATCH_SIZE && (
+            <div className="text-center py-8 text-xs sm:text-sm text-slate-500 select-none">
+              Seluruh program ({filteredItems.length}) telah ditampilkan
+            </div>
+          )}
         </div>
       ) : (
         <EmptyState
