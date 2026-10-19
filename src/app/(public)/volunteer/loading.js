@@ -7,19 +7,20 @@ export default function VolunteerLoading() {
         {/* Left Column: Editorial & Value Prop */}
         <div className="lg:col-span-5 space-y-8">
           <div className="space-y-3">
-            <Skeleton className="h-9 sm:h-10 w-80 max-w-full rounded-lg" />
-            <Skeleton className="h-4 sm:h-5 w-full rounded" />
-            <Skeleton className="h-4 sm:h-5 w-5/6 rounded" />
+            <Skeleton className="h-8 sm:h-10 w-80 max-w-full rounded-lg" />
+            <div className="space-y-1.5 pt-1">
+              <Skeleton className="h-4 sm:h-5 w-full rounded" />
+              <Skeleton className="h-4 sm:h-5 w-5/6 rounded" />
+            </div>
           </div>
 
+          {/* Perks List: 3 Editorial items without icons */}
           <div className="divide-y divide-slate-200 border-y border-slate-300 py-2">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="py-4 space-y-1.5 flex items-start gap-3.5">
-                <Skeleton className="w-8 h-8 rounded-lg shrink-0 mt-0.5" />
-                <div className="space-y-1 flex-1">
-                  <Skeleton className="h-4.5 w-40 rounded" />
-                  <Skeleton className="h-3.5 w-full rounded" />
-                </div>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="py-4 space-y-1.5">
+                <Skeleton className="h-5 w-48 rounded" />
+                <Skeleton className="h-4 w-full rounded" />
+                <Skeleton className="h-4 w-5/6 rounded" />
               </div>
             ))}
           </div>
@@ -60,14 +61,13 @@ export default function VolunteerLoading() {
           {/* Motivation Textarea */}
           <div className="space-y-1.5">
             <Skeleton className="h-4 w-36 rounded" />
-            <Skeleton className="h-28 w-full rounded-lg" />
+            <Skeleton className="h-24 w-full rounded-lg" />
           </div>
 
           {/* Submit Button */}
-          <Skeleton className="h-12 w-full rounded-lg" />
+          <Skeleton className="h-11 w-full rounded-lg" />
         </div>
       </div>
     </main>
   );
 }
-
