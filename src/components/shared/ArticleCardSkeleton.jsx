@@ -77,7 +77,6 @@ export function ArticleCardSkeleton({ isCompact = false, className }) {
           <Skeleton className="h-3.5 w-10 rounded" />
           <Skeleton className="h-3.5 w-10 rounded" />
           <Skeleton className="h-5 w-5 rounded-full" />
-          <Skeleton className="h-7 sm:h-8 w-24 rounded-lg ml-1" />
         </div>
       </div>
     </div>
