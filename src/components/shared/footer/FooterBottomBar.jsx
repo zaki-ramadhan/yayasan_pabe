@@ -17,7 +17,7 @@ export function FooterBottomBar() {
         </Link>
         <span className="text-slate-700 select-none">/</span>
         <Link href="/ketentuan-transaksi" className="text-slate-200 hover:text-white transition-colors">
-          Ketentuan ZISWAF
+          Ketentuan Donasi &amp; Zakat
         </Link>
       </div>
     </div>

@@ -48,10 +48,10 @@ export function FooterContactInfo({
           href={wa}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition-colors shadow-sm cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm transition-colors shadow-sm cursor-pointer"
         >
           <WhatsAppIcon className="w-4.5 h-4.5 shrink-0" />
-          <span>Konsultasi Donasi &amp; ZISWAF</span>
+          <span>Konsultasi Zakat &amp; Donasi</span>
         </a>
       </div>
     </div>

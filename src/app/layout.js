@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/toast";
 import { OfflineStatusBanner } from "@/components/shared/OfflineStatusBanner";
 import "./globals.css";
@@ -15,9 +16,15 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+const crustaceans = localFont({
+  src: "./fonts/Crustaceans-SignatureDEMO-Regular.otf",
+  variable: "--font-crustaceans",
+  display: "swap",
+});
+
 export const metadata = {
   title: {
-    default: "Yayasan PABE - Donasi & ZISWAF",
+    default: "Yayasan PABE - Donasi & Zakat",
     template: "%s | Yayasan PABE",
   },
   description:
@@ -53,7 +60,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="id"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${crustaceans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body

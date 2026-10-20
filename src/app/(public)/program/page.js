@@ -5,7 +5,7 @@ import { ProgramCatalog } from "@/components/modules/ProgramCatalog";
 import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 
 export const metadata = {
-  title: "Program Kebaikan & ZISWAF",
+  title: "Program Donasi & Penyaluran Zakat",
   description: "Temukan berbagai program kebaikan, beasiswa santri, tanggap bencana, dan zakat produktif Yayasan PABE.",
 };
 

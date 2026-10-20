@@ -48,14 +48,14 @@ export function AuthVisualPanel() {
         <div className="absolute bottom-10 right-10 w-72 h-72 rounded-full bg-emerald-600/10 blur-3xl pointer-events-none" />
 
         {/* Bottom Aligned Content Group */}
-        <div className="relative z-10 w-full max-w-md mx-auto flex flex-col items-center">
+        <div className="relative z-10 w-full max-w-md xl:max-w-lg mx-auto flex flex-col items-center">
           {/* Inviting Action Headline & Subheading */}
-          <div className="space-y-3 text-center">
-            <h1 className="text-2xl sm:text-3xl xl:text-4xl font-medium text-white tracking-tight leading-snug">
-              Mari Melangkah Bersama, Wujudkan Kebaikan Nyata
+          <div className="space-y-4 text-center">
+            <h1 className="text-3xl lg:text-4xl xl:text-5xl font-crustaceans text-white tracking-tight leading-[1.15]">
+              Mari Melangkah Bersama, <br /> Wujudkan Kebaikan Nyata
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-md mx-auto font-normal">
+            <p className="text-xs sm:text-sm xl:text-base text-slate-400 leading-relaxed max-w-md mx-auto font-normal">
               Satu langkah kepedulian Anda menghadirkan masa depan yang lebih mandiri dan penuh harapan bagi santri, yatim, dan dhuafa.
             </p>
           </div>

@@ -13,7 +13,13 @@ export async function getAuditReports() {
       orderBy: { year: "desc" },
     });
     if (dbReports && dbReports.length > 0) {
-      return dbReports;
+      return dbReports.map((r) => ({
+        ...r,
+        pdfUrl:
+          r.pdfUrl && r.pdfUrl !== "#"
+            ? r.pdfUrl
+            : `/api/documents/download?type=audit&year=${r.year || 2025}`,
+      }));
     }
   } catch (error) {
     console.warn("Prisma getAuditReports fallback:", error.message);

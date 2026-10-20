@@ -24,7 +24,7 @@ export function ArticleMiniCard({
   return (
     <Card
       className={cn(
-        "p-2 sm:p-2.5 bg-white border-slate-300 hover:border-slate-400 transition-colors flex flex-row gap-2.5 sm:gap-3 items-center rounded-lg shadow-2xs group h-full",
+        "p-2 sm:p-2.5 bg-white border-slate-200 transition-colors flex flex-row gap-2.5 sm:gap-3 items-center rounded-lg shadow-2xs group h-full",
         className
       )}
     >

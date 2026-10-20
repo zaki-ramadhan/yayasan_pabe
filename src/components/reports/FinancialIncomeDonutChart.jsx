@@ -48,11 +48,11 @@ export function FinancialIncomeDonutChart({ data = [] }) {
                           style={{ backgroundColor: item.payload?.color }}
                           aria-hidden="true"
                         />
-                        <span className="font-semibold text-slate-950">
+                        <span className="font-medium text-slate-900">
                           {item.name}
                         </span>
                       </div>
-                      <div className="text-slate-600 font-medium">
+                      <div className="text-slate-500 font-normal">
                         {formatRupiah(Number(item.value))} ({item.payload?.percentage}%)
                       </div>
                     </div>

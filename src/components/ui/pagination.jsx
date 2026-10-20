@@ -106,7 +106,7 @@ export function Pagination({
               className={cn(
                 "w-10 h-10 rounded-lg text-sm transition-all select-none flex items-center justify-center",
                 isActive
-                  ? "font-semibold text-white bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 border-t border-t-slate-500 border-x border-x-slate-700 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.25)] cursor-default"
+                  ? "font-medium text-white bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 border-t border-t-slate-500 border-x border-x-slate-700 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.25)] cursor-default"
                   : "font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-100 hover:border-slate-400 cursor-pointer"
               )}
             >

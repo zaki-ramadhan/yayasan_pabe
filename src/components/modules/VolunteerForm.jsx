@@ -6,6 +6,13 @@ import { toast } from "@/hooks/use-toast";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { VolunteerSuccessCard } from "@/components/volunteer/VolunteerSuccessCard";
 import { getStoredUser } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
@@ -34,7 +41,7 @@ export function VolunteerForm() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [city, setCity] = useState("");
-  const [interest, setInterest] = useState(INTEREST_OPTIONS[0]);
+  const [interest, setInterest] = useState("");
   const [motivation, setMotivation] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -117,6 +124,11 @@ export function VolunteerForm() {
     const cleanCity = stripEmojis(city).replace(/[^a-zA-ZÀ-ÿ\s.,'\-]/g, "").trim();
     if (!cleanCity || cleanCity.length < 2) {
       toast.error("Mohon masukkan kota / kabupaten domisili yang valid.");
+      return;
+    }
+
+    if (!interest) {
+      toast.error("Mohon pilih peminatan aksi relawan.");
       return;
     }
 
@@ -213,17 +225,18 @@ export function VolunteerForm() {
 
         <div className="space-y-1.5">
           <label className="text-sm font-semibold text-slate-800 block">Peminatan Aksi <span className="text-rose-500">*</span></label>
-          <select
-            value={interest}
-            onChange={(e) => setInterest(e.target.value)}
-            className="w-full h-11 px-3 text-sm rounded-lg border border-border-strong bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
-          >
-            {INTEREST_OPTIONS.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+          <Select value={interest} onValueChange={setInterest}>
+            <SelectTrigger className="w-full h-11 text-sm rounded-lg border-border-strong bg-white">
+              <SelectValue placeholder="Pilih peminatan aksi..." />
+            </SelectTrigger>
+            <SelectContent>
+              {INTEREST_OPTIONS.map((opt) => (
+                <SelectItem key={opt} value={opt}>
+                  {opt}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -239,7 +252,7 @@ export function VolunteerForm() {
         />
       </div>
 
-      <Button type="submit" disabled={loading} className="w-full h-11 font-semibold">
+      <Button type="submit" disabled={loading} className="w-full h-11 font-medium">
         {loading ? "Mengirim Pendaftaran..." : "Daftar sebagai relawan PABE"}
       </Button>
     </form>

@@ -12,6 +12,8 @@ export const AUDIT_SUMMARY_DATA = {
   operationalRatio: "8.8%",
   maxAllowedRatio: "12.5%",
   totalFundsManaged: 12500000000,
+  pdfUrl: "/api/documents/download?type=audit&year=2025",
+  downloadFilename: "Laporan-Audit-Keuangan-PABE-2025.pdf",
   allocations: [
     {
       id: "tahfidz",
@@ -100,7 +102,8 @@ export const SYARIAH_COMPLIANCE_DATA = {
   shariaBoardChairman: "Dr. KH. Abdullah Syukri, M.A.",
   effectiveDate: "01 Januari 2026 - 31 Desember 2026",
   legalFoundation: "DSN-MUI No. 138/DSN-MUI/IX/2020 & Regulasi Kemenag RI",
-  pdfUrl: "#",
+  pdfUrl: "/api/documents/download?type=syariah",
+  downloadFilename: "SK-Dewan-Pengawas-Syariah-PABE-2026.pdf",
   radarMetrics: [
     { dimension: "Akad Syariah", score: 98, fullMark: 100 },
     { dimension: "Ketepatan Asnaf", score: 96, fullMark: 100 },

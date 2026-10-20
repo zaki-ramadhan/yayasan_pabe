@@ -229,7 +229,7 @@ export function LoginForm() {
               onChange={(e) => setRememberMe(e.target.checked)}
               className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary cursor-pointer"
             />
-            <span>Ingat saya di perangkat ini</span>
+            <span>Ingat saya</span>
           </label>
         </div>
 

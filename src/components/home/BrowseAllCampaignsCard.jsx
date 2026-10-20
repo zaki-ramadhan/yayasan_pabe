@@ -25,7 +25,7 @@ export function BrowseAllCampaignsCard({ totalCount = 0, className }) {
         <Button
           type="button"
           variant="outline"
-          className="h-8.5 sm:h-9 px-5 rounded-lg text-xs sm:text-sm font-semibold border-slate-300 text-slate-700 bg-white hover:bg-slate-50 hover:text-slate-900 hover:border-slate-400 shadow-2xs transition-colors flex items-center gap-2 cursor-pointer"
+          className="h-8.5 sm:h-9 px-5 rounded-lg text-xs sm:text-sm font-medium border-slate-300 text-slate-700 bg-white hover:bg-slate-50 hover:text-slate-900 hover:border-slate-400 shadow-2xs transition-colors flex items-center gap-2 cursor-pointer"
         >
           <span>Lihat Seluruh Program</span>
           {totalCount > 0 && <span className="text-slate-500 font-normal">({totalCount})</span>}

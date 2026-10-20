@@ -16,6 +16,7 @@ export function PageHeader({
   action,
   align = "left",
   className = "",
+  titleClassName = "",
 }) {
   const isCenter = align === "center";
 
@@ -30,7 +31,12 @@ export function PageHeader({
       {badge && <div className={cn("mb-2", isCenter && "flex justify-center")}>{badge}</div>}
       <div className={cn("flex flex-col sm:flex-row sm:items-end justify-between gap-4")}>
         <div className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight leading-tight">
+          <h1
+            className={cn(
+              "text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight leading-tight",
+              titleClassName
+            )}
+          >
             {title}
           </h1>
           {description && (

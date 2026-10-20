@@ -21,7 +21,7 @@ export default async function HomePage() {
   const [allCampaigns, metrics, articles, instagramPosts, instagramAccount] = await Promise.all([
     getCampaigns({ status: "ACTIVE" }),
     getTransparencyMetrics(),
-    getArticles({ limit: 8 }),
+    getArticles({ limit: 10 }),
     getInstagramPosts(18),
     getInstagramAccount(),
   ]);

@@ -40,9 +40,9 @@ export function DistributionSyariahRadarChart({ metrics = [] }) {
                   const data = payload[0].payload;
                   return (
                     <div className="bg-white border border-slate-200 rounded-md p-3 shadow-md text-sm space-y-1">
-                      <p className="font-semibold text-slate-950">{data.dimension}</p>
-                      <p className="text-slate-700 font-medium">
-                        Skor: <span className="font-semibold text-slate-950">{data.score}</span> / {data.fullMark}
+                      <p className="font-semibold text-slate-900">{data.dimension}</p>
+                      <p className="text-slate-500 font-normal">
+                        Skor: <span className="font-medium text-slate-900">{data.score}</span> / {data.fullMark}
                       </p>
                     </div>
                   );

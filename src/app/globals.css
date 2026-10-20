@@ -21,6 +21,7 @@
 
   --font-sans: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
+  --font-crustaceans: var(--font-crustaceans), cursive;
 }
 
 :root {
@@ -58,6 +59,28 @@ html[data-scroll-locked] {
 .recharts-surface *:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+/* Recharts tooltip typography normalization (max semibold, no bold-black spam) */
+.recharts-default-tooltip {
+  font-family: inherit !important;
+}
+.recharts-default-tooltip .recharts-tooltip-label {
+  font-weight: 500 !important;
+  color: #0f172a !important;
+  margin-bottom: 4px !important;
+}
+.recharts-default-tooltip .recharts-tooltip-item {
+  font-weight: 500 !important;
+  color: #334155 !important;
+}
+.recharts-default-tooltip .recharts-tooltip-item-name {
+  font-weight: 400 !important;
+  color: #64748b !important;
+}
+.recharts-default-tooltip .recharts-tooltip-item-value {
+  font-weight: 500 !important;
+  color: #0f172a !important;
 }
 
 /* Custom Driver.js Popover Styling (Clean, Neutral, Accessible, No Bold Spam) */

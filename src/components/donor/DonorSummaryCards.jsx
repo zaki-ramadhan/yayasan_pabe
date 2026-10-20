@@ -41,7 +41,7 @@ export function DonorSummaryCards({ metrics, isLoading = false }) {
       {cards.map((card) => (
         <div
           key={card.title}
-          className="rounded-md border border-slate-200/90 bg-sidebar p-5 transition-colors hover:border-slate-300"
+          className="rounded-md border border-slate-200/90 bg-sidebar p-5 transition-colors"
         >
           <p className="text-sm font-medium text-slate-500">
             {card.title}

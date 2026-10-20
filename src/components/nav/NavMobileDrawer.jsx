@@ -372,7 +372,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 						}
 						className="w-full block"
 					>
-						<Button className="w-full h-10 rounded-lg font-semibold bg-slate-900 hover:bg-slate-800 text-white justify-center text-sm shadow-2xs cursor-pointer flex items-center gap-2">
+						<Button className="w-full h-10 rounded-lg font-medium bg-slate-900 hover:bg-slate-800 text-white justify-center text-sm shadow-2xs cursor-pointer flex items-center gap-2">
 							<User className="w-4 h-4 text-white" />
 							<span>
 								Masuk

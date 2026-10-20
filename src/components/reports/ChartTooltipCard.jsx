@@ -12,7 +12,7 @@ export function ChartTooltipCard({ active, payload, label, formatter = formatRup
   return (
     <div className="bg-white border border-slate-200 rounded-md shadow-md p-3 text-sm space-y-2 min-w-[200px]">
       {label && (
-        <div className="font-semibold text-slate-950 border-b border-slate-100 pb-1.5">
+        <div className="font-semibold text-slate-900 border-b border-slate-100 pb-1.5">
           {label}
         </div>
       )}
@@ -30,9 +30,9 @@ export function ChartTooltipCard({ active, payload, label, formatter = formatRup
                   style={{ backgroundColor: item.color || item.fill }}
                   aria-hidden="true"
                 />
-                <span className="text-slate-600 font-normal">{item.name}</span>
+                <span className="text-slate-500 font-normal">{item.name}</span>
               </div>
-              <span className="font-semibold text-slate-950">
+              <span className="font-medium text-slate-900">
                 {formatter(Number(item.value))}
               </span>
             </div>

@@ -91,7 +91,7 @@ export function AboutSidebarInfo() {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold transition-colors shadow-2xs cursor-pointer"
+              className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-medium transition-colors shadow-2xs cursor-pointer"
             >
               <WhatsAppIcon className="w-4.5 h-4.5 shrink-0" />
               <span>Hubungi Layanan WhatsApp</span>

@@ -21,11 +21,15 @@ export function AuditReportCard({ report }) {
           <p className="text-sm text-slate-700">Kantor Akuntan Publik: {report.auditorName}</p>
         </div>
 
-        <a href={report.pdfUrl} className="group inline-block shrink-0">
+        <a
+          href={report.pdfUrl || `/api/documents/download?type=audit&year=${report.year}`}
+          download={`Laporan-Audit-Keuangan-PABE-${report.year}.pdf`}
+          className="group inline-block shrink-0"
+        >
           <Button
             variant="outline"
             size="sm"
-            className="h-10 px-4 text-sm font-medium border-slate-300 text-slate-900 hover:bg-slate-50"
+            className="h-10 px-4 text-sm font-medium border-slate-300 text-slate-900 hover:bg-slate-50 cursor-pointer"
           >
             <Download className="w-4 h-4 mr-1.5 text-slate-600 group-hover:text-primary group-hover:-translate-y-0.5 transition-all" />
             Unduh Dokumen PDF

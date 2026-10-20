@@ -75,13 +75,15 @@ export function HomeHero({ defaultCampaignSlug }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           {/* Left Copy */}
           <div className="lg:col-span-7 space-y-6">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-950 tracking-tight leading-tight">
-              Penyaluran Zakat, Infak, dan Sedekah untuk Santri &amp; Dhuafa
-            </h1>
+            <div className="space-y-1.5 sm:space-y-2">
+              <h1 className="text-5xl sm:text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-crustaceans text-slate-950 leading-[1.08] sm:leading-[1.1] break-words">
+                Penyaluran Zakat, Infak, dan Sedekah untuk Santri &amp; Dhuafa
+              </h1>
 
-            <p className="text-base text-slate-800 leading-relaxed max-w-xl font-normal">
-              Yayasan PABE mengelola dan menyalurkan dana amanah untuk pembinaan hafalan Al-Qur&apos;an, kemandirian anak yatim, dan bantuan kemanusiaan secara transparan.
-            </p>
+              <p className="text-base text-slate-800 leading-relaxed max-w-xl font-normal -mt-1 sm:-mt-2">
+                Yayasan PABE mengelola dan menyalurkan dana amanah untuk pembinaan hafalan Al-Qur&apos;an, kemandirian anak yatim, dan bantuan kemanusiaan secara transparan.
+              </p>
+            </div>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <Link href="/program">
@@ -99,26 +101,11 @@ export function HomeHero({ defaultCampaignSlug }) {
                   variant="secondary3d"
                   className="h-12 px-6 rounded-lg"
                 >
-                  Kalkulator ZISWAF
+                  Kalkulator Zakat
                 </Button>
               </Link>
             </div>
 
-            {/* Donor Perks & Trust Highlights */}
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-300/80 text-sm text-slate-700">
-              <div>
-                <span className="block font-semibold text-slate-950 text-base">Mulai Rp 10.000</span>
-                <span className="text-xs sm:text-sm">Nominal bebas</span>
-              </div>
-              <div>
-                <span className="block font-semibold text-slate-950 text-base">QRIS &amp; Transfer Bank</span>
-                <span className="text-xs sm:text-sm">Semua e-wallet &amp; bank</span>
-              </div>
-              <div>
-                <span className="block font-semibold text-slate-950 text-base">Konfirmasi Otomatis</span>
-                <span className="text-xs sm:text-sm">Bukti donasi instan</span>
-              </div>
-            </div>
           </div>
 
           {/* Right Quick Donation Box */}

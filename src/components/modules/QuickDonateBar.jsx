@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { NominalGridPicker } from "@/components/donation/NominalGridPicker";
-import { formatRupiah } from "@/lib/formatters";
 import { DONATION_LIMITS } from "@/lib/security";
 import { getStoredUser } from "@/services/authService";
 
@@ -113,9 +112,9 @@ export function QuickDonateBar({ defaultCampaignSlug = "beasiswa-santri-penghafa
           type="submit"
           disabled={finalAmount < 10000}
           variant="primary3d"
-          className="w-full h-12 rounded-lg text-base"
+          className="w-full h-12 rounded-lg text-base font-medium"
         >
-          Lanjutkan {formatRupiah(finalAmount)}
+          Donasi Sekarang
         </Button>
 
         <div className="flex items-center justify-between text-xs sm:text-sm text-slate-700 pt-1 px-1">

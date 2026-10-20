@@ -27,7 +27,7 @@ export function DistributionAreaChart({ data = [] }) {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
-            margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
+            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
           >
             <defs>
               <linearGradient id="distributionGradient" x1="0" y1="0" x2="0" y2="1">
@@ -49,7 +49,7 @@ export function DistributionAreaChart({ data = [] }) {
               axisLine={false}
               tick={{ fontSize: 13, fill: "#64748b", fontWeight: 500 }}
               tickFormatter={(v) => `${(v / 1000000).toFixed(0)} jt`}
-              width={50}
+              width={56}
             />
             <Tooltip
               content={({ active, payload }) => {
@@ -57,18 +57,18 @@ export function DistributionAreaChart({ data = [] }) {
                   const item = payload[0].payload;
                   return (
                     <div className="bg-white border border-slate-200 rounded-md p-3 shadow-md text-sm space-y-1.5">
-                      <p className="font-semibold text-slate-950 border-b border-slate-100 pb-1">
+                      <p className="font-semibold text-slate-900 border-b border-slate-100 pb-1">
                         {item.fullMonth}
                       </p>
-                      <div className="flex items-center justify-between gap-4 text-slate-600">
+                      <div className="flex items-center justify-between gap-4 text-slate-500 font-normal">
                         <span>Penyaluran:</span>
-                        <span className="font-semibold text-slate-950">
+                        <span className="font-medium text-slate-900">
                           {formatRupiah(item.amount)}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between gap-4 text-slate-600">
+                      <div className="flex items-center justify-between gap-4 text-slate-500 font-normal">
                         <span>Penerima:</span>
-                        <span className="font-semibold text-slate-950">
+                        <span className="font-medium text-slate-900">
                           {formatNumber(item.beneficiaries)} Jiwa
                         </span>
                       </div>

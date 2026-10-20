@@ -42,8 +42,8 @@ function Calendar({
           buttonVariants({ variant: "ghost" }),
           "h-9 w-9 p-0 font-normal rounded-lg cursor-pointer hover:bg-blue-50 hover:text-primary transition-colors aria-selected:!bg-primary aria-selected:!text-white"
         ),
-        selected: "!bg-primary !text-white hover:!bg-primary hover:!text-white [&>button]:!text-white [&>button]:!bg-primary [&>button]:hover:!bg-primary [&>button]:hover:!text-white [&>button]:!font-semibold rounded-lg shadow-xs",
-        today: "border border-primary/40 font-bold text-primary",
+        selected: "!bg-primary !text-white hover:!bg-primary hover:!text-white [&>button]:!text-white [&>button]:!bg-primary [&>button]:hover:!bg-primary [&>button]:hover:!text-white [&>button]:!font-medium rounded-lg shadow-xs",
+        today: "border border-primary/40 font-medium text-primary",
         outside: "day-outside text-slate-300 opacity-50 aria-selected:bg-slate-100/50 aria-selected:text-slate-400",
         disabled: "text-slate-300 opacity-40 pointer-events-none",
         hidden: "invisible",
@@ -60,9 +60,9 @@ function Calendar({
                 buttonVariants({ variant: "ghost" }),
                 "h-9 w-9 p-0 rounded-lg cursor-pointer transition-colors text-sm",
                 isSelected
-                  ? "!bg-primary !text-white hover:!bg-primary hover:!text-white focus:!bg-primary focus:!text-white !font-bold shadow-xs"
+                  ? "!bg-primary !text-white hover:!bg-primary hover:!text-white focus:!bg-primary focus:!text-white !font-medium shadow-xs"
                   : "text-slate-900 hover:bg-blue-50 hover:text-primary font-normal",
-                modifiers?.today && !isSelected && "border border-primary/50 text-primary font-bold",
+                modifiers?.today && !isSelected && "border border-primary/50 text-primary font-medium",
                 modifiers?.outside && "text-slate-300 opacity-50",
                 modifiers?.disabled && "text-slate-300 opacity-40 pointer-events-none"
               )}

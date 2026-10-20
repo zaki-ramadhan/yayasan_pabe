@@ -32,7 +32,7 @@ export function CopyButton({
       type="button"
       onClick={handleCopy}
       className={cn(
-        "inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-md border transition-colors cursor-pointer",
+        "inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md border transition-colors cursor-pointer",
         copied
           ? "border-emerald-500 bg-emerald-50 text-emerald-700"
           : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900",

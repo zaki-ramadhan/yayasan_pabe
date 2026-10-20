@@ -40,7 +40,13 @@ export function DistributionSyariahSection({ syariahData }) {
       <DistributionSectionHeader
         title={syariahData.title}
         description="Dasar legalitas dan penilaian kepatuhan seluruh aktivitas yayasan terhadap syariat Islam."
-        action={<DistributionActionLink href={syariahData.pdfUrl} />}
+        action={
+          <DistributionActionLink
+            href={syariahData.pdfUrl}
+            filename={syariahData.downloadFilename || "SK-Dewan-Pengawas-Syariah-PABE-2026.pdf"}
+            documentTitle="SK Dewan Pengawas Syariah"
+          />
+        }
       />
 
       <div className="w-full">

@@ -41,13 +41,13 @@ export function TransactionLimitTable({ title, description, items = [] }) {
         <TableHeader>
           <TableRow>
             <TableHead className="w-1/2 font-medium text-slate-900">
-              Saluran Pembayaran
+              Metode Pembayaran
             </TableHead>
             <TableHead className="w-1/4 font-medium text-slate-900">
-              Batas Minimum
+              Batas Min.
             </TableHead>
             <TableHead className="w-1/4 font-medium text-slate-900">
-              Batas Maksimum
+              Batas Maks.
             </TableHead>
           </TableRow>
         </TableHeader>

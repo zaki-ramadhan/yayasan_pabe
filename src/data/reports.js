@@ -9,7 +9,7 @@ export const AUDIT_REPORTS = [
     totalFundsOut: 4420000000,
     beneficiaryCount: 14250,
     operationalRatio: "8.8%",
-    pdfUrl: "#",
+    pdfUrl: "/api/documents/download?type=audit&year=2025",
     summary: "Laporan hasil audit independen atas laporan keuangan PABE per 31 Desember 2025 dengan opini WTP. Rasio operasional terjaga sangat sehat di bawah batas maksimal regulasi BAZNAS dan Kemenag RI.",
   },
   {
@@ -22,7 +22,7 @@ export const AUDIT_REPORTS = [
     totalFundsOut: 3290000000,
     beneficiaryCount: 11100,
     operationalRatio: "9.1%",
-    pdfUrl: "#",
+    pdfUrl: "/api/documents/download?type=audit&year=2024",
     summary: "Hasil audit independen per 31 Desember 2024 membuktikan kepatuhan penuh tata kelola keuangan syariah dan standar akuntansi keuangan entitas nirlaba (ISAK 35).",
   },
   {
@@ -35,7 +35,7 @@ export const AUDIT_REPORTS = [
     totalFundsOut: 2480000000,
     beneficiaryCount: 8400,
     operationalRatio: "9.4%",
-    pdfUrl: "#",
+    pdfUrl: "/api/documents/download?type=audit&year=2023",
     summary: "Laporan audit tahunan 2023 dengan opini Wajar Tanpa Pengecualian, membuktikan integritas penyaluran dana zakat, infaq, sedekah, dan wakaf yang akuntabel.",
   },
 ];

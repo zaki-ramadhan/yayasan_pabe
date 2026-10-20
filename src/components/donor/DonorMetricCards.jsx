@@ -62,7 +62,7 @@ export function DonorMetricCards({ metrics, lastDonation, isLoading = false }) {
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
       {/* Card 1: Total Donasi Tersalurkan */}
       <div className="sm:col-span-3 rounded-md border border-slate-200/90 bg-sidebar pt-3.5 sm:pt-4 px-3 sm:px-3.5 pb-2.5 sm:pb-3 space-y-2.5">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pb-2.5 border-b border-slate-200/80">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pb-2.5 border-slate-200/80">
           <div>
             <p className="text-sm font-medium text-slate-500">
               Total Donasi Tersalurkan

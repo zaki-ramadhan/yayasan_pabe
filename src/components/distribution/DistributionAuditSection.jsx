@@ -35,7 +35,13 @@ export function DistributionAuditSection({ auditData }) {
       <DistributionSectionHeader
         title={auditData.title}
         description="Hasil audit kepatuhan keuangan tahunan oleh akuntan publik independen dengan opini WTP."
-        action={<DistributionActionLink href={auditData.pdfUrl} />}
+        action={
+          <DistributionActionLink
+            href={auditData.pdfUrl}
+            filename={auditData.downloadFilename || "Laporan-Audit-Keuangan-PABE-2025.pdf"}
+            documentTitle="Laporan Keuangan Audit"
+          />
+        }
       />
 
       <DistributionAuditDonutChart allocations={auditData.allocations} />

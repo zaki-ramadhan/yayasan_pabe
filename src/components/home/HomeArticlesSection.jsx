@@ -11,14 +11,14 @@ export function HomeArticlesSection({ articles = [] }) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-xl sm:text-2xl font-semibold text-slate-950">
-          Artikel &amp; Kabar Lapangan
+          Berita &amp; Artikel
         </h2>
         <Link href="/artikel" className="text-sm font-medium text-primary hover:underline">
           Lihat Semua
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {articles.map((art) => (
           <ArticleMiniCard key={art.id} article={art} />
         ))}

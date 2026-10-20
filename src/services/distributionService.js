@@ -22,7 +22,11 @@ export async function getDistributionAuditData() {
         opinion: latestAudit.opinionStatus || AUDIT_SUMMARY_DATA.opinion,
         auditPeriod: `Tahun Buku ${latestAudit.year}`,
         operationalRatio: latestAudit.operationalRatio || AUDIT_SUMMARY_DATA.operationalRatio,
-        pdfUrl: latestAudit.pdfUrl || "#",
+        pdfUrl:
+          latestAudit.pdfUrl && latestAudit.pdfUrl !== "#"
+            ? latestAudit.pdfUrl
+            : `/api/documents/download?type=audit&year=${latestAudit.year || 2025}`,
+        downloadFilename: `Laporan-Audit-Keuangan-PABE-${latestAudit.year}.pdf`,
       };
     }
   } catch (error) {

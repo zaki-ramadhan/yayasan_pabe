@@ -42,30 +42,26 @@ export function AboutHeader({ volunteerCount = 14 }) {
           {/* Header Action Buttons */}
           <div className="flex flex-wrap items-center gap-2 pt-2 sm:pt-0">
             <Link href="/program">
-              <Button className="h-9 sm:h-10 px-4 sm:px-5 text-xs sm:text-sm font-semibold text-white bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 hover:from-slate-700 hover:via-slate-800 hover:to-slate-950 border-t border-t-slate-600 border-x border-x-slate-700 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_6px_rgba(0,0,0,0.35)] active:translate-y-0.5 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] transition-all cursor-pointer">
+              <Button className="h-9 sm:h-10 px-4 sm:px-5 text-xs sm:text-sm font-medium text-white bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 hover:from-slate-700 hover:via-slate-800 hover:to-slate-950 border-t border-t-slate-600 border-x border-x-slate-700 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_6px_rgba(0,0,0,0.35)] active:translate-y-0.5 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] transition-all cursor-pointer">
                 Salurkan Donasi
               </Button>
             </Link>
-            <Link href="/kalkulator-zakat">
+            <Link href="/laporan">
               <Button
                 variant="outline"
                 className="h-9 sm:h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-medium text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-100 border-slate-300 transition-colors shadow-2xs cursor-pointer"
               >
-                Kalkulator Zakat
+                Laporan Keuangan
               </Button>
             </Link>
-            <a
-              href={`https://wa.me/${ORG_PROFILE.contacts.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent("Assalamu'alaikum Yayasan PABE, mohon info program yayasan.")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link href="/distribusi">
               <Button
                 variant="outline"
                 className="h-9 sm:h-10 px-3.5 sm:px-4 text-xs sm:text-sm font-medium text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-100 border-slate-300 transition-colors shadow-2xs cursor-pointer"
               >
-                Hubungi Kami
+                Penyaluran Donasi
               </Button>
-            </a>
+            </Link>
             <ShareDropdown
               title={ORG_PROFILE.name}
               align="end"

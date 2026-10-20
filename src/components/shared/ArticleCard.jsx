@@ -42,7 +42,7 @@ export function ArticleCard({
 	return (
 		<Card
 			className={cn(
-				"p-3.5 sm:p-4 bg-white border-slate-300 hover:border-slate-400 transition-colors flex flex-col justify-between rounded-xl shadow-2xs group h-full",
+				"p-3.5 sm:p-4 bg-white border-slate-300 transition-colors flex flex-col justify-between rounded-xl shadow-2xs group h-full",
 				className,
 			)}
 		>
