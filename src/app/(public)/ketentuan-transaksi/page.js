@@ -1,4 +1,5 @@
 import { InformationHeroHeader } from "@/components/shared/InformationHeroHeader";
+import { AkadTermsSection } from "@/components/transaction-terms/AkadTermsSection";
 import { TransactionLimitTable } from "@/components/transaction-terms/TransactionLimitTable";
 import {
   VA_TRANSACTION_LIMITS,
@@ -6,30 +7,35 @@ import {
 } from "@/data/transactionLimits";
 
 export const metadata = {
-  title: "Ketentuan Transaksi - Batas Minimum & Maksimum Donasi",
+  title: "Ketentuan Donasi & Transaksi",
   description:
-    "Informasi batas minimum dan maksimum transaksi donasi via Virtual Account dan QRIS guna mengedukasi donatur dan mencegah kejanggalan atau kesalahan dalam jumlah transaksi.",
+    "Prinsip syariat akad wakalah donasi dan zakat, bukti penerbitan e-Kwitansi, serta informasi batas minimum dan maksimum transaksi via Virtual Account dan QRIS.",
 };
 
 export default function KetentuanTransaksiPage() {
   return (
     <div className="w-full">
       <InformationHeroHeader
-        title="Ketentuan Transaksi"
-        description="Informasi batas minimum dan maksimum transaksi donasi via Virtual Account dan QRIS guna mengedukasi donatur dan mencegah kekeliruan nominal transfer."
-        imageAlt="Latar Belakang Ketentuan Transaksi Yayasan PABE"
+        title="Ketentuan Donasi & Transaksi"
+        description="Panduan akad syariah wakalah, tata kelola penyaluran donasi & zakat, serta batas minimum dan maksimum nominal transaksi resmi yayasan."
+        imageAlt="Latar Belakang Ketentuan Donasi dan Transaksi Yayasan Generasi Sejahtera Mandiri"
       />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6 sm:space-y-8">
-        {/* Table 1: Virtual Account (VA) */}
+        {/* Section 1: Akad Wakalah & Ketentuan Donasi Syariah */}
+        <AkadTermsSection />
+
+        {/* Section 2: Virtual Account (VA) Limits */}
         <TransactionLimitTable
-          title="Virtual Account (VA)"
+          title="Batas Transaksi Virtual Account (VA)"
+          description="Batas minimum dan maksimum per transfer pembayaran donasi via bank transfer resmi."
           items={VA_TRANSACTION_LIMITS}
         />
 
-        {/* Table 2: E-Wallet & QRIS */}
+        {/* Section 3: E-Wallet & QRIS Limits */}
         <TransactionLimitTable
-          title="E-Wallet & QRIS"
+          title="Batas Transaksi E-Wallet & QRIS"
+          description="Standar Bank Indonesia dan batas pembayaran instan via dompet digital nasional."
           items={EWALLET_QRIS_TRANSACTION_LIMITS}
         />
       </main>
