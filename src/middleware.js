@@ -31,8 +31,8 @@ export function middleware(request) {
     return response;
   }
 
-  // 3. Guard Client Portal Pages (/donatur/*)
-  if (pathname.startsWith("/donatur")) {
+  // 3. Guard Client Portal Pages (/donatur and /donatur/*)
+  if (pathname === "/donatur" || pathname.startsWith("/donatur/")) {
     if (!session) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
@@ -73,7 +73,9 @@ export function middleware(request) {
 
 export const config = {
   matcher: [
+    "/dashboard",
     "/dashboard/:path*",
+    "/donatur",
     "/donatur/:path*",
     "/api/user/:path*",
     "/api/dashboard/:path*",

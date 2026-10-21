@@ -71,7 +71,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 						onClose
 					}
 					className={cn(
-						"block px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors",
+						"block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
 						isHomeActive
 							? "bg-slate-100 text-primary"
 							: "text-slate-800 hover:bg-slate-50",
@@ -87,7 +87,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 						onClose
 					}
 					className={cn(
-						"block px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors",
+						"block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
 						isTentangKamiActive
 							? "bg-slate-100 text-primary"
 							: "text-slate-800 hover:bg-slate-50",
@@ -107,7 +107,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 							)
 						}
 						className={cn(
-							"flex items-center justify-between w-full px-3 py-2.5 text-sm font-semibold rounded-lg cursor-pointer transition-colors",
+							"flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-colors",
 							isProgramActive
 								? "bg-slate-100 text-primary"
 								: "text-slate-800 hover:bg-slate-50",
@@ -193,7 +193,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 						onClose
 					}
 					className={cn(
-						"block px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors",
+						"block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
 						isArtikelActive
 							? "bg-slate-100 text-primary"
 							: "text-slate-800 hover:bg-slate-50",
@@ -212,7 +212,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 							)
 						}
 						className={cn(
-							"flex items-center justify-between w-full px-3 py-2.5 text-sm font-semibold rounded-lg cursor-pointer transition-colors",
+							"flex items-center justify-between w-full px-3 py-2.5 text-sm font-medium rounded-lg cursor-pointer transition-colors",
 							isInformasiActive
 								? "bg-slate-100 text-primary"
 								: "text-slate-800 hover:bg-slate-50",
@@ -308,7 +308,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 										className="w-full h-full object-cover"
 									/>
 								) : (
-									<span className="font-bold text-sm text-white">
+									<span className="font-medium text-sm text-white">
 										{currentUser.initials ||
 											"U"}
 									</span>
@@ -316,7 +316,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 							</div>
 							<div className="min-w-0 flex-1">
 								<span
-									className="block text-sm font-bold text-slate-900 truncate"
+									className="block text-sm font-medium text-slate-900 truncate"
 									title={
 										currentUser.name
 									}
@@ -356,7 +356,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 								onLogout();
 								onClose();
 							}}
-							className="w-full h-10 rounded-lg font-semibold border border-rose-200 text-rose-600 hover:bg-rose-50 text-sm cursor-pointer flex items-center justify-center gap-2 transition-colors"
+							className="w-full h-10 rounded-lg font-medium border border-rose-200 text-rose-600 hover:bg-rose-50 text-sm cursor-pointer flex items-center justify-center gap-2 transition-colors"
 						>
 							<span>
 								Keluar

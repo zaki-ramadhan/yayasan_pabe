@@ -34,15 +34,15 @@ export function AdminUserProfile({ currentUser, onRoleSwitch }) {
             className="w-9 h-9 rounded-full object-cover border border-slate-700 bg-slate-800 shrink-0"
           />
         ) : (
-          <div className="w-9 h-9 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-full bg-primary text-white text-xs font-normal flex items-center justify-center shrink-0">
             {currentUser?.initials || "U"}
           </div>
         )}
         <div className="min-w-0">
-          <span className="text-xs font-bold text-white block truncate">
+          <span className="text-xs font-normal text-white block truncate">
             {currentUser?.name || "Pengguna"}
           </span>
-          <span className="text-[10px] text-primary-light font-medium block truncate">
+          <span className="text-[10px] text-primary-light font-normal block truncate">
             {ROLE_LABELS[userRole] || userRole}
           </span>
         </div>

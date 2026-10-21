@@ -6,10 +6,10 @@ export default function DistribusiLoading() {
       {/* Hero Header Banner - Centered Dark Theme */}
       <div className="relative w-full bg-slate-950 border-b border-slate-800 pt-10 sm:pt-14 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-3">
-          <Skeleton className="h-8 sm:h-10 w-72 bg-neutral-800 mx-auto rounded-lg" />
+          <Skeleton className="h-8 sm:h-10 w-72 bg-slate-800 mx-auto rounded-lg" />
           <div className="space-y-1.5 pt-1">
-            <Skeleton className="h-4 sm:h-5 w-full max-w-2xl bg-neutral-800 mx-auto rounded" />
-            <Skeleton className="h-4 sm:h-5 w-3/4 max-w-xl bg-neutral-800 mx-auto rounded" />
+            <Skeleton className="h-4 sm:h-5 w-full max-w-2xl bg-slate-800 mx-auto rounded" />
+            <Skeleton className="h-4 sm:h-5 w-3/4 max-w-xl bg-slate-800 mx-auto rounded" />
           </div>
         </div>
       </div>
@@ -37,7 +37,7 @@ export default function DistribusiLoading() {
             <div className="flex flex-col md:flex-row items-center justify-center gap-6 lg:gap-12 w-full py-1">
               {/* Donut Ring with Center Hole Label */}
               <div className="relative w-48 h-48 sm:w-52 sm:h-52 shrink-0 flex items-center justify-center">
-                <div className="w-40 h-40 rounded-full border-[18px] border-neutral-200 flex items-center justify-center">
+                <div className="w-40 h-40 rounded-full border-[18px] border-slate-200 flex items-center justify-center">
                   <div className="flex flex-col items-center justify-center space-y-1">
                     <Skeleton className="h-3.5 w-12 rounded" />
                     <Skeleton className="h-5 w-14 rounded" />
@@ -144,9 +144,9 @@ export default function DistribusiLoading() {
 
             {/* Radar Chart Container */}
             <div className="w-full h-52 sm:h-56 flex items-center justify-center">
-              <div className="relative w-44 h-44 rounded-full border border-dashed border-neutral-300 flex items-center justify-center">
-                <div className="w-28 h-28 rounded-full border border-dashed border-neutral-300 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-neutral-200/60" />
+              <div className="relative w-44 h-44 rounded-full border border-dashed border-slate-300 flex items-center justify-center">
+                <div className="w-28 h-28 rounded-full border border-dashed border-slate-300 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-slate-200/60" />
                 </div>
               </div>
             </div>

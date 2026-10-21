@@ -124,23 +124,23 @@ export function NavUserDropdown({ currentUser, onLogout }) {
 
         <DropdownMenuSeparator className="my-1 border-slate-100" />
 
-        {/* Staff Dashboard Portal Link */}
+        {/* Staff / Admin Link (Hanya tampil jika user adalah staf/admin) */}
         {isStaff && (
           <DropdownMenuItem asChild>
             <Link
               href="/dashboard"
-              className="px-2.5 py-2 rounded-lg text-sm font-medium text-slate-900 hover:bg-slate-100 cursor-pointer"
+              className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-900 hover:bg-slate-100 cursor-pointer transition-colors"
             >
-              <span className="flex-1">Dashboard Yayasan</span>
+              <span className="flex-1">Panel admin</span>
             </Link>
           </DropdownMenuItem>
         )}
 
-        {/* Donor Portal Links */}
+        {/* Core Donor Navigation Links */}
         <DropdownMenuItem asChild>
           <Link
             href="/donatur/dashboard"
-            className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 transition-colors"
+            className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
           >
             <span className="flex-1">Dashboard</span>
           </Link>
@@ -149,59 +149,30 @@ export function NavUserDropdown({ currentUser, onLogout }) {
         <DropdownMenuItem asChild>
           <Link
             href="/donatur/riwayat"
-            className="px-2.5 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer"
+            className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
           >
-            <span className="flex-1">Riwayat Donasi</span>
+            <span className="flex-1">Riwayat donasi</span>
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
           <Link
             href="/donatur/profil"
-            className="px-2.5 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer"
+            className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
           >
-            <span className="flex-1">Profil Saya</span>
-          </Link>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem asChild>
-          <Link
-            href="/donasi-rutin"
-            className="px-2.5 py-2 rounded-md text-sm font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer"
-          >
-            <span className="flex-1">Komitmen Donasi Rutin</span>
+            <span className="flex-1">Profil saya</span>
           </Link>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="my-1 border-slate-100" />
 
-        <DropdownMenuItem asChild>
-          <Link
-            href="/program"
-            className="px-2.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer"
-          >
-            <span className="flex-1">Program Kebaikan</span>
-          </Link>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem asChild>
-          <Link
-            href="/laporan"
-            className="px-2.5 py-2 rounded-lg text-sm font-medium text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer"
-          >
-            <span className="flex-1">Laporan Transparansi</span>
-          </Link>
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator className="my-1 border-slate-100" />
-
-        {/* Logout Item (Only item with icon) */}
+        {/* Logout Item */}
         <DropdownMenuItem
           onClick={onLogout}
-          className="flex items-center gap-2 px-2.5 py-2 rounded-lg text-sm font-medium text-rose-600 hover:text-rose-700 hover:bg-rose-50 cursor-pointer focus:bg-rose-50 focus:text-rose-700"
+          className="flex items-center gap-2 px-2.5 py-2 rounded-md text-sm font-normal text-rose-600 hover:text-rose-700 hover:bg-rose-50 cursor-pointer focus:bg-rose-50 focus:text-rose-700 transition-colors"
         >
           <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
-          <span>Keluar dari Akun</span>
+          <span>Keluar dari akun</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

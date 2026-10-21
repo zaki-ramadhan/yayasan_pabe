@@ -2,10 +2,11 @@ import { Suspense } from "react";
 import { getArticles, getArticleCategories } from "@/services/articleService";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { ArticleCatalog } from "@/components/modules/ArticleCatalog";
+import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
 
 export const metadata = {
-  title: "Berita & Artikel - Yayasan PABE",
-  description: "Kumpulan artikel edukasi fiqih zakat, sedekah subuh, dan kabar penyaluran bantuan Yayasan PABE.",
+  title: "Berita & Artikel",
+  description: "Kumpulan artikel edukasi fiqih zakat, sedekah subuh, dan kabar penyaluran bantuan Yayasan Generasi Sejahtera Mandiri.",
 };
 
 export default async function ArtikelIndexPage() {
@@ -21,7 +22,15 @@ export default async function ArtikelIndexPage() {
         description="Wawasan panduan zakat, infak, sedekah, serta laporan aktual kegiatan pemberdayaan santri dan dhuafa di lapangan."
       />
 
-      <Suspense>
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-3">
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <ArticleCardSkeleton key={n} />
+            ))}
+          </div>
+        }
+      >
         <ArticleCatalog initialArticles={articles} categories={categories} />
       </Suspense>
     </main>

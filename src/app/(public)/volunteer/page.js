@@ -4,8 +4,8 @@ import { VolunteerPerksList } from "@/components/volunteer/VolunteerPerksList";
 import { PageHeader } from "@/components/shared/PageHeader";
 
 export const metadata = {
-  title: "Gabung Jadi Relawan Aksi - Yayasan PABE",
-  description: "Daftarkan diri Anda sebagai relawan aksi kemanusiaan dan pendidikan santri tahfidz Yayasan PABE.",
+  title: "Gabung Jadi Relawan Aksi",
+  description: "Daftarkan diri Anda sebagai relawan aksi kemanusiaan dan pendidikan santri tahfidz Yayasan Generasi Sejahtera Mandiri.",
 };
 
 export default function VolunteerPage() {
@@ -18,7 +18,7 @@ export default function VolunteerPage() {
           <div className="relative w-full h-36 sm:h-44 rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200 shadow-2xs bg-slate-100">
             <Image
               src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1200&auto=format&fit=crop&q=80"
-              alt="Relawan Aksi Kemanusiaan Yayasan PABE"
+              alt="Relawan Aksi Kemanusiaan Yayasan Generasi Sejahtera Mandiri"
               fill
               sizes="(max-width: 1024px) 100vw, 40vw"
               className="object-cover"

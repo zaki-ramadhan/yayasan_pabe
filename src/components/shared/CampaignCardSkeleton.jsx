@@ -13,7 +13,7 @@ export function CampaignCardSkeleton({ className }) {
       <div className="relative aspect-video w-full bg-slate-100 overflow-hidden border-b border-slate-200">
         <Skeleton className="w-full h-full rounded-none" />
         <div className="absolute top-2.5 left-0 z-10">
-          <Skeleton className="h-5 sm:h-5.5 w-24 rounded-r-md bg-neutral-300" />
+          <Skeleton className="h-5 sm:h-5.5 w-24 rounded-r-md bg-slate-300" />
         </div>
       </div>
 

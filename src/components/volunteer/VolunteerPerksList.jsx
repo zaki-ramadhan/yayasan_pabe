@@ -1,7 +1,7 @@
 const VOLUNTEER_PERKS = [
   {
     title: "Aksi Lapangan Terpadu",
-    desc: "Terjun langsung ke titik bencana, pondok binaan, dan posko kesehatan dhuafa bersama tim lapangan profesional Yayasan PABE.",
+    desc: "Terjun langsung ke titik bencana, pondok binaan, dan posko kesehatan dhuafa bersama tim lapangan profesional Yayasan Generasi Sejahtera Mandiri.",
   },
   {
     title: "Jejaring Positif & Kolaborasi",

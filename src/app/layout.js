@@ -24,29 +24,29 @@ const crustaceans = localFont({
 
 export const metadata = {
   title: {
-    default: "Yayasan PABE - Donasi & Zakat",
-    template: "%s | Yayasan PABE",
+    default: "Yayasan Generasi Sejahtera Mandiri",
+    template: "%s",
   },
   description:
-    "Platform resmi donasi, zakat, infak, sedekah, dan wakaf Yayasan PABE. Transparan, amanah, dan terpercaya.",
+    "Platform resmi donasi, zakat, infak, sedekah, dan wakaf Yayasan Generasi Sejahtera Mandiri. Transparan, amanah, dan terpercaya.",
   keywords: [
     "donasi online",
     "zakat online",
     "sedekah subuh",
     "wakaf",
-    "yayasan pabe",
+    "yayasan generasi sejahtera mandiri",
     "kalkulator zakat",
   ],
-  authors: [{ name: "Yayasan PABE" }],
+  authors: [{ name: "Yayasan Generasi Sejahtera Mandiri" }],
   icons: {
     icon: "/logo_yayasan_GSM.png",
     shortcut: "/logo_yayasan_GSM.png",
     apple: "/logo_yayasan_GSM.png",
   },
   openGraph: {
-    title: "Yayasan PABE",
+    title: "Yayasan Generasi Sejahtera Mandiri",
     description: "Salurkan kepedulian Anda untuk masa depan santri, dakwah Al-Qur'an, dan aksi kemanusiaan.",
-    siteName: "Yayasan PABE Filantropi",
+    siteName: "Yayasan Generasi Sejahtera Mandiri",
     locale: "id_ID",
     type: "website",
   },

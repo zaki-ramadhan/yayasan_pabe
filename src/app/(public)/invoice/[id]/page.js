@@ -9,7 +9,7 @@ export async function generateMetadata({ params }) {
   const { id } = await params;
   return {
     title: `Instruksi Pembayaran Donasi #${id}`,
-    description: "Selesaikan pembayaran donasi Anda melalui QRIS atau Virtual Account Yayasan PABE.",
+    description: "Selesaikan pembayaran donasi Anda melalui QRIS atau Virtual Account Yayasan Generasi Sejahtera Mandiri.",
   };
 }
 

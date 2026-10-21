@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
+import { CampaignCardMinimalSkeleton } from "@/components/home/CampaignCardMinimalSkeleton";
 import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
 
 export default function HomeLoading() {
@@ -67,28 +67,34 @@ export default function HomeLoading() {
         </div>
       </section>
 
-      {/* 3. Program Donasi Pilihan (bg-slate-100/80 with 5 CampaignCards + 1 BrowseAllCard) */}
+      {/* 3. Program Donasi Pilihan (Modern Split Layout: Sticky Header Kiri, Grid 2x2 Kanan) */}
       <section className="bg-slate-100/80 border-y border-slate-200 py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <Skeleton className="h-7 sm:h-8 w-64 mx-auto rounded-lg" />
-            <Skeleton className="h-4 w-96 max-w-full mx-auto rounded" />
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-2">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <div
-                key={n}
-                className="w-full sm:w-[calc(50%-4px)] lg:w-[calc((100%-16px)/3)] flex"
-              >
-                <CampaignCardSkeleton showDescription={false} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            {/* Kolom Kiri: Sticky Header Skeleton */}
+            <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
+              <div className="space-y-2 sm:space-y-2.5">
+                <Skeleton className="h-8 sm:h-9 w-64 max-w-full rounded-lg" />
+                <div className="space-y-1.5">
+                  <Skeleton className="h-4 sm:h-4.5 w-full max-w-md rounded" />
+                  <Skeleton className="h-4 sm:h-4.5 w-4/5 max-w-sm rounded" />
+                </div>
               </div>
-            ))}
 
-            {/* 6th Slot: BrowseAllCampaignsCard Placeholder */}
-            <div className="w-full sm:w-[calc(50%-4px)] lg:w-[calc((100%-16px)/3)] flex">
-              <div className="flex items-center justify-center h-full w-full rounded-xl border border-slate-300 bg-white p-6 sm:p-8 min-h-[380px]">
-                <Skeleton className="h-9 w-44 rounded-lg" />
+              {/* Action Button Skeleton */}
+              <div className="pt-1">
+                <Skeleton className="h-9 sm:h-9.5 w-48 rounded-lg" />
+              </div>
+            </div>
+
+            {/* Kolom Kanan: Grid 2x2 Kartu Program Minimalis (4 Kartu) */}
+            <div className="lg:col-span-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-4.5">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="flex h-full">
+                    <CampaignCardMinimalSkeleton />
+                  </div>
+                ))}
               </div>
             </div>
           </div>

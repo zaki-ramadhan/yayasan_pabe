@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
   const article = await getArticleBySlug(slug);
   if (!article) return { title: "Artikel Tidak Ditemukan" };
   return {
-    title: `${article.title} | Yayasan PABE`,
+    title: article.title,
     description: article.excerpt,
   };
 }

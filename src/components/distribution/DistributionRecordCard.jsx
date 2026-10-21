@@ -10,7 +10,7 @@ import { SafeImage } from "@/components/ui/safe-image";
  */
 export function DistributionRecordCard({ record }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs hover:border-slate-300 transition-colors flex flex-col justify-between">
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs transition-colors flex flex-col justify-between">
       <div>
         <div className="relative aspect-16/9 w-full bg-slate-100 overflow-hidden border-b border-slate-200">
           <SafeImage

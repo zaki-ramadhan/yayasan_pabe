@@ -30,7 +30,7 @@ export function CareerListItem({
       className={`p-4 sm:p-4.5 shadow-none rounded-lg transition-all cursor-pointer text-left ${
         isSelected
           ? "border-primary bg-blue-50/40 shadow-xs ring-1 ring-primary/25"
-          : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+          : "border-slate-200 bg-white hover:bg-slate-50/50"
       }`}
     >
       <div className="space-y-1">

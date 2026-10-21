@@ -20,16 +20,16 @@ export default function ArtikelDetailLoading() {
         {/* Metadata Header (Category | Author | Date) */}
         <div className="flex items-center gap-3 text-xs sm:text-sm pt-0.5">
           <Skeleton className="h-4 w-24 rounded" />
-          <span className="text-neutral-300 select-none">|</span>
+          <span className="text-slate-300 select-none">|</span>
           <Skeleton className="h-4 w-32 rounded" />
-          <span className="text-neutral-300 select-none">|</span>
+          <span className="text-slate-300 select-none">|</span>
           <Skeleton className="h-4 w-36 rounded" />
         </div>
       </div>
 
       {/* 3. Featured Image & Caption */}
       <figure className="space-y-1.5">
-        <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
+        <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
           <Skeleton className="w-full h-full rounded-none" />
         </div>
         <Skeleton className="h-3 w-36 rounded" />
@@ -47,7 +47,7 @@ export default function ArtikelDetailLoading() {
       </div>
 
       {/* 5. Topic Tags */}
-      <div className="flex items-center gap-2 flex-wrap pt-4 border-t border-neutral-200">
+      <div className="flex items-center gap-2 flex-wrap pt-4 border-t border-slate-200">
         <Skeleton className="h-4 w-12 rounded" />
         <Skeleton className="h-6 w-20 rounded-md" />
         <Skeleton className="h-6 w-16 rounded-md" />
@@ -55,7 +55,7 @@ export default function ArtikelDetailLoading() {
       </div>
 
       {/* 6. Interactive Action Bar (Like, Dislike, Share) */}
-      <div className="flex items-center justify-between py-3 border-y border-neutral-200">
+      <div className="flex items-center justify-between py-3 border-y border-slate-200">
         <div className="flex items-center gap-2">
           <Skeleton className="h-8 w-16 rounded-lg" />
           <Skeleton className="h-8 w-16 rounded-lg" />
@@ -64,7 +64,7 @@ export default function ArtikelDetailLoading() {
       </div>
 
       {/* 7. Related Articles (2 items with ArticleCardSkeleton) */}
-      <section className="space-y-3 pt-6 border-t border-neutral-200">
+      <section className="space-y-3 pt-6 border-t border-slate-200">
         <div className="flex items-center justify-between">
           <Skeleton className="h-6 w-36 rounded-lg" />
           <Skeleton className="h-4 w-28 rounded" />
@@ -77,12 +77,12 @@ export default function ArtikelDetailLoading() {
       </section>
 
       {/* 8. Donation Promo CTA Box */}
-      <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-5 sm:p-6 shadow-md mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 sm:p-6 shadow-md mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1.5 flex-1">
-          <Skeleton className="h-5 w-64 rounded bg-neutral-800" />
-          <Skeleton className="h-3.5 w-full max-w-md rounded bg-neutral-800" />
+          <Skeleton className="h-5 w-64 rounded bg-slate-800" />
+          <Skeleton className="h-3.5 w-full max-w-md rounded bg-slate-800" />
         </div>
-        <Skeleton className="h-10 w-44 rounded-lg bg-neutral-800 shrink-0" />
+        <Skeleton className="h-10 w-44 rounded-lg bg-slate-800 shrink-0" />
       </div>
     </main>
   );

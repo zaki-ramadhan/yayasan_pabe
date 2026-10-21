@@ -116,31 +116,31 @@ export default function CampaignDetailLoading() {
             </div>
 
             {/* Chat Room Container */}
-            <div className="relative rounded-2xl border border-neutral-300 overflow-hidden shadow-xs bg-neutral-900 flex flex-col min-h-[440px] max-h-[580px]">
+            <div className="relative rounded-2xl border border-slate-300 overflow-hidden shadow-xs bg-slate-900 flex flex-col min-h-[440px] max-h-[580px]">
               {/* Messages area */}
               <div className="p-3.5 space-y-4 flex-1">
                 {/* Date sticky badge */}
                 <div className="flex justify-center">
-                  <Skeleton className="h-5 w-24 rounded-full bg-neutral-800" />
+                  <Skeleton className="h-5 w-24 rounded-full bg-slate-800" />
                 </div>
 
                 {/* Incoming bubble (left) */}
                 <div className="flex flex-col items-start w-full">
                   <div className="pl-[36px] mb-1">
-                    <Skeleton className="h-3 w-24 bg-neutral-800 rounded" />
+                    <Skeleton className="h-3 w-24 bg-slate-800 rounded" />
                   </div>
                   <div className="flex items-end gap-2 w-full">
-                    <Skeleton className="w-7 h-7 rounded-full bg-neutral-800 shrink-0" />
+                    <Skeleton className="w-7 h-7 rounded-full bg-slate-800 shrink-0" />
                     <div className="flex flex-col max-w-[82%] sm:max-w-[78%] items-start">
-                      <div className="bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-2xl rounded-bl-xs p-3 space-y-2 w-56 shadow-2xs">
-                        <Skeleton className="h-3.5 w-full bg-neutral-700/80 rounded" />
-                        <Skeleton className="h-3.5 w-4/5 bg-neutral-700/80 rounded" />
+                      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl rounded-bl-xs p-3 space-y-2 w-56 shadow-2xs">
+                        <Skeleton className="h-3.5 w-full bg-slate-700/80 rounded" />
+                        <Skeleton className="h-3.5 w-4/5 bg-slate-700/80 rounded" />
                         <div className="flex justify-end pt-0.5">
-                          <Skeleton className="h-2.5 w-10 bg-neutral-700/60 rounded" />
+                          <Skeleton className="h-2.5 w-10 bg-slate-700/60 rounded" />
                         </div>
                       </div>
                       <div className="mt-1">
-                        <Skeleton className="h-5 w-16 rounded-full bg-neutral-800 border border-neutral-700/70" />
+                        <Skeleton className="h-5 w-16 rounded-full bg-slate-800 border border-slate-700/70" />
                       </div>
                     </div>
                   </div>
@@ -149,20 +149,20 @@ export default function CampaignDetailLoading() {
                 {/* Outgoing bubble (right) */}
                 <div className="flex flex-col items-end w-full">
                   <div className="pr-[36px] mb-1">
-                    <Skeleton className="h-3 w-20 bg-neutral-800 rounded" />
+                    <Skeleton className="h-3 w-20 bg-slate-800 rounded" />
                   </div>
                   <div className="flex items-end gap-2 w-full flex-row-reverse">
-                    <Skeleton className="w-7 h-7 rounded-full bg-neutral-800 shrink-0" />
+                    <Skeleton className="w-7 h-7 rounded-full bg-slate-800 shrink-0" />
                     <div className="flex flex-col max-w-[82%] sm:max-w-[78%] items-end">
-                      <div className="bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-2xl rounded-br-xs p-3 space-y-2 w-52 shadow-2xs">
-                        <Skeleton className="h-3.5 w-full bg-neutral-700/80 rounded" />
-                        <Skeleton className="h-3.5 w-3/4 bg-neutral-700/80 rounded" />
+                      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl rounded-br-xs p-3 space-y-2 w-52 shadow-2xs">
+                        <Skeleton className="h-3.5 w-full bg-slate-700/80 rounded" />
+                        <Skeleton className="h-3.5 w-3/4 bg-slate-700/80 rounded" />
                         <div className="flex justify-end pt-0.5">
-                          <Skeleton className="h-2.5 w-10 bg-neutral-700/60 rounded" />
+                          <Skeleton className="h-2.5 w-10 bg-slate-700/60 rounded" />
                         </div>
                       </div>
                       <div className="mt-1">
-                        <Skeleton className="h-5 w-16 rounded-full bg-neutral-800 border border-neutral-700/70" />
+                        <Skeleton className="h-5 w-16 rounded-full bg-slate-800 border border-slate-700/70" />
                       </div>
                     </div>
                   </div>
@@ -171,20 +171,20 @@ export default function CampaignDetailLoading() {
                 {/* Incoming bubble (left) */}
                 <div className="flex flex-col items-start w-full">
                   <div className="pl-[36px] mb-1">
-                    <Skeleton className="h-3 w-28 bg-neutral-800 rounded" />
+                    <Skeleton className="h-3 w-28 bg-slate-800 rounded" />
                   </div>
                   <div className="flex items-end gap-2 w-full">
-                    <Skeleton className="w-7 h-7 rounded-full bg-neutral-800 shrink-0" />
+                    <Skeleton className="w-7 h-7 rounded-full bg-slate-800 shrink-0" />
                     <div className="flex flex-col max-w-[82%] sm:max-w-[78%] items-start">
-                      <div className="bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-2xl rounded-bl-xs p-3 space-y-2 w-60 shadow-2xs">
-                        <Skeleton className="h-3.5 w-full bg-neutral-700/80 rounded" />
-                        <Skeleton className="h-3.5 w-5/6 bg-neutral-700/80 rounded" />
+                      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl rounded-bl-xs p-3 space-y-2 w-60 shadow-2xs">
+                        <Skeleton className="h-3.5 w-full bg-slate-700/80 rounded" />
+                        <Skeleton className="h-3.5 w-5/6 bg-slate-700/80 rounded" />
                         <div className="flex justify-end pt-0.5">
-                          <Skeleton className="h-2.5 w-10 bg-neutral-700/60 rounded" />
+                          <Skeleton className="h-2.5 w-10 bg-slate-700/60 rounded" />
                         </div>
                       </div>
                       <div className="mt-1">
-                        <Skeleton className="h-5 w-16 rounded-full bg-neutral-800 border border-neutral-700/70" />
+                        <Skeleton className="h-5 w-16 rounded-full bg-slate-800 border border-slate-700/70" />
                       </div>
                     </div>
                   </div>
@@ -193,9 +193,9 @@ export default function CampaignDetailLoading() {
 
               {/* Chat Input Bar Footer */}
               <div className="p-2 sm:px-2.5 sm:pb-2.5 sm:pt-1">
-                <div className="h-10 rounded-full bg-neutral-800/90 border border-neutral-700/80 flex items-center justify-between px-3.5">
-                  <Skeleton className="h-3.5 w-44 bg-neutral-700 rounded" />
-                  <Skeleton className="h-7 w-7 rounded-full bg-neutral-700" />
+                <div className="h-10 rounded-full bg-slate-800/90 border border-slate-700/80 flex items-center justify-between px-3.5">
+                  <Skeleton className="h-3.5 w-44 bg-slate-700 rounded" />
+                  <Skeleton className="h-7 w-7 rounded-full bg-slate-700" />
                 </div>
               </div>
             </div>

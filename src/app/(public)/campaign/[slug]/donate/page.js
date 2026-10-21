@@ -13,7 +13,7 @@ export async function generateMetadata({ params }) {
   if (!campaign) return { title: "Program Tidak Ditemukan" };
   return {
     title: `Formulir Donasi: ${campaign.title}`,
-    description: `Salurkan donasi Anda untuk ${campaign.title} melalui Yayasan PABE.`,
+    description: `Salurkan donasi Anda untuk ${campaign.title} melalui Yayasan Generasi Sejahtera Mandiri.`,
   };
 }
 

@@ -6,10 +6,10 @@ export default function KalkulatorZakatLoading() {
       {/* Hero Header Banner - Centered Dark Theme */}
       <div className="relative w-full bg-slate-950 border-b border-slate-800 pt-10 sm:pt-14 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-3">
-          <Skeleton className="h-8 sm:h-10 w-64 bg-neutral-800 mx-auto rounded-lg" />
+          <Skeleton className="h-8 sm:h-10 w-64 bg-slate-800 mx-auto rounded-lg" />
           <div className="space-y-1.5 pt-1">
-            <Skeleton className="h-4 sm:h-5 w-full max-w-2xl bg-neutral-800 mx-auto rounded" />
-            <Skeleton className="h-4 sm:h-5 w-3/4 max-w-xl bg-neutral-800 mx-auto rounded" />
+            <Skeleton className="h-4 sm:h-5 w-full max-w-2xl bg-slate-800 mx-auto rounded" />
+            <Skeleton className="h-4 sm:h-5 w-3/4 max-w-xl bg-slate-800 mx-auto rounded" />
           </div>
         </div>
       </div>
@@ -20,7 +20,7 @@ export default function KalkulatorZakatLoading() {
           {/* Mode Selector Tabs (Centered) */}
           <div className="flex justify-center">
             <div className="inline-flex p-1 bg-slate-100 rounded-md border border-slate-200 gap-1 overflow-x-auto max-w-full">
-              <Skeleton className="h-9 w-28 rounded-md bg-neutral-300 shrink-0" />
+              <Skeleton className="h-9 w-28 rounded-md bg-slate-300 shrink-0" />
               <Skeleton className="h-9 w-20 rounded-md shrink-0" />
               <Skeleton className="h-9 w-24 rounded-md shrink-0" />
               <Skeleton className="h-9 w-24 rounded-md shrink-0" />
