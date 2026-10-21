@@ -1,18 +1,18 @@
 import { DonorProfileView } from "@/components/donor/DonorProfileView";
 
 export const metadata = {
-  title: "Profil Pengguna",
+  title: "Profil Saya",
   description:
-    "Kelola data pribadi, informasi rekening bank, foto profil, dan keamanan akun donatur Anda.",
+    "Kelola data pribadi, informasi rekening bank, foto profil, dan keamanan akun Anda.",
 };
 
 export default function DonaturProfilPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Page Heading (Tanpa Subheading) */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-slate-950">
-          Profil Pengguna
+        <h1 className="text-lg sm:text-xl font-medium tracking-tight text-slate-950">
+          Profil Saya
         </h1>
       </div>
 

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { DonorSummaryCards } from "@/components/donor/DonorSummaryCards";
 import { DonorTransactionTable } from "@/components/donor/DonorTransactionTable";
+import { DonorHistorySkeleton } from "@/components/donor/DonorHistorySkeleton";
 import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
 import { useDebounce } from "@/hooks/useDebounce";
 import { safeFetch } from "@/lib/safeFetch";
@@ -31,7 +32,7 @@ export function DonorHistoryDashboard() {
   const [sortBy, setSortBy] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [isTableLoading, setIsTableLoading] = useState(false);
+  const [isTableLoading, setIsTableLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
 
   const debouncedSearch = useDebounce(search, 350);
@@ -52,7 +53,11 @@ export function DonorHistoryDashboard() {
 
   const fetchHistory = useCallback(
     async (pageToLoad = 1, currentLimit = pagination.limit) => {
-      if (!currentUser?.email && !currentUser?.name) return;
+      if (!currentUser?.email && !currentUser?.name) {
+        setIsInitialLoading(false);
+        setIsTableLoading(false);
+        return;
+      }
 
       setIsTableLoading(true);
       setFetchError(null);
@@ -115,13 +120,17 @@ export function DonorHistoryDashboard() {
     setSortOrder(newSortOrder);
   };
 
+  if (isInitialLoading) {
+    return <DonorHistorySkeleton />;
+  }
+
   return (
     <div className="space-y-2.5">
-      {/* 3 Metric Cards Strip (Hanya skeleton pada initial loading) */}
-      <DonorSummaryCards metrics={metrics} isLoading={isInitialLoading} />
+      {/* 3 Metric Cards Strip */}
+      <DonorSummaryCards metrics={metrics} isLoading={false} />
 
       {/* Error state if fetch failed */}
-      {fetchError && !isInitialLoading && (
+      {fetchError && (
         <DataFetchErrorState
           compact
           title="Gangguan Koneksi Riwayat Donasi"

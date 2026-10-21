@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/formatters";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -192,6 +193,51 @@ export function DonorTransactionTable({
         pagination={pagination}
         onPageChange={onPageChange}
       />
+    </div>
+  );
+}
+
+export function DonorTransactionTableSkeleton() {
+  return (
+    <div className="rounded-md border border-slate-200/90 bg-sidebar overflow-hidden animate-pulse">
+      {/* Table Header Toolbar */}
+      <div className="p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div>
+          <h2 className="text-base font-medium text-slate-900">
+            Daftar Riwayat Transaksi
+          </h2>
+          <p className="text-sm font-normal text-slate-500 mt-0.5">
+            Rincian seluruh donasi, sedekah, dan zakat yang tercatat
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Skeleton className="h-10 w-full sm:w-72 md:w-80 rounded-md" />
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-sm font-medium text-slate-600">Baris:</span>
+            <Skeleton className="h-10 w-20 rounded-md" />
+          </div>
+        </div>
+      </div>
+
+      {/* Standar Reusable Table Primitives */}
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-14 text-center">No.</TableHead>
+            <TableHead>Atas Nama</TableHead>
+            <TableHead className="text-right">Nominal</TableHead>
+            <TableHead>Program / Akad</TableHead>
+            <TableHead>Metode</TableHead>
+            <TableHead>Tanggal</TableHead>
+            <TableHead className="text-center w-28">Kwitansi</TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          <TableSkeletonRows rows={6} colSpan={7} height="h-4" />
+        </TableBody>
+      </Table>
     </div>
   );
 }

@@ -1,6 +1,23 @@
 "use client";
 
 import { formatRupiah } from "@/lib/formatters";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export function DonorSummaryCardsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="rounded-md border border-slate-200/90 bg-sidebar p-5 space-y-2.5"
+        >
+          <Skeleton className="h-4 w-32 rounded-sm" />
+          <Skeleton className="h-8 w-44 rounded-sm" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export function DonorSummaryCards({ metrics, isLoading = false }) {
   const cards = [
@@ -20,20 +37,7 @@ export function DonorSummaryCards({ metrics, isLoading = false }) {
   ];
 
   if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="rounded-md border border-slate-200/90 bg-sidebar p-5 animate-pulse space-y-2.5"
-          >
-            <div className="h-4 bg-slate-200 rounded-sm w-32" />
-            <div className="h-8 bg-slate-200 rounded-sm w-44" />
-            <div className="h-4 bg-slate-100 rounded-sm w-48" />
-          </div>
-        ))}
-      </div>
-    );
+    return <DonorSummaryCardsSkeleton />;
   }
 
   return (

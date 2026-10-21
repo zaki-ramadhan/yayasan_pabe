@@ -7,8 +7,7 @@ import { Menu, X, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
-  const salutation = currentUser?.salutation ? `${currentUser.salutation} ` : "";
-  const displayName = `${salutation}${currentUser?.name || "Donatur"}`;
+  const displayName = currentUser?.name || "Pengguna";
 
   return (
     <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between">

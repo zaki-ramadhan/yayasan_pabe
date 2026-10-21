@@ -59,7 +59,7 @@ export function DonorMonthlyTrendChart({
     } catch (err) {
       toast({
         title: "Koneksi Bermasalah",
-        description: err.message || "Gagal memuat tren tahunan donatur.",
+        description: err.message || "Gagal memuat data tren tahunan.",
         variant: "destructive",
       });
     } finally {

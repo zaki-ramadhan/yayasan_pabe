@@ -1,6 +1,20 @@
 import crypto from "crypto";
 import prisma from "@/lib/prisma";
-import { sanitizeInput } from "@/lib/security";
+import {
+  sanitizeInput,
+  sanitizeName,
+  sanitizeCity,
+  sanitizePhone,
+  sanitizeBio,
+  sanitizeAddress,
+  sanitizeBankAccount,
+  sanitizeBankAccountName,
+  sanitizeImageUrl,
+  validateName,
+  validatePhone,
+  validateBankAccount,
+  validatePasswordInput,
+} from "@/lib/security";
 import { DEMO_USERS } from "@/services/authService";
 
 function hashPassword(password) {
@@ -220,7 +234,7 @@ export async function getDonorProfile({ userEmail, userId }) {
             title: demoMatch.title,
             phone: demoMatch.phone,
             avatar: demoMatch.avatar,
-            salutation: demoMatch.salutation || "Bpk.",
+            salutation: "",
             bio: "Mewujudkan generasi qur'ani mandiri dan berdaya saing.",
             city: "Bandung",
             address: "Jl. Riau No. 45, Bandung, Jawa Barat",
@@ -244,8 +258,8 @@ export async function getDonorProfile({ userEmail, userId }) {
       email: user.email,
       username: user.username,
       role: user.role,
-      title: user.title || "Donatur Terdaftar",
-      salutation: user.salutation || "Bpk.",
+      title: user.title || "Akun Terverifikasi",
+      salutation: user.salutation || "",
       phone: user.phone || "",
       avatar: user.avatar || "",
       bio: user.bio || "",
@@ -270,43 +284,76 @@ export async function updateDonorProfile({ userEmail, profileData }) {
   }
 
   const cleanEmail = userEmail.trim().toLowerCase();
-
   const updatePayload = {};
 
-  if (profileData.salutation !== undefined) {
-    updatePayload.salutation = sanitizeInput(profileData.salutation);
-  }
+  // 1. Sanitasi & Validasi Nama Lengkap (Wajib, no emoji, no leading space, max 60)
   if (profileData.name !== undefined) {
-    const cleanName = sanitizeInput(profileData.name);
-    if (!cleanName) throw new Error("Nama lengkap tidak boleh kosong.");
+    const cleanName = sanitizeName(profileData.name).trim();
+    const nameValidation = validateName(cleanName);
+    if (!nameValidation.isValid) {
+      throw new Error(nameValidation.message);
+    }
     updatePayload.name = cleanName;
   }
+
+  // 2. Sanitasi Bio & Motto (Anti-XSS, no leading space, max 200)
   if (profileData.bio !== undefined) {
-    updatePayload.bio = sanitizeInput(profileData.bio);
+    updatePayload.bio = sanitizeBio(profileData.bio).trim();
   }
+
+  // 3. Sanitasi Domisili / Kota (No emoji, no leading space, max 50)
   if (profileData.city !== undefined) {
-    updatePayload.city = sanitizeInput(profileData.city);
+    updatePayload.city = sanitizeCity(profileData.city).trim();
   }
+
+  // 4. Sanitasi Alamat Lengkap (Anti-XSS, no leading space, max 250)
   if (profileData.address !== undefined) {
-    updatePayload.address = sanitizeInput(profileData.address);
+    updatePayload.address = sanitizeAddress(profileData.address).trim();
   }
+
+  // 5. Sanitasi Nomor Telepon / WA (Hanya digit numerik, format 08/628, 10-15 digit)
   if (profileData.phone !== undefined) {
-    updatePayload.phone = sanitizeInput(profileData.phone);
+    const cleanPhone = sanitizePhone(profileData.phone).trim();
+    if (cleanPhone) {
+      const phoneValidation = validatePhone(cleanPhone);
+      if (!phoneValidation.isValid) {
+        throw new Error(phoneValidation.message);
+      }
+    }
+    updatePayload.phone = cleanPhone;
   }
+
+  // 6. Sanitasi Rekening Bank (Konsistensi nomor & nama, tanpa emoji, hanya angka)
   if (profileData.bankName !== undefined) {
-    updatePayload.bankName = sanitizeInput(profileData.bankName);
+    updatePayload.bankName = sanitizeInput(profileData.bankName).trim();
   }
   if (profileData.bankAccount !== undefined) {
-    updatePayload.bankAccount = sanitizeInput(profileData.bankAccount);
+    updatePayload.bankAccount = sanitizeBankAccount(profileData.bankAccount).trim();
   }
   if (profileData.bankAccountName !== undefined) {
-    updatePayload.bankAccountName = sanitizeInput(profileData.bankAccountName);
+    updatePayload.bankAccountName = sanitizeBankAccountName(profileData.bankAccountName).trim();
   }
+
+  // Periksa konsistensi jika ada perubahan data rekening
+  if (
+    updatePayload.bankAccount !== undefined ||
+    updatePayload.bankAccountName !== undefined
+  ) {
+    const bankValidation = validateBankAccount({
+      bankAccount: updatePayload.bankAccount,
+      bankAccountName: updatePayload.bankAccountName,
+    });
+    if (!bankValidation.isValid) {
+      throw new Error(bankValidation.message);
+    }
+  }
+
+  // 7. Sanitasi Tautan Foto Sampul & Avatar (Anti-XSS & javascript: URI)
   if (profileData.coverImage !== undefined) {
-    updatePayload.coverImage = sanitizeInput(profileData.coverImage);
+    updatePayload.coverImage = sanitizeImageUrl(profileData.coverImage);
   }
   if (profileData.avatar !== undefined) {
-    updatePayload.avatar = sanitizeInput(profileData.avatar);
+    updatePayload.avatar = sanitizeImageUrl(profileData.avatar);
   }
 
   try {
@@ -322,16 +369,16 @@ export async function updateDonorProfile({ userEmail, profileData }) {
       username: updated.username,
       role: updated.role,
       title: updated.title,
-      salutation: updated.salutation,
-      phone: updated.phone,
-      avatar: updated.avatar,
-      bio: updated.bio,
-      city: updated.city,
-      address: updated.address,
-      coverImage: updated.coverImage,
-      bankName: updated.bankName,
-      bankAccount: updated.bankAccount,
-      bankAccountName: updated.bankAccountName,
+      salutation: "",
+      phone: updated.phone || "",
+      avatar: updated.avatar || "",
+      bio: updated.bio || "",
+      city: updated.city || "",
+      address: updated.address || "",
+      coverImage: updated.coverImage || "",
+      bankName: updated.bankName || "",
+      bankAccount: updated.bankAccount || "",
+      bankAccountName: updated.bankAccountName || "",
       updatedAt: updated.updatedAt.toISOString(),
     };
   } catch (error) {
@@ -344,8 +391,11 @@ export async function updateDonorPassword({ userEmail, oldPassword, newPassword 
   if (!userEmail) {
     throw new Error("Email pengguna diperlukan.");
   }
-  if (!newPassword || newPassword.length < 6) {
-    throw new Error("Kata sandi baru minimal 6 karakter.");
+
+  // Validasi input password baru
+  const newPassValidation = validatePasswordInput(newPassword, "Kata sandi baru");
+  if (!newPassValidation.isValid) {
+    throw new Error(newPassValidation.message);
   }
 
   const cleanEmail = userEmail.trim().toLowerCase();
@@ -359,13 +409,17 @@ export async function updateDonorPassword({ userEmail, oldPassword, newPassword 
   }
 
   if (user.passwordHash) {
-    if (!oldPassword) {
-      throw new Error("Kata sandi saat ini wajib diisi untuk mengubah kata sandi.");
+    if (!oldPassword || !oldPassword.trim()) {
+      throw new Error("Kata sandi saat ini wajib diisi untuk verifikasi keamanan.");
     }
     const isValid = verifyPassword(oldPassword, user.passwordHash);
     if (!isValid) {
       throw new Error("Kata sandi saat ini tidak cocok.");
     }
+  }
+
+  if (oldPassword && oldPassword === newPassword) {
+    throw new Error("Kata sandi baru harus berbeda dari kata sandi saat ini.");
   }
 
   const newHash = hashPassword(newPassword);

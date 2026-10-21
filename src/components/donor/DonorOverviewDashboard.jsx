@@ -11,6 +11,7 @@ import { DonorCategoryDonutCard } from "@/components/donor/DonorCategoryDonutCar
 import { DonorRecentTransactionsCard } from "@/components/donor/DonorRecentTransactionsCard";
 import { DonorMonthlyTargetCard } from "@/components/donor/DonorMonthlyTargetCard";
 import { DonorRoutineDonationsCard } from "@/components/donor/DonorRoutineDonationsCard";
+import { DonorDashboardSkeleton } from "@/components/donor/DonorDashboardSkeleton";
 import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
 import { safeFetch } from "@/lib/safeFetch";
 
@@ -53,8 +54,10 @@ export function DonorOverviewDashboard({ currentUser }) {
 		if (
 			!currentUser?.email &&
 			!currentUser?.name
-		)
+		) {
+			setIsLoading(false);
 			return;
+		}
 
 		setIsLoading(true);
 		setFetchError(null);
@@ -87,11 +90,11 @@ export function DonorOverviewDashboard({ currentUser }) {
 					json.data,
 				);
 			} else {
-				setFetchError(json.message || "Gagal memuat data donatur.");
+				setFetchError(json.message || "Gagal memuat data akun.");
 			}
 		} catch (err) {
 			console.error(
-				"Gagal memuat data dashboard donatur:",
+				"Gagal memuat data dashboard:",
 				err,
 			);
 			setFetchError(err.message || "Koneksi terputus saat mengambil data donasi.");
@@ -106,6 +109,10 @@ export function DonorOverviewDashboard({ currentUser }) {
 		fetchDashboardData();
 	}, [fetchDashboardData]);
 
+	if (isLoading) {
+		return <DonorDashboardSkeleton />;
+	}
+
 	const metrics = dashboardData.metrics || {
 		totalNominal: 0,
 		totalTransactions: 0,
@@ -117,7 +124,7 @@ export function DonorOverviewDashboard({ currentUser }) {
 	return (
 		<div className="space-y-4 sm:space-y-5">
 			{/* Banner Error Sinkronisasi: Mencegah salah sangka data kosong */}
-			{fetchError && !isLoading && (
+			{fetchError && (
 				<DataFetchErrorState
 					title="Gangguan Koneksi Riwayat Donasi"
 					description="Tidak dapat menyinkronkan data donasi terbaru Anda ke server. Silakan periksa jaringan dan coba lagi."
@@ -127,8 +134,7 @@ export function DonorOverviewDashboard({ currentUser }) {
 			)}
 
 			{/* Banner Promosi Cepat: HANYA muncul jika belum pernah berdonasi dan tidak error */}
-			{!isLoading &&
-				!fetchError &&
+			{!fetchError &&
 				metrics.totalTransactions ===
 					0 && (
 					<CampaignCTA
@@ -142,9 +148,8 @@ export function DonorOverviewDashboard({ currentUser }) {
 
 			{/* Heading Utama */}
 			<div>
-				<h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-slate-950">
+				<h1 className="text-lg sm:text-xl font-medium tracking-tight text-slate-950">
 					Dashboard
-					Donatur
 				</h1>
 			</div>
 

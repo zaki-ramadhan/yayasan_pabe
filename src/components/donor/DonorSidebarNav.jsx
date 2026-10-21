@@ -15,7 +15,7 @@ import {
   HeartHandshake,
   Newspaper,
 } from "lucide-react";
-import { logoutUser } from "@/services/authService";
+import { logoutUser, USER_ROLES } from "@/services/authService";
 import { cn } from "@/lib/utils";
 
 export function DonorSidebarNav({
@@ -25,6 +25,10 @@ export function DonorSidebarNav({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+
+  const isStaff = Boolean(
+    currentUser?.role && currentUser.role !== USER_ROLES.DONOR
+  );
 
   const handleLogout = () => {
     logoutUser();
@@ -62,15 +66,13 @@ export function DonorSidebarNav({
       icon: HeartHandshake,
     },
     {
-      label: "Kabar & Artikel",
+      label: "Berita & Artikel",
       href: "/artikel",
       icon: Newspaper,
     },
   ];
 
-  const isStaff = currentUser?.role && currentUser.role !== "DONOR";
-  const salutation = currentUser?.salutation ? `${currentUser.salutation} ` : "";
-  const displayName = `${salutation}${currentUser?.name || "Donatur"}`;
+  const displayName = currentUser?.name || "Pengguna";
 
   return (
     <div className="h-full flex flex-col justify-between bg-sidebar border-r border-slate-200 overflow-hidden transition-all duration-200 select-none">
@@ -109,11 +111,11 @@ export function DonorSidebarNav({
           </Link>
         </div>
 
-        {/* Main Navigation (Portal Donatur) */}
+        {/* Main Navigation */}
         <div className="space-y-1">
           {!isCollapsed && (
-            <p className="px-2 text-xs font-medium text-slate-400 uppercase tracking-wider truncate">
-              Menu Donatur
+            <p className="px-2 text-xs font-medium text-slate-600 uppercase tracking-wider truncate">
+              Menu utama
             </p>
           )}
           <nav className="space-y-1 pt-0.5">
@@ -129,20 +131,20 @@ export function DonorSidebarNav({
                   onClick={onCloseMobile}
                   title={isCollapsed ? item.label : undefined}
                   className={cn(
-                    "flex items-center rounded-md text-sm font-normal transition-colors",
+                    "flex items-center rounded-md text-sm transition-colors group",
                     isCollapsed
                       ? "justify-center p-2.5"
                       : "gap-2.5 px-3 py-2",
                     isActive
-                      ? "bg-white text-slate-950 font-normal border border-slate-200/90"
-                      : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/50"
+                      ? "text-slate-950 font-medium bg-slate-200/60"
+                      : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40 font-normal"
                   )}
                 >
                   <Icon
                     className={cn(
-                      "w-5 h-5 shrink-0",
+                      "w-5 h-5 shrink-0 transition-colors",
                       isActive
-                        ? "text-emerald-700"
+                        ? "text-slate-950"
                         : "text-slate-400 group-hover:text-slate-600"
                     )}
                   />
@@ -160,8 +162,8 @@ export function DonorSidebarNav({
         {/* Website Utama Navigation */}
         <div className="space-y-1 pt-3 border-t border-slate-200">
           {!isCollapsed && (
-            <p className="px-2 text-xs font-medium text-slate-400 uppercase tracking-wider truncate">
-              Website Utama
+            <p className="px-2 text-xs font-medium text-slate-600 uppercase tracking-wider truncate">
+              Website utama
             </p>
           )}
           <nav className="space-y-1 pt-0.5">
@@ -175,16 +177,23 @@ export function DonorSidebarNav({
                   onClick={onCloseMobile}
                   title={isCollapsed ? item.label : undefined}
                   className={cn(
-                    "flex items-center rounded-md text-sm font-normal transition-colors",
+                    "flex items-center rounded-md text-sm transition-colors group",
                     isCollapsed
                       ? "justify-center p-2.5"
                       : "gap-2.5 px-3 py-2",
                     isActive
-                      ? "bg-white text-slate-950 font-normal border border-slate-200/90"
-                      : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/50"
+                      ? "text-slate-950 font-medium bg-slate-200/60"
+                      : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40 font-normal"
                   )}
                 >
-                  <Icon className="w-5 h-5 shrink-0 text-slate-400 group-hover:text-slate-600" />
+                  <Icon
+                    className={cn(
+                      "w-5 h-5 shrink-0 transition-colors",
+                      isActive
+                        ? "text-slate-950"
+                        : "text-slate-400 group-hover:text-slate-600"
+                    )}
+                  />
                   {!isCollapsed && (
                     <span className="flex-1 truncate whitespace-nowrap">
                       {item.label}
@@ -196,99 +205,62 @@ export function DonorSidebarNav({
           </nav>
         </div>
 
-        {/* Staff / Admin Shortcut if applicable */}
-        {!isCollapsed && isStaff && (
-          <div className="pt-2 border-t border-slate-200/80">
-            <Link
-              href="/dashboard"
-              onClick={onCloseMobile}
-              className="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-purple-50 hover:bg-purple-100/80 border border-purple-200 text-purple-900 text-xs font-normal transition-colors"
-            >
-              <div className="flex items-center gap-1.5 min-w-0">
-                <Shield className="w-3.5 h-3.5 text-purple-700 shrink-0" />
-                <span className="truncate">Dashboard Pengurus</span>
-              </div>
-              <ChevronRight className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-            </Link>
+        {isStaff && (
+          <div className={cn("pt-2 border-t border-slate-200/80", isCollapsed && "flex justify-center")}>
+            {isCollapsed ? (
+              <Link
+                href="/dashboard"
+                onClick={onCloseMobile}
+                title="Dashboard pengurus"
+                className="w-10 h-10 rounded-md flex items-center justify-center bg-purple-50 hover:bg-purple-100/80 border border-purple-200 text-purple-900 transition-colors"
+              >
+                <Shield className="w-4.5 h-4.5 text-purple-700" />
+              </Link>
+            ) : (
+              <Link
+                href="/dashboard"
+                onClick={onCloseMobile}
+                className="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-purple-50 hover:bg-purple-100/80 border border-purple-200 text-purple-900 text-xs font-normal transition-colors"
+              >
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <Shield className="w-3.5 h-3.5 text-purple-700 shrink-0" />
+                  <span className="truncate">Dashboard pengurus</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+              </Link>
+            )}
           </div>
         )}
       </div>
 
-      {/* Bottom Section: Profile Minicard with Integrated Logout Button on the Right */}
+      {/* Bottom Section: Dedicated Logout Button */}
       <div
         className={cn(
           "border-t border-slate-200 bg-sidebar",
-          isCollapsed ? "p-2.5 flex flex-col items-center" : "p-3"
+          isCollapsed ? "p-2.5 flex justify-center" : "p-3"
         )}
       >
         {isCollapsed ? (
-          /* Collapsed Mode: Only leaves user avatar */
-          currentUser && (
-            <Link
-              href="/donatur/profil"
-              onClick={onCloseMobile}
-              title={displayName}
-              className="relative w-7 h-7 rounded-full overflow-hidden bg-white border border-slate-300 shrink-0 flex items-center justify-center hover:ring-2 hover:ring-primary/20 transition-all cursor-pointer"
-            >
-              {currentUser.avatar ? (
-                <img
-                  src={currentUser.avatar}
-                  alt={displayName}
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <span className="font-medium text-[11px] text-slate-700">
-                  {currentUser.initials || "U"}
-                </span>
-              )}
-            </Link>
-          )
+          <button
+            type="button"
+            onClick={handleLogout}
+            title="Keluar dari akun"
+            aria-label="Keluar dari akun"
+            className="w-10 h-10 rounded-md flex items-center justify-center text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-colors cursor-pointer"
+          >
+            <LogOut className="w-4.5 h-4.5 text-rose-600" />
+          </button>
         ) : (
-          /* Expanded Mode: Minicard with Avatar + Info + Logout Button on the Right */
-          currentUser && (
-            <div className="p-2 rounded-md bg-white border border-slate-200 flex items-center justify-between gap-2">
-              <Link
-                href="/donatur/profil"
-                onClick={onCloseMobile}
-                className="flex items-center gap-2 min-w-0 flex-1 hover:opacity-85 transition-opacity"
-              >
-                <div className="relative w-7 h-7 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center">
-                  {currentUser.avatar ? (
-                    <img
-                      src={currentUser.avatar}
-                      alt={displayName}
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <span className="font-medium text-[11px] text-slate-700">
-                      {currentUser.initials || "U"}
-                    </span>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium text-xs text-slate-900 truncate leading-snug">
-                    {displayName}
-                  </p>
-                  <p className="text-xs font-normal text-slate-500 truncate leading-tight">
-                    {currentUser.email || "donatur@pabe.or.id"}
-                  </p>
-                </div>
-              </Link>
-
-              {/* Integrated Logout Button */}
-              <button
-                type="button"
-                onClick={handleLogout}
-                title="Keluar dari Akun"
-                aria-label="Keluar"
-                className="p-1.5 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          )
+          <button
+            type="button"
+            onClick={handleLogout}
+            title="Keluar dari akun"
+            aria-label="Keluar dari akun"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium text-slate-700 hover:text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-colors cursor-pointer group"
+          >
+            <LogOut className="w-4.5 h-4.5 shrink-0 text-rose-600 transition-colors" />
+            <span className="truncate">Keluar dari akun</span>
+          </button>
         )}
       </div>
     </div>

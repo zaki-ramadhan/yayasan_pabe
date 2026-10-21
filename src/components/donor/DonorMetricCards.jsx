@@ -2,7 +2,35 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { DonorStatCard, DonorAmountDisplay } from "@/components/donor/DonorDashboardPrimitives";
+
+export function DonorMetricCardsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <div className="sm:col-span-3 rounded-md border border-slate-200/90 bg-sidebar pt-3.5 sm:pt-4 px-3 sm:px-3.5 pb-2.5 sm:pb-3 space-y-2.5">
+        <div className="space-y-1.5 pb-2.5">
+          <Skeleton className="h-4 w-36 rounded" />
+          <Skeleton className="h-8 w-52 rounded" />
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-10 w-full rounded" />
+          ))}
+        </div>
+      </div>
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="rounded-md border border-slate-200/90 bg-sidebar p-4 sm:p-5 space-y-2"
+        >
+          <Skeleton className="h-4 w-28 rounded" />
+          <Skeleton className="h-7 w-32 rounded" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export function DonorMetricCards({ metrics, lastDonation, isLoading = false }) {
   const totalNominal = metrics?.totalNominal || 0;
@@ -11,28 +39,7 @@ export function DonorMetricCards({ metrics, lastDonation, isLoading = false }) {
   const lastAmount = lastDonation ? Number(lastDonation.amount || 0) : 0;
 
   if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-        <div className="sm:col-span-3 rounded-md border border-slate-200/90 bg-sidebar p-5 animate-pulse space-y-3">
-          <div className="h-4 bg-slate-200 rounded w-36" />
-          <div className="h-8 bg-slate-200 rounded w-48" />
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-10 bg-slate-200 rounded" />
-            ))}
-          </div>
-        </div>
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="rounded-md border border-slate-200/90 bg-sidebar p-5 animate-pulse space-y-2.5"
-          >
-            <div className="h-4 bg-slate-200 rounded w-28" />
-            <div className="h-8 bg-slate-200 rounded w-32" />
-          </div>
-        ))}
-      </div>
-    );
+    return <DonorMetricCardsSkeleton />;
   }
 
   const QUICK_ACTIONS = [

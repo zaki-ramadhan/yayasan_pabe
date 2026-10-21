@@ -7,7 +7,7 @@ export function DonorReportItem({ report }) {
   if (!report) return null;
 
   return (
-    <div className="p-4 rounded-md border border-slate-200 hover:border-slate-300 bg-white transition-colors flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div className="p-4 rounded-md border border-slate-200 bg-white transition-colors flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div className="space-y-1 min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 truncate">

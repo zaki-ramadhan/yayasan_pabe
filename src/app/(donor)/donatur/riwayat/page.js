@@ -11,7 +11,7 @@ export default function DonaturRiwayatPage() {
     <div className="space-y-4 sm:space-y-5">
       {/* Page Header (Tanpa Subheading) */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-medium tracking-tight text-slate-950">
+        <h1 className="text-lg sm:text-xl font-medium tracking-tight text-slate-950">
           Riwayat Donasi &amp; Zakat
         </h1>
       </div>

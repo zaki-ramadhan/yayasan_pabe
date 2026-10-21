@@ -5,7 +5,11 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { DonorProfileCover } from "@/components/donor/DonorProfileCover";
-import { DonorProfileForm } from "@/components/donor/DonorProfileForm";
+import { DonorProfileNav } from "@/components/donor/DonorProfileNav";
+import { DonorProfileSkeleton } from "@/components/donor/DonorProfileSkeleton";
+import { DonorPersonalFormCard } from "@/components/donor/DonorPersonalFormCard";
+import { DonorBankFormCard } from "@/components/donor/DonorBankFormCard";
+import { DonorSecurityFormCard } from "@/components/donor/DonorSecurityFormCard";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { safeFetch } from "@/lib/safeFetch";
@@ -19,13 +23,18 @@ export function DonorProfileView() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
 
+  // Tab aktif: "personal" | "bank" | "security"
+  const [activeTab, setActiveTab] = useState("personal");
+
   // Redirect guest to login
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!isAuthenticated && typeof window !== "undefined") {
-        const stored = localStorage.getItem("pabe_auth_user") || localStorage.getItem("ygsm_auth_user");
+        const stored =
+          localStorage.getItem("pabe_auth_user") ||
+          localStorage.getItem("ygsm_auth_user");
         if (!stored) {
-          router.replace("/login?redirect=/profil");
+          router.replace("/login?redirect=/donatur/profil");
         }
       }
     }, 150);
@@ -38,13 +47,14 @@ export function DonorProfileView() {
 
     setIsLoading(true);
     try {
-      const res = await safeFetch(`/api/user/profile?email=${encodeURIComponent(currentUser.email)}`);
+      const res = await safeFetch(
+        `/api/user/profile?email=${encodeURIComponent(currentUser.email)}`
+      );
       const json = await res.json();
 
       if (json.success && json.data) {
         setProfile(json.data);
       } else {
-        // Fallback to current session object if not yet seeded
         setProfile(currentUser);
       }
     } catch (err) {
@@ -61,7 +71,7 @@ export function DonorProfileView() {
     }
   }, [currentUser?.email, fetchProfile]);
 
-  // Handle profile updates (personal info / bank / images)
+  // Handle profile updates (personal info / bank)
   const handleUpdateProfile = async (profileData) => {
     if (!currentUser?.email) throw new Error("Sesi login berakhir.");
 
@@ -85,7 +95,6 @@ export function DonorProfileView() {
     // Sync with navbar & session
     updateLocalUser({
       name: json.data.name,
-      salutation: json.data.salutation,
       avatar: json.data.avatar,
       phone: json.data.phone,
     });
@@ -138,27 +147,14 @@ export function DonorProfileView() {
   };
 
   if (isLoading) {
-    return (
-      <div className="space-y-6 animate-pulse">
-        {/* Skeleton Cover Banner */}
-        <div className="h-56 sm:h-72 bg-slate-200 rounded-md" />
-        <div className="h-64 bg-white rounded-md border border-slate-200 p-6 space-y-4">
-          <div className="h-6 bg-slate-200 rounded-sm w-48" />
-          <div className="h-4 bg-slate-100 rounded-sm w-64" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-            <div className="h-10 bg-slate-100 rounded-md" />
-            <div className="h-10 bg-slate-100 rounded-md" />
-          </div>
-        </div>
-      </div>
-    );
+    return <DonorProfileSkeleton />;
   }
 
   if (!profile) {
     return (
-      <div className="p-8 text-center bg-white rounded-md border border-slate-200 space-y-3">
+      <div className="p-8 text-center bg-sidebar rounded-md border border-slate-200/90 space-y-3 shadow-2xs">
         <p className="text-sm font-medium text-slate-600">
-          Memuat data profil donatur...
+          Memuat data profil...
         </p>
         <Loader2 className="w-5 h-5 animate-spin text-primary mx-auto" />
       </div>
@@ -167,19 +163,47 @@ export function DonorProfileView() {
 
   return (
     <div className="space-y-6">
-      {/* Facebook-style Cover Banner & Header */}
+      {/* Unified Parent Profile Console (Identitas Avatar & Split Form dalam 1 Background Menyatu) */}
       <DonorProfileCover
         profile={profile}
         onUpdateImage={handleUpdateImage}
         isUpdating={isUpdatingImage}
-      />
+      >
+        {/* Split Kiri & Kanan di Bawah Avatar */}
+        <div className="flex flex-col md:flex-row min-h-[460px]">
+          {/* Kolom Kiri: Navigasi Teks Murni */}
+          <aside className="w-full md:w-52 lg:w-60 shrink-0 border-b md:border-b-0 md:border-r border-slate-200/80 p-3 sm:p-4 bg-slate-100/50">
+            <DonorProfileNav
+              activeTab={activeTab}
+              onSelectTab={setActiveTab}
+            />
+          </aside>
 
-      {/* Forms Section: Personal Info, Bank Account, Password */}
-      <DonorProfileForm
-        profile={profile}
-        onUpdateProfile={handleUpdateProfile}
-        onUpdatePassword={handleUpdatePassword}
-      />
+          {/* Kolom Kanan: Form Konten Aktif */}
+          <main className="flex-1 p-5 sm:p-7 md:p-8 bg-sidebar min-w-0">
+            {activeTab === "personal" && (
+              <DonorPersonalFormCard
+                profile={profile}
+                onUpdateProfile={handleUpdateProfile}
+                borderless
+              />
+            )}
+            {activeTab === "bank" && (
+              <DonorBankFormCard
+                profile={profile}
+                onUpdateProfile={handleUpdateProfile}
+                borderless
+              />
+            )}
+            {activeTab === "security" && (
+              <DonorSecurityFormCard
+                onUpdatePassword={handleUpdatePassword}
+                borderless
+              />
+            )}
+          </main>
+        </div>
+      </DonorProfileCover>
     </div>
   );
 }

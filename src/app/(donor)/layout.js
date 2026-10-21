@@ -1,12 +1,11 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { DonorLayoutClient } from "@/components/donor/DonorLayoutClient";
 
 export const metadata = {
-  title: {
-    default: "Portal Donatur | Yayasan PABE",
-    template: "%s | Portal Donatur Yayasan PABE",
-  },
+  title: "Dashboard",
   description:
-    "Area aman kelola donasi, riwayat ZISWAF, dan profil donatur Yayasan PABE.",
+    "Area aman kelola donasi, riwayat ZISWAF, dan profil akun Anda di Yayasan Generasi Sejahtera Mandiri.",
   robots: {
     index: false,
     follow: false,
@@ -22,6 +21,15 @@ export const metadata = {
   },
 };
 
-export default function DonorLayout({ children }) {
+export default async function DonorLayout({ children }) {
+  const cookieStore = await cookies();
+  const session =
+    cookieStore.get("pabe_session")?.value ||
+    cookieStore.get("ygsm_session")?.value;
+
+  if (!session) {
+    redirect("/login?redirect=/donatur/dashboard");
+  }
+
   return <DonorLayoutClient>{children}</DonorLayoutClient>;
 }
