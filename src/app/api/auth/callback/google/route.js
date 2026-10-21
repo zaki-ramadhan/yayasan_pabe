@@ -100,7 +100,7 @@ export async function GET(request) {
           username: sanitizedUsername,
           avatar: profile.picture || null,
           role: "DONOR",
-          title: "Donatur Terdaftar (Google)",
+          title: "Akun Terverifikasi (Google)",
           provider: "GOOGLE",
           providerId: profile.id,
         },
@@ -114,7 +114,7 @@ export async function GET(request) {
     const userEmail = dbUser?.email || profile.email.toLowerCase();
     const userUsername = dbUser?.username || sanitizedUsername;
     const userRole = dbUser?.role || "DONOR";
-    const userTitle = dbUser?.title || "Donatur Terdaftar (Google)";
+    const userTitle = dbUser?.title || "Akun Terverifikasi (Google)";
     const userAvatar = dbUser?.avatar || profile.picture || null;
 
     const sessionPayload = {

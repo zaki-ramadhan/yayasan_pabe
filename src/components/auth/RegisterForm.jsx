@@ -4,8 +4,16 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import { ShieldCheck, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { SocialAuthGroup } from "@/components/auth/SocialAuthGroup";
 import { AuthFormHeader } from "@/components/auth/AuthFormHeader";
 import { AuthNoticeBanner } from "@/components/auth/AuthNoticeBanner";
@@ -19,7 +27,15 @@ import {
   simulateSocialAuth,
   redirectToGoogleOAuth,
 } from "@/services/authService";
-import { sanitizeEmail, sanitizePhone, validateEmail, validatePhone, stripEmojis } from "@/lib/security";
+import {
+  sanitizeEmail,
+  sanitizePhone,
+  validateEmail,
+  validatePhone,
+  stripEmojis,
+  validateUsername,
+  containsReservedKeyword,
+} from "@/lib/security";
 import { cn } from "@/lib/utils";
 
 export function RegisterForm() {
@@ -34,7 +50,19 @@ export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const handledErrorRef = useRef(false);
+
+  // Submit button is disabled if required fields are incomplete or invalid
+  const isSubmitDisabled =
+    !username.trim() ||
+    username.trim().length < 3 ||
+    !email.trim() ||
+    !phone.trim() ||
+    !password ||
+    password.length < 6 ||
+    !agreeTerms ||
+    Boolean(errors.username || errors.email || errors.phone || errors.password || errors.agreeTerms);
 
   const redirectUrl = searchParams.get("redirect") || searchParams.get("callbackUrl");
   const reasonParam = searchParams.get("reason");
@@ -61,16 +89,10 @@ export function RegisterForm() {
   const validateForm = () => {
     const newErrors = {};
 
-    // 1. Username validation
-    const cleanUsername = stripEmojis(username).trim();
-    if (!cleanUsername) {
-      newErrors.username = "Nama pengguna wajib diisi.";
-    } else if (cleanUsername.length < 3) {
-      newErrors.username = "Nama pengguna minimal 3 karakter.";
-    } else if (cleanUsername.length > 30) {
-      newErrors.username = "Nama pengguna maksimal 30 karakter.";
-    } else if (!/^[a-zA-Z0-9_]+$/.test(cleanUsername)) {
-      newErrors.username = "Nama pengguna hanya boleh huruf, angka, dan garis bawah (_).";
+    // 1. Username validation (Format, batas karakter, & proteksi anti-impersonation)
+    const usernameResult = validateUsername(username);
+    if (!usernameResult.isValid) {
+      newErrors.username = usernameResult.message;
     }
 
     // 2. Email validation
@@ -191,9 +213,30 @@ export function RegisterForm() {
             value={username}
             maxLength={30}
             onChange={(e) => {
-              const clean = stripEmojis(e.target.value).replace(/[^a-zA-Z0-9_]/g, "").slice(0, 30);
+              const clean = stripEmojis(e.target.value).replace(/[^a-zA-Z0-9_.]/g, "").slice(0, 30);
               setUsername(clean);
-              if (errors.username) setErrors((prev) => ({ ...prev, username: undefined }));
+
+              if (clean.length >= 3) {
+                const reservedCheck = containsReservedKeyword(clean);
+                if (reservedCheck.isReserved) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    username: `Nama pengguna tidak boleh mengandung istilah yang dicadangkan sistem ("${reservedCheck.matchedWord}").`,
+                  }));
+                  return;
+                }
+              }
+              if (errors.username) {
+                setErrors((prev) => ({ ...prev, username: undefined }));
+              }
+            }}
+            onBlur={() => {
+              if (username) {
+                const res = validateUsername(username);
+                if (!res.isValid) {
+                  setErrors((prev) => ({ ...prev, username: res.message }));
+                }
+              }
             }}
             autoComplete="username"
             className={cn(
@@ -220,6 +263,14 @@ export function RegisterForm() {
               const clean = sanitizeEmail(e.target.value).slice(0, 100);
               setEmail(clean);
               if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+            }}
+            onBlur={() => {
+              if (email) {
+                const res = validateEmail(email, true);
+                if (!res.valid) {
+                  setErrors((prev) => ({ ...prev, email: res.error }));
+                }
+              }
             }}
             autoComplete="email"
             className={cn(
@@ -248,6 +299,14 @@ export function RegisterForm() {
               setPhone(clean);
               if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
             }}
+            onBlur={() => {
+              if (phone) {
+                const res = validatePhone(phone);
+                if (!res.valid) {
+                  setErrors((prev) => ({ ...prev, phone: res.error }));
+                }
+              }
+            }}
             autoComplete="tel"
             className={cn(
               "h-11 text-sm text-slate-900 border-slate-300 rounded-lg transition-colors",
@@ -259,24 +318,24 @@ export function RegisterForm() {
           )}
         </div>
 
-        {/* 4. Kata Sandi */}
-        <div className="space-y-1.5">
-          <label className="block text-sm font-semibold text-slate-800">
-            Kata sandi <span className="text-rose-500">*</span>
-          </label>
-          <AuthPasswordInput
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
-            }}
-            placeholder="Minimal 6 karakter"
-            error={errors.password}
-          />
-          {errors.password && (
-            <p className="text-xs text-rose-600 font-medium mt-1">{errors.password}</p>
-          )}
-        </div>
+        {/* 4. Kata Sandi (Label internal dikelola oleh AuthPasswordInput) */}
+        <AuthPasswordInput
+          id="password"
+          label="Kata sandi"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+          }}
+          onBlur={() => {
+            if (password && password.length < 6) {
+              setErrors((prev) => ({ ...prev, password: "Kata sandi minimal 6 karakter." }));
+            }
+          }}
+          placeholder="Minimal 6 karakter"
+          error={errors.password}
+          autoComplete="new-password"
+        />
 
         {/* Agree Terms Checkbox */}
         <div className="space-y-1 pt-1">
@@ -295,12 +354,13 @@ export function RegisterForm() {
               <label htmlFor="agree" className="cursor-pointer select-none">
                 Saya menyetujui{" "}
               </label>
-              <Link
-                href="/ketentuan-transaksi"
-                className="text-primary hover:underline font-semibold"
+              <button
+                type="button"
+                onClick={() => setIsTermsModalOpen(true)}
+                className="text-primary hover:underline font-semibold cursor-pointer inline text-left"
               >
                 Ketentuan Akad &amp; Kebijakan Privasi Yayasan
-              </Link>
+              </button>
               <span>.</span>
             </div>
           </div>
@@ -312,7 +372,7 @@ export function RegisterForm() {
         {/* Submit Button */}
         <Button
           type="submit"
-          disabled={isLoading || isGoogleLoading}
+          disabled={isLoading || isGoogleLoading || isFacebookLoading || isSubmitDisabled}
           variant="primary3d"
           className="w-full h-11 rounded-lg text-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -336,6 +396,75 @@ export function RegisterForm() {
           Masuk di sini
         </Link>
       </div>
+
+      {/* Modal Interaktif: Ketentuan Akad & Kebijakan Privasi */}
+      <Dialog open={isTermsModalOpen} onOpenChange={setIsTermsModalOpen}>
+        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto p-5 sm:p-6">
+          <DialogHeader className="space-y-1.5 pb-2 border-b border-slate-200">
+            <div className="flex items-center gap-2 text-primary">
+              <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
+              <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950">
+                Ketentuan Akad &amp; Kebijakan Privasi
+              </DialogTitle>
+            </div>
+            <DialogDescription className="text-xs sm:text-sm text-slate-500">
+              Prinsip syariat, perlindungan privasi donatur, dan tata kelola amanah Yayasan PABE.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2 text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div className="space-y-1">
+              <h5 className="font-semibold text-slate-900">1. Akad Wakalah Donasi &amp; Zakat</h5>
+              <p className="text-slate-600">
+                Donasi yang disalurkan melalui platform ini bersifat sukarela dan ikhlas. Donatur memberikan kuasa penuh (<em>wakalah</em>) kepada Yayasan PABE untuk mengelola, mendistribusikan, dan menyalurkan dana kepada mustahik yang berhak sesuai syariat Islam.
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <h5 className="font-semibold text-slate-900">2. Kerahasiaan Data Pribadi (UU PDP No. 27/2022)</h5>
+              <p className="text-slate-600">
+                Yayasan berkomitmen penuh melindungi data pribadi Anda. Nomor kontak, riwayat transaksi, dan profil tidak akan pernah diperjualbelikan atau disalahgunakan kepada pihak ketiga manapun.
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <h5 className="font-semibold text-slate-900">3. Hak Donasi Anonim (Hamba Allah)</h5>
+              <p className="text-slate-600">
+                Anda berhak menyamarkan identitas publik pada setiap penyaluran program. Sistem tetap mencatat transaksi secara sah dan menerbitkan e-Kwitansi resmi di akun donatur Anda.
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <h5 className="font-semibold text-slate-900">4. Kanal Transaksi Resmi &amp; Audit Publik</h5>
+              <p className="text-slate-600">
+                Pembayaran donasi diproses melalui kanal resmi berlisensi Bank Indonesia (QRIS dan Virtual Account). Laporan keuangan dan penyaluran dapat ditinjau kapan saja melalui halaman Transparansi Publik.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+            <Link
+              href="/kebijakan-privasi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary hover:underline font-medium flex items-center gap-1"
+            >
+              <span>Dokumen lengkap privasi</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </Link>
+            <Button
+              type="button"
+              onClick={() => {
+                setAgreeTerms(true);
+                setIsTermsModalOpen(false);
+              }}
+              className="w-full sm:w-auto h-9 px-4 rounded-lg text-xs sm:text-sm font-medium bg-primary hover:bg-primary-hover text-white cursor-pointer"
+            >
+              Saya Mengerti &amp; Setujui
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

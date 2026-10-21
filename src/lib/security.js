@@ -32,18 +32,244 @@ export function sanitizeInput(input) {
 
 /**
  * Sanitasi input nama orang/donatur (hanya alfabet, spasi, titik, koma, petik, strip; tanpa emoji/angka).
+ * Otomatis mencegah spasi di awal (leading space) dan mengompresi spasi ganda.
  */
 export function sanitizeName(input) {
   if (typeof input !== "string") return "";
   return stripEmojis(input)
     .replace(/<[^>]*>?/gm, "")
     .replace(/[^a-zA-ZÀ-ÿ\s.,'\-]/g, "")
+    .replace(/^\s+/, "")
     .replace(/\s{2,}/g, " ")
     .slice(0, 60);
 }
 
 /**
- * Validasi nama lengkap.
+ * Sanitasi nama kota / kabupaten domisili (hanya huruf, spasi, titik, strip; tanpa emoji/angka).
+ * Otomatis mencegah spasi di awal dan mengompresi spasi ganda.
+ */
+export function sanitizeCity(input) {
+  if (typeof input !== "string") return "";
+  return stripEmojis(input)
+    .replace(/<[^>]*>?/gm, "")
+    .replace(/[^a-zA-ZÀ-ÿ\s.\-]/g, "")
+    .replace(/^\s+/, "")
+    .replace(/\s{2,}/g, " ")
+    .slice(0, 50);
+}
+
+/**
+ * Sanitasi nomor rekening bank (hanya digit numerik, maksimal 30 digit).
+ */
+export function sanitizeBankAccount(input) {
+  if (typeof input !== "string") return "";
+  return stripEmojis(input).replace(/\D/g, "").slice(0, 30);
+}
+
+/**
+ * Sanitasi atas nama pemilik rekening bank (hanya alfabet dan tanda baca nama wajar).
+ * Dilarang keras memuat emoji, angka, tag HTML, atau leading space.
+ */
+export function sanitizeBankAccountName(input) {
+  if (typeof input !== "string") return "";
+  return stripEmojis(input)
+    .replace(/<[^>]*>?/gm, "")
+    .replace(/[^a-zA-ZÀ-ÿ\s.,'\-]/g, "")
+    .replace(/^\s+/, "")
+    .replace(/\s{2,}/g, " ")
+    .slice(0, 60);
+}
+
+/**
+ * Validasi konsistensi data rekening bank.
+ * Jika salah satu diisi (nomor atau nama), maka keduanya wajib valid dan terisi.
+ */
+export function validateBankAccount({ bankAccount, bankAccountName } = {}) {
+  const cleanAccount = sanitizeBankAccount(bankAccount || "");
+  const cleanAccountName = sanitizeBankAccountName(bankAccountName || "").trim();
+
+  // Jika keduanya kosong, diperbolehkan (data rekening bersifat opsional)
+  if (!cleanAccount && !cleanAccountName) {
+    return { isValid: true, valid: true, message: "", error: "" };
+  }
+
+  if (!cleanAccount) {
+    const msg = "Nomor rekening wajib diisi jika atas nama rekening dicantumkan.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+  if (cleanAccount.length < 5) {
+    const msg = "Nomor rekening bank minimal 5 digit angka.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
+  if (!cleanAccountName) {
+    const msg = "Atas nama rekening wajib diisi sesuai buku tabungan jika nomor rekening dicantumkan.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+  if (cleanAccountName.length < 2) {
+    const msg = "Atas nama rekening minimal 2 karakter huruf.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
+  return { isValid: true, valid: true, message: "", error: "" };
+}
+
+/**
+ * Sanitasi bio / moto pribadi pengguna (tanpa tag HTML, tanpa leading space, maksimal 200 karakter).
+ */
+export function sanitizeBio(input) {
+  if (typeof input !== "string") return "";
+  return stripEmojis(input)
+    .replace(/<[^>]*>?/gm, "")
+    .replace(/^\s+/, "")
+    .replace(/[^\S\r\n]{2,}/g, " ")
+    .slice(0, 200);
+}
+
+/**
+ * Sanitasi alamat lengkap domisili (tanpa tag HTML, tanpa leading space, maksimal 250 karakter).
+ */
+export function sanitizeAddress(input) {
+  if (typeof input !== "string") return "";
+  return stripEmojis(input)
+    .replace(/<[^>]*>?/gm, "")
+    .replace(/^\s+/, "")
+    .replace(/[^\S\r\n]{2,}/g, " ")
+    .slice(0, 250);
+}
+
+/**
+ * Validasi kekuatan dasar kata sandi.
+ */
+export function validatePasswordInput(password, fieldLabel = "Kata sandi") {
+  if (!password || typeof password !== "string" || !password.trim()) {
+    const msg = `${fieldLabel} tidak boleh kosong.`;
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+  if (password.length < 6) {
+    const msg = `${fieldLabel} minimal 6 karakter.`;
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+  if (password.length > 128) {
+    const msg = `${fieldLabel} maksimal 128 karakter.`;
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+  return { isValid: true, valid: true, message: "", error: "" };
+}
+
+/**
+ * Sanitasi tautan gambar (mencegah javascript: URI, tag inject, atau protocol berbahaya).
+ */
+export function sanitizeImageUrl(url) {
+  if (typeof url !== "string") return "";
+  const trimmed = url.trim();
+  if (!trimmed) return "";
+  if (!/^https?:\/\//i.test(trimmed) && !trimmed.startsWith("/")) {
+    return "";
+  }
+  return trimmed.replace(/[<>"'`\s]/g, "").slice(0, 500);
+}
+
+/**
+ * Daftar kata kunci terlarang dan dicadangkan oleh sistem (Anti-Impersonation).
+ */
+export const RESERVED_KEYWORDS = [
+  // 1. Otoritas Sistem & Teknis
+  "admin",
+  "administrator",
+  "superadmin",
+  "root",
+  "system",
+  "sysadmin",
+  "moderator",
+  "mod",
+  "developer",
+  "webmaster",
+
+  // 2. Identitas Yayasan & Staf Resmi
+  "yayasan",
+  "pabe",
+  "ygsm",
+  "official",
+  "staff",
+  "pengurus",
+  "civitas",
+  "helpdesk",
+  "support",
+  "customerservice",
+  "cs",
+
+  // 3. Entitas Finansial & Otoritas
+  "bendahara",
+  "auditor",
+  "finance",
+  "keuangan",
+  "kasir",
+  "bank",
+];
+
+/**
+ * Normalisasi leetspeak dan substitusi karakter visual (anti-evasion).
+ */
+export function normalizeLeetspeak(input) {
+  if (typeof input !== "string") return "";
+  return input
+    .toLowerCase()
+    .replace(/[@4]/g, "a")
+    .replace(/[1!|]/g, "i")
+    .replace(/0/g, "o")
+    .replace(/3/g, "e")
+    .replace(/[$5]/g, "s")
+    .replace(/7/g, "t")
+    .replace(/8/g, "b");
+}
+
+/**
+ * Memeriksa apakah teks memuat kata-kata yang dicadangkan sistem atau indikasi penyamaran.
+ */
+export function containsReservedKeyword(input) {
+  if (typeof input !== "string" || !input.trim()) {
+    return { isReserved: false, matchedWord: null };
+  }
+
+  const normalized = normalizeLeetspeak(input);
+
+  // Ekstrak token kata individual (pemisah spasi, titik, underscore, strip, koma, dsb)
+  const tokens = normalized.split(/[^a-z0-9]+/i).filter(Boolean);
+
+  // Deteksi jika pengguna mengetik huruf per huruf dengan pemisah (contoh: 'a d m i n' atau 'a_d_m_i_n')
+  const isSpacedOut = tokens.length >= 3 && tokens.every((t) => t.length <= 2);
+  const spacedOutWord = isSpacedOut ? tokens.join("") : "";
+
+  for (const keyword of RESERVED_KEYWORDS) {
+    // 1. Kecocokan token persis kata utuh
+    if (tokens.includes(keyword)) {
+      return { isReserved: true, matchedWord: keyword };
+    }
+
+    // 2. Deteksi prefiks/sufiks untuk istilah sensitif sistem
+    if (["admin", "administrator", "superadmin", "yayasan", "pabe", "ygsm", "official"].includes(keyword)) {
+      for (const token of tokens) {
+        if (
+          token === keyword ||
+          token.startsWith(keyword) ||
+          token.endsWith(keyword)
+        ) {
+          return { isReserved: true, matchedWord: keyword };
+        }
+      }
+
+      if (spacedOutWord && (spacedOutWord === keyword || spacedOutWord.includes(keyword))) {
+        return { isReserved: true, matchedWord: keyword };
+      }
+    }
+  }
+
+  return { isReserved: false, matchedWord: null };
+}
+
+/**
+ * Validasi nama lengkap dengan proteksi anti-penyamaran identitas.
  */
 export function validateName(name, isAnonymous = false) {
   if (isAnonymous) {
@@ -58,7 +284,62 @@ export function validateName(name, isAnonymous = false) {
     const msg = "Nama lengkap maksimal 60 karakter.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
+
+  // Proteksi anti-impersonation kata dicadangkan
+  const reservedCheck = containsReservedKeyword(clean);
+  if (reservedCheck.isReserved) {
+    const msg = `Nama tidak boleh menggunakan kata yang dicadangkan sistem atau identitas resmi yayasan ("${reservedCheck.matchedWord}").`;
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
   return { isValid: true, valid: true, message: "", error: "", sanitized: clean };
+}
+
+/**
+ * Validasi nama pengguna (username) saat pendaftaran akun.
+ */
+export function validateUsername(username) {
+  if (typeof username !== "string") {
+    const msg = "Nama pengguna wajib diisi.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
+  const clean = stripEmojis(username).trim();
+
+  if (!clean) {
+    const msg = "Nama pengguna wajib diisi.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
+  if (clean.length < 3) {
+    const msg = "Nama pengguna minimal 3 karakter.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
+  if (clean.length > 30) {
+    const msg = "Nama pengguna maksimal 30 karakter.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
+  if (!/^[a-zA-Z0-9_.]+$/.test(clean)) {
+    const msg = "Nama pengguna hanya boleh berisi huruf, angka, titik, atau garis bawah.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
+  // Proteksi anti-impersonation username
+  const reservedCheck = containsReservedKeyword(clean);
+  if (reservedCheck.isReserved) {
+    const msg = `Nama pengguna tidak boleh mengandung istilah yang dicadangkan sistem ("${reservedCheck.matchedWord}").`;
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
+  return {
+    isValid: true,
+    valid: true,
+    message: "",
+    error: "",
+    sanitized: clean.toLowerCase(),
+  };
 }
 
 /**

@@ -11,10 +11,12 @@ export function AuthPasswordInput({
   placeholder = "masukkan kata sandi",
   value,
   onChange,
+  onBlur,
   error,
   required = true,
   autoComplete = "current-password",
   extraAction,
+  ...props
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -34,11 +36,13 @@ export function AuthPasswordInput({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
           autoComplete={autoComplete}
           className={cn(
             "h-11 pr-10 text-sm text-slate-900 border-slate-300 rounded-lg transition-colors",
             error && "border-rose-500 bg-rose-50/20 focus-visible:ring-rose-500"
           )}
+          {...props}
         />
         <button
           type="button"

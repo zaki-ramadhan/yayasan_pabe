@@ -29,9 +29,9 @@ import { cn } from "@/lib/utils";
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [identifier, setIdentifier] = useState(() => (typeof window !== "undefined" ? getRememberedIdentifier() : ""));
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(() => (typeof window !== "undefined" ? Boolean(getRememberedIdentifier()) : false));
+  const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -39,6 +39,23 @@ export function LoginForm() {
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
   const handledErrorRef = useRef(false);
   const handledNoticeRef = useRef(false);
+
+  // Safely restore remembered identifier on client mount without hydration mismatch
+  useEffect(() => {
+    const remembered = getRememberedIdentifier();
+    if (remembered) {
+      setIdentifier(remembered);
+      setRememberMe(true);
+    }
+  }, []);
+
+  // Submit button is disabled if required fields are incomplete or invalid
+  const isSubmitDisabled =
+    !identifier.trim() ||
+    identifier.trim().length < 3 ||
+    !password.trim() ||
+    password.length < 6 ||
+    Boolean(errors.identifier || errors.password);
 
   const redirectUrl = searchParams.get("redirect") || searchParams.get("callbackUrl");
   const reasonParam = searchParams.get("reason");
@@ -236,7 +253,7 @@ export function LoginForm() {
         {/* Submit Button */}
         <Button
           type="submit"
-          disabled={isLoading || isGoogleLoading}
+          disabled={isLoading || isGoogleLoading || isSubmitDisabled}
           variant="primary3d"
           className="w-full h-11 rounded-lg text-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >

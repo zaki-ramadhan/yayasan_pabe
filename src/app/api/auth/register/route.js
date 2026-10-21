@@ -7,6 +7,7 @@ import {
   validateEmail,
   validatePhone,
   validateName,
+  validateUsername,
 } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
@@ -16,21 +17,36 @@ export async function POST(request) {
     const body = await request.json();
     const { username, name, email, phone, password } = body || {};
 
-    // 1. Sanitize & Validate Username
-    const cleanUsername = stripEmojis(username || "")
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9_.]/g, "")
-      .slice(0, 30);
-
-    if (!cleanUsername || cleanUsername.length < 3) {
+    // 1. Sanitize & Validate Username (dengan proteksi anti-impersonation)
+    const usernameValidation = validateUsername(username);
+    if (!usernameValidation.isValid) {
       return NextResponse.json(
         {
           success: false,
-          message: "Nama pengguna minimal 3 karakter (hanya huruf, angka, titik, atau garis bawah).",
+          message: usernameValidation.message,
         },
         { status: 400 }
       );
+    }
+    const cleanUsername = usernameValidation.sanitized;
+
+    // 1b. Validate Full Name jika dikirimkan oleh klien
+    let formattedName = cleanUsername
+      .replace(/[._]/g, " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+
+    if (name && typeof name === "string" && name.trim()) {
+      const nameValidation = validateName(name);
+      if (!nameValidation.isValid) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: nameValidation.message,
+          },
+          { status: 400 }
+        );
+      }
+      formattedName = nameValidation.sanitized;
     }
 
     // 2. Validate Email
@@ -99,12 +115,6 @@ export async function POST(request) {
     }
 
     // 6. Hash Password & Create User in DB
-    const formattedName = name
-      ? stripEmojis(name).trim()
-      : cleanUsername
-          .replace(/[._]/g, " ")
-          .replace(/\b\w/g, (l) => l.toUpperCase());
-
     const passwordHash = hashPassword(cleanPassword);
 
     const createdUser = await prisma.user.create({
@@ -115,8 +125,8 @@ export async function POST(request) {
         phone: cleanPhone,
         passwordHash,
         role: USER_ROLES.DONOR,
-        title: "Donatur Terdaftar",
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+        title: "Akun Terverifikasi",
+        avatar: null,
       },
       select: {
         id: true,
