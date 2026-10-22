@@ -18,6 +18,7 @@ import {
 	isParentMenuActive,
 } from "@/data/navigation";
 import { getRedirectPathForRole } from "@/services/authService";
+import { maskEmail } from "@/lib/security";
 import { cn } from "@/lib/utils";
 
 export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
@@ -326,8 +327,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 									}
 								</span>
 								<span className="block text-xs text-slate-500 truncate font-mono">
-									{currentUser.email ||
-										"Donatur Terdaftar"}
+									{currentUser.email ? maskEmail(currentUser.email) : "Donatur Terdaftar"}
 								</span>
 							</div>
 						</div>

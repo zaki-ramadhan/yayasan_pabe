@@ -169,15 +169,9 @@ export function AdminApplicantDrawer({
                   <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600">
                     <span className="flex items-center gap-1.5">
                       <Mail className="w-4 h-4 text-slate-400" />
-                      {isSuperAdmin ? (
-                        <a href={`mailto:${app.email}`} className="text-primary hover:underline">
-                          {app.email}
-                        </a>
-                      ) : (
-                        <span className="text-slate-700 font-medium">
-                          {maskEmail(app.email)}
-                        </span>
-                      )}
+                      <span className="text-slate-700 font-medium">
+                        {maskEmail(app.email)}
+                      </span>
                     </span>
                     <span className="flex items-center gap-1.5">
                       <Phone className="w-4 h-4 text-slate-400" />

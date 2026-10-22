@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { CAREER_VACANCIES, DEPARTMENT_OPTIONS, TYPE_OPTIONS, LOCATION_OPTIONS } from "@/data/careers";
-import { sanitizeInput } from "@/lib/security";
+import { sanitizeInput, maskEmail } from "@/lib/security";
 
 /**
  * Mengambil daftar seluruh lowongan pekerjaan (termasuk yang nonaktif) beserta jumlah pelamar.
@@ -208,7 +208,7 @@ export async function getAdminApplications({ vacancyId = "", status = "" } = {})
       vacancyTitle: app.vacancy?.title || "Posisi Umum",
       department: app.vacancy?.department || "-",
       fullName: app.fullName,
-      email: app.email,
+      email: app.email ? maskEmail(app.email) : "",
       phone: app.phone,
       linkedinUrl: app.linkedinUrl || "",
       portfolioUrl: app.portfolioUrl || "",

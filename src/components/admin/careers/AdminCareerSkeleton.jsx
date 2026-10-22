@@ -62,39 +62,39 @@ export function AdminCareerSkeleton() {
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
                   {/* Position & Code */}
-                  <TableCell className="space-y-1.5 py-3">
+                  <TableCell className="space-y-1.5 py-3 align-middle">
                     <Skeleton className="h-4 w-48 rounded" />
                     <Skeleton className="h-3 w-32 rounded" />
                   </TableCell>
 
                   {/* Department & System */}
-                  <TableCell className="w-48 space-y-1.5 py-3">
+                  <TableCell className="w-48 space-y-1.5 py-3 align-middle">
                     <Skeleton className="h-5 w-24 rounded" />
                     <Skeleton className="h-3 w-20 rounded" />
                   </TableCell>
 
                   {/* Location */}
-                  <TableCell className="w-44 py-3">
+                  <TableCell className="w-44 py-3 align-middle">
                     <Skeleton className="h-3.5 w-28 rounded" />
                   </TableCell>
 
                   {/* Deadline */}
-                  <TableCell className="w-36 py-3">
+                  <TableCell className="w-36 py-3 align-middle">
                     <Skeleton className="h-3.5 w-24 rounded" />
                   </TableCell>
 
                   {/* Applicants */}
-                  <TableCell className="w-32 py-3 text-center">
+                  <TableCell className="w-32 py-3 text-center align-middle">
                     <Skeleton className="h-6 w-16 rounded-full mx-auto" />
                   </TableCell>
 
                   {/* Status */}
-                  <TableCell className="w-28 py-3 text-center">
+                  <TableCell className="w-28 py-3 text-center align-middle">
                     <Skeleton className="h-5 w-16 rounded mx-auto" />
                   </TableCell>
 
                   {/* Actions */}
-                  <TableCell className="w-24 py-3 text-right">
+                  <TableCell className="w-24 py-3 text-right align-middle">
                     <Skeleton className="h-8 w-8 rounded ml-auto" />
                   </TableCell>
                 </TableRow>

@@ -60,7 +60,7 @@ export function AdminTransactionSkeleton() {
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
                   {/* Invoice */}
-                  <TableCell className="w-px py-3 whitespace-nowrap">
+                  <TableCell className="w-px py-3 whitespace-nowrap align-middle">
                     <div className="flex items-center gap-1.5">
                       <Skeleton className="h-4 w-28 rounded" />
                       <Skeleton className="h-4 w-4 rounded" />
@@ -68,33 +68,33 @@ export function AdminTransactionSkeleton() {
                   </TableCell>
 
                   {/* Donor */}
-                  <TableCell className="w-px space-y-1 py-3 whitespace-nowrap">
+                  <TableCell className="w-px space-y-1 py-3 whitespace-nowrap align-middle">
                     <Skeleton className="h-4 w-32 rounded" />
                     <Skeleton className="h-3 w-40 rounded" />
                   </TableCell>
 
                   {/* Campaign Target */}
-                  <TableCell className="py-3">
+                  <TableCell className="py-3 align-middle">
                     <Skeleton className="h-4 w-full max-w-sm rounded" />
                   </TableCell>
 
                   {/* Amount */}
-                  <TableCell className="w-px py-3 whitespace-nowrap">
+                  <TableCell className="w-px py-3 whitespace-nowrap align-middle">
                     <Skeleton className="h-4 w-24 rounded" />
                   </TableCell>
 
                   {/* Payment Method */}
-                  <TableCell className="w-px py-3 text-center whitespace-nowrap">
+                  <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
                     <Skeleton className="h-5 w-20 rounded mx-auto" />
                   </TableCell>
 
                   {/* Date */}
-                  <TableCell className="w-px py-3 whitespace-nowrap">
+                  <TableCell className="w-px py-3 whitespace-nowrap align-middle">
                     <Skeleton className="h-3.5 w-24 rounded" />
                   </TableCell>
 
                   {/* Status */}
-                  <TableCell className="w-px py-3 text-center whitespace-nowrap">
+                  <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
                     <Skeleton className="h-5 w-16 rounded mx-auto" />
                   </TableCell>
                 </TableRow>

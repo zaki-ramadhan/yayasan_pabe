@@ -258,5 +258,4 @@ export function parseThousandsToNumber(value) {
   const digitsOnly = value.replace(/\D/g, "");
   return digitsOnly ? parseInt(digitsOnly, 10) : 0;
 }
-
-
+export { maskEmail } from "@/lib/security";

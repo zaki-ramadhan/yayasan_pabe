@@ -1,19 +1,23 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
+
+const DEFAULT_ARTICLE_CATEGORIES = [
+  "Berita",
+  "Penyaluran",
+  "Sosial",
+  "Edukasi",
+  "Ziswaf",
+  "Inspirasi",
+];
 
 export function AdminArticleModal({
   isOpen,
@@ -26,11 +30,27 @@ export function AdminArticleModal({
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Berita");
+  const [customCategories, setCustomCategories] = useState([]);
   const [author, setAuthor] = useState("Redaksi Yayasan PABE");
   const [bannerUrl, setBannerUrl] = useState("/img/hero_card_1.jpeg");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const categoryList = useMemo(() => {
+    const fromProps = (categories || []).filter((c) => c !== "Semua Kategori" && c !== "ALL");
+    return Array.from(new Set([...DEFAULT_ARTICLE_CATEGORIES, ...fromProps, ...customCategories]));
+  }, [categories, customCategories]);
+
+  const handleCreateCategory = (newCat) => {
+    const trimmed = newCat.trim();
+    if (trimmed) {
+      setCustomCategories((prev) => Array.from(new Set([...prev, trimmed])));
+      setCategory(trimmed);
+      toast.success(`Kategori "${trimmed}" siap digunakan.`);
+      return trimmed;
+    }
+  };
 
   useEffect(() => {
     if (articleToEdit) {
@@ -96,12 +116,6 @@ export function AdminArticleModal({
     }
   };
 
-  const availableCategories = categories.filter((c) => c !== "Semua Kategori" && c !== "ALL");
-  if (!availableCategories.includes("Berita")) availableCategories.unshift("Berita");
-  if (!availableCategories.includes("Pendidikan")) availableCategories.push("Pendidikan");
-  if (!availableCategories.includes("Sosial")) availableCategories.push("Sosial");
-  if (!availableCategories.includes("Kemanusiaan")) availableCategories.push("Kemanusiaan");
-
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-5 sm:p-6">
@@ -136,18 +150,16 @@ export function AdminArticleModal({
               <label className="text-sm font-semibold text-slate-800">
                 Kategori Berita <span className="text-rose-500">*</span>
               </label>
-              <Select value={category} onValueChange={setCategory} required>
-                <SelectTrigger className="h-10 text-sm bg-white">
-                  <SelectValue placeholder="Pilih Kategori" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableCategories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CreatableCombobox
+                options={categoryList}
+                value={category}
+                onChange={(val) => setCategory(val)}
+                onCreate={handleCreateCategory}
+                placeholder="Pilih kategori berita..."
+                searchPlaceholder="Cari kategori atau buat baru..."
+                createPrefix="Buat kategori"
+                className="bg-white"
+              />
             </div>
 
             {/* Penulis / Redaksi */}
@@ -222,7 +234,7 @@ export function AdminArticleModal({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="h-10 px-4 text-sm font-semibold bg-primary hover:bg-primary/90 text-white cursor-pointer"
+              className="h-10 px-4 text-sm font-medium bg-primary hover:bg-primary/90 text-white cursor-pointer"
             >
               {isSubmitting ? "Menyimpan..." : isEditing ? "Simpan Perubahan" : "Terbitkan Artikel"}
             </Button>

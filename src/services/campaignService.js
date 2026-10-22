@@ -445,6 +445,11 @@ export async function getCampaignDonationStats(slug) {
 export async function getCategories() {
   try {
     const dbCats = await prisma.category.findMany({
+      where: {
+        campaigns: {
+          some: {},
+        },
+      },
       orderBy: { name: "asc" },
       include: {
         _count: {
@@ -455,12 +460,14 @@ export async function getCategories() {
     if (dbCats && dbCats.length > 0) {
       return [
         { id: "all", name: "Semua Program", slug: "all", count: 0 },
-        ...dbCats.map((c) => ({
-          id: c.id,
-          name: c.name,
-          slug: c.slug,
-          count: c._count?.campaigns || 0,
-        })),
+        ...dbCats
+          .filter((c) => (c._count?.campaigns || 0) > 0)
+          .map((c) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            count: c._count?.campaigns || 0,
+          })),
       ];
     }
   } catch (error) {

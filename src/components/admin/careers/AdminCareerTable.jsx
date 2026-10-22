@@ -4,13 +4,7 @@ import { useState, useMemo } from "react";
 import { Plus, Search, Edit3, Trash2, Users, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import {
   Table,
   TableHeader,
@@ -40,9 +34,19 @@ export function AdminCareerTable({ initialVacancies = [] }) {
   const [isLoading, setIsLoading] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 10;
 
   const debouncedSearch = useDebounce(search.trim(), 300);
+
+  const filterDepartmentOptions = useMemo(() => {
+    return [
+      { value: "ALL", label: "Semua Divisi" },
+      ...DEPARTMENT_OPTIONS.filter((d) => d !== "Semua Divisi").map((dept) => ({
+        value: dept,
+        label: dept,
+      })),
+    ];
+  }, []);
 
   const filteredVacancies = useMemo(() => {
     return vacancies.filter((job) => {
@@ -172,19 +176,15 @@ export function AdminCareerTable({ initialVacancies = [] }) {
             className="h-10 text-sm bg-white"
           />
 
-          <Select value={departmentFilter} onValueChange={handleDepartmentChange}>
-            <SelectTrigger className="h-10 w-48 text-sm bg-white shrink-0">
-              <SelectValue placeholder="Semua Divisi" />
-            </SelectTrigger>
-            <SelectContent align="start">
-              <SelectItem value="ALL">Semua Divisi</SelectItem>
-              {DEPARTMENT_OPTIONS.filter((d) => d !== "Semua Divisi").map((dept) => (
-                <SelectItem key={dept} value={dept}>
-                  {dept}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <CreatableCombobox
+            options={filterDepartmentOptions}
+            value={departmentFilter}
+            onChange={handleDepartmentChange}
+            placeholder="Semua Divisi"
+            searchPlaceholder="Cari divisi pekerjaan..."
+            emptyMessage="Divisi tidak ditemukan."
+            className="h-10 w-48 text-sm bg-white shrink-0"
+          />
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-auto">
@@ -202,10 +202,10 @@ export function AdminCareerTable({ initialVacancies = [] }) {
           <Button
             type="button"
             onClick={handleOpenAdd}
-            className="h-10 px-4 rounded-lg text-sm font-semibold bg-primary hover:bg-primary/90 text-white flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            className="h-10 px-4 rounded-lg text-sm font-medium bg-primary hover:bg-primary/90 text-white flex items-center gap-1.5 cursor-pointer shadow-2xs"
           >
             <Plus className="w-4 h-4" />
-            <span>Buka Lowongan Baru</span>
+            <span>Lowongan baru</span>
           </Button>
         </div>
       </div>
@@ -219,7 +219,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
               <TableHead className="w-48">Divisi &amp; Sistem</TableHead>
               <TableHead className="w-44">Lokasi</TableHead>
               <TableHead className="w-36">Batas Waktu</TableHead>
-              <TableHead className="w-32 text-center">Pelamar Masuk</TableHead>
+              <TableHead className="w-32 text-center">Pelamar</TableHead>
               <TableHead className="w-28 text-center">Status</TableHead>
               <TableHead className="text-right w-24">Aksi</TableHead>
             </TableRow>
@@ -228,7 +228,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
             {paginatedVacancies && paginatedVacancies.length > 0 ? (
               paginatedVacancies.map((job) => (
                 <TableRow key={job.id}>
-                  <TableCell className="py-3">
+                  <TableCell className="py-3 align-middle">
                     <div className="space-y-0.5">
                       <span className="text-sm font-semibold text-slate-900 block">
                         {job.title}
@@ -239,7 +239,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
                     </div>
                   </TableCell>
 
-                  <TableCell className="py-3">
+                  <TableCell className="py-3 align-middle">
                     <div className="space-y-0.5">
                       <span className="text-sm font-medium text-slate-800 block">
                         {job.department}
@@ -250,15 +250,15 @@ export function AdminCareerTable({ initialVacancies = [] }) {
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-sm text-slate-600 py-3">
+                  <TableCell className="text-sm text-slate-600 py-3 align-middle">
                     {job.location}
                   </TableCell>
 
-                  <TableCell className="text-sm text-slate-600 py-3 whitespace-nowrap">
+                  <TableCell className="text-sm text-slate-600 py-3 whitespace-nowrap align-middle">
                     {job.deadline}
                   </TableCell>
 
-                  <TableCell className="py-3 text-center whitespace-nowrap">
+                  <TableCell className="py-3 text-center whitespace-nowrap align-middle">
                     <Button
                       type="button"
                       variant="outline"
@@ -271,7 +271,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
                     </Button>
                   </TableCell>
 
-                  <TableCell className="py-3 text-center whitespace-nowrap">
+                  <TableCell className="py-3 text-center whitespace-nowrap align-middle">
                     <button
                       type="button"
                       onClick={() => handleToggleStatus(job.id, job.isActive)}
@@ -286,7 +286,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
                     </button>
                   </TableCell>
 
-                  <TableCell className="text-right py-3 whitespace-nowrap">
+                  <TableCell className="text-right py-3 whitespace-nowrap align-middle">
                     <div className="flex items-center justify-end gap-1">
                       <Button
                         type="button"

@@ -43,6 +43,7 @@ export function DistributionFeed({ records = [] }) {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
+        className="pt-6 sm:pt-8"
       />
     </div>
   );

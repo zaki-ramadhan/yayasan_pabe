@@ -15,39 +15,39 @@ export function FinancialTransactionRow({ transaction }) {
   return (
     <TableRow>
       {/* Date */}
-      <TableCell className="font-medium text-slate-800 whitespace-nowrap">
+      <TableCell className="font-medium text-slate-800 whitespace-nowrap align-middle">
         {formatDate(transaction.date, { month: "short" })}
       </TableCell>
 
       {/* Source */}
-      <TableCell className="font-normal text-slate-600 whitespace-nowrap">
+      <TableCell className="font-normal text-slate-600 whitespace-nowrap align-middle">
         {transaction.source}
       </TableCell>
 
       {/* Type */}
-      <TableCell className="font-normal text-slate-700 whitespace-nowrap">
+      <TableCell className="font-normal text-slate-700 whitespace-nowrap align-middle">
         {transaction.typeLabel || (isIncome ? "Donasi Masuk" : "Penyaluran")}
       </TableCell>
 
       {/* Description */}
-      <TableCell className="font-normal text-slate-800 max-w-xs truncate" title={transaction.description}>
+      <TableCell className="font-normal text-slate-800 max-w-xs truncate align-middle" title={transaction.description}>
         {transaction.description}
       </TableCell>
 
       {/* Category */}
-      <TableCell className="font-normal text-slate-600 whitespace-nowrap">
+      <TableCell className="font-normal text-slate-600 whitespace-nowrap align-middle">
         {transaction.category}
       </TableCell>
 
       {/* Amount */}
-      <TableCell className="font-medium whitespace-nowrap text-right">
+      <TableCell className="font-medium whitespace-nowrap text-right align-middle">
         <span className={isIncome ? "text-emerald-700" : "text-slate-900"}>
           {isIncome ? `+${formatRupiah(absAmount)}` : `-${formatRupiah(absAmount)}`}
         </span>
       </TableCell>
 
       {/* Status */}
-      <TableCell className="whitespace-nowrap text-center">
+      <TableCell className="whitespace-nowrap text-center align-middle">
         <span
           className={
             isIncome

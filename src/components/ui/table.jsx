@@ -53,7 +53,7 @@ const TableRow = React.forwardRef(({ className, ...props }, ref) => (
   <tr
     ref={ref}
     className={cn(
-      "border-b border-slate-100 transition-colors hover:bg-slate-50/70 data-[state=selected]:bg-slate-100",
+      "border-b border-slate-100 transition-colors hover:bg-slate-50/70 data-[state=selected]:bg-slate-100 [&>td]:align-middle [&>th]:align-middle",
       className
     )}
     {...props}
@@ -215,7 +215,7 @@ export function TableEmptyRow({
       <TableCell
         colSpan={colSpan}
         className={cn(
-          "py-12 text-center text-sm font-normal text-slate-600",
+          "py-12 text-center text-sm font-normal text-slate-600 align-middle",
           className
         )}
       >
@@ -237,7 +237,7 @@ export function TableSkeletonRows({
       {Array.from({ length: rows }).map((_, rIdx) => (
         <TableRow key={rIdx} className="hover:bg-transparent">
           {Array.from({ length: columns }).map((_, cIdx) => (
-            <TableCell key={cIdx} className="py-3.5 px-3.5 sm:px-4">
+            <TableCell key={cIdx} className="py-3.5 px-3.5 sm:px-4 align-middle">
               <div
                 className={cn(
                   "bg-slate-200/80 rounded animate-pulse",
@@ -261,7 +261,7 @@ export function TablePaginationFooter({
   currentPage = pagination?.currentPage || 1,
   totalPages = pagination?.totalPages || 1,
   total = pagination?.total || 0,
-  limit = pagination?.limit || 25,
+  limit = pagination?.limit || 10,
   onPageChange,
   className = "",
 }) {
@@ -271,15 +271,15 @@ export function TablePaginationFooter({
   return (
     <div
       className={cn(
-        "p-4 sm:p-5 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-slate-600",
+        "px-4 py-2.5 sm:px-5 sm:py-3 border-t border-slate-200/90 bg-white flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-600",
         className
       )}
     >
-      <div>
+      <div className="leading-normal flex items-center">
         Menampilkan{" "}
-        <span className="font-medium text-slate-900">{fromRecord}</span> -{" "}
-        <span className="font-medium text-slate-900">{toRecord}</span> dari{" "}
-        <span className="font-medium text-slate-900">{total}</span> data
+        <span className="font-medium text-slate-900 mx-1">{fromRecord}</span> -{" "}
+        <span className="font-medium text-slate-900 mx-1">{toRecord}</span> dari{" "}
+        <span className="font-medium text-slate-900 ml-1 mr-1">{total}</span> data
       </div>
 
       <Pagination

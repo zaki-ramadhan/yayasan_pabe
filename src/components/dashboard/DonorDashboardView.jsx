@@ -107,7 +107,7 @@ export function DonorDashboardView({ currentUser: propUser }) {
           </div>
           <Link href="/donasi-rutin">
             <Button size="sm" className="h-8 text-xs bg-primary hover:bg-primary-hover text-white cursor-pointer">
-              <Plus className="w-3.5 h-3.5 mr-1" /> Tambah Jadwal Baru
+              <Plus className="w-3.5 h-3.5 mr-1" /> Jadwal baru
             </Button>
           </Link>
         </div>
@@ -228,12 +228,12 @@ export function DonorDashboardView({ currentUser: propUser }) {
               ) : (
                 sortedTransactions.map((tx) => (
                   <TableRow key={tx.id}>
-                    <TableCell className="text-slate-900 font-medium">{tx.id}</TableCell>
-                    <TableCell className="text-slate-600 font-normal whitespace-nowrap">{formatDate(tx.date)}</TableCell>
-                    <TableCell className="font-normal text-slate-800">{tx.program}</TableCell>
-                    <TableCell className="font-medium text-emerald-800 text-right">{formatRupiah(tx.amount)}</TableCell>
-                    <TableCell className="text-slate-600 font-normal">{tx.channel}</TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-slate-900 font-medium align-middle">{tx.id}</TableCell>
+                    <TableCell className="text-slate-600 font-normal whitespace-nowrap align-middle">{formatDate(tx.date)}</TableCell>
+                    <TableCell className="font-normal text-slate-800 align-middle">{tx.program}</TableCell>
+                    <TableCell className="font-medium text-emerald-800 text-right align-middle">{formatRupiah(tx.amount)}</TableCell>
+                    <TableCell className="text-slate-600 font-normal align-middle">{tx.channel}</TableCell>
+                    <TableCell className="text-center align-middle">
                       <Link
                         href={`/invoice/${tx.id}`}
                         className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-medium cursor-pointer"

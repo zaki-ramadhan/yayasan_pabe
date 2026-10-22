@@ -14,7 +14,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { formatDate } from "@/lib/formatters";
-import { sanitizeImageUrl } from "@/lib/security";
+import { sanitizeImageUrl, maskEmail } from "@/lib/security";
 import { DonorProfileBannerCanvas } from "@/components/donor/DonorProfileBannerCanvas";
 
 const AVATAR_PRESETS = [
@@ -128,7 +128,7 @@ export function DonorProfileCover({
 
               {profile?.email && (
                 <p className="text-sm font-normal text-slate-500">
-                  {profile.email}
+                  {maskEmail(profile.email)}
                 </p>
               )}
 

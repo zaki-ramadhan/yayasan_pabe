@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect } from "react";
 import {
@@ -19,6 +20,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import {
   DEPARTMENT_OPTIONS,
   TYPE_OPTIONS,
@@ -26,6 +28,10 @@ import {
 } from "@/data/careers";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
+
+const INITIAL_DEPARTMENTS = DEPARTMENT_OPTIONS.filter((d) => d !== "Semua Divisi");
+const INITIAL_LOCATIONS = LOCATION_OPTIONS.filter((l) => l !== "Semua Lokasi");
+const EMPLOYMENT_TYPES = TYPE_OPTIONS.filter((t) => t !== "Semua Tipe");
 
 export function AdminCareerModal({
   isOpen,
@@ -37,8 +43,30 @@ export function AdminCareerModal({
 
   const [title, setTitle] = useState("");
   const [department, setDepartment] = useState("Operasional & Penyaluran");
+  const [departmentList, setDepartmentList] = useState(INITIAL_DEPARTMENTS);
   const [location, setLocation] = useState("Jakarta Timur / Depok");
+  const [locationList, setLocationList] = useState(INITIAL_LOCATIONS);
   const [type, setType] = useState("Penuh Waktu (Full-time)");
+
+  const handleCreateDepartment = (newDept) => {
+    const trimmed = newDept.trim();
+    if (trimmed) {
+      setDepartmentList((prev) => Array.from(new Set([...prev, trimmed])));
+      setDepartment(trimmed);
+      toast.success(`Divisi "${trimmed}" siap digunakan.`);
+      return trimmed;
+    }
+  };
+
+  const handleCreateLocation = (newLoc) => {
+    const trimmed = newLoc.trim();
+    if (trimmed) {
+      setLocationList((prev) => Array.from(new Set([...prev, trimmed])));
+      setLocation(trimmed);
+      toast.success(`Lokasi "${trimmed}" siap digunakan.`);
+      return trimmed;
+    }
+  };
   const [workplace, setWorkplace] = useState("On-site");
   const [experience, setExperience] = useState("1 - 3 tahun");
   const [deadline, setDeadline] = useState("30 November 2026");
@@ -144,10 +172,6 @@ export function AdminCareerModal({
     }
   };
 
-  const departments = DEPARTMENT_OPTIONS.filter((d) => d !== "Semua Divisi");
-  const types = TYPE_OPTIONS.filter((t) => t !== "Semua Tipe");
-  const locations = LOCATION_OPTIONS.filter((l) => l !== "Semua Lokasi");
-
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-5 sm:p-6">
@@ -182,18 +206,16 @@ export function AdminCareerModal({
               <label className="text-sm font-semibold text-slate-800">
                 Divisi / Departemen <span className="text-rose-500">*</span>
               </label>
-              <Select value={department} onValueChange={setDepartment} required>
-                <SelectTrigger className="h-10 text-sm bg-white">
-                  <SelectValue placeholder="Pilih Divisi" />
-                </SelectTrigger>
-                <SelectContent>
-                  {departments.map((dept) => (
-                    <SelectItem key={dept} value={dept}>
-                      {dept}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CreatableCombobox
+                options={departmentList}
+                value={department}
+                onChange={(val) => setDepartment(val)}
+                onCreate={handleCreateDepartment}
+                placeholder="Pilih divisi..."
+                searchPlaceholder="Cari divisi atau buat baru..."
+                createPrefix="Buat divisi"
+                className="bg-white"
+              />
             </div>
 
             {/* Tipe Pekerjaan */}
@@ -206,7 +228,7 @@ export function AdminCareerModal({
                   <SelectValue placeholder="Pilih Tipe" />
                 </SelectTrigger>
                 <SelectContent>
-                  {types.map((tp) => (
+                  {EMPLOYMENT_TYPES.map((tp) => (
                     <SelectItem key={tp} value={tp}>
                       {tp}
                     </SelectItem>
@@ -220,18 +242,16 @@ export function AdminCareerModal({
               <label className="text-sm font-semibold text-slate-800">
                 Lokasi Penempatan <span className="text-rose-500">*</span>
               </label>
-              <Select value={location} onValueChange={setLocation} required>
-                <SelectTrigger className="h-10 text-sm bg-white">
-                  <SelectValue placeholder="Pilih Lokasi" />
-                </SelectTrigger>
-                <SelectContent>
-                  {locations.map((loc) => (
-                    <SelectItem key={loc} value={loc}>
-                      {loc}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CreatableCombobox
+                options={locationList}
+                value={location}
+                onChange={(val) => setLocation(val)}
+                onCreate={handleCreateLocation}
+                placeholder="Pilih lokasi..."
+                searchPlaceholder="Cari lokasi atau buat baru..."
+                createPrefix="Buat lokasi"
+                className="bg-white"
+              />
             </div>
 
             {/* Sistem Kerja (Workplace) */}
@@ -347,7 +367,7 @@ export function AdminCareerModal({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="h-10 px-4 text-sm font-semibold bg-primary hover:bg-primary/90 text-white cursor-pointer"
+              className="h-10 px-4 text-sm font-medium bg-primary hover:bg-primary/90 text-white cursor-pointer"
             >
               {isSubmitting ? "Menyimpan..." : isEditing ? "Simpan Perubahan" : "Terbitkan Lowongan"}
             </Button>

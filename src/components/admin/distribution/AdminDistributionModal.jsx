@@ -6,13 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 
@@ -96,18 +90,14 @@ export function AdminDistributionModal({
             <label className="text-sm font-semibold text-slate-800">
               Program Donasi Terkait <span className="text-rose-500">*</span>
             </label>
-            <Select value={campaignId} onValueChange={setCampaignId} required>
-              <SelectTrigger className="h-10 text-sm bg-white">
-                <SelectValue placeholder="Pilih Program Donasi" />
-              </SelectTrigger>
-              <SelectContent>
-                {campaigns.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CreatableCombobox
+              options={campaigns.map((c) => ({ value: c.id, label: c.title }))}
+              value={campaignId}
+              onChange={(val) => setCampaignId(val)}
+              placeholder="Pilih program donasi terkait..."
+              searchPlaceholder="Ketik untuk mencari program donasi..."
+              emptyMessage="Program donasi tidak ditemukan."
+            />
           </div>
 
           {/* Judul Kegiatan Penyaluran */}

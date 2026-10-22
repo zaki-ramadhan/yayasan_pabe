@@ -1,19 +1,14 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 
@@ -26,6 +21,7 @@ export function AdminProgramModal({
 }) {
   const isEditing = Boolean(campaignToEdit);
 
+  const [createdCategories, setCreatedCategories] = useState([]);
   const [title, setTitle] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [targetAmount, setTargetAmount] = useState(0);
@@ -34,6 +30,15 @@ export function AdminProgramModal({
   const [isUrgent, setIsUrgent] = useState(false);
   const [story, setStory] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const categoryList = useMemo(() => {
+    const combined = [...(categories || []), ...createdCategories];
+    const map = new Map();
+    combined.forEach((item) => {
+      if (item && item.id) map.set(item.id, item);
+    });
+    return Array.from(map.values());
+  }, [categories, createdCategories]);
 
   useEffect(() => {
     if (campaignToEdit) {
@@ -55,6 +60,20 @@ export function AdminProgramModal({
     }
   }, [campaignToEdit, categories, isOpen]);
 
+  const handleCreateCategory = (name) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const tempId = `new:${trimmed}`;
+    const tempItem = { id: tempId, name: trimmed, isNew: true };
+    setCreatedCategories((prev) => {
+      if (prev.some((c) => c.name.toLowerCase() === trimmed.toLowerCase())) return prev;
+      return [...prev, tempItem];
+    });
+    setCategoryId(tempId);
+    toast.success(`Kategori "${trimmed}" disiapkan.`);
+    return tempItem;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) {
@@ -64,6 +83,23 @@ export function AdminProgramModal({
     if (!categoryId) {
       toast.error("Kategori program wajib dipilih.");
       return;
+    }
+
+    const isNewCat = categoryId.startsWith("new:");
+    const payload = {
+      title,
+      targetAmount,
+      endDate: endDate ? new Date(endDate).toISOString() : null,
+      location,
+      isUrgent,
+      story,
+      excerpt: story.slice(0, 160),
+    };
+
+    if (isNewCat) {
+      payload.newCategoryName = categoryId.slice(4);
+    } else {
+      payload.categoryId = categoryId;
     }
 
     setIsSubmitting(true);
@@ -76,16 +112,7 @@ export function AdminProgramModal({
       const res = await safeFetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          categoryId,
-          targetAmount,
-          endDate: endDate ? new Date(endDate).toISOString() : null,
-          location,
-          isUrgent,
-          story,
-          excerpt: story.slice(0, 160),
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -138,18 +165,16 @@ export function AdminProgramModal({
               <label className="text-sm font-semibold text-slate-800">
                 Kategori Program <span className="text-rose-500">*</span>
               </label>
-              <Select value={categoryId} onValueChange={setCategoryId} required>
-                <SelectTrigger className="h-10 text-sm bg-white">
-                  <SelectValue placeholder="Pilih Kategori" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CreatableCombobox
+                options={categoryList}
+                value={categoryId}
+                onChange={(val) => setCategoryId(val)}
+                onCreate={handleCreateCategory}
+                placeholder="Pilih kategori..."
+                searchPlaceholder="Cari kategori atau buat baru..."
+                createPrefix="Buat kategori"
+                className="bg-white"
+              />
             </div>
 
             {/* Target Donasi (Dengan CurrencyInput Pemisah Ribuan 3-Digit Terpusat) */}

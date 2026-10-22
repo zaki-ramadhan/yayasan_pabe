@@ -28,7 +28,7 @@ export function VolunteerDashboardView() {
               <Button
                 size="sm"
                 onClick={() => toast.success("Presensi kehadiran relawan berhasil dicatat!")}
-                className="h-9 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer"
+                className="h-9 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-medium cursor-pointer"
               >
                 <Check className="w-3.5 h-3.5 mr-1" /> Presensi Hadir
               </Button>

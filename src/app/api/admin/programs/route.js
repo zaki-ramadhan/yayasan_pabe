@@ -46,9 +46,9 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
-    if (!body.title || !body.categoryId) {
+    if (!body.title || (!body.categoryId && !body.newCategoryName)) {
       return NextResponse.json(
-        { success: false, message: "Judul program dan kategori wajib dipilih." },
+        { success: false, message: "Judul program dan kategori wajib diisi." },
         { status: 400 }
       );
     }

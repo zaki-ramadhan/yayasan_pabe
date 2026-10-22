@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, Home } from "lucide-react";
@@ -8,6 +8,15 @@ import { Button } from "@/components/ui/button";
 
 export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
   const displayName = currentUser?.name || "Pengguna";
+  const [imgError, setImgError] = useState(false);
+
+  const avatarUrl = !imgError
+    ? (currentUser?.avatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
+    : null;
+
+  const fallbackInitial =
+    currentUser?.initials ||
+    (currentUser?.name ? currentUser.name.trim().charAt(0).toUpperCase() : "U");
 
   return (
     <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between">
@@ -22,11 +31,11 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </Button>
 
-        <Link href="/" className="flex items-center gap-2" title="Kembali ke Beranda Utama Yayasan PABE">
+        <Link href="/" className="flex items-center gap-2" title="Kembali ke Beranda Utama Yayasan GSM">
           <div className="relative w-8 h-8 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
             <Image
               src="/logo_yayasan_GSM.png"
-              alt="Logo Yayasan PABE"
+              alt="Logo Yayasan Generasi Sejahtera Mandiri"
               width={32}
               height={32}
               className="w-full h-full object-contain rounded-xs"
@@ -34,7 +43,7 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
           </div>
           <div>
             <span className="font-medium text-sm block text-slate-950 leading-tight">
-              Yayasan PABE
+              Yayasan GSM
             </span>
             <span className="text-xs font-normal text-slate-500 block">
               Beranda Utama
@@ -58,16 +67,17 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
             title={displayName}
             className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center hover:ring-2 hover:ring-primary/20 transition-all"
           >
-            {currentUser.avatar ? (
+            {avatarUrl ? (
               <img
-                src={currentUser.avatar}
+                src={avatarUrl}
                 alt={displayName}
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
+                onError={() => setImgError(true)}
               />
             ) : (
               <span className="font-medium text-sm text-slate-700">
-                {currentUser.initials || "U"}
+                {fallbackInitial}
               </span>
             )}
           </Link>

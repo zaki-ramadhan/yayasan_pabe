@@ -60,7 +60,7 @@ export function AdminProgramSkeleton() {
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
                   {/* Program Title & Details */}
-                  <TableCell className="space-y-1.5 py-3 align-top">
+                  <TableCell className="space-y-1.5 py-3 align-middle">
                     <div className="flex items-center gap-2">
                       <Skeleton className="h-4 w-44 rounded" />
                       <Skeleton className="h-4 w-14 rounded" />
@@ -69,12 +69,12 @@ export function AdminProgramSkeleton() {
                   </TableCell>
 
                   {/* Category */}
-                  <TableCell className="py-3 align-top text-center">
+                  <TableCell className="py-3 align-middle text-center">
                     <Skeleton className="h-5 w-20 rounded mx-auto" />
                   </TableCell>
 
                   {/* Target & Progress */}
-                  <TableCell className="space-y-2 py-3 align-top">
+                  <TableCell className="space-y-2 py-3 align-middle">
                     <div className="flex items-center justify-between">
                       <Skeleton className="h-4 w-24 rounded" />
                       <Skeleton className="h-4 w-8 rounded" />
@@ -84,24 +84,24 @@ export function AdminProgramSkeleton() {
                   </TableCell>
 
                   {/* Donors & Time */}
-                  <TableCell className="space-y-1.5 py-3 align-top">
+                  <TableCell className="space-y-1.5 py-3 align-middle">
                     <Skeleton className="h-4 w-20 rounded" />
                     <Skeleton className="h-3 w-16 rounded" />
                   </TableCell>
 
                   {/* Disbursed Amount */}
-                  <TableCell className="space-y-1.5 py-3 align-top">
+                  <TableCell className="space-y-1.5 py-3 align-middle">
                     <Skeleton className="h-4 w-24 rounded" />
                     <Skeleton className="h-3 w-28 rounded" />
                   </TableCell>
 
                   {/* Status */}
-                  <TableCell className="py-3 align-top text-center">
+                  <TableCell className="py-3 align-middle text-center">
                     <Skeleton className="h-5 w-16 rounded mx-auto" />
                   </TableCell>
 
                   {/* Action */}
-                  <TableCell className="py-3 align-top text-right">
+                  <TableCell className="py-3 align-middle text-right">
                     <Skeleton className="h-8 w-8 rounded ml-auto" />
                   </TableCell>
                 </TableRow>

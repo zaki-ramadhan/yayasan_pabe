@@ -28,7 +28,7 @@ import {
 
 export function DonorTransactionTable({
   items = [],
-  pagination = { total: 0, totalPages: 1, currentPage: 1, limit: 25 },
+  pagination = { total: 0, totalPages: 1, currentPage: 1, limit: 10 },
   search = "",
   sortBy = "date",
   sortOrder = "desc",
@@ -144,16 +144,16 @@ export function DonorTransactionTable({
           ) : (
             items.map((item) => (
               <TableRow key={item.id}>
-                <TableCell className="text-center text-slate-700 font-normal">
+                <TableCell className="text-center text-slate-700 font-normal align-middle">
                   {item.no}
                 </TableCell>
-                <TableCell className="font-medium text-slate-900">
+                <TableCell className="font-medium text-slate-900 align-middle">
                   {item.donorName}
                 </TableCell>
-                <TableCell className="text-right font-medium text-emerald-800">
+                <TableCell className="text-right font-medium text-emerald-800 align-middle">
                   {formatRupiah(item.amount)}
                 </TableCell>
-                <TableCell className="font-normal text-slate-800 max-w-xs">
+                <TableCell className="font-normal text-slate-800 max-w-xs align-middle">
                   {item.campaignSlug ? (
                     <Link
                       href={`/program/${item.campaignSlug}`}
@@ -165,15 +165,15 @@ export function DonorTransactionTable({
                     <span className="line-clamp-1">{item.programTitle}</span>
                   )}
                 </TableCell>
-                <TableCell className="font-normal text-slate-800 whitespace-nowrap">
+                <TableCell className="font-normal text-slate-800 whitespace-nowrap align-middle">
                   <span className="inline-block max-w-[120px] truncate whitespace-nowrap">
                     {item.paymentChannel?.replace("_", " ")}
                   </span>
                 </TableCell>
-                <TableCell className="font-normal text-slate-800 whitespace-nowrap">
+                <TableCell className="font-normal text-slate-800 whitespace-nowrap align-middle">
                   {formatDate(item.date)}
                 </TableCell>
-                <TableCell className="text-center whitespace-nowrap">
+                <TableCell className="text-center whitespace-nowrap align-middle">
                   <Link href={`/invoice/${item.invoiceId}`} target="_blank">
                     <Button
                       size="sm"

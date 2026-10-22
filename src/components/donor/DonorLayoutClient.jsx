@@ -14,8 +14,6 @@ export function DonorLayoutClient({ children }) {
   const pathname = usePathname();
   const { currentUser, isAuthenticated } = useCurrentUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
 
   // If administrator/staff lands on donor dashboard, redirect to admin portal
   useEffect(() => {
@@ -27,16 +25,6 @@ export function DonorLayoutClient({ children }) {
       router.replace("/admin");
     }
   }, [currentUser, pathname, router]);
-
-  // Detect desktop screen width (>= 1024px)
-  useEffect(() => {
-    const updateMedia = () => {
-      setIsDesktop(window.innerWidth >= 1024);
-    };
-    updateMedia();
-    window.addEventListener("resize", updateMedia);
-    return () => window.removeEventListener("resize", updateMedia);
-  }, []);
 
   // Close mobile drawer on route change
   useEffect(() => {
@@ -89,15 +77,8 @@ export function DonorLayoutClient({ children }) {
   }, [pathname, router, isAuthenticated]);
 
   const handleToggleSidebar = () => {
-    if (isDesktop) {
-      setIsSidebarExpanded((prev) => !prev);
-    } else {
-      setIsMobileMenuOpen((prev) => !prev);
-    }
+    setIsMobileMenuOpen((prev) => !prev);
   };
-
-  // On desktop: collapsed when not expanded. On mobile drawer: always expanded.
-  const isCollapsed = isDesktop ? !isSidebarExpanded : false;
 
   return (
     <div className="min-h-screen bg-slate-50/60 flex flex-col lg:flex-row">
@@ -110,15 +91,15 @@ export function DonorLayoutClient({ children }) {
         />
       )}
 
-      {/* Responsive Sidebar (w-16 collapsed -> w-52 expanded via toggle button) */}
+      {/* Permanently Open Sidebar on Desktop (w-52), Mobile Slide Drawer */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 bg-sidebar transform transition-all duration-200 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:sticky lg:top-0 lg:z-30 shrink-0 ${
-          isMobileMenuOpen ? "translate-x-0 w-52" : "-translate-x-full"
-        } ${isSidebarExpanded ? "lg:w-52" : "lg:w-16"}`}
+        className={`fixed inset-y-0 left-0 z-50 bg-sidebar transform transition-all duration-200 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:sticky lg:top-0 lg:z-30 shrink-0 w-52 ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <DonorSidebarNav
           currentUser={currentUser}
-          isCollapsed={isCollapsed}
+          isCollapsed={false}
           onCloseMobile={() => setIsMobileMenuOpen(false)}
         />
       </aside>
@@ -128,7 +109,7 @@ export function DonorLayoutClient({ children }) {
         <DonorTopHeader
           currentUser={currentUser}
           onToggleSidebar={handleToggleSidebar}
-          isSidebarExpanded={isDesktop ? isSidebarExpanded : isMobileMenuOpen}
+          isSidebarExpanded={true}
         />
         <main className="p-4 sm:p-6 lg:p-8 flex-1 w-full max-w-7xl mx-auto">
           {children}

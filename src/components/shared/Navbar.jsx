@@ -52,7 +52,7 @@ export function Navbar() {
 
   const handleLogout = () => {
     logoutUser();
-    toast.info("Anda telah keluar dari akun.");
+    toast.success("Berhasil keluar dari akun.");
     router.push("/");
   };
 

@@ -27,7 +27,7 @@ export function DonorHistoryDashboard() {
     total: 0,
     totalPages: 1,
     currentPage: 1,
-    limit: 25,
+    limit: 10,
   });
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("date");

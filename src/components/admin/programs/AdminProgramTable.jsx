@@ -32,6 +32,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { AdminProgramModal } from "./AdminProgramModal";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
@@ -44,20 +45,36 @@ export function AdminProgramTable({
   const [campaigns, setCampaigns] = useState(initialCampaigns);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 10;
 
   const debouncedSearch = useDebounce(search.trim(), 300);
+
+  const filterCategoryOptions = useMemo(() => {
+    return [
+      { value: "ALL", label: "Semua Kategori" },
+      ...(categories || []).map((cat) => ({
+        value: cat.id || cat.name,
+        label: cat.name || cat.label,
+      })),
+    ];
+  }, [categories]);
 
   const filteredCampaigns = useMemo(() => {
     return campaigns.filter((item) => {
       if (statusFilter !== "ALL" && item.status !== statusFilter) return false;
+      if (categoryFilter !== "ALL") {
+        const matchesId = item.categoryId === categoryFilter;
+        const matchesName = item.category?.toLowerCase() === categoryFilter.toLowerCase();
+        if (!matchesId && !matchesName) return false;
+      }
       if (debouncedSearch && !item.title.toLowerCase().includes(debouncedSearch.toLowerCase())) return false;
       return true;
     });
-  }, [campaigns, statusFilter, debouncedSearch]);
+  }, [campaigns, statusFilter, categoryFilter, debouncedSearch]);
 
   const totalPages = Math.ceil(filteredCampaigns.length / PAGE_SIZE) || 1;
   const paginatedCampaigns = useMemo(() => {
@@ -127,18 +144,39 @@ export function AdminProgramTable({
     <div className="space-y-4">
       {/* Top Filter Bar & Add Action */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex flex-1 items-center gap-2.5 max-w-lg">
-          <Input
-            leftIcon={Search}
-            placeholder="Cari judul program donasi..."
-            value={search}
-            onChange={(e) => setSearch(sanitizeSearchQuery(e.target.value))}
-            onClear={() => setSearch("")}
-            className="h-10 text-sm bg-white"
+        <div className="flex flex-1 flex-wrap items-center gap-2.5">
+          <div className="flex-1 min-w-[200px] max-w-sm">
+            <Input
+              leftIcon={Search}
+              placeholder="Cari judul program donasi..."
+              value={search}
+              onChange={(e) => setSearch(sanitizeSearchQuery(e.target.value))}
+              onClear={() => setSearch("")}
+              className="h-10 text-sm bg-white"
+            />
+          </div>
+
+          <CreatableCombobox
+            options={filterCategoryOptions}
+            value={categoryFilter}
+            onChange={(val) => {
+              setCategoryFilter(val);
+              setCurrentPage(1);
+            }}
+            placeholder="Semua Kategori"
+            searchPlaceholder="Cari kategori program..."
+            emptyMessage="Kategori tidak ditemukan."
+            className="h-10 w-44 text-sm bg-white shrink-0"
           />
 
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-10 w-44 text-sm bg-white shrink-0">
+          <Select
+            value={statusFilter}
+            onValueChange={(val) => {
+              setStatusFilter(val);
+              setCurrentPage(1);
+            }}
+          >
+            <SelectTrigger className="h-10 w-36 text-sm bg-white shrink-0">
               <SelectValue placeholder="Semua Status" />
             </SelectTrigger>
             <SelectContent align="start">
@@ -156,7 +194,7 @@ export function AdminProgramTable({
           className="h-10 px-4 rounded-lg text-sm font-medium bg-primary hover:bg-primary-hover text-white flex items-center gap-1.5 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
-          <span>Tambah Program</span>
+          <span>Program baru</span>
         </Button>
       </div>
 
@@ -187,7 +225,7 @@ export function AdminProgramTable({
 
                   return (
                     <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                      <TableCell className="space-y-1 py-3 align-top">
+                      <TableCell className="space-y-1 py-3 align-middle">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="font-medium text-sm text-slate-900 block leading-snug">
                             {item.title}
@@ -208,13 +246,13 @@ export function AdminProgramTable({
                         </span>
                       </TableCell>
 
-                      <TableCell className="py-3 align-top text-center whitespace-nowrap">
+                      <TableCell className="py-3 align-middle text-center whitespace-nowrap">
                         <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 max-w-[130px] truncate whitespace-nowrap" title={item.category}>
                           {item.category}
                         </span>
                       </TableCell>
 
-                      <TableCell className="space-y-1.5 py-3 align-top">
+                      <TableCell className="space-y-1.5 py-3 align-middle">
                         <div className="flex items-center justify-between text-sm">
                           <span className="font-semibold text-slate-900">{formatRupiah(collected)}</span>
                           {target > 0 && <span className="font-medium text-slate-600">{percent}%</span>}
@@ -229,7 +267,7 @@ export function AdminProgramTable({
                         )}
                       </TableCell>
 
-                      <TableCell className="text-sm text-slate-700 py-3 align-top whitespace-nowrap">
+                      <TableCell className="text-sm text-slate-700 py-3 align-middle whitespace-nowrap">
                         <span className="font-medium text-slate-900">{item.donorCount}</span> donatur
                         {daysLeft !== null && (
                           <span className="text-xs text-slate-500 block mt-0.5">
@@ -238,7 +276,7 @@ export function AdminProgramTable({
                         )}
                       </TableCell>
 
-                      <TableCell className="space-y-0.5 py-3 align-top whitespace-nowrap">
+                      <TableCell className="space-y-0.5 py-3 align-middle whitespace-nowrap">
                         {disbursed > 0 ? (
                           <>
                             <div className="font-semibold text-sm text-slate-900">
@@ -260,7 +298,7 @@ export function AdminProgramTable({
                         )}
                       </TableCell>
 
-                      <TableCell className="py-3.5 align-top text-center whitespace-nowrap">
+                      <TableCell className="py-3.5 align-middle text-center whitespace-nowrap">
                         {item.status === "ACTIVE" ? (
                           <span className="inline-flex items-center justify-center text-xs font-medium text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200 max-w-[100px] truncate whitespace-nowrap">
                             Aktif
@@ -276,7 +314,7 @@ export function AdminProgramTable({
                         )}
                       </TableCell>
 
-                      <TableCell className="text-right py-3.5 align-top">
+                      <TableCell className="text-right py-3.5 align-middle">
                         <DropdownMenu>
                           <DropdownMenuTrigger className="p-1 rounded hover:bg-slate-100 text-slate-600 cursor-pointer outline-none">
                             <MoreVertical className="w-4.5 h-4.5" />

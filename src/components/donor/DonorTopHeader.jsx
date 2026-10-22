@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { PanelLeft } from "lucide-react";
 
@@ -11,6 +11,15 @@ export function DonorTopHeader({
 }) {
   const firstName = currentUser?.name ? currentUser.name.split(" ")[0] : "";
   const displayName = currentUser?.name || "Akun Saya";
+  const [imgError, setImgError] = useState(false);
+
+  const avatarUrl = !imgError
+    ? (currentUser?.avatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
+    : null;
+
+  const fallbackInitial =
+    currentUser?.initials ||
+    (currentUser?.name ? currentUser.name.trim().charAt(0).toUpperCase() : "U");
 
   return (
     <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
@@ -21,7 +30,7 @@ export function DonorTopHeader({
           onClick={onToggleSidebar}
           aria-label={isSidebarExpanded ? "Kecilkan bilah menu" : "Perluas bilah menu"}
           title={isSidebarExpanded ? "Kecilkan menu samping" : "Perluas menu samping"}
-          className="p-1.5 -ml-1.5 rounded-md text-slate-500 hover:text-slate-950 hover:bg-slate-100/80 transition-colors cursor-pointer flex items-center justify-center shrink-0"
+          className="lg:hidden p-1.5 -ml-1.5 rounded-md text-slate-500 hover:text-slate-950 hover:bg-slate-100/80 transition-colors cursor-pointer flex items-center justify-center shrink-0"
         >
           <PanelLeft className="w-5 h-5" />
         </button>
@@ -39,16 +48,17 @@ export function DonorTopHeader({
           title={`Profil Saya (${displayName})`}
           aria-label="Buka Profil Saya"
         >
-          {currentUser.avatar ? (
+          {avatarUrl ? (
             <img
-              src={currentUser.avatar}
+              src={avatarUrl}
               alt={displayName}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform"
               referrerPolicy="no-referrer"
+              onError={() => setImgError(true)}
             />
           ) : (
             <span className="font-medium text-xs text-slate-700">
-              {currentUser.initials || "U"}
+              {fallbackInitial}
             </span>
           )}
         </Link>

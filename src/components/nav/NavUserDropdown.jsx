@@ -13,10 +13,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
+import { maskEmail } from "@/lib/security";
 import { cn } from "@/lib/utils";
 
 export function NavUserDropdown({ currentUser, onLogout }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  const avatarUrl = !imgError
+    ? (currentUser?.avatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
+    : null;
+
+  const fallbackInitial =
+    currentUser?.initials ||
+    (currentUser?.name ? currentUser.name.trim().charAt(0).toUpperCase() : "U");
 
   if (!currentUser) {
     return (
@@ -61,16 +71,17 @@ export function NavUserDropdown({ currentUser, onLogout }) {
                 : "border border-slate-300 bg-slate-100"
             )}
           >
-            {currentUser.avatar ? (
+            {avatarUrl ? (
               <img
-                src={currentUser.avatar}
+                src={avatarUrl}
                 alt={currentUser.name || "Avatar"}
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
+                onError={() => setImgError(true)}
               />
             ) : (
               <span className="font-medium text-xs text-slate-800">
-                {currentUser.initials || currentUser.name?.charAt(0) || "U"}
+                {fallbackInitial}
               </span>
             )}
           </div>
@@ -116,7 +127,7 @@ export function NavUserDropdown({ currentUser, onLogout }) {
                 {currentUser.name}
               </p>
               <p className="text-sm font-normal text-slate-500 truncate leading-tight">
-                {currentUser.email || roleLabel}
+                {currentUser.email ? maskEmail(currentUser.email) : roleLabel}
               </p>
             </div>
           </div>

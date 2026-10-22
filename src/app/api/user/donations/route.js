@@ -21,7 +21,7 @@ export async function GET(request) {
     const sortBy = searchParams.get("sortBy") || "date";
     const sortOrder = searchParams.get("sortOrder") || "desc";
     const page = searchParams.get("page") || "1";
-    const limit = searchParams.get("limit") || "25";
+    const limit = searchParams.get("limit") || "10";
 
     // Strict Scope: Regular users can only access their own donations (Anti-IDOR)
     const isAdmin = authUser.role && authUser.role !== USER_ROLES.DONOR;

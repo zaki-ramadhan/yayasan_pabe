@@ -62,23 +62,23 @@ export function AdminArticleSkeleton() {
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
                   {/* Banner */}
-                  <TableCell className="w-16 py-2.5">
+                  <TableCell className="w-16 py-2.5 align-middle">
                     <Skeleton className="w-12 h-9 rounded" />
                   </TableCell>
 
                   {/* Title & Slug */}
-                  <TableCell className="space-y-1.5 py-2.5">
+                  <TableCell className="space-y-1.5 py-2.5 align-middle">
                     <Skeleton className="h-4 w-60 rounded" />
                     <Skeleton className="h-3 w-40 rounded" />
                   </TableCell>
 
                   {/* Category */}
-                  <TableCell className="w-36 py-2.5 text-center">
+                  <TableCell className="w-36 py-2.5 text-center align-middle">
                     <Skeleton className="h-5 w-24 rounded mx-auto" />
                   </TableCell>
 
                   {/* Author */}
-                  <TableCell className="w-40 py-2.5">
+                  <TableCell className="w-40 py-2.5 align-middle">
                     <div className="flex items-center gap-2">
                       <Skeleton className="h-6 w-6 rounded-full shrink-0" />
                       <Skeleton className="h-3.5 w-20 rounded" />
@@ -86,17 +86,17 @@ export function AdminArticleSkeleton() {
                   </TableCell>
 
                   {/* Published Date */}
-                  <TableCell className="w-32 py-2.5">
+                  <TableCell className="w-32 py-2.5 align-middle">
                     <Skeleton className="h-3.5 w-24 rounded" />
                   </TableCell>
 
                   {/* Likes/Appreciation */}
-                  <TableCell className="w-24 py-2.5 text-center">
+                  <TableCell className="w-24 py-2.5 text-center align-middle">
                     <Skeleton className="h-4 w-10 rounded mx-auto" />
                   </TableCell>
 
                   {/* Actions */}
-                  <TableCell className="w-28 py-2.5 text-right">
+                  <TableCell className="w-28 py-2.5 text-right align-middle">
                     <div className="flex items-center justify-end gap-1.5">
                       <Skeleton className="h-7 w-7 rounded" />
                       <Skeleton className="h-7 w-7 rounded" />

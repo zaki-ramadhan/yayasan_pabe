@@ -92,7 +92,7 @@ export function AdminDistributionTable({
           className="h-10 px-4 rounded-lg text-sm font-medium bg-primary hover:bg-primary-hover text-white flex items-center gap-1.5 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
-          <span>Catat Penyaluran Baru</span>
+          <span>Penyaluran baru</span>
         </Button>
       </div>
 
@@ -120,11 +120,11 @@ export function AdminDistributionTable({
               {paginatedDistributions && paginatedDistributions.length > 0 ? (
                 paginatedDistributions.map((item) => (
                   <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                    <TableCell className="font-medium text-sm text-slate-900 py-3 align-top">
+                    <TableCell className="font-medium text-sm text-slate-900 py-3 align-middle">
                       {item.campaignTitle}
                     </TableCell>
 
-                    <TableCell className="space-y-1 py-3 align-top">
+                    <TableCell className="space-y-1 py-3 align-middle">
                       <span className="font-medium text-sm text-slate-900 block leading-snug">
                         {item.title}
                       </span>
@@ -135,11 +135,11 @@ export function AdminDistributionTable({
                       )}
                     </TableCell>
 
-                    <TableCell className="text-sm text-slate-600 py-3 align-top whitespace-nowrap">
+                    <TableCell className="text-sm text-slate-600 py-3 align-middle whitespace-nowrap">
                       {formatDate(item.date)}
                     </TableCell>
 
-                    <TableCell className="text-right font-semibold text-sm text-slate-900 py-3 align-top whitespace-nowrap">
+                    <TableCell className="text-right font-semibold text-sm text-slate-900 py-3 align-middle whitespace-nowrap">
                       {formatRupiah(item.disbursedAmount)}
                     </TableCell>
                   </TableRow>

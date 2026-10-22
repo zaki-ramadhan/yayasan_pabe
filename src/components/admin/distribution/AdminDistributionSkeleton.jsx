@@ -49,23 +49,23 @@ export function AdminDistributionSkeleton() {
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
                   {/* Origin Program */}
-                  <TableCell className="w-72 py-3 align-top">
+                  <TableCell className="w-72 py-3 align-middle">
                     <Skeleton className="h-4 w-56 rounded" />
                   </TableCell>
 
                   {/* Activity Title & Content */}
-                  <TableCell className="space-y-1.5 py-3 align-top">
+                  <TableCell className="space-y-1.5 py-3 align-middle">
                     <Skeleton className="h-4 w-72 rounded" />
                     <Skeleton className="h-3.5 w-full max-w-lg rounded" />
                   </TableCell>
 
                   {/* Realization Date */}
-                  <TableCell className="w-36 py-3 align-top whitespace-nowrap">
+                  <TableCell className="w-36 py-3 align-middle whitespace-nowrap">
                     <Skeleton className="h-3.5 w-24 rounded" />
                   </TableCell>
 
                   {/* Disbursed Amount */}
-                  <TableCell className="w-40 py-3 align-top text-right whitespace-nowrap">
+                  <TableCell className="w-40 py-3 align-middle text-right whitespace-nowrap">
                     <Skeleton className="h-4 w-28 rounded ml-auto" />
                   </TableCell>
                 </TableRow>

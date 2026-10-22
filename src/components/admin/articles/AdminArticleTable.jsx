@@ -5,13 +5,7 @@ import Image from "next/image";
 import { Plus, Search, Edit3, Trash2, ExternalLink, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import {
   Table,
   TableHeader,
@@ -38,9 +32,17 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
   const [isLoading, setIsLoading] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 10;
 
   const debouncedSearch = useDebounce(search.trim(), 300);
+
+  const filterCategoryOptions = useMemo(() => {
+    const rawCategories = categories.filter((c) => c !== "Semua Kategori" && c !== "ALL");
+    return [
+      { value: "ALL", label: "Semua Kategori" },
+      ...rawCategories.map((cat) => ({ value: cat, label: cat })),
+    ];
+  }, [categories]);
 
   const filteredArticles = useMemo(() => {
     return articles.filter((item) => {
@@ -142,21 +144,15 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
             className="h-10 text-sm bg-white"
           />
 
-          <Select value={categoryFilter} onValueChange={handleCategoryChange}>
-            <SelectTrigger className="h-10 w-44 text-sm bg-white shrink-0">
-              <SelectValue placeholder="Semua Kategori" />
-            </SelectTrigger>
-            <SelectContent align="start">
-              <SelectItem value="ALL">Semua Kategori</SelectItem>
-              {categories
-                .filter((c) => c !== "Semua Kategori" && c !== "ALL")
-                .map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
+          <CreatableCombobox
+            options={filterCategoryOptions}
+            value={categoryFilter}
+            onChange={handleCategoryChange}
+            placeholder="Semua Kategori"
+            searchPlaceholder="Cari kategori artikel..."
+            emptyMessage="Kategori tidak ditemukan."
+            className="h-10 w-44 text-sm bg-white shrink-0"
+          />
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-auto">
@@ -174,10 +170,10 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
           <Button
             type="button"
             onClick={handleOpenAdd}
-            className="h-10 px-4 rounded-lg text-sm font-semibold bg-primary hover:bg-primary/90 text-white flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            className="h-10 px-4 rounded-lg text-sm font-medium bg-primary hover:bg-primary/90 text-white flex items-center gap-1.5 cursor-pointer shadow-2xs"
           >
             <Plus className="w-4 h-4" />
-            <span>Tulis Artikel Baru</span>
+            <span>Artikel baru</span>
           </Button>
         </div>
       </div>
@@ -209,7 +205,7 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
 
                 return (
                   <TableRow key={article.id}>
-                    <TableCell className="py-2.5">
+                    <TableCell className="py-2.5 align-middle">
                       <div className="w-12 h-9 rounded bg-slate-100 overflow-hidden relative border border-slate-200 shrink-0">
                         <Image
                           src={article.bannerUrl || "/img/hero_card_1.jpeg"}
@@ -221,7 +217,7 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
                       </div>
                     </TableCell>
 
-                    <TableCell className="py-2.5">
+                    <TableCell className="py-2.5 align-middle">
                       <div className="space-y-0.5">
                         <span className="text-sm font-semibold text-slate-900 block line-clamp-1">
                           {article.title}
@@ -240,7 +236,7 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
                       </div>
                     </TableCell>
 
-                    <TableCell className="py-2.5 text-center">
+                    <TableCell className="py-2.5 text-center align-middle">
                       <span
                         className="inline-block text-xs font-medium text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded border border-slate-200/80 max-w-[140px] truncate whitespace-nowrap align-middle"
                         title={article.category}
@@ -249,19 +245,19 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
                       </span>
                     </TableCell>
 
-                    <TableCell className="text-sm text-slate-600 py-2.5">
+                    <TableCell className="text-sm text-slate-600 py-2.5 align-middle">
                       {article.author}
                     </TableCell>
 
-                    <TableCell className="text-sm text-slate-600 py-2.5 whitespace-nowrap">
+                    <TableCell className="text-sm text-slate-600 py-2.5 whitespace-nowrap align-middle">
                       {dateDisplay}
                     </TableCell>
 
-                    <TableCell className="text-sm text-slate-700 py-2.5 text-center whitespace-nowrap font-medium">
+                    <TableCell className="text-sm text-slate-700 py-2.5 text-center whitespace-nowrap font-medium align-middle">
                       {article.likeCount} Suka
                     </TableCell>
 
-                    <TableCell className="text-right py-2.5 whitespace-nowrap">
+                    <TableCell className="text-right py-2.5 whitespace-nowrap align-middle">
                       <div className="flex items-center justify-end gap-1">
                         <Button
                           type="button"

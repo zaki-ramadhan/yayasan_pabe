@@ -103,6 +103,7 @@ export function ArticleCatalog({ initialArticles = [], categories = ARTICLE_CATE
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlers.onPageChange}
+            className="pt-6 sm:pt-8"
           />
         </div>
       ) : (
