@@ -115,7 +115,7 @@ export async function POST(request) {
       const hashedPassword = hashPassword(cleanPassword);
       const isSuper = isSuperAdminIdentifier(cleanIdentifier) || isSuperAdminEmail(newEmail);
       const initialRole = isSuper ? USER_ROLES.SUPER_ADMIN : USER_ROLES.DONOR;
-      const initialTitle = isSuper ? "Super Admin (Ketua Yayasan)" : "Donatur Terdaftar";
+      const initialTitle = isSuper ? "Super Admin" : "Donatur Terdaftar";
 
       try {
         user = await prisma.user.create({
@@ -157,7 +157,7 @@ export async function POST(request) {
           where: { id: user.id },
           data: {
             role: USER_ROLES.SUPER_ADMIN,
-            title: "Super Admin (Ketua Yayasan)",
+            title: "Super Admin",
           },
         });
       } catch (elevateErr) {
@@ -165,10 +165,12 @@ export async function POST(request) {
         user = {
           ...user,
           role: USER_ROLES.SUPER_ADMIN,
-          title: "Super Admin (Ketua Yayasan)",
+          title: "Super Admin",
         };
       }
     }
+
+    const cleanTitle = (user.title && user.title.includes("Ketua Yayasan")) ? "Super Admin" : (user.title || "Donatur Terdaftar");
 
     // Safe user response (exclude passwordHash)
     const safeUser = {
@@ -177,7 +179,7 @@ export async function POST(request) {
       username: user.username,
       email: user.email,
       role: user.role,
-      title: user.title || "Donatur Terdaftar",
+      title: cleanTitle,
       phone: user.phone || "-",
       avatar: user.avatar || "",
       initials: (user.name || user.email).slice(0, 2).toUpperCase(),

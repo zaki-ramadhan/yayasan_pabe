@@ -101,16 +101,20 @@ export async function GET(request) {
           where: { id: user.id },
           data: {
             role: USER_ROLES.SUPER_ADMIN,
-            title: "Super Admin (Ketua Yayasan)",
+            title: "Super Admin",
           },
         });
         user.role = USER_ROLES.SUPER_ADMIN;
-        user.title = "Super Admin (Ketua Yayasan)";
+        user.title = "Super Admin";
       } catch (elevateErr) {
         console.warn("Auto-elevating user to SUPER_ADMIN in /me error:", elevateErr.message);
         user.role = USER_ROLES.SUPER_ADMIN;
-        user.title = "Super Admin (Ketua Yayasan)";
+        user.title = "Super Admin";
       }
+    }
+
+    if (user.title && user.title.includes("Ketua Yayasan")) {
+      user.title = "Super Admin";
     }
 
     const response = NextResponse.json({

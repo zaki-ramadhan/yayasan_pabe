@@ -58,7 +58,7 @@ export function AdminRecentTransactionsCard({ initialTransactions = [] }) {
         <Table>
           <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
             <TableRow>
-              <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Invoice</TableHead>
+              <TableHead className="w-[170px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Invoice</TableHead>
               <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Donatur</TableHead>
               <TableHead className="w-full font-medium text-slate-600 text-sm py-2.5 min-w-[160px]">Program</TableHead>
               <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Nominal</TableHead>
@@ -72,9 +72,14 @@ export function AdminRecentTransactionsCard({ initialTransactions = [] }) {
             {transactions && transactions.length > 0 ? (
               transactions.slice(0, 7).map((item) => (
                 <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                  <TableCell className="w-px text-sm py-3 whitespace-nowrap">
-                    <div className="inline-flex items-center gap-1.5">
-                      <span className="font-medium text-slate-900 select-all">{item.invoiceId}</span>
+                  <TableCell className="w-[170px] text-sm py-3 align-middle">
+                    <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
+                      <span
+                        className="font-medium text-slate-900 truncate block select-all"
+                        title={item.invoiceId}
+                      >
+                        {item.invoiceId}
+                      </span>
                       <button
                         type="button"
                         onClick={() => handleCopyInvoice(item.invoiceId)}
@@ -90,21 +95,21 @@ export function AdminRecentTransactionsCard({ initialTransactions = [] }) {
                       </button>
                     </div>
                   </TableCell>
-                  <TableCell className="w-px text-sm font-medium text-slate-900 py-3 whitespace-nowrap">
+                  <TableCell className="w-px text-sm font-medium text-slate-900 py-3 whitespace-nowrap align-middle">
                     {item.donorName}
                   </TableCell>
-                  <TableCell className="text-sm text-slate-700 py-3">
+                  <TableCell className="text-sm text-slate-700 py-3 align-middle">
                     <span className="line-clamp-2 leading-snug font-normal text-slate-800 block">{item.campaignTitle}</span>
                   </TableCell>
-                  <TableCell className="w-px text-sm font-semibold text-slate-900 py-3 whitespace-nowrap">
+                  <TableCell className="w-px text-sm font-semibold text-slate-900 py-3 whitespace-nowrap align-middle">
                     {formatRupiah(item.amount)}
                   </TableCell>
-                  <TableCell className="w-px text-center py-3 whitespace-nowrap uppercase">
+                  <TableCell className="w-px text-center py-3 whitespace-nowrap uppercase align-middle">
                     <span className="inline-flex items-center justify-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 max-w-[110px] truncate whitespace-nowrap">
                       {item.paymentChannel}
                     </span>
                   </TableCell>
-                  <TableCell className="w-px text-center py-3 whitespace-nowrap">
+                  <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
                     {item.status === "PAID" ? (
                       <span className="inline-flex items-center justify-center text-xs font-medium text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200 max-w-[100px] truncate whitespace-nowrap">
                         Berhasil

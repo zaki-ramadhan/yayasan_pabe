@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { PanelLeft } from "lucide-react";
 import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
+import { SuperAdminNoticeBanner } from "@/components/admin/SuperAdminNoticeBanner";
 
 export function AdminTopHeader({
   currentUser,
@@ -9,9 +11,21 @@ export function AdminTopHeader({
   isSidebarExpanded = false,
 }) {
   const userRole = currentUser?.role || USER_ROLES.SUPER_ADMIN;
+  const isSuperAdmin = userRole === USER_ROLES.SUPER_ADMIN;
+  const [imgError, setImgError] = useState(false);
+
+  const avatarUrl = !imgError
+    ? (currentUser?.avatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
+    : null;
+
+  const fallbackInitial =
+    currentUser?.initials ||
+    (currentUser?.name ? currentUser.name.trim().charAt(0).toUpperCase() : "A");
 
   return (
-    <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+    <div className="sticky top-0 z-20">
+      <SuperAdminNoticeBanner isSuperAdmin={isSuperAdmin} />
+      <header className="bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
       {/* Left: Sidebar Toggle Button + Portal Title */}
       <div className="flex items-center gap-2 min-w-0">
         <button
@@ -19,7 +33,7 @@ export function AdminTopHeader({
           onClick={onToggleSidebar}
           aria-label={isSidebarExpanded ? "Kecilkan bilah menu" : "Perluas bilah menu"}
           title={isSidebarExpanded ? "Kecilkan menu samping" : "Perluas menu samping"}
-          className="p-1.5 -ml-1.5 rounded-md text-slate-500 hover:text-slate-950 hover:bg-slate-100/80 transition-colors cursor-pointer flex items-center justify-center shrink-0"
+          className="lg:hidden p-1.5 -ml-1.5 rounded-md text-slate-500 hover:text-slate-950 hover:bg-slate-100/80 transition-colors cursor-pointer flex items-center justify-center shrink-0"
         >
           <PanelLeft className="w-5 h-5" />
         </button>
@@ -36,17 +50,30 @@ export function AdminTopHeader({
             {currentUser?.name || "Administrator"}
           </span>
           <span className="text-sm text-slate-500 block">
-            {ROLE_LABELS[userRole] || userRole}
+            {(ROLE_LABELS[userRole] || currentUser?.title || userRole || "Administrator")
+              .replace(/\s*\(Ketua Yayasan\)/gi, "")
+              .replace(/\s*Ketua Yayasan/gi, "")}
           </span>
         </div>
 
         <div
-          className="w-9 h-9 sm:w-9.5 sm:h-9.5 rounded-full bg-slate-100 border border-slate-200 text-sm font-semibold text-slate-800 flex items-center justify-center shadow-2xs"
+          className="relative w-9 h-9 sm:w-9.5 sm:h-9.5 rounded-full overflow-hidden bg-slate-100 border border-slate-200 text-sm font-semibold text-slate-800 flex items-center justify-center shadow-2xs shrink-0 select-none"
           title={currentUser?.name || "Pengurus"}
         >
-          {currentUser?.initials || "A"}
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={currentUser?.name || "Avatar"}
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <span>{fallbackInitial}</span>
+          )}
         </div>
       </div>
     </header>
+    </div>
   );
 }

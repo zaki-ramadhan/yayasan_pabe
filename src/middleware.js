@@ -33,6 +33,14 @@ export function middleware(request) {
       return NextResponse.redirect(loginUrl);
     }
 
+    // Khusus rute manajemen pengurus: hanya SUPER_ADMIN yang diizinkan
+    if (pathname === "/admin/pengguna" || pathname.startsWith("/admin/pengguna/")) {
+      const role = request.cookies.get("pabe_role")?.value || request.cookies.get("ygsm_role")?.value;
+      if (role !== "SUPER_ADMIN") {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+    }
+
     const response = NextResponse.next();
     response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
     response.headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate");

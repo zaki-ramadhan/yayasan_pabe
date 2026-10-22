@@ -91,7 +91,7 @@ export async function GET(request) {
 
     const isSuperAdmin = isSuperAdminEmail(profile.email);
     const resolvedRole = isSuperAdmin ? "SUPER_ADMIN" : "DONOR";
-    const resolvedTitle = isSuperAdmin ? "Super Admin (Ketua Yayasan)" : "Akun Terverifikasi (Google)";
+    const resolvedTitle = isSuperAdmin ? "Super Admin" : "Akun Terverifikasi (Google)";
 
     let dbUser = null;
     try {
@@ -102,7 +102,7 @@ export async function GET(request) {
           avatar: profile.picture || undefined,
           provider: "GOOGLE",
           providerId: profile.id,
-          ...(isSuperAdmin ? { role: "SUPER_ADMIN", title: "Super Admin (Ketua Yayasan)" } : {}),
+          ...(isSuperAdmin ? { role: "SUPER_ADMIN", title: "Super Admin" } : {}),
         },
         create: {
           name: profile.name || profile.email.split("@")[0],
@@ -124,7 +124,8 @@ export async function GET(request) {
     const userEmail = dbUser?.email || profile.email.toLowerCase();
     const userUsername = dbUser?.username || sanitizedUsername;
     const userRole = isSuperAdmin ? "SUPER_ADMIN" : (dbUser?.role || "DONOR");
-    const userTitle = isSuperAdmin ? "Super Admin (Ketua Yayasan)" : (dbUser?.title || "Akun Terverifikasi (Google)");
+    const rawUserTitle = isSuperAdmin ? "Super Admin" : (dbUser?.title || "Akun Terverifikasi (Google)");
+    const userTitle = rawUserTitle.includes("Ketua Yayasan") ? "Super Admin" : rawUserTitle;
     const userAvatar = dbUser?.avatar || profile.picture || null;
 
     const sessionPayload = {

@@ -118,7 +118,7 @@ export async function POST(request) {
     const passwordHash = hashPassword(cleanPassword);
     const isSuperAdmin = isSuperAdminIdentifier(cleanUsername) || isSuperAdminEmail(cleanEmail);
     const assignedRole = isSuperAdmin ? USER_ROLES.SUPER_ADMIN : USER_ROLES.DONOR;
-    const assignedTitle = isSuperAdmin ? "Super Admin (Ketua Yayasan)" : "Akun Terverifikasi";
+    const assignedTitle = isSuperAdmin ? "Super Admin" : "Akun Terverifikasi";
 
     const createdUser = await prisma.user.create({
       data: {

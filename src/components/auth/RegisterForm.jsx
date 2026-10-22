@@ -150,7 +150,7 @@ export function RegisterForm() {
       });
 
       setIsLoading(false);
-      toast.success("Pendaftaran berhasil! Selamat datang di Yayasan PABE.");
+      toast.success("Pendaftaran berhasil! Selamat bergabung.");
       router.push(redirectUrl || getRedirectPathForRole(user.role));
     } catch (err) {
       setIsLoading(false);
@@ -360,7 +360,7 @@ export function RegisterForm() {
               <button
                 type="button"
                 onClick={() => setIsTermsModalOpen(true)}
-                className="text-primary hover:underline font-semibold cursor-pointer inline text-left"
+                className="text-primary hover:underline font-medium cursor-pointer inline text-left"
               >
                 Ketentuan Akad &amp; Kebijakan Privasi Yayasan
               </button>

@@ -118,11 +118,16 @@ export async function getAuthenticatedUser(request) {
         avatar: true,
         phone: true,
         provider: true,
+        isActive: true,
         createdAt: true,
       },
     });
 
     if (user) {
+      if (user.isActive === false) {
+        return { authenticated: false, user: null, reason: "ACCOUNT_SUSPENDED" };
+      }
+
       let resolvedRole = user.role;
       let resolvedTitle = user.title;
 
@@ -131,13 +136,17 @@ export async function getAuthenticatedUser(request) {
         user.role !== USER_ROLES.SUPER_ADMIN
       ) {
         resolvedRole = USER_ROLES.SUPER_ADMIN;
-        resolvedTitle = "Super Admin (Ketua Yayasan)";
+        resolvedTitle = "Super Admin";
         prisma.user
           .update({
             where: { id: user.id },
             data: { role: resolvedRole, title: resolvedTitle },
           })
           .catch((err) => console.warn("Auto-elevate super admin update error:", err?.message));
+      }
+
+      if (resolvedTitle && resolvedTitle.includes("Ketua Yayasan")) {
+        resolvedTitle = "Super Admin";
       }
 
       return {

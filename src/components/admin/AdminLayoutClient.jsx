@@ -12,18 +12,6 @@ export function AdminLayoutClient({ children, initialUser }) {
   const pathname = usePathname();
   const [currentUser, setCurrentUser] = useState(initialUser || null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
-  const [isDesktop, setIsDesktop] = useState(true);
-
-  // Deteksi layar desktop (>= 1024px)
-  useEffect(() => {
-    const updateMedia = () => {
-      setIsDesktop(window.innerWidth >= 1024);
-    };
-    updateMedia();
-    window.addEventListener("resize", updateMedia);
-    return () => window.removeEventListener("resize", updateMedia);
-  }, []);
 
   // Tutup drawer saat navigasi rute berubah
   useEffect(() => {
@@ -52,14 +40,8 @@ export function AdminLayoutClient({ children, initialUser }) {
   }, [pathname, router]);
 
   const handleToggleSidebar = () => {
-    if (isDesktop) {
-      setIsSidebarExpanded((prev) => !prev);
-    } else {
-      setIsMobileMenuOpen((prev) => !prev);
-    }
+    setIsMobileMenuOpen((prev) => !prev);
   };
-
-  const isCollapsed = isDesktop ? !isSidebarExpanded : false;
 
   return (
     <div className="min-h-screen bg-slate-50/60 flex flex-col lg:flex-row">
@@ -72,14 +54,14 @@ export function AdminLayoutClient({ children, initialUser }) {
         />
       )}
 
-      {/* Responsive Collapsible Sidebar (w-16 -> w-52) */}
+      {/* Permanently Open Sidebar on Desktop (w-52), Mobile Slide Drawer */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 bg-sidebar transform transition-all duration-200 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:sticky lg:top-0 lg:z-30 shrink-0 ${
-          isMobileMenuOpen ? "translate-x-0 w-52" : "-translate-x-full"
-        } ${isSidebarExpanded ? "lg:w-52" : "lg:w-16"}`}
+        className={`fixed inset-y-0 left-0 z-50 bg-sidebar transform transition-all duration-200 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:sticky lg:top-0 lg:z-30 shrink-0 w-52 ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <AdminSidebarNav
-          isCollapsed={isCollapsed}
+          isCollapsed={false}
           onCloseMobile={() => setIsMobileMenuOpen(false)}
         />
       </aside>
@@ -89,7 +71,7 @@ export function AdminLayoutClient({ children, initialUser }) {
         <AdminTopHeader
           currentUser={currentUser}
           onToggleSidebar={handleToggleSidebar}
-          isSidebarExpanded={isDesktop ? isSidebarExpanded : isMobileMenuOpen}
+          isSidebarExpanded={true}
         />
         <main className="p-4 sm:p-6 lg:p-8 flex-1 w-full max-w-7xl mx-auto space-y-6">
           {children}

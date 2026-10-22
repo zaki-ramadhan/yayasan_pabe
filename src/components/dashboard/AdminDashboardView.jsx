@@ -103,12 +103,12 @@ export function AdminDashboardView({ userRole, stats }) {
               ) : (
                 sortedTransactions.map((tx) => (
                   <TableRow key={tx.id}>
-                    <TableCell className="text-slate-900 font-medium">{tx.id}</TableCell>
-                    <TableCell className="font-normal text-slate-800">{tx.donor}</TableCell>
-                    <TableCell className="font-medium text-emerald-800 text-right">{formatRupiah(tx.amount)}</TableCell>
-                    <TableCell className="font-normal text-slate-600">{tx.channel}</TableCell>
-                    <TableCell className="font-normal text-slate-600 whitespace-nowrap">{formatDate(tx.date, { withTime: true })}</TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-slate-900 font-medium align-middle">{tx.id}</TableCell>
+                    <TableCell className="font-normal text-slate-800 align-middle">{tx.donor}</TableCell>
+                    <TableCell className="font-medium text-emerald-800 text-right align-middle">{formatRupiah(tx.amount)}</TableCell>
+                    <TableCell className="font-normal text-slate-600 align-middle">{tx.channel}</TableCell>
+                    <TableCell className="font-normal text-slate-600 whitespace-nowrap align-middle">{formatDate(tx.date, { withTime: true })}</TableCell>
+                    <TableCell className="text-center align-middle">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
                           tx.status === "PAID"

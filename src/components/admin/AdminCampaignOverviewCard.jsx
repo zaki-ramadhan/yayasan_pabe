@@ -19,22 +19,13 @@ export function AdminCampaignOverviewCard({ campaigns = [] }) {
   return (
     <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden h-full flex flex-col">
       {/* Card Header */}
-      <div className="p-3.5 sm:p-4 border-b border-slate-200/90 flex items-center justify-between gap-3">
-        <div>
-          <h2 className="text-base font-semibold text-slate-900 leading-tight">
-            Capaian Program Prioritas
-          </h2>
-          <p className="text-sm text-slate-500 mt-0.5">
-            Progres perolehan dana kampanye aktif
-          </p>
-        </div>
-        <Link
-          href="/admin/program"
-          className="text-sm font-medium text-primary hover:underline flex items-center gap-1 shrink-0"
-        >
-          <span>Kelola</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
+      <div className="p-3.5 sm:p-4 border-b border-slate-200/90">
+        <h2 className="text-base font-semibold text-slate-900 leading-tight">
+          Capaian Program Prioritas
+        </h2>
+        <p className="text-sm text-slate-500 mt-0.5">
+          Progres perolehan dana kampanye aktif
+        </p>
       </div>
 
       {/* Flat List Items */}
@@ -102,15 +93,14 @@ export function AdminCampaignOverviewCard({ campaigns = [] }) {
           )}
         </div>
 
-        {/* View All Programs Link */}
-        {campaigns.length > 4 && (
-          <Link
-            href="/admin/program"
-            className="block text-center text-xs font-medium text-slate-700 hover:text-primary py-2 rounded-md bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors mt-auto"
-          >
-            Lihat semua program donasi ({campaigns.length}) &rarr;
-          </Link>
-        )}
+        {/* Check All Donation Programs Button */}
+        <Link
+          href="/admin/program"
+          className="flex items-center justify-center gap-2 h-10 px-4 rounded-lg text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 hover:text-slate-950 border border-slate-200 transition-colors mt-auto text-center cursor-pointer shadow-2xs"
+        >
+          <span>Periksa semua program donasi</span>
+          <ArrowRight className="w-4 h-4 text-slate-500 shrink-0" />
+        </Link>
       </div>
     </div>
   );

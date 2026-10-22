@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { CAMPAIGNS } from "@/data/campaigns";
 import { RECENT_TRANSACTIONS } from "@/data/adminMockData";
-import { sanitizeInput } from "@/lib/security";
+import { sanitizeInput, maskEmail } from "@/lib/security";
 
 /**
  * Mengambil ringkasan metrik statistik operasional admin yayasan.
@@ -156,6 +156,38 @@ export async function getAdminCampaigns({ search = "", status = "", page = 1, li
 }
 
 /**
+ * Membuat kategori program baru dan menghasilkan slug unik.
+ */
+export async function createAdminCategory(name) {
+  const sanitizedName = sanitizeInput(name || "").trim();
+  if (!sanitizedName) {
+    throw new Error("Nama kategori program wajib diisi.");
+  }
+
+  const baseSlug = sanitizedName
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  const uniqueSlug = `${baseSlug || "kategori"}-${Date.now().toString().slice(-4)}`;
+
+  try {
+    return await prisma.category.create({
+      data: {
+        name: sanitizedName,
+        slug: uniqueSlug,
+      },
+    });
+  } catch (error) {
+    console.warn("Prisma createAdminCategory fallback:", error.message);
+    return {
+      id: `cat-${Date.now()}`,
+      name: sanitizedName,
+      slug: uniqueSlug,
+    };
+  }
+}
+
+/**
  * Membuat program kampanye baru dengan whitelisting atribut ketat (OWASP).
  */
 export async function createAdminCampaign(payload) {
@@ -167,7 +199,8 @@ export async function createAdminCampaign(payload) {
   const isUrgent = Boolean(payload.isUrgent);
   const isFeatured = Boolean(payload.isFeatured);
   const bannerUrl = sanitizeInput(payload.bannerUrl || "/img/hero_card_1.jpeg").trim();
-  const categoryId = payload.categoryId;
+  let categoryId = payload.categoryId;
+  const newCategoryName = payload.newCategoryName ? sanitizeInput(payload.newCategoryName).trim() : null;
   const endDate = payload.endDate ? new Date(payload.endDate) : null;
 
   // Auto-generate clean unique slug
@@ -176,6 +209,48 @@ export async function createAdminCampaign(payload) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
   const uniqueSlug = `${baseSlug}-${Date.now().toString().slice(-4)}`;
+
+  // If a new category is requested on-the-fly, create it atomically with the campaign
+  if (!categoryId && newCategoryName) {
+    return prisma.$transaction(async (tx) => {
+      let category = await tx.category.findFirst({
+        where: { name: { equals: newCategoryName, mode: "insensitive" } },
+      });
+
+      if (!category) {
+        const catSlug = newCategoryName
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "");
+        category = await tx.category.create({
+          data: {
+            name: newCategoryName,
+            slug: `${catSlug || "kategori"}-${Date.now().toString().slice(-4)}`,
+          },
+        });
+      }
+
+      return tx.campaign.create({
+        data: {
+          title,
+          slug: uniqueSlug,
+          categoryId: category.id,
+          targetAmount,
+          collectedAmount: 0,
+          donorCount: 0,
+          endDate,
+          isUrgent,
+          isFeatured,
+          location,
+          excerpt,
+          story,
+          bannerUrl,
+          status: "ACTIVE",
+        },
+        include: { category: true },
+      });
+    });
+  }
 
   return prisma.campaign.create({
     data: {
@@ -215,7 +290,31 @@ export async function updateAdminCampaign(id, payload) {
   if (payload.isUrgent !== undefined) updateData.isUrgent = Boolean(payload.isUrgent);
   if (payload.isFeatured !== undefined) updateData.isFeatured = Boolean(payload.isFeatured);
   if (payload.bannerUrl !== undefined) updateData.bannerUrl = sanitizeInput(payload.bannerUrl).trim();
-  if (payload.categoryId !== undefined) updateData.categoryId = payload.categoryId;
+
+  if (!payload.categoryId && payload.newCategoryName) {
+    const newCatName = sanitizeInput(payload.newCategoryName).trim();
+    if (newCatName) {
+      let category = await prisma.category.findFirst({
+        where: { name: { equals: newCatName, mode: "insensitive" } },
+      });
+      if (!category) {
+        const catSlug = newCatName
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "");
+        category = await prisma.category.create({
+          data: {
+            name: newCatName,
+            slug: `${catSlug || "kategori"}-${Date.now().toString().slice(-4)}`,
+          },
+        });
+      }
+      updateData.categoryId = category.id;
+    }
+  } else if (payload.categoryId !== undefined) {
+    updateData.categoryId = payload.categoryId;
+  }
+
   if (payload.endDate !== undefined) updateData.endDate = payload.endDate ? new Date(payload.endDate) : null;
 
   return prisma.campaign.update({
@@ -268,7 +367,7 @@ export async function getAdminTransactions({
         invoiceId: d.invoiceId,
         donorName: d.isAnonymous ? "Hamba Allah" : d.donorName,
         rawDonorName: d.donorName,
-        donorEmail: d.donorEmail,
+        donorEmail: d.donorEmail ? maskEmail(d.donorEmail) : "",
         donorPhone: d.donorPhone,
         amount: Number(d.amount),
         totalAmount: Number(d.totalAmount),
@@ -293,7 +392,7 @@ export async function getAdminTransactions({
       invoiceId: t.id,
       donorName: t.donor,
       rawDonorName: t.donor,
-      donorEmail: `${t.donor.toLowerCase().replace(/[^a-z0-9]/g, ".")}@gmail.com`,
+      donorEmail: maskEmail(`${t.donor.toLowerCase().replace(/[^a-z0-9]/g, ".")}@gmail.com`),
       donorPhone: "08123456789",
       amount: t.amount,
       totalAmount: t.amount,
@@ -457,3 +556,210 @@ export async function createAdminDistribution(payload) {
     include: { campaign: true },
   });
 }
+
+/**
+ * Mengambil ringkasan data tren donasi dan penyaluran untuk grafik analitik admin.
+ */
+export async function getAdminDonationTrends() {
+  try {
+    const ninetyDaysAgo = new Date();
+    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+    ninetyDaysAgo.setHours(0, 0, 0, 0);
+
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
+    twelveMonthsAgo.setDate(1);
+    twelveMonthsAgo.setHours(0, 0, 0, 0);
+
+    const [priorAggregate, paidDonations, disbursements] = await Promise.all([
+      prisma.donation.aggregate({
+        where: {
+          status: "PAID",
+          paidAt: { lt: ninetyDaysAgo },
+        },
+        _sum: { amount: true },
+      }),
+      prisma.donation.findMany({
+        where: {
+          status: "PAID",
+          paidAt: { gte: twelveMonthsAgo },
+        },
+        select: {
+          amount: true,
+          paidAt: true,
+          createdAt: true,
+        },
+        orderBy: { paidAt: "asc" },
+      }),
+      prisma.campaignUpdate.findMany({
+        where: {
+          date: { gte: twelveMonthsAgo },
+          disbursedAmount: { gt: 0 },
+        },
+        select: {
+          disbursedAmount: true,
+          date: true,
+        },
+        orderBy: { date: "asc" },
+      }),
+    ]);
+
+    const priorTotal = Number(priorAggregate?._sum?.amount || 0);
+
+    const dailyMap = new Map();
+    paidDonations.forEach((d) => {
+      const rawDate = d.paidAt || d.createdAt;
+      if (!rawDate) return;
+      const dObj = rawDate instanceof Date ? rawDate : new Date(rawDate);
+      if (dObj >= ninetyDaysAgo) {
+        const dateKey = dObj.toISOString().split("T")[0];
+        const existing = dailyMap.get(dateKey) || { dailyAmount: 0, donationsCount: 0, disbursedAmount: 0 };
+        existing.dailyAmount += Number(d.amount || 0);
+        existing.donationsCount += 1;
+        dailyMap.set(dateKey, existing);
+      }
+    });
+
+    disbursements.forEach((u) => {
+      if (!u.date) return;
+      const dObj = u.date instanceof Date ? u.date : new Date(u.date);
+      if (dObj >= ninetyDaysAgo) {
+        const dateKey = dObj.toISOString().split("T")[0];
+        const existing = dailyMap.get(dateKey) || { dailyAmount: 0, donationsCount: 0, disbursedAmount: 0 };
+        existing.disbursedAmount += Number(u.disbursedAmount || 0);
+        dailyMap.set(dateKey, existing);
+      }
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dailyTrend = [];
+    let runningCumulative = priorTotal;
+    const cursor = new Date(ninetyDaysAgo);
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+    const fullMonthNames = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+    ];
+
+    while (cursor <= today) {
+      const dateKey = cursor.toISOString().split("T")[0];
+      const dayData = dailyMap.get(dateKey) || { dailyAmount: 0, donationsCount: 0, disbursedAmount: 0 };
+      runningCumulative += dayData.dailyAmount;
+
+      dailyTrend.push({
+        date: dateKey,
+        label: `${cursor.getDate()} ${monthNames[cursor.getMonth()]}`,
+        dailyAmount: dayData.dailyAmount,
+        cumulativeAmount: runningCumulative,
+        donationsCount: dayData.donationsCount,
+        disbursedAmount: dayData.disbursedAmount,
+      });
+
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    const monthlyMap = new Map();
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const mKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      monthlyMap.set(mKey, {
+        key: mKey,
+        month: monthNames[d.getMonth()],
+        fullMonth: `${fullMonthNames[d.getMonth()]} ${d.getFullYear()}`,
+        inflow: 0,
+        outflow: 0,
+        count: 0,
+      });
+    }
+
+    paidDonations.forEach((d) => {
+      const rawDate = d.paidAt || d.createdAt;
+      if (!rawDate) return;
+      const dObj = rawDate instanceof Date ? rawDate : new Date(rawDate);
+      const mKey = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, "0")}`;
+      if (monthlyMap.has(mKey)) {
+        const item = monthlyMap.get(mKey);
+        item.inflow += Number(d.amount || 0);
+        item.count += 1;
+      }
+    });
+
+    disbursements.forEach((u) => {
+      if (!u.date) return;
+      const dObj = u.date instanceof Date ? u.date : new Date(u.date);
+      const mKey = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, "0")}`;
+      if (monthlyMap.has(mKey)) {
+        const item = monthlyMap.get(mKey);
+        item.outflow += Number(u.disbursedAmount || 0);
+      }
+    });
+
+    const monthlyTrend = Array.from(monthlyMap.values());
+
+    return {
+      dailyTrend,
+      monthlyTrend,
+    };
+  } catch (error) {
+    console.warn("Prisma getAdminDonationTrends fallback:", error.message);
+    return generateFallbackAdminDonationTrends();
+  }
+}
+
+function generateFallbackAdminDonationTrends() {
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  const fullMonthNames = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  ];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const monthlyTrend = [];
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    const mIdx = d.getMonth();
+    const baseInflow = 320000000 + ((mIdx * 37) % 180) * 1000000;
+    const baseOutflow = Math.round(baseInflow * 0.82);
+    monthlyTrend.push({
+      key: `${d.getFullYear()}-${String(mIdx + 1).padStart(2, "0")}`,
+      month: monthNames[mIdx],
+      fullMonth: `${fullMonthNames[mIdx]} ${d.getFullYear()}`,
+      inflow: baseInflow,
+      outflow: baseOutflow,
+      count: 140 + (mIdx * 12),
+    });
+  }
+
+  const ninetyDaysAgo = new Date(today);
+  ninetyDaysAgo.setDate(today.getDate() - 89);
+  const dailyTrend = [];
+  let runningCumulative = 2850000000;
+  const cursor = new Date(ninetyDaysAgo);
+
+  while (cursor <= today) {
+    const day = cursor.getDate();
+    const isWeekend = cursor.getDay() === 0 || cursor.getDay() === 5;
+    const multiplier = isWeekend ? 1.6 : 1.0;
+    const daily = Math.round((12000000 + ((day * 7919) % 25000000)) * multiplier);
+    const count = Math.max(3, Math.round(daily / 250000));
+    const disbursed = day % 7 === 0 ? Math.round(daily * 1.8) : 0;
+    runningCumulative += daily;
+
+    dailyTrend.push({
+      date: cursor.toISOString().split("T")[0],
+      label: `${day} ${monthNames[cursor.getMonth()]}`,
+      dailyAmount: daily,
+      cumulativeAmount: runningCumulative,
+      donationsCount: count,
+      disbursedAmount: disbursed,
+    });
+
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  return { dailyTrend, monthlyTrend };
+}
+

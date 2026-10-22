@@ -160,6 +160,8 @@ model User {
   avatar          String?
   provider        String   @default("CREDENTIALS") // CREDENTIALS, GOOGLE, FACEBOOK
   providerId      String?
+  isActive        Boolean  @default(true)
+  lastLoginAt     DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

@@ -2,8 +2,10 @@ import {
   getAdminOverviewStats,
   getAdminTransactions,
   getAdminCampaigns,
+  getAdminDonationTrends,
 } from "@/services/adminService";
 import { AdminMetricCards } from "@/components/admin/AdminMetricCards";
+import { AdminDonationTrendCard } from "@/components/admin/analytics/AdminDonationTrendCard";
 import { AdminRecentTransactionsCard } from "@/components/admin/AdminRecentTransactionsCard";
 import { AdminCampaignOverviewCard } from "@/components/admin/AdminCampaignOverviewCard";
 
@@ -13,10 +15,11 @@ export const metadata = {
 };
 
 export default async function AdminDashboardPage() {
-  const [stats, transactionsData, campaignsData] = await Promise.all([
+  const [stats, transactionsData, campaignsData, trendData] = await Promise.all([
     getAdminOverviewStats(),
     getAdminTransactions({ limit: 7 }),
     getAdminCampaigns({ status: "ACTIVE", limit: 5 }),
+    getAdminDonationTrends(),
   ]);
 
   return (
@@ -24,7 +27,10 @@ export default async function AdminDashboardPage() {
       {/* 1. Metric Overview Cards */}
       <AdminMetricCards stats={stats} />
 
-      {/* 2. Main Grid: Real-time Transactions + Priority Campaign Progress */}
+      {/* 2. Donation & Cashflow Trend Analytics Chart */}
+      <AdminDonationTrendCard initialTrends={trendData} />
+
+      {/* 3. Main Grid: Real-time Transactions + Priority Campaign Progress */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-stretch">
         <div className="lg:col-span-8 xl:col-span-9 flex flex-col">
           <AdminRecentTransactionsCard initialTransactions={transactionsData.items} />

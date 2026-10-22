@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { AdminDonationTrendSkeleton } from "@/components/admin/analytics/AdminDonationTrendSkeleton";
 
 export function AdminDashboardSkeleton() {
   return (
@@ -14,6 +15,8 @@ export function AdminDashboardSkeleton() {
           </div>
         ))}
       </div>
+
+      <AdminDonationTrendSkeleton />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-stretch">
         <div className="lg:col-span-8 xl:col-span-9 flex flex-col">

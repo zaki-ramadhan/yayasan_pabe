@@ -9,7 +9,7 @@ export const USER_ROLES = {
 };
 
 export const ROLE_LABELS = {
-  SUPER_ADMIN: "Super Admin (Ketua Yayasan)",
+  SUPER_ADMIN: "Super Admin",
   ADMIN: "Admin Yayasan",
   DONOR: "Donatur / Muzakki",
   FINANCE: "Admin Yayasan (Finance)",
@@ -23,7 +23,7 @@ export const DEMO_USERS = [
     username: "superadmin",
     email: "superadmin@pabe.or.id",
     role: USER_ROLES.SUPER_ADMIN,
-    title: "Ketua Dewan Pengurus Yayasan",
+    title: "Super Admin",
     phone: "0811-2233-4455",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
     initials: "HF",
