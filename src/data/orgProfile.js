@@ -1,6 +1,6 @@
 export const ORG_PROFILE = {
-  name: "Yayasan PABE",
-  shortName: "PABE",
+  name: "Yayasan Generasi Sejahtera Mandiri",
+  shortName: "GSM",
   tagline: "Menebar Kebaikan, Membangun Kemandirian Generasi Qur'ani",
   legal: {
     skKemenkumham: "AHU-0012345.AH.01.04.Tahun 2021",
@@ -11,13 +11,13 @@ export const ORG_PROFILE = {
     address: "Jl. Mandiri Sejahtera No. 88, Cibinong, Kab. Bogor, Jawa Barat 16911",
     phone: "(021) 876-5432",
     whatsapp: "+62 812-3456-7890",
-    email: "layanan@pabe.or.id",
+    email: "layanan@yayasangsm.id",
     officeHours: "Senin - Jumat, 08.00 - 17.00 WIB",
   },
   officialBankAccounts: [
-    { bank: "Bank Syariah Indonesia (BSI)", accountNumber: "7123456789", accountName: "Yayasan PABE", category: "Infaq & Sedekah" },
-    { bank: "Bank Central Asia (BCA)", accountNumber: "8901234567", accountName: "Yayasan PABE", category: "Zakat & Wakaf" },
-    { bank: "Bank Mandiri", accountNumber: "1330098765432", accountName: "Yayasan PABE", category: "Operasional & Bencana" },
+    { bank: "Bank Syariah Indonesia (BSI)", accountNumber: "7123456789", accountName: "Yayasan Generasi Sejahtera Mandiri", category: "Infaq & Sedekah" },
+    { bank: "Bank Central Asia (BCA)", accountNumber: "8901234567", accountName: "Yayasan Generasi Sejahtera Mandiri", category: "Zakat & Wakaf" },
+    { bank: "Bank Mandiri", accountNumber: "1330098765432", accountName: "Yayasan Generasi Sejahtera Mandiri", category: "Operasional & Bencana" },
   ],
   vision: "Menjadi lembaga filantropi Islam terdepan dan terpercaya dalam membina generasi penghafal Al-Qur'an serta memberdayakan keluarga mustahik menjadi mandiri dan sejahtera.",
   missions: [
@@ -26,9 +26,9 @@ export const ORG_PROFILE = {
     "Memberdayakan ekonomi keluarga mustahik melalui pelatihan keterampilan dan permodalan bebas riba.",
     "Merespons secara cepat aksi kemanusiaan dan tanggap darurat bencana di tanah air.",
   ],
-  aboutStory: `Yayasan PABE adalah lembaga nirlaba dan filantropi Islam yang berdedikasi dalam pembinaan generasi Qur'ani serta pemberdayaan sosial kaum yatim dan dhuafa di Indonesia.
+  aboutStory: `Yayasan Generasi Sejahtera Mandiri (GSM) adalah lembaga nirlaba dan filantropi Islam yang berdedikasi dalam pembinaan generasi Qur'ani serta pemberdayaan sosial kaum yatim dan dhuafa di Indonesia.
 
-Didirikan berlandaskan komitmen amanah dan kepatuhan syariah penuh, Yayasan PABE memfokuskan gerak dakwahnya pada penyediaan beasiswa tahfidz Al-Qur'an berasrama, santunan kebutuhan pangan & gizi santri, pembebasan biaya pendidikan formal, serta program pemberdayaan ekonomi keluarga mustahik agar mampu mandiri secara berkelanjutan.
+Didirikan berlandaskan komitmen amanah dan kepatuhan syariah penuh, Yayasan Generasi Sejahtera Mandiri memfokuskan gerak dakwahnya pada penyediaan beasiswa tahfidz Al-Qur'an berasrama, santunan kebutuhan pangan & gizi santri, pembebasan biaya pendidikan formal, serta program pemberdayaan ekonomi keluarga mustahik agar mampu mandiri secara berkelanjutan.
 
 Seluruh operasional pengelolaan dana Zakat, Infak, Sedekah, dan Wakaf (ZISWAF) diaudit secara berkala oleh Kantor Akuntan Publik (KAP) independen dengan raihan opini Wajar Tanpa Pengecualian (WTP), menjamin transparansi penyaluran hingga ke tangan penerima manfaat yang berhak.`,
   corePillars: [

@@ -19,6 +19,7 @@ const ADMIN_NAV_GROUPS = [
       { href: "/admin/program", label: "Kelola Program", short: "KP" },
       { href: "/admin/distribusi", label: "Rekam Penyaluran", short: "RP" },
       { href: "/admin/transaksi", label: "Mutasi Transaksi", short: "MT" },
+      { href: "/admin/donasi-rutin", label: "Donasi Rutin", short: "DR" },
     ],
   },
   {
@@ -26,6 +27,7 @@ const ADMIN_NAV_GROUPS = [
     items: [
       { href: "/admin/artikel", label: "Berita & Artikel", short: "BA" },
       { href: "/admin/karier", label: "Lowongan Karier", short: "LK" },
+      { href: "/admin/relawan", label: "Kelola Relawan", short: "KR" },
       { href: "/admin/faq", label: "Pusat FAQ", short: "FQ" },
     ],
   },
@@ -48,6 +50,7 @@ export function AdminSidebarNav({
             title: "Hak Akses & Pengurus",
             items: [
               { href: "/admin/pengguna", label: "Kelola Pengurus", short: "KP" },
+              { href: "/admin/pengaturan", label: "Pengaturan Yayasan", short: "PY" },
             ],
           },
         ]
@@ -78,7 +81,7 @@ export function AdminSidebarNav({
             <div className="relative w-8.5 h-8.5 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
               <Image
                 src="/logo_yayasan_GSM.png"
-                alt="Logo Yayasan PABE"
+                alt="Logo Yayasan GSM"
                 width={34}
                 height={34}
                 className="w-full h-full object-contain rounded-xs"
@@ -87,7 +90,7 @@ export function AdminSidebarNav({
             {!isCollapsed && (
               <div className="min-w-0 flex-1 truncate">
                 <span className="font-normal text-sm block text-slate-950 leading-tight truncate">
-                  Yayasan PABE
+                  Yayasan GSM
                 </span>
                 <span className="text-sm font-normal text-slate-500 block truncate">
                   Portal Pengurus
