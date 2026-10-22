@@ -124,45 +124,66 @@ export function NavUserDropdown({ currentUser, onLogout }) {
 
         <DropdownMenuSeparator className="my-1 border-slate-100" />
 
-        {/* Staff / Admin Link (Hanya tampil jika user adalah staf/admin) */}
-        {isStaff && (
-          <DropdownMenuItem asChild>
-            <Link
-              href="/dashboard"
-              className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-900 hover:bg-slate-100 cursor-pointer transition-colors"
-            >
-              <span className="flex-1">Panel admin</span>
-            </Link>
-          </DropdownMenuItem>
+        {/* Navigation Links based on Role */}
+        {isStaff ? (
+          <>
+            <DropdownMenuItem asChild>
+              <Link
+                href="/admin"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-900 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Portal administrator</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/admin/program"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Kelola program</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/admin/transaksi"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Mutasi transaksi</span>
+              </Link>
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <>
+            <DropdownMenuItem asChild>
+              <Link
+                href="/donatur/dashboard"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Dashboard</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/donatur/riwayat"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Riwayat donasi</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/donatur/profil"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Profil saya</span>
+              </Link>
+            </DropdownMenuItem>
+          </>
         )}
-
-        {/* Core Donor Navigation Links */}
-        <DropdownMenuItem asChild>
-          <Link
-            href="/donatur/dashboard"
-            className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
-          >
-            <span className="flex-1">Dashboard</span>
-          </Link>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem asChild>
-          <Link
-            href="/donatur/riwayat"
-            className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
-          >
-            <span className="flex-1">Riwayat donasi</span>
-          </Link>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem asChild>
-          <Link
-            href="/donatur/profil"
-            className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
-          >
-            <span className="flex-1">Profil saya</span>
-          </Link>
-        </DropdownMenuItem>
 
         <DropdownMenuSeparator className="my-1 border-slate-100" />
 

@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
-import { toast } from "@/hooks/use-toast";
 import { sanitizePrayer } from "@/lib/security";
 import { cn } from "@/lib/utils";
 

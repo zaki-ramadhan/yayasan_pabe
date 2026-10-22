@@ -10,6 +10,7 @@ import { DonorTransactionTable } from "@/components/donor/DonorTransactionTable"
 import { DonorHistorySkeleton } from "@/components/donor/DonorHistorySkeleton";
 import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
 import { useDebounce } from "@/hooks/useDebounce";
+import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
 
 export function DonorHistoryDashboard() {
@@ -65,7 +66,7 @@ export function DonorHistoryDashboard() {
         const params = new URLSearchParams({
           email: currentUser.email || "",
           name: currentUser.name || "",
-          search: debouncedSearch,
+          search: debouncedSearch.trim(),
           sortBy,
           sortOrder,
           page: String(pageToLoad),
@@ -147,7 +148,7 @@ export function DonorHistoryDashboard() {
         sortBy={sortBy}
         sortOrder={sortOrder}
         isLoading={isTableLoading}
-        onSearchChange={setSearch}
+        onSearchChange={(val) => setSearch(sanitizeSearchQuery(val))}
         onSortChange={handleSortChange}
         onPageChange={handlePageChange}
         onLimitChange={handleLimitChange}

@@ -27,7 +27,7 @@ export function CatalogSearchBar({
           onClear={onClear}
           maxLength={60}
           isLoading={isLoading}
-          className="h-11 text-sm sm:text-base bg-white"
+          className="h-10 text-sm bg-white"
         />
       </div>
 

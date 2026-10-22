@@ -165,8 +165,10 @@ export function DonorTransactionTable({
                     <span className="line-clamp-1">{item.programTitle}</span>
                   )}
                 </TableCell>
-                <TableCell className="font-normal text-slate-800">
-                  {item.paymentChannel.replace("_", " ")}
+                <TableCell className="font-normal text-slate-800 whitespace-nowrap">
+                  <span className="inline-block max-w-[120px] truncate whitespace-nowrap">
+                    {item.paymentChannel?.replace("_", " ")}
+                  </span>
                 </TableCell>
                 <TableCell className="font-normal text-slate-800 whitespace-nowrap">
                   {formatDate(item.date)}

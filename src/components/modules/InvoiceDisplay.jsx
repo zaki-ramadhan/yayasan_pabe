@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
+import { copyToClipboard } from "@/lib/clipboard";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
 import { CAMPAIGNS } from "@/data/campaigns";
 import { PostDonationPrayerForm } from "@/components/donation/PostDonationPrayerForm";
@@ -63,29 +64,34 @@ export function InvoiceDisplay({ donation }) {
     return () => clearInterval(interval);
   }, [donation?.expiredAt]);
 
-  const handleCopyVa = (text) => {
-    if (!navigator.clipboard) return;
-    navigator.clipboard.writeText(text);
-    setCopiedVa(true);
-    toast.success("Nomor Virtual Account berhasil disalin.");
-    setTimeout(() => setCopiedVa(false), 2000);
+  const handleCopyVa = async (text) => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      setCopiedVa(true);
+      toast.success("Nomor Virtual Account berhasil disalin.");
+      setTimeout(() => setCopiedVa(false), 2000);
+    } else {
+      toast.error("Gagal menyalin nomor Virtual Account.");
+    }
   };
 
-  const handleCopyInvoiceId = (e) => {
-    const spanEl = e.currentTarget.querySelector("span");
-    if (window.getSelection && spanEl) {
+  const handleCopyInvoiceId = async (e) => {
+    const spanEl = e?.currentTarget?.querySelector?.("span");
+    if (typeof window !== "undefined" && window.getSelection && spanEl) {
       const selection = window.getSelection();
       const range = document.createRange();
       range.selectNodeContents(spanEl);
       selection.removeAllRanges();
       selection.addRange(range);
     }
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(donation.invoiceId);
+    const success = await copyToClipboard(donation?.invoiceId);
+    if (success) {
+      setCopiedInvoice(true);
+      toast.success(`Nomor invoice ${donation?.invoiceId} berhasil disalin.`);
+      setTimeout(() => setCopiedInvoice(false), 2000);
+    } else {
+      toast.error("Gagal menyalin nomor invoice.");
     }
-    setCopiedInvoice(true);
-    toast.success("ID Invoice berhasil disalin.");
-    setTimeout(() => setCopiedInvoice(false), 2000);
   };
 
   const channelInfo =

@@ -41,7 +41,7 @@ const Input = React.forwardRef(
           value={value}
           suppressHydrationWarning
           className={cn(
-            "flex h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm sm:text-base text-slate-950 placeholder:text-slate-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden",
+            "flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 placeholder:text-slate-500 placeholder:text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden",
             ResolvedIcon && "pl-9",
             (isLoading || (onClear && hasValue)) && "pr-9",
             className

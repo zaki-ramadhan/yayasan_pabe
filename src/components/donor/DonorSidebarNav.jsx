@@ -209,24 +209,24 @@ export function DonorSidebarNav({
           <div className={cn("pt-2 border-t border-slate-200/80", isCollapsed && "flex justify-center")}>
             {isCollapsed ? (
               <Link
-                href="/dashboard"
+                href="/admin"
                 onClick={onCloseMobile}
-                title="Dashboard pengurus"
-                className="w-10 h-10 rounded-md flex items-center justify-center bg-purple-50 hover:bg-purple-100/80 border border-purple-200 text-purple-900 transition-colors"
+                title="Portal Administrator"
+                className="w-10 h-10 rounded-md flex items-center justify-center bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-900 transition-colors"
               >
-                <Shield className="w-4.5 h-4.5 text-purple-700" />
+                <Shield className="w-4.5 h-4.5 text-primary" />
               </Link>
             ) : (
               <Link
-                href="/dashboard"
+                href="/admin"
                 onClick={onCloseMobile}
-                className="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-purple-50 hover:bg-purple-100/80 border border-purple-200 text-purple-900 text-xs font-normal transition-colors"
+                className="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-900 text-xs font-normal transition-colors"
               >
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <Shield className="w-3.5 h-3.5 text-purple-700 shrink-0" />
-                  <span className="truncate">Dashboard pengurus</span>
+                  <Shield className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <span className="truncate">Portal Administrator</span>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-purple-600 shrink-0" />
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500 shrink-0" />
               </Link>
             )}
           </div>

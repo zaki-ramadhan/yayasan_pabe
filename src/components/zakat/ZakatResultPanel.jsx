@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { formatRupiah, formatNumber } from "@/lib/formatters";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
+import { copyToClipboard } from "@/lib/clipboard";
 import { Bookmark, Check } from "lucide-react";
 import { ZakatEmptyState } from "./ZakatEmptyState";
 
@@ -10,7 +11,6 @@ export function ZakatResultPanel({
   hasCalculated,
   onPay,
 }) {
-  const { toast } = useToast();
   const [isSaved, setIsSaved] = useState(false);
 
   if (!hasCalculated || !result) {
@@ -26,24 +26,19 @@ export function ZakatResultPanel({
     categoryKey = "ZAKAT",
   } = result;
 
-  const handleSaveResult = () => {
-    try {
-      const summaryText = `Ringkasan Kalkulator Zakat (${categoryKey}):\n- Nilai Bersih: ${formatRupiah(netAmount)}\n- Batas Nisab: ${formatRupiah(nisabThreshold)}\n- Status: ${isNisabMet ? "Wajib Ditunaikan" : "Belum Wajib"}\n- Kewajiban Zakat: ${formatRupiah(zakatAmount)}`;
-      if (typeof navigator !== "undefined" && navigator.clipboard) {
-        navigator.clipboard.writeText(summaryText);
-      }
-      setIsSaved(true);
-      setTimeout(() => setIsSaved(false), 2500);
-      toast({
-        title: "Hasil Perhitungan Disimpan",
+  const handleSaveResult = async () => {
+    const summaryText = `Ringkasan Kalkulator Zakat (${categoryKey}):\n- Nilai Bersih: ${formatRupiah(netAmount)}\n- Batas Nisab: ${formatRupiah(nisabThreshold)}\n- Status: ${isNisabMet ? "Wajib Ditunaikan" : "Belum Wajib"}\n- Kewajiban Zakat: ${formatRupiah(zakatAmount)}`;
+    const copied = await copyToClipboard(summaryText);
+    setIsSaved(true);
+    setTimeout(() => setIsSaved(false), 2500);
+
+    if (copied) {
+      toast.success("Hasil Perhitungan Disimpan", {
         description: "Rincian zakat aktif di sesi Anda dan telah disalin ke papan klip.",
-        variant: "success",
       });
-    } catch {
-      toast({
-        title: "Hasil Perhitungan Disimpan",
+    } else {
+      toast.info("Hasil Perhitungan Disimpan", {
         description: "Rincian zakat aktif tersimpan di sesi browser Anda.",
-        variant: "success",
       });
     }
   };

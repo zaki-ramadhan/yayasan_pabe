@@ -4,7 +4,6 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Plus, Download, CalendarClock, CheckCircle, Clock } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { formatRoutineSchedule } from "@/data/routineDonation";
@@ -229,7 +228,7 @@ export function DonorDashboardView({ currentUser: propUser }) {
               ) : (
                 sortedTransactions.map((tx) => (
                   <TableRow key={tx.id}>
-                    <TableCell className="font-mono text-slate-900 font-medium">{tx.id}</TableCell>
+                    <TableCell className="text-slate-900 font-medium">{tx.id}</TableCell>
                     <TableCell className="text-slate-600 font-normal whitespace-nowrap">{formatDate(tx.date)}</TableCell>
                     <TableCell className="font-normal text-slate-800">{tx.program}</TableCell>
                     <TableCell className="font-medium text-emerald-800 text-right">{formatRupiah(tx.amount)}</TableCell>

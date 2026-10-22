@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
 import {
@@ -23,7 +23,6 @@ export function DonorPersonalFormCard({
   id = "section-personal",
   borderless = false,
 }) {
-  const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
 
   const { bind, getCleanValues } = useSanitizedForm(

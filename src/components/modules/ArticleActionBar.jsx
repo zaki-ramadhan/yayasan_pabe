@@ -3,7 +3,6 @@
 import { useState, useMemo, useSyncExternalStore, useId, useRef, useEffect } from "react";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
-import { toast } from "@/hooks/use-toast";
 import { safeFetch } from "@/lib/safeFetch";
 import { cn } from "@/lib/utils";
 

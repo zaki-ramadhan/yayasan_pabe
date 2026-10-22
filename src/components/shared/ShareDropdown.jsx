@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { toast } from "@/hooks/use-toast";
+import { copyToClipboard } from "@/lib/clipboard";
 import { cn } from "@/lib/utils";
 
 export function ShareDropdown({
@@ -33,15 +34,15 @@ export function ShareDropdown({
   const handleCopyLink = async (e) => {
     e?.preventDefault?.();
     e?.stopPropagation?.();
-    try {
-      const shareUrl = getTargetUrl();
-      if (typeof window !== "undefined" && shareUrl) {
-        await navigator.clipboard.writeText(shareUrl);
-        setCopied(true);
-        toast.success("Tautan berhasil disalin!");
-        setTimeout(() => setCopied(false), 2000);
-      }
-    } catch {
+    const shareUrl = getTargetUrl();
+    if (!shareUrl) return;
+
+    const success = await copyToClipboard(shareUrl);
+    if (success) {
+      setCopied(true);
+      toast.success("Tautan berhasil disalin!");
+      setTimeout(() => setCopied(false), 2000);
+    } else {
       toast.error("Gagal menyalin tautan.");
     }
   };

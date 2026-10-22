@@ -47,7 +47,7 @@ export function FinancialTransactionRow({ transaction }) {
       </TableCell>
 
       {/* Status */}
-      <TableCell className="whitespace-nowrap text-right">
+      <TableCell className="whitespace-nowrap text-center">
         <span
           className={
             isIncome

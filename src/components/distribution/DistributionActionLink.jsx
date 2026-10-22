@@ -1,7 +1,7 @@
 "use client";
 
 import { Download } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 /**

@@ -11,12 +11,11 @@ import { DonorPersonalFormCard } from "@/components/donor/DonorPersonalFormCard"
 import { DonorBankFormCard } from "@/components/donor/DonorBankFormCard";
 import { DonorSecurityFormCard } from "@/components/donor/DonorSecurityFormCard";
 import { Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { safeFetch } from "@/lib/safeFetch";
 
 export function DonorProfileView() {
   const router = useRouter();
-  const { toast } = useToast();
   const { currentUser, isAuthenticated, updateLocalUser } = useCurrentUser();
 
   const [profile, setProfile] = useState(null);

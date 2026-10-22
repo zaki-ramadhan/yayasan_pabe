@@ -160,7 +160,13 @@ export function TableSortHeader({
       : "justify-start text-left";
 
   return (
-    <TableHead className={className}>
+    <TableHead
+      className={cn(
+        align === "center" && "text-center",
+        align === "right" && "text-right",
+        className
+      )}
+    >
       {sortKey && onSort ? (
         <button
           type="button"

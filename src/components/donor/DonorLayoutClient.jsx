@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { DonorSidebarNav } from "@/components/donor/DonorSidebarNav";
 import { DonorTopHeader } from "@/components/donor/DonorTopHeader";
-import { logoutUser } from "@/services/authService";
+import { logoutUser, USER_ROLES } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
 
 export function DonorLayoutClient({ children }) {
@@ -16,6 +16,17 @@ export function DonorLayoutClient({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+
+  // If administrator/staff lands on donor dashboard, redirect to admin portal
+  useEffect(() => {
+    if (
+      currentUser?.role &&
+      currentUser.role !== USER_ROLES.DONOR &&
+      (pathname === "/donatur" || pathname === "/donatur/dashboard")
+    ) {
+      router.replace("/admin");
+    }
+  }, [currentUser, pathname, router]);
 
   // Detect desktop screen width (>= 1024px)
   useEffect(() => {

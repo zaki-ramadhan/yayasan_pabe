@@ -118,7 +118,11 @@ export function DonorProfileCover({
                   {displayName}
                 </h2>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-emerald-800 bg-emerald-50 border border-emerald-200">
-                  {profile?.role === "SUPER_ADMIN" ? "Super Admin" : "Akun terverifikasi"}
+                  {profile?.role === "SUPER_ADMIN"
+                    ? "Super Admin"
+                    : profile?.role === "ADMIN"
+                    ? "Admin Yayasan"
+                    : "Akun terverifikasi"}
                 </span>
               </div>
 

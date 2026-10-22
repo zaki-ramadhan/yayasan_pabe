@@ -14,7 +14,10 @@ export function FloatingWhatsApp() {
     pathname?.startsWith("/donasi-rutin") ||
     pathname?.startsWith("/kalkulator-zakat");
 
-  const isHiddenPage = pathname?.startsWith("/dashboard") || pathname === "/login";
+  const isHiddenPage =
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/dashboard") ||
+    pathname === "/login";
 
   if (!isDonationPage || isHiddenPage) {
     return null;

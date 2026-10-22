@@ -335,7 +335,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 						{currentUser.role !==
 							"DONOR" && (
 							<Link
-								href="/dashboard"
+								href="/admin"
 								onClick={
 									onClose
 								}
@@ -344,7 +344,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 								<LayoutDashboard className="w-4 h-4" />
 								<span>
 									Portal
-									Dashboard
+									Administrator
 									Yayasan
 								</span>
 							</Link>

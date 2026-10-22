@@ -53,7 +53,7 @@ export function useCatalogState({
     let result = items.filter((item) =>
       filterFn(item, {
         category: selectedCategory,
-        searchQuery: debouncedSearchQuery,
+        searchQuery: debouncedSearchQuery.trim(),
         categories,
       })
     );

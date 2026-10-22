@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { copyToClipboard } from "@/lib/clipboard";
 import { cn } from "@/lib/utils";
 
 export function CopyButton({
@@ -17,12 +18,12 @@ export function CopyButton({
     e?.preventDefault?.();
     e?.stopPropagation?.();
     if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text);
+    const success = await copyToClipboard(text);
+    if (success) {
       setCopied(true);
       toast.success(successMessage);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
+    } else {
       toast.error("Gagal menyalin teks.");
     }
   };

@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
 import {
@@ -37,7 +37,6 @@ export function DonorBankFormCard({
   id = "section-bank",
   borderless = false,
 }) {
-  const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
 
   const { values, bind, getCleanValues, setValues } = useSanitizedForm(
