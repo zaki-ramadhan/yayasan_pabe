@@ -103,7 +103,7 @@ export function AdminDashboardView({ userRole, stats }) {
               ) : (
                 sortedTransactions.map((tx) => (
                   <TableRow key={tx.id}>
-                    <TableCell className="font-mono text-slate-900 font-medium">{tx.id}</TableCell>
+                    <TableCell className="text-slate-900 font-medium">{tx.id}</TableCell>
                     <TableCell className="font-normal text-slate-800">{tx.donor}</TableCell>
                     <TableCell className="font-medium text-emerald-800 text-right">{formatRupiah(tx.amount)}</TableCell>
                     <TableCell className="font-normal text-slate-600">{tx.channel}</TableCell>

@@ -250,7 +250,7 @@ export function AdminTransactionLedger({
                   currentSortBy={sortBy}
                   currentSortOrder={sortOrder}
                   onSort={handleSort}
-                  align="right"
+                  align="center"
                 />
               </TableRow>
             </TableHeader>
