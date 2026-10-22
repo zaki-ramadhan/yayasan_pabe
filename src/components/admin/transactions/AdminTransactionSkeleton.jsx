@@ -54,6 +54,9 @@ export function AdminTransactionSkeleton() {
                 <TableHead className="w-px py-2.5 text-center whitespace-nowrap">
                   <Skeleton className="h-4 w-14 rounded mx-auto" />
                 </TableHead>
+                <TableHead className="w-32 py-2.5 text-right whitespace-nowrap">
+                  <Skeleton className="h-4 w-12 ml-auto rounded" />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
@@ -96,6 +99,14 @@ export function AdminTransactionSkeleton() {
                   {/* Status */}
                   <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
                     <Skeleton className="h-5 w-16 rounded mx-auto" />
+                  </TableCell>
+
+                  {/* Actions */}
+                  <TableCell className="w-32 py-3 text-right whitespace-nowrap align-middle">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Skeleton className="h-8 w-16 rounded-md" />
+                      <Skeleton className="h-8 w-16 rounded-md" />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

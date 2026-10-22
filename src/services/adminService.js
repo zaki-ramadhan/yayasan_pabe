@@ -558,6 +558,38 @@ export async function createAdminDistribution(payload) {
 }
 
 /**
+ * Memperbarui data rekam penyaluran yang sudah ada.
+ */
+export async function updateAdminDistribution(id, payload) {
+  const updateData = {};
+  if (payload.title !== undefined) updateData.title = sanitizeInput(payload.title).trim();
+  if (payload.content !== undefined) updateData.content = sanitizeInput(payload.content).trim();
+  if (payload.disbursedAmount !== undefined) {
+    updateData.disbursedAmount = Math.max(0, parseInt(payload.disbursedAmount, 10) || 0);
+  }
+  if (payload.campaignId !== undefined) updateData.campaignId = payload.campaignId;
+  if (payload.date !== undefined) updateData.date = new Date(payload.date);
+  if (Array.isArray(payload.images)) {
+    updateData.images = payload.images.map((img) => sanitizeInput(img).trim());
+  }
+
+  return prisma.campaignUpdate.update({
+    where: { id },
+    data: updateData,
+    include: { campaign: true },
+  });
+}
+
+/**
+ * Menghapus data rekam penyaluran dari database.
+ */
+export async function deleteAdminDistribution(id) {
+  return prisma.campaignUpdate.delete({
+    where: { id },
+  });
+}
+
+/**
  * Mengambil ringkasan data tren donasi dan penyaluran untuk grafik analitik admin.
  */
 export async function getAdminDonationTrends() {

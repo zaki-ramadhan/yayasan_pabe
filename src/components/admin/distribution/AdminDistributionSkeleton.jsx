@@ -43,6 +43,9 @@ export function AdminDistributionSkeleton() {
                 <TableHead className="w-40 py-2.5 text-right">
                   <Skeleton className="h-4 w-28 rounded ml-auto" />
                 </TableHead>
+                <TableHead className="w-24 py-2.5 text-right whitespace-nowrap">
+                  <Skeleton className="h-4 w-12 rounded ml-auto" />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
@@ -67,6 +70,14 @@ export function AdminDistributionSkeleton() {
                   {/* Disbursed Amount */}
                   <TableCell className="w-40 py-3 align-middle text-right whitespace-nowrap">
                     <Skeleton className="h-4 w-28 rounded ml-auto" />
+                  </TableCell>
+
+                  {/* Action */}
+                  <TableCell className="w-24 py-3 align-middle text-right whitespace-nowrap">
+                    <div className="flex items-center justify-end gap-1">
+                      <Skeleton className="h-7 w-7 rounded" />
+                      <Skeleton className="h-7 w-7 rounded" />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
