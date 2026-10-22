@@ -259,3 +259,4 @@ export function parseThousandsToNumber(value) {
   return digitsOnly ? parseInt(digitsOnly, 10) : 0;
 }
 export { maskEmail } from "@/lib/security";
+export { formatRupiah as formatCurrency };
