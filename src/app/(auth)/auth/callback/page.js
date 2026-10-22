@@ -23,7 +23,7 @@ function AuthCallbackContent() {
       try {
         const userParam = searchParams.get("user");
         const providerParam = searchParams.get("provider") || "Sosial";
-        const redirectParam = searchParams.get("redirect") || "/dashboard";
+        const redirectParam = searchParams.get("redirect") || "/admin";
         const errorParam = searchParams.get("error");
 
         toast.dismiss();
@@ -57,10 +57,17 @@ function AuthCallbackContent() {
           providerParam.toLowerCase() === "facebook" ? "Facebook" : "Google";
         toast.success(`Selamat datang, ${user.name}! Masuk via ${providerLabel}.`);
 
+        let targetRedirect = searchParams.get("redirect");
+        if (targetRedirect?.startsWith("/dashboard")) {
+          targetRedirect = targetRedirect.replace(/^\/dashboard/, "/admin");
+        }
+        if (!targetRedirect) {
+          targetRedirect = user?.role === "DONOR" ? "/donatur/dashboard" : "/admin";
+        }
+
         setStatus("success");
-        // Redirect to target path
         setTimeout(() => {
-          router.replace(redirectParam);
+          router.replace(targetRedirect);
         }, 400);
       } catch (err) {
         console.error("Auth callback client parsing error:", err);

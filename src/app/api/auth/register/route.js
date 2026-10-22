@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { USER_ROLES } from "@/services/authService";
-import { hashPassword } from "@/lib/serverAuth";
+import { hashPassword, isSuperAdminEmail, isSuperAdminIdentifier } from "@/lib/serverAuth";
 import {
   stripEmojis,
   validateEmail,
@@ -116,6 +116,9 @@ export async function POST(request) {
 
     // 6. Hash Password & Create User in DB
     const passwordHash = hashPassword(cleanPassword);
+    const isSuperAdmin = isSuperAdminIdentifier(cleanUsername) || isSuperAdminEmail(cleanEmail);
+    const assignedRole = isSuperAdmin ? USER_ROLES.SUPER_ADMIN : USER_ROLES.DONOR;
+    const assignedTitle = isSuperAdmin ? "Super Admin (Ketua Yayasan)" : "Akun Terverifikasi";
 
     const createdUser = await prisma.user.create({
       data: {
@@ -124,8 +127,8 @@ export async function POST(request) {
         email: cleanEmail,
         phone: cleanPhone,
         passwordHash,
-        role: USER_ROLES.DONOR,
-        title: "Akun Terverifikasi",
+        role: assignedRole,
+        title: assignedTitle,
         avatar: null,
       },
       select: {
@@ -159,13 +162,15 @@ export async function POST(request) {
       {
         success: true,
         data: safeUser,
-        message: "Pendaftaran akun donatur berhasil! Selamat datang di Yayasan PABE.",
+        message: "Pendaftaran akun berhasil! Selamat datang di Yayasan PABE.",
       },
       { status: 201 }
     );
 
     response.cookies.set("pabe_session", safeUser.id, cookieOpts);
     response.cookies.set("ygsm_session", safeUser.id, cookieOpts);
+    response.cookies.set("pabe_role", safeUser.role, { ...cookieOpts, httpOnly: false });
+    response.cookies.set("ygsm_role", safeUser.role, { ...cookieOpts, httpOnly: false });
 
     return response;
   } catch (error) {

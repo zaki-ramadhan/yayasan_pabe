@@ -4,6 +4,56 @@ import prisma from "@/lib/prisma";
 import { DEMO_USERS, USER_ROLES } from "@/services/authService";
 
 /**
+ * Retrieves the list of super admin emails from the server-only environment variable.
+ * Safe from exposure: Not prefixed with NEXT_PUBLIC_ so it is never bundled to the client.
+ * @returns {string[]}
+ */
+export function getSuperAdminEmails() {
+  const envVal = process.env.SUPER_ADMIN_EMAILS || "";
+  const list = envVal
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter((e) => e.length > 0);
+  if (!list.includes("superadmin@pabe.or.id")) {
+    list.push("superadmin@pabe.or.id");
+  }
+  return list;
+}
+
+/**
+ * Checks whether an email address belongs to a configured Super Admin.
+ * Strictly executes on server side; case-insensitive and trimmed.
+ * @param {string} email
+ * @returns {boolean}
+ */
+export function isSuperAdminEmail(email) {
+  if (!email || typeof email !== "string") return false;
+  const cleanEmail = email.trim().toLowerCase();
+  const superAdminEmails = getSuperAdminEmails();
+  return (
+    superAdminEmails.includes(cleanEmail) ||
+    cleanEmail === "superadmin@pabe.or.id" ||
+    cleanEmail === "superadmin@pabe.user"
+  );
+}
+
+/**
+ * Checks whether an identifier (username or email) belongs to Super Admin.
+ * @param {string} identifier
+ * @returns {boolean}
+ */
+export function isSuperAdminIdentifier(identifier) {
+  if (!identifier || typeof identifier !== "string") return false;
+  const clean = identifier.trim().toLowerCase();
+  return (
+    clean === "superadmin" ||
+    clean === "superadmin@pabe.or.id" ||
+    clean === "superadmin@pabe.user" ||
+    isSuperAdminEmail(clean)
+  );
+}
+
+/**
  * Creates a salted scrypt hash of a password.
  * @param {string} password
  * @returns {string}
@@ -73,10 +123,29 @@ export async function getAuthenticatedUser(request) {
     });
 
     if (user) {
+      let resolvedRole = user.role;
+      let resolvedTitle = user.title;
+
+      if (
+        (isSuperAdminIdentifier(user.username) || isSuperAdminEmail(user.email)) &&
+        user.role !== USER_ROLES.SUPER_ADMIN
+      ) {
+        resolvedRole = USER_ROLES.SUPER_ADMIN;
+        resolvedTitle = "Super Admin (Ketua Yayasan)";
+        prisma.user
+          .update({
+            where: { id: user.id },
+            data: { role: resolvedRole, title: resolvedTitle },
+          })
+          .catch((err) => console.warn("Auto-elevate super admin update error:", err?.message));
+      }
+
       return {
         authenticated: true,
         user: {
           ...user,
+          role: resolvedRole,
+          title: resolvedTitle,
           initials: (user.name || user.email).slice(0, 2).toUpperCase(),
         },
       };

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isSuperAdminEmail } from "@/lib/serverAuth";
 
 export const dynamic = "force-dynamic";
 
@@ -9,11 +10,15 @@ export async function GET(request) {
   const error = searchParams.get("error");
   const stateRaw = searchParams.get("state");
 
-  let callbackUrl = "/dashboard";
+  let callbackUrl = null;
   if (stateRaw) {
     try {
       const parsed = JSON.parse(Buffer.from(stateRaw, "base64").toString("utf-8"));
-      if (parsed.callbackUrl) callbackUrl = parsed.callbackUrl;
+      if (parsed.callbackUrl) {
+        callbackUrl = parsed.callbackUrl === "/dashboard" || parsed.callbackUrl.startsWith("/dashboard/")
+          ? parsed.callbackUrl.replace(/^\/dashboard/, "/admin")
+          : parsed.callbackUrl;
+      }
     } catch {}
   }
 
@@ -84,6 +89,10 @@ export async function GET(request) {
       .replace(/[^a-z0-9_]/g, "_")
       .slice(0, 30);
 
+    const isSuperAdmin = isSuperAdminEmail(profile.email);
+    const resolvedRole = isSuperAdmin ? "SUPER_ADMIN" : "DONOR";
+    const resolvedTitle = isSuperAdmin ? "Super Admin (Ketua Yayasan)" : "Akun Terverifikasi (Google)";
+
     let dbUser = null;
     try {
       dbUser = await prisma.user.upsert({
@@ -93,14 +102,15 @@ export async function GET(request) {
           avatar: profile.picture || undefined,
           provider: "GOOGLE",
           providerId: profile.id,
+          ...(isSuperAdmin ? { role: "SUPER_ADMIN", title: "Super Admin (Ketua Yayasan)" } : {}),
         },
         create: {
           name: profile.name || profile.email.split("@")[0],
           email: profile.email.toLowerCase(),
           username: sanitizedUsername,
           avatar: profile.picture || null,
-          role: "DONOR",
-          title: "Akun Terverifikasi (Google)",
+          role: resolvedRole,
+          title: resolvedTitle,
           provider: "GOOGLE",
           providerId: profile.id,
         },
@@ -113,8 +123,8 @@ export async function GET(request) {
     const userName = dbUser?.name || profile.name || profile.email.split("@")[0];
     const userEmail = dbUser?.email || profile.email.toLowerCase();
     const userUsername = dbUser?.username || sanitizedUsername;
-    const userRole = dbUser?.role || "DONOR";
-    const userTitle = dbUser?.title || "Akun Terverifikasi (Google)";
+    const userRole = isSuperAdmin ? "SUPER_ADMIN" : (dbUser?.role || "DONOR");
+    const userTitle = isSuperAdmin ? "Super Admin (Ketua Yayasan)" : (dbUser?.title || "Akun Terverifikasi (Google)");
     const userAvatar = dbUser?.avatar || profile.picture || null;
 
     const sessionPayload = {
@@ -133,10 +143,11 @@ export async function GET(request) {
 
     // 4. Return HTML bridge to sync localStorage session and redirect smoothly
     const sessionJson = JSON.stringify(sessionPayload).replace(/</g, "\\u003c");
-    const defaultTarget = userRole === "DONOR" ? "/" : "/dashboard";
-    const targetUrl = callbackUrl && !["/login", "/register"].includes(callbackUrl)
-      ? callbackUrl
-      : defaultTarget;
+    const defaultTarget = userRole === "DONOR" ? "/" : "/admin";
+    const targetUrl =
+      callbackUrl && !["/login", "/register", "/"].includes(callbackUrl)
+        ? callbackUrl
+        : defaultTarget;
 
     const responseHtml = `
       <!DOCTYPE html>
@@ -212,6 +223,8 @@ export async function GET(request) {
     };
     response.cookies.set("pabe_session", userId, cookieOpts);
     response.cookies.set("ygsm_session", userId, cookieOpts);
+    response.cookies.set("pabe_role", userRole, { ...cookieOpts, httpOnly: false });
+    response.cookies.set("ygsm_role", userRole, { ...cookieOpts, httpOnly: false });
 
     return response;
   } catch (err) {

@@ -10,10 +10,10 @@ export const USER_ROLES = {
 
 export const ROLE_LABELS = {
   SUPER_ADMIN: "Super Admin (Ketua Yayasan)",
-  ADMIN: "Admin Program & Penyaluran",
-  FINANCE: "Finance & Bendahara",
-  VOLUNTEER: "Relawan Lapangan",
+  ADMIN: "Admin Yayasan",
   DONOR: "Donatur / Muzakki",
+  FINANCE: "Admin Yayasan (Finance)",
+  VOLUNTEER: "Relawan Lapangan",
 };
 
 export const DEMO_USERS = [
@@ -273,7 +273,7 @@ export function getRedirectPathForRole(role) {
   if (role === USER_ROLES.DONOR) {
     return "/donatur/dashboard";
   }
-  return "/dashboard";
+  return "/admin";
 }
 
 export function simulateSocialAuth(provider = "google") {

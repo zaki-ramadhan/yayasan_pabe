@@ -16,7 +16,7 @@ export async function GET(request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const callbackUrl = searchParams.get("callbackUrl") || "/admin";
 
   // Construct origin dynamically
   const origin =

@@ -6,17 +6,27 @@ export function middleware(request) {
     request.cookies.get("pabe_session")?.value ||
     request.cookies.get("ygsm_session")?.value;
 
-  // 1. Reverse Guard: If already authenticated, redirect away from /login & /register
+  // 1. Backward-Compatibility Redirect: /dashboard/* -> /admin/*
+  if (pathname === "/dashboard" || pathname.startsWith("/dashboard/")) {
+    const newPath = pathname.replace(/^\/dashboard/, "/admin");
+    const redirectUrl = new URL(newPath, request.url);
+    request.nextUrl.searchParams.forEach((val, key) => redirectUrl.searchParams.set(key, val));
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // 2. Reverse Guard: If already authenticated, redirect away from /login & /register
   if (pathname === "/login" || pathname === "/register") {
     if (session) {
-      const redirectUrl = request.nextUrl.searchParams.get("redirect") || "/donatur/dashboard";
+      const role = request.cookies.get("pabe_role")?.value || request.cookies.get("ygsm_role")?.value;
+      const defaultTarget = role && role !== "DONOR" ? "/admin" : "/donatur/dashboard";
+      const redirectUrl = request.nextUrl.searchParams.get("redirect") || defaultTarget;
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
     return NextResponse.next();
   }
 
-  // 2. Guard Admin Portal Pages (/dashboard/*)
-  if (pathname.startsWith("/dashboard")) {
+  // 3. Guard Admin Portal Pages (/admin and /admin/*)
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     if (!session) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
@@ -31,12 +41,17 @@ export function middleware(request) {
     return response;
   }
 
-  // 3. Guard Client Portal Pages (/donatur and /donatur/*)
+  // 4. Guard Client Portal Pages (/donatur and /donatur/*)
   if (pathname === "/donatur" || pathname.startsWith("/donatur/")) {
     if (!session) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
+    }
+
+    const role = request.cookies.get("pabe_role")?.value || request.cookies.get("ygsm_role")?.value;
+    if (role && role !== "DONOR" && (pathname === "/donatur" || pathname === "/donatur/dashboard")) {
+      return NextResponse.redirect(new URL("/admin", request.url));
     }
 
     const response = NextResponse.next();
@@ -50,8 +65,12 @@ export function middleware(request) {
     return response;
   }
 
-  // 4. Guard Sensitive Internal API Endpoints (/api/dashboard/* and /api/user/*)
-  if (pathname.startsWith("/api/user") || pathname.startsWith("/api/dashboard")) {
+  // 5. Guard Sensitive Internal API Endpoints (/api/admin/*, /api/user/*, /api/dashboard/*)
+  if (
+    pathname.startsWith("/api/admin") ||
+    pathname.startsWith("/api/user") ||
+    pathname.startsWith("/api/dashboard")
+  ) {
     if (!session) {
       return NextResponse.json(
         {
@@ -73,10 +92,13 @@ export function middleware(request) {
 
 export const config = {
   matcher: [
+    "/admin",
+    "/admin/:path*",
     "/dashboard",
     "/dashboard/:path*",
     "/donatur",
     "/donatur/:path*",
+    "/api/admin/:path*",
     "/api/user/:path*",
     "/api/dashboard/:path*",
     "/login",

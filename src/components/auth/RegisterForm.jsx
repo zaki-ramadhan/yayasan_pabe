@@ -64,7 +64,10 @@ export function RegisterForm() {
     !agreeTerms ||
     Boolean(errors.username || errors.email || errors.phone || errors.password || errors.agreeTerms);
 
-  const redirectUrl = searchParams.get("redirect") || searchParams.get("callbackUrl");
+  const rawRedirect = searchParams.get("redirect") || searchParams.get("callbackUrl");
+  const redirectUrl = rawRedirect?.startsWith("/dashboard")
+    ? rawRedirect.replace(/^\/dashboard/, "/admin")
+    : rawRedirect;
   const reasonParam = searchParams.get("reason");
   const isDonationRedirect = reasonParam === "donation_requires_login" || reasonParam === "auth_required";
 
