@@ -131,10 +131,7 @@ export function LoginForm() {
         rememberMe,
       });
 
-      sessionStorage.removeItem("pabe_just_logged_in");
-      sessionStorage.removeItem("ygsm_just_logged_in");
       setIsLoading(false);
-      toast.success(`Selamat datang kembali, ${user.name}!`);
       router.push(redirectUrl || getRedirectPathForRole(user.role));
     } catch (err) {
       setIsLoading(false);
@@ -152,10 +149,7 @@ export function LoginForm() {
     setTimeout(() => {
       const fbUser = simulateSocialAuth("facebook");
       loginUser(fbUser);
-      sessionStorage.removeItem("pabe_just_logged_in");
-      sessionStorage.removeItem("ygsm_just_logged_in");
       setIsFacebookLoading(false);
-      toast.success(`Berhasil masuk dengan Facebook: ${fbUser.name}`);
       router.push(redirectUrl || getRedirectPathForRole(fbUser.role));
     }, 700);
   };
@@ -227,13 +221,15 @@ export function LoginForm() {
             setPassword(e.target.value);
             if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
           }}
+          placeholder="Masukkan kata sandi"
+          helperText="Gunakan minimal 6 karakter."
           error={errors.password}
           autoComplete="current-password"
           extraAction={
             <button
               type="button"
               onClick={() => setIsForgotModalOpen(true)}
-              className="text-xs sm:text-sm text-primary hover:underline font-medium cursor-pointer"
+              className="text-sm text-primary hover:underline font-medium cursor-pointer"
             >
               Lupa kata sandi?
             </button>

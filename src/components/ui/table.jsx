@@ -258,13 +258,26 @@ export function TableSkeletonRows({
  */
 export function TablePaginationFooter({
   pagination,
-  currentPage = pagination?.currentPage || 1,
+  currentPage = pagination?.currentPage || pagination?.page || 1,
   totalPages = pagination?.totalPages || 1,
   total = pagination?.total || 0,
   limit = pagination?.limit || 10,
   onPageChange,
   className = "",
+  alwaysShow = false,
 }) {
+  const calculatedTotalPages =
+    totalPages > 1
+      ? totalPages
+      : total > 0 && limit > 0
+      ? Math.ceil(total / limit)
+      : totalPages;
+
+  // Hanya tampilkan jika jumlah data memicu 2 halaman atau lebih
+  if (!alwaysShow && calculatedTotalPages <= 1) {
+    return null;
+  }
+
   const fromRecord = total === 0 ? 0 : (currentPage - 1) * limit + 1;
   const toRecord = Math.min(currentPage * limit, total);
 

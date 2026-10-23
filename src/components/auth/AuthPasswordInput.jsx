@@ -8,11 +8,12 @@ import { cn } from "@/lib/utils";
 export function AuthPasswordInput({
   id = "password",
   label = "Kata sandi",
-  placeholder = "masukkan kata sandi",
+  placeholder = "Masukkan kata sandi",
   value,
   onChange,
   onBlur,
   error,
+  helperText,
   required = true,
   autoComplete = "current-password",
   extraAction,
@@ -23,7 +24,7 @@ export function AuthPasswordInput({
   return (
     <div className="space-y-1.5">
       <div className="flex justify-between items-center">
-        <label htmlFor={id} className="text-sm font-semibold text-slate-800">
+        <label htmlFor={id} className="text-sm font-medium text-slate-800">
           {label} {required && <span className="text-rose-500">*</span>}
         </label>
         {extraAction}
@@ -39,7 +40,7 @@ export function AuthPasswordInput({
           onBlur={onBlur}
           autoComplete={autoComplete}
           className={cn(
-            "h-11 pr-10 text-sm text-slate-900 border-slate-300 rounded-lg transition-colors",
+            "h-11 pr-10 text-sm text-slate-900 border-slate-300 rounded-lg transition-colors font-normal",
             error && "border-rose-500 bg-rose-50/20 focus-visible:ring-rose-500"
           )}
           {...props}
@@ -55,9 +56,11 @@ export function AuthPasswordInput({
         </button>
       </div>
 
-      {error && (
-        <p className="text-xs text-rose-600 font-medium mt-1">{error}</p>
-      )}
+      {error ? (
+        <p className="text-sm text-rose-600 font-medium mt-1">{error}</p>
+      ) : helperText ? (
+        <p className="text-sm text-slate-500 font-normal mt-1">{helperText}</p>
+      ) : null}
     </div>
   );
 }

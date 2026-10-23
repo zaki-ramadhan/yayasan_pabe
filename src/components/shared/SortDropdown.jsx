@@ -25,14 +25,14 @@ export function SortDropdown({
         <button
           type="button"
           className={cn(
-            "h-11 px-3.5 bg-white border border-slate-300 rounded-lg text-sm font-normal text-slate-900 hover:bg-slate-50 hover:border-slate-400 transition-colors flex items-center gap-2 justify-between cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs",
+            "group h-11 px-3.5 bg-white border border-slate-300 rounded-lg text-sm font-normal text-slate-900 hover:bg-slate-50 hover:border-slate-400 transition-colors flex items-center gap-2 justify-between cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs [&[data-state=open]>svg]:rotate-180",
             className
           )}
         >
           <span className="truncate">
             {currentOption ? currentOption.label : label}
           </span>
-          <ChevronDown className="w-4 h-4 text-slate-500 shrink-0" />
+          <ChevronDown className="w-4 h-4 text-slate-500 shrink-0 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align={align} className="w-56 bg-white border border-slate-200 shadow-md rounded-lg p-1 z-50">

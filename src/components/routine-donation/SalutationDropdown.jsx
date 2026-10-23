@@ -23,10 +23,10 @@ export function SalutationDropdown({
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="flex h-11 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm sm:text-base font-normal text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer shadow-2xs"
+            className="group flex h-11 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm sm:text-base font-normal text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer shadow-2xs [&[data-state=open]>svg]:rotate-180"
           >
             <span>{value || options[0]}</span>
-            <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 ml-1" />
+            <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 ml-1 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent

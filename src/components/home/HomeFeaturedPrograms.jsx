@@ -17,8 +17,18 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
   if (displayedCampaigns.length === 0) return null;
 
   return (
-    <section className="bg-slate-100/80 border-y border-slate-200 py-12 sm:py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden bg-slate-100/80 border-y border-slate-200 py-12 sm:py-16">
+      {/* Background Line Decoration Overlay (Full Lebar & Tinggi, Opacity 20%) */}
+      <div className="absolute inset-0 pointer-events-none select-none scale-130 overflow-hidden z-0">
+        <img
+          src="/img/line%20decoration.svg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-fill opacity-8"
+        />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Kolom Kiri: Sticky Header & Navigasi Program */}
           <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">

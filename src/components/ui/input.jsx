@@ -31,7 +31,7 @@ const Input = React.forwardRef(
     return (
       <div className="relative w-full flex items-center">
         {ResolvedIcon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none flex items-center shrink-0">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none flex items-center shrink-0 z-10">
             {renderLeftIcon()}
           </div>
         )}

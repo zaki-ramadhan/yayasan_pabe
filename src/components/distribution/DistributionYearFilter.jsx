@@ -30,12 +30,12 @@ export function DistributionYearFilter({
           <button
             type="button"
             className={cn(
-              "h-8 sm:h-9 px-3 bg-white border border-slate-300 rounded-md text-sm font-medium text-slate-800 hover:bg-slate-50 transition-colors flex items-center justify-between gap-2.5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary",
+              "group h-8 sm:h-9 px-3 bg-white border border-slate-300 rounded-md text-sm font-medium text-slate-800 hover:bg-slate-50 transition-colors flex items-center justify-between gap-2.5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary [&[data-state=open]>svg]:rotate-180",
               className
             )}
           >
             <span>{selectedYear}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent

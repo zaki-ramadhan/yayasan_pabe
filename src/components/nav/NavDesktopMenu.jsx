@@ -67,7 +67,7 @@ export function NavDesktopMenu({ pathname }) {
 					<button
 						type="button"
 						className={cn(
-							"inline-flex items-center gap-1.5 px-3.5 text-sm font-medium border-b-2 transition-all cursor-pointer h-full select-none outline-none",
+							"group inline-flex items-center gap-1.5 px-3.5 text-sm font-medium border-b-2 transition-all cursor-pointer h-full select-none outline-none [&[data-state=open]>svg]:rotate-180",
 							isProgramActive || isProgramOpen
 								? "text-primary border-primary -mb-px"
 								: "text-slate-700 hover:text-slate-950 border-transparent hover:border-slate-300 -mb-px",
@@ -76,7 +76,7 @@ export function NavDesktopMenu({ pathname }) {
 						<span>Program</span>
 						<ChevronDown
 							className={cn(
-								"w-4 h-4 opacity-70 transition-transform duration-200",
+								"w-4 h-4 opacity-70 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180",
 								isProgramOpen && "rotate-180"
 							)}
 						/>
@@ -135,7 +135,7 @@ export function NavDesktopMenu({ pathname }) {
 					<button
 						type="button"
 						className={cn(
-							"inline-flex items-center gap-1.5 px-3.5 text-sm font-medium border-b-2 transition-all cursor-pointer h-full select-none outline-none",
+							"group inline-flex items-center gap-1.5 px-3.5 text-sm font-medium border-b-2 transition-all cursor-pointer h-full select-none outline-none [&[data-state=open]>svg]:rotate-180",
 							isInformasiActive || isInformasiOpen
 								? "text-primary border-primary -mb-px"
 								: "text-slate-700 hover:text-slate-950 border-transparent hover:border-slate-300 -mb-px",
@@ -144,7 +144,7 @@ export function NavDesktopMenu({ pathname }) {
 						<span>Informasi</span>
 						<ChevronDown
 							className={cn(
-								"w-4 h-4 opacity-70 transition-transform duration-200",
+								"w-4 h-4 opacity-70 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180",
 								isInformasiOpen && "rotate-180"
 							)}
 						/>

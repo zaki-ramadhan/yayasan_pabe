@@ -34,14 +34,14 @@ export function RoutineProgramPicker({
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="flex h-11 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm sm:text-base font-normal text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer text-left"
+            className="group flex h-11 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm sm:text-base font-normal text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer text-left [&[data-state=open]>svg]:rotate-180"
           >
             <span className="truncate">
               {selectedCampaign
                 ? `${selectedCampaign.title} (${selectedCampaign.categoryName || "Program Umum"})`
                 : "-- Silakan Pilih Program --"}
             </span>
-            <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 ml-2" />
+            <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 ml-2 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent

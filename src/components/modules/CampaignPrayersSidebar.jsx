@@ -156,12 +156,12 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClo
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="inline-flex items-center justify-between gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-normal text-slate-800 hover:bg-slate-50 focus:outline-none transition-colors cursor-pointer h-9 min-w-[130px] shadow-2xs"
+              className="group inline-flex items-center justify-between gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-normal text-slate-800 hover:bg-slate-50 focus:outline-none transition-colors cursor-pointer h-9 min-w-[130px] shadow-2xs [&[data-state=open]>svg]:rotate-180"
             >
               <span className="truncate">
                 {PRAYER_SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label || "Urutkan"}
               </span>
-              <ChevronDown className="h-4 w-4 text-slate-500 shrink-0" />
+              <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent

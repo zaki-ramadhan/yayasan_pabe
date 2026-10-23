@@ -8,9 +8,9 @@ export default function HomeLoading() {
       {/* 1. Hero Section with Quick Donate (Light theme matching HomeHero) */}
       <section className="relative overflow-hidden border-b border-slate-300 py-14 sm:py-20 bg-slate-50/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12">
             {/* Left: Headline, Subtitle & Buttons */}
-            <div className="lg:col-span-7 space-y-6">
+            <div className="flex-1 max-w-2xl space-y-6">
               <div className="space-y-3">
                 <Skeleton className="h-9 sm:h-11 lg:h-12 w-full max-w-xl rounded-lg" />
                 <Skeleton className="h-9 sm:h-11 lg:h-12 w-3/4 max-w-lg rounded-lg" />
@@ -27,20 +27,31 @@ export default function HomeLoading() {
               </div>
             </div>
 
-            {/* Right: Quick Donate Form Card (2x2 grid matching QuickDonateBar) */}
-            <div className="lg:col-span-5 bg-white rounded-xl border border-slate-300 p-6 sm:p-7 space-y-3 shadow-md">
-              <div className="space-y-1 pb-1">
-                <Skeleton className="h-5 w-40 rounded" />
-                <Skeleton className="h-3.5 w-56 rounded" />
-              </div>
+            {/* Right: Quick Donate Folder Skeleton */}
+            <div className="w-full lg:w-[500px] shrink-0 flex justify-center lg:justify-end">
+              <div className="relative w-full aspect-[592/458] min-h-[380px] sm:min-h-[390px]">
+                <img
+                  src="/img/folder%20hero.svg"
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none drop-shadow-md opacity-80"
+                />
 
-              <div className="grid grid-cols-2 gap-2.5 py-1">
-                {[1, 2, 3, 4].map((i) => (
-                  <Skeleton key={i} className="h-11 rounded-lg" />
-                ))}
-              </div>
+                <div className="relative z-10 h-full flex flex-col justify-end pt-12 pb-9 sm:pb-11 px-6 sm:px-7 space-y-3 sm:space-y-3.5">
+                  <div className="space-y-1">
+                    <Skeleton className="h-5 w-40 rounded" />
+                    <Skeleton className="h-3.5 w-56 rounded" />
+                  </div>
 
-              <Skeleton className="h-11 w-full rounded-lg mt-2" />
+                  <div className="grid grid-cols-2 gap-2.5 py-1">
+                    {[1, 2, 3, 4].map((i) => (
+                      <Skeleton key={i} className="h-11 rounded-lg" />
+                    ))}
+                  </div>
+
+                  <Skeleton className="h-11 w-full rounded-lg" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -68,8 +79,18 @@ export default function HomeLoading() {
       </section>
 
       {/* 3. Program Donasi Pilihan (Modern Split Layout: Sticky Header Kiri, Grid 2x2 Kanan) */}
-      <section className="bg-slate-100/80 border-y border-slate-200 py-12 sm:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-slate-100/80 border-y border-slate-200 py-12 sm:py-16">
+        {/* Background Line Decoration Overlay (Full Lebar & Tinggi, Opacity 20%) */}
+        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
+          <img
+            src="/img/line%20decoration.svg"
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-fill opacity-20"
+          />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Kolom Kiri: Sticky Header Skeleton */}
             <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">

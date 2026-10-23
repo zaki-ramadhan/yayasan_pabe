@@ -31,10 +31,10 @@ export function CareerFilterSelect({
           <button
             type="button"
             aria-label={label}
-            className="w-full h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm font-normal text-slate-800 hover:bg-slate-50 transition-colors flex items-center justify-between cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
+            className="group w-full h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm font-normal text-slate-800 hover:bg-slate-50 transition-colors flex items-center justify-between cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs [&[data-state=open]>svg]:rotate-180"
           >
             <span className="truncate">{value || label}</span>
-            <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 ml-2" />
+            <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 ml-2 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent

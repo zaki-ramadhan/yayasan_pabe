@@ -40,10 +40,10 @@ export function RoutineSchedulePicker({ item, onChange, isFirstIndex = false }) 
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex h-11 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm sm:text-base font-normal text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer text-left"
+              className="group flex h-11 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm sm:text-base font-normal text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer text-left [&[data-state=open]>svg]:rotate-180"
             >
               <span className="truncate">{selectedFreq.label}</span>
-              <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 ml-2" />
+              <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 ml-2 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -128,7 +128,7 @@ export function RoutineSchedulePicker({ item, onChange, isFirstIndex = false }) 
                 variant="outline"
                 data-empty={!item.monthlyDate}
                 className={cn(
-                  "w-full sm:w-[280px] justify-between text-left font-normal h-11 border-slate-300 bg-white hover:bg-slate-50 text-slate-900 px-3.5 cursor-pointer",
+                  "group w-full sm:w-[280px] justify-between text-left font-normal h-11 border-slate-300 bg-white hover:bg-slate-50 text-slate-900 px-3.5 cursor-pointer [&[data-state=open]>svg]:rotate-180",
                   !item.monthlyDate && "text-slate-500"
                 )}
               >
@@ -142,7 +142,7 @@ export function RoutineSchedulePicker({ item, onChange, isFirstIndex = false }) 
                     <span>Pilih tanggal</span>
                   )}
                 </span>
-                <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 opacity-70 ml-2" />
+                <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 opacity-70 ml-2 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
               </Button>
             </PopoverTrigger>
             <PopoverContent

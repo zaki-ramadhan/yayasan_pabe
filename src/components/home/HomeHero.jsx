@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { QuickDonateBar } from "@/components/modules/QuickDonateBar";
+import { QuickDonateFolder } from "@/components/modules/QuickDonateFolder";
 import { cn } from "@/lib/utils";
 
 const HERO_SLIDES = [
@@ -72,9 +72,9 @@ export function HomeHero({ defaultCampaignSlug }) {
 
       {/* Foreground Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Left Copy */}
-          <div className="lg:col-span-7 space-y-6">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12">
+          {/* Left Copy: Mengambil sisa ruang dinamis secara leluasa */}
+          <div className="flex-1 max-w-2xl space-y-6">
             <div className="space-y-1.5 sm:space-y-2">
               <h1 className="text-5xl sm:text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-crustaceans text-slate-950 leading-[1.08] sm:leading-[1.1] break-words">
                 Penyaluran Zakat, Infak, dan Sedekah untuk Santri &amp; Dhuafa
@@ -105,12 +105,11 @@ export function HomeHero({ defaultCampaignSlug }) {
                 </Button>
               </Link>
             </div>
-
           </div>
 
-          {/* Right Quick Donation Box */}
-          <div className="lg:col-span-5">
-            <QuickDonateBar defaultCampaignSlug={defaultCampaignSlug} />
+          {/* Right Quick Donation Folder: Ukuran Mandiri Bebas Grid (Mudah Diubah-ubah) */}
+          <div className="w-full lg:w-[500px] shrink-0 flex justify-center lg:justify-end">
+            <QuickDonateFolder defaultCampaignSlug={defaultCampaignSlug} />
           </div>
         </div>
       </div>

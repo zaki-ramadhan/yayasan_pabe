@@ -335,7 +335,8 @@ export function RegisterForm() {
               setErrors((prev) => ({ ...prev, password: "Kata sandi minimal 6 karakter." }));
             }
           }}
-          placeholder="Minimal 6 karakter"
+          placeholder="Buat kata sandi akun"
+          helperText="Gunakan minimal 6 karakter."
           error={errors.password}
           autoComplete="new-password"
         />

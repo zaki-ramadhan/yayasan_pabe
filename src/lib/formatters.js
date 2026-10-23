@@ -260,3 +260,19 @@ export function parseThousandsToNumber(value) {
 }
 export { maskEmail } from "@/lib/security";
 export { formatRupiah as formatCurrency };
+
+/**
+ * Mendekode entitas HTML umum seperti &amp; menjadi & agar tampil bersih di UI.
+ * @param {string} str
+ * @returns {string}
+ */
+export function decodeHtmlEntities(str) {
+  if (!str || typeof str !== "string") return "";
+  return str
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;/g, "'")
+    .replace(/&#39;/g, "'");
+}

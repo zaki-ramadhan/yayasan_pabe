@@ -13,6 +13,7 @@ export async function safeFetch(url, options = {}, timeoutMs = 12000) {
 
   try {
     const res = await fetch(url, {
+      credentials: options.credentials || "same-origin",
       ...options,
       signal: options.signal || controller.signal,
     });
