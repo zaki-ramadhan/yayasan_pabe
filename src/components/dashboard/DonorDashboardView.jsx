@@ -3,7 +3,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Plus, Download, CalendarClock, CheckCircle, Clock } from "lucide-react";
+import { Plus, Download, CalendarClock, CheckCircle, Clock, RefreshCw } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { formatRoutineSchedule } from "@/data/routineDonation";
@@ -84,6 +85,11 @@ export function DonorDashboardView({ currentUser: propUser }) {
     loadDonorData();
   }, [loadDonorData]);
 
+  const handleRefresh = async () => {
+    await loadDonorData();
+    toast.success("Data riwayat transaksi donatur berhasil diperbarui.");
+  };
+
   const paidTransactions = transactions.filter((t) => t.status === "PAID");
 
   const {
@@ -161,11 +167,23 @@ export function DonorDashboardView({ currentUser: propUser }) {
 
       {/* Donation History and e-Receipts */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 shadow-2xs">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-base font-bold text-slate-950">Riwayat Transaksi &amp; Bukti Setor Zakat Resmi</h2>
             <p className="text-xs text-slate-500">Unduh e-Kwitansi dengan QR Code sah untuk lampiran pajak.</p>
           </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={handleRefresh}
+            disabled={isLoading}
+            className="h-8 w-8 rounded-lg border-slate-200 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50"
+            title="Segarkan riwayat transaksi"
+            aria-label="Segarkan riwayat transaksi"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
+          </Button>
         </div>
 
         <div className="rounded-lg border border-slate-200/90 overflow-hidden">

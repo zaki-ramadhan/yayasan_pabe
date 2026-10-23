@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, RefreshCw } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Table,
   TableHeader,
@@ -37,6 +38,7 @@ export function DonorTransactionTable({
   onSortChange,
   onPageChange,
   onLimitChange,
+  onRefresh,
 }) {
 
   return (
@@ -85,6 +87,22 @@ export function DonorTransactionTable({
               </SelectContent>
             </Select>
           </div>
+
+          {/* Refresh Button */}
+          {onRefresh && (
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={onRefresh}
+              disabled={isLoading}
+              className="h-10 w-10 rounded-md border-slate-300 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50"
+              title="Segarkan riwayat donasi"
+              aria-label="Segarkan riwayat donasi"
+            >
+              <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
+            </Button>
+          )}
         </div>
       </div>
 
@@ -148,7 +166,15 @@ export function DonorTransactionTable({
                   {item.no}
                 </TableCell>
                 <TableCell className="font-medium text-slate-900 align-middle">
-                  {item.donorName}
+                  <div className="flex items-center gap-2.5">
+                    <Avatar className="w-7 h-7 rounded-full border border-slate-200 shrink-0 bg-slate-100">
+                      {item.donorAvatar && <AvatarImage src={item.donorAvatar} alt={item.donorName} />}
+                      <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
+                        {(item.donorName || "D").slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="truncate">{item.donorName}</span>
+                  </div>
                 </TableCell>
                 <TableCell className="text-right font-medium text-emerald-800 align-middle">
                   {formatRupiah(item.amount)}

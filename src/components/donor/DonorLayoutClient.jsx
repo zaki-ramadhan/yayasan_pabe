@@ -8,12 +8,27 @@ import { DonorSidebarNav } from "@/components/donor/DonorSidebarNav";
 import { DonorTopHeader } from "@/components/donor/DonorTopHeader";
 import { logoutUser, USER_ROLES } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
+import { toast } from "@/hooks/use-toast";
 
 export function DonorLayoutClient({ children }) {
   const router = useRouter();
   const pathname = usePathname();
   const { currentUser, isAuthenticated } = useCurrentUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Tampilkan toast sambutan setelah login donatur berhasil
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const justLoggedIn =
+        sessionStorage.getItem("ygsm_just_logged_in") ||
+        sessionStorage.getItem("pabe_just_logged_in");
+      if (justLoggedIn) {
+        sessionStorage.removeItem("ygsm_just_logged_in");
+        sessionStorage.removeItem("pabe_just_logged_in");
+        toast.success(`Selamat datang, ${justLoggedIn}! Berhasil masuk ke akun donatur.`);
+      }
+    }
+  }, []);
 
   // If administrator/staff lands on donor dashboard, redirect to admin portal
   useEffect(() => {

@@ -12,6 +12,7 @@ import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
+import { toast } from "@/hooks/use-toast";
 
 export function DonorHistoryDashboard() {
   const router = useRouter();
@@ -121,6 +122,11 @@ export function DonorHistoryDashboard() {
     setSortOrder(newSortOrder);
   };
 
+  const handleRefresh = async () => {
+    await fetchHistory(pagination.currentPage, pagination.limit);
+    toast.success("Riwayat donasi berhasil diperbarui.");
+  };
+
   if (isInitialLoading) {
     return <DonorHistorySkeleton />;
   }
@@ -152,6 +158,7 @@ export function DonorHistoryDashboard() {
         onSortChange={handleSortChange}
         onPageChange={handlePageChange}
         onLimitChange={handleLimitChange}
+        onRefresh={handleRefresh}
       />
     </div>
   );

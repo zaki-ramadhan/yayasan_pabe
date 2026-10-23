@@ -11,6 +11,7 @@ import { DonorCategoryDonutCard } from "@/components/donor/DonorCategoryDonutCar
 import { DonorRecentTransactionsCard } from "@/components/donor/DonorRecentTransactionsCard";
 import { DonorMonthlyTargetCard } from "@/components/donor/DonorMonthlyTargetCard";
 import { DonorRoutineDonationsCard } from "@/components/donor/DonorRoutineDonationsCard";
+import { DonorPrayersCard } from "@/components/donor/DonorPrayersCard";
 import { DonorDashboardSkeleton } from "@/components/donor/DonorDashboardSkeleton";
 import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
 import { safeFetch } from "@/lib/safeFetch";
@@ -193,6 +194,9 @@ export function DonorOverviewDashboard({ currentUser }) {
 							isLoading
 						}
 					/>
+
+					{/* 4. Doa & Harapan Saya */}
+					<DonorPrayersCard currentUser={currentUser} />
 				</div>
 
 				{/* ======================================================== */}

@@ -183,7 +183,7 @@ export function DonorSidebarNav({
               <Link
                 href="/admin"
                 onClick={onCloseMobile}
-                title="Portal Administrator"
+                title="Panel admin"
                 className="w-10 h-10 rounded-md flex items-center justify-center bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-900 transition-colors text-xs font-normal"
               >
                 ADM
@@ -194,7 +194,7 @@ export function DonorSidebarNav({
                 onClick={onCloseMobile}
                 className="flex items-center justify-between px-3 py-2 rounded-md bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-sm font-normal transition-colors"
               >
-                <span className="truncate font-normal">Portal Administrator</span>
+                <span className="truncate font-normal">Panel admin</span>
                 <span className="text-xs text-slate-400 font-normal">&rarr;</span>
               </Link>
             )}
