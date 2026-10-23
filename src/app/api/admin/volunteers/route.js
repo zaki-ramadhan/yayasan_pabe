@@ -7,10 +7,14 @@ import {
   deleteVolunteer,
 } from "@/services/adminVolunteerService";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request) {
   const { errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
     USER_ROLES.ADMIN,
+    USER_ROLES.VOLUNTEER,
+    USER_ROLES.FINANCE,
   ]);
   if (errorResponse) return errorResponse;
 

@@ -369,6 +369,8 @@ export async function getAdminTransactions({
         rawDonorName: d.donorName,
         donorEmail: d.donorEmail ? maskEmail(d.donorEmail) : "",
         donorPhone: d.donorPhone,
+        donorAvatar: d.donorAvatar || null,
+        isAnonymous: Boolean(d.isAnonymous),
         amount: Number(d.amount),
         totalAmount: Number(d.totalAmount),
         paymentChannel: d.paymentChannel,
@@ -394,6 +396,8 @@ export async function getAdminTransactions({
       rawDonorName: t.donor,
       donorEmail: maskEmail(`${t.donor.toLowerCase().replace(/[^a-z0-9]/g, ".")}@gmail.com`),
       donorPhone: "08123456789",
+      donorAvatar: null,
+      isAnonymous: t.donor === "Hamba Allah",
       amount: t.amount,
       totalAmount: t.amount,
       paymentChannel: t.channel,
@@ -471,12 +475,12 @@ export async function getAdminDistributions({ page = 1, limit = 10 } = {}) {
         take: limit,
         orderBy: { date: "desc" },
         include: {
-          campaign: { select: { id: true, title: true, slug: true } },
+          campaign: { select: { id: true, title: true, slug: true, bannerUrl: true } },
         },
       }),
       prisma.campaign.findMany({
         where: { status: "ACTIVE" },
-        select: { id: true, title: true },
+        select: { id: true, title: true, bannerUrl: true },
       }),
     ]);
 
@@ -485,6 +489,7 @@ export async function getAdminDistributions({ page = 1, limit = 10 } = {}) {
         id: u.id,
         campaignId: u.campaignId,
         campaignTitle: u.campaign?.title || "Program Amanah",
+        campaignBannerUrl: u.campaign?.bannerUrl || null,
         title: u.title,
         content: u.content,
         disbursedAmount: Number(u.disbursedAmount || 0),
@@ -507,6 +512,7 @@ export async function getAdminDistributions({ page = 1, limit = 10 } = {}) {
         id: `dist-${c.id}-${i}`,
         campaignId: c.id,
         campaignTitle: c.title,
+        campaignBannerUrl: c.bannerUrl || c.image || "/img/hero_card_1.jpeg",
         title: u.title,
         content: u.content,
         disbursedAmount: Number(u.spentAmount || 15000000),
@@ -524,7 +530,7 @@ export async function getAdminDistributions({ page = 1, limit = 10 } = {}) {
         total: mock.length,
         totalPages: Math.ceil(mock.length / limit) || 1,
       },
-      campaigns: CAMPAIGNS.map((c) => ({ id: c.id, title: c.title })),
+      campaigns: CAMPAIGNS.map((c) => ({ id: c.id, title: c.title, bannerUrl: c.bannerUrl || c.image || null })),
     };
   }
 }

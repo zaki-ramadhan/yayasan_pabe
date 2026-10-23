@@ -23,10 +23,11 @@ import {
 } from "@/components/ui/select";
 import { AdminVolunteerStatusBadge } from "./AdminVolunteerStatusBadge";
 import { AdminVolunteerDetailDialog } from "./AdminVolunteerDetailDialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery, maskEmail } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 const PAGE_SIZE = 10;
 
@@ -80,11 +81,13 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   const refreshList = async () => {
     setIsLoading(true);
     try {
-      const res = await safeFetch("/api/admin/volunteers");
+      const res = await safeFetch("/api/admin/volunteers?limit=100");
       const data = await res.json();
       if (data.success && data.data) {
         setVolunteers(data.data);
         toast.success("Data pendaftar relawan berhasil diperbarui.");
+      } else {
+        toast.error(data.message || "Gagal menyegarkan data relawan.");
       }
     } catch {
       toast.error("Gagal menyegarkan data relawan.");
@@ -191,7 +194,6 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
             className="h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Segarkan</span>
           </button>
         </div>
       </div>
@@ -227,13 +229,22 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                 paginatedVolunteers.map((item) => (
                   <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
                     {/* Nama & Kontak */}
-                    <TableCell className="w-64 space-y-0.5 py-3 align-middle">
-                      <span className="font-medium text-sm text-slate-900 block leading-tight">
-                        {item.fullName}
-                      </span>
-                      <div className="flex flex-col text-xs text-slate-500 font-normal">
-                        {item.email && <span>{maskEmail(item.email)}</span>}
-                        {item.phone && <span>{item.phone}</span>}
+                    <TableCell className="w-64 py-3 align-middle">
+                      <div className="flex items-center gap-2.5">
+                        <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
+                          <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
+                            {(item.fullName || "R").slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0 space-y-0.5">
+                          <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
+                            {item.fullName}
+                          </span>
+                          <div className="flex flex-col text-sm text-slate-500 font-normal truncate">
+                            {item.email && <span>{maskEmail(item.email)}</span>}
+                            {item.phone && <span>{item.phone}</span>}
+                          </div>
+                        </div>
                       </div>
                     </TableCell>
 
@@ -251,7 +262,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                         {item.interest}
                       </span>
                       {item.motivation && (
-                        <p className="text-xs text-slate-500 line-clamp-1 font-normal mt-0.5">
+                        <p className="text-sm text-slate-500 line-clamp-1 font-normal mt-0.5">
                           {item.motivation}
                         </p>
                       )}

@@ -37,7 +37,7 @@ export function AdminUserProfile({ currentUser }) {
           )}
         </div>
         <div className="min-w-0">
-          <span className="text-sm font-semibold text-slate-900 block truncate">
+          <span className="text-sm font-medium text-slate-900 block truncate">
             {currentUser?.name || "Pengguna"}
           </span>
           <span className="text-sm text-slate-500 font-normal block truncate">

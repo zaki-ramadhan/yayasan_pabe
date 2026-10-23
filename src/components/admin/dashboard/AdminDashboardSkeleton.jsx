@@ -8,10 +8,18 @@ export function AdminDashboardSkeleton() {
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="rounded-lg border border-slate-200/90 bg-white p-3.5 sm:p-4 shadow-2xs space-y-1.5"
+            className="relative w-full aspect-[363/224]"
           >
-            <Skeleton className="h-4 w-32 rounded" />
-            <Skeleton className="h-7 w-28 rounded-md" />
+            <img
+              src="/img/folder%20admin.svg?v=3"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none opacity-80"
+            />
+            <div className="relative z-10 h-full flex flex-col justify-end pb-3.5 sm:pb-4 md:pb-4.5 px-3.5 sm:px-4 md:px-4.5 space-y-1.5">
+              <Skeleton className="h-3.5 w-28 rounded" />
+              <Skeleton className="h-6 w-32 rounded" />
+            </div>
           </div>
         ))}
       </div>

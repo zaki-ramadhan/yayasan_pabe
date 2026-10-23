@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Plus, Search, ExternalLink, MoreVertical, Edit2, Play, Pause, CheckCircle } from "lucide-react";
+import { Plus, Search, ExternalLink, MoreVertical, Edit2, Play, Pause, CheckCircle, RefreshCw } from "lucide-react";
 import { formatRupiah, calculateDaysLeft } from "@/lib/formatters";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -49,6 +49,7 @@ export function AdminProgramTable({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const PAGE_SIZE = 10;
 
   const debouncedSearch = useDebounce(search.trim(), 300);
@@ -97,6 +98,24 @@ export function AdminProgramTable({
     setCurrentPage(1);
   };
 
+  const refreshList = async () => {
+    setIsLoading(true);
+    try {
+      const res = await safeFetch("/api/admin/programs?limit=100");
+      const data = await res.json();
+      if (data.success && data.data) {
+        setCampaigns(data.data);
+        toast.success("Data program donasi berhasil diperbarui.");
+      } else {
+        toast.error(data.message || "Gagal menyegarkan data program.");
+      }
+    } catch {
+      toast.error("Gagal menyegarkan data program.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleOpenAdd = () => {
     setEditingCampaign(null);
     setIsModalOpen(true);
@@ -128,17 +147,6 @@ export function AdminProgramTable({
     }
   };
 
-  const refreshList = async () => {
-    try {
-      const res = await safeFetch("/api/admin/programs");
-      const data = await res.json();
-      if (data.success && data.data) {
-        setCampaigns(data.data);
-      }
-    } catch {
-      // silent
-    }
-  };
 
   return (
     <div className="space-y-4">
@@ -188,14 +196,29 @@ export function AdminProgramTable({
           </Select>
         </div>
 
-        <Button
-          type="button"
-          onClick={handleOpenAdd}
-          className="h-10 px-4 rounded-lg text-sm font-medium bg-primary hover:bg-primary-hover text-white flex items-center gap-1.5 cursor-pointer shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Program baru</span>
-        </Button>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={refreshList}
+            disabled={isLoading}
+            className="h-10 w-10 rounded-lg border-slate-300 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50"
+            title="Segarkan data program"
+            aria-label="Segarkan data program"
+          >
+            <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
+          </Button>
+
+          <Button
+            type="button"
+            onClick={handleOpenAdd}
+            className="h-10 px-4 rounded-lg text-sm font-medium bg-primary hover:bg-primary-hover text-white flex items-center gap-1.5 cursor-pointer shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Program baru</span>
+          </Button>
+        </div>
       </div>
 
       {/* Table Container */}
@@ -254,7 +277,7 @@ export function AdminProgramTable({
 
                       <TableCell className="space-y-1.5 py-3 align-middle">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="font-semibold text-slate-900">{formatRupiah(collected)}</span>
+                          <span className="font-medium text-slate-900">{formatRupiah(collected)}</span>
                           {target > 0 && <span className="font-medium text-slate-600">{percent}%</span>}
                         </div>
                         {target > 0 && (
@@ -279,7 +302,7 @@ export function AdminProgramTable({
                       <TableCell className="space-y-0.5 py-3 align-middle whitespace-nowrap">
                         {disbursed > 0 ? (
                           <>
-                            <div className="font-semibold text-sm text-slate-900">
+                            <div className="font-medium text-sm text-slate-900">
                               {formatRupiah(disbursed)}
                             </div>
                             <span className="text-xs text-slate-500 block">

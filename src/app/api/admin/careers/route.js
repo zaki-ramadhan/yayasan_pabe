@@ -6,10 +6,14 @@ import {
   createAdminVacancy,
 } from "@/services/adminCareerService";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request) {
   const { errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
     USER_ROLES.ADMIN,
+    USER_ROLES.FINANCE,
+    USER_ROLES.VOLUNTEER,
   ]);
   if (errorResponse) return errorResponse;
 

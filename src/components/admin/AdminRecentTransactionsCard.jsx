@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Copy, Check } from "lucide-react";
+import { ArrowRight, Copy, Check, RefreshCw } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
 import { toast } from "@/hooks/use-toast";
 import { copyToClipboard } from "@/lib/clipboard";
+import { safeFetch } from "@/lib/safeFetch";
 import {
   Table,
   TableHeader,
@@ -16,9 +17,32 @@ import {
   TableEmptyRow,
 } from "@/components/ui/table";
 
-export function AdminRecentTransactionsCard({ initialTransactions = [] }) {
-  const transactions = initialTransactions;
+export function AdminRecentTransactionsCard({
+  initialTransactions = [],
+  maxRows = 7,
+  scrollable = false,
+}) {
+  const [transactions, setTransactions] = useState(initialTransactions);
+  const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
+
+  const refreshList = async () => {
+    setIsLoading(true);
+    try {
+      const res = await safeFetch(`/api/admin/transactions?limit=${maxRows}`);
+      const data = await res.json();
+      if (data.success && data.data) {
+        setTransactions(data.data);
+        toast.success("Mutasi donasi terkini berhasil diperbarui.");
+      } else {
+        toast.error(data.message || "Gagal menyegarkan data transaksi.");
+      }
+    } catch {
+      toast.error("Gagal menyegarkan data transaksi.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleCopyInvoice = async (invoiceId) => {
     if (!invoiceId) return;
@@ -45,16 +69,29 @@ export function AdminRecentTransactionsCard({ initialTransactions = [] }) {
             Pencatatan kas masuk real-time seluruh metode pembayaran
           </p>
         </div>
-        <Link
-          href="/admin/transaksi"
-          className="text-sm font-medium text-primary hover:underline flex items-center gap-1 shrink-0"
-        >
-          <span>Semua transaksi</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={refreshList}
+            disabled={isLoading}
+            className="h-8 w-8 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors flex items-center justify-center cursor-pointer disabled:opacity-50"
+            title="Segarkan transaksi terkini"
+            aria-label="Segarkan transaksi terkini"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
+          </button>
+
+          <Link
+            href="/admin/transaksi"
+            className="text-sm font-medium text-primary hover:underline flex items-center gap-1 shrink-0"
+          >
+            <span>Semua transaksi</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
 
-      <div className="overflow-x-auto flex-1">
+      <div className={`overflow-x-auto flex-1 ${scrollable ? "max-h-[380px] overflow-y-auto" : ""}`}>
         <Table>
           <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
             <TableRow>
@@ -70,7 +107,7 @@ export function AdminRecentTransactionsCard({ initialTransactions = [] }) {
           </TableHeader>
           <TableBody className="divide-y divide-slate-100">
             {transactions && transactions.length > 0 ? (
-              transactions.slice(0, 7).map((item) => (
+              transactions.slice(0, maxRows).map((item) => (
                 <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
                   <TableCell className="w-[170px] text-sm py-3 align-middle">
                     <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
@@ -101,7 +138,7 @@ export function AdminRecentTransactionsCard({ initialTransactions = [] }) {
                   <TableCell className="text-sm text-slate-700 py-3 align-middle">
                     <span className="line-clamp-2 leading-snug font-normal text-slate-800 block">{item.campaignTitle}</span>
                   </TableCell>
-                  <TableCell className="w-px text-sm font-semibold text-slate-900 py-3 whitespace-nowrap align-middle">
+                  <TableCell className="w-px text-sm font-medium text-slate-900 py-3 whitespace-nowrap align-middle">
                     {formatRupiah(item.amount)}
                   </TableCell>
                   <TableCell className="w-px text-center py-3 whitespace-nowrap uppercase align-middle">

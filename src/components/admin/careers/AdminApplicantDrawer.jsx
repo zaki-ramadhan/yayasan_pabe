@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 import { Mail, Phone, ExternalLink, FileText, RefreshCw } from "lucide-react";
@@ -42,11 +43,13 @@ export function AdminApplicantDrawer({
   const [isLoading, setIsLoading] = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
 
-  const fetchApplications = async () => {
-    if (!vacancy?.id) return;
+  const vacancyId = vacancy?.id;
+
+  const fetchApplications = useCallback(async () => {
+    if (!vacancyId) return;
     setIsLoading(true);
     try {
-      const res = await safeFetch(`/api/admin/careers/applications?vacancyId=${vacancy.id}`);
+      const res = await safeFetch(`/api/admin/careers/applications?vacancyId=${vacancyId}`);
       const data = await res.json();
       if (data.success) {
         setApplications(data.data || []);
@@ -56,15 +59,31 @@ export function AdminApplicantDrawer({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [vacancyId]);
 
   useEffect(() => {
-    if (isOpen && vacancy) {
-      fetchApplications();
-    } else {
-      setApplications([]);
+    let ignore = false;
+    if (isOpen && vacancyId) {
+      const load = async () => {
+        setIsLoading(true);
+        try {
+          const res = await safeFetch(`/api/admin/careers/applications?vacancyId=${vacancyId}`);
+          const data = await res.json();
+          if (!ignore && data.success) {
+            setApplications(data.data || []);
+          }
+        } catch {
+          if (!ignore) toast.error("Gagal memuat daftar pelamar.");
+        } finally {
+          if (!ignore) setIsLoading(false);
+        }
+      };
+      load();
     }
-  }, [isOpen, vacancy]);
+    return () => {
+      ignore = true;
+    };
+  }, [isOpen, vacancyId]);
 
   const handleStatusChange = async (appId, newStatus) => {
     setUpdatingId(appId);
@@ -129,17 +148,24 @@ export function AdminApplicantDrawer({
                   className="rounded-lg border border-slate-200/90 bg-white p-3.5 sm:p-4 space-y-3 shadow-2xs"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-950">
-                        {app.fullName}
-                      </h4>
-                      <p className="text-sm text-slate-500">
-                        Melamar pada {new Date(app.createdAt).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <Avatar className="w-9 h-9 rounded-full border border-slate-200 shrink-0 bg-slate-100">
+                        <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
+                          {(app.fullName || "P").slice(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-950">
+                          {app.fullName}
+                        </h4>
+                        <p className="text-sm text-slate-500">
+                          Melamar pada {new Date(app.createdAt).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </p>
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -198,7 +224,7 @@ export function AdminApplicantDrawer({
                   {/* Motivasi & Surat Pengantar */}
                   {app.coverLetter && (
                     <div className="bg-slate-50 p-3 rounded-md border border-slate-200/80 text-sm text-slate-700 leading-relaxed">
-                      <span className="font-semibold text-slate-900 block mb-1">
+                      <span className="font-medium text-slate-900 block mb-1">
                         Surat Pengantar &amp; Motivasi:
                       </span>
                       {app.coverLetter}

@@ -154,9 +154,12 @@ export function AdminCareerTable({ initialVacancies = [] }) {
       const data = await res.json();
       if (data.success && data.data) {
         setVacancies(data.data);
+        toast.success("Data lowongan karier berhasil diperbarui.");
+      } else {
+        toast.error(data.message || "Gagal menyegarkan data lowongan.");
       }
     } catch {
-      // silent
+      toast.error("Gagal menyegarkan data lowongan.");
     } finally {
       setIsLoading(false);
     }
@@ -196,7 +199,6 @@ export function AdminCareerTable({ initialVacancies = [] }) {
             className="h-10 px-3 rounded-lg text-sm font-medium text-slate-700 border-slate-300 bg-white hover:bg-slate-50 flex items-center gap-1.5 cursor-pointer"
           >
             <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Segarkan</span>
           </Button>
 
           <Button
@@ -230,7 +232,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
                 <TableRow key={job.id}>
                   <TableCell className="py-3 align-middle">
                     <div className="space-y-0.5">
-                      <span className="text-sm font-semibold text-slate-900 block">
+                      <span className="text-sm font-medium text-slate-900 block">
                         {job.title}
                       </span>
                       <span className="text-sm text-slate-500">

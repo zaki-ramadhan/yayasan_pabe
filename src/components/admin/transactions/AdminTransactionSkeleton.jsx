@@ -54,8 +54,8 @@ export function AdminTransactionSkeleton() {
                 <TableHead className="w-px py-2.5 text-center whitespace-nowrap">
                   <Skeleton className="h-4 w-14 rounded mx-auto" />
                 </TableHead>
-                <TableHead className="w-32 py-2.5 text-right whitespace-nowrap">
-                  <Skeleton className="h-4 w-12 ml-auto rounded" />
+                <TableHead className="w-24 py-2.5 text-right whitespace-nowrap">
+                  <Skeleton className="h-4 w-10 ml-auto rounded" />
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -71,9 +71,14 @@ export function AdminTransactionSkeleton() {
                   </TableCell>
 
                   {/* Donor */}
-                  <TableCell className="w-px space-y-1 py-3 whitespace-nowrap align-middle">
-                    <Skeleton className="h-4 w-32 rounded" />
-                    <Skeleton className="h-3 w-40 rounded" />
+                  <TableCell className="w-px py-3 whitespace-nowrap align-middle">
+                    <div className="flex items-center gap-2.5">
+                      <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+                      <div className="space-y-1">
+                        <Skeleton className="h-4 w-28 rounded" />
+                        <Skeleton className="h-3 w-36 rounded" />
+                      </div>
+                    </div>
                   </TableCell>
 
                   {/* Campaign Target */}
@@ -93,7 +98,7 @@ export function AdminTransactionSkeleton() {
 
                   {/* Date */}
                   <TableCell className="w-px py-3 whitespace-nowrap align-middle">
-                    <Skeleton className="h-3.5 w-24 rounded" />
+                    <Skeleton className="h-4 w-24 rounded" />
                   </TableCell>
 
                   {/* Status */}
@@ -102,10 +107,10 @@ export function AdminTransactionSkeleton() {
                   </TableCell>
 
                   {/* Actions */}
-                  <TableCell className="w-32 py-3 text-right whitespace-nowrap align-middle">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <Skeleton className="h-8 w-16 rounded-md" />
-                      <Skeleton className="h-8 w-16 rounded-md" />
+                  <TableCell className="w-24 py-3 text-right whitespace-nowrap align-middle">
+                    <div className="flex items-center justify-end gap-1">
+                      <Skeleton className="h-7 w-7 rounded" />
+                      <Skeleton className="h-7 w-7 rounded" />
                     </div>
                   </TableCell>
                 </TableRow>

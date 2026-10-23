@@ -13,11 +13,15 @@ import { SafeImage } from "@/components/ui/safe-image";
  * - Right: 2-line title (line-clamp-2), progress bar, and metrics (target & percent aligned)
  * - No location info
  */
-export function AdminCampaignOverviewCard({ campaigns = [] }) {
-  const displayCampaigns = campaigns ? campaigns.slice(0, 4) : [];
+export function AdminCampaignOverviewCard({
+  campaigns = [],
+  maxItems = 4,
+  stretch = true,
+}) {
+  const displayCampaigns = campaigns ? campaigns.slice(0, maxItems) : [];
 
   return (
-    <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden h-full flex flex-col">
+    <div className={`rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden flex flex-col ${stretch ? "h-full" : "h-auto"}`}>
       {/* Card Header */}
       <div className="p-3.5 sm:p-4 border-b border-slate-200/90">
         <h2 className="text-base font-semibold text-slate-900 leading-tight">
@@ -29,7 +33,7 @@ export function AdminCampaignOverviewCard({ campaigns = [] }) {
       </div>
 
       {/* Flat List Items */}
-      <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between gap-3">
+      <div className={`p-3.5 sm:p-4 flex-1 flex flex-col ${stretch ? "justify-between" : ""} gap-3`}>
         <div className="space-y-3">
           {displayCampaigns.length > 0 ? (
             displayCampaigns.map((campaign) => {
@@ -96,9 +100,9 @@ export function AdminCampaignOverviewCard({ campaigns = [] }) {
         {/* Check All Donation Programs Button */}
         <Link
           href="/admin/program"
-          className="flex items-center justify-center gap-2 h-10 px-4 rounded-lg text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 hover:text-slate-950 border border-slate-200 transition-colors mt-auto text-center cursor-pointer shadow-2xs"
+          className={`flex items-center justify-center gap-2 h-10 px-4 rounded-lg text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 hover:text-slate-950 border border-slate-200 transition-colors text-center cursor-pointer shadow-2xs ${stretch ? "mt-auto" : "mt-2"}`}
         >
-          <span>Periksa semua program donasi</span>
+          <span>Periksa semua program</span>
           <ArrowRight className="w-4 h-4 text-slate-500 shrink-0" />
         </Link>
       </div>

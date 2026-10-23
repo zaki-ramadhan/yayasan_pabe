@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
 import { Plus, Search, RefreshCw, Edit3, Trash2 } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { Input } from "@/components/ui/input";
@@ -19,7 +20,7 @@ import { AdminDistributionDeleteDialog } from "./AdminDistributionDeleteDialog";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 export function AdminDistributionTable({
   initialDistributions = [],
@@ -67,11 +68,13 @@ export function AdminDistributionTable({
   const refreshList = async () => {
     setIsLoading(true);
     try {
-      const res = await safeFetch("/api/admin/distributions");
+      const res = await safeFetch("/api/admin/distributions?limit=100");
       const data = await res.json();
       if (data.success && data.data) {
         setDistributions(data.data);
         toast.success("Data rekam penyaluran berhasil diperbarui.");
+      } else {
+        toast.error(data.message || "Gagal menyegarkan data penyaluran.");
       }
     } catch {
       toast.error("Gagal menyegarkan data penyaluran.");
@@ -139,7 +142,6 @@ export function AdminDistributionTable({
             className="h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Segarkan</span>
           </button>
 
           <button
@@ -180,9 +182,22 @@ export function AdminDistributionTable({
               {paginatedDistributions && paginatedDistributions.length > 0 ? (
                 paginatedDistributions.map((item) => (
                   <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                    {/* Program */}
-                    <TableCell className="font-medium text-sm text-slate-900 py-3 align-middle">
-                      {item.campaignTitle}
+                    {/* Program Donasi Asal */}
+                    <TableCell className="w-72 py-3 align-middle">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-10 h-10 rounded-md bg-slate-100 overflow-hidden relative border border-slate-200 shrink-0">
+                          <Image
+                            src={item.campaignBannerUrl || "/img/hero_card_1.jpeg"}
+                            alt={item.campaignTitle || "Program donasi"}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
+                        <span className="font-medium text-sm text-slate-900 block line-clamp-2 leading-snug">
+                          {item.campaignTitle}
+                        </span>
+                      </div>
                     </TableCell>
 
                     {/* Judul & Konten */}
@@ -191,7 +206,7 @@ export function AdminDistributionTable({
                         {item.title}
                       </span>
                       {item.content && (
-                        <p className="text-xs text-slate-500 line-clamp-2 max-w-xl leading-relaxed font-normal">
+                        <p className="text-sm text-slate-500 line-clamp-2 max-w-xl leading-relaxed font-normal mt-0.5">
                           {item.content}
                         </p>
                       )}

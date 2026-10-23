@@ -53,13 +53,16 @@ export function AdminDistributionSkeleton() {
                 <TableRow key={i} className="hover:bg-transparent">
                   {/* Origin Program */}
                   <TableCell className="w-72 py-3 align-middle">
-                    <Skeleton className="h-4 w-56 rounded" />
+                    <div className="flex items-center gap-2.5">
+                      <Skeleton className="w-10 h-10 rounded-md shrink-0" />
+                      <Skeleton className="h-4 w-44 rounded" />
+                    </div>
                   </TableCell>
 
                   {/* Activity Title & Content */}
                   <TableCell className="space-y-1.5 py-3 align-middle">
                     <Skeleton className="h-4 w-72 rounded" />
-                    <Skeleton className="h-3.5 w-full max-w-lg rounded" />
+                    <Skeleton className="h-4 w-full max-w-lg rounded" />
                   </TableCell>
 
                   {/* Realization Date */}

@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { DEMO_USERS, USER_ROLES } from "@/services/authService";
 
@@ -85,20 +86,45 @@ export function verifyPassword(password, storedHash) {
 
 /**
  * Extracts and verifies the current authenticated user from request cookies.
- * @param {Request} request
+ * Supports NextRequest, standard WHATWG Request headers, and Next.js cookies() store.
+ * @param {Request} [request]
  * @returns {Promise<{ authenticated: boolean, user: object|null, reason?: string }>}
  */
 export async function getAuthenticatedUser(request) {
   let sessionId = null;
 
-  if (request && request.cookies) {
-    if (typeof request.cookies.get === "function") {
-      sessionId = request.cookies.get("pabe_session")?.value || request.cookies.get("ygsm_session")?.value;
-    } else {
-      const cookieHeader = request.headers.get("cookie") || "";
+  // 1. NextRequest helper (.cookies.get)
+  if (request?.cookies && typeof request.cookies.get === "function") {
+    sessionId = request.cookies.get("pabe_session")?.value || request.cookies.get("ygsm_session")?.value;
+  }
+
+  // 2. Fallback: Parse raw Request header 'cookie'
+  if (!sessionId && request?.headers) {
+    const cookieHeader =
+      typeof request.headers.get === "function"
+        ? request.headers.get("cookie") || ""
+        : request.headers?.cookie || "";
+    if (cookieHeader) {
       const match = cookieHeader.match(/(?:pabe_session|ygsm_session)=([^;]+)/);
-      sessionId = match ? decodeURIComponent(match[1]) : null;
+      sessionId = match ? decodeURIComponent(match[1].trim()) : null;
     }
+  }
+
+  // 3. Fallback: Official Next.js cookies() store from next/headers
+  if (!sessionId) {
+    try {
+      const cookieStore = await cookies();
+      sessionId =
+        cookieStore.get("pabe_session")?.value ||
+        cookieStore.get("ygsm_session")?.value;
+    } catch {
+      // Ignored if executed outside server context
+    }
+  }
+
+  // Sanitize sessionId value
+  if (sessionId) {
+    sessionId = String(sessionId).replace(/^["']|["']$/g, "").trim();
   }
 
   if (!sessionId) {
@@ -106,22 +132,51 @@ export async function getAuthenticatedUser(request) {
   }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: sessionId },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        username: true,
-        role: true,
-        title: true,
-        avatar: true,
-        phone: true,
-        provider: true,
-        isActive: true,
-        createdAt: true,
-      },
-    });
+    let user = null;
+    let lastDbError = null;
+    try {
+      user = await prisma.user.findUnique({
+        where: { id: sessionId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          username: true,
+          role: true,
+          title: true,
+          avatar: true,
+          phone: true,
+          provider: true,
+          createdAt: true,
+        },
+      });
+      if (!user) {
+        // Also try finding by email or username or providerId if sessionId wasn't the UUID/cuid
+        user = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { email: sessionId },
+              { username: sessionId },
+              { providerId: sessionId },
+            ],
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            username: true,
+            role: true,
+            title: true,
+            avatar: true,
+            phone: true,
+            provider: true,
+            createdAt: true,
+          },
+        });
+      }
+    } catch (dbErr) {
+      console.warn("serverAuth prisma user lookup warning:", dbErr?.message);
+    }
 
     if (user) {
       if (user.isActive === false) {
@@ -162,7 +217,10 @@ export async function getAuthenticatedUser(request) {
 
     // Check demo users fallback
     const demoMatch = DEMO_USERS.find(
-      (u) => u.id === sessionId || u.email.toLowerCase() === sessionId.toLowerCase()
+      (u) =>
+        u.id === sessionId ||
+        (u.email && u.email.toLowerCase() === sessionId.toLowerCase()) ||
+        (u.username && u.username.toLowerCase() === sessionId.toLowerCase())
     );
 
     if (demoMatch) {

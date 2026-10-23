@@ -18,7 +18,7 @@ export default async function AdminDashboardPage() {
   const [stats, transactionsData, campaignsData, trendData] = await Promise.all([
     getAdminOverviewStats(),
     getAdminTransactions({ limit: 7 }),
-    getAdminCampaigns({ status: "ACTIVE", limit: 5 }),
+    getAdminCampaigns({ status: "ACTIVE", limit: 4 }),
     getAdminDonationTrends(),
   ]);
 
@@ -30,13 +30,20 @@ export default async function AdminDashboardPage() {
       {/* 2. Donation & Cashflow Trend Analytics Chart */}
       <AdminDonationTrendCard initialTrends={trendData} />
 
-      {/* 3. Main Grid: Real-time Transactions + Priority Campaign Progress */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-stretch">
+      {/* 3. Main Grid: Real-time Transactions + Priority Campaign Progress (Fit-Content) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-start">
         <div className="lg:col-span-8 xl:col-span-9 flex flex-col">
-          <AdminRecentTransactionsCard initialTransactions={transactionsData.items} />
+          <AdminRecentTransactionsCard
+            initialTransactions={transactionsData.items}
+            maxRows={7}
+          />
         </div>
         <div className="lg:col-span-4 xl:col-span-3 flex flex-col">
-          <AdminCampaignOverviewCard campaigns={campaignsData.items} />
+          <AdminCampaignOverviewCard
+            campaigns={campaignsData.items}
+            maxItems={4}
+            stretch={false}
+          />
         </div>
       </div>
     </div>

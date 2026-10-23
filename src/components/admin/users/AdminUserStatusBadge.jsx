@@ -45,11 +45,10 @@ export function AdminUserStatusBadge({ isActive, className = "" }) {
     return (
       <span
         className={cn(
-          "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/90 whitespace-nowrap",
+          "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-emerald-800 bg-emerald-50 border border-emerald-200/90 whitespace-nowrap",
           className
         )}
       >
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0" />
         <span>Aktif</span>
       </span>
     );
@@ -58,11 +57,10 @@ export function AdminUserStatusBadge({ isActive, className = "" }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium text-rose-800 bg-rose-50 border border-rose-200/90 whitespace-nowrap",
+        "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-rose-800 bg-rose-50 border border-rose-200/90 whitespace-nowrap",
         className
       )}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0" />
       <span>Ditangguhkan</span>
     </span>
   );

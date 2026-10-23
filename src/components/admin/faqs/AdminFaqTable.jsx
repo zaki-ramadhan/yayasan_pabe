@@ -25,7 +25,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { formatDate } from "@/lib/formatters";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 export function AdminFaqTable({ initialFaqs = [] }) {
   const [faqs, setFaqs] = useState(initialFaqs);
@@ -117,6 +117,9 @@ export function AdminFaqTable({ initialFaqs = [] }) {
       const data = await res.json();
       if (data.success && data.data) {
         setFaqs(data.data);
+        toast.success("Data FAQ berhasil diperbarui.");
+      } else {
+        toast.error(data.message || "Gagal menyegarkan data FAQ.");
       }
     } catch {
       toast.error("Gagal menyegarkan data FAQ.");
@@ -169,7 +172,6 @@ export function AdminFaqTable({ initialFaqs = [] }) {
             className="h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Segarkan</span>
           </button>
 
           <button
@@ -214,7 +216,7 @@ export function AdminFaqTable({ initialFaqs = [] }) {
                           <span className="text-sm font-medium text-slate-900 block leading-snug">
                             {faq.question}
                           </span>
-                          <p className="text-xs text-slate-500 line-clamp-1 font-normal leading-normal">
+                          <p className="text-sm text-slate-500 line-clamp-1 font-normal leading-normal mt-0.5">
                             {faq.answer}
                           </p>
                         </div>

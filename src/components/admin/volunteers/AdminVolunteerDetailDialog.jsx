@@ -54,7 +54,7 @@ export function AdminVolunteerDetailDialog({
           {/* Identitas Pendaftar */}
           <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg space-y-2.5">
             <div>
-              <span className="text-xs text-slate-500 block font-normal">Nama lengkap:</span>
+              <span className="text-sm text-slate-500 block font-normal">Nama lengkap:</span>
               <span className="font-medium text-slate-900 text-base leading-snug">
                 {volunteer.fullName}
               </span>
@@ -62,13 +62,13 @@ export function AdminVolunteerDetailDialog({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-slate-200">
               <div>
-                <span className="text-xs text-slate-500 block">Email:</span>
+                <span className="text-sm text-slate-500 block font-normal">Email:</span>
                 <span className="font-medium text-slate-900">
                   {volunteer.email ? maskEmail(volunteer.email) : "-"}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 block">Nomor telepon / WA:</span>
+                <span className="text-sm text-slate-500 block font-normal">Nomor telepon / WA:</span>
                 <div className="flex items-center gap-1.5">
                   <span className="font-medium text-slate-900">{volunteer.phone || "-"}</span>
                   {waUrl && (
@@ -76,23 +76,23 @@ export function AdminVolunteerDetailDialog({
                       href={waUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-emerald-700 hover:text-emerald-800 text-xs font-medium hover:underline inline-flex items-center gap-0.5"
+                      className="text-emerald-700 hover:text-emerald-800 text-sm font-medium hover:underline inline-flex items-center gap-0.5"
                     >
-                      <Phone className="w-3 h-3" />
+                      <Phone className="w-3.5 h-3.5" />
                       <span>Chat WA</span>
                     </a>
                   )}
                 </div>
               </div>
               <div>
-                <span className="text-xs text-slate-500 block">Kota domisili:</span>
+                <span className="text-sm text-slate-500 block font-normal">Kota domisili:</span>
                 <span className="font-medium text-slate-900 flex items-center gap-1 mt-0.5">
                   <MapPin className="w-3.5 h-3.5 text-slate-400" />
                   <span>{volunteer.city}</span>
                 </span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 block">Tanggal mendaftar:</span>
+                <span className="text-sm text-slate-500 block font-normal">Tanggal mendaftar:</span>
                 <span className="font-medium text-slate-900 flex items-center gap-1 mt-0.5">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
                   <span>{formatDate(volunteer.createdAt)}</span>
@@ -103,7 +103,7 @@ export function AdminVolunteerDetailDialog({
 
           {/* Minat Kerelawanan */}
           <div className="p-3 border border-slate-200 rounded-lg space-y-1">
-            <span className="text-xs text-slate-500 block font-normal">Bidang minat program:</span>
+            <span className="text-sm text-slate-500 block font-normal">Bidang minat program:</span>
             <div className="flex items-center gap-1.5 text-primary">
               <Heart className="w-4 h-4 shrink-0" />
               <span className="font-medium text-slate-900">{volunteer.interest}</span>
@@ -112,7 +112,7 @@ export function AdminVolunteerDetailDialog({
 
           {/* Motivasi & Harapan */}
           <div className="p-3.5 bg-slate-50/50 border border-slate-200 rounded-lg space-y-1">
-            <span className="text-xs text-slate-500 block font-normal">Motivasi kerelawanan:</span>
+            <span className="text-sm text-slate-500 block font-normal">Motivasi kerelawanan:</span>
             <p className="text-sm font-normal text-slate-800 leading-relaxed whitespace-pre-line italic">
               &ldquo;{volunteer.motivation || "Tidak menuliskan catatan motivasi khusus."}&rdquo;
             </p>
@@ -120,7 +120,7 @@ export function AdminVolunteerDetailDialog({
 
           {/* Pengaturan Status Pendaftar */}
           <div className="p-3 border border-slate-200 rounded-lg space-y-2">
-            <span className="text-xs text-slate-700 block font-medium">
+            <span className="text-sm text-slate-700 block font-medium">
               Ubah status tindak lanjut:
             </span>
             <div className="flex items-center gap-2">

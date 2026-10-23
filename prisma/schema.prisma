@@ -51,6 +51,9 @@ model CampaignUpdate {
   title           String
   content         String
   disbursedAmount Float    @default(0)
+  approvalStatus  String   @default("APPROVED") // PENDING, APPROVED, REJECTED
+  approvedBy      String?
+  approvedAt      DateTime?
   date            DateTime @default(now())
   images          String[] @default([])
   createdAt       DateTime @default(now())
@@ -77,6 +80,10 @@ model Donation {
   isAnonymous    Boolean   @default(false)
   prayer         String?
   aminCount      Int       @default(0)
+  isPrayerHidden Boolean   @default(false)
+  isPrayerPinned Boolean   @default(false)
+  prayerReply    String?
+  prayerReplyAt  DateTime?
   status         String    @default("PENDING") // PENDING, PAID, EXPIRED, CANCELLED
   paidAt         DateTime?
   expiredAt      DateTime
@@ -252,4 +259,3 @@ model JobApplication {
   @@index([email])
   @@index([status])
 }
-

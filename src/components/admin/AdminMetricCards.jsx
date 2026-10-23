@@ -1,4 +1,5 @@
-import { formatRupiah } from "@/lib/formatters";
+/* eslint-disable @next/next/no-img-element */
+import { formatCompactRupiah, formatRupiah } from "@/lib/formatters";
 
 export function AdminMetricCards({ stats }) {
   const totalCollected = stats?.totalCollected || 0;
@@ -6,22 +7,41 @@ export function AdminMetricCards({ stats }) {
   const activeDonors = stats?.activeDonors || 0;
   const activeCampaigns = stats?.activeCampaigns || 0;
 
+  const formatDetailedRupiah = (amount) => {
+    const num = Number(amount);
+    if (isNaN(num)) return "Rp 0";
+    return `Rp ${new Intl.NumberFormat("id-ID", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(num)}`;
+  };
+
   const cards = [
     {
       label: "Total Donasi Terhimpun",
-      value: formatRupiah(totalCollected),
+      value: formatCompactRupiah(totalCollected),
+      detailValue: formatDetailedRupiah(totalCollected),
+      fullValue: formatDetailedRupiah(totalCollected),
+      radialColor: "#10B981", // Emerald (Kas Masuk)
     },
     {
       label: "Dana Telah Disalurkan",
-      value: formatRupiah(totalDisbursed),
+      value: formatCompactRupiah(totalDisbursed),
+      detailValue: formatDetailedRupiah(totalDisbursed),
+      fullValue: formatDetailedRupiah(totalDisbursed),
+      radialColor: "#0284C7", // Sky/Blue (Penyaluran)
     },
     {
       label: "Donatur Terdaftar",
-      value: `${new Intl.NumberFormat("id-ID").format(activeDonors)} Jiwa`,
+      value: `${new Intl.NumberFormat("id-ID").format(activeDonors)} Orang`,
+      fullValue: `${new Intl.NumberFormat("id-ID").format(activeDonors)} Orang`,
+      radialColor: "#D97706", // Warm Amber (Komunitas Donatur)
     },
     {
       label: "Program Donasi Aktif",
       value: `${activeCampaigns} Program`,
+      fullValue: `${activeCampaigns} Program`,
+      radialColor: "#E11D48", // Rose (Program Aktif)
     },
   ];
 
@@ -30,13 +50,61 @@ export function AdminMetricCards({ stats }) {
       {cards.map((card) => (
         <div
           key={card.label}
-          className="rounded-lg border border-slate-200/90 bg-white p-3.5 sm:p-4 shadow-2xs space-y-1"
+          title={card.fullValue}
+          className="relative w-full aspect-[363/224]"
         >
-          <span className="text-sm font-medium text-slate-600 block leading-tight">
-            {card.label}
-          </span>
-          <div className="text-lg sm:text-xl font-semibold text-slate-900 tracking-tight">
-            {card.value}
+          {/* Background Folder Frame */}
+          <img
+            src="/img/folder%20admin.svg?v=3"
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none"
+          />
+
+          {/* Radial Gradient Overlay */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none select-none opacity-7"
+            style={{
+              background: `radial-gradient(ellipse at 100% 100%, ${card.radialColor} 0%, transparent 72%)`,
+              WebkitMaskImage: 'url("/img/folder%20admin.svg?v=3")',
+              maskImage: 'url("/img/folder%20admin.svg?v=3")',
+              WebkitMaskSize: "100% 100%",
+              maskSize: "100% 100%",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+            }}
+          />
+
+          {/* Dekorasi Garis Lingkaran Tanpa Fill (Border Putih Nampak) */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none select-none overflow-hidden"
+            style={{
+              WebkitMaskImage: 'url("/img/folder%20admin.svg?v=3")',
+              maskImage: 'url("/img/folder%20admin.svg?v=3")',
+              WebkitMaskSize: "100% 100%",
+              maskSize: "100% 100%",
+              WebkitMaskRepeat: "no-repeat",
+              maskRepeat: "no-repeat",
+            }}
+          >
+            <div className="absolute right-0 bottom-0 translate-x-1/3 translate-y-1/3 w-28 h-28 sm:w-32 sm:h-32 rounded-full border-[18px] border-white bg-transparent opacity-60" />
+          </div>
+
+          {/* Konten Metrik di Dalam Folder */}
+          <div className="relative z-10 h-full flex flex-col justify-end pb-3 sm:pb-3.5 md:pb-4 px-3.5 sm:px-4 md:px-4.5 space-y-0.5">
+            <span className="text-sm font-medium text-slate-600 block leading-tight truncate">
+              {card.label}
+            </span>
+            <div className="text-lg sm:text-xl font-semibold text-slate-900 tracking-tight truncate">
+              {card.value}
+            </div>
+            {card.detailValue && (
+              <p className="text-sm text-slate-500 font-normal leading-tight truncate mt-0.5 tabular-nums">
+                {card.detailValue}
+              </p>
+            )}
           </div>
         </div>
       ))}

@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Search, RefreshCw, Eye, Download, Calendar, Clock } from "lucide-react";
-import { formatRupiah, formatDate } from "@/lib/formatters";
+import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -23,10 +23,11 @@ import {
 } from "@/components/ui/select";
 import { AdminRoutineDonationStatusBadge } from "./AdminRoutineDonationStatusBadge";
 import { AdminRoutineDonationDetailDialog } from "./AdminRoutineDonationDetailDialog";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery, maskEmail } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 const PAGE_SIZE = 10;
 
@@ -77,11 +78,13 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
   const refreshList = async () => {
     setIsLoading(true);
     try {
-      const res = await safeFetch("/api/admin/routine-donations");
+      const res = await safeFetch("/api/admin/routine-donations?limit=100");
       const data = await res.json();
       if (data.success && data.data) {
         setItems(data.data);
         toast.success("Data komitmen donasi rutin berhasil diperbarui.");
+      } else {
+        toast.error(data.message || "Gagal menyegarkan data donasi rutin.");
       }
     } catch {
       toast.error("Gagal menyegarkan data donasi rutin.");
@@ -177,16 +180,16 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Left Filters */}
         <div className="flex flex-1 flex-wrap items-center gap-2.5">
-          {/* Search Box */}
+          {/* Search Box with Left Icon */}
           <div className="relative flex-1 min-w-[200px] max-w-sm">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <Input
+              leftIcon={Search}
               type="text"
               placeholder="Cari donatur atau program..."
               value={search}
               onChange={handleSearchChange}
               onClear={handleClearSearch}
-              className="pl-9 h-10 text-sm font-normal bg-white"
+              className="h-10 text-sm font-normal bg-white"
             />
           </div>
 
@@ -218,7 +221,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ALL" className="text-sm font-normal">
-                Semua frekuensi
+                Semua 
               </SelectItem>
               <SelectItem value="DAILY" className="text-sm font-normal">
                 Harian
@@ -242,7 +245,6 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
             className="h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Segarkan</span>
           </button>
           <button
             type="button"
@@ -289,22 +291,32 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                 paginatedItems.map((item) => (
                   <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
                     {/* Donatur & Kontak */}
-                    <TableCell className="w-60 space-y-0.5 py-3 align-middle">
-                      <span className="font-medium text-sm text-slate-900 block leading-tight">
-                        {item.donorName}
-                      </span>
-                      <div className="flex flex-col text-xs text-slate-500 font-normal">
-                        {item.donorEmail && <span>{maskEmail(item.donorEmail)}</span>}
-                        {item.donorPhone && <span>{item.donorPhone}</span>}
+                    <TableCell className="w-60 py-3 align-middle">
+                      <div className="flex items-center gap-2.5">
+                        <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
+                          {item.donorAvatar && <AvatarImage src={item.donorAvatar} alt={item.donorName} />}
+                          <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
+                            {(item.donorName || "D").slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0 space-y-0.5">
+                          <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
+                            {item.donorName}
+                          </span>
+                          <div className="flex flex-col text-sm text-slate-500 font-normal truncate">
+                            {item.donorEmail && <span>{maskEmail(item.donorEmail)}</span>}
+                            {item.donorPhone && <span>{item.donorPhone}</span>}
+                          </div>
+                        </div>
                       </div>
                     </TableCell>
 
                     {/* Program Kebaikan */}
                     <TableCell className="text-sm text-slate-800 py-3 align-middle">
                       <span className="font-medium block leading-snug">
-                        {item.programTitle}
+                        {decodeHtmlEntities(item.programTitle)}
                       </span>
-                      <span className="text-xs text-slate-500 font-normal block mt-0.5">
+                      <span className="text-sm text-slate-500 font-normal block mt-0.5">
                         Didaftarkan {formatDate(item.createdAt)}
                       </span>
                     </TableCell>
@@ -320,20 +332,20 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                         <span className="font-normal block leading-tight">
                           {getFrequencyText(item)}
                         </span>
-                        <span className="text-xs text-slate-500 font-normal block">
+                        <span className="text-sm text-slate-500 font-normal block">
                           Pukul {item.reminderTime} WIB
                         </span>
                       </div>
                     </TableCell>
 
                     {/* Tipe Komitmen */}
-                    <TableCell className="w-36 text-xs text-slate-600 py-3 align-middle whitespace-nowrap font-normal">
+                    <TableCell className="w-36 text-sm text-slate-600 py-3 align-middle whitespace-nowrap font-normal">
                       {item.routineType === "AUTO_DONATION" ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200/60">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/60">
                           Auto debet
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200/60">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-800 border border-blue-200/60">
                           Pengingat
                         </span>
                       )}

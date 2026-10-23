@@ -25,17 +25,24 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  // 3. Guard Admin Portal Pages (/admin and /admin/*)
+  // 3. Guard Admin Panel Pages (/admin and /admin/*) - Stealth Masking 404
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    if (!session) {
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(loginUrl);
+    const role = request.cookies.get("pabe_role")?.value || request.cookies.get("ygsm_role")?.value;
+    const isStaff = Boolean(session && role && role !== "DONOR");
+
+    // Jika belum login atau bukan staf yayasan: sembunyikan rute admin dengan mengembalikan 404
+    if (!isStaff) {
+      const notFoundUrl = new URL("/_not-found", request.url);
+      const stealthResponse = NextResponse.rewrite(notFoundUrl, { status: 404 });
+      stealthResponse.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+      stealthResponse.headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate");
+      stealthResponse.headers.set("X-Frame-Options", "DENY");
+      stealthResponse.headers.set("X-Content-Type-Options", "nosniff");
+      return stealthResponse;
     }
 
     // Khusus rute manajemen pengurus: hanya SUPER_ADMIN yang diizinkan
     if (pathname === "/admin/pengguna" || pathname.startsWith("/admin/pengguna/")) {
-      const role = request.cookies.get("pabe_role")?.value || request.cookies.get("ygsm_role")?.value;
       if (role !== "SUPER_ADMIN") {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
@@ -74,8 +81,28 @@ export function middleware(request) {
   }
 
   // 5. Guard Sensitive Internal API Endpoints (/api/admin/*, /api/user/*, /api/dashboard/*)
+  if (pathname.startsWith("/api/admin")) {
+    const role = request.cookies.get("pabe_role")?.value || request.cookies.get("ygsm_role")?.value;
+    const isStaff = Boolean(session && role && role !== "DONOR");
+
+    // Kembalikan 404 palsu untuk API admin agar bot scanner tidak mendeteksi endpoint admin
+    if (!isStaff) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Sumber daya tidak ditemukan.",
+        },
+        { status: 404 }
+      );
+    }
+
+    const response = NextResponse.next();
+    response.headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate");
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    return response;
+  }
+
   if (
-    pathname.startsWith("/api/admin") ||
     pathname.startsWith("/api/user") ||
     pathname.startsWith("/api/dashboard")
   ) {

@@ -21,12 +21,13 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { AdminTransactionDetailModal } from "@/components/admin/transactions/AdminTransactionDetailModal";
 import { AdminTransactionVerifyDialog } from "@/components/admin/transactions/AdminTransactionVerifyDialog";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery, maskEmail } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import { copyToClipboard } from "@/lib/clipboard";
 
 const PAGE_SIZE = 10;
@@ -103,11 +104,13 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   const refreshList = async () => {
     setIsLoading(true);
     try {
-      const res = await safeFetch("/api/admin/transactions");
+      const res = await safeFetch("/api/admin/transactions?limit=100");
       const data = await res.json();
       if (data.success && data.data) {
         setTransactions(data.data);
         toast.success("Data transaksi berhasil diperbarui.");
+      } else {
+        toast.error(data.message || "Gagal menyegarkan data transaksi.");
       }
     } catch {
       toast.error("Gagal menyegarkan data transaksi.");
@@ -251,7 +254,6 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
             className="h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Segarkan</span>
           </button>
         </div>
       </div>
@@ -283,7 +285,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                 <TableHead className="w-px text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Status
                 </TableHead>
-                <TableHead className="w-32 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-24 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Aksi
                 </TableHead>
               </TableRow>
@@ -318,15 +320,25 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                     </TableCell>
 
                     {/* Donatur */}
-                    <TableCell className="w-px space-y-0.5 py-3 whitespace-nowrap align-middle">
-                      <span className="font-medium text-sm text-slate-900 block leading-tight">
-                        {item.donorName}
-                      </span>
-                      {item.donorEmail && (
-                        <span className="text-xs text-slate-500 block truncate">
-                          {maskEmail(item.donorEmail)}
-                        </span>
-                      )}
+                    <TableCell className="w-px py-3 whitespace-nowrap align-middle">
+                      <div className="flex items-center gap-2.5">
+                        <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
+                          {item.donorAvatar && <AvatarImage src={item.donorAvatar} alt={item.donorName} />}
+                          <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
+                            {item.isAnonymous ? "HA" : (item.donorName || "D").slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0 space-y-0.5">
+                          <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
+                            {item.donorName}
+                          </span>
+                          {item.donorEmail && (
+                            <span className="text-sm text-slate-500 block truncate font-normal">
+                              {maskEmail(item.donorEmail)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </TableCell>
 
                     {/* Program */}
@@ -367,27 +379,27 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                     </TableCell>
 
                     {/* Aksi: Verifikasi + Rincian */}
-                    <TableCell className="w-32 text-right py-3 whitespace-nowrap align-middle">
-                      <div className="flex items-center justify-end gap-1.5">
+                    <TableCell className="w-24 text-right py-3 whitespace-nowrap align-middle">
+                      <div className="flex items-center justify-end gap-1">
                         {item.status === "PENDING" && (
                           <button
                             type="button"
                             onClick={() => setVerifyingTx(item)}
                             title="Verifikasi manual donasi"
-                            className="h-8 px-2 rounded-md text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition-colors flex items-center gap-1 cursor-pointer"
+                            aria-label={`Verifikasi donasi: ${item.invoiceId}`}
+                            className="p-1.5 rounded-md text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
                           >
-                            <ShieldCheck className="w-3.5 h-3.5" />
-                            <span>Verifikasi</span>
+                            <ShieldCheck className="w-4 h-4" />
                           </button>
                         )}
                         <button
                           type="button"
                           onClick={() => setSelectedDetail(item)}
                           title="Lihat rincian donasi"
-                          className="h-8 px-2 rounded-md text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition-colors flex items-center gap-1 cursor-pointer"
+                          aria-label={`Lihat rincian: ${item.invoiceId}`}
+                          className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
                         >
-                          <Eye className="w-3.5 h-3.5 text-slate-500" />
-                          <span>Rincian</span>
+                          <Eye className="w-4 h-4" />
                         </button>
                       </div>
                     </TableCell>

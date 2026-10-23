@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 export function AdminDistributionModal({
   isOpen,

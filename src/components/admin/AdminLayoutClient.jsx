@@ -6,12 +6,27 @@ import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
 import { AdminTopHeader } from "@/components/admin/AdminTopHeader";
 import { USER_ROLES } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
+import { toast } from "@/hooks/use-toast";
 
 export function AdminLayoutClient({ children, initialUser }) {
   const router = useRouter();
   const pathname = usePathname();
   const [currentUser, setCurrentUser] = useState(initialUser || null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Tampilkan toast notifikasi sambutan setelah login berhasil
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const justLoggedIn =
+        sessionStorage.getItem("ygsm_just_logged_in") ||
+        sessionStorage.getItem("pabe_just_logged_in");
+      if (justLoggedIn) {
+        sessionStorage.removeItem("ygsm_just_logged_in");
+        sessionStorage.removeItem("pabe_just_logged_in");
+        toast.success(`Selamat datang kembali, ${justLoggedIn}! Sesi pengurus berhasil diaktifkan.`);
+      }
+    }
+  }, []);
 
   // Tutup drawer saat navigasi rute berubah
   useEffect(() => {

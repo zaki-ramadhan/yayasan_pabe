@@ -12,7 +12,7 @@ import {
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { maskEmail } from "@/lib/security";
 import { copyToClipboard } from "@/lib/clipboard";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 export function AdminTransactionDetailModal({
   isOpen,
@@ -101,52 +101,52 @@ export function AdminTransactionDetailModal({
           {/* Program & Metode */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="p-3 border border-slate-200 rounded-lg space-y-1">
-              <span className="text-xs text-slate-500 block font-normal">Program tujuan:</span>
+              <span className="text-sm text-slate-500 block font-normal">Program tujuan:</span>
               <span className="font-medium text-slate-900 line-clamp-2 leading-snug">
                 {transaction.campaignTitle || transaction.campaign?.title || "Donasi Umum Yayasan"}
               </span>
             </div>
 
             <div className="p-3 border border-slate-200 rounded-lg space-y-1">
-              <span className="text-xs text-slate-500 block font-normal">Metode pembayaran:</span>
+              <span className="text-sm text-slate-500 block font-normal">Metode pembayaran:</span>
               <span className="font-medium text-slate-900 block uppercase">
                 {transaction.paymentChannel}
               </span>
               {transaction.paymentRef && (
-                <span className="text-xs text-slate-500 block">Ref: {transaction.paymentRef}</span>
+                <span className="text-sm text-slate-500 block">Ref: {transaction.paymentRef}</span>
               )}
             </div>
           </div>
 
           {/* Data Donatur */}
           <div className="p-3.5 border border-slate-200 rounded-lg space-y-2">
-            <span className="text-xs text-slate-500 block font-medium uppercase tracking-wider">
+            <span className="text-sm text-slate-700 block font-medium">
               Identitas donatur
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
               <div>
-                <span className="text-xs text-slate-500 block">Nama donatur:</span>
+                <span className="text-sm text-slate-500 block font-normal">Nama donatur:</span>
                 <span className="font-medium text-slate-900">
                   {transaction.donorName}
                   {transaction.isAnonymous && (
-                    <span className="ml-1.5 text-xs text-slate-500 font-normal">(Anonim)</span>
+                    <span className="ml-1.5 text-sm text-slate-500 font-normal">(Anonim)</span>
                   )}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 block">Email:</span>
+                <span className="text-sm text-slate-500 block font-normal">Email:</span>
                 <span className="font-medium text-slate-900">
                   {transaction.donorEmail ? maskEmail(transaction.donorEmail) : "-"}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 block">Nomor telepon:</span>
+                <span className="text-sm text-slate-500 block font-normal">Nomor telepon:</span>
                 <span className="font-medium text-slate-900">
                   {transaction.donorPhone || "-"}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 block">Waktu donasi:</span>
+                <span className="text-sm text-slate-500 block font-normal">Waktu donasi:</span>
                 <span className="font-medium text-slate-900">
                   {formatDate(transaction.createdAt, { withDay: true, withTime: true })}
                 </span>
@@ -159,7 +159,7 @@ export function AdminTransactionDetailModal({
             <div className="p-3.5 bg-amber-50/60 border border-amber-200 rounded-lg space-y-1">
               <div className="flex items-center gap-1.5 text-amber-800">
                 <Heart className="w-3.5 h-3.5" />
-                <span className="text-xs font-medium">Doa &amp; pesan dari donatur:</span>
+                <span className="text-sm font-medium">Doa &amp; pesan dari donatur:</span>
               </div>
               <p className="text-sm text-slate-800 italic leading-relaxed">
                 &ldquo;{transaction.prayer}&rdquo;

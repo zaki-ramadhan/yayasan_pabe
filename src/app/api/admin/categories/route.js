@@ -1,63 +1,111 @@
 import { NextResponse } from "next/server";
+import {
+  getAdminCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from "@/services/categoryService";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
-import { createAdminCategory } from "@/services/adminService";
-import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+const ADMIN_ROLES = [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN];
 
 export async function GET(request) {
-  const { errorResponse } = await requireAuth(request, [
-    USER_ROLES.SUPER_ADMIN,
-    USER_ROLES.ADMIN,
-    USER_ROLES.FINANCE,
-  ]);
+  const { errorResponse } = await requireAuth(request, ADMIN_ROLES);
   if (errorResponse) return errorResponse;
 
   try {
-    const categories = await prisma.category.findMany({
-      select: { id: true, name: true, slug: true },
-      orderBy: { name: "asc" },
-    });
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get("search") || "";
+    const categories = await getAdminCategories({ search });
     return NextResponse.json({ success: true, data: categories });
   } catch (error) {
-    console.warn("Prisma getCategories fallback:", error.message);
-    return NextResponse.json({
-      success: true,
-      data: [
-        { id: "cat-1", name: "Pendidikan & Santri", slug: "pendidikan" },
-        { id: "cat-2", name: "Kesehatan Dhuafa", slug: "kesehatan" },
-        { id: "cat-3", name: "Pemberdayaan Ekonomi", slug: "ekonomi" },
-        { id: "cat-4", name: "Tanggap Bencana", slug: "bencana" },
-      ],
-    });
+    console.error("GET /api/admin/categories error:", error);
+    return NextResponse.json({ success: false, message: "Gagal memuat kategori." }, { status: 500 });
   }
 }
 
 export async function POST(request) {
-  const { errorResponse } = await requireAuth(request, [
-    USER_ROLES.SUPER_ADMIN,
-    USER_ROLES.ADMIN,
-  ]);
+  const { user, errorResponse } = await requireAuth(request, ADMIN_ROLES);
   if (errorResponse) return errorResponse;
 
   try {
     const body = await request.json();
-    if (!body.name || !body.name.trim()) {
-      return NextResponse.json(
-        { success: false, message: "Nama kategori wajib diisi." },
-        { status: 400 }
-      );
-    }
+    const category = await createCategory({
+      ...body,
+      actorId: user.id,
+      actorName: user.name || "Admin",
+      actorRole: user.role || "ADMIN",
+    });
 
-    const category = await createAdminCategory(body.name);
     return NextResponse.json({
       success: true,
-      message: "Kategori baru berhasil dibuat.",
+      message: "Kategori baru berhasil ditambahkan.",
       data: category,
     });
   } catch (error) {
     return NextResponse.json(
-      { success: false, message: error.message || "Gagal membuat kategori baru." },
-      { status: 500 }
+      { success: false, message: error.message || "Gagal menambahkan kategori." },
+      { status: 400 }
+    );
+  }
+}
+
+export async function PUT(request) {
+  const { user, errorResponse } = await requireAuth(request, ADMIN_ROLES);
+  if (errorResponse) return errorResponse;
+
+  try {
+    const body = await request.json();
+    const category = await updateCategory({
+      ...body,
+      actorId: user.id,
+      actorName: user.name || "Admin",
+      actorRole: user.role || "ADMIN",
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Kategori berhasil diperbarui.",
+      data: category,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message || "Gagal memperbarui kategori." },
+      { status: 400 }
+    );
+  }
+}
+
+export async function DELETE(request) {
+  const { user, errorResponse } = await requireAuth(request, ADMIN_ROLES);
+  if (errorResponse) return errorResponse;
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return NextResponse.json({ success: false, message: "ID kategori wajib diisi." }, { status: 400 });
+    }
+
+    const deleted = await deleteCategory({
+      id,
+      actorId: user.id,
+      actorName: user.name || "Admin",
+      actorRole: user.role || "ADMIN",
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Kategori berhasil dihapus.",
+      data: deleted,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message || "Gagal menghapus kategori." },
+      { status: 400 }
     );
   }
 }

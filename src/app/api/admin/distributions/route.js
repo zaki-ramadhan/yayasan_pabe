@@ -6,6 +6,8 @@ import {
   createAdminDistribution,
 } from "@/services/adminService";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request) {
   const { errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,

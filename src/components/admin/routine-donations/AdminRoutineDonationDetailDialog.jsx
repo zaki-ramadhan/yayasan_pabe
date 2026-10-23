@@ -16,7 +16,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { AdminRoutineDonationStatusBadge } from "./AdminRoutineDonationStatusBadge";
-import { formatRupiah, formatDate } from "@/lib/formatters";
+import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail } from "@/lib/security";
 import { Mail, Phone, Calendar, Clock, HeartHandshake, User, ArrowUpRight } from "lucide-react";
 
@@ -65,13 +65,13 @@ export function AdminRoutineDonationDetailDialog({
           {/* Program & Nominal */}
           <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
             <div>
-              <span className="text-xs text-slate-500 font-normal block">Program donasi</span>
+              <span className="text-sm text-slate-500 font-normal block">Program donasi</span>
               <span className="font-medium text-slate-900 block mt-0.5 leading-snug">
-                {donation.programTitle}
+                {decodeHtmlEntities(donation.programTitle)}
               </span>
             </div>
             <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-normal">Nominal komitmen</span>
+              <span className="text-sm text-slate-500 font-normal">Nominal komitmen</span>
               <span className="font-medium text-emerald-700 text-sm">
                 {formatRupiah(donation.amount)}
               </span>
@@ -80,7 +80,7 @@ export function AdminRoutineDonationDetailDialog({
 
           {/* Profil Donatur */}
           <div className="space-y-2 rounded-lg border border-slate-100 p-3">
-            <h4 className="text-xs font-medium text-slate-700 uppercase tracking-wider">
+            <h4 className="text-sm font-medium text-slate-700">
               Profil donatur
             </h4>
             <div className="space-y-1.5 font-normal">
@@ -88,7 +88,7 @@ export function AdminRoutineDonationDetailDialog({
                 <User className="w-4 h-4 text-slate-400 shrink-0" />
                 <span className="font-medium">{donation.donorName}</span>
                 {donation.isAnonymous && (
-                  <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-normal">
+                  <span className="text-sm px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-normal">
                     Anonim publik
                   </span>
                 )}
@@ -111,7 +111,7 @@ export function AdminRoutineDonationDetailDialog({
                     href={waUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-emerald-700 hover:text-emerald-800 font-medium"
+                    className="inline-flex items-center gap-1 text-sm text-emerald-700 hover:text-emerald-800 font-medium"
                   >
                     <span>Hubungi WA</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -123,10 +123,10 @@ export function AdminRoutineDonationDetailDialog({
 
           {/* Jadwal & Frekuensi */}
           <div className="space-y-2 rounded-lg border border-slate-100 p-3">
-            <h4 className="text-xs font-medium text-slate-700 uppercase tracking-wider">
-              Jadwal & frekuensi
+            <h4 className="text-sm font-medium text-slate-700">
+              Jadwal &amp; frekuensi
             </h4>
-            <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="space-y-0.5">
                 <span className="text-slate-500 font-normal flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-slate-400" />
@@ -148,7 +148,7 @@ export function AdminRoutineDonationDetailDialog({
             </div>
 
             <div className="pt-2 border-t border-slate-100 space-y-0.5">
-              <span className="text-xs text-slate-500 font-normal flex items-center gap-1">
+              <span className="text-sm text-slate-500 font-normal flex items-center gap-1">
                 <HeartHandshake className="w-3.5 h-3.5 text-slate-400" />
                 <span>Metode komitmen</span>
               </span>
@@ -160,7 +160,7 @@ export function AdminRoutineDonationDetailDialog({
 
           {/* Ubah Status */}
           <div className="space-y-1.5 pt-1">
-            <label className="text-xs font-medium text-slate-700">
+            <label className="text-sm font-medium text-slate-700">
               Ubah status komitmen
             </label>
             <Select

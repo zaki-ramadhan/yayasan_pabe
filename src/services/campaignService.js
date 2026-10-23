@@ -247,6 +247,10 @@ export async function getCampaignDonationsPaginated({ campaignSlug, skip = 0, li
           paidAt: true,
           createdAt: true,
           prayer: true,
+          isPrayerHidden: true,
+          isPrayerPinned: true,
+          prayerReply: true,
+          prayerReplyAt: true,
         },
       }),
       prisma.donation.count({
@@ -272,7 +276,10 @@ export async function getCampaignDonationsPaginated({ campaignSlug, skip = 0, li
         date: d.paidAt
           ? (d.paidAt instanceof Date ? d.paidAt.toISOString() : d.paidAt)
           : (d.createdAt instanceof Date ? d.createdAt.toISOString() : d.createdAt),
-        prayer: d.prayer || "",
+        prayer: d.isPrayerHidden ? "" : (d.prayer || ""),
+        isPrayerPinned: Boolean(d.isPrayerPinned),
+        prayerReply: d.isPrayerHidden ? null : (d.prayerReply || null),
+        prayerReplyAt: d.prayerReplyAt ? (d.prayerReplyAt instanceof Date ? d.prayerReplyAt.toISOString() : d.prayerReplyAt) : null,
         aminCount: 0,
         isAnonymous: isAnon,
       };

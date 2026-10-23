@@ -80,7 +80,7 @@ export function AdminCareerSkeleton() {
 
                   {/* Deadline */}
                   <TableCell className="w-36 py-3 align-middle">
-                    <Skeleton className="h-3.5 w-24 rounded" />
+                    <Skeleton className="h-4 w-24 rounded" />
                   </TableCell>
 
                   {/* Applicants */}

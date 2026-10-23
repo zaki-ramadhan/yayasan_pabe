@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Search, Plus, RefreshCw } from "lucide-react";
 import {
@@ -26,8 +26,9 @@ import { AdminUserResetDialog } from "./AdminUserResetDialog";
 import { AdminUserConfirmDialog } from "./AdminUserConfirmDialog";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { formatPhoneNumber, MANAGEABLE_ROLES } from "@/lib/userParser";
+import { useDebounce } from "@/hooks/useDebounce";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 export function AdminUserTable({ initialData = { items: [], pagination: {} } }) {
   const { currentUser } = useCurrentUser();
@@ -54,7 +55,16 @@ export function AdminUserTable({ initialData = { items: [], pagination: {} } }) 
     targetUser: null,
   });
 
-  const fetchUsers = async ({ newSearch = search, newRole = roleFilter, newStatus = statusFilter, newPage = 1 } = {}) => {
+  const debouncedSearch = useDebounce(search.trim(), 350);
+  const isInitialMount = useRef(true);
+
+  const fetchUsers = async ({
+    newSearch = debouncedSearch,
+    newRole = roleFilter,
+    newStatus = statusFilter,
+    newPage = 1,
+    isRefresh = false,
+  } = {}) => {
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
@@ -71,6 +81,9 @@ export function AdminUserTable({ initialData = { items: [], pagination: {} } }) 
       if (json.success && json.data) {
         setUsers(json.data.items || []);
         setPagination(json.data.pagination || { page: 1, total: 0, totalPages: 1 });
+        if (isRefresh) {
+          toast.success("Data pengurus berhasil diperbarui.");
+        }
       } else {
         toast.error(json.message || "Gagal memuat data pengurus.");
       }
@@ -81,9 +94,18 @@ export function AdminUserTable({ initialData = { items: [], pagination: {} } }) 
     }
   };
 
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    fetchUsers({ newSearch: debouncedSearch, newPage: 1 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch]);
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    fetchUsers({ newSearch: search, newPage: 1 });
+    fetchUsers({ newSearch: debouncedSearch, newPage: 1 });
   };
 
   const handleRoleChange = (val) => {
@@ -283,12 +305,11 @@ export function AdminUserTable({ initialData = { items: [], pagination: {} } }) 
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
-            onClick={() => fetchUsers()}
+            onClick={() => fetchUsers({ newPage: pagination.page, isRefresh: true })}
             disabled={isLoading}
             className="h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Segarkan</span>
           </button>
           <button
             type="button"
@@ -421,11 +442,13 @@ export function AdminUserTable({ initialData = { items: [], pagination: {} } }) 
           </Table>
         </div>
 
-        {/* Footer info & pagination */}
-        <div className="px-4 py-2.5 bg-slate-50/50 border-t border-slate-200/90 flex items-center justify-between text-xs text-slate-500 font-normal">
-          <span>Total pengurus terdaftar: {pagination.total || users.length} orang</span>
-          <span>Halaman {pagination.page} dari {pagination.totalPages || 1}</span>
-        </div>
+        {/* Footer info & pagination (hanya jika data memicu 2 halaman atau lebih) */}
+        {(pagination?.totalPages || 1) > 1 && (
+          <div className="px-4 py-2.5 bg-slate-50/50 border-t border-slate-200/90 flex items-center justify-between text-xs text-slate-500 font-normal">
+            <span>Total pengurus terdaftar: {pagination.total || users.length} orang</span>
+            <span>Halaman {pagination.page} dari {pagination.totalPages || 1}</span>
+          </div>
+        )}
       </div>
 
       {/* Dialog Modals */}

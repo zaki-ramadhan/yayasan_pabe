@@ -110,7 +110,7 @@ export function AdminDashboardView({ userRole, stats }) {
                     <TableCell className="font-normal text-slate-600 whitespace-nowrap align-middle">{formatDate(tx.date, { withTime: true })}</TableCell>
                     <TableCell className="text-center align-middle">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                           tx.status === "PAID"
                             ? "bg-emerald-50 text-emerald-700"
                             : "bg-amber-50 text-amber-800"

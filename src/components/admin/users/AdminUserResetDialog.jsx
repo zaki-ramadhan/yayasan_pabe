@@ -11,7 +11,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { copyToClipboard } from "@/lib/clipboard";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 export function AdminUserResetDialog({
   isOpen,

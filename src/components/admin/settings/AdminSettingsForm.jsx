@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, Landmark, Phone, ShieldCheck, Plus, Trash2, Save, RefreshCw } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 export function AdminSettingsForm({ initialSettings }) {
   const [formData, setFormData] = useState(initialSettings || {});
@@ -78,22 +79,16 @@ export function AdminSettingsForm({ initialSettings }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-3">
       {/* 1. Identitas Yayasan */}
-      <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-4">
-        <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-          <Building2 className="w-5 h-5 text-emerald-700" />
-          <div>
-            <h2 className="text-base font-medium text-slate-900 leading-tight">
-              Identitas &amp; profil yayasan
-            </h2>
-            <p className="text-sm text-slate-500 font-normal">
-              Informasi dasar nama yayasan, sebutan singkat, dan visi utama.
-            </p>
-          </div>
+      <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-3">
+        <div className="pb-2.5 border-b border-slate-100">
+          <h2 className="text-base font-medium text-slate-900 leading-tight">
+            Identitas &amp; profil yayasan
+          </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-normal">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm font-normal">
           <div className="space-y-1 sm:col-span-2">
             <label className="text-xs font-medium text-slate-700">Nama resmi yayasan</label>
             <Input
@@ -128,32 +123,26 @@ export function AdminSettingsForm({ initialSettings }) {
 
           <div className="space-y-1 sm:col-span-2">
             <label className="text-xs font-medium text-slate-700">Visi lembaga</label>
-            <textarea
+            <Textarea
               rows={2}
               value={formData.vision || ""}
               onChange={(e) => handleFieldChange(null, "vision", e.target.value)}
               placeholder="Visi jangka panjang yayasan"
-              className="w-full rounded-md border border-slate-300 p-2.5 text-sm font-normal text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-emerald-700/20 focus:border-emerald-700"
+              className="w-full text-sm font-normal border-slate-300"
             />
           </div>
         </div>
       </div>
 
       {/* 2. Legalitas & Perizinan */}
-      <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-4">
-        <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-          <ShieldCheck className="w-5 h-5 text-emerald-700" />
-          <div>
-            <h2 className="text-base font-medium text-slate-900 leading-tight">
-              Legalitas &amp; perizinan resmi
-            </h2>
-            <p className="text-sm text-slate-500 font-normal">
-              Nomor SK Kemenkumham, NPWP lembaga, dan rekomendasi dinas sosial.
-            </p>
-          </div>
+      <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-3">
+        <div className="pb-2.5 border-b border-slate-100">
+          <h2 className="text-base font-medium text-slate-900 leading-tight">
+            Legalitas &amp; perizinan resmi
+          </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm font-normal">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-sm font-normal">
           <div className="space-y-1">
             <label className="text-xs font-medium text-slate-700">SK Kemenkumham RI</label>
             <Input
@@ -187,20 +176,14 @@ export function AdminSettingsForm({ initialSettings }) {
       </div>
 
       {/* 3. Kontak & Kantor */}
-      <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-4">
-        <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-          <Phone className="w-5 h-5 text-emerald-700" />
-          <div>
-            <h2 className="text-base font-medium text-slate-900 leading-tight">
-              Kontak layanan &amp; alamat kantor
-            </h2>
-            <p className="text-sm text-slate-500 font-normal">
-              Informasi alamat operasional, telepon, WhatsApp, dan jam pelayanan.
-            </p>
-          </div>
+      <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-3">
+        <div className="pb-2.5 border-b border-slate-100">
+          <h2 className="text-base font-medium text-slate-900 leading-tight">
+            Kontak layanan &amp; alamat kantor
+          </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-normal">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm font-normal">
           <div className="space-y-1 sm:col-span-2">
             <label className="text-xs font-medium text-slate-700">Alamat lengkap kantor</label>
             <Input
@@ -255,25 +238,17 @@ export function AdminSettingsForm({ initialSettings }) {
       </div>
 
       {/* 4. Rekening Bank Resmi */}
-      <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <Landmark className="w-5 h-5 text-emerald-700" />
-            <div>
-              <h2 className="text-base font-medium text-slate-900 leading-tight">
-                Rekening bank resmi yayasan
-              </h2>
-              <p className="text-sm text-slate-500 font-normal">
-                Daftar nomor rekening resmi untuk transaksi donasi dan infaq manual.
-              </p>
-            </div>
-          </div>
+      <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+          <h2 className="text-base font-medium text-slate-900 leading-tight">
+            Rekening bank resmi yayasan
+          </h2>
           <button
             type="button"
             onClick={handleAddBankAccount}
             className="h-9 px-3 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 self-start sm:self-auto"
           >
-            <Plus className="w-4 h-4 text-emerald-700" />
+            <Plus className="w-4 h-4 text-slate-700" />
             <span>Tambah rekening</span>
           </button>
         </div>
@@ -353,13 +328,8 @@ export function AdminSettingsForm({ initialSettings }) {
         <button
           type="submit"
           disabled={isSaving}
-          className="h-10 px-5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
+          className="h-10 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer shadow-2xs disabled:opacity-50"
         >
-          {isSaving ? (
-            <RefreshCw className="w-4 h-4 animate-spin" />
-          ) : (
-            <Save className="w-4 h-4" />
-          )}
           <span>{isSaving ? "Menyimpan perubahan..." : "Simpan semua pengaturan"}</span>
         </button>
       </div>

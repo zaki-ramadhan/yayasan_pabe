@@ -38,13 +38,14 @@ export async function DELETE(request, { params }) {
 
   try {
     await deleteAdminUser(id, authUser);
+
     return NextResponse.json({
       success: true,
-      message: "Akun pengurus berhasil dihapus.",
+      message: "Pengurus berhasil dihapus.",
     });
   } catch (error) {
     return NextResponse.json(
-      { success: false, message: error.message || "Gagal menghapus akun pengurus." },
+      { success: false, message: error.message || "Gagal menghapus pengurus." },
       { status: 400 }
     );
   }

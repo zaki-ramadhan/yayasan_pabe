@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 
 const DEFAULT_FAQ_CATEGORIES = ["Umum", "Donasi", "Penyaluran", "Legalitas", "Zakat"];
 
@@ -150,7 +150,7 @@ export function AdminFaqModal({
               <button
                 type="button"
                 onClick={handleToggleCustomMode}
-                className="text-xs font-medium text-primary hover:underline cursor-pointer"
+                className="text-sm font-medium text-primary hover:underline cursor-pointer"
               >
                 {isCustomMode ? "Pilih dari daftar topik" : "+ Tambah topik baru"}
               </button>

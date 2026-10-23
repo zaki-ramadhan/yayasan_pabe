@@ -118,13 +118,16 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
   const refreshList = async () => {
     setIsLoading(true);
     try {
-      const res = await safeFetch("/api/admin/articles");
+      const res = await safeFetch("/api/admin/articles?limit=100");
       const data = await res.json();
       if (data.success && data.data) {
         setArticles(data.data);
+        toast.success("Data artikel berhasil diperbarui.");
+      } else {
+        toast.error(data.message || "Gagal menyegarkan data artikel.");
       }
     } catch {
-      // silent
+      toast.error("Gagal menyegarkan data artikel.");
     } finally {
       setIsLoading(false);
     }
@@ -164,7 +167,6 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
             className="h-10 px-3 rounded-lg text-sm font-medium text-slate-700 border-slate-300 bg-white hover:bg-slate-50 flex items-center gap-1.5 cursor-pointer"
           >
             <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Segarkan</span>
           </Button>
 
           <Button
@@ -219,7 +221,7 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
 
                     <TableCell className="py-2.5 align-middle">
                       <div className="space-y-0.5">
-                        <span className="text-sm font-semibold text-slate-900 block line-clamp-1">
+                        <span className="text-sm font-medium text-slate-900 block line-clamp-1">
                           {article.title}
                         </span>
                         <div className="flex items-center gap-1 text-sm text-slate-500">

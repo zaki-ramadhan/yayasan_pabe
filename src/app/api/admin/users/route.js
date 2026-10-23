@@ -3,8 +3,10 @@ import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import { getAdminUsers, createAdminUser } from "@/services/adminUserService";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request) {
-  const { user: authUser, errorResponse } = await requireAuth(request, [
+  const { errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
   ]);
   if (errorResponse) return errorResponse;
@@ -28,7 +30,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const { user: authUser, errorResponse } = await requireAuth(request, [
+  const { errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
   ]);
   if (errorResponse) return errorResponse;

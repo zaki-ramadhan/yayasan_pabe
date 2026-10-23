@@ -49,7 +49,7 @@ export function AdminFaqSkeleton() {
                   <TableCell className="py-3 px-4">
                     <div className="space-y-1">
                       <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-4 w-full" />
                     </div>
                   </TableCell>
                   <TableCell className="w-36 py-3 px-4">

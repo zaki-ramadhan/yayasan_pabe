@@ -16,6 +16,8 @@ export function sanitizeInput(input) {
   if (typeof input !== "string") return "";
   const noEmoji = stripEmojis(input);
   return noEmoji
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
     .replace(/<[^>]*>?/gm, "")
     .replace(/[&<>"']/g, (match) => {
       const escapeMap = {
@@ -37,6 +39,8 @@ export function sanitizeInput(input) {
 export function sanitizeName(input) {
   if (typeof input !== "string") return "";
   return stripEmojis(input)
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
     .replace(/<[^>]*>?/gm, "")
     .replace(/[^a-zA-ZÀ-ÿ\s.,'\-]/g, "")
     .replace(/^\s+/, "")
@@ -51,6 +55,8 @@ export function sanitizeName(input) {
 export function sanitizeCity(input) {
   if (typeof input !== "string") return "";
   return stripEmojis(input)
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
     .replace(/<[^>]*>?/gm, "")
     .replace(/[^a-zA-ZÀ-ÿ\s.\-]/g, "")
     .replace(/^\s+/, "")

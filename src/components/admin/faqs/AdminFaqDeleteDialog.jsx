@@ -38,14 +38,14 @@ export function AdminFaqDeleteDialog({
 
         {faq && (
           <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 space-y-1 my-1">
-            <span className="text-xs font-medium text-slate-500 block">Pertanyaan:</span>
+            <span className="text-sm font-medium text-slate-500 block">Pertanyaan:</span>
             <p className="font-medium text-slate-900 leading-snug">
               {faq.question}
             </p>
           </div>
         )}
 
-        <p className="text-xs text-slate-500 leading-relaxed">
+        <p className="text-sm text-slate-500 leading-relaxed">
           Tindakan ini permanen dan akan menghapus data tanya-jawab terkait dari database.
         </p>
 

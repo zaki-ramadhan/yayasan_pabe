@@ -6,6 +6,8 @@ import {
   updateOrgSettings,
 } from "@/services/adminSettingsService";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request) {
   const { errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
