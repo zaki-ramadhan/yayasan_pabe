@@ -1,5 +1,6 @@
 import { getAdminDistributions } from "@/services/adminService";
 import { AdminDistributionTable } from "@/components/admin/distribution/AdminDistributionTable";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export const metadata = {
   title: "Rekam Penyaluran Donasi",
@@ -11,14 +12,10 @@ export default async function AdminDistributionPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
-          Rekam Penyaluran Donasi ke Mustahik
-        </h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          Catat alokasi pengeluaran dana amanah, dokumentasi kegiatan di lapangan, dan laporan pertanggungjawaban donatur.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Rekam Penyaluran Donasi ke Mustahik"
+        description="Catat penyaluran dana program dan bukti kegiatan lapangan."
+      />
 
       <AdminDistributionTable
         initialDistributions={items}

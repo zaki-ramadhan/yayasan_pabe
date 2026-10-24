@@ -1,5 +1,6 @@
 import { getAdminAuditReports } from "@/services/auditReportAdminService";
 import { AdminAuditReportTable } from "@/components/admin/audit-reports/AdminAuditReportTable";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export const metadata = {
   title: "Laporan Audit Keuangan",
@@ -11,14 +12,10 @@ export default async function AdminAuditReportPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
-          Laporan audit keuangan independen
-        </h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          Kelola publikasi transparansi tahunan dari kantor akuntan publik independen dengan opini wajar tanpa pengecualian (WTP) untuk publik donatur.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Laporan audit keuangan independen"
+        description="Kelola berkas dan publikasi laporan audit keuangan."
+      />
 
       <AdminAuditReportTable initialReports={reports} />
     </div>

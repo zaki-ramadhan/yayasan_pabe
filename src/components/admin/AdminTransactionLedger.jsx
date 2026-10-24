@@ -10,6 +10,7 @@ import { FinancialMetricCard } from "@/components/reports/FinancialMetricCard";
 import { FinancialTransactionRow } from "@/components/reports/FinancialTransactionRow";
 import {
   Table,
+  TableContainer,
   TableHeader,
   TableBody,
   TableRow,
@@ -197,7 +198,7 @@ export function AdminTransactionLedger({
         </div>
 
         {/* Transactions Table */}
-        <div className="rounded-lg border border-slate-200/90 bg-white overflow-hidden shadow-2xs">
+        <TableContainer>
           <Table>
             <TableHeader>
               <TableRow>
@@ -264,7 +265,7 @@ export function AdminTransactionLedger({
               )}
             </TableBody>
           </Table>
-        </div>
+        </TableContainer>
 
         {totalPages > 1 && (
           <TablePaginationFooter

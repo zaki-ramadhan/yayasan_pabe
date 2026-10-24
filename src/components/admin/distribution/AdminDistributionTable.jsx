@@ -1,22 +1,20 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
-import { Plus, Search, RefreshCw, Edit3, Trash2 } from "lucide-react";
-import { formatRupiah, formatDate } from "@/lib/formatters";
-import { Input } from "@/components/ui/input";
 import {
   Table,
+  TableContainer,
   TableHeader,
   TableBody,
   TableRow,
   TableHead,
-  TableCell,
   TableEmptyRow,
   TablePaginationFooter,
 } from "@/components/ui/table";
 import { AdminDistributionModal } from "./AdminDistributionModal";
 import { AdminDistributionDeleteDialog } from "./AdminDistributionDeleteDialog";
+import { AdminDistributionToolbar } from "./AdminDistributionToolbar";
+import { AdminDistributionTableRow } from "./AdminDistributionTableRow";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
@@ -122,41 +120,17 @@ export function AdminDistributionTable({
   return (
     <div className="space-y-4">
       {/* Top Bar: Search & Action Buttons */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-        <div className="flex-1 max-w-md">
-          <Input
-            leftIcon={Search}
-            placeholder="Cari program atau kegiatan penyaluran..."
-            value={search}
-            onChange={handleSearchChange}
-            onClear={handleClearSearch}
-            className="h-10 text-sm font-normal bg-white border-slate-300"
-          />
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={refreshList}
-            disabled={isLoading}
-            className="h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-          </button>
-
-          <button
-            type="button"
-            onClick={handleOpenAdd}
-            className="h-10 px-3 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Penyaluran baru</span>
-          </button>
-        </div>
-      </div>
+      <AdminDistributionToolbar
+        search={search}
+        onSearchChange={handleSearchChange}
+        onClearSearch={handleClearSearch}
+        isLoading={isLoading}
+        onRefresh={refreshList}
+        onOpenAdd={handleOpenAdd}
+      />
 
       {/* Table Container */}
-      <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
+      <TableContainer>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
@@ -181,71 +155,12 @@ export function AdminDistributionTable({
             <TableBody className="divide-y divide-slate-100">
               {paginatedDistributions && paginatedDistributions.length > 0 ? (
                 paginatedDistributions.map((item) => (
-                  <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                    {/* Program Donasi Asal */}
-                    <TableCell className="w-72 py-3 align-middle">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-md bg-slate-100 overflow-hidden relative border border-slate-200 shrink-0">
-                          <Image
-                            src={item.campaignBannerUrl || "/img/hero_card_1.jpeg"}
-                            alt={item.campaignTitle || "Program donasi"}
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
-                        </div>
-                        <span className="font-medium text-sm text-slate-900 block line-clamp-2 leading-snug">
-                          {item.campaignTitle}
-                        </span>
-                      </div>
-                    </TableCell>
-
-                    {/* Judul & Konten */}
-                    <TableCell className="space-y-1 py-3 align-middle">
-                      <span className="font-medium text-sm text-slate-900 block leading-snug">
-                        {item.title}
-                      </span>
-                      {item.content && (
-                        <p className="text-sm text-slate-500 line-clamp-2 max-w-xl leading-relaxed font-normal mt-0.5">
-                          {item.content}
-                        </p>
-                      )}
-                    </TableCell>
-
-                    {/* Tanggal */}
-                    <TableCell className="text-sm text-slate-600 py-3 align-middle whitespace-nowrap">
-                      {formatDate(item.date)}
-                    </TableCell>
-
-                    {/* Nominal */}
-                    <TableCell className="text-right font-medium text-sm text-slate-900 py-3 align-middle whitespace-nowrap">
-                      {formatRupiah(item.disbursedAmount)}
-                    </TableCell>
-
-                    {/* Aksi */}
-                    <TableCell className="text-right py-3 whitespace-nowrap align-middle">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEdit(item)}
-                          title="Sunting rekam penyaluran"
-                          aria-label={`Sunting: ${item.title}`}
-                          className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          <Edit3 className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleOpenDelete(item)}
-                          title="Hapus rekam penyaluran"
-                          aria-label={`Hapus: ${item.title}`}
-                          className="p-1.5 rounded-md text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <AdminDistributionTableRow
+                    key={item.id}
+                    item={item}
+                    onEdit={handleOpenEdit}
+                    onDelete={handleOpenDelete}
+                  />
                 ))
               ) : (
                 <TableEmptyRow colSpan={5} message="Belum ada catatan rekam penyaluran." />
@@ -263,7 +178,7 @@ export function AdminDistributionTable({
             onPageChange={setCurrentPage}
           />
         )}
-      </div>
+      </TableContainer>
 
       {/* Distribution Modal (Create/Edit) */}
       <AdminDistributionModal

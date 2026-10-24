@@ -16,6 +16,9 @@ import {
   TableCell,
   TableEmptyRow,
 } from "@/components/ui/table";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 
 export function AdminRecentTransactionsCard({
   initialTransactions = [],
@@ -59,27 +62,29 @@ export function AdminRecentTransactionsCard({
   };
 
   return (
-    <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden h-full flex flex-col">
-      <div className="p-3.5 sm:p-4 border-b border-slate-200/90 flex items-center justify-between gap-3">
+    <Card className="shadow-2xs overflow-hidden h-full flex flex-col">
+      <CardHeader className="p-3.5 sm:p-4 border-b border-slate-200/90 flex flex-row items-center justify-between gap-3 space-y-0">
         <div>
-          <h2 className="text-base font-semibold text-slate-900 leading-tight">
+          <CardTitle className="text-base font-semibold text-slate-900 leading-tight">
             Mutasi Donasi Masuk Terkini
-          </h2>
-          <p className="text-sm text-slate-500 mt-0.5">
+          </CardTitle>
+          <CardDescription className="text-sm text-slate-500 mt-0.5">
             Pencatatan kas masuk real-time seluruh metode pembayaran
-          </p>
+          </CardDescription>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="icon"
             onClick={refreshList}
             disabled={isLoading}
-            className="h-8 w-8 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors flex items-center justify-center cursor-pointer disabled:opacity-50"
+            className="h-8 w-8 text-slate-600 hover:bg-slate-50"
             title="Segarkan transaksi terkini"
             aria-label="Segarkan transaksi terkini"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-          </button>
+          </Button>
 
           <Link
             href="/admin/transaksi"
@@ -89,7 +94,7 @@ export function AdminRecentTransactionsCard({
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
-      </div>
+      </CardHeader>
 
       <div className={`overflow-x-auto flex-1 ${scrollable ? "max-h-[380px] overflow-y-auto" : ""}`}>
         <Table>
@@ -147,15 +152,7 @@ export function AdminRecentTransactionsCard({
                     </span>
                   </TableCell>
                   <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
-                    {item.status === "PAID" ? (
-                      <span className="inline-flex items-center justify-center text-xs font-medium text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200 max-w-[100px] truncate whitespace-nowrap">
-                        Berhasil
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center justify-center text-xs font-medium text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-200 max-w-[100px] truncate whitespace-nowrap">
-                        Menunggu
-                      </span>
-                    )}
+                    <StatusBadge status={item.status} />
                   </TableCell>
                 </TableRow>
               ))
@@ -165,6 +162,6 @@ export function AdminRecentTransactionsCard({
           </TableBody>
         </Table>
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,18 +1,19 @@
 "use client";
 
 import { useState, useEffect, useTransition, useRef } from "react";
-import { Plus, Search, RefreshCw, Edit3, Trash2, FolderCheck } from "lucide-react";
 import {
   Table,
+  TableContainer,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  TableEmptyRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { AdminCategoryModal } from "./AdminCategoryModal";
+import { AdminCategoryToolbar } from "./AdminCategoryToolbar";
+import { AdminCategoryTableRow } from "./AdminCategoryTableRow";
 import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "@/hooks/use-toast";
 import { safeFetch } from "@/lib/safeFetch";
@@ -57,14 +58,6 @@ export function AdminCategoryTable({ initialCategories = [] }) {
       fetchCategories(debouncedSearch);
       toast.success("Daftar kategori berhasil dimuat ulang.");
     });
-  };
-
-  const handleSearchChange = (e) => {
-    setSearch(e.target.value);
-  };
-
-  const handleClearSearch = () => {
-    setSearch("");
   };
 
   const handleOpenCreate = () => {
@@ -128,45 +121,16 @@ export function AdminCategoryTable({ initialCategories = [] }) {
 
   return (
     <div className="space-y-4">
-      {/* Action Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Input
-            value={search}
-            onChange={handleSearchChange}
-            onClear={handleClearSearch}
-            placeholder="Cari nama atau tautan (slug)..."
-            leftIcon={Search}
-            className="h-10 text-sm font-normal bg-white"
-          />
-        </div>
+      <AdminCategoryToolbar
+        search={search}
+        onSearchChange={setSearch}
+        onClearSearch={() => setSearch("")}
+        onRefresh={handleRefresh}
+        onOpenCreate={handleOpenCreate}
+        isPending={isPending}
+      />
 
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isPending}
-            title="Muat ulang data"
-            className="h-10 px-3 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer shrink-0"
-          >
-            <RefreshCw className={`w-4 h-4 ${isPending ? "animate-spin text-primary" : ""}`} />
-          </Button>
-
-          <Button
-            type="button"
-            onClick={handleOpenCreate}
-            className="h-10 px-4 text-sm font-medium gap-1.5 cursor-pointer shrink-0"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Tambah kategori</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* Main Category Table */}
-      <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
+      <TableContainer>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
@@ -187,55 +151,24 @@ export function AdminCategoryTable({ initialCategories = [] }) {
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
               {categories.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="h-40 text-center text-slate-500 font-normal text-sm">
-                    Belum ada kategori program yang cocok dengan pencarian.
-                  </TableCell>
-                </TableRow>
+                <TableEmptyRow
+                  colSpan={4}
+                  message="Belum ada kategori program yang cocok dengan pencarian."
+                />
               ) : (
                 categories.map((item) => (
-                  <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                    <TableCell className="py-3.5 align-middle font-medium text-sm text-slate-900">
-                      <div className="flex items-center gap-2">
-                        <FolderCheck className="w-4 h-4 text-primary shrink-0" />
-                        <span>{item.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-3.5 align-middle text-sm font-mono text-slate-500 font-normal">
-                      {item.slug}
-                    </TableCell>
-                    <TableCell className="text-center py-3.5 align-middle">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700">
-                        {item.campaignCount} program
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right py-3.5 align-middle pr-4">
-                      <div className="inline-flex items-center gap-1 justify-end">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEdit(item)}
-                          title="Sunting kategori"
-                          className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          <Edit3 className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(item)}
-                          title="Hapus kategori"
-                          className="p-1.5 rounded-md text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <AdminCategoryTableRow
+                    key={item.id}
+                    item={item}
+                    onEdit={handleOpenEdit}
+                    onDelete={handleDelete}
+                  />
                 ))
               )}
             </TableBody>
           </Table>
         </div>
-      </div>
+      </TableContainer>
 
       <AdminCategoryModal
         category={selectedCategory}

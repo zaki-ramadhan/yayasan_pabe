@@ -7,6 +7,7 @@ import { RECENT_TRANSACTIONS, VOLUNTEER_APPLICANTS } from "@/data/adminMockData"
 import { cn } from "@/lib/utils";
 import {
   Table,
+  TableContainer,
   TableHeader,
   TableBody,
   TableRow,
@@ -15,6 +16,7 @@ import {
   TableEmptyRow,
   useTableSort,
 } from "@/components/ui/table";
+import { StatusBadge } from "@/components/ui/badge";
 
 export function AdminDashboardView({ userRole, stats }) {
   const transactions = stats?.recentTransactions || RECENT_TRANSACTIONS;
@@ -47,7 +49,7 @@ export function AdminDashboardView({ userRole, stats }) {
           </span>
         </div>
 
-        <div className="rounded-lg border border-slate-200/90 overflow-hidden">
+        <TableContainer>
           <Table>
             <TableHeader>
               <TableRow>
@@ -109,22 +111,14 @@ export function AdminDashboardView({ userRole, stats }) {
                     <TableCell className="font-normal text-slate-600 align-middle">{tx.channel}</TableCell>
                     <TableCell className="font-normal text-slate-600 whitespace-nowrap align-middle">{formatDate(tx.date, { withTime: true })}</TableCell>
                     <TableCell className="text-center align-middle">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                          tx.status === "PAID"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-amber-50 text-amber-800"
-                        }`}
-                      >
-                        {tx.status === "PAID" ? "Lunas" : "Pending"}
-                      </span>
+                      <StatusBadge status={tx.status} label={tx.status === "PAID" ? "Lunas" : undefined} />
                     </TableCell>
                   </TableRow>
                 ))
               )}
             </TableBody>
           </Table>
-        </div>
+        </TableContainer>
       </div>
 
       {/* Right: Role Context Widgets */}
@@ -140,12 +134,7 @@ export function AdminDashboardView({ userRole, stats }) {
               <div key={v.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-1">
                 <div className="flex justify-between items-center">
                   <strong className="text-slate-900">{v.name}</strong>
-                  <span className={cn(
-                    "px-1.5 py-0.5 rounded text-[10px] font-bold",
-                    v.status === "APPROVED" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
-                  )}>
-                    {v.status}
-                  </span>
+                  <StatusBadge status={v.status} className="text-[10px] px-1.5 py-0.5" />
                 </div>
                 <p className="text-slate-600">{v.city}, {v.profession}</p>
                 <p className="text-[11px] text-slate-500 italic">Minat: {v.event}</p>

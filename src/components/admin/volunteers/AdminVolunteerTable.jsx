@@ -1,31 +1,21 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, RefreshCw, Eye, Trash2, Phone, MapPin, Mail } from "lucide-react";
-import { formatDate } from "@/lib/formatters";
-import { Input } from "@/components/ui/input";
 import {
   Table,
+  TableContainer,
   TableHeader,
   TableBody,
   TableRow,
   TableHead,
-  TableCell,
   TableEmptyRow,
   TablePaginationFooter,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { AdminVolunteerStatusBadge } from "./AdminVolunteerStatusBadge";
 import { AdminVolunteerDetailDialog } from "./AdminVolunteerDetailDialog";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { AdminVolunteerToolbar } from "./AdminVolunteerToolbar";
+import { AdminVolunteerTableRow } from "./AdminVolunteerTableRow";
 import { useDebounce } from "@/hooks/useDebounce";
-import { sanitizeSearchQuery, maskEmail } from "@/lib/security";
+import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 
@@ -148,58 +138,18 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   return (
     <div className="space-y-4">
       {/* Top Filter and Actions Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
-        <div className="flex flex-1 flex-wrap items-center gap-2 max-w-xl">
-          <div className="flex-1 min-w-[200px]">
-            <Input
-              leftIcon={Search}
-              placeholder="Cari nama, kota, email, atau bidang minat..."
-              value={search}
-              onChange={handleSearchChange}
-              onClear={handleClearSearch}
-              className="h-10 text-sm font-normal bg-white border-slate-300"
-            />
-          </div>
-
-          <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-            <SelectTrigger className="h-10 w-40 text-sm font-normal bg-white border border-slate-300 shrink-0">
-              <SelectValue placeholder="Semua status" />
-            </SelectTrigger>
-            <SelectContent className="bg-white border border-slate-200 z-50">
-              <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
-                Semua status
-              </SelectItem>
-              <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
-                Menunggu (PENDING)
-              </SelectItem>
-              <SelectItem value="CONTACTED" className="cursor-pointer text-sm font-normal py-2">
-                Sudah dihubungi
-              </SelectItem>
-              <SelectItem value="APPROVED" className="cursor-pointer text-sm font-normal py-2">
-                Disetujui
-              </SelectItem>
-              <SelectItem value="REJECTED" className="cursor-pointer text-sm font-normal py-2">
-                Ditolak
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Right Actions: Refresh */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={refreshList}
-            disabled={isLoading}
-            className="h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-          </button>
-        </div>
-      </div>
+      <AdminVolunteerToolbar
+        search={search}
+        onSearchChange={handleSearchChange}
+        onClearSearch={handleClearSearch}
+        statusFilter={statusFilter}
+        onStatusFilterChange={handleStatusFilterChange}
+        isLoading={isLoading}
+        onRefresh={refreshList}
+      />
 
       {/* Main Table */}
-      <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
+      <TableContainer>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
@@ -227,81 +177,12 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
             <TableBody className="divide-y divide-slate-100">
               {paginatedVolunteers && paginatedVolunteers.length > 0 ? (
                 paginatedVolunteers.map((item) => (
-                  <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
-                    {/* Nama & Kontak */}
-                    <TableCell className="w-64 py-3 align-middle">
-                      <div className="flex items-center gap-2.5">
-                        <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
-                          <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
-                            {(item.fullName || "R").slice(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0 space-y-0.5">
-                          <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
-                            {item.fullName}
-                          </span>
-                          <div className="flex flex-col text-sm text-slate-500 font-normal truncate">
-                            {item.email && <span>{maskEmail(item.email)}</span>}
-                            {item.phone && <span>{item.phone}</span>}
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-
-                    {/* Domisili */}
-                    <TableCell className="w-36 text-sm text-slate-700 py-3 align-middle whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1 font-normal">
-                        <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                        <span>{item.city}</span>
-                      </span>
-                    </TableCell>
-
-                    {/* Bidang Minat */}
-                    <TableCell className="text-sm text-slate-800 py-3 align-middle">
-                      <span className="font-medium block leading-snug">
-                        {item.interest}
-                      </span>
-                      {item.motivation && (
-                        <p className="text-sm text-slate-500 line-clamp-1 font-normal mt-0.5">
-                          {item.motivation}
-                        </p>
-                      )}
-                    </TableCell>
-
-                    {/* Tanggal Daftar */}
-                    <TableCell className="w-36 text-sm text-slate-500 py-3 whitespace-nowrap align-middle">
-                      {formatDate(item.createdAt)}
-                    </TableCell>
-
-                    {/* Status */}
-                    <TableCell className="w-32 text-center py-3 whitespace-nowrap align-middle">
-                      <AdminVolunteerStatusBadge status={item.status} />
-                    </TableCell>
-
-                    {/* Aksi */}
-                    <TableCell className="w-24 text-right py-3 whitespace-nowrap align-middle">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedVolunteer(item)}
-                          title="Lihat rincian pendaftar"
-                          aria-label={`Lihat rincian: ${item.fullName}`}
-                          className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(item.id, item.fullName)}
-                          title="Hapus berkas pendaftar"
-                          aria-label={`Hapus: ${item.fullName}`}
-                          className="p-1.5 rounded-md text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <AdminVolunteerTableRow
+                    key={item.id}
+                    item={item}
+                    onViewDetail={setSelectedVolunteer}
+                    onDelete={handleDelete}
+                  />
                 ))
               ) : (
                 <TableEmptyRow
@@ -322,7 +203,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
             onPageChange={setCurrentPage}
           />
         )}
-      </div>
+      </TableContainer>
 
       {/* Detail Dialog */}
       <AdminVolunteerDetailDialog

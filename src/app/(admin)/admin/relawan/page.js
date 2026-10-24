@@ -1,5 +1,6 @@
 import { getAdminVolunteers } from "@/services/adminVolunteerService";
 import { AdminVolunteerTable } from "@/components/admin/volunteers/AdminVolunteerTable";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export const metadata = {
   title: "Pendaftar Relawan",
@@ -11,14 +12,10 @@ export default async function AdminVolunteerPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
-          Pendaftar relawan yayasan
-        </h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          Pantau calon relawan, verifikasi profil, hubungi melalui WhatsApp, dan kelola status keaktifan penugasan.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Pendaftar relawan yayasan"
+        description="Pantau pendaftar relawan dan verifikasi data."
+      />
 
       <AdminVolunteerTable initialVolunteers={items} />
     </div>

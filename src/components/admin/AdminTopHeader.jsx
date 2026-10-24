@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PanelLeft } from "lucide-react";
 import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
 import { SuperAdminNoticeBanner } from "@/components/admin/SuperAdminNoticeBanner";
+import { getInitials } from "@/lib/formatters";
 
 export function AdminTopHeader({
   currentUser,
@@ -19,8 +20,7 @@ export function AdminTopHeader({
     : null;
 
   const fallbackInitial =
-    currentUser?.initials ||
-    (currentUser?.name ? currentUser.name.trim().charAt(0).toUpperCase() : "A");
+    currentUser?.initials || getInitials(currentUser?.name, "A");
 
   return (
     <div className="sticky top-0 z-20">
@@ -46,10 +46,10 @@ export function AdminTopHeader({
       {/* Right: Clean User Info & Avatar */}
       <div className="flex items-center gap-2.5 shrink-0">
         <div className="text-right hidden sm:block">
-          <span className="text-xs font-medium text-slate-900 block leading-tight">
+          <span className="text-sm font-medium text-slate-900 block leading-tight">
             {currentUser?.name || "Administrator"}
           </span>
-          <span className="text-[11px] text-slate-500 block leading-tight mt-0.5">
+          <span className="text-sm text-slate-500 font-normal block leading-tight mt-0.5">
             {(ROLE_LABELS[userRole] || currentUser?.title || userRole || "Administrator")
               .replace(/\s*\(Ketua Yayasan\)/gi, "")
               .replace(/\s*Ketua Yayasan/gi, "")}
@@ -57,7 +57,7 @@ export function AdminTopHeader({
         </div>
 
         <div
-          className="relative w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 text-xs font-medium text-slate-800 flex items-center justify-center shadow-2xs shrink-0 select-none"
+          className="relative w-9 h-9 rounded-full overflow-hidden bg-slate-100 border border-slate-200 text-xs font-medium text-slate-800 flex items-center justify-center shadow-2xs shrink-0 select-none"
           title={currentUser?.name || "Pengurus"}
         >
           {avatarUrl ? (

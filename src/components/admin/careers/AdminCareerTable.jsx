@@ -1,22 +1,20 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Plus, Search, Edit3, Trash2, Users, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import {
   Table,
+  TableContainer,
   TableHeader,
   TableBody,
   TableRow,
   TableHead,
-  TableCell,
   TableEmptyRow,
   TablePaginationFooter,
 } from "@/components/ui/table";
 import { AdminCareerModal } from "@/components/admin/careers/AdminCareerModal";
 import { AdminApplicantDrawer } from "@/components/admin/careers/AdminApplicantDrawer";
+import { AdminCareerToolbar } from "@/components/admin/careers/AdminCareerToolbar";
+import { AdminCareerTableRow } from "@/components/admin/careers/AdminCareerTableRow";
 import { DEPARTMENT_OPTIONS } from "@/data/careers";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
@@ -150,11 +148,11 @@ export function AdminCareerTable({ initialVacancies = [] }) {
   const refreshList = async () => {
     setIsLoading(true);
     try {
-      const res = await safeFetch("/api/admin/careers");
+      const res = await safeFetch("/api/admin/careers?limit=100");
       const data = await res.json();
       if (data.success && data.data) {
         setVacancies(data.data);
-        toast.success("Data lowongan karier berhasil diperbarui.");
+        toast.success("Data lowongan berhasil diperbarui.");
       } else {
         toast.error(data.message || "Gagal menyegarkan data lowongan.");
       }
@@ -168,52 +166,20 @@ export function AdminCareerTable({ initialVacancies = [] }) {
   return (
     <div className="space-y-4">
       {/* Filter and Action Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex flex-1 items-center gap-2.5 max-w-lg">
-          <Input
-            leftIcon={Search}
-            placeholder="Cari lowongan, divisi, lokasi..."
-            value={search}
-            onChange={handleSearchChange}
-            onClear={handleClearSearch}
-            className="h-10 text-sm bg-white"
-          />
-
-          <CreatableCombobox
-            options={filterDepartmentOptions}
-            value={departmentFilter}
-            onChange={handleDepartmentChange}
-            placeholder="Semua Divisi"
-            searchPlaceholder="Cari divisi pekerjaan..."
-            emptyMessage="Divisi tidak ditemukan."
-            className="h-10 w-48 text-sm bg-white shrink-0"
-          />
-        </div>
-
-        <div className="flex items-center gap-2 self-end sm:self-auto">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={refreshList}
-            disabled={isLoading}
-            className="h-10 px-3 rounded-lg text-sm font-medium text-slate-700 border-slate-300 bg-white hover:bg-slate-50 flex items-center gap-1.5 cursor-pointer"
-          >
-            <RefreshCw className={`w-4 h-4 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-          </Button>
-
-          <Button
-            type="button"
-            onClick={handleOpenAdd}
-            className="h-10 px-4 rounded-lg text-sm font-medium bg-primary hover:bg-primary/90 text-white flex items-center gap-1.5 cursor-pointer shadow-2xs"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Lowongan baru</span>
-          </Button>
-        </div>
-      </div>
+      <AdminCareerToolbar
+        search={search}
+        onSearchChange={handleSearchChange}
+        onClearSearch={handleClearSearch}
+        departmentFilter={departmentFilter}
+        onDepartmentChange={handleDepartmentChange}
+        filterDepartmentOptions={filterDepartmentOptions}
+        onRefresh={refreshList}
+        onOpenAdd={handleOpenAdd}
+        isLoading={isLoading}
+      />
 
       {/* Main Table */}
-      <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
+      <TableContainer>
         <Table>
           <TableHeader>
             <TableRow>
@@ -229,91 +195,15 @@ export function AdminCareerTable({ initialVacancies = [] }) {
           <TableBody>
             {paginatedVacancies && paginatedVacancies.length > 0 ? (
               paginatedVacancies.map((job) => (
-                <TableRow key={job.id}>
-                  <TableCell className="py-3 align-middle">
-                    <div className="space-y-0.5">
-                      <span className="text-sm font-medium text-slate-900 block">
-                        {job.title}
-                      </span>
-                      <span className="text-sm text-slate-500">
-                        {job.jobCode || job.id} &bull; {job.experience}
-                      </span>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="py-3 align-middle">
-                    <div className="space-y-0.5">
-                      <span className="text-sm font-medium text-slate-800 block">
-                        {job.department}
-                      </span>
-                      <span className="text-sm text-slate-500">
-                        {job.type} ({job.workplace})
-                      </span>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="text-sm text-slate-600 py-3 align-middle">
-                    {job.location}
-                  </TableCell>
-
-                  <TableCell className="text-sm text-slate-600 py-3 whitespace-nowrap align-middle">
-                    {job.deadline}
-                  </TableCell>
-
-                  <TableCell className="py-3 text-center whitespace-nowrap align-middle">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleOpenApplicants(job)}
-                      className="h-8 px-2.5 rounded-md text-sm font-medium text-primary border-primary/30 hover:bg-primary/5 flex items-center gap-1.5 mx-auto cursor-pointer"
-                    >
-                      <Users className="w-3.5 h-3.5" />
-                      <span>{job.applicantCount || 0} Berkas</span>
-                    </Button>
-                  </TableCell>
-
-                  <TableCell className="py-3 text-center whitespace-nowrap align-middle">
-                    <button
-                      type="button"
-                      onClick={() => handleToggleStatus(job.id, job.isActive)}
-                      className={`inline-block text-xs font-medium px-2.5 py-0.5 rounded border transition-colors cursor-pointer max-w-[120px] truncate whitespace-nowrap align-middle ${
-                        job.isActive
-                          ? "text-emerald-800 bg-emerald-50 border-emerald-200 hover:bg-emerald-100"
-                          : "text-slate-600 bg-slate-100 border-slate-300 hover:bg-slate-200"
-                      }`}
-                      title="Klik untuk mengubah status aktif lowongan"
-                    >
-                      {job.isActive ? "Buka (Aktif)" : "Ditutup"}
-                    </button>
-                  </TableCell>
-
-                  <TableCell className="text-right py-3 whitespace-nowrap align-middle">
-                    <div className="flex items-center justify-end gap-1">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleOpenEdit(job)}
-                        title="Sunting lowongan"
-                        className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer"
-                      >
-                        <Edit3 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        disabled={deletingId === job.id}
-                        onClick={() => handleDelete(job.id, job.title)}
-                        title="Hapus lowongan"
-                        className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 cursor-pointer"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                <AdminCareerTableRow
+                  key={job.id}
+                  job={job}
+                  onOpenApplicants={handleOpenApplicants}
+                  onToggleStatus={handleToggleStatus}
+                  onEdit={handleOpenEdit}
+                  onDelete={handleDelete}
+                  isDeleting={deletingId === job.id}
+                />
               ))
             ) : (
               <TableEmptyRow
@@ -337,7 +227,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
             onPageChange={setCurrentPage}
           />
         )}
-      </div>
+      </TableContainer>
 
       {/* Modal & Drawer */}
       <AdminCareerModal

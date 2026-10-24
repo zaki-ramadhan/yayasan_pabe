@@ -1,10 +1,11 @@
 import prisma from "@/lib/prisma";
 import { getAdminPrayers } from "@/services/prayerService";
 import { AdminPrayerTable } from "@/components/admin/prayers/AdminPrayerTable";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export const metadata = {
   title: "Moderasi Doa Donatur",
-  description: "Kelola dan moderasi doa, pesan harapan, serta tanggapan resmi yayasan untuk donatur.",
+  description: "Pantau dan kelola doa dari donatur.",
 };
 
 export default async function AdminPrayerPage() {
@@ -18,14 +19,10 @@ export default async function AdminPrayerPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
-          Moderasi doa donatur
-        </h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          Pantau doa donatur dari transaksi publik, sembunyikan pesan tidak pantas, sematkan doa pilihan, dan kirimkan balasan resmi yayasan.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Moderasi doa donatur"
+        description="Pantau dan kelola doa yang masuk dari donatur."
+      />
 
       <AdminPrayerTable
         initialData={prayersData}

@@ -1,28 +1,30 @@
 import Link from "next/link";
 import { ArrowRight, Repeat, CalendarCheck, Wallet } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export function AdminRoutineMiniCard() {
   return (
-    <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden flex flex-col justify-between">
+    <Card className="shadow-2xs overflow-hidden flex flex-col justify-between">
       {/* Header */}
-      <div className="p-3.5 sm:p-4 border-b border-slate-200/90 flex items-center justify-between gap-2">
+      <CardHeader className="p-3.5 sm:p-4 border-b border-slate-200/90 flex flex-row items-center justify-between gap-2 space-y-0">
         <div className="flex items-center gap-2 min-w-0">
           <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center shrink-0">
             <Repeat className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-slate-900 leading-tight truncate">
+            <CardTitle className="text-sm font-semibold text-slate-900 leading-tight truncate">
               Komitmen Donasi Rutin
-            </h3>
-            <p className="text-xs text-slate-500 mt-0.5 truncate">
+            </CardTitle>
+            <CardDescription className="text-xs text-slate-500 mt-0.5 truncate">
               Pemberi donasi terjadwal aktif
-            </p>
+            </CardDescription>
           </div>
         </div>
-      </div>
+      </CardHeader>
 
       {/* Metrics Row */}
-      <div className="p-3.5 sm:p-4 grid grid-cols-2 gap-2.5">
+      <CardContent className="p-3.5 sm:p-4 grid grid-cols-2 gap-2.5">
         <div className="bg-slate-50/80 border border-slate-200/80 rounded-md p-2.5">
           <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
             <CalendarCheck className="w-3.5 h-3.5 text-slate-400" />
@@ -42,18 +44,22 @@ export function AdminRoutineMiniCard() {
             Rp 14,5 Juta
           </div>
         </div>
-      </div>
+      </CardContent>
 
       {/* Link Action */}
       <div className="px-3.5 sm:px-4 pb-3.5 sm:pb-4 pt-0">
-        <Link
-          href="/admin/donasi-rutin"
-          className="flex items-center justify-center gap-1.5 w-full h-9 rounded-md text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 hover:text-slate-950 border border-slate-200 transition-colors"
+        <Button
+          variant="secondary"
+          size="sm"
+          asChild
+          className="w-full text-xs gap-1.5"
         >
-          <span>Kelola Jadwal Donasi Rutin</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
+          <Link href="/admin/donasi-rutin">
+            <span>Kelola Jadwal Donasi Rutin</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 }

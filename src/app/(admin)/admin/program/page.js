@@ -1,5 +1,6 @@
 import { getAdminCampaigns } from "@/services/adminService";
 import { AdminProgramTable } from "@/components/admin/programs/AdminProgramTable";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export const metadata = {
   title: "Kelola Program Donasi",
@@ -11,14 +12,10 @@ export default async function AdminProgramPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
-          Kelola Program Donasi
-        </h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          Publikasikan kampanye baru, pantau pencapaian donatur, dan kelola masa aktif program amanah.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Kelola Program Donasi"
+        description="Kelola daftar program galang dana dan target donasi."
+      />
 
       <AdminProgramTable initialCampaigns={items} categories={categories} />
     </div>

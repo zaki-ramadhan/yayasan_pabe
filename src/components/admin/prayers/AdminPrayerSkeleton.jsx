@@ -37,31 +37,45 @@ export function AdminPrayerSkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
-                <TableHead className="w-60 py-2.5">
+                {/* 1. Donatur */}
+                <TableHead className="w-48 py-2.5">
                   <Skeleton className="h-4 w-20 rounded" />
                 </TableHead>
-                <TableHead className="w-48 py-2.5 whitespace-nowrap">
+                {/* 2. Program Donasi */}
+                <TableHead className="w-48 py-2.5">
                   <Skeleton className="h-4 w-28 rounded" />
                 </TableHead>
-                <TableHead className="py-2.5 min-w-[180px]">
-                  <Skeleton className="h-4 w-32 rounded" />
+                {/* 3. Nominal */}
+                <TableHead className="w-32 py-2.5 whitespace-nowrap">
+                  <Skeleton className="h-4 w-16 rounded" />
                 </TableHead>
-                <TableHead className="py-2.5 min-w-[260px]">
-                  <Skeleton className="h-4 w-44 rounded" />
+                {/* 4. No. Invoice */}
+                <TableHead className="w-32 py-2.5 whitespace-nowrap">
+                  <Skeleton className="h-4 w-20 rounded" />
                 </TableHead>
-                <TableHead className="w-36 py-2.5 text-center whitespace-nowrap">
-                  <Skeleton className="h-4 w-24 mx-auto rounded" />
+                {/* 5. Pesan Doa */}
+                <TableHead className="min-w-[200px] py-2.5">
+                  <Skeleton className="h-4 w-24 rounded" />
                 </TableHead>
-                <TableHead className="w-28 py-2.5 text-right whitespace-nowrap pr-4">
-                  <Skeleton className="h-4 w-10 ml-auto rounded" />
+                {/* 6. Waktu Kirim */}
+                <TableHead className="w-36 py-2.5 whitespace-nowrap">
+                  <Skeleton className="h-4 w-20 rounded" />
+                </TableHead>
+                {/* 7. Status Moderasi */}
+                <TableHead className="w-28 py-2.5 text-center whitespace-nowrap">
+                  <Skeleton className="h-4 w-16 mx-auto rounded" />
+                </TableHead>
+                {/* 8. Aksi */}
+                <TableHead className="w-24 py-2.5 text-right whitespace-nowrap pr-4">
+                  <Skeleton className="h-4 w-12 ml-auto rounded" />
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
-                  {/* Donatur */}
-                  <TableCell className="w-60 py-3 align-top">
+                  {/* 1. Donatur */}
+                  <TableCell className="w-48 py-3 align-top">
                     <div className="flex items-center gap-2.5">
                       <Skeleton className="h-8 w-8 rounded-full shrink-0" />
                       <div className="space-y-1">
@@ -71,28 +85,41 @@ export function AdminPrayerSkeleton() {
                     </div>
                   </TableCell>
 
-                  {/* Donasi & Transaksi */}
-                  <TableCell className="w-48 py-3 align-top whitespace-nowrap space-y-1">
-                    <Skeleton className="h-4 w-24 rounded" />
-                    <Skeleton className="h-3 w-28 rounded" />
-                    <Skeleton className="h-3 w-32 rounded" />
+                  {/* 2. Program Donasi */}
+                  <TableCell className="w-48 py-3 align-top space-y-1">
+                    <Skeleton className="h-4 w-36 rounded" />
+                    <Skeleton className="h-3 w-20 rounded" />
                   </TableCell>
-                  <TableCell className="py-3 align-top space-y-1 min-w-[200px]">
-                    <Skeleton className="h-4 w-48 rounded" />
+
+                  {/* 3. Nominal */}
+                  <TableCell className="w-32 py-3 align-top whitespace-nowrap">
+                    <Skeleton className="h-4 w-20 rounded" />
+                  </TableCell>
+
+                  {/* 4. No. Invoice */}
+                  <TableCell className="w-32 py-3 align-top whitespace-nowrap">
                     <Skeleton className="h-3.5 w-24 rounded" />
                   </TableCell>
-                  <TableCell className="py-3 align-top space-y-2 min-w-[280px]">
+
+                  {/* 5. Pesan Doa */}
+                  <TableCell className="min-w-[200px] py-3 align-top space-y-1.5">
                     <Skeleton className="h-4 w-full rounded" />
                     <Skeleton className="h-4 w-3/4 rounded" />
-                    <Skeleton className="h-12 w-full rounded-md" />
                   </TableCell>
-                  <TableCell className="w-36 text-center py-3 align-top space-y-1.5">
-                    <Skeleton className="h-5 w-20 mx-auto rounded-md" />
-                    <Skeleton className="h-5 w-24 mx-auto rounded-md" />
+
+                  {/* 6. Waktu Kirim */}
+                  <TableCell className="w-36 py-3 align-top whitespace-nowrap">
+                    <Skeleton className="h-3.5 w-28 rounded" />
                   </TableCell>
-                  <TableCell className="w-28 text-right py-3 align-top pr-4">
+
+                  {/* 7. Status Moderasi */}
+                  <TableCell className="w-28 text-center py-3 align-top">
+                    <Skeleton className="h-5 w-16 mx-auto rounded-md" />
+                  </TableCell>
+
+                  {/* 8. Aksi */}
+                  <TableCell className="w-24 text-right py-3 align-top pr-4">
                     <div className="flex items-center justify-end gap-1">
-                      <Skeleton className="h-7 w-7 rounded-md" />
                       <Skeleton className="h-7 w-7 rounded-md" />
                       <Skeleton className="h-7 w-7 rounded-md" />
                     </div>

@@ -1,17 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { Progress } from "@/components/ui/progress";
 import { ArrowRight } from "lucide-react";
-import { formatRupiah } from "@/lib/formatters";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { SafeImage } from "@/components/ui/safe-image";
+import { formatRupiah } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 
 /**
  * Compact Admin Campaign Overview Card displaying priority active programs
- * formatted as clean flat items without outer card borders or padding:
- * - Left: compact thumbnail image preview (w-14 h-14 / w-16 h-16)
+ * formatted as clean flat items using standard Card and Button components:
+ * - Left: compact thumbnail image preview (w-11 h-11 / w-12 h-12)
  * - Right: 2-line title (line-clamp-2), progress bar, and metrics (target & percent aligned)
- * - No location info
  */
 export function AdminCampaignOverviewCard({
   campaigns = [],
@@ -21,19 +23,19 @@ export function AdminCampaignOverviewCard({
   const displayCampaigns = campaigns ? campaigns.slice(0, maxItems) : [];
 
   return (
-    <div className={`rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden flex flex-col ${stretch ? "h-full" : "h-auto"}`}>
+    <Card className={cn("shadow-2xs overflow-hidden flex flex-col", stretch ? "h-full" : "h-auto")}>
       {/* Card Header */}
-      <div className="p-3.5 sm:p-4 border-b border-slate-200/90">
-        <h2 className="text-base font-semibold text-slate-900 leading-tight">
+      <CardHeader className="p-3.5 sm:p-4 border-b border-slate-200/90">
+        <CardTitle className="text-base font-semibold text-slate-900 leading-tight">
           Capaian Program Prioritas
-        </h2>
-        <p className="text-sm text-slate-500 mt-0.5">
+        </CardTitle>
+        <CardDescription className="text-sm text-slate-500 mt-0.5">
           Progres perolehan dana kampanye aktif
-        </p>
-      </div>
+        </CardDescription>
+      </CardHeader>
 
       {/* Flat List Items */}
-      <div className={`p-3.5 sm:p-4 flex-1 flex flex-col ${stretch ? "justify-between" : ""} gap-3`}>
+      <CardContent className={cn("p-3.5 sm:p-4 flex-1 flex flex-col gap-3", stretch ? "justify-between" : "")}>
         <div className="space-y-3">
           {displayCampaigns.length > 0 ? (
             displayCampaigns.map((campaign) => {
@@ -58,32 +60,24 @@ export function AdminCampaignOverviewCard({
                       />
                     </div>
 
-                    {/* Right: Title, Progress Bar with Inline %, and Stacked Metrics */}
-                    <div className="flex-1 min-w-0 space-y-1.5">
-                      <h3 className="text-xs sm:text-sm font-medium text-slate-800 group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                    {/* Right: Info, Progress & Metrics */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-medium text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                         {campaign.title}
-                      </h3>
+                      </p>
 
-                      {/* Progress Bar & Inline Plain-text Percentage (Only when target exists) */}
-                      {target > 0 && (
-                        <div className="flex items-center gap-2 pt-0.5">
-                          <Progress value={percent} className="h-1.5 flex-1" />
-                          <span className="text-xs font-medium text-slate-600 tabular-nums shrink-0">
-                            {percent}%
+                      {/* Progress Bar & Metrics */}
+                      <div className="mt-1 space-y-1">
+                        <Progress
+                          value={percent ?? 100}
+                          className="h-1.5 bg-slate-100"
+                        />
+                        <div className="flex items-center justify-between text-2xs text-slate-500">
+                          <span>{formatRupiah(collected)}</span>
+                          <span className="font-medium text-slate-700">
+                            {percent !== null ? `${percent}%` : "Tanpa Target"}
                           </span>
                         </div>
-                      )}
-
-                      {/* Stacked Metrics: Each on its own line below progress bar */}
-                      <div className="space-y-0.5 text-xs">
-                        <div className="text-slate-600 truncate">
-                          Terkumpul: <strong className="font-semibold text-slate-900">{formatRupiah(collected)}</strong>
-                        </div>
-                        {target > 0 && (
-                          <div className="text-slate-500 truncate">
-                            Target: <span className="font-medium text-slate-700">{formatRupiah(target)}</span>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -98,14 +92,17 @@ export function AdminCampaignOverviewCard({
         </div>
 
         {/* Check All Donation Programs Button */}
-        <Link
-          href="/admin/program"
-          className={`flex items-center justify-center gap-2 h-10 px-4 rounded-lg text-sm font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 hover:text-slate-950 border border-slate-200 transition-colors text-center cursor-pointer shadow-2xs ${stretch ? "mt-auto" : "mt-2"}`}
+        <Button
+          variant="secondary"
+          asChild
+          className={cn("w-full gap-2", stretch ? "mt-auto" : "mt-2")}
         >
-          <span>Periksa semua program</span>
-          <ArrowRight className="w-4 h-4 text-slate-500 shrink-0" />
-        </Link>
-      </div>
-    </div>
+          <Link href="/admin/program">
+            <span>Periksa semua program</span>
+            <ArrowRight className="w-4 h-4 text-slate-500 shrink-0" />
+          </Link>
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

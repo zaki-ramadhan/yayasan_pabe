@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import { AdminDonationTrendCanvas } from "./AdminDonationTrendCanvas";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -81,23 +83,23 @@ export function AdminDonationTrendCard({
   }, [timeRange, dailyList, monthlyList]);
 
   return (
-    <div className={cn("rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden", className)}>
+    <Card className={cn("shadow-2xs overflow-hidden", className)}>
       {/* Header Kartu */}
-      <div className="p-3.5 sm:p-4 border-b border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <CardHeader className="p-3.5 sm:p-4 pb-3.5 border-b border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3 space-y-0">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-slate-900 leading-tight">
+            <CardTitle className="text-base font-semibold text-slate-900 leading-tight">
               Tren Dinamika Donasi
-            </h2>
+            </CardTitle>
             {isSuperAdmin && (
-              <span className="rounded-md bg-slate-100 text-slate-700 px-1.5 py-0.5 text-[11px] font-medium border border-slate-200">
+              <Badge variant="secondary" className="px-1.5 py-0.5 text-[11px] font-medium">
                 Super admin
-              </span>
+              </Badge>
             )}
           </div>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <CardDescription className="text-sm text-slate-500 mt-0.5 font-normal">
             Analitik perolehan donasi masuk dan arus kas operasional yayasan
-          </p>
+          </CardDescription>
         </div>
 
         {/* Filter Bar */}
@@ -117,7 +119,7 @@ export function AdminDonationTrendCard({
             className="h-9 px-3 text-sm w-full sm:w-[175px]"
           />
         </div>
-      </div>
+      </CardHeader>
 
       {/* Subheader Ringkasan Nilai & Legenda */}
       <div className="px-3.5 sm:px-4 py-2.5 bg-slate-50/50 border-b border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
@@ -168,13 +170,13 @@ export function AdminDonationTrendCard({
       </div>
 
       {/* Recharts Canvas */}
-      <div className="p-3.5 sm:p-4">
+      <CardContent className="p-3.5 sm:p-4 pt-3.5 sm:pt-4">
         <AdminDonationTrendCanvas
           data={activeData}
           viewMode={viewMode}
           isMonthly={isMonthly}
         />
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

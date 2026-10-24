@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { USER_ROLES } from "@/services/authService";
 
 export function AdminUserActionMenu({
@@ -24,14 +25,16 @@ export function AdminUserActionMenu({
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           title="Aksi pengurus"
           aria-label={`Menu aksi ${user.name}`}
-          className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none"
+          className="h-8 w-8 text-slate-500 hover:text-slate-900"
         >
           <MoreVertical className="w-4 h-4" />
-        </button>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52 bg-white border border-slate-200 shadow-md rounded-lg p-1 z-50">
         <DropdownMenuItem

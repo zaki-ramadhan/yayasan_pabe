@@ -1,5 +1,6 @@
 import { getAdminRoutineDonations } from "@/services/adminRoutineDonationService";
 import { AdminRoutineDonationTable } from "@/components/admin/routine-donations/AdminRoutineDonationTable";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export const metadata = {
   title: "Komitmen Donasi Rutin",
@@ -11,14 +12,10 @@ export default async function AdminRoutineDonationPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
-          Komitmen donasi rutin
-        </h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          Pantau komitmen kebaikan berkelanjutan para donatur, jadwal debet atau pengingat sedekah, serta status keaktifan program.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Komitmen donasi rutin"
+        description="Pantau jadwal dan status donasi rutin dari donatur."
+      />
 
       <AdminRoutineDonationTable initialRoutineDonations={items} />
     </div>

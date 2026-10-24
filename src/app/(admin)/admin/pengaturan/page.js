@@ -1,5 +1,6 @@
 import { getOrgSettings } from "@/services/adminSettingsService";
 import { AdminSettingsForm } from "@/components/admin/settings/AdminSettingsForm";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export const metadata = {
   title: "Pengaturan Yayasan",
@@ -11,14 +12,10 @@ export default async function AdminSettingsPage() {
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
-          Pengaturan profil &amp; rekening yayasan
-        </h1>
-        <p className="text-sm font-normal text-slate-500 mt-0.5">
-          Kelola informasi identitas lembaga, data kontak layanan donatur, legalitas perizinan, dan rekening bank resmi.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="Pengaturan profil & rekening yayasan"
+        description="Kelola profil lembaga, kontak layanan, dan rekening bank yayasan."
+      />
 
       <AdminSettingsForm initialSettings={settings} />
     </div>

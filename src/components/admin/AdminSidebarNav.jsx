@@ -16,7 +16,6 @@ const ADMIN_NAV_GROUPS = [
     items: [
       { href: "/admin", label: "Dashboard Utama", short: "DB", exact: true },
       { href: "/admin/program", label: "Kelola Program", short: "KP" },
-      { href: "/admin/kategori", label: "Kategori Program", short: "KT" },
       { href: "/admin/distribusi", label: "Rekam Penyaluran", short: "RP" },
       { href: "/admin/transaksi", label: "Mutasi Transaksi", short: "MT" },
       { href: "/admin/donasi-rutin", label: "Donasi Rutin", short: "DR" },
