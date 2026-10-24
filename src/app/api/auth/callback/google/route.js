@@ -91,7 +91,7 @@ export async function GET(request) {
 
     const isSuperAdmin = isSuperAdminEmail(profile.email);
     const resolvedRole = isSuperAdmin ? "SUPER_ADMIN" : "DONOR";
-    const resolvedTitle = isSuperAdmin ? "Super Admin" : "Akun Terverifikasi (Google)";
+    const resolvedTitle = isSuperAdmin ? "Super Admin" : "Donatur";
 
     let dbUser = null;
     try {
@@ -124,7 +124,7 @@ export async function GET(request) {
     const userEmail = dbUser?.email || profile.email.toLowerCase();
     const userUsername = dbUser?.username || sanitizedUsername;
     const userRole = isSuperAdmin ? "SUPER_ADMIN" : (dbUser?.role || "DONOR");
-    const rawUserTitle = isSuperAdmin ? "Super Admin" : (dbUser?.title || "Akun Terverifikasi (Google)");
+    const rawUserTitle = isSuperAdmin ? "Super Admin" : (dbUser?.title || "Donatur");
     const userTitle = rawUserTitle.includes("Ketua Yayasan") ? "Super Admin" : rawUserTitle;
     const userAvatar = dbUser?.avatar || profile.picture || null;
 

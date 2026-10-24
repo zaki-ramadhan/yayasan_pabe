@@ -180,7 +180,7 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
 
       let effectiveAccessToken = dbDonation.accessToken;
       if (!effectiveAccessToken) {
-        const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "ygsm_inv_secure_salt_key";
+        const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "pabe_inv_secure_salt_key";
         effectiveAccessToken = crypto
           .createHash("sha256")
           .update(`${dbDonation.invoiceId}_${secretSalt}`)
@@ -241,7 +241,7 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
   if (fallbackDonation) {
     let effectiveAccessToken = fallbackDonation.accessToken;
     if (!effectiveAccessToken) {
-      const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "ygsm_inv_secure_salt_key";
+      const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "pabe_inv_secure_salt_key";
       effectiveAccessToken = crypto
         .createHash("sha256")
         .update(`${fallbackDonation.invoiceId}_${secretSalt}`)

@@ -11,7 +11,7 @@ import {
 export const metadata = {
   title: "Laporan Distribusi Penyaluran",
   description:
-    "Laporan keuangan audit independen, grafik distribusi penyaluran berkala, dan kepatuhan syariah Yayasan Generasi Sejahtera Mandiri.",
+    "Laporan keuangan audit independen, grafik distribusi penyaluran berkala, dan kepatuhan syariah Yayasan Payung Berkah.",
 };
 
 export default async function DistribusiPage() {

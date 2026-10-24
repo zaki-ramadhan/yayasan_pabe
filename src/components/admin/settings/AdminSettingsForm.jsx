@@ -48,7 +48,7 @@ export function AdminSettingsForm({ initialSettings }) {
         {
           bank: "",
           accountNumber: "",
-          accountName: prev.name || "Yayasan Generasi Sejahtera Mandiri",
+          accountName: prev.name || "Yayasan Payung Berkah",
           category: "Infaq & Sedekah",
         },
       ],

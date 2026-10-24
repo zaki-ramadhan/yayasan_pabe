@@ -26,7 +26,7 @@ export function FooterNavLinks({ links = DEFAULT_NAV_LINKS }) {
           <li key={item.href}>
             <Link
               href={item.href}
-              className="block text-sm text-slate-200 hover:text-white transition-colors py-0.5"
+              className="block text-sm text-slate-200 hover:text-white hover:underline underline-offset-2 transition-colors py-0.5"
             >
               {item.label}
             </Link>

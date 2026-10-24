@@ -22,7 +22,7 @@ export function AdminSettingsIdentitySection({ formData, onFieldChange }) {
               value={formData.name || ""}
               onChange={(e) => onFieldChange(null, "name", sanitizeStandardText(e.target.value, 80))}
               onBlur={(e) => onFieldChange(null, "name", e.target.value.trim())}
-              placeholder="Contoh: Yayasan Generasi Sejahtera Mandiri"
+              placeholder="Contoh: Yayasan Payung Berkah"
               className="h-10 text-sm font-normal"
               required
             />
@@ -33,7 +33,7 @@ export function AdminSettingsIdentitySection({ formData, onFieldChange }) {
               value={formData.shortName || ""}
               onChange={(e) => onFieldChange(null, "shortName", sanitizeStandardText(e.target.value, 20))}
               onBlur={(e) => onFieldChange(null, "shortName", e.target.value.trim())}
-              placeholder="Contoh: GSM"
+              placeholder="Contoh: PABE"
               className="h-10 text-sm font-normal"
               required
             />

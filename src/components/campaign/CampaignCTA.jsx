@@ -32,6 +32,7 @@ export function CampaignCTA({
   buttonHref,
   ignoreAuthCheck = false,
   className = "",
+  variant = "blue",
 }) {
   const userJson = useSyncExternalStore(subscribeAuth, getAuthSnapshot, getAuthServerSnapshot);
 
@@ -78,7 +79,13 @@ export function CampaignCTA({
             className="object-cover opacity-40"
           />
         )}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(29,78,216,0.5)_0%,_rgba(15,23,42,0.75)_55%,_rgba(2,6,23,0.92)_100%)]" />
+        <div
+          className={
+            variant === "emerald"
+              ? "absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(5,150,105,0.45)_0%,_rgba(15,23,42,0.75)_55%,_rgba(2,6,23,0.92)_100%)]"
+              : "absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(29,78,216,0.5)_0%,_rgba(15,23,42,0.75)_55%,_rgba(2,6,23,0.92)_100%)]"
+          }
+        />
       </div>
 
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -93,7 +100,11 @@ export function CampaignCTA({
 
         <Link
           href={effectiveHref}
-          className="relative inline-flex items-center justify-center px-4 sm:px-4.5 py-2.5 rounded-md bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs sm:text-sm border-t border-white/25 shadow-[0_3.5px_0_0_#1e3a8a] active:shadow-[0_1px_0_0_#1e3a8a] active:translate-y-[2.5px] transition-all cursor-pointer shrink-0 whitespace-nowrap self-start sm:self-auto select-none"
+          className={
+            variant === "emerald"
+              ? "relative inline-flex items-center justify-center px-4 sm:px-4.5 py-2.5 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs sm:text-sm border-t border-white/25 shadow-[0_3.5px_0_0_#065f46] active:shadow-[0_1px_0_0_#065f46] active:translate-y-[2.5px] transition-all cursor-pointer shrink-0 whitespace-nowrap self-start sm:self-auto select-none"
+              : "relative inline-flex items-center justify-center px-4 sm:px-4.5 py-2.5 rounded-md bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs sm:text-sm border-t border-white/25 shadow-[0_3.5px_0_0_#1e3a8a] active:shadow-[0_1px_0_0_#1e3a8a] active:translate-y-[2.5px] transition-all cursor-pointer shrink-0 whitespace-nowrap self-start sm:self-auto select-none"
+          }
         >
           {effectiveButtonText}
         </Link>

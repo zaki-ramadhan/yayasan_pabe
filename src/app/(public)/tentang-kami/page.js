@@ -10,7 +10,7 @@ import { DashedDivider } from "@/components/ui/DashedDivider";
 
 export const metadata = {
   title: "Tentang Kami",
-  description: "Profil lengkap, struktur dewan pengurus, legalitas resmi, dan visi misi Yayasan Generasi Sejahtera Mandiri.",
+  description: "Profil lengkap, struktur dewan pengurus, legalitas resmi, dan visi misi Yayasan Payung Berkah (PABE).",
 };
 
 export default async function TentangKamiPage() {

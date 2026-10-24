@@ -4,7 +4,7 @@ import { AdminLayoutClient } from "@/components/admin/AdminLayoutClient";
 
 export const metadata = {
   title: "Panel Admin Yayasan",
-  description: "Dasbor pengelolaan program, rekam penyaluran, dan mutasi donasi Yayasan Generasi Sejahtera Mandiri.",
+  description: "Dasbor pengelolaan program, rekam penyaluran, dan mutasi donasi Yayasan Payung Berkah.",
 };
 
 export default async function AdminLayout({ children }) {

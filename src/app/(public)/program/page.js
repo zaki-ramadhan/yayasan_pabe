@@ -6,7 +6,7 @@ import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 
 export const metadata = {
   title: "Program Donasi & Penyaluran Zakat",
-  description: "Temukan berbagai program kebaikan, beasiswa santri, tanggap bencana, dan zakat produktif Yayasan Generasi Sejahtera Mandiri.",
+  description: "Temukan berbagai program kebaikan, beasiswa santri, tanggap bencana, dan zakat produktif Yayasan Payung Berkah.",
 };
 
 export default async function ProgramPage() {

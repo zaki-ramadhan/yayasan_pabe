@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
@@ -78,10 +77,6 @@ export function AboutHeader({ volunteerCount = 14 }) {
               <h1 className="text-2xl sm:text-3xl font-semibold text-slate-950 leading-tight">
                 {ORG_PROFILE.name}
               </h1>
-              <BadgeCheck
-                className="w-5 h-5 sm:w-6 sm:h-6 text-white fill-amber-500 shrink-0 inline-block drop-shadow-xs"
-                title="Yayasan Terverifikasi Resmi (Official Organization)"
-              />
             </div>
             <p className="text-sm sm:text-base text-slate-700">
               {ORG_PROFILE.tagline}

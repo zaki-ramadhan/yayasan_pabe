@@ -15,6 +15,7 @@ const ADMIN_NAV_GROUPS = [
     title: "Program & Donasi",
     items: [
       { href: "/admin", label: "Dashboard Utama", short: "DB", exact: true },
+      { href: "/admin/donatur", label: "Daftar Donatur", short: "DD" },
       { href: "/admin/program", label: "Kelola Program", short: "KP" },
       { href: "/admin/distribusi", label: "Rekam Penyaluran", short: "RP" },
       { href: "/admin/transaksi", label: "Mutasi Transaksi", short: "MT" },
@@ -76,12 +77,12 @@ export function AdminSidebarNav({
             "flex items-center group transition-all",
             isCollapsed ? "justify-center w-full" : "gap-2.5 w-full"
           )}
-          title="Yayasan Generasi Sejahtera Mandiri"
+          title="Yayasan Payung Berkah (PABE)"
         >
           <div className="relative w-8.5 h-8.5 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
             <Image
               src="/logo_yayasan_GSM.png"
-              alt="Logo Yayasan GSM"
+              alt="Logo Yayasan Payung Berkah"
               width={34}
               height={34}
               className="w-full h-full object-contain rounded-xs"
@@ -90,7 +91,7 @@ export function AdminSidebarNav({
           {!isCollapsed && (
             <div className="min-w-0 flex-1 truncate">
               <span className="font-normal text-sm block text-slate-950 leading-tight truncate">
-                Yayasan GSM
+                Yayasan PABE
               </span>
               <span className="text-xs font-normal text-slate-500 block truncate">
                 Panel admin

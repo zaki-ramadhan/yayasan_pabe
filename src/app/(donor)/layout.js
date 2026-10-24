@@ -5,7 +5,7 @@ import { DonorLayoutClient } from "@/components/donor/DonorLayoutClient";
 export const metadata = {
   title: "Dashboard",
   description:
-    "Area aman kelola donasi, riwayat ZISWAF, dan profil akun Anda di Yayasan Generasi Sejahtera Mandiri.",
+    "Area aman kelola donasi, riwayat ZISWAF, dan profil akun Anda di Yayasan Payung Berkah.",
   robots: {
     index: false,
     follow: false,

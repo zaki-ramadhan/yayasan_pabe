@@ -110,7 +110,7 @@ export function formatSocialUser({
     username: `${sanitizedUsername}_${String(id || Date.now()).slice(-4)}`,
     email: email || `${id || Date.now()}@${provider}.user`,
     role: USER_ROLES.DONOR,
-    title: `Akun Terverifikasi (${isGoogle ? "Google" : "Facebook"})`,
+    title: "Donatur",
     phone: "-",
     avatar:
       avatar ||

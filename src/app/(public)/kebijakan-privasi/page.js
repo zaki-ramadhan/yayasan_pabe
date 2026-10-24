@@ -12,7 +12,7 @@ const PRIVACY_SECTIONS = [
     icon: ShieldCheck,
     title: "1. Komitmen perlindungan data pribadi",
     content: [
-      "Yayasan Generasi Sejahtera Mandiri (Yayasan PABE) berkomitmen menjaga kerahasiaan, integritas, dan keamanan seluruh data pribadi donatur, relawan, dan mitra kami.",
+      "Yayasan Payung Berkah (PABE) berkomitmen menjaga kerahasiaan, integritas, dan keamanan seluruh data pribadi donatur, relawan, dan mitra kami.",
       "Seluruh tata kelola dan pemrosesan informasi pribadi diselenggarakan dengan mengacu pada Undang-Undang Republik Indonesia Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP).",
     ],
   },
@@ -76,7 +76,7 @@ export default function KebijakanPrivasiPage() {
       <InformationHeroHeader
         title="Kebijakan Privasi"
         description="Komitmen keterbukaan dan perlindungan data pribadi donatur sesuai ketentuan Undang-Undang Pelindungan Data Pribadi (UU PDP No. 27/2022)."
-        imageAlt="Latar Belakang Kebijakan Privasi Yayasan Generasi Sejahtera Mandiri"
+        imageAlt="Latar Belakang Kebijakan Privasi Yayasan Payung Berkah"
       />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6 sm:space-y-8">
@@ -85,7 +85,7 @@ export default function KebijakanPrivasiPage() {
             Prinsip Amanah &amp; Keterbukaan Data
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Terakhir diperbarui: 21 Oktober 2026. Kebijakan ini menjelaskan bagaimana Yayasan Generasi Sejahtera Mandiri menghimpun, mengelola, dan melindungi data pribadi yang Anda percayakan kepada kami saat menggunakan layanan platform donasi digital.
+            Terakhir diperbarui: 21 Oktober 2026. Kebijakan ini menjelaskan bagaimana Yayasan Payung Berkah menghimpun, mengelola, dan melindungi data pribadi yang Anda percayakan kepada kami saat menggunakan layanan platform donasi digital.
           </p>
         </div>
 

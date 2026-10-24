@@ -91,7 +91,7 @@ export async function getDonorProfile({ userEmail, userId }) {
       email: user.email,
       username: user.username,
       role: user.role,
-      title: user.title || "Akun Terverifikasi",
+      title: user.title || "Donatur",
       salutation: user.salutation || "",
       phone: user.phone || "",
       avatar: user.avatar || "",

@@ -16,6 +16,7 @@ export const RESERVED_KEYWORDS = [
   "superadmin",
   "yayasan",
   "pabe",
+  "payungberkah",
   "ygsm",
   "official",
   "pengurus",

@@ -53,7 +53,7 @@ export function AdminSettingsContactSection({ formData, onFieldChange }) {
                 onFieldChange("contacts", "email", sanitizeEmail(e.target.value))
               }
               onBlur={(e) => onFieldChange("contacts", "email", e.target.value.trim().toLowerCase())}
-              placeholder="layanan@yayasangsm.id"
+              placeholder="layanan@payungberkah.id"
               type="email"
               inputMode="email"
               className="h-10 text-sm font-normal"

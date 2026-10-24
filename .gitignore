@@ -26,6 +26,7 @@
 !PRD.md
 !AGENTS.md
 !CLAUDE.md
+!public/documents/*.md
 
 # private & confidential documents (legal, internal assets, bank statements)
 /private-docs/

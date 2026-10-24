@@ -89,7 +89,7 @@ export function generateAuditReportPdf(data = {}) {
 BT
 /F1 13 Tf
 48 786 Td
-(${escapePdfText("Yayasan Generasi Sejahtera Mandiri (Yayasan PABE)")}) Tj
+(${escapePdfText("Yayasan Payung Berkah (Yayasan PABE)")}) Tj
 ET
 
 0.39 0.45 0.55 rg
@@ -349,7 +349,7 @@ ET
 BT
 /F2 7.5 Tf
 48 202 Td
-(${escapePdfText("Yayasan Generasi Sejahtera Mandiri - Portal Akuntabilitas Publik (localhost:3000/distribusi)")}) Tj
+(${escapePdfText("Yayasan Payung Berkah - Portal Akuntabilitas Publik (payungberkah.id/distribusi)")}) Tj
 395 0 Td
 (${escapePdfText("Halaman 1 dari 1")}) Tj
 ET
@@ -375,7 +375,7 @@ export function generateSyariahReportPdf(data = {}) {
 BT
 /F1 13 Tf
 48 786 Td
-(${escapePdfText("Dewan Pengawas Syariah - Yayasan Generasi Sejahtera Mandiri")}) Tj
+(${escapePdfText("Dewan Pengawas Syariah - Yayasan Payung Berkah (PABE)")}) Tj
 ET
 
 0.39 0.45 0.55 rg
@@ -638,7 +638,7 @@ ET
 BT
 /F2 8 Tf
 62 274 Td
-(${escapePdfText("pada Yayasan Generasi Sejahtera Mandiri telah memenuhi kaidah syariat Islam dan regulasi yang berlaku.")}) Tj
+(${escapePdfText("pada Yayasan Payung Berkah telah memenuhi kaidah syariat Islam dan regulasi yang berlaku.")}) Tj
 ET
 
 0.58 0.64 0.72 rg

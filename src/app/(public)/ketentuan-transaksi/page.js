@@ -18,7 +18,7 @@ export default function KetentuanTransaksiPage() {
       <InformationHeroHeader
         title="Ketentuan Donasi & Transaksi"
         description="Panduan akad syariah wakalah, tata kelola penyaluran donasi & zakat, serta batas minimum dan maksimum nominal transaksi resmi yayasan."
-        imageAlt="Latar Belakang Ketentuan Donasi dan Transaksi Yayasan Generasi Sejahtera Mandiri"
+        imageAlt="Latar Belakang Ketentuan Donasi dan Transaksi Yayasan Payung Berkah"
       />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6 sm:space-y-8">
