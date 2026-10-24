@@ -16,9 +16,8 @@ export function DonorProfileSkeleton() {
               </div>
 
               <div className="text-center sm:text-left space-y-2 pt-1 sm:pt-2">
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                <div className="flex items-center justify-center sm:justify-start">
                   <Skeleton className="h-6 sm:h-7 w-44 rounded-sm" />
-                  <Skeleton className="h-5 w-28 rounded-full" />
                 </div>
                 <Skeleton className="h-4 w-52 rounded-sm mx-auto sm:mx-0" />
                 <Skeleton className="h-4 w-72 max-w-xs rounded-sm mx-auto sm:mx-0" />

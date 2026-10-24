@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Camera, MapPin, Calendar, Trash2 } from "lucide-react";
+import { Camera, MapPin, Calendar, Trash2, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
@@ -14,7 +14,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { formatDate, getInitials } from "@/lib/formatters";
-import { sanitizeImageUrl, maskEmail } from "@/lib/security";
+import { sanitizeImageUrl } from "@/lib/security";
 import { DonorProfileBannerCanvas } from "@/components/donor/DonorProfileBannerCanvas";
 
 const AVATAR_PRESETS = [
@@ -101,18 +101,11 @@ export function DonorProfileCover({
                 <h2 className="text-lg sm:text-xl font-medium text-slate-950 tracking-tight">
                   {displayName}
                 </h2>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-emerald-800 bg-emerald-50 border border-emerald-200">
-                  {profile?.role === "SUPER_ADMIN"
-                    ? "Super Admin"
-                    : profile?.role === "ADMIN"
-                    ? "Admin Yayasan"
-                    : "Akun terverifikasi"}
-                </span>
               </div>
 
               {profile?.email && (
                 <p className="text-sm font-normal text-slate-500">
-                  {maskEmail(profile.email)}
+                  {profile.email}
                 </p>
               )}
 
@@ -123,6 +116,12 @@ export function DonorProfileCover({
               )}
 
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-1 text-sm font-normal text-slate-500">
+                {profile?.phone && (
+                  <div className="flex items-center gap-1.5">
+                    <Phone className="w-4 h-4 text-slate-400" />
+                    <span>{profile.phone}</span>
+                  </div>
+                )}
                 {profile?.city && (
                   <div className="flex items-center gap-1.5">
                     <MapPin className="w-4 h-4 text-slate-400" />

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { sanitizePrayer } from "@/lib/security";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 export function PrayerWriteDialog({

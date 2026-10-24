@@ -35,7 +35,6 @@ export function DonorTransactionTable({
       <div className="p-4 sm:p-5 border-b border-slate-200">
         <TableToolbar
           title="Daftar Riwayat Transaksi"
-          description="Rincian seluruh donasi, sedekah, dan zakat yang tercatat"
           search={search}
           onSearchChange={onSearchChange}
           searchPlaceholder="Cari program, invoice, metode..."

@@ -1,0 +1,70 @@
+"use client";
+
+import { formatRupiah, formatDate, getInitials } from "@/lib/formatters";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { maskEmail, maskPhone } from "@/lib/security";
+
+export function AdminDonorTableRow({ donor, onOpenDetail }) {
+  return (
+    <TableRow className="hover:bg-slate-50/70 transition-colors">
+      {/* 1. Donatur (Avatar, Nama & Email) */}
+      <TableCell className="w-[260px] py-3 align-middle">
+        <div className="flex items-center gap-2.5">
+          <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
+            {donor.avatar && <AvatarImage src={donor.avatar} alt={donor.name} />}
+            <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
+              {donor.name === "Hamba Allah" ? "HA" : getInitials(donor.name, "D")}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 space-y-0.5">
+            <span className="font-medium text-sm text-slate-900 block leading-tight truncate" title={donor.name}>
+              {donor.name}
+            </span>
+            {donor.email ? (
+              <span className="text-sm text-slate-500 block truncate font-normal" title={donor.email}>
+                {maskEmail(donor.email)}
+              </span>
+            ) : (
+              <span className="text-sm text-slate-400 block italic font-normal">
+                Email tidak dicantumkan
+              </span>
+            )}
+          </div>
+        </div>
+      </TableCell>
+
+      {/* 2. No. Telepon (Kolom Mandiri & Disensor) */}
+      <TableCell className="w-44 py-3 text-sm text-slate-700 align-middle whitespace-nowrap">
+        {donor.phone ? (
+          <span className="font-normal tabular-nums">{maskPhone(donor.phone)}</span>
+        ) : (
+          <span className="text-sm text-slate-400 italic font-normal">-</span>
+        )}
+      </TableCell>
+
+      {/* 3. Total Donasi */}
+      <TableCell className="w-px font-medium text-sm text-slate-900 py-3 whitespace-nowrap align-middle">
+        {formatRupiah(donor.totalPaidAmount)}
+      </TableCell>
+
+      {/* 4. Frekuensi Donasi */}
+      <TableCell className="w-px text-center text-sm font-normal text-slate-700 py-3 whitespace-nowrap align-middle">
+        {donor.paidCount} kali
+      </TableCell>
+
+      {/* 5. Donasi Terakhir */}
+      <TableCell className="w-px text-sm text-slate-500 py-3 whitespace-nowrap align-middle">
+        {donor.lastDonatedAt ? formatDate(donor.lastDonatedAt) : "-"}
+      </TableCell>
+
+      {/* 6. Aksi (Hanya Rincian) */}
+      <TableCell className="w-20 text-right py-3 whitespace-nowrap align-middle pr-4">
+        <TableRowActions
+          onView={() => onOpenDetail(donor)}
+          viewTooltip={`Lihat rincian: ${donor.name}`}
+        />
+      </TableCell>
+    </TableRow>
+  );
+}

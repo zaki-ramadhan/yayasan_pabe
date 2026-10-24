@@ -16,15 +16,17 @@ export function AdminAuditReportTableRow({ item, onEdit, onDelete }) {
 			</TableCell>
 
 			<TableCell className="py-3.5 align-middle space-y-1">
-				<span className="font-medium text-sm text-slate-900 block leading-tight">
-					{
-						item.auditorName
-					}
+				<span
+					className="font-medium text-sm text-slate-900 block leading-tight line-clamp-1"
+					title={item.auditorName}
+				>
+					{item.auditorName}
 				</span>
-				<span className="text-sm font-normal text-slate-500 block leading-normal">
-					{
-						item.title
-					}
+				<span
+					className="text-sm font-normal text-slate-500 block leading-normal line-clamp-2"
+					title={item.title}
+				>
+					{item.title}
 				</span>
 				{item.pdfUrl && (
 					<a

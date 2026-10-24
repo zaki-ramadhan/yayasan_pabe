@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { BadgeCheck, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 /**
  * Individual leadership team or Syariah advisor member card
@@ -29,10 +29,6 @@ export function LeaderItem({ leader }) {
           >
             {leader.name}
           </h3>
-          <BadgeCheck
-            className="w-4 h-4 text-white fill-primary shrink-0"
-            title="Profil Pengurus Terverifikasi"
-          />
         </div>
         <div className="flex items-center gap-1.5 text-slate-600 min-w-0">
           <ChevronRight className="w-3.5 h-3.5 text-primary shrink-0" />

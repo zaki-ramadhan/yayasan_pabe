@@ -19,6 +19,7 @@ import { PRAYER_SORT_OPTIONS } from "@/data/sortOptions";
 import { DateStickyBadge } from "@/components/shared/DateStickyBadge";
 import { getDateKey, getDateBadgeLabel } from "@/lib/dateUtils";
 import { validatePrayer } from "@/lib/security";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 5;

@@ -260,17 +260,22 @@ export function TablePaginationFooter({
   pagination,
   currentPage = pagination?.currentPage || pagination?.page || 1,
   totalPages = pagination?.totalPages || 1,
-  total = pagination?.total || 0,
-  limit = pagination?.limit || 10,
+  total = pagination?.total || pagination?.totalCount || 0,
+  totalItems,
+  limit = pagination?.limit || pagination?.pageSize || 10,
+  pageSize,
   onPageChange,
   className = "",
   alwaysShow = false,
 }) {
+  const resolvedTotal = totalItems !== undefined ? totalItems : total;
+  const resolvedLimit = pageSize !== undefined ? pageSize : limit;
+
   const calculatedTotalPages =
     totalPages > 1
       ? totalPages
-      : total > 0 && limit > 0
-      ? Math.ceil(total / limit)
+      : resolvedTotal > 0 && resolvedLimit > 0
+      ? Math.ceil(resolvedTotal / resolvedLimit)
       : totalPages;
 
   // Hanya tampilkan jika jumlah data memicu 2 halaman atau lebih
@@ -278,8 +283,8 @@ export function TablePaginationFooter({
     return null;
   }
 
-  const fromRecord = total === 0 ? 0 : (currentPage - 1) * limit + 1;
-  const toRecord = Math.min(currentPage * limit, total);
+  const fromRecord = resolvedTotal === 0 ? 0 : (currentPage - 1) * resolvedLimit + 1;
+  const toRecord = Math.min(currentPage * resolvedLimit, resolvedTotal);
 
   return (
     <div

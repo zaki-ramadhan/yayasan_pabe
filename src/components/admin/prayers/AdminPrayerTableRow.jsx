@@ -1,17 +1,35 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { ExternalLink, Eye, EyeOff, Heart } from "lucide-react";
+import { ExternalLink, Eye, EyeOff, Heart, Copy, Check } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, formatRupiah, getInitials } from "@/lib/formatters";
+import { maskEmail } from "@/lib/security";
+import { copyToClipboard } from "@/lib/clipboard";
+import { toast } from "@/hooks/use-toast";
 
 export function AdminPrayerTableRow({
   item,
   onToggleHide,
 }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyInvoice = async (invoiceId) => {
+    if (!invoiceId) return;
+    const success = await copyToClipboard(invoiceId);
+    if (success) {
+      setCopied(true);
+      toast.success(`Nomor invoice ${invoiceId} berhasil disalin.`);
+      setTimeout(() => setCopied(false), 2000);
+    } else {
+      toast.error("Gagal menyalin nomor invoice.");
+    }
+  };
+
   return (
     <TableRow
       key={item.id}
@@ -19,8 +37,33 @@ export function AdminPrayerTableRow({
         item.isPrayerHidden ? "bg-slate-50/60 opacity-80" : ""
       }`}
     >
-      {/* 1. Donatur */}
-      <TableCell className="w-48 py-3 align-top">
+      {/* 1. No. Invoice (Persis gaya & posisi seperti Mutasi Transaksi) */}
+      <TableCell className="w-[170px] text-sm py-3 align-top">
+        <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
+          <span
+            className="font-medium text-slate-900 truncate block select-all"
+            title={item.invoiceId}
+          >
+            {item.invoiceId}
+          </span>
+          <button
+            type="button"
+            onClick={() => handleCopyInvoice(item.invoiceId)}
+            title="Salin nomor invoice"
+            aria-label={`Salin invoice ${item.invoiceId}`}
+            className="p-1 rounded text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+          >
+            {copied ? (
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+            ) : (
+              <Copy className="w-3.5 h-3.5" />
+            )}
+          </button>
+        </div>
+      </TableCell>
+
+      {/* 2. Donatur (Email disensor & ukuran teks minimal sm) */}
+      <TableCell className="w-52 py-3 align-top">
         <div className="flex items-center gap-2.5">
           <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
             {item.donorAvatar && <AvatarImage src={item.donorAvatar} alt={item.donorName} />}
@@ -33,29 +76,32 @@ export function AdminPrayerTableRow({
               {item.donorName}
             </span>
             {item.isAnonymous ? (
-              <span className="text-xs font-normal text-slate-400 block">
+              <span className="text-sm font-normal text-slate-400 block">
                 (Anonim)
               </span>
             ) : item.donorEmail ? (
-              <span className="text-xs font-normal text-slate-500 block truncate">
-                {item.donorEmail}
+              <span className="text-sm font-normal text-slate-500 block truncate" title={item.donorEmail}>
+                {maskEmail(item.donorEmail)}
               </span>
             ) : null}
           </div>
         </div>
       </TableCell>
 
-      {/* 2. Program Donasi */}
-      <TableCell className="w-48 py-3 align-top">
+      {/* 3. Program Donasi (Lebar lega dengan line-clamp-2) */}
+      <TableCell className="min-w-[280px] max-w-[360px] py-3 align-top">
         <div className="space-y-1">
-          <span className="font-medium text-sm text-slate-900 block leading-snug line-clamp-2">
+          <span
+            className="font-medium text-sm text-slate-900 block leading-snug line-clamp-2"
+            title={item.campaignTitle}
+          >
             {item.campaignTitle}
           </span>
           {item.campaignSlug && (
             <Link
               href={`/campaign/${item.campaignSlug}`}
               target="_blank"
-              className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-normal"
+              className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-normal"
             >
               <span>Lihat program</span>
               <ExternalLink className="w-3 h-3" />
@@ -64,35 +110,33 @@ export function AdminPrayerTableRow({
         </div>
       </TableCell>
 
-      {/* 3. Nominal Donasi */}
-      <TableCell className="w-32 py-3 align-top whitespace-nowrap text-sm font-medium text-slate-800">
+      {/* 4. Nominal Donasi */}
+      <TableCell className="w-32 py-3 align-top whitespace-nowrap text-sm font-medium text-slate-900">
         {formatRupiah(item.amount)}
       </TableCell>
 
-      {/* 4. No. Invoice */}
-      <TableCell className="w-32 py-3 align-top whitespace-nowrap text-xs font-mono text-slate-500">
-        {item.invoiceId}
-      </TableCell>
-
-      {/* 4. Pesan Doa */}
-      <TableCell className="min-w-[220px] py-3 align-top space-y-1.5">
-        <p className="text-sm font-normal text-slate-800 leading-relaxed italic">
+      {/* 5. Pesan Doa (Lega dengan line-clamp-3) */}
+      <TableCell className="min-w-[240px] max-w-md py-3 align-top space-y-1.5">
+        <p
+          className="text-sm font-normal text-slate-800 leading-relaxed italic line-clamp-3"
+          title={item.prayer}
+        >
           &ldquo;{item.prayer}&rdquo;
         </p>
         {item.aminCount > 0 && (
-          <span className="inline-flex items-center gap-1 text-xs text-rose-600 font-normal">
-            <Heart className="w-3 h-3 fill-rose-500 text-rose-500" />
+          <span className="inline-flex items-center gap-1 text-sm text-rose-600 font-normal">
+            <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
             <span>{item.aminCount} orang mengaminkan</span>
           </span>
         )}
       </TableCell>
 
-      {/* 5. Waktu Kirim */}
-      <TableCell className="w-36 py-3 align-top whitespace-nowrap text-xs text-slate-500 font-normal">
+      {/* 6. Waktu Kirim (Ukuran sm bukan xs) */}
+      <TableCell className="w-36 py-3 align-top whitespace-nowrap text-sm text-slate-500 font-normal">
         {formatDate(item.createdAt, { withTime: true })}
       </TableCell>
 
-      {/* 6. Status Moderasi */}
+      {/* 7. Status Moderasi (Badge) */}
       <TableCell className="w-32 text-center py-3 align-top whitespace-nowrap">
         {item.isPrayerHidden ? (
           <Badge variant="danger" className="gap-1">
@@ -107,10 +151,9 @@ export function AdminPrayerTableRow({
         )}
       </TableCell>
 
-      {/* 7. Aksi Moderasi */}
+      {/* 8. Aksi Moderasi */}
       <TableCell className="w-24 text-right py-3 align-top pr-4 whitespace-nowrap">
         <div className="flex items-center justify-end gap-1">
-          {/* Tombol Sembunyikan/Tampilkan Doa */}
           <Button
             type="button"
             variant="ghost"

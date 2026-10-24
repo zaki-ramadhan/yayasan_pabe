@@ -59,17 +59,17 @@ export function AdminPrayerTable({
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
-                <TableHead className="w-48 font-medium text-slate-600 text-sm py-2.5">
+                <TableHead className="w-[170px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                  No. Invoice
+                </TableHead>
+                <TableHead className="w-52 font-medium text-slate-600 text-sm py-2.5">
                   Donatur
                 </TableHead>
-                <TableHead className="w-48 font-medium text-slate-600 text-sm py-2.5">
+                <TableHead className="min-w-[280px] max-w-[360px] font-medium text-slate-600 text-sm py-2.5">
                   Program donasi
                 </TableHead>
                 <TableHead className="w-32 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Nominal
-                </TableHead>
-                <TableHead className="w-32 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  No. Invoice
                 </TableHead>
                 <TableHead className="min-w-[200px] font-medium text-slate-600 text-sm py-2.5">
                   Pesan doa

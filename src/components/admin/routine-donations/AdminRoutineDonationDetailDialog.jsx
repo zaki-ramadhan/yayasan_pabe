@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { AdminRoutineDonationStatusBadge } from "./AdminRoutineDonationStatusBadge";
 import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
-import { maskEmail } from "@/lib/security";
+import { maskEmail, maskPhone } from "@/lib/security";
 import { Mail, Phone, Calendar, Clock, HeartHandshake, User, ArrowUpRight } from "lucide-react";
 
 export function AdminRoutineDonationDetailDialog({
@@ -33,7 +33,7 @@ export function AdminRoutineDonationDetailDialog({
   const cleanPhone = (donation.donorPhone || "").replace(/\D/g, "");
   const waPhone = cleanPhone.startsWith("0") ? `62${cleanPhone.slice(1)}` : cleanPhone;
   const waUrl = `https://wa.me/${waPhone}?text=${encodeURIComponent(
-    `Halo ${donation.donorName}, terima kasih atas komitmen donasi rutin Anda di Yayasan Generasi Sejahtera Mandiri untuk program "${donation.programTitle}".`
+    `Halo ${donation.donorName}, terima kasih atas komitmen donasi rutin Anda di Yayasan Payung Berkah untuk program "${donation.programTitle}".`
   )}`;
 
   const frequencyLabel = {
@@ -103,7 +103,7 @@ export function AdminRoutineDonationDetailDialog({
                 <div className="flex items-center justify-between text-slate-600">
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>{donation.donorPhone}</span>
+                    <span>{maskPhone(donation.donorPhone)}</span>
                   </div>
                   <a
                     href={waUrl}

@@ -17,10 +17,11 @@ export function AdminCareerTableRow({
 		<TableRow key={job.id}>
 			<TableCell className="py-3 align-middle">
 				<div className="space-y-0.5">
-					<span className="text-sm font-medium text-slate-900 block">
-						{
-							job.title
-						}
+					<span
+						className="text-sm font-medium text-slate-900 block leading-snug line-clamp-2"
+						title={job.title}
+					>
+						{job.title}
 					</span>
 					<span className="text-sm text-slate-500">
 						{job.jobCode ||

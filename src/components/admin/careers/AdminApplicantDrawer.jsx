@@ -19,8 +19,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/ui/badge";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
-import { Mail, Phone, ExternalLink, FileText, RefreshCw } from "lucide-react";
-import { maskEmail } from "@/lib/security";
+import { Mail, Phone, ExternalLink, FileText } from "lucide-react";
+import { maskEmail, maskPhone } from "@/lib/security";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { USER_ROLES } from "@/services/authService";
 
@@ -106,22 +106,9 @@ export function AdminApplicantDrawer({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader className="border-b border-slate-100">
-          <div className="flex items-center gap-2.5">
-            <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950">
-              Daftar pelamar: {vacancy?.title || "Lowongan"}
-            </DialogTitle>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={fetchApplications}
-              disabled={isLoading}
-              className="h-7.5 px-2.5 text-xs gap-1.5 cursor-pointer shrink-0"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
-              <span>Muat Ulang</span>
-            </Button>
-          </div>
+          <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950">
+            Daftar pelamar: {vacancy?.title || "Lowongan"}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-3.5">
@@ -166,7 +153,7 @@ export function AdminApplicantDrawer({
                           <SelectValue placeholder="Ubah Status" />
                         </SelectTrigger>
                         <SelectContent align="end">
-                          <SelectItem value="PENDING">Menunggu Review</SelectItem>
+                          <SelectItem value="PENDING">Menunggu</SelectItem>
                           <SelectItem value="REVIEWED">Telah Direview</SelectItem>
                           <SelectItem value="SHORTLISTED">Lolos Seleksi</SelectItem>
                           <SelectItem value="REJECTED">Belum Sesuai</SelectItem>
@@ -186,7 +173,7 @@ export function AdminApplicantDrawer({
                     <span className="flex items-center gap-1.5">
                       <Phone className="w-4 h-4 text-slate-400" />
                       <a href={`tel:${app.phone}`} className="text-slate-800">
-                        {app.phone}
+                        {maskPhone(app.phone)}
                       </a>
                     </span>
                     {app.resumeUrl && (

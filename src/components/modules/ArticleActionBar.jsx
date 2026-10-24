@@ -4,6 +4,7 @@ import { useState, useMemo, useSyncExternalStore, useId, useRef, useEffect } fro
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
 import { safeFetch } from "@/lib/safeFetch";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 const LIKE_STORAGE_KEY = "pabe_liked_articles";

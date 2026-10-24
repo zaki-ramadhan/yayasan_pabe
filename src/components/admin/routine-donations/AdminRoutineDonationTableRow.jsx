@@ -1,7 +1,7 @@
 "use client";
 
 import { formatRupiah, formatDate, decodeHtmlEntities, getInitials } from "@/lib/formatters";
-import { maskEmail } from "@/lib/security";
+import { maskEmail, maskPhone } from "@/lib/security";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { AdminRoutineDonationStatusBadge } from "./AdminRoutineDonationStatusBadge";
@@ -31,7 +31,7 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
             </span>
             <div className="flex flex-col text-sm text-slate-500 font-normal truncate">
               {item.donorEmail && <span>{maskEmail(item.donorEmail)}</span>}
-              {item.donorPhone && <span>{item.donorPhone}</span>}
+              {item.donorPhone && <span>{maskPhone(item.donorPhone)}</span>}
             </div>
           </div>
         </div>
@@ -39,7 +39,10 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
 
       {/* Program Kebaikan */}
       <TableCell className="text-sm text-slate-800 py-3 align-middle">
-        <span className="font-medium block leading-snug">
+        <span
+          className="font-medium block leading-snug line-clamp-2"
+          title={decodeHtmlEntities(item.programTitle)}
+        >
           {decodeHtmlEntities(item.programTitle)}
         </span>
         <span className="text-sm text-slate-500 font-normal block mt-0.5">

@@ -1,13 +1,13 @@
 "use client";
 
-import { MapPin } from "lucide-react";
+import { MapPin, QrCode } from "lucide-react";
 import { formatDate, getInitials } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
 import { AdminVolunteerStatusBadge } from "./AdminVolunteerStatusBadge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { maskEmail } from "@/lib/security";
+import { maskEmail, maskPhone } from "@/lib/security";
 
-export function AdminVolunteerTableRow({ item, onViewDetail, onDelete }) {
+export function AdminVolunteerTableRow({ item, onViewDetail, onPrintCard, onDelete }) {
   return (
     <TableRow className="hover:bg-slate-50/70 transition-colors">
       {/* Nama & Kontak */}
@@ -24,7 +24,7 @@ export function AdminVolunteerTableRow({ item, onViewDetail, onDelete }) {
             </span>
             <div className="flex flex-col text-sm text-slate-500 font-normal truncate">
               {item.email && <span>{maskEmail(item.email)}</span>}
-              {item.phone && <span>{item.phone}</span>}
+              {item.phone && <span>{maskPhone(item.phone)}</span>}
             </div>
           </div>
         </div>
@@ -40,7 +40,7 @@ export function AdminVolunteerTableRow({ item, onViewDetail, onDelete }) {
 
       {/* Bidang Minat */}
       <TableCell className="text-sm text-slate-800 py-3 align-middle">
-        <span className="font-medium block leading-snug">
+        <span className="font-medium block leading-snug line-clamp-1" title={item.interest}>
           {item.interest}
         </span>
         {item.motivation && (
@@ -67,7 +67,19 @@ export function AdminVolunteerTableRow({ item, onViewDetail, onDelete }) {
           onDelete={() => onDelete(item.id, item.fullName)}
           viewTooltip="Lihat rincian pendaftar"
           deleteTooltip="Hapus berkas pendaftar"
-        />
+        >
+          {item.status === "APPROVED" && onPrintCard && (
+            <button
+              type="button"
+              onClick={() => onPrintCard(item)}
+              title="Cetak kartu tanda anggota"
+              aria-label="Cetak kartu tanda anggota"
+              className="p-1.5 rounded-md text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
+            >
+              <QrCode className="w-4 h-4" />
+            </button>
+          )}
+        </TableRowActions>
       </TableCell>
     </TableRow>
   );

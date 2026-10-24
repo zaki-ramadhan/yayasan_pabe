@@ -60,12 +60,9 @@ export function AdminProgramSkeleton() {
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
                   {/* Program Title & Details */}
-                  <TableCell className="space-y-1.5 py-3 align-middle">
-                    <div className="flex items-center gap-2">
-                      <Skeleton className="h-4 w-44 rounded" />
-                      <Skeleton className="h-4 w-14 rounded" />
-                    </div>
-                    <Skeleton className="h-3 w-28 rounded" />
+                  <TableCell className="space-y-1 py-3 align-middle">
+                    <Skeleton className="h-4 w-52 rounded" />
+                    <Skeleton className="h-3.5 w-28 rounded" />
                   </TableCell>
 
                   {/* Category */}

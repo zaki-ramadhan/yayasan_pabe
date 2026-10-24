@@ -9,10 +9,11 @@ export function AdminFaqTableRow({ faq, onEdit, onDelete }) {
 			{/* Question & Answer snippet */}
 			<TableCell className="py-3 px-4 align-middle">
 				<div className="space-y-0.5">
-					<span className="text-sm font-medium text-slate-900 block leading-snug">
-						{
-							faq.question
-						}
+					<span
+						className="text-sm font-medium text-slate-900 block leading-snug line-clamp-2"
+						title={faq.question}
+					>
+						{faq.question}
 					</span>
 					<p className="text-sm text-slate-500 line-clamp-1 font-normal leading-normal mt-0.5">
 						{

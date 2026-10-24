@@ -14,6 +14,7 @@ import {
 import { AdminVolunteerDetailDialog } from "./AdminVolunteerDetailDialog";
 import { AdminVolunteerToolbar } from "./AdminVolunteerToolbar";
 import { AdminVolunteerTableRow } from "./AdminVolunteerTableRow";
+import { VolunteerPrintDialog } from "@/components/volunteer/VolunteerPrintDialog";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
@@ -27,6 +28,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedVolunteer, setSelectedVolunteer] = useState(null);
+  const [cardVolunteer, setCardVolunteer] = useState(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -181,6 +183,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                     key={item.id}
                     item={item}
                     onViewDetail={setSelectedVolunteer}
+                    onPrintCard={setCardVolunteer}
                     onDelete={handleDelete}
                   />
                 ))
@@ -211,7 +214,18 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         onClose={() => setSelectedVolunteer(null)}
         volunteer={selectedVolunteer}
         onStatusChange={handleUpdateStatus}
+        onPrintCard={(v) => {
+          setSelectedVolunteer(null);
+          setCardVolunteer(v);
+        }}
         isUpdating={isUpdatingStatus}
+      />
+
+      {/* Print KTA / ID Card Dialog */}
+      <VolunteerPrintDialog
+        isOpen={Boolean(cardVolunteer)}
+        onClose={() => setCardVolunteer(null)}
+        volunteer={cardVolunteer}
       />
     </div>
   );

@@ -51,33 +51,16 @@ export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
 			className="hover:bg-slate-50/70 transition-colors"
 		>
 			<TableCell className="space-y-1 py-3 align-middle">
-				<div className="flex items-center gap-1.5 flex-wrap">
-					<span className="font-medium text-sm text-slate-900 block leading-snug">
-						{
-							item.title
-						}
-					</span>
-					{item.isUrgent && (
-						<Badge
-							variant="danger"
-							className="shrink-0"
-						>
-							Mendesak
-						</Badge>
-					)}
-					{item.isFeatured && (
-						<Badge
-							variant="warning"
-							className="shrink-0"
-						>
-							Prioritas
-						</Badge>
-					)}
-				</div>
-				<span className="text-xs text-slate-500 block">
+				<span
+					className="font-medium text-sm text-slate-900 block leading-snug line-clamp-2"
+					title={item.title}
+				>
+					{item.title}
+				</span>
+				<span className="text-sm text-slate-500 block">
 					Lokasi:{" "}
 					{
-						item.location
+						item.location || "-"
 					}
 				</span>
 			</TableCell>
@@ -122,7 +105,7 @@ export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
 							}
 							className="h-1.5"
 						/>
-						<span className="text-xs text-slate-500 block">
+						<span className="text-sm text-slate-500 block">
 							Target:{" "}
 							{formatRupiah(
 								target,
@@ -141,7 +124,7 @@ export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
 				donatur
 				{daysLeft !==
 					null && (
-					<span className="text-xs text-slate-500 block mt-0.5">
+					<span className="text-sm text-slate-500 block mt-0.5">
 						{daysLeft >
 						0
 							? `${daysLeft} hari lagi`
@@ -159,7 +142,7 @@ export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
 								disbursed,
 							)}
 						</div>
-						<span className="text-xs text-slate-500 block">
+						<span className="text-sm text-slate-500 block">
 							Sisa
 							kas:{" "}
 							{formatRupiah(
@@ -169,11 +152,11 @@ export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
 					</>
 				) : (
 					<>
-						<span className="text-xs text-slate-400 block font-normal">
+						<span className="text-sm text-slate-400 block font-normal">
 							Belum
 							disalurkan
 						</span>
-						<span className="text-xs text-slate-500 block">
+						<span className="text-sm text-slate-500 block">
 							Kas
 							utuh:{" "}
 							{formatRupiah(

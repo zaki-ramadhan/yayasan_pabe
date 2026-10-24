@@ -13,6 +13,7 @@ import { DonorCard } from "@/components/donor/DonorDashboardPrimitives";
 import { DonorTrendChartCanvas } from "@/components/donor/DonorTrendChartCanvas";
 import { DonorTopCategoryCards } from "@/components/donor/DonorTopCategoryCards";
 import { safeFetch } from "@/lib/safeFetch";
+import { toast } from "@/hooks/use-toast";
 
 export function DonorMonthlyTrendChart({
   initialMonthlyTrend = [],

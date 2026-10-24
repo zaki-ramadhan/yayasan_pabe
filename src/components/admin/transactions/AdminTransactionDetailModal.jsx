@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/badge";
 import { formatRupiah, formatDate } from "@/lib/formatters";
-import { maskEmail } from "@/lib/security";
+import { maskEmail, maskPhone } from "@/lib/security";
 import { copyToClipboard } from "@/lib/clipboard";
 import { toast } from "@/hooks/use-toast";
 
@@ -130,7 +130,7 @@ export function AdminTransactionDetailModal({
               <div>
                 <span className="text-sm text-slate-500 block font-normal">Nomor telepon:</span>
                 <span className="font-medium text-slate-900">
-                  {transaction.donorPhone || "-"}
+                  {transaction.donorPhone ? maskPhone(transaction.donorPhone) : "-"}
                 </span>
               </div>
               <div>

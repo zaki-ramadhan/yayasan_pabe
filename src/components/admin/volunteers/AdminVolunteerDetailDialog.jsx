@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Phone, MapPin, Calendar, Heart, ShieldCheck } from "lucide-react";
+import { MessageSquare, Phone, MapPin, Calendar, Heart, ShieldCheck, QrCode } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,7 +17,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { formatDate } from "@/lib/formatters";
-import { maskEmail } from "@/lib/security";
+import { maskEmail, maskPhone } from "@/lib/security";
 import { AdminVolunteerStatusBadge } from "./AdminVolunteerStatusBadge";
 
 export function AdminVolunteerDetailDialog({
@@ -25,6 +25,7 @@ export function AdminVolunteerDetailDialog({
   onClose,
   volunteer = null,
   onStatusChange,
+  onPrintCard,
   isUpdating = false,
 }) {
   if (!volunteer) return null;
@@ -66,7 +67,7 @@ export function AdminVolunteerDetailDialog({
               <div>
                 <span className="text-sm text-slate-500 block font-normal">Nomor telepon / WA:</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-slate-900">{volunteer.phone || "-"}</span>
+                  <span className="font-medium text-slate-900">{volunteer.phone ? maskPhone(volunteer.phone) : "-"}</span>
                   {waUrl && (
                     <a
                       href={waUrl}
@@ -147,7 +148,18 @@ export function AdminVolunteerDetailDialog({
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex-col sm:flex-row gap-2">
+          {volunteer.status === "APPROVED" && onPrintCard && (
+            <Button
+              type="button"
+              onClick={() => onPrintCard(volunteer)}
+              className="h-9 px-3.5 text-sm font-medium gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white cursor-pointer w-full sm:w-auto"
+            >
+              <QrCode className="w-4 h-4" />
+              <span>Lihat KTA &amp; QR</span>
+            </Button>
+          )}
+
           <Button
             type="button"
             variant="outline"

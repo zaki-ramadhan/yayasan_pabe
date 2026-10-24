@@ -35,10 +35,11 @@ export function AdminDistributionTableRow({ item, onEdit, onDelete }) {
 
 			{/* Judul & Konten */}
 			<TableCell className="space-y-1 py-3 align-middle">
-				<span className="font-medium text-sm text-slate-900 block leading-snug">
-					{
-						item.title
-					}
+				<span
+					className="font-medium text-sm text-slate-900 block leading-snug line-clamp-2"
+					title={item.title}
+				>
+					{item.title}
 				</span>
 				{item.content && (
 					<p className="text-sm text-slate-500 line-clamp-2 max-w-xl leading-relaxed font-normal mt-0.5">
