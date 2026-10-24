@@ -34,7 +34,7 @@ export default function Error({ error, reset }) {
           </button>
           
           <a
-            href="https://wa.me/6281234567890?text=Halo%20Admin%20Yayasan%20PABE,%20saya%20mengalami%20kendala%20di%20website"
+            href="https://wa.me/6281284079912?text=Halo%20Admin%20Yayasan%20Payung%20Berkah,%20saya%20mengalami%20kendala%20di%20website"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center px-5 py-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 text-sm font-medium rounded-lg transition-colors"

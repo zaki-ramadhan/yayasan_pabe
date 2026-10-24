@@ -13,7 +13,8 @@ export function FooterContactInfo({
   contacts = ORG_PROFILE.contacts,
   whatsappUrl,
 }) {
-  const defaultWa = `https://wa.me/6281234567890?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan PABE, saya ingin bertanya seputar donasi & ZISWAF.")}`;
+  const cleanWa = (contacts.whatsapp || "").replace(/\D/g, "") || "6281284079912";
+  const defaultWa = `https://wa.me/${cleanWa}?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan Payung Berkah, saya ingin bertanya seputar donasi & ZISWAF.")}`;
   const wa = whatsappUrl || defaultWa;
 
   return (
@@ -35,6 +36,10 @@ export function FooterContactInfo({
         <div className="flex items-center gap-2 text-slate-200">
           <Phone className="w-4 h-4 text-slate-300 shrink-0" />
           <span>{contacts.phone}</span>
+        </div>
+        <div className="flex items-center gap-2 text-slate-200">
+          <WhatsAppIcon className="w-4 h-4 text-slate-300 shrink-0" />
+          <span>{contacts.whatsapp}</span>
         </div>
         <div className="flex items-center gap-2 text-slate-200">
           <Mail className="w-4 h-4 text-slate-300 shrink-0" />

@@ -8,7 +8,8 @@ import { FooterPaymentLogos } from "./footer/FooterPaymentLogos";
 import { FooterBottomBar } from "./footer/FooterBottomBar";
 
 export function Footer() {
-  const whatsappUrl = `https://wa.me/6281234567890?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan PABE, saya ingin bertanya seputar donasi & ZISWAF.")}`;
+  const cleanWa = (ORG_PROFILE.contacts.whatsapp || "").replace(/\D/g, "") || "6281284079912";
+  const whatsappUrl = `https://wa.me/${cleanWa}?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan Payung Berkah, saya ingin bertanya seputar donasi & ZISWAF.")}`;
 
   return (
     <footer className="relative z-40 overflow-hidden bg-slate-950 text-white pt-12 pb-8 border-t border-slate-800">
