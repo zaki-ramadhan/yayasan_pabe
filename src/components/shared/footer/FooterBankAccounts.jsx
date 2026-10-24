@@ -17,7 +17,7 @@ export function FooterBankAccounts({ accounts = ORG_PROFILE.officialBankAccounts
       <div className="space-y-3">
         {accounts.map((acc) => (
           <div key={acc.bank} className="space-y-0.5 border-b border-slate-800/80 pb-2.5 last:border-none">
-            <div className="text-sm font-medium text-slate-200">{acc.category} ({acc.bank})</div>
+            <div className="text-sm font-medium text-slate-200">{acc.bank}</div>
             <div className="font-semibold text-white text-base font-mono tracking-wider">{acc.accountNumber}</div>
             <div className="text-sm text-slate-300">a.n. {acc.accountName}</div>
           </div>
