@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { LayoutDashboard, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { maskEmail } from "@/lib/security";
 
 export function NavMobileUserSection({ currentUser, onClose, onLogout }) {
   return (
@@ -36,7 +35,7 @@ export function NavMobileUserSection({ currentUser, onClose, onLogout }) {
                 {currentUser.name}
               </span>
               <span className="block text-xs text-slate-500 truncate font-mono">
-                {currentUser.email ? maskEmail(currentUser.email) : "Donatur Terdaftar"}
+                {currentUser.email || "Donatur Terdaftar"}
               </span>
             </div>
           </div>

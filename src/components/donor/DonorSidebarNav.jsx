@@ -40,6 +40,11 @@ export function DonorSidebarNav({
       short: "RD",
     },
     {
+      label: "Kartu Relawan",
+      href: "/donatur/relawan",
+      short: "KR",
+    },
+    {
       label: "Profil Saya",
       href: "/donatur/profil",
       short: "PS",

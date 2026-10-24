@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
-import { maskEmail } from "@/lib/security";
 import { cn } from "@/lib/utils";
 
 export function NavUserDropdown({ currentUser, onLogout }) {
@@ -127,7 +126,7 @@ export function NavUserDropdown({ currentUser, onLogout }) {
                 {currentUser.name}
               </p>
               <p className="text-sm font-normal text-slate-500 truncate leading-tight">
-                {currentUser.email ? maskEmail(currentUser.email) : roleLabel}
+                {currentUser.email || roleLabel}
               </p>
             </div>
           </div>
@@ -182,6 +181,15 @@ export function NavUserDropdown({ currentUser, onLogout }) {
                 className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
               >
                 <span className="flex-1">Riwayat donasi</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/donatur/relawan"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Kartu relawan</span>
               </Link>
             </DropdownMenuItem>
 
