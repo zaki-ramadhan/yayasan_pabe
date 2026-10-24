@@ -7,8 +7,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { maskEmail } from "@/lib/security";
 import { copyToClipboard } from "@/lib/clipboard";
@@ -37,30 +38,17 @@ export function AdminTransactionDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto p-5 sm:p-6 bg-white border border-slate-200">
-        <DialogHeader className="pb-3 border-b border-slate-200">
-          <div className="flex items-center justify-between gap-2">
-            <div>
-              <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
-                Rincian mutasi donasi
-              </DialogTitle>
-              <DialogDescription className="text-sm text-slate-500 font-normal mt-0.5">
-                Informasi lengkap transaksi pembayaran dan amanah donatur.
-              </DialogDescription>
-            </div>
-            {isPending ? (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium text-amber-800 bg-amber-50 border border-amber-200 shrink-0">
-                Menunggu
-              </span>
-            ) : (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 shrink-0">
-                Berhasil
-              </span>
-            )}
+      <DialogContent className="max-w-lg max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+        <DialogHeader className="border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <DialogTitle className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
+              Rincian mutasi donasi
+            </DialogTitle>
+            <StatusBadge status={transaction.status} />
           </div>
         </DialogHeader>
 
-        <div className="space-y-4 pt-2 text-sm">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-4 text-sm">
           {/* Invoice & Nominal Card */}
           <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
             <div className="flex items-center justify-between">
@@ -169,28 +157,30 @@ export function AdminTransactionDetailModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="pt-3 border-t border-slate-200 flex items-center justify-between gap-2">
+        <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex items-center justify-between gap-2">
           {isPending && onOpenVerify && (
-            <button
+            <Button
               type="button"
+              variant="default"
               onClick={() => {
                 onClose();
                 onOpenVerify(transaction);
               }}
-              className="h-10 px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="h-9 gap-1.5"
             >
               <ShieldCheck className="w-4 h-4" />
               <span>Verifikasi donasi sekarang</span>
-            </button>
+            </Button>
           )}
 
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={onClose}
-            className="h-10 px-4 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors ml-auto cursor-pointer"
+            className="h-9 min-w-[84px] ml-auto"
           >
             Tutup
-          </button>
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

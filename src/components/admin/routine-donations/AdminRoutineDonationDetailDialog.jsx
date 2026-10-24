@@ -5,9 +5,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/ui/form-field";
 import {
   Select,
   SelectTrigger,
@@ -48,20 +49,17 @@ export function AdminRoutineDonationDetailDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
-        <DialogHeader className="space-y-1">
-          <div className="flex items-center justify-between gap-2 pr-6">
-            <DialogTitle className="text-base font-medium text-slate-900 leading-tight">
+      <DialogContent className="sm:max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+        <DialogHeader>
+          <div className="flex items-center gap-2.5">
+            <DialogTitle className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
               Rincian komitmen donasi rutin
             </DialogTitle>
             <AdminRoutineDonationStatusBadge status={donation.status} />
           </div>
-          <DialogDescription className="text-sm text-slate-500 font-normal">
-            ID: <span className="font-mono text-slate-700">{donation.id}</span>
-          </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3.5 py-1 text-sm">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-3.5 text-sm">
           {/* Program & Nominal */}
           <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
             <div>
@@ -159,10 +157,7 @@ export function AdminRoutineDonationDetailDialog({
           </div>
 
           {/* Ubah Status */}
-          <div className="space-y-1.5 pt-1">
-            <label className="text-sm font-medium text-slate-700">
-              Ubah status komitmen
-            </label>
+          <FormField label="Ubah status komitmen" className="pt-1">
             <Select
               defaultValue={donation.status}
               onValueChange={(val) => onStatusChange(donation.id, val)}
@@ -183,17 +178,18 @@ export function AdminRoutineDonationDetailDialog({
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </FormField>
         </div>
 
-        <DialogFooter className="pt-2 border-t border-slate-100">
-          <button
+        <DialogFooter>
+          <Button
             type="button"
+            variant="outline"
             onClick={onClose}
-            className="w-full sm:w-auto h-9 px-4 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm font-medium transition-colors cursor-pointer"
+            className="h-9 min-w-[84px] w-full sm:w-auto"
           >
             Tutup
-          </button>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

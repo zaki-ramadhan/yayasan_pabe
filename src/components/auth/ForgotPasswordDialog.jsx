@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { KeyRound, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { stripEmojis, validateEmail, validatePhone } from "@/lib/security";
@@ -65,19 +64,15 @@ export function ForgotPasswordDialog({ isOpen, onOpenChange, initialIdentifier =
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg font-bold text-slate-950 flex items-center gap-2">
-            <KeyRound className="w-5 h-5 text-primary" />
-            <span>Atur Ulang Kata Sandi</span>
+          <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950 leading-tight">
+            Atur Ulang Kata Sandi
           </DialogTitle>
-          <DialogDescription className="text-xs sm:text-sm text-slate-600">
-            Masukkan alamat email atau nomor WhatsApp yang terdaftar untuk menerima tautan pemulihan kata sandi.
-          </DialogDescription>
         </DialogHeader>
 
         {forgotSent ? (
-          <div className="py-4 text-center space-y-4">
+          <div className="flex-1 min-h-0 overflow-y-auto p-5 sm:p-6 text-center space-y-4">
             <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-6 h-6" />
             </div>
@@ -96,32 +91,34 @@ export function ForgotPasswordDialog({ isOpen, onOpenChange, initialIdentifier =
             </Button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 pt-2" noValidate>
-            <div className="space-y-1">
-              <label className="block text-sm font-semibold text-slate-800">
-                Email atau nomor WhatsApp <span className="text-rose-500">*</span>
-              </label>
-              <Input
-                type="text"
-                placeholder="nama@email.com atau 081234567890"
-                value={forgotInput}
-                maxLength={100}
-                onChange={(e) => {
-                  const clean = stripEmojis(e.target.value).slice(0, 100);
-                  setForgotInput(clean);
-                  if (forgotError) setForgotError("");
-                }}
-                className={cn(
-                  "h-10 text-sm text-slate-900 border-slate-300",
-                  forgotError && "border-rose-500 bg-rose-50/20 focus-visible:ring-rose-500"
+          <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden" noValidate>
+            <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-4">
+              <div className="space-y-1">
+                <label className="block text-sm font-semibold text-slate-800">
+                  Email atau nomor WhatsApp <span className="text-rose-500">*</span>
+                </label>
+                <Input
+                  type="text"
+                  placeholder="nama@email.com atau 081234567890"
+                  value={forgotInput}
+                  maxLength={100}
+                  onChange={(e) => {
+                    const clean = stripEmojis(e.target.value).slice(0, 100);
+                    setForgotInput(clean);
+                    if (forgotError) setForgotError("");
+                  }}
+                  className={cn(
+                    "h-10 text-sm text-slate-900 border-slate-300",
+                    forgotError && "border-rose-500 bg-rose-50/20 focus-visible:ring-rose-500"
+                  )}
+                />
+                {forgotError && (
+                  <p className="text-xs text-rose-600 font-medium mt-1">{forgotError}</p>
                 )}
-              />
-              {forgotError && (
-                <p className="text-xs text-rose-600 font-medium mt-1">{forgotError}</p>
-              )}
+              </div>
             </div>
 
-            <div className="flex gap-2 justify-end pt-2">
+            <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex gap-2 justify-end">
               <Button
                 type="button"
                 variant="outline"

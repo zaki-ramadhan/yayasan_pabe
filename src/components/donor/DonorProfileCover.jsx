@@ -5,15 +5,15 @@ import { useState } from "react";
 import { Camera, MapPin, Calendar, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { formatDate } from "@/lib/formatters";
+import { formatDate, getInitials } from "@/lib/formatters";
 import { sanitizeImageUrl, maskEmail } from "@/lib/security";
 import { DonorProfileBannerCanvas } from "@/components/donor/DonorProfileBannerCanvas";
 
@@ -24,22 +24,6 @@ const AVATAR_PRESETS = [
   "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
 ];
-
-function getInitials(name, email) {
-  if (name && typeof name === "string") {
-    const parts = name.trim().split(/\s+/).filter(Boolean);
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
-    if (parts.length === 1 && parts[0].length >= 1) {
-      return parts[0].slice(0, 2).toUpperCase();
-    }
-  }
-  if (email && typeof email === "string") {
-    return email.slice(0, 2).toUpperCase();
-  }
-  return "U";
-}
 
 export function DonorProfileCover({
   profile,
@@ -164,21 +148,15 @@ export function DonorProfileCover({
       )}
 
       <Dialog open={isAvatarModalOpen} onOpenChange={setIsAvatarModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
           <DialogHeader>
-            <DialogTitle className="text-base font-medium text-slate-950">
+            <DialogTitle className="text-base font-semibold text-slate-950 leading-tight">
               Pengaturan foto profil
             </DialogTitle>
-            <DialogDescription className="text-sm font-normal text-slate-600">
-              Pilih avatar atau tempel tautan foto representatif Anda. Jika dihapus, sistem akan otomatis menggunakan inisial nama Anda.
-            </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-2">
-            <div>
-              <label htmlFor="input-avatar-url" className="text-sm font-medium text-slate-700 block mb-1.5">
-                URL foto profil
-              </label>
+          <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-4">
+            <FormField label="URL foto profil">
               <Input
                 id="input-avatar-url"
                 type="url"
@@ -187,7 +165,7 @@ export function DonorProfileCover({
                 onChange={(e) => setNewAvatarUrl(e.target.value)}
                 className="text-sm h-9.5 rounded-md border-slate-200"
               />
-            </div>
+            </FormField>
 
             <div>
               <p className="text-sm font-medium text-slate-700 mb-2">
@@ -232,12 +210,12 @@ export function DonorProfileCover({
             )}
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="gap-2.5">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setIsAvatarModalOpen(false)}
-              className="text-sm font-medium border-slate-200 rounded-md"
+              className="h-9 px-4 min-w-[84px] text-sm font-medium border-slate-200 rounded-md cursor-pointer"
             >
               Batal
             </Button>
@@ -245,7 +223,7 @@ export function DonorProfileCover({
               size="sm"
               disabled={!newAvatarUrl || isUpdating}
               onClick={handleSaveAvatar}
-              className="text-sm font-medium rounded-md"
+              className="h-9 px-4 min-w-[96px] text-sm font-medium rounded-md cursor-pointer"
             >
               {isUpdating ? "Menyimpan..." : "Simpan foto"}
             </Button>

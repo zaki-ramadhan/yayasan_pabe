@@ -2,19 +2,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle2, Loader2, Send } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { CareerApplySuccessState } from "./CareerApplySuccessState";
+import { CareerApplyFormFields } from "./CareerApplyFormFields";
 import { sanitizeInput } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
+import { toast } from "@/hooks/use-toast";
 
 export function CareerApplyModal({ isOpen, onClose, job }) {
   const [formData, setFormData] = useState({
@@ -147,155 +147,36 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg p-5 sm:p-6">
+      <DialogContent className="max-w-lg max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-slate-900">
+          <DialogTitle className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
             {isSuccess ? "Lamaran Berhasil Terkirim" : "Formulir Lamaran Kerja"}
           </DialogTitle>
-          <DialogDescription className="text-xs text-slate-500">
-            {isSuccess
-              ? "Data berkas Anda telah tersimpan secara resmi di database yayasan."
-              : `Mengajukan lamaran untuk posisi ${job.title} (${job.department})`}
-          </DialogDescription>
         </DialogHeader>
 
         {isSuccess ? (
-          <div className="py-6 flex flex-col items-center text-center space-y-3">
-            <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-              <CheckCircle2 className="w-7 h-7" />
-            </div>
-            <h3 className="text-base font-semibold text-slate-900">
-              Jazakumullahu Khairan
-            </h3>
-            <p className="text-xs text-slate-600 max-w-sm leading-relaxed">
-              Lamaran Anda untuk posisi <strong>{job.title}</strong> telah berhasil kami terima.
-              Tim rekrutmen akan meninjau kualifikasi Anda dan menghubungi via WhatsApp atau email.
-            </p>
-            <Button
-              type="button"
-              onClick={handleClose}
-              className="mt-4 bg-primary hover:bg-primary-hover text-white text-xs h-9 px-6 rounded-lg font-medium"
-            >
-              Tutup &amp; Selesai
-            </Button>
+          <div className="flex-1 min-h-0 overflow-y-auto px-5 py-6 sm:px-6">
+            <CareerApplySuccessState job={job} onClose={handleClose} />
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4 pt-1">
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-700">
-                Posisi Yang Dilamar
-              </label>
-              <Input
-                type="text"
-                value={`${job.title} • ${job.location}`}
-                disabled
-                className="bg-slate-50 text-slate-500 text-xs h-9 cursor-not-allowed"
+          <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+            <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-4">
+              <CareerApplyFormFields
+                job={job}
+                formData={formData}
+                onChange={handleChange}
+                onPhoneChange={handlePhoneChange}
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700">
-                  Nama Lengkap <span className="text-rose-500">*</span>
-                </label>
-                <Input
-                  type="text"
-                  placeholder="Contoh: Muhammad Ihsan"
-                  value={formData.fullName}
-                  onChange={(e) => handleChange("fullName", e.target.value)}
-                  required
-                  autoComplete="name"
-                  className="text-xs h-9"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700">
-                  Email Aktif <span className="text-rose-500">*</span>
-                </label>
-                <Input
-                  type="email"
-                  placeholder="nama@email.com"
-                  value={formData.email}
-                  onChange={(e) => handleChange("email", e.target.value)}
-                  required
-                  autoComplete="email"
-                  className="text-xs h-9"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700">
-                  No. WhatsApp / HP <span className="text-rose-500">*</span>
-                </label>
-                <Input
-                  type="tel"
-                  inputMode="numeric"
-                  placeholder="081234567890"
-                  value={formData.phone}
-                  onChange={handlePhoneChange}
-                  required
-                  autoComplete="tel"
-                  className="text-xs h-9"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700">
-                  Tautan Profil LinkedIn / Portofolio
-                </label>
-                <Input
-                  type="url"
-                  placeholder="https://linkedin.com/in/..."
-                  value={formData.linkedinUrl}
-                  onChange={(e) => handleChange("linkedinUrl", e.target.value)}
-                  className="text-xs h-9"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-700">
-                Tautan Berkas CV / Resume (Google Drive / Drop Link){" "}
-                <span className="text-rose-500">*</span>
-              </label>
-              <Input
-                type="url"
-                placeholder="https://drive.google.com/file/d/..."
-                value={formData.resumeUrl}
-                onChange={(e) => handleChange("resumeUrl", e.target.value)}
-                required
-                className="text-xs h-9"
-              />
-              <p className="text-[11px] text-slate-400">
-                Pastikan akses berkas Google Drive telah diatur ke publik (&ldquo;Anyone with link can view&rdquo;).
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-700">
-                Surat Pengantar &amp; Motivasi Bergabung <span className="text-rose-500">*</span>
-              </label>
-              <Textarea
-                placeholder="Ceritakan secara ringkas latar belakang, keahlian, dan motivasi Anda bergabung bersama yayasan..."
-                value={formData.coverLetter}
-                onChange={(e) => handleChange("coverLetter", e.target.value)}
-                rows={3}
-                required
-                className="text-xs resize-none"
-              />
-            </div>
-
-            <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+            <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex items-center justify-end gap-2.5">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={handleClose}
                 disabled={isSubmitting}
-                className="h-9 text-xs"
+                className="h-9 text-xs cursor-pointer"
               >
                 Batal
               </Button>
@@ -303,7 +184,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
                 type="submit"
                 size="sm"
                 disabled={isSubmitting}
-                className="h-9 text-xs bg-primary hover:bg-primary-hover text-white font-medium px-4"
+                className="h-9 text-xs bg-primary hover:bg-primary-hover text-white font-medium px-4 cursor-pointer"
               >
                 {isSubmitting ? (
                   <>

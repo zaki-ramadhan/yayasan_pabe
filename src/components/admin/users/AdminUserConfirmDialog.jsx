@@ -1,71 +1,81 @@
 "use client";
 
-import { AlertTriangle } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export function AdminUserConfirmDialog({
   isOpen,
   onClose,
   onConfirm,
-  title = "Konfirmasi tindakan",
-  description = "Apakah Anda yakin ingin melanjutkan tindakan ini?",
-  confirmLabel = "Ya, lanjutkan",
-  confirmVariant = "destructive", // "destructive" | "primary"
+  type = null,
+  targetUser = null,
+  title,
+  confirmLabel,
+  confirmVariant,
   isLoading = false,
+  isSubmitting = false,
 }) {
+  const isDelete = type === "delete";
+  const isSuspend = type === "suspend";
+  const isActive = targetUser?.isActive;
+
+  const computedTitle =
+    title ||
+    (isDelete
+      ? "Hapus akun pengurus"
+      : isSuspend
+      ? isActive
+        ? "Tangguhkan akun pengurus"
+        : "Aktifkan kembali akun"
+      : "Konfirmasi tindakan");
+
+  const computedConfirmLabel =
+    confirmLabel ||
+    (isDelete
+      ? "Hapus sekarang"
+      : isSuspend
+      ? isActive
+        ? "Tangguhkan akun"
+        : "Aktifkan akun"
+      : "Ya, lanjutkan");
+
+  const computedVariant =
+    confirmVariant || (isDelete || (isSuspend && isActive) ? "destructive" : "default");
+  const loadingState = isLoading || isSubmitting;
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-white border border-slate-200">
-        <DialogHeader>
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shrink-0">
-              <AlertTriangle className="w-4 h-4" />
-            </div>
-            <div>
-              <DialogTitle className="text-base font-medium text-slate-900 leading-tight">
-                {title}
-              </DialogTitle>
-              <DialogDescription className="text-sm text-slate-500 mt-0.5">
-                Tindakan ini akan langsung diterapkan ke sistem.
-              </DialogDescription>
-            </div>
+    <ConfirmDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      isLoading={loadingState}
+      title={computedTitle}
+      confirmLabel={loadingState ? "Memproses..." : computedConfirmLabel}
+      confirmVariant={computedVariant}
+    >
+      {targetUser && (
+        <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 space-y-1.5 my-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500 font-normal">Nama pengurus:</span>
+            <span className="font-medium text-slate-900">{targetUser.name}</span>
           </div>
-        </DialogHeader>
-
-        <p className="text-sm text-slate-700 leading-relaxed py-2">
-          {description}
-        </p>
-
-        <DialogFooter className="gap-2 sm:gap-0">
-          <button
-            type="button"
-            disabled={isLoading}
-            onClick={onClose}
-            className="w-full sm:w-auto px-3.5 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
-          >
-            Batal
-          </button>
-          <button
-            type="button"
-            disabled={isLoading}
-            onClick={onConfirm}
-            className={`w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer disabled:opacity-50 ${
-              confirmVariant === "destructive"
-                ? "bg-rose-600 hover:bg-rose-700 text-white"
-                : "bg-primary hover:bg-primary/90 text-white"
-            }`}
-          >
-            {isLoading ? "Memproses..." : confirmLabel}
-          </button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-slate-500 font-normal">Email:</span>
+            <span className="font-medium text-slate-900">{targetUser.email}</span>
+          </div>
+          <div className="flex items-center justify-between pt-1 border-t border-slate-200">
+            <span className="text-xs text-slate-500 font-normal">Peran:</span>
+            <span className="font-medium text-slate-900">{targetUser.role}</span>
+          </div>
+        </div>
+      )}
+      <p className="text-xs text-slate-500 leading-relaxed">
+        {isDelete
+          ? "Tindakan ini permanen dan akan menghapus akses staf terkait dari sistem."
+          : isSuspend && isActive
+          ? "Akun pengurus akan dinonaktifkan sementara dan tidak dapat masuk ke sistem."
+          : "Akun pengurus akan diaktifkan kembali dan dapat masuk ke panel sistem."}
+      </p>
+    </ConfirmDialog>
   );
 }
+

@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, KeyRound } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/ui/form-field";
 import { copyToClipboard } from "@/lib/clipboard";
 import { toast } from "@/hooks/use-toast";
 
@@ -34,24 +35,14 @@ export function AdminUserResetDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-white border border-slate-200">
+      <DialogContent className="sm:max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 shrink-0">
-              <KeyRound className="w-4 h-4" />
-            </div>
-            <div>
-              <DialogTitle className="text-base font-medium text-slate-900 leading-tight">
-                Kata sandi baru dibuat
-              </DialogTitle>
-              <DialogDescription className="text-sm text-slate-500 mt-0.5">
-                Salin dan berikan kredensial ini kepada pengurus terkait.
-              </DialogDescription>
-            </div>
-          </div>
+          <DialogTitle className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
+            Kata sandi baru dibuat
+          </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3 py-2">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-3">
           <div className="rounded-lg bg-slate-50 border border-slate-200 p-3 space-y-2 text-sm">
             <div className="flex items-center justify-between text-slate-600">
               <span>Pengurus:</span>
@@ -63,18 +54,17 @@ export function AdminUserResetDialog({
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-slate-600 block mb-1">
-              Kata sandi sementara:
-            </label>
+          <FormField label="Kata sandi sementara:">
             <div className="flex items-center justify-between bg-slate-100 border border-slate-300 rounded-lg p-2.5">
               <code className="text-sm font-medium font-mono text-slate-900 select-all tracking-wider">
                 {data?.temporaryPassword}
               </code>
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={handleCopy}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-white text-slate-700 hover:text-slate-900 border border-slate-200 rounded-md transition-colors cursor-pointer"
+                className="h-8 px-2.5 gap-1.5 bg-white text-slate-700 cursor-pointer"
               >
                 {isCopied ? (
                   <>
@@ -87,9 +77,9 @@ export function AdminUserResetDialog({
                     <span>Salin</span>
                   </>
                 )}
-              </button>
+              </Button>
             </div>
-          </div>
+          </FormField>
 
           <p className="text-xs text-amber-700 bg-amber-50/80 border border-amber-200/60 rounded-md p-2.5 leading-relaxed">
             Kata sandi sementara ini hanya ditampilkan satu kali demi keamanan. Harap minta pengurus mengganti kata sandi setelah berhasil login.
@@ -97,13 +87,14 @@ export function AdminUserResetDialog({
         </div>
 
         <DialogFooter>
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={onClose}
-            className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+            className="h-9 min-w-[84px] w-full sm:w-auto cursor-pointer"
           >
             Selesai
-          </button>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

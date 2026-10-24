@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,19 +16,13 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { StatusBadge } from "@/components/ui/badge";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 import { Mail, Phone, ExternalLink, FileText, RefreshCw } from "lucide-react";
 import { maskEmail } from "@/lib/security";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { USER_ROLES } from "@/services/authService";
-
-const STATUS_LABELS = {
-  PENDING: { label: "Menunggu Review", color: "text-amber-800 bg-amber-50 border-amber-200" },
-  REVIEWED: { label: "Telah Direview", color: "text-sky-800 bg-sky-50 border-sky-200" },
-  SHORTLISTED: { label: "Lolos Seleksi", color: "text-emerald-800 bg-emerald-50 border-emerald-200" },
-  REJECTED: { label: "Belum Sesuai", color: "text-rose-800 bg-rose-50 border-rose-200" },
-};
 
 export function AdminApplicantDrawer({
   isOpen,
@@ -111,24 +104,19 @@ export function AdminApplicantDrawer({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto p-5 sm:p-6">
-        <DialogHeader className="pb-3 border-b border-slate-200">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950">
-                Daftar Pelamar: {vacancy?.title || "Lowongan"}
-              </DialogTitle>
-              <DialogDescription className="text-sm text-slate-500">
-                Divisi {vacancy?.department || "-"} &bull; {applications.length} berkas lamaran masuk
-              </DialogDescription>
-            </div>
+      <DialogContent className="max-w-3xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+        <DialogHeader className="border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950">
+              Daftar pelamar: {vacancy?.title || "Lowongan"}
+            </DialogTitle>
             <Button
               type="button"
               variant="outline"
               size="sm"
               onClick={fetchApplications}
               disabled={isLoading}
-              className="h-8 px-2.5 text-sm gap-1.5 cursor-pointer shrink-0"
+              className="h-7.5 px-2.5 text-xs gap-1.5 cursor-pointer shrink-0"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
               <span>Muat Ulang</span>
@@ -136,13 +124,11 @@ export function AdminApplicantDrawer({
           </div>
         </DialogHeader>
 
-        <div className="space-y-3.5 pt-2">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-3.5">
           {isLoading ? (
             <div className="py-8 text-center text-sm text-slate-500">Memuat data pelamar...</div>
           ) : applications.length > 0 ? (
-            applications.map((app) => {
-              const statusInfo = STATUS_LABELS[app.status] || STATUS_LABELS.PENDING;
-              return (
+            applications.map((app) => (
                 <div
                   key={app.id}
                   className="rounded-lg border border-slate-200/90 bg-white p-3.5 sm:p-4 space-y-3 shadow-2xs"
@@ -169,9 +155,7 @@ export function AdminApplicantDrawer({
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className={`text-sm font-medium px-2.5 py-0.5 rounded border ${statusInfo.color}`}>
-                        {statusInfo.label}
-                      </span>
+                      <StatusBadge status={app.status} className="text-xs px-2.5 py-0.5" />
 
                       <Select
                         value={app.status}
@@ -231,13 +215,23 @@ export function AdminApplicantDrawer({
                     </div>
                   )}
                 </div>
-              );
-            })
+            ))
           ) : (
             <div className="py-12 text-center text-sm text-slate-500">
               Belum ada berkas lamaran yang masuk untuk posisi ini.
             </div>
           )}
+        </div>
+
+        <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="h-9 min-w-[84px] w-full sm:w-auto"
+          >
+            Tutup
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
