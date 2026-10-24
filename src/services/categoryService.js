@@ -116,3 +116,35 @@ export async function deleteCategory({ id }) {
 
   return deleted;
 }
+
+/**
+ * Membersihkan kategori kosong yang tidak memiliki program kampanye terhubung.
+ * Menjamin database selalu bersih dan tidak ada kategori yatim (orphan) tanpa data.
+ * @param {object} [client] - Prisma client atau transaction
+ * @returns {Promise<number>} - Jumlah kategori yang dibersihkan
+ */
+export async function cleanupOrphanCategories(client = prisma) {
+  try {
+    const orphans = await client.category.findMany({
+      where: {
+        campaigns: {
+          none: {},
+        },
+      },
+      select: { id: true, name: true },
+    });
+
+    if (orphans.length === 0) return 0;
+
+    const ids = orphans.map((c) => c.id);
+    const result = await client.category.deleteMany({
+      where: { id: { in: ids } },
+    });
+
+    return result.count;
+  } catch (err) {
+    console.warn("Auto-cleanup orphan categories warning:", err.message);
+    return 0;
+  }
+}
+

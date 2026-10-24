@@ -1,5 +1,6 @@
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { sanitizeInput } from "@/lib/security";
+import { validateOrgSettings } from "@/lib/validator";
 
 let activeOrgSettings = {
   name: ORG_PROFILE.name,
@@ -27,6 +28,11 @@ export async function updateOrgSettings(payload) {
     throw new Error("Data pengaturan tidak valid.");
   }
 
+  const validation = validateOrgSettings(payload);
+  if (!validation.isValid) {
+    throw new Error(validation.error);
+  }
+
   const updated = {
     name: sanitizeInput(payload.name || activeOrgSettings.name),
     shortName: sanitizeInput(payload.shortName || activeOrgSettings.shortName),
@@ -40,13 +46,13 @@ export async function updateOrgSettings(payload) {
       address: sanitizeInput(payload.contacts?.address || activeOrgSettings.contacts.address),
       phone: sanitizeInput(payload.contacts?.phone || activeOrgSettings.contacts.phone),
       whatsapp: sanitizeInput(payload.contacts?.whatsapp || activeOrgSettings.contacts.whatsapp),
-      email: sanitizeInput(payload.contacts?.email || activeOrgSettings.contacts.email),
+      email: sanitizeInput(payload.contacts?.email || activeOrgSettings.contacts.email).toLowerCase(),
       officeHours: sanitizeInput(payload.contacts?.officeHours || activeOrgSettings.contacts.officeHours),
     },
     officialBankAccounts: Array.isArray(payload.officialBankAccounts)
       ? payload.officialBankAccounts.map((b) => ({
           bank: sanitizeInput(b.bank || ""),
-          accountNumber: sanitizeInput(b.accountNumber || ""),
+          accountNumber: sanitizeInput(b.accountNumber || "").replace(/\D/g, ""),
           accountName: sanitizeInput(b.accountName || ""),
           category: sanitizeInput(b.category || "Infaq & Sedekah"),
         }))

@@ -276,3 +276,58 @@ export function decodeHtmlEntities(str) {
     .replace(/&#x27;/g, "'")
     .replace(/&#39;/g, "'");
 }
+
+/**
+ * Menghasilkan inisial 2 karakter untuk avatar/PFP secara proporsional:
+ * - Jika terdiri dari >= 2 kata: ambil huruf pertama kata ke-1 + huruf pertama kata ke-2 (e.g. "Hendra Wijaya" -> "HW").
+ * - Jika hanya 1 kata: ambil 2 huruf pertama dari kata tersebut (e.g. "Zaki" -> "ZA", "Budi" -> "BU").
+ * - Jika nama kosong, gunakan email atau fallback default (e.g. "D" atau "U").
+ * @param {string} name
+ * @param {string} [fallbackOrEmail]
+ * @returns {string}
+ */
+export function getInitials(name, fallbackOrEmail = "U") {
+  if (name && typeof name === "string") {
+    const cleaned = name.trim().replace(/[^\p{L}\p{N}\s]/gu, "").trim();
+    if (cleaned) {
+      const parts = cleaned.split(/\s+/).filter(Boolean);
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+      if (parts.length === 1) {
+        return parts[0].slice(0, 2).toUpperCase();
+      }
+    }
+  }
+
+  if (fallbackOrEmail && typeof fallbackOrEmail === "string") {
+    const cleanFallback = fallbackOrEmail.trim().replace(/[^\p{L}\p{N}]/gu, "");
+    if (cleanFallback.length >= 2) {
+      return cleanFallback.slice(0, 2).toUpperCase();
+    }
+    if (cleanFallback.length === 1) {
+      return cleanFallback.toUpperCase();
+    }
+  }
+
+  return "U";
+}
+
+/**
+ * Mengubah string menjadi format Title Case yang rapi (contoh: "PENDIDIKAN ISLAM" -> "Pendidikan Islam").
+ * Menjaga kata penghubung kecil tetap lowercase jika bukan kata pertama.
+ */
+export function toTitleCase(str) {
+  if (!str || typeof str !== "string") return "";
+  const smallWords = new Set(["dan", "atau", "di", "ke", "dari", "untuk", "pada", "yang", "&"]);
+  return str
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word, idx) => {
+      if (idx > 0 && smallWords.has(word)) return word;
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
+}
+

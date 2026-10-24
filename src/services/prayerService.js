@@ -29,8 +29,8 @@ export async function getAdminPrayers({
       where.isPrayerHidden = false;
     } else if (status === "HIDDEN") {
       where.isPrayerHidden = true;
-    } else if (status === "REPLIED") {
-      where.prayerReply = { not: null };
+    } else if (status === "PINNED") {
+      where.isPrayerPinned = true;
     }
 
     if (search && search.trim()) {

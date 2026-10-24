@@ -304,8 +304,21 @@ export function TablePaginationFooter({
   );
 }
 
+const TableContainer = React.forwardRef(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden",
+      className
+    )}
+    {...props}
+  />
+));
+TableContainer.displayName = "TableContainer";
+
 export {
   Table,
+  TableContainer,
   TableHeader,
   TableBody,
   TableFooter,
@@ -315,5 +328,8 @@ export {
   TableCaption,
 };
 
+export { TableRowActions } from "./table-actions";
+export { TableToolbar } from "./table-toolbar";
 export { useTableSort } from "@/hooks/useTableSort";
+
 
