@@ -1,42 +1,41 @@
 /**
- * Data mitra & lembaga terkait yayasan.
- * Logo sementara menggunakan aset yang tersedia.
- * Ganti path `logo` dengan gambar resmi saat diterima dari klien.
+ * Data mitra & lembaga terkait yayasan resmi Yayasan Payung Berkah (PABE).
+ * Mengacu pada dokumen legalitas dan proposal resmi.
  */
 export const PARTNERS = [
   {
-    id: "baznas",
-    name: "BAZNAS RI",
+    id: "baznas-dki",
+    name: "BAZNAS BAZIS DKI Jakarta",
     logo: "/img/payments/qris.png",
-    category: "Lembaga Zakat Nasional",
-    url: "https://baznas.go.id",
+    category: "Mitra Penyaluran & Rekomendasi",
+    url: "https://baznasbazisdki.id",
   },
   {
-    id: "kemensos",
-    name: "Kementerian Sosial RI",
+    id: "kemenkumham",
+    name: "Kemenkumham RI",
     logo: "/img/payments/mandiri.png",
-    category: "Instansi Pemerintah",
-    url: "https://kemensos.go.id",
+    category: "Pengesahan Badan Hukum",
+    url: "https://ahu.go.id",
   },
   {
-    id: "laz-banten",
-    name: "LAZ Dhuafa Banten",
+    id: "kemensos-dinsos",
+    name: "Dinsos DKI Jakarta & Kemensos",
     logo: "/img/payments/BNI.png",
-    category: "Lembaga Amil Zakat",
-    url: null,
+    category: "Izin Operasional LKS",
+    url: "https://dinsos.jakarta.go.id",
   },
   {
-    id: "dinsos-banten",
-    name: "Dinsos Prov. Banten",
+    id: "bank-bri",
+    name: "Bank Rakyat Indonesia (BRI)",
     logo: "/img/payments/BRI.png",
-    category: "Instansi Pemerintah Daerah",
-    url: null,
+    category: "Mitra Perbankan Resmi",
+    url: "https://bri.co.id",
   },
   {
-    id: "pp-darussalam",
-    name: "PP. Darussalam",
-    logo: "/img/payments/permata.png",
-    category: "Pesantren Mitra",
-    url: null,
+    id: "bank-mandiri",
+    name: "Bank Mandiri",
+    logo: "/img/payments/mandiri.png",
+    category: "Mitra Perbankan Resmi",
+    url: "https://bankmandiri.co.id",
   },
 ];

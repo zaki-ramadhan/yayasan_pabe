@@ -92,7 +92,7 @@ export function AboutHeader({ volunteerCount = 14 }) {
           {/* Metadata Bar */}
           <div className="flex flex-wrap items-center gap-y-1.5 gap-x-3 text-xs sm:text-sm text-slate-700 pt-2 border-t border-slate-200">
             <span className="text-slate-800 font-medium">
-              Cibinong, Kab. Bogor, Jawa Barat
+              {ORG_PROFILE.contacts.cityProvince}
             </span>
             <span className="text-slate-300 select-none hidden sm:inline" aria-hidden="true">
               |

@@ -50,32 +50,25 @@ export const TRANSPARENCY_METRICS = {
 
 export const PROGRAM_ALLOCATIONS = [
   {
-    id: "tahfidz",
-    label: "Pendidikan & Tahfidz Santri",
-    percentage: 52,
-    amount: 6500000000,
+    id: "santunan-yatim",
+    label: "Santunan Yatim & Kaum Dhu'afa",
+    percentage: 64,
+    amount: 469800000,
     color: "#059669", // emerald-600
   },
   {
-    id: "yatim",
-    label: "Kemandirian & Asrama Yatim",
-    percentage: 28,
-    amount: 3500000000,
+    id: "sarana-bimbel",
+    label: "Bimbel PABE Smart & Sarana Belajar",
+    percentage: 22,
+    amount: 162400000,
     color: "#0284c7", // sky-600
   },
   {
-    id: "dhuafa",
-    label: "Bantuan Pangan & Kesehatan",
-    percentage: 12,
-    amount: 1500000000,
+    id: "kesehatan",
+    label: "Layanan Kesehatan & Terapi Akupresur",
+    percentage: 14,
+    amount: 100500000,
     color: "#d97706", // amber-600
-  },
-  {
-    id: "operasional",
-    label: "Operasional & Hak Amil",
-    percentage: 8,
-    amount: 1000000000,
-    color: "#64748b", // slate-500
   },
 ];
 
