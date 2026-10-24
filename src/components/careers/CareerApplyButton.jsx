@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const DEFAULT_APPLY_URL = "https://forms.gle/beqi-charity-recruitment";
+const DEFAULT_APPLY_URL = "https://forms.gle/pabe-recruitment";
 
 /**
  * Atomic component: Standardized application CTA button pointing to Google Form

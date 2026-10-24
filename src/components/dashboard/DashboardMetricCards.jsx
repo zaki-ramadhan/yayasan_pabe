@@ -22,7 +22,7 @@ export function DashboardMetricCards({ userRole, stats }) {
         <DashboardMetricCard
           label="Santri yang Didukung"
           value="4 Santri Yatim"
-          subtitle="Pesantren Tahfidz Bogor"
+          subtitle="Bimbel PABE Smart Cakung"
           statusColor="slate"
         />
         <DashboardMetricCard

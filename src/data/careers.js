@@ -52,7 +52,7 @@ export const CAREER_VACANCIES = [
     postedAt: "Hari ini",
     applicantCount: 18,
     deadline: "30 Oktober 2026",
-    applyUrl: "https://forms.gle/beqi-charity-recruitment",
+    applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
       "Bertanggung jawab atas kelancaran logistik penyaluran bantuan sosial, santunan yatim, dan program ketahanan pangan masyarakat secara tepat sasaran, transparan, dan akuntabel.",
     responsibilities: [
@@ -89,7 +89,7 @@ export const CAREER_VACANCIES = [
     postedAt: "4 hari yang lalu",
     applicantCount: 12,
     deadline: "25 Oktober 2026",
-    applyUrl: "https://forms.gle/beqi-charity-recruitment",
+    applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
       "Mengelola pencatatan keuangan ZISWAF berdasarkan PSAK 109, rekonsiliasi kas dan rekening bank harian, serta menjamin kepatuhan audit keuangan yayasan secara berkala.",
     responsibilities: [
@@ -125,7 +125,7 @@ export const CAREER_VACANCIES = [
     postedAt: "1 pekan yang lalu",
     applicantCount: 29,
     deadline: "15 November 2026",
-    applyUrl: "https://forms.gle/beqi-charity-recruitment",
+    applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
       "Merancang narasi visual dakwah, liputan dokumenter kegiatan santri dan dhuafa, serta mengelola publikasi media sosial yayasan dengan estetika modern dan edukatif.",
     responsibilities: [
@@ -161,7 +161,7 @@ export const CAREER_VACANCIES = [
     postedAt: "1 pekan yang lalu",
     applicantCount: 15,
     deadline: "5 November 2026",
-    applyUrl: "https://forms.gle/beqi-charity-recruitment",
+    applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
       "Membangun dan merawat kemitraan strategis dengan korporasi, komunitas muslim, dan instansi swasta dalam program CSR dan kolaborasi zakat perusahaan.",
     responsibilities: [
@@ -197,7 +197,7 @@ export const CAREER_VACANCIES = [
     postedAt: "2 pekan yang lalu",
     applicantCount: 8,
     deadline: "20 November 2026",
-    applyUrl: "https://forms.gle/beqi-charity-recruitment",
+    applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
       "Mengawasi jalannya kurikulum tahfidz Al-Qur'an, pembinaan adab santri mukim, dan memfasilitasi kebutuhan pendampingan asatidz di rumah tahfidz naungan yayasan.",
     responsibilities: [

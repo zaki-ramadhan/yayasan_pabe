@@ -26,11 +26,12 @@ import {
 } from "@/lib/security";
 
 const INTEREST_OPTIONS = [
-	"Pengajar & Pembimbing Al-Qur'an",
-	"Distribusi Logistik Tanggap Bencana",
-	"Dokumentasi & Tim Media Kreatif",
-	"Layanan Kesehatan & Medis",
-	"Pendampingan Wirausaha Yatim",
+	"Tutor Bimbel PABE Smart (Akademis, Komputer & Bahasa)",
+	"Pengajar TPA & Bimbingan Al-Qur'an",
+	"Penyaluran Santunan & Operasional Doa Istighotsah",
+	"Layanan Kesehatan & Terapi Akupresur Lansia Dhu'afa",
+	"Dokumentasi, Desain & Tim Media Kreatif",
+	"Aksi Kemanusiaan & Tanggap Darurat",
 ];
 
 const DRAFT_STORAGE_KEY = "pabe_volunteer_draft";
@@ -489,7 +490,7 @@ export function VolunteerForm() {
 									),
 							)
 						}
-						placeholder="Contoh: Bogor / Jakarta"
+						placeholder="Contoh: Jakarta Timur / Bekasi"
 						className="h-11"
 					/>
 				</div>

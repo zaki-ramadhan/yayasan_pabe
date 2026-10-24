@@ -2,7 +2,7 @@ export const CAMPAIGNS = [
   {
     "id": "camp-001",
     "slug": "beasiswa-santri-penghafal-quran",
-    "title": "Beasiswa Pendidikan Santri Penghafal Al-Qur'an 30 Juz",
+    "title": "Bimbel PABE Smart & Beasiswa Belajar 98 Anak Yatim Piatu",
     "categoryId": "pendidikan",
     "categoryName": "Pendidikan & Santri",
     "targetAmount": 150000000,
@@ -11,16 +11,16 @@ export const CAMPAIGNS = [
     "endDate": "2026-12-31T23:59:59Z",
     "isUrgent": false,
     "isFeatured": true,
-    "location": "Bogor, Jawa Barat",
+    "location": "Cakung, Jakarta Timur",
     "bannerUrl": "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80",
-    "excerpt": "Dukung 50 santri yatim dan dhuafa menyelesaikan hafalan Al-Qur'an dengan fasilitas beasiswa mondok penuh.",
-    "story": "Pendidikan Al-Qur'an adalah fondasi peradaban umat. Di Pesantren Binaan Yayasan PABE, terdapat 50 santri yatim dan dhuafa yang bertekad menyelesaikan hafalan 30 juz Al-Qur'an sekaligus menempuh pendidikan formal.\n\nKebutuhan beasiswa mencakup:\n1. Biaya asrama dan konsumsi pangan bergizi para santri.\n2. Kitab, mushaf Al-Qur'an, dan buku pelajaran formal.\n3. Tunjangan guru pembimbing hafalan (Asatidz).\n4. Layanan kesehatan berkala untuk para santri.\n\nSetiap ayat yang mereka baca dan hafal akan mengalirkan pahala jariyah tanpa henti bagi para donatur. Mari bersama lahirkan generasi Qur'ani yang sejahtera dan mandiri.",
+    "excerpt": "Bimbingan belajar sekolah, literasi digital komputer, kursus bahasa, dan TPA Al-Qur'an gratis bagi 98 anak yatim binaan Yayasan Payung Berkah.",
+    "story": "Pendidikan adalah bekal utama kemandirian masa depan anak-anak yatim. Di bawah naungan Yayasan Payung Berkah (PABE) yang berpusat di Cakung, Jakarta Timur, terdapat 98 anak yatim piatu binaan yang memperoleh akses belajar gratis dan pelatihan keterampilan hidup.\n\nFokus program Bimbel PABE Smart meliputi:\n1. Bimbingan belajar akademis gratis jenjang SD, SMP, hingga SMA.\n2. Pembelajaran literasi komputer dasar dan keterampilan digital.\n3. Kursus Bahasa Inggris dan Bahasa Arab bersama para tutor relawan.\n4. Pembinaan Taman Pendidikan Al-Qur'an (TPA) dan hafalan surat-surat pilihan.\n\nMari bersama lahirkan generasi cerdas, berakhlak mulia, dan mandiri demi menyongsong masa depan yang sejahtera.",
     "updates": [
       {
         "id": "upd-001",
         "date": "2026-08-15",
-        "title": "Penyaluran Mushaf Al-Qur'an & Seragam Santri Baru",
-        "content": "Alhamdulillah, dana sebesar Rp 25.000.000 telah disalurkan untuk pengadaan 50 paket mushaf hafalan dan perlengkapan asrama santri angkatan baru.",
+        "title": "Penyaluran Paket Modul Belajar & Fasilitas Bimbel PABE Smart",
+        "content": "Alhamdulillah, dana sebesar Rp 25.000.000 telah disalurkan untuk pengadaan modul belajar, sarana meja tulis, dan perlengkapan kelas Bimbel PABE Smart bagi adik-adik yatim di Rawa Bebek, Cakung.",
         "disbursedAmount": 25000000,
         "images": [
           "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=800&q=80"
@@ -29,8 +29,8 @@ export const CAMPAIGNS = [
       {
         "id": "upd-002",
         "date": "2026-07-01",
-        "title": "Wisuda Tahfidz 15 Juz Angkatan Pertama",
-        "content": "12 santri dhuafa berhasil menyelesaikan setoran hafalan 15 juz mutqin. Terima kasih atas sedekah dan doa para muhsinin.",
+        "title": "Wisuda Bimbingan Tahfidz Juz 'Amma & Apresiasi Juara Kelas",
+        "content": "Apresiasi prestasi untuk anak-anak yatim berprestasi di sekolah formal dan kelulusan hafalan Juz 'Amma santri TPA Yayasan Payung Berkah.",
         "disbursedAmount": 18000000,
         "images": [
           "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80"
@@ -436,7 +436,7 @@ export const CAMPAIGNS = [
   {
     "id": "camp-004",
     "slug": "santunan-kado-yatim-dhuafa",
-    "title": "Santunan & Kado Kasih 100 Yatim Dhuafa Penghafal Quran",
+    "title": "Santunan Rutin & Doa Bersama 98 Anak Yatim Piatu PABE",
     "categoryId": "yatim",
     "categoryName": "Kemandirian Yatim",
     "targetAmount": 50000000,
@@ -446,16 +446,16 @@ export const CAMPAIGNS = [
     "status": "ACTIVE",
     "isUrgent": false,
     "isFeatured": true,
-    "location": "Lebak, Banten",
+    "location": "Cakung, Jakarta Timur",
     "bannerUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
-    "excerpt": "Hadirkan senyuman dan kebahagiaan anak-anak yatim dengan paket perlengkapan sekolah, santunan uang saku, dan gizi.",
-    "story": "Rasulullah SAW bersabda: \"Aku dan orang yang menanggung anak yatim (kedudukannya) di surga seperti ini,\" seraya mengisyaratkan jari telunjuk dan jari tengahnya. (HR. Bukhari).\n\nProgram Santunan Yatim Ceria PABE menyasar 100 anak yatim piatu di pelosok Banten dengan bantuan berupa:\n1. Paket tas, sepatu, dan seragam sekolah baru.\n2. Santunan biaya SPP dan uang saku bulanan.\n3. Paket makanan bernutrisi tinggi dan susu.",
+    "excerpt": "Salurkan santunan uang saku, bingkisan nutrisi, dan sembako untuk 98 anak yatim dalam majelis doa istighotsah malam Jumat.",
+    "story": "Rasulullah SAW bersabda: \"Aku dan orang yang menanggung anak yatim (kedudukannya) di surga seperti ini,\" seraya mengisyaratkan jari telunjuk dan jari tengahnya. (HR. Bukhari).\n\nProgram Santunan & Doa Bersama Yayasan Payung Berkah (PABE) menyantuni 98 anak yatim piatu binaan di kawasan Cakung, Jakarta Timur secara konsisten:\n1. Santunan uang saku dan makanan bergizi dalam Majelis Dzikir & Doa Istighotsah malam Jumat.\n2. Santunan bulanan berupa sembako pokok dan kebutuhan nutrisi keluarga yatim.\n3. Bingkisan istimewa hari raya dan perlengkapan sekolah.\n\nMelalui doa tulus dari anak-anak yatim, pintu-pintu keberkahan dan kemudahan senantiasa terbuka bagi para muhsinin.",
     "updates": [
       {
         "id": "upd-004-1",
         "date": "2026-09-05",
-        "title": "Penyaluran Paket Kado Kasih & Santunan 100 Yatim",
-        "content": "Alhamdulillah, amanah donatur sebesar Rp 28.500.000 telah disalurkan dalam bentuk paket perlengkapan sekolah, santunan tunai, dan bingkisan gizi untuk 100 anak yatim dhuafa di Lebak, Banten.",
+        "title": "Penyaluran Santunan Rutin & Doa Istighotsah Bersama 98 Yatim",
+        "content": "Alhamdulillah, amanah donatur sebesar Rp 28.500.000 telah disalurkan dalam bentuk santunan tunai uang saku dan bingkisan sembako nutrisi untuk 98 anak yatim dhuafa di Sekretariat Jl. Rawa Bebek, Cakung.",
         "disbursedAmount": 28500000,
         "images": [
           "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800&q=80",
@@ -861,7 +861,7 @@ export const CAMPAIGNS = [
   {
     "id": "camp-007",
     "slug": "renovasi-asrama-ruang-belajar-santri",
-    "title": "Renovasi Asrama & Ruang Belajar Santri Yatim Pelosok Banten",
+    "title": "Wakaf Sarana Asrama Yatim Berkah Mandiri & Ruang Belajar PKBM",
     "categoryId": "pendidikan",
     "categoryName": "Pendidikan & Santri",
     "targetAmount": 95000000,
@@ -871,16 +871,16 @@ export const CAMPAIGNS = [
     "status": "COMPLETED",
     "isUrgent": false,
     "isFeatured": false,
-    "location": "Pandeglang, Banten",
+    "location": "Cakung, Jakarta Timur",
     "bannerUrl": "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=800&q=80",
-    "excerpt": "Perbaiki atap bocor dan perluas ruang belajar tahfidz agar 60 santri yatim dhuafa dapat menghafal Quran dengan nyaman.",
-    "story": "Kondisi asrama santri binaan di Pandeglang mengalami kerusakan atap dan lantai yang lembab saat musim hujan tiba.\n\nRenovasi ini mencakup:\n- Penggantian genteng dan plafon tahan air.\n- Pembangunan ruang belajar berlantai keramik dan rak kitab.\n- Ventilasi udara sehat dan sanitasi kamar mandi yang bersih.",
+    "excerpt": "Pengadaan sarana asrama yatim terpadu, ruang belajar multimedia, dan Pusat Kegiatan Belajar Masyarakat (PKBM) Yayasan Payung Berkah.",
+    "story": "Yayasan Payung Berkah memiliki visi strategis jangka panjang untuk mendirikan Asrama Yatim Berkah Mandiri dan Pusat Kegiatan Belajar Masyarakat (PKBM) terpadu di kawasan Cakung, Jakarta Timur.\n\nFasilitas yang dihadirkan meliputi:\n- Ruang kelas multimedia dan pelatihan keterampilan kerja bagi anak-anak yatim.\n- Asrama tinggal yang sehat, bersih, dan representatif bagi anak asuh dhuafa.\n- Sarana musholla bersama dan ruang istighotsah terpadu.\n\nSetiap rupiah wakaf jariyah yang disalurkan menjadi amal jariyah yang abadi dan terus mengalirkan kebaikan.",
     "updates": [
       {
         "id": "upd-007-1",
         "date": "2026-09-05",
-        "title": "Renovasi Asrama Selesai 100% & Syukuran Bersama Santri",
-        "content": "Alhamdulillah, seluruh pekerjaan atap plafon dan lantai ruang belajar telah selesai 100%. Santri kini belajar dengan tenang dan nyaman.",
+        "title": "Penyelesaian Renovasi Ruang Belajar PKBM & Syukuran Bersama Santri",
+        "content": "Alhamdulillah, penataan ruang belajar dan sarana penunjang kegiatan bimbingan belajar anak yatim telah selesai 100%. Santri kini dapat belajar dengan tenang dan kondusif.",
         "disbursedAmount": 95000000,
         "images": [
           "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80"
@@ -1003,25 +1003,25 @@ export const CAMPAIGNS = [
   {
     "id": "camp-008",
     "slug": "klinik-keliling-paket-gizi-balita",
-    "title": "Klinik Keliling & Paket Pangan Bergizi Balita Cegah Stunting",
+    "title": "Layanan Medis Gratis & Terapi Akupresur 34 Lansia Dhu'afa",
     "categoryId": "bencana",
-    "categoryName": "Tanggap Bencana",
+    "categoryName": "Kesehatan & Kemanusiaan",
     "targetAmount": 40000000,
     "collectedAmount": 38200000,
     "donorCount": 180,
     "endDate": "2026-10-31T23:59:59Z",
     "isUrgent": true,
     "isFeatured": false,
-    "location": "Sukabumi, Jawa Barat",
+    "location": "Cakung, Jakarta Timur",
     "bannerUrl": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
-    "excerpt": "Layanan cek kesehatan gratis, imunisasi, vitamin, dan paket makanan tinggi protein untuk 200 balita dhuafa.",
-    "story": "Kekurangan asupan gizi pada anak di usia emas berpotensi menimbulkan stunting dan gangguan kesehatan jangka panjang.\n\nMelalui Mobil Klinik Keliling PABE:\n- Pemeriksaan medis berkala oleh dokter relawan.\n- Pemberian paket telur, susu formula khusus, biskuit gizi, dan suplemen mikronutrien.\n- Edukasi sanitasi keluarga dan cara memasak makanan bergizi seimbang.",
+    "excerpt": "Pemeriksaan medis berkala, cek metabolik (gula darah, asam urat, kolesterol), obat-obatan, dan terapi akupresur untuk 34 lansia binaan.",
+    "story": "Kesehatan adalah hak setiap insan, terutama bagi para lansia dhu'afa yang hidup dengan keterbatasan ekonomi. Yayasan Payung Berkah (PABE) menyelenggarakan program pelayanan kesehatan gratis dan terapi akupresur bagi 34 lansia dan dhu'afa binaan di kawasan Cakung, Jakarta Timur.\n\nPelayanan yang diberikan meliputi:\n1. Pemeriksaan fisik dan konsultasi kesehatan berkala.\n2. Pemeriksaan laboratorium sederhana (gula darah, asam urat, dan kolesterol).\n3. Terapi akupresur tradisional oleh tenaga terapis berpengalaman untuk melancarkan sirkulasi darah dan meredakan nyeri.\n4. Pemberian suplemen vitamin, obat rutin, dan bingkisan pangan sehat.",
     "updates": [
       {
         "id": "upd-007",
         "date": "2026-09-02",
-        "title": "Distribusi 200 Paket Gizi & Skrining Balita Sehat",
-        "content": "Tim medis relawan telah menyalurkan 200 paket gizi lengkap dan melakukan skrining tumbuh kembang di 4 posyandu desa binaan.",
+        "title": "Layanan Cek Kesehatan Rutin & Terapi Akupresur Lansia Binaan",
+        "content": "Alhamdulillah, tim kesehatan dan terapis relawan Yayasan Payung Berkah telah melayani 34 lansia dan dhu'afa binaan dengan cek metabolik lengkap serta terapi akupresur di Sekretariat Cakung.",
         "disbursedAmount": 18500000,
         "images": [
           "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80"
