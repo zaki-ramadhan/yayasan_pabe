@@ -152,6 +152,9 @@ export function DonorOverviewDashboard({ currentUser }) {
 				<h1 className="text-lg sm:text-xl font-medium tracking-tight text-slate-950">
 					Dashboard
 				</h1>
+				<p className="text-sm font-normal text-slate-500 mt-0.5">
+					Ringkasan donasi dan kebaikan yang telah Anda salurkan.
+				</p>
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5">

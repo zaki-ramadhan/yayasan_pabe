@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/ui/form-field";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
@@ -102,15 +104,12 @@ export function DonorPersonalFormCard({
           Informasi Data Diri
         </h2>
         <p className="text-sm font-normal text-slate-500 mt-0.5">
-          Kelola nama lengkap, kontak pribadi, serta alamat domisili Anda
+          Perbarui informasi identitas dan kontak Anda.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="input-full-name" className="text-sm font-medium text-slate-700 block mb-1.5">
-            Nama Lengkap
-          </label>
+        <FormField label="Nama Lengkap" required>
           <Input
             id="input-full-name"
             name="fullName"
@@ -122,28 +121,22 @@ export function DonorPersonalFormCard({
             required
             maxLength={60}
           />
-        </div>
+        </FormField>
 
-        <div>
-          <label htmlFor="input-bio" className="text-sm font-medium text-slate-700 block mb-1.5">
-            Bio / Moto Pribadi
-          </label>
-          <textarea
+        <FormField label="Bio / Moto Pribadi">
+          <Textarea
             id="input-bio"
             name="bio"
             rows={2}
             {...bind("bio")}
             placeholder="Tuliskan moto atau harapan kebaikan Anda..."
             maxLength={200}
-            className="w-full text-sm rounded-md border border-slate-200 p-2.5 outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all text-slate-950 placeholder:text-slate-400 bg-white"
+            className="rounded-md border-slate-200 bg-white"
           />
-        </div>
+        </FormField>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div>
-            <label htmlFor="input-city" className="text-sm font-medium text-slate-700 block mb-1.5">
-              Domisili / Kota
-            </label>
+          <FormField label="Domisili / Kota">
             <Input
               id="input-city"
               name="city"
@@ -154,12 +147,9 @@ export function DonorPersonalFormCard({
               maxLength={50}
               className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label htmlFor="input-phone" className="text-sm font-medium text-slate-700 block mb-1.5">
-              Nomor Telepon / WhatsApp
-            </label>
+          <FormField label="Nomor Telepon / WhatsApp">
             <Input
               id="input-phone"
               name="phone"
@@ -171,14 +161,11 @@ export function DonorPersonalFormCard({
               maxLength={15}
               className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
             />
-          </div>
+          </FormField>
         </div>
 
-        <div>
-          <label htmlFor="input-address" className="text-sm font-medium text-slate-700 block mb-1.5">
-            Alamat Lengkap
-          </label>
-          <textarea
+        <FormField label="Alamat Lengkap">
+          <Textarea
             id="input-address"
             name="address"
             rows={2}
@@ -186,9 +173,9 @@ export function DonorPersonalFormCard({
             {...bind("address")}
             placeholder="Alamat domisili lengkap untuk keperluan konfirmasi penyaluran..."
             maxLength={250}
-            className="w-full text-sm rounded-md border border-slate-200 p-2.5 outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all text-slate-950 placeholder:text-slate-400 bg-white"
+            className="rounded-md border-slate-200 bg-white"
           />
-        </div>
+        </FormField>
 
         <div className="pt-2 flex justify-end">
           <Button

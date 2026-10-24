@@ -2,18 +2,19 @@
 
 import { formatRupiah } from "@/lib/formatters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 
 export function DonorSummaryCardsSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
       {[1, 2, 3].map((i) => (
-        <div
+        <Card
           key={i}
-          className="rounded-md border border-slate-200/90 bg-sidebar p-5 space-y-2.5"
+          className="border-slate-200/90 bg-sidebar p-5 space-y-2.5 shadow-2xs"
         >
           <Skeleton className="h-4 w-32 rounded-sm" />
           <Skeleton className="h-8 w-44 rounded-sm" />
-        </div>
+        </Card>
       ))}
     </div>
   );
@@ -43,9 +44,9 @@ export function DonorSummaryCards({ metrics, isLoading = false }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
       {cards.map((card) => (
-        <div
+        <Card
           key={card.title}
-          className="rounded-md border border-slate-200/90 bg-sidebar p-5 transition-colors"
+          className="border-slate-200/90 bg-sidebar p-5 transition-colors shadow-2xs"
         >
           <p className="text-sm font-medium text-slate-500">
             {card.title}
@@ -62,7 +63,7 @@ export function DonorSummaryCards({ metrics, isLoading = false }) {
               {card.value}
             </p>
           )}
-        </div>
+        </Card>
       ))}
     </div>
   );

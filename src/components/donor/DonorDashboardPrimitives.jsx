@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 /**
@@ -17,9 +18,9 @@ export function DonorCard({
 	headerClassName = "",
 }) {
 	return (
-		<div
+		<Card
 			className={cn(
-				"rounded-md border border-slate-200/90 bg-sidebar p-4.5 sm:p-5 space-y-3",
+				"bg-sidebar border-slate-200/90 p-4.5 sm:p-5 space-y-3",
 				className,
 			)}
 		>
@@ -61,7 +62,7 @@ export function DonorCard({
 			{
 				children
 			}
-		</div>
+		</Card>
 	);
 }
 
@@ -111,9 +112,9 @@ export function DonorStatCard({
 	children,
 }) {
 	return (
-		<div
+		<Card
 			className={cn(
-				"rounded-md border border-slate-200/90 bg-sidebar p-4 sm:p-5",
+				"bg-sidebar border-slate-200/90 p-4 sm:p-5",
 				className,
 			)}
 		>
@@ -138,7 +139,7 @@ export function DonorStatCard({
 			{
 				children
 			}
-		</div>
+		</Card>
 	);
 }
 

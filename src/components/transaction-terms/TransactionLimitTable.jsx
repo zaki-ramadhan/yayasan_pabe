@@ -1,6 +1,7 @@
 import { TransactionLimitTableRow } from "./TransactionLimitTableRow";
 import {
   Table,
+  TableContainer,
   TableHeader,
   TableBody,
   TableRow,
@@ -23,7 +24,7 @@ import {
  */
 export function TransactionLimitTable({ title, description, items = [] }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white shadow-2xs overflow-hidden">
+    <TableContainer className="bg-white">
       {/* Table Header Bar */}
       <div className="p-4 sm:p-5 sm:py-3 border-b border-slate-200 bg-slate-50/60">
         <h2 className="text-base sm:text-lg font-semibold text-slate-950">
@@ -64,6 +65,6 @@ export function TransactionLimitTable({ title, description, items = [] }) {
           )}
         </TableBody>
       </Table>
-    </div>
+    </TableContainer>
   );
 }

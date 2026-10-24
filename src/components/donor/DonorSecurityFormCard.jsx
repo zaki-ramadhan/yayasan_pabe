@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/ui/form-field";
 import { toast } from "@/hooks/use-toast";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
@@ -110,16 +111,13 @@ export function DonorSecurityFormCard({
           </h2>
         </div>
         <p className="text-sm font-normal text-slate-500 mt-0.5">
-          Perbarui kata sandi secara berkala untuk menjaga perlindungan akun Anda
+          Ganti kata sandi untuk menjaga keamanan akun.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
         <div className="space-y-4">
-          <div>
-            <label htmlFor="input-old-password" className="text-sm font-medium text-slate-700 block mb-1.5">
-              Kata Sandi Saat Ini
-            </label>
+          <FormField label="Kata Sandi Saat Ini" required>
             <Input
               id="input-old-password"
               name="oldPassword"
@@ -131,12 +129,9 @@ export function DonorSecurityFormCard({
               className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
               required
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label htmlFor="input-new-password" className="text-sm font-medium text-slate-700 block mb-1.5">
-              Kata Sandi Baru
-            </label>
+          <FormField label="Kata Sandi Baru" required>
             <Input
               id="input-new-password"
               name="newPassword"
@@ -148,12 +143,9 @@ export function DonorSecurityFormCard({
               className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
               required
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label htmlFor="input-confirm-password" className="text-sm font-medium text-slate-700 block mb-1.5">
-              Ulangi Sandi Baru
-            </label>
+          <FormField label="Ulangi Sandi Baru" required>
             <Input
               id="input-confirm-password"
               name="confirmPassword"
@@ -165,7 +157,7 @@ export function DonorSecurityFormCard({
               className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
               required
             />
-          </div>
+          </FormField>
         </div>
 
         <div className="pt-2 flex justify-start">

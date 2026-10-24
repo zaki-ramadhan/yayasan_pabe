@@ -1,5 +1,5 @@
 import { User } from "lucide-react";
-import { formatRupiah } from "@/lib/formatters";
+import { formatRupiah, getInitials } from "@/lib/formatters";
 import { formatClockTime } from "@/lib/dateUtils";
 import { maskEmail } from "@/lib/security";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -10,7 +10,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
  */
 export function CampaignTransactionItem({ item }) {
   const isAnon = !item.name || item.name.toLowerCase().includes("hamba allah");
-  const initial = isAnon ? "HA" : item.name.slice(0, 2).toUpperCase();
+  const initial = isAnon ? "HA" : getInitials(item.name, "D");
 
   return (
     <div className="p-2 flex items-center justify-between gap-2.5 shadow-2xs">

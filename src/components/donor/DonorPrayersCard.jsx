@@ -95,18 +95,6 @@ export function DonorPrayersCard({ currentUser }) {
                   </Link>
                 )}
               </div>
-
-              {/* Balasan Resmi Yayasan jika ada */}
-              {item.prayerReply && (
-                <div className="w-full mt-1 p-2 rounded-md bg-blue-50/70 border border-blue-200 text-xs font-normal text-slate-800 space-y-0.5">
-                  <span className="font-medium text-primary block">
-                    Balasan Pengurus Yayasan:
-                  </span>
-                  <p className="text-slate-700 leading-normal">
-                    {item.prayerReply}
-                  </p>
-                </div>
-              )}
             </DonorListItem>
           ))
         )}

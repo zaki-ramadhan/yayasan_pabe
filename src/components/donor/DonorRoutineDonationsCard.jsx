@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Pause, Play, XCircle } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/badge";
 import {
   DonorCard,
   DonorListItem,
@@ -75,17 +76,7 @@ export function DonorRoutineDonationsCard({
                           ? "Pekanan"
                           : "Bulanan"}
                       </span>
-                      <span
-                        className={`text-xs px-2 py-0.5 rounded font-medium border ${
-                          isActive
-                            ? "bg-blue-50 text-blue-800 border-blue-200"
-                            : isPaused
-                            ? "bg-amber-50 text-amber-800 border-amber-200"
-                            : "bg-slate-100 text-slate-600 border-slate-200"
-                        }`}
-                      >
-                        {isActive ? "Aktif" : isPaused ? "Dijeda" : "Dibatalkan"}
-                      </span>
+                      <StatusBadge status={item.status} />
                     </div>
                     <p className="text-sm font-medium text-slate-900 truncate">
                       {item.programTitle}
@@ -107,40 +98,46 @@ export function DonorRoutineDonationsCard({
                 {!isCancelled && (
                   <div className="w-full pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5">
                     {isActive ? (
-                      <button
+                      <Button
                         type="button"
+                        variant="outline"
+                        size="sm"
                         onClick={() => handleUpdateStatus(item.id, "PAUSED")}
                         disabled={isProcessing}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-normal text-amber-700 bg-amber-50 hover:bg-amber-100 rounded border border-amber-200 transition-colors cursor-pointer disabled:opacity-50"
+                        className="h-7 px-2.5 text-xs text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200 gap-1"
                       >
                         <Pause className="w-3 h-3" />
                         <span>Jeda sementara</span>
-                      </button>
+                      </Button>
                     ) : (
-                      <button
+                      <Button
                         type="button"
+                        variant="outline"
+                        size="sm"
                         onClick={() => handleUpdateStatus(item.id, "ACTIVE")}
                         disabled={isProcessing}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-normal text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded border border-emerald-200 transition-colors cursor-pointer disabled:opacity-50"
+                        className="h-7 px-2.5 text-xs text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200 gap-1"
                       >
                         <Play className="w-3 h-3" />
                         <span>Lanjutkan donasi</span>
-                      </button>
+                      </Button>
                     )}
 
-                    <button
+                    <Button
                       type="button"
+                      variant="outline"
+                      size="sm"
                       onClick={() => {
                         if (confirm(`Apakah Anda yakin ingin membatalkan komitmen donasi rutin ini?`)) {
                           handleUpdateStatus(item.id, "CANCELLED");
                         }
                       }}
                       disabled={isProcessing}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-normal text-rose-600 bg-rose-50 hover:bg-rose-100 rounded border border-rose-200 transition-colors cursor-pointer disabled:opacity-50"
+                      className="h-7 px-2.5 text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 border-rose-200 gap-1"
                     >
                       <XCircle className="w-3 h-3" />
                       <span>Batalkan</span>
-                    </button>
+                    </Button>
                   </div>
                 )}
               </DonorListItem>

@@ -12,26 +12,8 @@ import {
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import { formatRupiah, formatCompactNumber } from "@/lib/formatters";
 import { TIME_RANGE_OPTIONS, VIEW_MODE_OPTIONS } from "@/data/chartOptions";
-import { cn } from "@/lib/utils";
-
-const chartConfig = {
-  cumulativeAmount: {
-    label: "Total Terkumpul",
-    color: "#2563eb",
-  },
-  dailyAmount: {
-    label: "Donasi Harian",
-    color: "#10b981",
-  },
-};
-
-function toDateKey(date) {
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+import { useCampaignChartData } from "./useCampaignChartData";
+import { CampaignChartSummaryCards } from "./CampaignChartSummaryCards";
 
 export function CampaignDonationGrowthChart({
   initialData = [],
@@ -40,129 +22,12 @@ export function CampaignDonationGrowthChart({
   const [timeRange, setTimeRange] = React.useState("30d");
   const [viewMode, setViewMode] = React.useState("all"); // 'all' | 'daily' | 'cumulative'
 
-  // Generate runtun tanggal harian kontinu (tanpa bolong) untuk rentang waktu terpilih
-  const chartData = React.useMemo(() => {
-    // 1. Map transaksi riil per tanggal
-    const transactionMap = new Map();
-    if (Array.isArray(initialData)) {
-      initialData.forEach((item) => {
-        if (item?.date) {
-          transactionMap.set(item.date, {
-            dailyAmount: Number(item.dailyAmount || 0),
-            donationsCount: Number(item.donationsCount || 0),
-          });
-        }
-      });
-    }
-
-    // 2. Tentukan rentang tanggal (startDate sampai today)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    let startDate = new Date(today);
-
-    if (timeRange === "7d") {
-      startDate.setDate(today.getDate() - 6);
-    } else if (timeRange === "90d") {
-      startDate.setDate(today.getDate() - 89);
-    } else {
-      // Default: '30d'
-      startDate.setDate(today.getDate() - 29);
-    }
-
-    // 3. Hitung akumulasi dana yang terkumpul SEBELUM startDate
-    const startKey = toDateKey(startDate);
-    let totalBeforeStart = 0;
-    if (Array.isArray(initialData)) {
-      initialData.forEach((item) => {
-        if (item?.date && item.date < startKey) {
-          totalBeforeStart += Number(item.dailyAmount || 0);
-        }
-      });
-    }
-
-    // 4. Generate setiap hari secara sekuensial dari startDate hingga today
-    const continuousSeries = [];
-    let runningCumulative = totalBeforeStart;
-    const cursor = new Date(startDate);
-
-    while (cursor <= today) {
-      const dateKey = toDateKey(cursor);
-      const tx = transactionMap.get(dateKey);
-
-      const daily = tx ? tx.dailyAmount : 0;
-      const count = tx ? tx.donationsCount : 0;
-      runningCumulative += daily;
-
-      continuousSeries.push({
-        date: dateKey,
-        dailyAmount: daily,
-        cumulativeAmount: runningCumulative,
-        donationsCount: count,
-      });
-
-      cursor.setDate(cursor.getDate() + 1);
-    }
-
-    // Fallback bila DB belum ada transaksi tetapi program sudah memiliki collectedAmount (misal data seed)
-    if (
-      transactionMap.size === 0 &&
-      Number(campaign?.collectedAmount || 0) > 0 &&
-      continuousSeries.length > 0
-    ) {
-      const total = Number(campaign.collectedAmount);
-      const totalDonors = Number(campaign.donorCount || 1);
-      continuousSeries[continuousSeries.length - 1].cumulativeAmount = total;
-      continuousSeries[continuousSeries.length - 1].dailyAmount = total;
-      continuousSeries[continuousSeries.length - 1].donationsCount = totalDonors;
-    }
-
-    return continuousSeries;
-  }, [initialData, campaign, timeRange]);
-
-  // Kalkulasi ringkasan metrik periode terpilih
-  const summaryMetrics = React.useMemo(() => {
-    const totalPeriod = chartData.reduce((acc, curr) => acc + (curr.dailyAmount || 0), 0);
-    const totalTransactions = chartData.reduce((acc, curr) => acc + (curr.donationsCount || 0), 0);
-    const avgPerDay = chartData.length > 0 ? Math.round(totalPeriod / chartData.length) : 0;
-    const latestCumulative = chartData[chartData.length - 1]?.cumulativeAmount || campaign.collectedAmount || 0;
-
-    return {
-      totalPeriod,
-      totalTransactions,
-      avgPerDay,
-      latestCumulative,
-    };
-  }, [chartData, campaign]);
-
-  const currentChartConfig = React.useMemo(() => {
-    if (viewMode === "all") {
-      return {
-        cumulativeAmount: {
-          label: "Total Terkumpul (Kiri)",
-          color: "#2563eb",
-        },
-        dailyAmount: {
-          label: "Donasi Harian (Kanan)",
-          color: "#10b981",
-        },
-      };
-    }
-    if (viewMode === "daily") {
-      return {
-        dailyAmount: {
-          label: "Donasi Harian",
-          color: "#10b981",
-        },
-      };
-    }
-    return {
-      cumulativeAmount: {
-        label: "Total Terkumpul",
-        color: "#2563eb",
-      },
-    };
-  }, [viewMode]);
+  const { chartData, summaryMetrics, currentChartConfig } = useCampaignChartData({
+    initialData,
+    campaign,
+    timeRange,
+    viewMode,
+  });
 
   return (
     <div className="space-y-5">
@@ -199,28 +64,10 @@ export function CampaignDonationGrowthChart({
       </div>
 
       {/* KPI Highlight Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 border border-x-0 border-slate-200 bg-slate-50/70 text-xs sm:text-sm overflow-hidden">
-        <div className="p-3.5 sm:p-4 space-y-0.5">
-          <span className="text-slate-600 font-medium">Total Akumulasi</span>
-          <p className="text-base sm:text-lg font-semibold text-slate-950">
-            {formatRupiah(summaryMetrics.latestCumulative)}
-          </p>
-        </div>
-
-        <div className="p-3.5 sm:p-4 space-y-0.5">
-          <span className="text-slate-600 font-medium">Donasi Periode Ini</span>
-          <p className="text-base sm:text-lg font-semibold text-slate-950">
-            {formatRupiah(summaryMetrics.totalPeriod || summaryMetrics.latestCumulative)}
-          </p>
-        </div>
-
-        <div className="p-3.5 sm:p-4 space-y-0.5">
-          <span className="text-slate-600 font-medium">Donatur Berpartisipasi</span>
-          <p className="text-base sm:text-lg font-semibold text-slate-950">
-            {summaryMetrics.totalTransactions || campaign.donorCount || 0} donasi
-          </p>
-        </div>
-      </div>
+      <CampaignChartSummaryCards
+        summaryMetrics={summaryMetrics}
+        campaign={campaign}
+      />
 
       {/* Interactive Dual-Axis Area Chart */}
       <div className="pt-2">
@@ -248,6 +95,7 @@ export function CampaignDonationGrowthChart({
               </linearGradient>
             </defs>
             <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e2e8f0" />
+
             <XAxis
               dataKey="date"
               tickLine={false}

@@ -11,6 +11,7 @@ import { formatRoutineSchedule } from "@/data/routineDonation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import {
   Table,
+  TableContainer,
   TableHeader,
   TableBody,
   TableRow,
@@ -186,7 +187,7 @@ export function DonorDashboardView({ currentUser: propUser }) {
           </Button>
         </div>
 
-        <div className="rounded-lg border border-slate-200/90 overflow-hidden">
+        <TableContainer>
           <Table>
             <TableHeader>
               <TableRow>
@@ -264,7 +265,7 @@ export function DonorDashboardView({ currentUser: propUser }) {
               )}
             </TableBody>
           </Table>
-        </div>
+        </TableContainer>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/ui/form-field";
 import {
   Select,
   SelectContent,
@@ -99,16 +100,13 @@ export function DonorBankFormCard({
           Informasi Rekening Bank
         </h2>
         <p className="text-sm font-normal text-slate-500 mt-0.5">
-          Digunakan untuk verifikasi administrasi dan konfirmasi penyaluran resmi
+          Rekening bank untuk keperluan administrasi donasi.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
         <div className="space-y-4">
-          <div>
-            <label htmlFor="select-bank-name" className="text-sm font-medium text-slate-700 block mb-1.5">
-              Nama Bank
-            </label>
+          <FormField label="Nama Bank">
             <Select
               value={values.bankName}
               onValueChange={(val) => setValues((prev) => ({ ...prev, bankName: val }))}
@@ -124,12 +122,9 @@ export function DonorBankFormCard({
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </FormField>
 
-          <div>
-            <label htmlFor="input-bank-account" className="text-sm font-medium text-slate-700 block mb-1.5">
-              Nomor Rekening
-            </label>
+          <FormField label="Nomor Rekening">
             <Input
               id="input-bank-account"
               name="bankAccount"
@@ -142,12 +137,9 @@ export function DonorBankFormCard({
               maxLength={30}
               className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
             />
-          </div>
+          </FormField>
 
-          <div>
-            <label htmlFor="input-bank-account-name" className="text-sm font-medium text-slate-700 block mb-1.5">
-              Atas Nama Rekening
-            </label>
+          <FormField label="Atas Nama Rekening">
             <Input
               id="input-bank-account-name"
               name="bankAccountName"
@@ -158,7 +150,7 @@ export function DonorBankFormCard({
               maxLength={60}
               className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
             />
-          </div>
+          </FormField>
         </div>
 
         <div className="pt-2 flex justify-start">
