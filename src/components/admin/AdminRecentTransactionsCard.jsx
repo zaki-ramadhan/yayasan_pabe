@@ -157,7 +157,7 @@ export function AdminRecentTransactionsCard({
                 </TableRow>
               ))
             ) : (
-              <TableEmptyRow colSpan={6} message="Belum ada data mutasi transaksi masuk." />
+              <TableEmptyRow colSpan={6} />
             )}
           </TableBody>
         </Table>

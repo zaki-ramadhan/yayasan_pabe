@@ -16,6 +16,7 @@ export function useAdminPrayerModeration({
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [campaignFilter, setCampaignFilter] = useState("ALL");
+  const [togglingId, setTogglingId] = useState(null);
   const [isPending, startTransition] = useTransition();
 
   const debouncedSearch = useDebounce(search.trim(), 350);
@@ -101,6 +102,7 @@ export function useAdminPrayerModeration({
   };
 
   const handleToggleHide = async (prayer) => {
+    setTogglingId(prayer.id);
     const nextHidden = !prayer.isPrayerHidden;
     try {
       const res = await safeFetch("/api/admin/prayers", {
@@ -128,6 +130,8 @@ export function useAdminPrayerModeration({
       }
     } catch {
       toast.error("Terjadi kendala jaringan saat memproses moderasi.");
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -139,6 +143,7 @@ export function useAdminPrayerModeration({
     search,
     statusFilter,
     campaignFilter,
+    togglingId,
     isPending,
     handleRefresh,
     handleSearchChange,

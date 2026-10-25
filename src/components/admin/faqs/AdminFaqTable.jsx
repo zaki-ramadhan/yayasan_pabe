@@ -169,11 +169,7 @@ export function AdminFaqTable({ initialFaqs = [] }) {
               ) : (
                 <TableEmptyRow
                   colSpan={4}
-                  message={
-                    search
-                      ? "Tidak ada pertanyaan FAQ yang cocok dengan kata kunci pencarian."
-                      : "Belum ada pertanyaan FAQ yang dicatat."
-                  }
+                  isFiltered={Boolean(search)}
                 />
               )}
             </TableBody>

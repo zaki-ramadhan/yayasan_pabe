@@ -4,8 +4,8 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 import { AuthFormSkeleton } from "@/components/auth/AuthFormSkeleton";
 
 export const metadata = {
-  title: "Daftar Akun Baru",
-  description: "Daftar akun donatur Yayasan Payung Berkah untuk mulai menyalurkan infaq dan sedekah terpercaya.",
+  title: "Daftar Donatur Baru",
+  description: "Daftar akun donatur Yayasan Payung Berkah untuk mulai menyalurkan infaq dan sedekah terpercaya. Hidup Berkah dengan Sedekah.",
 };
 
 export default function RegisterPage() {

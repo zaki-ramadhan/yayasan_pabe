@@ -104,9 +104,10 @@ export function DonorRoutineDonationsCard({
                         size="sm"
                         onClick={() => handleUpdateStatus(item.id, "PAUSED")}
                         disabled={isProcessing}
+                        isLoading={isProcessing}
                         className="h-7 px-2.5 text-xs text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200 gap-1"
                       >
-                        <Pause className="w-3 h-3" />
+                        {!isProcessing && <Pause className="w-3 h-3" />}
                         <span>Jeda sementara</span>
                       </Button>
                     ) : (
@@ -116,9 +117,10 @@ export function DonorRoutineDonationsCard({
                         size="sm"
                         onClick={() => handleUpdateStatus(item.id, "ACTIVE")}
                         disabled={isProcessing}
+                        isLoading={isProcessing}
                         className="h-7 px-2.5 text-xs text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200 gap-1"
                       >
-                        <Play className="w-3 h-3" />
+                        {!isProcessing && <Play className="w-3 h-3" />}
                         <span>Lanjutkan donasi</span>
                       </Button>
                     )}
@@ -133,9 +135,10 @@ export function DonorRoutineDonationsCard({
                         }
                       }}
                       disabled={isProcessing}
+                      isLoading={isProcessing}
                       className="h-7 px-2.5 text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 border-rose-200 gap-1"
                     >
-                      <XCircle className="w-3 h-3" />
+                      {!isProcessing && <XCircle className="w-3 h-3" />}
                       <span>Batalkan</span>
                     </Button>
                   </div>

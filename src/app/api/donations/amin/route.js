@@ -43,15 +43,10 @@ export async function POST(request) {
         },
       });
     } catch (dbErr) {
-      // Fallback untuk id demo / mock yang belum ada di database
-      return NextResponse.json({
-        success: true,
-        data: {
-          id: donationId,
-          fallback: true,
-          delta,
-        },
-      });
+      return NextResponse.json(
+        { success: false, message: "Doa donasi tidak ditemukan." },
+        { status: 404 }
+      );
     }
   } catch (error) {
     return NextResponse.json(

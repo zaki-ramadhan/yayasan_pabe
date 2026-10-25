@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import { DonorLayoutClient } from "@/components/donor/DonorLayoutClient";
 
 export const metadata = {
-  title: "Dashboard",
+  title: "Dasbor Donatur",
   description:
-    "Area aman kelola donasi, riwayat ZISWAF, dan profil akun Anda di Yayasan Payung Berkah.",
+    "Area aman kelola donasi, riwayat ZISWAF, dan profil akun Anda di Yayasan Payung Berkah. Hidup Berkah dengan Sedekah.",
   robots: {
     index: false,
     follow: false,

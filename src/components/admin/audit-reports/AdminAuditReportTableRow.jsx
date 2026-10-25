@@ -86,7 +86,7 @@ export function AdminAuditReportTableRow({ item, onEdit, onDelete }) {
 					{formatNumber(
 						item.beneficiaryCount,
 					)}{" "}
-					jiwa
+					orang
 				</span>
 				<span className="text-sm font-normal text-slate-500 block">
 					Rasio

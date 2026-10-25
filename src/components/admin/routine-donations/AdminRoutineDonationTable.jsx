@@ -214,7 +214,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
               ) : (
                 <TableEmptyRow
                   colSpan={7}
-                  message="Belum ada data komitmen donasi rutin yang terdaftar."
+                  isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL" || frequencyFilter !== "ALL")}
                 />
               )}
             </TableBody>

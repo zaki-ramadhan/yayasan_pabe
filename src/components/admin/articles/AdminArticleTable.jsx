@@ -173,11 +173,7 @@ export function AdminArticleTable({ initialArticles = [], categories = [] }) {
             ) : (
               <TableEmptyRow
                 colSpan={7}
-                message={
-                  search || categoryFilter !== "ALL"
-                    ? "Tidak ada artikel yang sesuai dengan filter pencarian."
-                    : "Belum ada artikel berita yang diterbitkan."
-                }
+                isFiltered={Boolean(search || categoryFilter !== "ALL")}
               />
             )}
           </TableBody>

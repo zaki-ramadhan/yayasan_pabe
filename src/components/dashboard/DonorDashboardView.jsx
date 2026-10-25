@@ -243,7 +243,7 @@ export function DonorDashboardView({ currentUser: propUser }) {
                   </TableCell>
                 </TableRow>
               ) : sortedTransactions.length === 0 ? (
-                <TableEmptyRow colSpan={6} message={isLoading ? "Memuat riwayat transaksi..." : "Belum ada transaksi donasi"} />
+                <TableEmptyRow colSpan={6} message={isLoading ? "Memuat riwayat transaksi..." : "Belum ada data"} />
               ) : (
                 sortedTransactions.map((tx) => (
                   <TableRow key={tx.id}>

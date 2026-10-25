@@ -155,10 +155,8 @@ export function AdminUserTable({
 								)
 							) : (
 								<TableEmptyRow
-									colSpan={
-										6
-									}
-									message="Belum ada data pengurus yang sesuai dengan kriteria filter."
+									colSpan={6}
+									isFiltered={Boolean(search || roleFilter !== "ALL" || statusFilter !== "ALL")}
 								/>
 							)}
 						</TableBody>

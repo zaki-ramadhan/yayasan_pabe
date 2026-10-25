@@ -208,11 +208,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
             ) : (
               <TableEmptyRow
                 colSpan={7}
-                message={
-                  search || departmentFilter !== "ALL"
-                    ? "Tidak ada lowongan yang sesuai dengan kriteria filter."
-                    : "Belum ada lowongan pekerjaan yang dibuka."
-                }
+                isFiltered={Boolean(search || departmentFilter !== "ALL")}
               />
             )}
           </TableBody>

@@ -1,5 +1,8 @@
 export const metadata = {
-  title: "Panel Admin",
+  title: {
+    default: "Panel Admin",
+    template: "%s | Admin PABE",
+  },
   robots: {
     index: false,
     follow: false,

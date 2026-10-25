@@ -4,8 +4,8 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { AuthFormSkeleton } from "@/components/auth/AuthFormSkeleton";
 
 export const metadata = {
-  title: "Masuk ke Akun",
-  description: "Masuk ke akun donatur Yayasan Payung Berkah untuk mengelola infaq rutin dan e-Kwitansi.",
+  title: "Masuk Akun Donatur",
+  description: "Masuk ke akun donatur Yayasan Payung Berkah untuk mengelola infaq rutin dan e-Kwitansi. Hidup Berkah dengan Sedekah.",
 };
 
 export default function LoginPage() {

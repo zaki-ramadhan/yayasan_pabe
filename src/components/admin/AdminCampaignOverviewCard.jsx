@@ -30,7 +30,7 @@ export function AdminCampaignOverviewCard({
           Capaian Program Prioritas
         </CardTitle>
         <CardDescription className="text-sm text-slate-500 mt-0.5">
-          Progres perolehan dana kampanye aktif
+          Progres perolehan dana program donasi aktif
         </CardDescription>
       </CardHeader>
 

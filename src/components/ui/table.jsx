@@ -207,9 +207,13 @@ export function TableSortHeader({
  */
 export function TableEmptyRow({
   colSpan = 5,
-  message = "Belum ada data",
+  message,
+  isFiltered = false,
   className = "",
 }) {
+  const resolvedMessage =
+    message ?? (isFiltered ? "Tidak ada data yang sesuai" : "Belum ada data");
+
   return (
     <TableRow className="hover:bg-transparent">
       <TableCell
@@ -219,7 +223,7 @@ export function TableEmptyRow({
           className
         )}
       >
-        <p className="max-w-md mx-auto">{message}</p>
+        <p className="max-w-md mx-auto">{resolvedMessage}</p>
       </TableCell>
     </TableRow>
   );
@@ -260,7 +264,7 @@ export function TablePaginationFooter({
   pagination,
   currentPage = pagination?.currentPage || pagination?.page || 1,
   totalPages = pagination?.totalPages || 1,
-  total = pagination?.total || pagination?.totalCount || 0,
+  total,
   totalItems,
   limit = pagination?.limit || pagination?.pageSize || 10,
   pageSize,
@@ -268,18 +272,33 @@ export function TablePaginationFooter({
   className = "",
   alwaysShow = false,
 }) {
-  const resolvedTotal = totalItems !== undefined ? totalItems : total;
-  const resolvedLimit = pageSize !== undefined ? pageSize : limit;
+  const resolvedTotal =
+    totalItems !== undefined
+      ? totalItems
+      : total !== undefined
+      ? total
+      : pagination?.total !== undefined
+      ? pagination.total
+      : pagination?.totalCount !== undefined
+      ? pagination.totalCount
+      : 0;
+
+  const resolvedLimit =
+    pageSize !== undefined
+      ? pageSize
+      : limit !== undefined
+      ? limit
+      : 10;
 
   const calculatedTotalPages =
     totalPages > 1
       ? totalPages
       : resolvedTotal > 0 && resolvedLimit > 0
       ? Math.ceil(resolvedTotal / resolvedLimit)
-      : totalPages;
+      : 1;
 
-  // Hanya tampilkan jika jumlah data memicu 2 halaman atau lebih
-  if (!alwaysShow && calculatedTotalPages <= 1) {
+  // Hanya tampilkan jika jumlah data memicu 2 halaman atau lebih (kecuali alwaysShow)
+  if (!alwaysShow && calculatedTotalPages <= 1 && resolvedTotal <= resolvedLimit) {
     return null;
   }
 
@@ -294,15 +313,23 @@ export function TablePaginationFooter({
       )}
     >
       <div className="leading-normal flex items-center">
-        Menampilkan{" "}
-        <span className="font-medium text-slate-900 mx-1">{fromRecord}</span> -{" "}
-        <span className="font-medium text-slate-900 mx-1">{toRecord}</span> dari{" "}
-        <span className="font-medium text-slate-900 ml-1 mr-1">{total}</span> data
+        {resolvedTotal === 0 ? (
+          <span>
+            Menampilkan <span className="font-medium text-slate-900 mx-1">0</span> data
+          </span>
+        ) : (
+          <span>
+            Menampilkan{" "}
+            <span className="font-medium text-slate-900 mx-1">{fromRecord}</span> -{" "}
+            <span className="font-medium text-slate-900 mx-1">{toRecord}</span> dari{" "}
+            <span className="font-medium text-slate-900 ml-1 mr-1">{resolvedTotal}</span> data
+          </span>
+        )}
       </div>
 
       <Pagination
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={calculatedTotalPages}
         onPageChange={onPageChange}
       />
     </div>

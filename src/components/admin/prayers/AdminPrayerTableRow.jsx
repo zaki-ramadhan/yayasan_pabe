@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ExternalLink, Eye, EyeOff, Heart, Copy, Check } from "lucide-react";
+import { ExternalLink, Eye, EyeOff, Heart, Copy, Check, Loader2 } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { toast } from "@/hooks/use-toast";
 
 export function AdminPrayerTableRow({
   item,
+  isToggling = false,
   onToggleHide,
 }) {
   const [copied, setCopied] = useState(false);
@@ -158,6 +159,7 @@ export function AdminPrayerTableRow({
             type="button"
             variant="ghost"
             size="sm"
+            disabled={isToggling}
             onClick={() => onToggleHide(item)}
             title={item.isPrayerHidden ? "Tampilkan kembali ke publik" : "Sembunyikan dari feed publik"}
             className={`h-8 w-8 p-0 cursor-pointer ${
@@ -166,7 +168,13 @@ export function AdminPrayerTableRow({
                 : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
             }`}
           >
-            {item.isPrayerHidden ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+            {isToggling ? (
+              <Loader2 className="w-4 h-4 animate-spin text-slate-600" />
+            ) : item.isPrayerHidden ? (
+              <Eye className="w-4 h-4" />
+            ) : (
+              <EyeOff className="w-4 h-4" />
+            )}
           </Button>
         </div>
       </TableCell>

@@ -20,23 +20,29 @@ export function AuthVisualPanel() {
           </Link>
         </div>
         {/* Base Photographic Background Image */}
-        <Image
-          src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1600&auto=format&fit=crop&q=80"
-          alt="Kegiatan Sosial Yayasan PABE"
-          fill
-          sizes="(max-width: 1200px) 50vw, 40vw"
-          className="object-cover object-center brightness-[0.45] contrast-[1.05] saturate-60"
-          priority
-        />
-
-        {/* Artistic Texture Overlay 2 */}
-        <div className="absolute inset-0 mix-blend-overlay opacity-45 pointer-events-none">
+        <div className="absolute inset-0 z-0 pointer-events-none select-none">
           <Image
-            src="/img/texture_overlay_2.jpeg"
-            alt="Texture Overlay"
+            src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1600&auto=format&fit=crop&q=80"
+            alt=""
             fill
             sizes="(max-width: 1200px) 50vw, 40vw"
-            className="object-cover object-center"
+            className="object-cover object-center brightness-[0.45] contrast-[1.05] saturate-60 pointer-events-none select-none"
+            draggable={false}
+            aria-hidden="true"
+            priority
+          />
+        </div>
+
+        {/* Artistic Texture Overlay 2 */}
+        <div className="absolute inset-0 mix-blend-overlay opacity-45 pointer-events-none select-none">
+          <Image
+            src="/img/texture_overlay_2.jpeg"
+            alt=""
+            fill
+            sizes="(max-width: 1200px) 50vw, 40vw"
+            className="object-cover object-center pointer-events-none select-none"
+            draggable={false}
+            aria-hidden="true"
           />
         </div>
 

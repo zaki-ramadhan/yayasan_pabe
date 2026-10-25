@@ -19,7 +19,7 @@ import {
 import { AdminRoutineDonationStatusBadge } from "./AdminRoutineDonationStatusBadge";
 import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
-import { Mail, Phone, Calendar, Clock, HeartHandshake, User, ArrowUpRight } from "lucide-react";
+import { Mail, Phone, Calendar, Clock, HeartHandshake, User, ArrowUpRight, Loader2 } from "lucide-react";
 
 export function AdminRoutineDonationDetailDialog({
   donation,
@@ -158,26 +158,29 @@ export function AdminRoutineDonationDetailDialog({
 
           {/* Ubah Status */}
           <FormField label="Ubah status komitmen" className="pt-1">
-            <Select
-              defaultValue={donation.status}
-              onValueChange={(val) => onStatusChange(donation.id, val)}
-              disabled={isUpdating}
-            >
-              <SelectTrigger className="w-full h-9 text-sm font-normal bg-white">
-                <SelectValue placeholder="Pilih status baru" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ACTIVE" className="text-sm font-normal">
-                  Aktif (Berjalan Normal)
-                </SelectItem>
-                <SelectItem value="PAUSED" className="text-sm font-normal">
-                  Dijeda (Sementara Waktu)
-                </SelectItem>
-                <SelectItem value="CANCELLED" className="text-sm font-normal">
-                  Dibatalkan (Berhenti)
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-2">
+              <Select
+                defaultValue={donation.status}
+                onValueChange={(val) => onStatusChange(donation.id, val)}
+                disabled={isUpdating}
+              >
+                <SelectTrigger className="w-full h-9 text-sm font-normal bg-white">
+                  <SelectValue placeholder="Pilih status baru" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ACTIVE" className="text-sm font-normal">
+                    Aktif (Berjalan Normal)
+                  </SelectItem>
+                  <SelectItem value="PAUSED" className="text-sm font-normal">
+                    Dijeda (Sementara Waktu)
+                  </SelectItem>
+                  <SelectItem value="CANCELLED" className="text-sm font-normal">
+                    Dibatalkan (Berhenti)
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-emerald-600 shrink-0" />}
+            </div>
           </FormField>
         </div>
 

@@ -58,6 +58,7 @@ export function AdminMetricCards({ stats }) {
             src="/img/folder%20admin.svg?v=3"
             alt=""
             aria-hidden="true"
+            draggable="false"
             className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none"
           />
 

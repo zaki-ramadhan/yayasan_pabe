@@ -176,7 +176,10 @@ export function AdminProgramTable({
                   />
                 ))
               ) : (
-                <TableEmptyRow colSpan={7} message="Tidak ada program donasi yang sesuai kriteria." />
+                <TableEmptyRow
+                  colSpan={7}
+                  isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL" || categoryFilter !== "ALL")}
+                />
               )}
             </TableBody>
           </Table>

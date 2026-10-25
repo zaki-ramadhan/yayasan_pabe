@@ -163,7 +163,7 @@ export function AdminDistributionTable({
                   />
                 ))
               ) : (
-                <TableEmptyRow colSpan={5} message="Belum ada catatan rekam penyaluran." />
+                <TableEmptyRow colSpan={5} isFiltered={Boolean(debouncedSearch)} />
               )}
             </TableBody>
           </Table>

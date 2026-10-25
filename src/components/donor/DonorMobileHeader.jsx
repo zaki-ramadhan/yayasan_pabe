@@ -34,7 +34,7 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
         <Link href="/" className="flex items-center gap-2" title="Kembali ke Beranda Utama Yayasan PABE">
           <div className="relative w-8 h-8 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
             <Image
-              src="/logo_yayasan_GSM.png"
+              src="/img/logo/logo_ypabe.jpeg"
               alt="Logo Yayasan Payung Berkah"
               width={32}
               height={32}
@@ -45,7 +45,7 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
             <span className="font-medium text-sm block text-slate-950 leading-tight">
               Yayasan PABE
             </span>
-            <span className="text-xs font-normal text-slate-500 block">
+            <span className="text-sm font-normal text-slate-500 block">
               Beranda Utama
             </span>
           </div>

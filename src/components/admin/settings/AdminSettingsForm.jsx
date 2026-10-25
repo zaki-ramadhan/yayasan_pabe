@@ -154,6 +154,7 @@ export function AdminSettingsForm({ initialSettings }) {
       <div className="flex items-center justify-end gap-3 pt-2">
         <Button
           type="submit"
+          isLoading={isSaving}
           disabled={isSaving}
           className="h-10 px-5 text-sm font-medium"
         >

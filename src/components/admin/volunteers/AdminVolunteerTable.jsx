@@ -190,7 +190,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
               ) : (
                 <TableEmptyRow
                   colSpan={6}
-                  message="Belum ada pendaftar relawan yang sesuai dengan kriteria filter."
+                  isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL")}
                 />
               )}
             </TableBody>

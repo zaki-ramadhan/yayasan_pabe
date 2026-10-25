@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { CAMPAIGNS } from "@/data/campaigns";
-import { RECENT_TRANSACTIONS, VOLUNTEER_APPLICANTS } from "@/data/adminMockData";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 
@@ -60,42 +58,36 @@ export async function GET(request) {
         .catch(() => []),
     ]);
 
-    const totalDonations = donationAgg._sum.amount ?? 148500000;
-    const paidCount = donationAgg._count.id ?? 1240;
+    const totalDonations = donationAgg._sum.amount ?? 0;
+    const paidCount = donationAgg._count.id ?? 0;
 
-    const formattedDonations = recentDonations.length > 0
-      ? recentDonations.map((d) => ({
-          id: d.invoiceId,
-          donor: d.isAnonymous ? "Hamba Allah" : d.donorName,
-          amount: d.amount,
-          channel: (d.paymentChannel || "qris").toUpperCase(),
-          date: d.createdAt.toISOString(),
-          status: d.status,
-          campaignTitle: d.campaign?.title || "Sedekah Umum PABE",
-        }))
-      : RECENT_TRANSACTIONS;
+    const formattedDonations = recentDonations.map((d) => ({
+      id: d.invoiceId,
+      donor: d.isAnonymous ? "Hamba Allah" : d.donorName,
+      amount: d.amount,
+      channel: (d.paymentChannel || "qris").toUpperCase(),
+      date: d.createdAt.toISOString(),
+      status: d.status,
+      campaignTitle: d.campaign?.title || "Sedekah Umum PABE",
+    }));
 
-    const formattedVolunteers = volunteerList.length > 0
-      ? volunteerList.map((v) => ({
-          id: v.id,
-          name: v.fullName,
-          city: v.city,
-          profession: v.interest,
-          event: v.interest,
-          status: v.status,
-        }))
-      : VOLUNTEER_APPLICANTS;
+    const formattedVolunteers = volunteerList.map((v) => ({
+      id: v.id,
+      name: v.fullName,
+      city: v.city,
+      profession: v.interest,
+      event: v.interest,
+      status: v.status,
+    }));
 
-    const formattedCampaigns = campaignList.length > 0
-      ? campaignList.map((c) => ({
-          id: c.id,
-          title: c.title,
-          slug: c.slug,
-          collectedAmount: c.collectedAmount,
-          targetAmount: c.targetAmount,
-          categoryName: c.category?.name || "Program Umum",
-        }))
-      : CAMPAIGNS.slice(0, 5);
+    const formattedCampaigns = campaignList.map((c) => ({
+      id: c.id,
+      title: c.title,
+      slug: c.slug,
+      collectedAmount: c.collectedAmount,
+      targetAmount: c.targetAmount,
+      categoryName: c.category?.name || "Program Umum",
+    }));
 
     const formattedJobApps = recentJobApps.map((app) => ({
       id: app.id,
@@ -112,8 +104,8 @@ export async function GET(request) {
       data: {
         totalDonations,
         transactionCount: paidCount,
-        activeCampaignsCount: campaignList.length || CAMPAIGNS.length,
-        volunteerCount: volunteerCount || 348,
+        activeCampaignsCount: campaignList.length,
+        volunteerCount,
         jobApplicationCount: jobAppCount,
         recentTransactions: formattedDonations,
         volunteerApplicants: formattedVolunteers,
@@ -123,18 +115,24 @@ export async function GET(request) {
     });
 
   } catch (error) {
-    console.warn("Dashboard stats fallback:", error.message);
-    return NextResponse.json({
-      success: true,
-      data: {
-        totalDonations: 148500000,
-        transactionCount: 1240,
-        activeCampaignsCount: CAMPAIGNS.length,
-        volunteerCount: 348,
-        recentTransactions: RECENT_TRANSACTIONS,
-        volunteerApplicants: VOLUNTEER_APPLICANTS,
-        campaigns: CAMPAIGNS.slice(0, 5),
+    console.error("Dashboard stats error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Gagal memuat statistik dashboard",
+        data: {
+          totalDonations: 0,
+          transactionCount: 0,
+          activeCampaignsCount: 0,
+          volunteerCount: 0,
+          jobApplicationCount: 0,
+          recentTransactions: [],
+          volunteerApplicants: [],
+          jobApplications: [],
+          campaigns: [],
+        },
       },
-    });
+      { status: 500 }
+    );
   }
 }

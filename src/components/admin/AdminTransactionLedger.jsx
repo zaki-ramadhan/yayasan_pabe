@@ -261,7 +261,10 @@ export function AdminTransactionLedger({
                   <FinancialTransactionRow key={tx.id} transaction={tx} />
                 ))
               ) : (
-                <TableEmptyRow colSpan={7} message="Belum ada data" />
+                <TableEmptyRow
+                  colSpan={7}
+                  isFiltered={selectedType !== "ALL" || selectedPeriod !== "30d"}
+                />
               )}
             </TableBody>
           </Table>

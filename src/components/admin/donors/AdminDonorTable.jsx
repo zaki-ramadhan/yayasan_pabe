@@ -142,11 +142,7 @@ export function AdminDonorTable({ initialData = {} }) {
             ) : paginatedDonors.length === 0 ? (
               <TableEmptyRow
                 colSpan={6}
-                message={
-                  search
-                    ? "Tidak ada data donatur yang sesuai dengan kata kunci pencarian."
-                    : "Belum ada riwayat donatur tercatat di sistem."
-                }
+                isFiltered={Boolean(search)}
               />
             ) : (
               paginatedDonors.map((donor) => (

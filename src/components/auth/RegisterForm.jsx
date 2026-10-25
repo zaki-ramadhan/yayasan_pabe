@@ -198,6 +198,7 @@ export function RegisterForm() {
 
         <Button
           type="submit"
+          isLoading={isLoading}
           disabled={isLoading || isGoogleLoading || isFacebookLoading || isSubmitDisabled}
           variant="primary3d"
           className="w-full h-11 rounded-lg text-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed"

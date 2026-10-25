@@ -81,7 +81,7 @@ export function AdminSidebarNav({
         >
           <div className="relative w-8.5 h-8.5 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
             <Image
-              src="/logo_yayasan_GSM.png"
+              src="/img/logo/logo_ypabe.jpeg"
               alt="Logo Yayasan Payung Berkah"
               width={34}
               height={34}
@@ -93,7 +93,7 @@ export function AdminSidebarNav({
               <span className="font-normal text-sm block text-slate-950 leading-tight truncate">
                 Yayasan PABE
               </span>
-              <span className="text-xs font-normal text-slate-500 block truncate">
+              <span className="text-sm font-normal text-slate-500 block truncate">
                 Panel admin
               </span>
             </div>

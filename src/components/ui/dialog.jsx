@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Dialog = DialogPrimitive.Root;
@@ -154,13 +154,14 @@ function DialogFooterActions({
 				type="submit"
 				disabled={isSubmitting || submitDisabled}
 				className={cn(
-					"inline-flex items-center justify-center h-9 px-4 min-w-[96px] rounded-lg text-sm font-medium transition-colors cursor-pointer disabled:opacity-60 whitespace-nowrap",
+					"inline-flex items-center justify-center gap-2 h-9 px-4 min-w-[96px] rounded-lg text-sm font-medium transition-colors cursor-pointer disabled:opacity-60 whitespace-nowrap",
 					submitVariant === "destructive"
 						? "bg-rose-600 text-white hover:bg-rose-700"
 						: "bg-primary text-white hover:bg-primary/90"
 				)}
 			>
-				{isSubmitting ? activeSubmittingText : activeSubmitText}
+				{isSubmitting && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
+				<span>{isSubmitting ? activeSubmittingText : activeSubmitText}</span>
 			</button>
 		</DialogFooter>
 	);

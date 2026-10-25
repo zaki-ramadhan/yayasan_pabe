@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 import {
   generateAuditReportPdf,
   generateSyariahReportPdf,
@@ -41,13 +42,17 @@ export async function GET(request) {
     }
 
     if (type === "audit") {
+      const dbReport = await prisma.auditReport.findFirst({
+        where: { year: parseInt(year, 10) || 2025 },
+      }).catch(() => null);
+
       const pdfBuffer = generateAuditReportPdf({
         year,
-        auditorName: AUDIT_SUMMARY_DATA.auditorName,
-        opinion: AUDIT_SUMMARY_DATA.opinion,
-        operationalRatio: AUDIT_SUMMARY_DATA.operationalRatio,
+        auditorName: dbReport?.auditorName || AUDIT_SUMMARY_DATA.auditorName,
+        opinion: dbReport?.opinionStatus || AUDIT_SUMMARY_DATA.opinion,
+        operationalRatio: dbReport?.operationalRatio || AUDIT_SUMMARY_DATA.operationalRatio,
         maxAllowedRatio: AUDIT_SUMMARY_DATA.maxAllowedRatio,
-        totalFundsManagedFormatted: formatRupiah(AUDIT_SUMMARY_DATA.totalFundsManaged),
+        totalFundsManagedFormatted: formatRupiah(dbReport ? dbReport.totalFundsIn : AUDIT_SUMMARY_DATA.totalFundsManaged),
       });
 
       const filename = `Laporan-Audit-Keuangan-PABE-${year}.pdf`;

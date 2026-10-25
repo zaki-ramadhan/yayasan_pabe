@@ -19,7 +19,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/ui/badge";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
-import { Mail, Phone, ExternalLink, FileText } from "lucide-react";
+import { Mail, Phone, ExternalLink, FileText, Loader2 } from "lucide-react";
 import { maskEmail, maskPhone } from "@/lib/security";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { USER_ROLES } from "@/services/authService";
@@ -159,6 +159,9 @@ export function AdminApplicantDrawer({
                           <SelectItem value="REJECTED">Belum Sesuai</SelectItem>
                         </SelectContent>
                       </Select>
+                      {updatingId === app.id && (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500 shrink-0" />
+                      )}
                     </div>
                   </div>
 

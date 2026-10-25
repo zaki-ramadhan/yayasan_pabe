@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { USER_ROLES } from "@/services/authService";
-import { CAMPAIGNS } from "@/data/campaigns";
 import { formatRupiah, formatDate } from "@/lib/formatters";
-import { RECENT_TRANSACTIONS, VOLUNTEER_APPLICANTS } from "@/data/adminMockData";
 import { cn } from "@/lib/utils";
 import {
   Table,
@@ -19,9 +17,9 @@ import {
 import { StatusBadge } from "@/components/ui/badge";
 
 export function AdminDashboardView({ userRole, stats }) {
-  const transactions = stats?.recentTransactions || RECENT_TRANSACTIONS;
-  const volunteers = stats?.volunteerApplicants || VOLUNTEER_APPLICANTS;
-  const campaigns = stats?.campaigns || CAMPAIGNS.slice(0, 3);
+  const transactions = stats?.recentTransactions || [];
+  const volunteers = stats?.volunteerApplicants || [];
+  const campaigns = stats?.campaigns || [];
 
   const {
     items: sortedTransactions,
@@ -101,7 +99,7 @@ export function AdminDashboardView({ userRole, stats }) {
             </TableHeader>
             <TableBody>
               {sortedTransactions.length === 0 ? (
-                <TableEmptyRow colSpan={6} message="Belum ada data" />
+                <TableEmptyRow colSpan={6} />
               ) : (
                 sortedTransactions.map((tx) => (
                   <TableRow key={tx.id}>
@@ -146,7 +144,7 @@ export function AdminDashboardView({ userRole, stats }) {
         {/* Campaign Summary Widget */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-3 shadow-2xs">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-950">Progres Kampanye Aktif</h3>
+            <h3 className="text-sm font-bold text-slate-950">Progres Program Donasi Aktif</h3>
             <Link href="/program" className="text-xs text-primary hover:underline font-semibold">
               Lihat Semua
             </Link>

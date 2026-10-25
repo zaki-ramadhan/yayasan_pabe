@@ -164,7 +164,7 @@ export function AdminAuditReportTable({ initialReports = [] }) {
               {reports.length === 0 ? (
                 <TableEmptyRow
                   colSpan={6}
-                  message="Belum ada laporan audit keuangan yang terdaftar."
+                  isFiltered={Boolean(debouncedSearch)}
                 />
               ) : (
                 reports.map((item) => (

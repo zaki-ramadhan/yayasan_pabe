@@ -1,27 +1,30 @@
 import { DashboardMetricCard } from "@/components/dashboard/DashboardMetricCard";
 import { USER_ROLES } from "@/services/authService";
-import { CAMPAIGNS } from "@/data/campaigns";
-import { formatRupiah } from "@/lib/formatters";
+import { formatRupiah, formatNumber } from "@/lib/formatters";
 
 export function DashboardMetricCards({ userRole, stats }) {
   if (userRole === USER_ROLES.DONOR) {
+    const totalDonated = Number(stats?.totalDonations || stats?.totalDonated || 0);
+    const activeRoutines = Number(stats?.activeRoutines || stats?.activeSchedulesCount || 0);
+    const supportedBeneficiaries = Number(stats?.beneficiariesCount || (totalDonated > 0 ? Math.max(1, Math.round(totalDonated / 250000)) : 0));
+
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardMetricCard
           label="Total Infak / Zakat Disalurkan"
-          value={formatRupiah(3850000)}
+          value={formatRupiah(totalDonated)}
           subtitle="Tercatat di e-Kwitansi Pajak"
           statusColor="emerald"
         />
         <DashboardMetricCard
           label="Jadwal Donasi Rutin Aktif"
-          value="2 Program"
+          value={`${formatNumber(activeRoutines)} Program`}
           subtitle="Pengingat WhatsApp aktif"
           statusColor="slate"
         />
         <DashboardMetricCard
           label="Santri yang Didukung"
-          value="4 Santri Yatim"
+          value={`${formatNumber(supportedBeneficiaries)} Santri Yatim`}
           subtitle="Bimbel PABE Smart Cakung"
           statusColor="slate"
         />
@@ -36,40 +39,44 @@ export function DashboardMetricCards({ userRole, stats }) {
   }
 
   if (userRole === USER_ROLES.VOLUNTEER) {
+    const totalHours = Number(stats?.totalHours || 0);
+    const missionCount = Number(stats?.missionCount || 0);
+    const assistedBeneficiaries = Number(stats?.assistedBeneficiaries || 0);
+
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardMetricCard
           label="Total Jam Khidmat Relawan"
-          value="48 Jam"
-          subtitle="6 Misi Lapangan Selesai"
+          value={`${formatNumber(totalHours)} Jam`}
+          subtitle={`${formatNumber(missionCount)} Misi Lapangan`}
           statusColor="emerald"
         />
         <DashboardMetricCard
           label="Misi Aksi Mendatang"
-          value="2 Agenda"
-          subtitle="Lebak & Sukabumi"
+          value={`${formatNumber(missionCount)} Agenda`}
+          subtitle="Wilayah Binaan PABE"
           statusColor="slate"
         />
         <DashboardMetricCard
           label="Penerima Manfaat Dibantu"
-          value="320 Jiwa"
+          value={`${formatNumber(assistedBeneficiaries)} Orang`}
           subtitle="Distribusi sembako & mushaf"
           statusColor="slate"
         />
         <DashboardMetricCard
           label="Status Keaktifan"
-          value={<span className="text-emerald-600">Relawan Aktif</span>}
-          subtitle="Terdaftar resmi di Yayasan PABE"
+          value={<span className="text-emerald-600">Relawan Terdaftar</span>}
+          subtitle="Database Resmi Yayasan PABE"
           statusColor="slate"
         />
       </div>
     );
   }
 
-  const totalDonations = stats?.totalDonations || 148500000;
-  const transactionCount = stats?.transactionCount || 1240;
-  const campaignsCount = stats?.activeCampaignsCount || CAMPAIGNS.length;
-  const volunteersCount = stats?.volunteerCount || 348;
+  const totalDonations = Number(stats?.totalDonations || 0);
+  const transactionCount = Number(stats?.transactionCount || 0);
+  const campaignsCount = Number(stats?.activeCampaignsCount || 0);
+  const volunteersCount = Number(stats?.volunteerCount || 0);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -81,19 +88,19 @@ export function DashboardMetricCards({ userRole, stats }) {
       />
       <DashboardMetricCard
         label="Transaksi Terverifikasi"
-        value={`${transactionCount} Transaksi`}
+        value={`${formatNumber(transactionCount)} Transaksi`}
         subtitle="Otomatis QRIS & VA"
         statusColor="slate"
       />
       <DashboardMetricCard
         label="Program Campaign Aktif"
-        value={`${campaignsCount} Program`}
+        value={`${formatNumber(campaignsCount)} Program`}
         subtitle="Tersinkronisasi Database"
         statusColor="slate"
       />
       <DashboardMetricCard
         label="Relawan Terdaftar"
-        value={`${volunteersCount} Relawan`}
+        value={`${formatNumber(volunteersCount)} Relawan`}
         subtitle="Formulir Relawan Terhubung"
         statusColor="emerald"
       />

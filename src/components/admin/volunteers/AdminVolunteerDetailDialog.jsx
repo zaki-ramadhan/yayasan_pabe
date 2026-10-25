@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Phone, MapPin, Calendar, Heart, ShieldCheck, QrCode } from "lucide-react";
+import { MessageSquare, Phone, MapPin, Calendar, Heart, ShieldCheck, QrCode, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -144,6 +144,7 @@ export function AdminVolunteerDetailDialog({
                   </SelectItem>
                 </SelectContent>
               </Select>
+              {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-emerald-600 shrink-0" />}
             </div>
           </div>
         </div>

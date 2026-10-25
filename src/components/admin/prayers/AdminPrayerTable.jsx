@@ -27,6 +27,7 @@ export function AdminPrayerTable({
     search,
     statusFilter,
     campaignFilter,
+    togglingId,
     isPending,
     handleRefresh,
     handleSearchChange,
@@ -89,13 +90,14 @@ export function AdminPrayerTable({
               {prayers.length === 0 ? (
                 <TableEmptyRow
                   colSpan={8}
-                  message="Tidak ada doa donatur yang cocok dengan filter atau kata kunci pencarian."
+                  isFiltered={Boolean(search || statusFilter !== "ALL" || campaignFilter !== "ALL")}
                 />
               ) : (
                 prayers.map((item) => (
                   <AdminPrayerTableRow
                     key={item.id}
                     item={item}
+                    isToggling={togglingId === item.id}
                     onToggleHide={handleToggleHide}
                   />
                 ))

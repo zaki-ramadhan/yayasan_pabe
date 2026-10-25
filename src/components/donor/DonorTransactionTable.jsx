@@ -96,7 +96,7 @@ export function DonorTransactionTable({
           ) : items.length === 0 ? (
             <TableEmptyRow
               colSpan={7}
-              message="Belum ada data riwayat transaksi yang cocok dengan kriteria pencarian."
+              isFiltered={Boolean(search)}
             />
           ) : (
             items.map((item) => (

@@ -14,6 +14,7 @@ export function AdminDashboardSkeleton() {
               src="/img/folder%20admin.svg?v=3"
               alt=""
               aria-hidden="true"
+              draggable="false"
               className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none opacity-80"
             />
             <div className="relative z-10 h-full flex flex-col justify-end pb-3.5 sm:pb-4 md:pb-4.5 px-3.5 sm:px-4 md:px-4.5 space-y-1.5">

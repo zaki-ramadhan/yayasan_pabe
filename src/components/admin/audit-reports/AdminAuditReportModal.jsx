@@ -367,7 +367,7 @@ export function AdminAuditReportModal({
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 				<FormField
-					label="Jumlah penerima manfaat (Jiwa)"
+					label="Jumlah penerima manfaat (Orang)"
 					required
 				>
 					<Input

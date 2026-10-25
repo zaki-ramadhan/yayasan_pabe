@@ -153,7 +153,7 @@ export function AdminCategoryTable({ initialCategories = [] }) {
               {categories.length === 0 ? (
                 <TableEmptyRow
                   colSpan={4}
-                  message="Belum ada kategori program yang cocok dengan pencarian."
+                  isFiltered={Boolean(debouncedSearch)}
                 />
               ) : (
                 categories.map((item) => (

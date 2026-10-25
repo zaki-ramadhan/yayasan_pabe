@@ -188,13 +188,15 @@ export function DonorVolunteerCardView() {
       ) : (
         // Kasus 3: Belum Terdaftar sebagai Relawan (Empty State dengan Aset Gambar)
         <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-3 shadow-2xs">
-          <div className="relative w-56 h-56 sm:w-72 sm:h-72 mx-auto">
+          <div className="relative w-56 h-56 sm:w-72 sm:h-72 mx-auto pointer-events-none select-none">
             <Image
               src="/img/empty_state_asset.png"
-              alt="Kartu relawan belum tersedia"
+              alt=""
               fill
               sizes="(max-width: 640px) 224px, 288px"
-              className="object-contain"
+              className="object-contain pointer-events-none select-none"
+              draggable={false}
+              aria-hidden="true"
               priority
             />
           </div>

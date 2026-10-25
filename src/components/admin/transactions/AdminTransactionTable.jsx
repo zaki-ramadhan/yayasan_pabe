@@ -228,7 +228,10 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                   />
                 ))
               ) : (
-                <TableEmptyRow colSpan={8} message="Tidak ada mutasi transaksi yang sesuai filter." />
+                <TableEmptyRow
+                  colSpan={8}
+                  isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL" || channelFilter !== "ALL")}
+                />
               )}
             </TableBody>
           </Table>

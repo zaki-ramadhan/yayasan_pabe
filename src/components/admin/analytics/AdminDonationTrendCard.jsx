@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import * as React from "react";
@@ -46,10 +47,10 @@ export function AdminDonationTrendCard({
     }
   }, [viewModeOptions, viewMode]);
 
-  const dailyList = initialTrends?.dailyTrend || [];
-  const monthlyList = initialTrends?.monthlyTrend || [];
-
   const { activeData, totalInRange, avgDaily, totalTransactions, isMonthly } = React.useMemo(() => {
+    const dailyList = initialTrends?.dailyTrend || [];
+    const monthlyList = initialTrends?.monthlyTrend || [];
+
     if (timeRange === "12m") {
       const data = monthlyList;
       const total = data.reduce((acc, curr) => acc + (Number(curr.inflow) || 0), 0);
@@ -80,7 +81,7 @@ export function AdminDonationTrendCard({
       totalTransactions: txCount,
       isMonthly: false,
     };
-  }, [timeRange, dailyList, monthlyList]);
+  }, [timeRange, initialTrends]);
 
   return (
     <Card className={cn("shadow-2xs overflow-hidden", className)}>
