@@ -1,45 +1,8 @@
 import prisma from "@/lib/prisma";
-import { CAREER_VACANCIES } from "@/data/careers";
 import { sanitizeInput } from "@/lib/security";
 
 /**
- * Auto-seed vacancies from CAREER_VACANCIES if PostgreSQL table is empty
- */
-async function ensureVacanciesSeeded() {
-  try {
-    const count = await prisma.jobVacancy.count();
-    if (count === 0) {
-      for (const item of CAREER_VACANCIES) {
-        await prisma.jobVacancy.upsert({
-          where: { jobCode: item.id },
-          update: {},
-          create: {
-            jobCode: item.id,
-            title: item.title,
-            department: item.department,
-            location: item.location,
-            type: item.type,
-            workplace: item.workplace || "On-site",
-            experience: item.experience || "1 - 3 tahun",
-            publishedDate: item.publishedDate || "2026-09-20",
-            deadline: item.deadline || "30 November 2026",
-            overview: item.overview,
-            responsibilities: item.responsibilities || [],
-            requirements: item.requirements || [],
-            benefits: item.benefits || [],
-            applyUrl: item.applyUrl || null,
-            isActive: true,
-          },
-        });
-      }
-    }
-  } catch (error) {
-    console.warn("ensureVacanciesSeeded fallback:", error.message);
-  }
-}
-
-/**
- * Retrieve active job vacancies with robust DB querying & fallbacks
+ * Retrieve active job vacancies directly from PostgreSQL
  */
 export async function getJobVacancies({
   search = "",
@@ -48,8 +11,6 @@ export async function getJobVacancies({
   department = "Semua Divisi",
 } = {}) {
   try {
-    await ensureVacanciesSeeded();
-
     const where = { isActive: true };
 
     if (location && location !== "Semua Lokasi") {
@@ -81,46 +42,28 @@ export async function getJobVacancies({
       },
     });
 
-    if (vacancies && vacancies.length > 0) {
-      return vacancies.map((v) => ({
-        id: v.jobCode || v.id,
-        dbId: v.id,
-        title: v.title,
-        department: v.department,
-        location: v.location,
-        type: v.type,
-        workplace: v.workplace,
-        experience: v.experience,
-        publishedDate: v.publishedDate,
-        deadline: v.deadline,
-        overview: v.overview,
-        responsibilities: v.responsibilities,
-        requirements: v.requirements,
-        benefits: v.benefits,
-        applyUrl: v.applyUrl,
-        applicantCount: v._count?.applications || 0,
-      }));
-    }
+    return vacancies.map((v) => ({
+      id: v.jobCode || v.id,
+      dbId: v.id,
+      title: v.title,
+      department: v.department,
+      location: v.location,
+      type: v.type,
+      workplace: v.workplace,
+      experience: v.experience,
+      publishedDate: v.publishedDate,
+      deadline: v.deadline,
+      overview: v.overview,
+      responsibilities: v.responsibilities,
+      requirements: v.requirements,
+      benefits: v.benefits,
+      applyUrl: v.applyUrl,
+      applicantCount: v._count?.applications || 0,
+    }));
   } catch (error) {
-    console.warn("Prisma getJobVacancies fallback:", error.message);
+    console.error("Prisma getJobVacancies error:", error);
+    return [];
   }
-
-  // Fallback to static vacancies
-  return CAREER_VACANCIES.filter((job) => {
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      const matches =
-        job.title.toLowerCase().includes(q) ||
-        job.department.toLowerCase().includes(q) ||
-        job.location.toLowerCase().includes(q) ||
-        job.overview?.toLowerCase().includes(q);
-      if (!matches) return false;
-    }
-    if (location !== "Semua Lokasi" && job.location !== location) return false;
-    if (type !== "Semua Tipe" && job.type !== type) return false;
-    if (department !== "Semua Divisi" && job.department !== department) return false;
-    return true;
-  });
 }
 
 /**
@@ -161,10 +104,10 @@ export async function getJobVacancyById(identifier) {
       };
     }
   } catch (error) {
-    console.warn("Prisma getJobVacancyById fallback:", error.message);
+    console.error("Prisma getJobVacancyById error:", error);
   }
 
-  return CAREER_VACANCIES.find((j) => j.id === identifier) || null;
+  return null;
 }
 
 /**
@@ -204,78 +147,40 @@ export async function submitJobApplication(payload) {
   const cleanResume = resumeUrl ? sanitizeInput(resumeUrl.trim()) : null;
   const cleanCoverLetter = sanitizeInput(coverLetter.trim());
 
-  // Resolve target vacancy in DB with fallback
-  let targetVacancy = null;
-  try {
-    targetVacancy = await prisma.jobVacancy.findFirst({
-      where: {
-        OR: [{ id: vacancyId }, { jobCode: vacancyId }],
-      },
-    });
-
-    if (!targetVacancy) {
-      await ensureVacanciesSeeded();
-      targetVacancy = await prisma.jobVacancy.findFirst({
-        where: {
-          OR: [{ id: vacancyId }, { jobCode: vacancyId }],
-        },
-      });
-    }
-  } catch (error) {
-    console.warn("Prisma submitJobApplication vacancy lookup fallback:", error.message);
-  }
-
-  // Fallback to static CAREER_VACANCIES if DB is offline/in test mode
-  if (!targetVacancy) {
-    const staticJob = CAREER_VACANCIES.find((j) => j.id === vacancyId);
-    if (staticJob) {
-      targetVacancy = { id: staticJob.id, title: staticJob.title };
-    }
-  }
+  // Resolve target vacancy in DB
+  const targetVacancy = await prisma.jobVacancy.findFirst({
+    where: {
+      OR: [{ id: vacancyId }, { jobCode: vacancyId }],
+    },
+  });
 
   if (!targetVacancy) {
     throw new Error("Posisi lowongan pekerjaan yang dipilih tidak ditemukan.");
   }
 
-  try {
-    const application = await prisma.jobApplication.create({
-      data: {
-        vacancyId: targetVacancy.id,
-        fullName: cleanFullName,
-        email: cleanEmail,
-        phone: cleanPhone,
-        linkedinUrl: cleanLinkedin,
-        portfolioUrl: cleanPortfolio,
-        resumeUrl: cleanResume,
-        coverLetter: cleanCoverLetter,
-        status: "PENDING",
-      },
-    });
+  const application = await prisma.jobApplication.create({
+    data: {
+      vacancyId: targetVacancy.id,
+      fullName: cleanFullName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      linkedinUrl: cleanLinkedin,
+      portfolioUrl: cleanPortfolio,
+      resumeUrl: cleanResume,
+      coverLetter: cleanCoverLetter,
+      status: "PENDING",
+    },
+  });
 
-    return {
-      success: true,
-      message: "Lamaran pekerjaan berhasil dikirim ke sistem HRD yayasan.",
-      data: {
-        id: application.id,
-        position: targetVacancy.title,
-        fullName: application.fullName,
-        email: application.email,
-        submittedAt: application.createdAt.toISOString(),
-      },
-    };
-  } catch (dbError) {
-    console.warn("Prisma job application create fallback:", dbError.message);
-    return {
-      success: true,
-      message: "Lamaran pekerjaan berhasil dikirim ke sistem HRD yayasan.",
-      data: {
-        id: `APP-OFFLINE-${Date.now()}`,
-        position: targetVacancy.title,
-        fullName: cleanFullName,
-        email: cleanEmail,
-        submittedAt: new Date().toISOString(),
-      },
-    };
-  }
+  return {
+    success: true,
+    message: "Lamaran pekerjaan berhasil dikirim ke sistem HRD yayasan.",
+    data: {
+      id: application.id,
+      position: targetVacancy.title,
+      fullName: application.fullName,
+      email: application.email,
+      submittedAt: application.createdAt.toISOString(),
+    },
+  };
 }
-

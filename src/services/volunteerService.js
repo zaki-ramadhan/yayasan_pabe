@@ -57,17 +57,8 @@ export async function registerVolunteer({
       message: "Pendaftaran relawan berhasil dikirim!",
     };
   } catch (error) {
-    console.warn("Prisma registerVolunteer fallback:", error.message);
-    return {
-      success: true,
-      data: {
-        id: `vol-${Date.now()}`,
-        fullName: cleanData.fullName,
-        city: cleanData.city,
-        status: cleanData.status,
-      },
-      message: "Pendaftaran relawan berhasil dikirim (Mock mode)!",
-    };
+    console.error("Prisma registerVolunteer error:", error.message);
+    throw new Error("Gagal mendaftarkan relawan ke sistem. Silakan coba kembali.");
   }
 }
 
@@ -77,7 +68,7 @@ export async function getVolunteers() {
       orderBy: { createdAt: "desc" },
     });
   } catch (error) {
-    console.warn("Prisma getVolunteers fallback:", error.message);
+    console.warn("Prisma getVolunteers error:", error.message);
     return [];
   }
 }
@@ -86,7 +77,8 @@ export async function getVolunteerCount() {
   try {
     return await prisma.volunteer.count();
   } catch (error) {
-    console.warn("Prisma getVolunteerCount fallback:", error.message);
-    return 14;
+    console.warn("Prisma getVolunteerCount error:", error.message);
+    return 0;
   }
 }
+

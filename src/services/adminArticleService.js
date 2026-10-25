@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { ARTICLES, ARTICLE_CATEGORIES } from "@/data/articles";
+import { ARTICLE_CATEGORIES } from "@/data/articles";
 import { sanitizeInput } from "@/lib/security";
 
 function slugify(text) {
@@ -70,7 +70,7 @@ export async function getAdminArticles({ search = "", category = "ALL", page = 1
         author: a.author || "Redaksi Yayasan PABE",
         excerpt: a.excerpt || "",
         content: a.content || "",
-        bannerUrl: a.bannerUrl || "/img/hero_card_1.jpeg",
+        bannerUrl: a.bannerUrl || null,
         likeCount: a.likeCount || 0,
         dislikeCount: a.dislikeCount || 0,
         publishedAt: a.publishedAt ? a.publishedAt.toISOString() : new Date().toISOString(),
@@ -84,31 +84,14 @@ export async function getAdminArticles({ search = "", category = "ALL", page = 1
       categories,
     };
   } catch (error) {
-    console.warn("Prisma getAdminArticles fallback:", error.message);
-    let filtered = [...ARTICLES];
-
-    if (category && category !== "ALL" && category !== "Semua Kategori") {
-      filtered = filtered.filter((a) => a.category.toLowerCase() === category.toLowerCase());
-    }
-
-    if (search && search.trim()) {
-      const q = search.toLowerCase().trim();
-      filtered = filtered.filter(
-        (a) =>
-          a.title.toLowerCase().includes(q) ||
-          a.author.toLowerCase().includes(q) ||
-          a.excerpt.toLowerCase().includes(q)
-      );
-    }
-
-    const items = filtered.slice(skip, skip + limit);
+    console.error("Prisma getAdminArticles error:", error);
     return {
-      items,
+      items: [],
       pagination: {
         page,
         limit,
-        total: filtered.length,
-        totalPages: Math.ceil(filtered.length / limit) || 1,
+        total: 0,
+        totalPages: 1,
       },
       categories: ["Semua Kategori", ...ARTICLE_CATEGORIES.map((c) => c.name)],
     };
@@ -124,7 +107,7 @@ export async function createAdminArticle(payload) {
   const category = sanitizeInput(payload.category || "Berita").trim();
   const excerpt = sanitizeInput(payload.excerpt || "").trim();
   const content = sanitizeInput(payload.content || "").trim();
-  const bannerUrl = payload.bannerUrl ? sanitizeInput(payload.bannerUrl).trim() : "/img/hero_card_1.jpeg";
+  const bannerUrl = payload.bannerUrl ? sanitizeInput(payload.bannerUrl).trim() : null;
 
   if (!title || !content) {
     throw new Error("Judul dan isi konten artikel wajib diisi.");

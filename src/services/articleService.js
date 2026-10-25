@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { ARTICLES, ARTICLE_CATEGORIES, validateArticleCategories } from "@/data/articles";
+import { ARTICLE_CATEGORIES, validateArticleCategories } from "@/data/articles";
 
 export { validateArticleCategories };
 
@@ -43,35 +43,11 @@ export async function getArticles({ category = "all", search = "", limit } = {})
       take: limit || undefined,
     });
 
-    if (dbArticles && dbArticles.length > 0) {
-      return dbArticles.map(formatArticleFromDb);
-    }
+    return dbArticles.map(formatArticleFromDb);
   } catch (error) {
-    console.warn("Prisma getArticles fallback:", error.message);
+    console.error("Prisma getArticles error:", error);
+    return [];
   }
-
-  // Fallback to static articles
-  let filtered = [...ARTICLES];
-
-  if (category && category !== "all" && category !== "Semua Kategori") {
-    filtered = filtered.filter((a) => a.category.toLowerCase() === category.toLowerCase());
-  }
-
-  if (search && search.trim().length >= 2) {
-    const query = search.toLowerCase().trim();
-    filtered = filtered.filter(
-      (a) =>
-        a.title.toLowerCase().includes(query) ||
-        a.excerpt.toLowerCase().includes(query) ||
-        a.content.toLowerCase().includes(query)
-    );
-  }
-
-  if (limit && limit > 0) {
-    filtered = filtered.slice(0, limit);
-  }
-
-  return filtered;
 }
 
 export async function getArticleBySlug(slug) {
@@ -84,9 +60,9 @@ export async function getArticleBySlug(slug) {
       return formatArticleFromDb(dbArticle);
     }
   } catch (error) {
-    console.warn("Prisma getArticleBySlug fallback:", error.message);
+    console.error("Prisma getArticleBySlug error:", error);
   }
-  return ARTICLES.find((a) => a.slug === slug) || null;
+  return null;
 }
 
 export async function getArticleCategories() {

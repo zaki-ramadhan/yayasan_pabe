@@ -1,35 +1,33 @@
-import { FAQS } from "@/data/articles";
+import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
 
-// In-memory runtime state for FAQs with default data
-let runtimeFaqs = FAQS.map((faq, index) => ({
-  id: `faq-${index + 1}`,
-  question: faq.question,
-  answer: faq.answer,
-  category: "Umum",
-  order: index + 1,
-  updatedAt: new Date().toISOString(),
-}));
-
 /**
- * Mengambil daftar seluruh pertanyaan FAQ dengan filter pencarian.
+ * Mengambil daftar seluruh pertanyaan FAQ dari PostgreSQL dengan filter pencarian.
  */
 export async function getAdminFaqs({ search = "" } = {}) {
-  let list = [...runtimeFaqs];
-  if (search && search.trim()) {
-    const q = search.toLowerCase().trim();
-    list = list.filter(
-      (f) =>
-        f.question.toLowerCase().includes(q) ||
-        f.answer.toLowerCase().includes(q) ||
-        f.category.toLowerCase().includes(q)
-    );
+  try {
+    const where = { isActive: true };
+    if (search && search.trim()) {
+      const q = search.trim();
+      where.OR = [
+        { question: { contains: q, mode: "insensitive" } },
+        { answer: { contains: q, mode: "insensitive" } },
+        { category: { contains: q, mode: "insensitive" } },
+      ];
+    }
+
+    return await prisma.faq.findMany({
+      where,
+      orderBy: { order: "asc" },
+    });
+  } catch (error) {
+    console.warn("Prisma getAdminFaqs error:", error.message);
+    return [];
   }
-  return list.sort((a, b) => a.order - b.order);
 }
 
 /**
- * Menambahkan butir FAQ baru.
+ * Menambahkan butir FAQ baru ke database.
  */
 export async function createAdminFaq(payload) {
   const question = sanitizeInput(payload.question || "").trim();
@@ -40,53 +38,42 @@ export async function createAdminFaq(payload) {
     throw new Error("Pertanyaan dan jawaban FAQ wajib diisi.");
   }
 
-  const newFaq = {
-    id: `faq-${Date.now()}`,
-    question,
-    answer,
-    category,
-    order: runtimeFaqs.length + 1,
-    updatedAt: new Date().toISOString(),
-  };
+  const count = await prisma.faq.count().catch(() => 0);
 
-  runtimeFaqs.push(newFaq);
-  return newFaq;
+  return await prisma.faq.create({
+    data: {
+      question,
+      answer,
+      category,
+      order: count + 1,
+      isActive: true,
+    },
+  });
 }
 
 /**
- * Memperbarui butir FAQ yang sudah ada.
+ * Memperbarui butir FAQ yang tersimpan di database.
  */
 export async function updateAdminFaq(id, payload) {
-  const index = runtimeFaqs.findIndex((f) => f.id === id);
-  if (index === -1) {
-    throw new Error("Data FAQ tidak ditemukan.");
-  }
+  const data = {};
+  if (payload.question !== undefined) data.question = sanitizeInput(payload.question).trim();
+  if (payload.answer !== undefined) data.answer = sanitizeInput(payload.answer).trim();
+  if (payload.category !== undefined) data.category = sanitizeInput(payload.category).trim();
+  if (payload.order !== undefined) data.order = Number(payload.order);
+  if (payload.isActive !== undefined) data.isActive = Boolean(payload.isActive);
 
-  if (payload.question !== undefined) {
-    runtimeFaqs[index].question = sanitizeInput(payload.question).trim();
-  }
-  if (payload.answer !== undefined) {
-    runtimeFaqs[index].answer = sanitizeInput(payload.answer).trim();
-  }
-  if (payload.category !== undefined) {
-    runtimeFaqs[index].category = sanitizeInput(payload.category).trim();
-  }
-  if (payload.order !== undefined) {
-    runtimeFaqs[index].order = Number(payload.order) || runtimeFaqs[index].order;
-  }
-  runtimeFaqs[index].updatedAt = new Date().toISOString();
-
-  return runtimeFaqs[index];
+  return await prisma.faq.update({
+    where: { id },
+    data,
+  });
 }
 
 /**
- * Menghapus butir FAQ.
+ * Menghapus butir FAQ dari database.
  */
 export async function deleteAdminFaq(id) {
-  const initialLength = runtimeFaqs.length;
-  runtimeFaqs = runtimeFaqs.filter((f) => f.id !== id);
-  if (runtimeFaqs.length === initialLength) {
-    throw new Error("Data FAQ tidak ditemukan untuk dihapus.");
-  }
+  await prisma.faq.delete({
+    where: { id },
+  });
   return true;
 }

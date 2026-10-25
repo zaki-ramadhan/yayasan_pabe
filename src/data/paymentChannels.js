@@ -39,31 +39,4 @@ export const PAYMENT_CHANNELS = [
       "Konfirmasi nominal pembayaran dan masukkan PIN Livin.",
     ],
   },
-  {
-    id: "bca_va",
-    name: "BCA Virtual Account",
-    type: "VA",
-    bankCode: "014",
-    accountNumberPrefix: "12389",
-    fee: 1000,
-    instructions: [
-      "Buka BCA mobile > m-Transfer > BCA Virtual Account.",
-      "Masukkan nomor Virtual Account yang tertera.",
-      "Pastikan jumlah tagihan sesuai dengan total donasi.",
-      "Masukkan PIN m-BCA Anda untuk menyelesaikan transaksi.",
-    ],
-  },
-  {
-    id: "bsi_va",
-    name: "Bank Syariah Indonesia (BSI) VA",
-    type: "VA",
-    bankCode: "451",
-    accountNumberPrefix: "99100",
-    fee: 1000,
-    instructions: [
-      "Buka BSI Mobile > Bayar > Institusi / Virtual Account.",
-      "Masukkan kode nama institusi PABE atau nomor Virtual Account.",
-      "Periksa rincian donasi, masukkan kata sandi & PIN transaksi.",
-    ],
-  },
 ];

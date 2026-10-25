@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { CAMPAIGNS } from "@/data/campaigns";
 
 // Re-export sub-services untuk menjaga backward compatibility 100%
 export {
@@ -55,14 +54,13 @@ export async function getAdminOverviewStats() {
       activeCampaigns: campaignCount,
     };
   } catch (error) {
-    console.warn("Prisma getAdminOverviewStats fallback:", error.message);
-    const mockTotalCollected = CAMPAIGNS.reduce((acc, c) => acc + (c.collectedAmount || 0), 0);
+    console.warn("Prisma getAdminOverviewStats error:", error.message);
     return {
-      totalCollected: mockTotalCollected,
-      totalTransactions: 124,
-      totalDisbursed: Math.round(mockTotalCollected * 0.72),
-      activeDonors: 85,
-      activeCampaigns: CAMPAIGNS.filter((c) => c.status === "ACTIVE").length,
+      totalCollected: 0,
+      totalTransactions: 0,
+      totalDisbursed: 0,
+      activeDonors: 0,
+      activeCampaigns: 0,
     };
   }
 }
@@ -213,62 +211,8 @@ export async function getAdminDonationTrends() {
       monthlyTrend,
     };
   } catch (error) {
-    console.warn("Prisma getAdminDonationTrends fallback:", error.message);
-    return generateFallbackAdminDonationTrends();
+    console.warn("Prisma getAdminDonationTrends error:", error.message);
+    return { dailyTrend: [], monthlyTrend: [] };
   }
 }
 
-function generateFallbackAdminDonationTrends() {
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-  const fullMonthNames = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
-  ];
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const monthlyTrend = [];
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-    const mIdx = d.getMonth();
-    const baseInflow = 320000000 + ((mIdx * 37) % 180) * 1000000;
-    const baseOutflow = Math.round(baseInflow * 0.82);
-    monthlyTrend.push({
-      key: `${d.getFullYear()}-${String(mIdx + 1).padStart(2, "0")}`,
-      month: monthNames[mIdx],
-      fullMonth: `${fullMonthNames[mIdx]} ${d.getFullYear()}`,
-      inflow: baseInflow,
-      outflow: baseOutflow,
-      count: 140 + (mIdx * 12),
-    });
-  }
-
-  const ninetyDaysAgo = new Date(today);
-  ninetyDaysAgo.setDate(today.getDate() - 89);
-  const dailyTrend = [];
-  let runningCumulative = 2850000000;
-  const cursor = new Date(ninetyDaysAgo);
-
-  while (cursor <= today) {
-    const day = cursor.getDate();
-    const isWeekend = cursor.getDay() === 0 || cursor.getDay() === 5;
-    const multiplier = isWeekend ? 1.6 : 1.0;
-    const daily = Math.round((12000000 + ((day * 7919) % 25000000)) * multiplier);
-    const count = Math.max(3, Math.round(daily / 250000));
-    const disbursed = day % 7 === 0 ? Math.round(daily * 1.8) : 0;
-    runningCumulative += daily;
-
-    dailyTrend.push({
-      date: cursor.toISOString().split("T")[0],
-      label: `${day} ${monthNames[cursor.getMonth()]}`,
-      dailyAmount: daily,
-      cumulativeAmount: runningCumulative,
-      donationsCount: count,
-      disbursedAmount: disbursed,
-    });
-
-    cursor.setDate(cursor.getDate() + 1);
-  }
-
-  return { dailyTrend, monthlyTrend };
-}

@@ -6,12 +6,21 @@ const adapter = new PrismaPg({ connectionString });
 
 const globalForPrisma = globalThis;
 
-delete globalForPrisma.prisma;
+if (
+  globalForPrisma.prisma &&
+  (!globalForPrisma.prisma.faq ||
+    !globalForPrisma.prisma.beneficiary ||
+    !globalForPrisma.prisma.activityLog)
+) {
+  globalForPrisma.prisma = undefined;
+}
 
-export const prisma = new PrismaClient({
-  adapter,
-  log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
-});
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    adapter,
+    log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
+  });
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 

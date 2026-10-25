@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { CAMPAIGNS } from "@/data/campaigns";
 import { sanitizeInput } from "@/lib/security";
 
 /**
@@ -47,34 +46,20 @@ export async function getAdminDistributions({ page = 1, limit = 10 } = {}) {
       campaigns,
     };
   } catch (error) {
-    console.warn("Prisma getAdminDistributions fallback:", error.message);
-    const mock = CAMPAIGNS.flatMap((c) =>
-      (c.updates || []).map((u, i) => ({
-        id: `dist-${c.id}-${i}`,
-        campaignId: c.id,
-        campaignTitle: c.title,
-        campaignBannerUrl: c.bannerUrl || c.image || "/img/hero_card_1.jpeg",
-        title: u.title,
-        content: u.content,
-        disbursedAmount: Number(u.spentAmount || 15000000),
-        date: u.date || new Date().toISOString().split("T")[0],
-        images: u.images || [],
-        createdAt: new Date().toISOString(),
-      }))
-    );
-
+    console.warn("Prisma getAdminDistributions error:", error.message);
     return {
-      items: mock.slice(skip, skip + limit),
+      items: [],
       pagination: {
         page,
         limit,
-        total: mock.length,
-        totalPages: Math.ceil(mock.length / limit) || 1,
+        total: 0,
+        totalPages: 1,
       },
-      campaigns: CAMPAIGNS.map((c) => ({ id: c.id, title: c.title, bannerUrl: c.bannerUrl || c.image || null })),
+      campaigns: [],
     };
   }
 }
+
 
 /**
  * Mencatat rekam penyaluran bantuan mustahik baru ke database.

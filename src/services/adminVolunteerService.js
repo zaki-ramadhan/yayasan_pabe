@@ -60,64 +60,14 @@ export async function getAdminVolunteers({
       },
     };
   } catch (error) {
-    console.warn("Prisma getAdminVolunteers fallback:", error.message);
-    const mock = [
-      {
-        id: "vol-1",
-        fullName: "Ahmad Fauzi",
-        email: "ahmad.fauzi@gmail.com",
-        phone: "081234567890",
-        city: "Bogor",
-        interest: "Pengajar & Pembimbing Al-Qur'an",
-        motivation: "Ingin berkontribusi dalam membina adik-adik penghafal Al-Qur'an dan berbagi ilmu tajwid.",
-        status: "PENDING",
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: "vol-2",
-        fullName: "Siti Rahmawati",
-        email: "siti.rahma@yahoo.com",
-        phone: "085678901234",
-        city: "Depok",
-        interest: "Distribusi Logistik & Bantuan Sosial",
-        motivation: "Berpengalaman dalam organisasi kepemudaan dan siap membantu distribusi logistik di lapangan.",
-        status: "APPROVED",
-        createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-      },
-      {
-        id: "vol-3",
-        fullName: "Rizky Ramadhan",
-        email: "rizky.r@outlook.com",
-        phone: "087812345678",
-        city: "Jakarta Selatan",
-        interest: "Dokumentasi & Media Sosial",
-        motivation: "Punya keahlian fotografi dan videografi kegiatan bakti sosial kemanusiaan.",
-        status: "CONTACTED",
-        createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
-      },
-    ];
-
-    let filtered = mock;
-    if (status !== "ALL") {
-      filtered = filtered.filter((v) => v.status === status);
-    }
-    if (search && search.trim()) {
-      const q = search.toLowerCase().trim();
-      filtered = filtered.filter(
-        (v) =>
-          v.fullName.toLowerCase().includes(q) ||
-          v.city.toLowerCase().includes(q) ||
-          v.interest.toLowerCase().includes(q)
-      );
-    }
-
+    console.warn("Prisma getAdminVolunteers error:", error.message);
     return {
-      items: filtered.slice(skip, skip + limit),
+      items: [],
       pagination: {
         page,
         limit,
-        total: filtered.length,
-        totalPages: Math.ceil(filtered.length / limit) || 1,
+        total: 0,
+        totalPages: 1,
       },
     };
   }

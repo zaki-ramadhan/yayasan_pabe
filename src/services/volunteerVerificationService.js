@@ -17,41 +17,9 @@ export async function getVolunteerPublicProfile(id) {
     });
 
     if (!v) {
-      // Cek fallback mock data untuk testing jika di database belum ada
-      const mock = [
-        {
-          id: "vol-1",
-          fullName: "Ahmad Fauzi",
-          city: "Bogor",
-          interest: "Pengajar & Pembimbing Al-Qur'an",
-          status: "PENDING",
-          createdAt: new Date(),
-        },
-        {
-          id: "vol-2",
-          fullName: "Siti Rahmawati",
-          city: "Depok",
-          interest: "Distribusi Logistik & Bantuan Sosial",
-          status: "APPROVED",
-          createdAt: new Date(Date.now() - 86400000 * 30),
-        },
-        {
-          id: "vol-3",
-          fullName: "Rizky Ramadhan",
-          city: "Jakarta Selatan",
-          interest: "Dokumentasi & Media Sosial",
-          status: "CONTACTED",
-          createdAt: new Date(Date.now() - 86400000 * 60),
-        },
-      ];
-
-      const found = mock.find((m) => m.id === id);
-      if (found) {
-        return mapToPublicVolunteer(found);
-      }
-
       return null;
     }
+
 
     return mapToPublicVolunteer(v);
   } catch (error) {
@@ -74,26 +42,9 @@ export async function getVolunteerByEmail(email) {
 
     if (v) return mapToPublicVolunteer(v);
 
-    // Mock volunteer untuk pengujian akun relawan demo (Bagas Pratama)
-    if (cleanEmail === "bagas.relawan@gmail.com" || cleanEmail.includes("relawan")) {
-      return {
-        id: "vol-bagas",
-        volunteerId: "REL-2026-0004",
-        fullName: "Bagas Pratama",
-        city: "Bandung",
-        interest: "Koordinator Relawan Aksi Lapangan",
-        status: "APPROVED",
-        isApproved: true,
-        createdAt: new Date(Date.now() - 86400000 * 60).toISOString(),
-        validUntil: new Date(Date.now() + 86400000 * 305).toISOString(),
-        orgName: ORG_PROFILE.name,
-        legalSk: ORG_PROFILE.legal.skKemenkumham,
-      };
-    }
-
     return null;
   } catch (error) {
-    console.warn("Prisma getVolunteerByEmail fallback:", error?.message);
+    console.error("Prisma getVolunteerByEmail error:", error);
     return null;
   }
 }

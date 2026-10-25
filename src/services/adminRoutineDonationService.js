@@ -84,94 +84,14 @@ export async function getAdminRoutineDonations({
       },
     };
   } catch (error) {
-    console.warn("Prisma getAdminRoutineDonations fallback:", error.message);
-    const mock = [
-      {
-        id: "rout-1",
-        programTitle: "Sedekah Subuh Yatim & Dhuafa",
-        campaignId: "camp-1",
-        campaignTitle: "Sedekah Subuh Yatim & Dhuafa",
-        campaignSlug: "sedekah-subuh-yatim-dhuafa",
-        amount: 25000,
-        frequency: "DAILY",
-        routineType: "AUTO_DONATION",
-        status: "ACTIVE",
-        selectedDay: null,
-        monthlyDate: null,
-        reminderTime: "04:30",
-        donorName: "Budi Santoso",
-        donorEmail: "budi.santoso@gmail.com",
-        donorPhone: "081234567891",
-        isAnonymous: false,
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: "rout-2",
-        programTitle: "Beasiswa Tahfidz Qur'an Berasrama",
-        campaignId: "camp-2",
-        campaignTitle: "Beasiswa Tahfidz Qur'an Berasrama",
-        campaignSlug: "beasiswa-tahfidz-quran",
-        amount: 150000,
-        frequency: "MONTHLY",
-        routineType: "REMINDER_ONLY",
-        status: "ACTIVE",
-        selectedDay: null,
-        monthlyDate: new Date(2026, 9, 25).toISOString(),
-        reminderTime: "07:00",
-        donorName: "Hamba Allah",
-        donorEmail: "donatur.dermawan@yahoo.com",
-        donorPhone: "085712345678",
-        isAnonymous: true,
-        createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-      },
-      {
-        id: "rout-3",
-        programTitle: "Pangan & Nutrisi Harian Lansia Dhuafa",
-        campaignId: "camp-3",
-        campaignTitle: "Pangan & Nutrisi Harian Lansia Dhuafa",
-        campaignSlug: "pangan-nutrisi-lansia",
-        amount: 50000,
-        frequency: "WEEKLY",
-        routineType: "AUTO_DONATION",
-        status: "PAUSED",
-        selectedDay: "Jumat",
-        monthlyDate: null,
-        reminderTime: "05:00",
-        donorName: "Dewi Lestari",
-        donorEmail: "dewi.lestari@gmail.com",
-        donorPhone: "081987654321",
-        isAnonymous: false,
-        createdAt: new Date(Date.now() - 86400000 * 7).toISOString(),
-      },
-    ];
-
-    let filtered = mock;
-    if (status !== "ALL") {
-      filtered = filtered.filter((r) => r.status === status);
-    }
-    if (frequency !== "ALL") {
-      filtered = filtered.filter((r) => r.frequency === frequency);
-    }
-    if (routineType !== "ALL") {
-      filtered = filtered.filter((r) => r.routineType === routineType);
-    }
-    if (search && search.trim()) {
-      const q = search.toLowerCase().trim();
-      filtered = filtered.filter(
-        (r) =>
-          r.donorName.toLowerCase().includes(q) ||
-          r.programTitle.toLowerCase().includes(q) ||
-          (r.donorEmail && r.donorEmail.toLowerCase().includes(q))
-      );
-    }
-
+    console.error("Error fetching admin routine donations:", error);
     return {
-      items: filtered.slice(skip, skip + limit),
+      items: [],
       pagination: {
         page,
         limit,
-        total: filtered.length,
-        totalPages: Math.ceil(filtered.length / limit) || 1,
+        total: 0,
+        totalPages: 1,
       },
     };
   }

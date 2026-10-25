@@ -7,8 +7,6 @@ import {
   DONATION_LIMITS,
 } from "@/lib/security";
 
-// Fallback in-memory store for offline/demo sessions
-const fallbackRoutineStore = [];
 
 /**
  * Service to register routine donations directly into PostgreSQL via Prisma.
@@ -109,27 +107,9 @@ export async function createRoutineDonations({
       message: "Jadwal donasi rutin Anda berhasil diaktifkan dan tersimpan di database!",
     };
   } catch (error) {
-    console.warn("Prisma createRoutineDonations fallback:", error.message);
-
-    const mockRecords = cleanPrograms.map((p, idx) => ({
-      id: `rout-${Date.now()}-${idx}`,
-      ...p,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
-
-    fallbackRoutineStore.push(...mockRecords);
-
-    return {
-      success: true,
-      data: mockRecords.map((r) => ({
-        id: r.id,
-        programTitle: r.programTitle,
-        amount: r.amount,
-        frequency: r.frequency,
-        status: r.status,
-      })),
-      message: "Jadwal donasi rutin berhasil diaktifkan!",
-    };
+    console.error("Prisma createRoutineDonations error:", error);
+    throw new Error(
+      error.message || "Gagal mengaktifkan jadwal donasi rutin. Silakan coba kembali beberapa saat lagi."
+    );
   }
 }

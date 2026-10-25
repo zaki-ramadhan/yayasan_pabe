@@ -259,3 +259,67 @@ model JobApplication {
   @@index([email])
   @@index([status])
 }
+
+model Beneficiary {
+  id        String   @id @default(cuid())
+  code      String   @unique // e.g. YTM-001, DHF-001
+  name      String
+  gender    String   // L, P
+  category  String   // YATIM, LANSIA_DHUAFA
+  program   String
+  location  String
+  createdAt DateTime @default(now())
+
+  @@index([category])
+  @@index([gender])
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String   @default("Umum")
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model OrgSetting {
+  id           String   @id @default("org_profile")
+  name         String
+  shortName    String
+  tagline      String?
+  legalSk      String?
+  npwp         String?
+  izinSosial   String?
+  address      String?
+  phone        String?
+  whatsapp     String?
+  email        String?
+  officeHours  String?
+  bankAccounts Json?
+  vision       String?
+  missions     String[] @default([])
+  updatedAt    DateTime @updatedAt
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  userName    String?
+  userRole    String?
+  action      String
+  targetType  String?
+  targetId    String?
+  description String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}

@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { TRANSPARENCY_METRICS } from "@/data/reports";
 import {
   aggregateFinancialAnalytics,
   getFallbackAnalytics,
@@ -76,11 +75,8 @@ export async function getFinancialLedgerData() {
       }),
     ]);
 
-    const dbTotalIncome = donationsAgg?._sum?.amount || 0;
-    const dbTotalDisbursed = updatesAgg?._sum?.disbursedAmount || 0;
-    const baseTotalIncome = TRANSPARENCY_METRICS.totalDonationsAllTime || 12500000000;
-    const totalIncome = Math.max(dbTotalIncome, baseTotalIncome);
-    const totalExpenses = dbTotalDisbursed > 0 ? dbTotalDisbursed : Math.round(totalIncome * 0.88);
+    const totalIncome = Number(donationsAgg?._sum?.amount || 0);
+    const totalExpenses = Number(updatesAgg?._sum?.disbursedAmount || 0);
     const netBalance = totalIncome - totalExpenses;
 
     const incomingTx = donations.map((d) => ({
@@ -153,13 +149,14 @@ export async function getFinancialLedgerData() {
       transactions: [],
       campaigns: [],
       grandTotals: {
-        totalIncome: 12500000000,
-        totalExpenses: 11000000000,
-        netBalance: 1500000000,
+        totalIncome: 0,
+        totalExpenses: 0,
+        netBalance: 0,
       },
-      nextDistributionDate: "25 Sep 2026",
+      nextDistributionDate: "Jumat Ini",
       financialDetails: fallbackAnalytics.financialDetails,
       cashFlowDetails: fallbackAnalytics.cashFlowDetails,
     };
   }
 }
+

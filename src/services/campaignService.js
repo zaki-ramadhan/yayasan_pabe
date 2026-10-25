@@ -44,42 +44,11 @@ export async function getCampaigns({ category = "all", search = "", sort = "terb
       },
     });
 
-    if (dbCampaigns && dbCampaigns.length > 0) {
-      return dbCampaigns.map(formatCampaignFromDb);
-    }
+    return dbCampaigns.map(formatCampaignFromDb);
   } catch (error) {
-    console.warn("Prisma getCampaigns fallback:", error.message);
+    console.error("Prisma getCampaigns error:", error);
+    return [];
   }
-
-  // Fallback to static data
-  let filtered = [...CAMPAIGNS];
-
-  if (status) {
-    filtered = filtered.filter((c) => (c.status || "ACTIVE") === status);
-  }
-
-  if (category && category !== "all" && category !== "semua") {
-    filtered = filtered.filter(
-      (c) => c.categoryId === category || c.categoryName.toLowerCase().includes(category.toLowerCase())
-    );
-  }
-
-  if (search && search.trim().length >= 2) {
-    const query = search.toLowerCase().trim();
-    filtered = filtered.filter((c) => c.title.toLowerCase().includes(query));
-  }
-
-  if (sort === "mendesak") {
-    filtered.sort((a, b) => (b.isUrgent ? 1 : 0) - (a.isUrgent ? 1 : 0));
-  } else if (sort === "terpopuler") {
-    filtered.sort((a, b) => b.donorCount - a.donorCount);
-  } else if (sort === "dana-terbanyak") {
-    filtered.sort((a, b) => b.collectedAmount - a.collectedAmount);
-  } else {
-    filtered.sort((a, b) => new Date(b.endDate) - new Date(a.endDate));
-  }
-
-  return filtered;
 }
 
 export async function getFeaturedCampaigns() {
@@ -92,13 +61,11 @@ export async function getFeaturedCampaigns() {
         donations: { where: { status: "PAID" }, take: 5, orderBy: { createdAt: "desc" } },
       },
     });
-    if (dbFeatured && dbFeatured.length > 0) {
-      return dbFeatured.map(formatCampaignFromDb);
-    }
+    return dbFeatured.map(formatCampaignFromDb);
   } catch (error) {
-    console.warn("Prisma getFeaturedCampaigns fallback:", error.message);
+    console.error("Prisma getFeaturedCampaigns error:", error);
+    return [];
   }
-  return CAMPAIGNS.filter((c) => c.isFeatured);
 }
 
 export async function getUrgentCampaigns() {
@@ -111,13 +78,11 @@ export async function getUrgentCampaigns() {
         donations: { where: { status: "PAID" }, take: 5, orderBy: { createdAt: "desc" } },
       },
     });
-    if (dbUrgent && dbUrgent.length > 0) {
-      return dbUrgent.map(formatCampaignFromDb);
-    }
+    return dbUrgent.map(formatCampaignFromDb);
   } catch (error) {
-    console.warn("Prisma getUrgentCampaigns fallback:", error.message);
+    console.error("Prisma getUrgentCampaigns error:", error);
+    return [];
   }
-  return CAMPAIGNS.filter((c) => c.isUrgent);
 }
 
 export async function getCampaignBySlug(slug) {
@@ -139,19 +104,9 @@ export async function getCampaignBySlug(slug) {
       return formatCampaignFromDb(dbCampaign);
     }
   } catch (error) {
-    console.warn("Prisma getCampaignBySlug fallback:", error.message);
+    console.error("Prisma getCampaignBySlug error:", error);
   }
-  const found = CAMPAIGNS.find((c) => c.slug === slug) || null;
-  if (!found) return null;
-  return {
-    ...found,
-    recentDonors: (found.recentDonors || []).map((d) => ({
-      ...d,
-      name: d.isAnonymous ? "Hamba Allah" : d.name,
-      avatar: d.isAnonymous ? null : d.avatar,
-      email: maskEmail(d.email),
-    })),
-  };
+  return null;
 }
 
 export { getCampaignDonationsPaginated } from "./campaignFeedService";

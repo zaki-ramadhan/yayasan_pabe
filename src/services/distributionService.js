@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import {
   AUDIT_SUMMARY_DATA,
-  DISTRIBUTION_TREND_DATA,
   SYARIAH_COMPLIANCE_DATA,
 } from "@/data/distributionData";
 import { formatNumber } from "@/lib/formatters";
@@ -16,17 +15,61 @@ export async function getDistributionAuditData() {
     });
 
     if (latestAudit) {
+      let allocations = AUDIT_SUMMARY_DATA.allocations;
+      try {
+        const updates = await prisma.campaignUpdate.findMany({
+          where: { disbursedAmount: { gt: 0 } },
+          include: {
+            campaign: {
+              include: { category: true },
+            },
+          },
+        });
+
+        if (updates && updates.length > 0) {
+          let totalDisbursed = 0;
+          const categoryMap = {};
+          const palette = ["#059669", "#0284c7", "#d97706", "#7c3aed", "#e11d48"];
+
+          updates.forEach((u) => {
+            const catName = u.campaign?.category?.name || "Bantuan & Pemberdayaan";
+            const amt = Number(u.disbursedAmount || 0);
+            totalDisbursed += amt;
+            if (!categoryMap[catName]) {
+              categoryMap[catName] = { name: catName, amount: 0 };
+            }
+            categoryMap[catName].amount += amt;
+          });
+
+          if (totalDisbursed > 0) {
+            allocations = Object.values(categoryMap).map((cat, idx) => ({
+              id: `alloc-${idx}`,
+              name: cat.name,
+              amount: cat.amount,
+              percentage: Math.round((cat.amount / totalDisbursed) * 100),
+              color: palette[idx % palette.length],
+            }));
+          }
+        }
+      } catch (allocErr) {
+        console.warn("Prisma allocation aggregation fallback:", allocErr.message);
+      }
+
       return {
         ...AUDIT_SUMMARY_DATA,
+        title: latestAudit.title || AUDIT_SUMMARY_DATA.title,
+        description: latestAudit.summary || AUDIT_SUMMARY_DATA.description,
         auditorName: latestAudit.auditorName || AUDIT_SUMMARY_DATA.auditorName,
         opinion: latestAudit.opinionStatus || AUDIT_SUMMARY_DATA.opinion,
         auditPeriod: `Tahun Buku ${latestAudit.year}`,
         operationalRatio: latestAudit.operationalRatio || AUDIT_SUMMARY_DATA.operationalRatio,
+        totalFundsManaged: Number(latestAudit.totalFundsIn) || AUDIT_SUMMARY_DATA.totalFundsManaged,
         pdfUrl:
           latestAudit.pdfUrl && latestAudit.pdfUrl !== "#"
             ? latestAudit.pdfUrl
             : `/api/documents/download?type=audit&year=${latestAudit.year || 2025}`,
         downloadFilename: `Laporan-Audit-Keuangan-PABE-${latestAudit.year}.pdf`,
+        allocations,
       };
     }
   } catch (error) {
@@ -44,7 +87,7 @@ export async function getDistributionTrendData() {
       orderBy: { date: "asc" },
     });
 
-    if (updates && updates.length >= 5) {
+    if (updates && updates.length > 0) {
       // Aggregate by year and month from real DB updates
       const trendMap = {};
       const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -71,16 +114,28 @@ export async function getDistributionTrendData() {
         trendMap[yearKey][monthIdx].beneficiaries += Math.round(Number(u.disbursedAmount || 0) / 250000);
       });
 
-      return {
-        ...DISTRIBUTION_TREND_DATA,
-        ...trendMap,
-      };
+      if (Object.keys(trendMap).length > 0) {
+        return trendMap;
+      }
     }
   } catch (error) {
-    console.warn("Prisma getDistributionTrendData fallback:", error.message);
+    console.error("Prisma getDistributionTrendData error:", error);
   }
 
-  return DISTRIBUTION_TREND_DATA;
+  const currentYear = new Date().getFullYear();
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+  const fullMonthNames = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+  return {
+    [`Tahun ${currentYear}`]: monthNames.map((m, idx) => ({
+      month: m,
+      fullMonth: `${fullMonthNames[idx]} ${currentYear}`,
+      amount: 0,
+      beneficiaries: 0,
+    })),
+  };
 }
 
 export async function getDistributionSyariahData() {
@@ -107,14 +162,15 @@ export async function getDistributionRecords() {
     if (updates && updates.length > 0) {
       return updates.map((u, idx) => {
         const dateStr = u.date instanceof Date ? u.date.toISOString().split("T")[0] : u.date;
-        const beneficiaryEstimated = Math.max(50, Math.round(Number(u.disbursedAmount || 25000000) / 200000));
+        const value = Number(u.disbursedAmount || 0);
+        const beneficiaryEstimated = value > 0 ? Math.max(1, Math.round(value / 200000)) : 0;
         return {
           id: `DIST-${dateStr.slice(0, 4)}-00${idx + 1}`,
           title: u.title,
           location: u.campaign?.location || "Wilayah Binaan PABE",
           date: dateStr,
-          beneficiaries: `${formatNumber(beneficiaryEstimated)}+ Jiwa`,
-          value: Number(u.disbursedAmount || 25000000),
+          beneficiaries: `${formatNumber(beneficiaryEstimated)}+ Orang`,
+          value,
           status: "SELESAI",
           image: (u.images && u.images[0]) || u.campaign?.bannerUrl || "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=800&auto=format&fit=crop&q=80",
           pj: "Tim Penyaluran & Logistik PABE",

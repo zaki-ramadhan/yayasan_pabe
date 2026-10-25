@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { CAREER_VACANCIES, DEPARTMENT_OPTIONS, TYPE_OPTIONS, LOCATION_OPTIONS } from "@/data/careers";
+import { DEPARTMENT_OPTIONS, TYPE_OPTIONS, LOCATION_OPTIONS } from "@/data/careers";
 import { sanitizeInput, maskEmail } from "@/lib/security";
 
 /**
@@ -30,67 +30,30 @@ export async function getAdminVacancies({ search = "", department = "ALL" } = {}
       },
     });
 
-    if (vacancies && vacancies.length > 0) {
-      return vacancies.map((v) => ({
-        id: v.id,
-        jobCode: v.jobCode,
-        title: v.title,
-        department: v.department,
-        location: v.location,
-        type: v.type,
-        workplace: v.workplace,
-        experience: v.experience,
-        publishedDate: v.publishedDate,
-        deadline: v.deadline,
-        overview: v.overview,
-        responsibilities: v.responsibilities || [],
-        requirements: v.requirements || [],
-        benefits: v.benefits || [],
-        applyUrl: v.applyUrl,
-        isActive: v.isActive,
-        applicantCount: v._count?.applications || 0,
-        createdAt: v.createdAt.toISOString(),
-      }));
-    }
+    return vacancies.map((v) => ({
+      id: v.id,
+      jobCode: v.jobCode,
+      title: v.title,
+      department: v.department,
+      location: v.location,
+      type: v.type,
+      workplace: v.workplace,
+      experience: v.experience,
+      publishedDate: v.publishedDate,
+      deadline: v.deadline,
+      overview: v.overview,
+      responsibilities: v.responsibilities || [],
+      requirements: v.requirements || [],
+      benefits: v.benefits || [],
+      applyUrl: v.applyUrl,
+      isActive: v.isActive,
+      applicantCount: v._count?.applications || 0,
+      createdAt: v.createdAt.toISOString(),
+    }));
   } catch (error) {
-    console.warn("Prisma getAdminVacancies fallback:", error.message);
+    console.error("Prisma getAdminVacancies error:", error);
+    return [];
   }
-
-  // Fallback to static vacancies
-  let filtered = [...CAREER_VACANCIES];
-  if (department && department !== "ALL" && department !== "Semua Divisi") {
-    filtered = filtered.filter((v) => v.department === department);
-  }
-  if (search && search.trim()) {
-    const q = search.toLowerCase().trim();
-    filtered = filtered.filter(
-      (v) =>
-        v.title.toLowerCase().includes(q) ||
-        v.department.toLowerCase().includes(q) ||
-        v.location.toLowerCase().includes(q)
-    );
-  }
-
-  return filtered.map((v) => ({
-    id: v.id,
-    jobCode: v.id,
-    title: v.title,
-    department: v.department,
-    location: v.location,
-    type: v.type,
-    workplace: v.workplace || "On-site",
-    experience: v.experience || "1 - 3 tahun",
-    publishedDate: v.publishedDate || "2026-09-20",
-    deadline: v.deadline || "30 November 2026",
-    overview: v.overview || "",
-    responsibilities: v.responsibilities || [],
-    requirements: v.requirements || [],
-    benefits: v.benefits || [],
-    applyUrl: v.applyUrl || null,
-    isActive: true,
-    applicantCount: v.applicantCount || 0,
-    createdAt: new Date().toISOString(),
-  }));
 }
 
 /**

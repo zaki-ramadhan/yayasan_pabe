@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { CAMPAIGNS } from "@/data/campaigns";
 import { sanitizeInput } from "@/lib/security";
 import { toTitleCase } from "@/lib/formatters";
 import { cleanupOrphanCategories } from "./categoryService";
@@ -55,7 +54,7 @@ export async function getAdminCampaigns({ search = "", status = "", page = 1, li
         isUrgent: c.isUrgent,
         isFeatured: c.isFeatured,
         location: c.location || "Nasional",
-        bannerUrl: c.bannerUrl || "/img/hero_card_1.jpeg",
+        bannerUrl: c.bannerUrl || null,
         createdAt: c.createdAt.toISOString(),
       })),
       pagination: {
@@ -67,45 +66,16 @@ export async function getAdminCampaigns({ search = "", status = "", page = 1, li
       categories,
     };
   } catch (error) {
-    console.warn("Prisma getAdminCampaigns fallback:", error.message);
-    const filtered = CAMPAIGNS.filter((c) => {
-      if (status && status !== "ALL" && c.status !== status) return false;
-      if (search && !c.title.toLowerCase().includes(search.toLowerCase())) return false;
-      return true;
-    });
-
+    console.error("Prisma getAdminCampaigns error:", error);
     return {
-      items: filtered.slice(skip, skip + limit).map((c) => ({
-        id: c.id,
-        title: c.title,
-        slug: c.slug,
-        category: c.category || "Program Umum",
-        categoryId: c.categoryId || "cat-1",
-        targetAmount: Number(c.targetAmount || 0),
-        collectedAmount: Number(c.collectedAmount || 0),
-        disbursedAmount: c.updates?.reduce((acc, u) => acc + Number(u.disbursedAmount || 0), 0) || 0,
-        updatesCount: c.updates?.length || 0,
-        donorCount: c.donorCount || 0,
-        endDate: c.endDate || null,
-        status: c.status || "ACTIVE",
-        isUrgent: Boolean(c.isUrgent),
-        isFeatured: Boolean(c.isFeatured),
-        location: c.location || "Nasional",
-        bannerUrl: c.bannerUrl || "/img/hero_card_1.jpeg",
-        createdAt: new Date().toISOString(),
-      })),
+      items: [],
       pagination: {
         page,
         limit,
-        total: filtered.length,
-        totalPages: Math.ceil(filtered.length / limit) || 1,
+        total: 0,
+        totalPages: 1,
       },
-      categories: [
-        { id: "cat-1", name: "Pendidikan & Santri", slug: "pendidikan" },
-        { id: "cat-2", name: "Kesehatan Dhuafa", slug: "kesehatan" },
-        { id: "cat-3", name: "Pemberdayaan Ekonomi", slug: "ekonomi" },
-        { id: "cat-4", name: "Tanggap Bencana", slug: "bencana" },
-      ],
+      categories: [],
     };
   }
 }
@@ -153,7 +123,7 @@ export async function createAdminCampaign(payload) {
   const targetAmount = Math.max(0, parseInt(payload.targetAmount, 10) || 0);
   const isUrgent = Boolean(payload.isUrgent);
   const isFeatured = Boolean(payload.isFeatured);
-  const bannerUrl = sanitizeInput(payload.bannerUrl || "/img/hero_card_1.jpeg").trim();
+  const bannerUrl = payload.bannerUrl ? sanitizeInput(payload.bannerUrl).trim() : null;
   let categoryId = payload.categoryId;
   const rawCat = payload.newCategoryName ? sanitizeInput(payload.newCategoryName).trim() : null;
   const newCategoryName = rawCat ? toTitleCase(rawCat) : null;

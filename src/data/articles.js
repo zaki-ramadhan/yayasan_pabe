@@ -473,29 +473,4 @@ Hasil evaluasi setelah 3 bulan intervensi menunjukkan peningkatan berat badan da
   },
 ];
 
-export const FAQS = [
-  {
-    question: "Bagaimana cara menyalurkan donasi di Yayasan PABE?",
-    answer: "Pilih program donasi yang ingin Anda bantu, klik tombol 'Donasi Sekarang', tentukan nominal donasi, pilih metode pembayaran (QRIS atau Virtual Account Bank), lalu selesaikan pembayaran sesuai petunjuk yang tertera pada invoice.",
-  },
-  {
-    question: "Apakah donasi saya dikenakan biaya administrasi?",
-    answer: "Pembayaran via QRIS tidak dikenakan biaya tambahan (Gratis / Rp 0). Untuk pembayaran via Virtual Account Bank dikenakan biaya transfer antar bank standar Rp 1.000 oleh pihak penyedia sistem pembayaran.",
-  },
-  {
-    question: "Bagaimana saya mengetahui dana donasi telah disalurkan?",
-    answer: "Yayasan PABE secara berkala mempublikasikan laporan penyaluran, foto dokumentasi kegiatan, dan rincian alokasi dana di tab 'Kabar Penyaluran' pada setiap halaman program dan di menu 'Laporan Akuntabilitas'.",
-  },
-  {
-    question: "Apakah Yayasan PABE berbadan hukum dan diaudit secara resmi?",
-    answer: "Ya, Yayasan PABE berbadan hukum resmi berdasarkan SK Kemenkumham RI No. AHU-0012845.AH.01.04.Tahun 2018 dan laporan keuangan tahunan selalu diaudit oleh Kantor Akuntan Publik (KAP) independen dengan opini Wajar Tanpa Pengecualian (WTP).",
-  },
-  {
-    question: "Apakah donatur mendapatkan bukti tanda terima donasi resmi?",
-    answer: "Setiap transaksi donasi yang berhasil terverifikasi akan otomatis menerbitkan Bukti Tanda Terima Donasi Digital (Digital Receipt) resmi ber-QR Code yang dapat langsung diunduh atau dikirimkan via WhatsApp dan Email donatur.",
-  },
-  {
-    question: "Bisakah donatur berkunjung langsung ke kantor atau asrama santri?",
-    answer: "Sangat bisa. Kami menyambut hangat silaturahmi para donatur di kantor pusat Yayasan PABE atau asrama santri binaan kami setiap hari kerja (Senin–Sabtu, pukul 08.00–17.00 WIB) dengan konfirmasi terlebih dahulu melalui layanan WhatsApp resmi.",
-  },
-];
+export { FAQS } from "./faqs.js";

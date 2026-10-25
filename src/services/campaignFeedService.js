@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { CAMPAIGNS } from "@/data/campaigns";
 import { maskEmail } from "@/lib/security";
 
 /**
@@ -106,17 +105,11 @@ export async function getCampaignUpdates() {
     });
     if (updates && updates.length > 0) {
       return updates.map((u) => {
-        const seedCampaign = CAMPAIGNS.find((sc) => sc.id === u.campaignId || sc.slug === u.campaign?.slug);
-        const seedUpdate = (seedCampaign?.updates || []).find((su) => su.id === u.id || su.title === u.title);
         const resolvedImages =
           Array.isArray(u.images) && u.images.length > 0
             ? u.images
-            : seedUpdate?.images && seedUpdate.images.length > 0
-            ? seedUpdate.images
             : u.image
             ? [u.image]
-            : seedUpdate?.image
-            ? [seedUpdate.image]
             : [];
 
         return {
@@ -126,7 +119,7 @@ export async function getCampaignUpdates() {
           date: u.date instanceof Date ? u.date.toISOString().split("T")[0] : u.date,
           images: resolvedImages,
           imageCaptions: u.imageCaptions || [],
-          spentAmount: u.spentAmount || 0,
+          spentAmount: u.spentAmount || u.disbursedAmount || 0,
           beneficiaryCount: u.beneficiaryCount || 0,
           location: u.location || "Wilayah Binaan PABE",
           spentBreakdown: u.spentBreakdown || [],
@@ -135,7 +128,7 @@ export async function getCampaignUpdates() {
       });
     }
   } catch (error) {
-    console.warn("Prisma getCampaignUpdates fallback:", error.message);
+    console.error("Prisma getCampaignUpdates error:", error);
   }
   return [];
 }

@@ -1,4 +1,3 @@
-import { CAMPAIGNS } from "@/data/campaigns";
 import { maskEmail } from "@/lib/security";
 
 /**
@@ -41,23 +40,17 @@ export function formatCampaignFromDb(c) {
     categoryName: c.category?.name || "Program Umum",
     categorySlug: c.category?.slug || "",
     updates: (c.updates || []).map((u) => {
-      const seedCampaign = CAMPAIGNS.find((sc) => sc.id === c.id || sc.slug === c.slug);
-      const seedUpdate = (seedCampaign?.updates || []).find((su) => su.id === u.id || su.title === u.title);
-      const resolvedImages =
-        Array.isArray(u.images) && u.images.length > 0
-          ? u.images
-          : seedUpdate?.images && seedUpdate.images.length > 0
-          ? seedUpdate.images
-          : u.image
-          ? [u.image]
-          : seedUpdate?.image
-          ? [seedUpdate.image]
-          : [];
+      const resolvedImages = Array.isArray(u.images) && u.images.length > 0
+        ? u.images
+        : u.image
+        ? [u.image]
+        : [];
 
       return {
         ...u,
         date: u.date instanceof Date ? u.date.toISOString().split("T")[0] : u.date,
         images: resolvedImages,
+        spentAmount: Number(u.spentAmount || u.disbursedAmount || 0),
       };
     }),
     recentDonors: paidDonations,

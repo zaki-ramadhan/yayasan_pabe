@@ -1,7 +1,7 @@
 export const INSTAGRAM_ACCOUNT = {
-  username: "@zqramadhan_",
-  displayName: "Zaki Ramadhan",
-  profileUrl: "https://www.instagram.com/zqramadhan_/",
+  username: "@yayasanpayungberkah",
+  displayName: "Yayasan Payung Berkah",
+  profileUrl: "https://www.instagram.com/yayasanpayungberkah/",
   postCount: 3,
   followersCount: "186",
   followingCount: 385,
@@ -18,7 +18,7 @@ export const INSTAGRAM_POSTS = [
     likes: 1240,
     comments: 86,
     type: "carousel",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-2",
@@ -29,7 +29,7 @@ export const INSTAGRAM_POSTS = [
     likes: 2450,
     comments: 142,
     type: "photo",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-3",
@@ -40,7 +40,7 @@ export const INSTAGRAM_POSTS = [
     likes: 890,
     comments: 48,
     type: "carousel",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-4",
@@ -51,7 +51,7 @@ export const INSTAGRAM_POSTS = [
     likes: 3820,
     comments: 215,
     type: "video",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-5",
@@ -62,7 +62,7 @@ export const INSTAGRAM_POSTS = [
     likes: 1560,
     comments: 94,
     type: "carousel",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-6",
@@ -73,7 +73,7 @@ export const INSTAGRAM_POSTS = [
     likes: 2780,
     comments: 183,
     type: "photo",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-7",
@@ -84,7 +84,7 @@ export const INSTAGRAM_POSTS = [
     likes: 1940,
     comments: 112,
     type: "carousel",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-8",
@@ -95,7 +95,7 @@ export const INSTAGRAM_POSTS = [
     likes: 4210,
     comments: 290,
     type: "photo",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-9",
@@ -106,7 +106,7 @@ export const INSTAGRAM_POSTS = [
     likes: 2180,
     comments: 135,
     type: "video",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-10",
@@ -117,7 +117,7 @@ export const INSTAGRAM_POSTS = [
     likes: 1650,
     comments: 72,
     type: "carousel",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-11",
@@ -128,7 +128,7 @@ export const INSTAGRAM_POSTS = [
     likes: 3120,
     comments: 204,
     type: "photo",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
   {
     id: "ig-12",
@@ -139,6 +139,6 @@ export const INSTAGRAM_POSTS = [
     likes: 2890,
     comments: 168,
     type: "video",
-    postUrl: "https://www.instagram.com",
+    postUrl: "https://www.instagram.com/yayasanpayungberkah/",
   },
 ];

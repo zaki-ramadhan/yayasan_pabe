@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { INSTAGRAM_POSTS, INSTAGRAM_ACCOUNT } from "@/data/instagramPosts";
+import { INSTAGRAM_ACCOUNT } from "@/data/instagramPosts";
 
 /**
  * Mengambil postingan murni langsung dari akun Instagram yang terhubung.
@@ -8,12 +8,9 @@ import { INSTAGRAM_POSTS, INSTAGRAM_ACCOUNT } from "@/data/instagramPosts";
 export async function getInstagramPosts(limit = 9) {
   const token = process.env.INSTAGRAM_ACCESS_TOKEN;
 
-  if (!token) {
-    return [];
-  }
-
-  try {
-    const apiUrl = `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count&limit=50&access_token=${token}`;
+  if (token) {
+    try {
+      const apiUrl = `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count&limit=50&access_token=${token}`;
     const response = await fetch(apiUrl, {
       next: { revalidate: 1800 }, // Cache 30 menit
     });
@@ -42,7 +39,7 @@ export async function getInstagramPosts(limit = 9) {
             likes,
             comments,
             engagementScore: likes + comments,
-            postUrl: post.permalink || `https://www.instagram.com/`,
+            postUrl: post.permalink || (INSTAGRAM_ACCOUNT.profileUrl || "https://www.instagram.com/yayasanpayungberkah/"),
           };
         });
 
@@ -53,8 +50,41 @@ export async function getInstagramPosts(limit = 9) {
         return mappedPosts.slice(0, Math.min(limit, 50));
       }
     }
-  } catch (apiError) {
-    console.warn("Instagram Live API fetch error:", apiError?.message);
+    } catch (apiError) {
+      console.warn("Instagram Live API fetch error:", apiError?.message);
+    }
+  }
+
+  try {
+    const dbPosts = await prisma.instagramPost.findMany({
+      orderBy: { postedAt: "desc" },
+      take: limit || 12,
+    });
+    if (dbPosts && dbPosts.length > 0) {
+      return dbPosts.map((post) => {
+        const rawTimestamp = post.postedAt ? new Date(post.postedAt).getTime() : 0;
+        return {
+          id: post.id,
+          imageUrl: post.imageUrl,
+          alt: post.altText || post.caption?.slice(0, 100) || "Postingan Instagram",
+          caption: post.caption || "",
+          timestamp: rawTimestamp,
+          date: post.postedAt
+            ? new Date(post.postedAt).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })
+            : "",
+          likes: post.likeCount || 0,
+          comments: post.commentCount || 0,
+          engagementScore: (post.likeCount || 0) + (post.commentCount || 0),
+          postUrl: post.postUrl || (INSTAGRAM_ACCOUNT.profileUrl || "https://www.instagram.com/yayasanpayungberkah/"),
+        };
+      });
+    }
+  } catch (dbError) {
+    console.warn("Prisma getInstagramPosts fallback error:", dbError?.message);
   }
 
   return [];
@@ -99,16 +129,24 @@ export async function getInstagramAccount() {
     }
   }
 
+  let dbCount = INSTAGRAM_ACCOUNT.postCount || 12;
+  try {
+    const count = await prisma.instagramPost.count();
+    if (count > 0) dbCount = count;
+  } catch {
+    // ignore
+  }
+
   return {
-    username: (INSTAGRAM_ACCOUNT.username || "yayasanpabe").replace("@", ""),
-    handle: (INSTAGRAM_ACCOUNT.username || "yayasanpabe").replace("@", ""),
-    displayName: INSTAGRAM_ACCOUNT.displayName || "Yayasan PABE",
+    username: (INSTAGRAM_ACCOUNT.username || "yayasanpayungberkah").replace("@", ""),
+    handle: (INSTAGRAM_ACCOUNT.username || "yayasanpayungberkah").replace("@", ""),
+    displayName: INSTAGRAM_ACCOUNT.displayName || "Yayasan Payung Berkah",
     avatarUrl: null,
-    profileUrl: INSTAGRAM_ACCOUNT.profileUrl || "https://www.instagram.com",
+    profileUrl: INSTAGRAM_ACCOUNT.profileUrl || "https://www.instagram.com/yayasanpayungberkah/",
     messageUrl: "https://www.instagram.com/direct/inbox/",
-    followersCount: INSTAGRAM_ACCOUNT.followersCount || "14.8K",
-    followingCount: INSTAGRAM_ACCOUNT.followingCount || 120,
-    postsCount: INSTAGRAM_ACCOUNT.postCount || 384,
+    followersCount: INSTAGRAM_ACCOUNT.followersCount || "186",
+    followingCount: INSTAGRAM_ACCOUNT.followingCount || 385,
+    postsCount: dbCount,
     isVerified: false,
   };
 }

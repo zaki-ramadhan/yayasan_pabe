@@ -9,9 +9,9 @@ export const AUDIT_SUMMARY_DATA = {
   auditorName: "Kantor Akuntan Publik (KAP) Rama & Rekan",
   opinion: "Wajar Tanpa Pengecualian (WTP)",
   auditPeriod: "Tahun Buku 2025",
-  operationalRatio: "8.8%",
+  operationalRatio: "9.2%",
   maxAllowedRatio: "12.5%",
-  totalFundsManaged: 12500000000,
+  totalFundsManaged: 732700000,
   pdfUrl: "/api/documents/download?type=audit&year=2025",
   downloadFilename: "Laporan-Audit-Keuangan-PABE-2025.pdf",
   allocations: [

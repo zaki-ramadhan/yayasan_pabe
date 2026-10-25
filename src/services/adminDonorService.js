@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { RECENT_TRANSACTIONS } from "@/data/adminMockData";
 import { maskEmail, maskPhone, sanitizeSearchQuery } from "@/lib/security";
 
 function normalizePhone(phone) {
@@ -160,105 +159,22 @@ export async function getAdminDonors({
       },
     };
   } catch (error) {
-    console.warn("Prisma getAdminDonors fallback:", error.message);
-    return getMockAdminDonors({ search, page, limit });
+    console.warn("Prisma getAdminDonors error:", error.message);
+    const safePage = Math.max(1, parseInt(page, 10) || 1);
+    const safeLimit = Math.max(1, Math.min(50, parseInt(limit, 10) || 10));
+    return {
+      items: [],
+      totalCount: 0,
+      pagination: {
+        page: safePage,
+        limit: safeLimit,
+        total: 0,
+        totalPages: 1,
+      },
+    };
   }
 }
 
-function getMockAdminDonors({ search = "", page = 1, limit = 10 } = {}) {
-  const mockDonors = [
-    {
-      id: "donor-1",
-      name: "Ahmad Fauzi",
-      rawName: "Ahmad Fauzi",
-      email: "ahmad.fauzi@example.com",
-      phone: "081298765432",
-      avatar: null,
-      totalPaidAmount: 3750000,
-      paidCount: 8,
-      lastDonatedAt: "2026-09-17T14:30:00Z",
-      firstDonatedAt: "2026-01-10T10:00:00Z",
-      lastCampaignTitle: "Beasiswa Santri Penghafal Quran",
-    },
-    {
-      id: "donor-2",
-      name: "H. Hendra Wijaya",
-      rawName: "H. Hendra Wijaya",
-      email: "hendra.wijaya@example.com",
-      phone: "081311223344",
-      avatar: null,
-      totalPaidAmount: 5500000,
-      paidCount: 5,
-      lastDonatedAt: "2026-09-17T10:00:00Z",
-      firstDonatedAt: "2026-02-15T09:30:00Z",
-      lastCampaignTitle: "Zakat Penghasilan Mustahik",
-    },
-    {
-      id: "donor-3",
-      name: "Keluarga Bpk. Sukardi",
-      rawName: "Keluarga Bpk. Sukardi",
-      email: "keluarga.sukardi@example.com",
-      phone: "081755667788",
-      avatar: null,
-      totalPaidAmount: 1800000,
-      paidCount: 3,
-      lastDonatedAt: "2026-09-17T08:10:00Z",
-      firstDonatedAt: "2026-05-01T11:00:00Z",
-      lastCampaignTitle: "Sedekah Beras Pesantren",
-    },
-    {
-      id: "donor-4",
-      name: "Siti Rahma",
-      rawName: "Siti Rahma",
-      email: "siti.rahma@example.com",
-      phone: "085612349876",
-      avatar: null,
-      totalPaidAmount: 450000,
-      paidCount: 3,
-      lastDonatedAt: "2026-09-17T11:45:00Z",
-      firstDonatedAt: "2026-07-20T08:00:00Z",
-      lastCampaignTitle: "Sedekah Subuh Beras",
-    },
-    {
-      id: "donor-5",
-      name: "Hamba Allah",
-      rawName: "Hamba Allah",
-      email: null,
-      phone: "081288776655",
-      avatar: null,
-      totalPaidAmount: 550000,
-      paidCount: 2,
-      lastDonatedAt: "2026-09-17T13:15:00Z",
-      firstDonatedAt: "2026-08-01T15:20:00Z",
-      lastCampaignTitle: "Tanggap Darurat Banjir",
-    },
-  ];
-
-  const cleanSearch = (search || "").toLowerCase().trim();
-  const filtered = cleanSearch
-    ? mockDonors.filter(
-        (d) =>
-          d.name.toLowerCase().includes(cleanSearch) ||
-          (d.email && d.email.toLowerCase().includes(cleanSearch)) ||
-          (d.phone && d.phone.includes(cleanSearch))
-      )
-    : mockDonors;
-
-  const safePage = Math.max(1, parseInt(page, 10) || 1);
-  const safeLimit = Math.max(1, Math.min(50, parseInt(limit, 10) || 10));
-  const start = (safePage - 1) * safeLimit;
-
-  return {
-    items: filtered.slice(start, start + safeLimit),
-    totalCount: filtered.length,
-    pagination: {
-      page: safePage,
-      limit: safeLimit,
-      total: filtered.length,
-      totalPages: Math.ceil(filtered.length / safeLimit) || 1,
-    },
-  };
-}
 
 export async function getAdminDonorDetail({ email, phone, name } = {}) {
   try {
@@ -300,22 +216,8 @@ export async function getAdminDonorDetail({ email, phone, name } = {}) {
       })),
     };
   } catch (error) {
-    console.warn("Prisma getAdminDonorDetail fallback:", error.message);
-    return {
-      donations: [
-        {
-          id: "mock-tx-1",
-          invoiceId: "INV-891023",
-          amount: 250000,
-          totalAmount: 250000,
-          status: "PAID",
-          paymentChannel: "BCA VA",
-          campaignTitle: "Beasiswa Santri Penghafal Quran",
-          isAnonymous: false,
-          createdAt: "2026-09-17T14:30:00Z",
-          paidAt: "2026-09-17T14:35:00Z",
-        },
-      ],
-    };
+    console.warn("Prisma getAdminDonorDetail error:", error.message);
+    return { donations: [] };
   }
 }
+

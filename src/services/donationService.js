@@ -10,35 +10,6 @@ import {
 } from "@/lib/security";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
 
-// Fallback in-memory donation store for offline/demo sessions
-const donationStore = new Map();
-
-donationStore.set("INV-2026-DEMO", {
-  id: "don-demo",
-  invoiceId: "INV-2026-DEMO",
-  campaignId: "camp-001",
-  campaignTitle: "Beasiswa Pendidikan Santri Penghafal Al-Qur'an 30 Juz",
-  campaignSlug: "beasiswa-santri-penghafal-quran",
-  campaignImage: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80",
-  donationType: "CAMPAIGN",
-  amount: 100000,
-  uniqueCode: 124,
-  adminFee: 0,
-  totalAmount: 100124,
-  paymentChannelId: "qris",
-  paymentChannelName: "QRIS (Semua Bank & E-Wallet)",
-  paymentChannelType: "QRIS",
-  virtualAccountNumber: "",
-  donorName: "Hamba Allah",
-  donorEmail: "donatur@example.com",
-  donorPhone: "081234567890",
-  isAnonymous: true,
-  prayer: "Semoga santri menjadi penghafal Al-Qur'an yang amanah dan berkah untuk umat.",
-  status: "PENDING",
-  createdAt: new Date().toISOString(),
-  expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-});
-
 export async function createDonation({
   campaignId = null,
   campaignTitle = "Sedekah Umum PABE",
@@ -58,55 +29,52 @@ export async function createDonation({
     throw new Error(validation.message);
   }
 
-  const nameVal = validateName(donorName, isAnonymous);
-  if (!nameVal.isValid) {
-    throw new Error(nameVal.message);
-  }
+  const cleanDonorName = isAnonymous ? "Hamba Allah" : validateName(donorName);
+  const cleanDonorPhone = validatePhone(donorPhone);
+  const cleanDonorEmail = donorEmail ? validateEmail(donorEmail) : "";
+  const cleanPrayer = sanitizePrayer(prayer);
 
-  const phoneVal = validatePhone(donorPhone);
-  if (!phoneVal.isValid) {
-    throw new Error(phoneVal.message);
-  }
+  const channel =
+    PAYMENT_CHANNELS.find((p) => p.id === paymentChannelId) || PAYMENT_CHANNELS[0];
 
-  let cleanDonorEmail = "";
-  if (donorEmail) {
-    const emailVal = validateEmail(donorEmail);
-    if (!emailVal.isValid) {
-      throw new Error(emailVal.message);
-    }
-    cleanDonorEmail = emailVal.sanitized;
-  }
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
+  const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+  const invoiceId = `INV-${dateStr}-${randomSuffix}`;
 
-  const channel = PAYMENT_CHANNELS.find((p) => p.id === paymentChannelId) || PAYMENT_CHANNELS[0];
-  const uniqueCode = channel.type === "QRIS" ? 0 : Math.floor(100 + Math.random() * 900);
-  const adminFee = channel.fee || 0;
-  const totalAmount = Number(amount) + uniqueCode + adminFee;
-  const invoiceId = `INV-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
-  const accessToken = crypto.randomBytes(16).toString("hex");
+  const uniqueCode = channel.type === "QRIS" || channel.type === "EWALLET" ? Math.floor(100 + Math.random() * 900) : 0;
+  const totalAmount = Number(amount) + uniqueCode + (channel.fee || 0);
+
+  const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "pabe_inv_secure_salt_key";
+  const accessToken = crypto
+    .createHash("sha256")
+    .update(`${invoiceId}_${secretSalt}`)
+    .digest("hex")
+    .slice(0, 32);
+
+  const expiredAtDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
   let virtualAccountNumber = "";
   if (channel.type === "VA") {
-    virtualAccountNumber = `${channel.accountNumberPrefix || "88"}${
-      phoneVal.sanitized.slice(-8)
-    }`;
+    const bankPrefix = {
+      bca_va: "80777",
+      mandiri_va: "89508",
+      bsi_va: "90088",
+      bri_va: "12800",
+    }[channel.id] || "88000";
+    virtualAccountNumber = `${bankPrefix}${cleanDonorPhone.slice(-8)}`;
   }
 
-  const cleanDonorName = nameVal.sanitized;
-  const cleanDonorPhone = phoneVal.sanitized;
-  const cleanPrayer = sanitizePrayer(prayer);
-  const expiredAtDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
   const donationData = {
-    id: `don-${Date.now()}`,
     invoiceId,
     accessToken,
-    campaignId: campaignId || null,
+    campaignId,
     campaignTitle,
     campaignSlug,
     donationType,
     amount: Number(amount),
     uniqueCode,
-    adminFee,
+    adminFee: channel.fee || 0,
     totalAmount,
     paymentChannelId: channel.id,
     paymentChannelName: channel.name,
@@ -118,15 +86,10 @@ export async function createDonation({
     isAnonymous: Boolean(isAnonymous),
     prayer: cleanPrayer,
     status: "PENDING",
-    idempotencyKey: idempotencyKey || null,
-    createdAt: new Date().toISOString(),
+    createdAt: now.toISOString(),
     expiredAt: expiredAtDate.toISOString(),
   };
 
-  // Always keep in fallback cache
-  donationStore.set(invoiceId, donationData);
-
-  // Save to PostgreSQL via Prisma
   try {
     const createdDb = await prisma.donation.create({
       data: {
@@ -157,7 +120,8 @@ export async function createDonation({
       donationData.id = createdDb.id;
     }
   } catch (error) {
-    console.warn("Prisma createDonation fallback:", error.message);
+    console.error("Prisma createDonation error:", error);
+    throw new Error("Gagal memproses pembuatan transaksi donasi ke sistem database.");
   }
 
   return donationData;
@@ -234,34 +198,7 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
       };
     }
   } catch (error) {
-    console.warn("Prisma getDonationByInvoiceId fallback:", error.message);
-  }
-
-  const fallbackDonation = donationStore.get(invoiceId);
-  if (fallbackDonation) {
-    let effectiveAccessToken = fallbackDonation.accessToken;
-    if (!effectiveAccessToken) {
-      const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "pabe_inv_secure_salt_key";
-      effectiveAccessToken = crypto
-        .createHash("sha256")
-        .update(`${fallbackDonation.invoiceId}_${secretSalt}`)
-        .digest("hex")
-        .slice(0, 32);
-      fallbackDonation.accessToken = effectiveAccessToken;
-    }
-
-    const isOwner = Boolean(
-      sessionUser?.email &&
-      fallbackDonation.donorEmail &&
-      sessionUser.email.toLowerCase() === fallbackDonation.donorEmail.toLowerCase()
-    );
-    const isStaff = Boolean(sessionUser?.role && sessionUser.role !== "DONOR");
-    const isAuthorized = Boolean((token && token === effectiveAccessToken) || isOwner || isStaff);
-    return {
-      ...fallbackDonation,
-      accessToken: effectiveAccessToken,
-      isAuthorized,
-    };
+    console.error("Prisma getDonationByInvoiceId error:", error);
   }
 
   return null;
@@ -273,8 +210,7 @@ import {
 } from "./donationPrayerService";
 
 export async function updateDonationPrayer({ invoiceId, prayer, isAnonymous }) {
-  return updateDonationPrayerImpl({ invoiceId, prayer, isAnonymous, donationStore });
+  return updateDonationPrayerImpl({ invoiceId, prayer, isAnonymous });
 }
 
 export { getRecentDonations };
-

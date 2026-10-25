@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import { RECENT_TRANSACTIONS } from "@/data/adminMockData";
 import { maskEmail } from "@/lib/security";
 
 /**
@@ -67,37 +66,19 @@ export async function getAdminTransactions({
       },
     };
   } catch (error) {
-    console.warn("Prisma getAdminTransactions fallback:", error.message);
-    const mock = RECENT_TRANSACTIONS.map((t, idx) => ({
-      id: `mock-${idx + 1}`,
-      invoiceId: t.id,
-      donorName: t.donor,
-      rawDonorName: t.donor,
-      donorEmail: maskEmail(`${t.donor.toLowerCase().replace(/[^a-z0-9]/g, ".")}@gmail.com`),
-      donorPhone: "08123456789",
-      donorAvatar: null,
-      isAnonymous: t.donor === "Hamba Allah",
-      amount: t.amount,
-      totalAmount: t.amount,
-      paymentChannel: t.channel,
-      status: t.status === "Sukses" ? "PAID" : "PENDING",
-      campaignTitle: t.campaign,
-      campaignSlug: "beasiswa-santri",
-      createdAt: t.time ? new Date().toISOString() : new Date().toISOString(),
-      paidAt: t.status === "Sukses" ? new Date().toISOString() : null,
-    }));
-
+    console.warn("Prisma getAdminTransactions error:", error.message);
     return {
-      items: mock.slice(skip, skip + limit),
+      items: [],
       pagination: {
         page,
         limit,
-        total: mock.length,
-        totalPages: Math.ceil(mock.length / limit) || 1,
+        total: 0,
+        totalPages: 1,
       },
     };
   }
 }
+
 
 /**
  * Verifikasi transaksi secara atomik (ACID): update status PAID dan increment dana campaign.
