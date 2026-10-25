@@ -1,17 +1,12 @@
 
 const DEFAULT_PAYMENT_LOGOS = [
-  { name: "QRIS", src: "/img/payments/qris.png", alt: "QRIS Nasional" },
-  { name: "Bank Mandiri", src: "/img/payments/mandiri.png", alt: "Bank Mandiri" },
-  { name: "Bank BNI", src: "/img/payments/BNI.png", alt: "Bank BNI" },
-  { name: "Bank BRI", src: "/img/payments/BRI.png", alt: "Bank BRI" },
-  { name: "Bank Permata", src: "/img/payments/permata.png", alt: "Bank Permata" },
-  { name: "GoPay", src: "/img/payments/gopay.png", alt: "GoPay" },
-  { name: "ShopeePay", src: "/img/payments/shopeepay.png", alt: "ShopeePay" },
-  { name: "Kredivo", src: "/img/payments/kredivo.png", alt: "Kredivo" },
-  { name: "Akulaku", src: "/img/payments/akulaku.png", alt: "Akulaku" },
-  { name: "Indomaret", src: "/img/payments/indomaret.png", alt: "Indomaret" },
-  { name: "Alfamart", src: "/img/payments/alfamart.png", alt: "Alfamart" },
-  { name: "Alfamidi", src: "/img/payments/alfamidi.png", alt: "Alfamidi" },
+  { name: "QRIS", src: "/img/logo/payments/qris.png", alt: "QRIS Nasional" },
+  { name: "Bank BRI", src: "/img/logo/payments/BRI.png", alt: "Bank BRI" },
+  { name: "Bank Mandiri", src: "/img/logo/payments/mandiri.png", alt: "Bank Mandiri" },
+  { name: "GoPay", src: "/img/logo/payments/gopay.png", alt: "GoPay" },
+  { name: "ShopeePay", src: "/img/logo/payments/shopeepay.png", alt: "ShopeePay" },
+  { name: "Indomaret", src: "/img/logo/payments/indomaret.png", alt: "Indomaret" },
+  { name: "Alfamart", src: "/img/logo/payments/alfamart.png", alt: "Alfamart" },
 ];
 
 /**

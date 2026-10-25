@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" fill="none">
+  <!-- Background circle -->
+  <circle cx="80" cy="80" r="80" fill="#E2E8F0"/>
+  <circle cx="80" cy="80" r="76" fill="#F1F5F9"/>
+  
+  <!-- Male Body / Torso with Collar -->
+  <path d="M30 148 C30 118 52 102 80 102 C108 102 130 118 130 148 C130 156 122 160 80 160 C38 160 30 156 30 148 Z" fill="#334155"/>
+  <!-- Shirt collar -->
+  <path d="M68 102 L80 122 L92 102 Z" fill="#F8FAFC"/>
+  <!-- Neck -->
+  <path d="M68 84 H92 V106 H68 Z" fill="#CBD5E1"/>
+  
+  <!-- Head -->
+  <circle cx="80" cy="62" r="26" fill="#E2E8F0"/>
+  <!-- Neat Hair Style -->
+  <path d="M54 58 C54 40 64 32 80 32 C96 32 106 40 106 58 C106 58 102 46 92 44 C82 42 74 46 68 44 C60 42 54 58 54 58 Z" fill="#1E293B"/>
+  
+  <!-- Ears -->
+  <circle cx="53" cy="62" r="5" fill="#CBD5E1"/>
+  <circle cx="107" cy="62" r="5" fill="#CBD5E1"/>
+  
+  <!-- Shoulders depth highlight -->
+  <path d="M36 148 C42 124 60 112 80 112 C100 112 118 124 124 148" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+</svg>

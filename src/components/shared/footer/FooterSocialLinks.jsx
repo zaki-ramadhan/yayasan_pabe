@@ -1,6 +1,6 @@
 import {
-  InstagramIcon,
   FacebookIcon,
+  InstagramIcon,
   YouTubeIcon,
   TikTokIcon,
   WhatsAppIcon,
@@ -18,57 +18,56 @@ export function FooterSocialLinks({ whatsappUrl }) {
   const defaultWa = `https://wa.me/${cleanWa}?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan Payung Berkah, saya ingin bertanya seputar donasi & ZISWAF.")}`;
   const wa = whatsappUrl || defaultWa;
 
+  const socialLinks = [
+    {
+      name: "Facebook",
+      href: ORG_PROFILE.socialMedia?.facebook || "https://web.facebook.com/payung.berkah.161",
+      icon: FacebookIcon,
+    },
+    {
+      name: "Instagram",
+      href: ORG_PROFILE.socialMedia?.instagram || "https://www.instagram.com/yayasanpayungberkah/",
+      icon: InstagramIcon,
+    },
+    {
+      name: "TikTok",
+      href: ORG_PROFILE.socialMedia?.tiktok || "https://www.tiktok.com/@yayasan.payung.be",
+      icon: TikTokIcon,
+    },
+    {
+      name: "YouTube",
+      href: ORG_PROFILE.socialMedia?.youtube || "https://youtube.com/@yayasanpayungberkah9678?si=h15x9m5GMFpkwMVk",
+      icon: YouTubeIcon,
+    },
+    {
+      name: "WhatsApp",
+      href: wa,
+      icon: WhatsAppIcon,
+    },
+  ];
+
   return (
     <div className="pt-1.5 space-y-2">
       <span className="text-sm font-semibold uppercase tracking-wider text-white block">
         Media Sosial
       </span>
       <div className="flex items-center gap-2.5 text-white">
-        <a
-          href="https://instagram.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-8.5 h-8.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-white hover:bg-slate-800 flex items-center justify-center transition-colors text-slate-200 hover:text-white"
-          title="Instagram"
-        >
-          <InstagramIcon className="w-4.5 h-4.5" />
-        </a>
-        <a
-          href="https://facebook.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-8.5 h-8.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-white hover:bg-slate-800 flex items-center justify-center transition-colors text-slate-200 hover:text-white"
-          title="Facebook"
-        >
-          <FacebookIcon className="w-4.5 h-4.5" />
-        </a>
-        <a
-          href="https://youtube.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-8.5 h-8.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-white hover:bg-slate-800 flex items-center justify-center transition-colors text-slate-200 hover:text-white"
-          title="YouTube"
-        >
-          <YouTubeIcon className="w-4.5 h-4.5" />
-        </a>
-        <a
-          href="https://tiktok.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-8.5 h-8.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-white hover:bg-slate-800 flex items-center justify-center transition-colors text-slate-200 hover:text-white"
-          title="TikTok"
-        >
-          <TikTokIcon className="w-4.5 h-4.5" />
-        </a>
-        <a
-          href={wa}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-8.5 h-8.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-white hover:bg-slate-800 flex items-center justify-center transition-colors text-slate-200 hover:text-white"
-          title="WhatsApp"
-        >
-          <WhatsAppIcon className="w-4.5 h-4.5" />
-        </a>
+        {socialLinks.map((item) => {
+          const Icon = item.icon;
+          return (
+            <a
+              key={item.name}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8.5 h-8.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-white hover:bg-slate-800 flex items-center justify-center transition-colors text-slate-200 hover:text-white"
+              title={item.name}
+              aria-label={item.name}
+            >
+              <Icon className="w-4.5 h-4.5" />
+            </a>
+          );
+        })}
       </div>
     </div>
   );

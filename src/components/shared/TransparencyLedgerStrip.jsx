@@ -51,7 +51,7 @@ export function TransparencyLedgerStrip({
           <div className="py-3 sm:py-0 sm:px-6 space-y-1">
             <span className="text-sm font-medium text-slate-700 block">Penerima Manfaat</span>
             <div className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight">
-              {formatNumber(metrics.totalBeneficiaries || 0)}+ Jiwa
+              {formatNumber(metrics.totalBeneficiaries || 0)}+ Orang
             </div>
             <span className="text-sm text-slate-600 block pt-0.5">Santri, yatim &amp; dhuafa</span>
           </div>
@@ -84,7 +84,7 @@ export function TransparencyLedgerStrip({
           <div className="py-4 sm:py-0 sm:px-6 space-y-1.5">
             <span className="text-sm sm:text-base font-medium text-slate-700 block">Penerima Manfaat</span>
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-950 tracking-tight">
-              {(metrics.totalBeneficiaries || 0).toLocaleString("id-ID")}+ Jiwa
+              {(metrics.totalBeneficiaries || 0).toLocaleString("id-ID")}+ Orang
             </div>
             <span className="text-sm sm:text-base text-slate-700 block">Santri, yatim &amp; dhuafa</span>
           </div>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" fill="none">
+  <!-- Background circle matching male avatar -->
+  <circle cx="80" cy="80" r="80" fill="#E2E8F0"/>
+  <circle cx="80" cy="80" r="76" fill="#F1F5F9"/>
+
+  <!-- Female Torso / Clothes in harmonious slate palette -->
+  <path d="M30 148 C30 120 50 106 80 106 C110 106 130 120 130 148 C130 156 122 160 80 160 C38 160 30 156 30 148 Z" fill="#334155"/>
+  
+  <!-- Outer Hijab Flowing Silhouette -->
+  <path d="M48 64 C48 38 62 28 80 28 C98 28 112 38 112 64 C112 88 104 122 80 122 C56 122 48 88 48 64 Z" fill="#475569"/>
+  
+  <!-- Face Oval - Harmonious Slate-200 Skin Tone identical to Male avatar -->
+  <path d="M62 62 C62 48 70 40 80 40 C90 40 98 48 98 62 C98 76 90 84 80 84 C70 84 62 76 62 62 Z" fill="#E2E8F0"/>
+  
+  <!-- Inner Hijab Under-cap (Ciput) -->
+  <path d="M66 48 C70 43 75 41 80 41 C85 41 90 43 94 48 C91 45 86 43 80 43 C74 43 69 45 66 48 Z" fill="#1E293B"/>
+
+  <!-- Neck/chin shadow -->
+  <path d="M72 82 C74 84 77 85 80 85 C83 85 86 84 88 82 C88 88 85 92 80 92 C75 92 72 88 72 82 Z" fill="#CBD5E1"/>
+
+  <!-- Hijab Drape Fold & Collar Lines in light slate -->
+  <path d="M74 106 L80 118 L86 106" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M38 148 C44 124 60 114 80 114 C100 114 116 124 122 148" stroke="#475569" stroke-width="2" stroke-linecap="round"/>
+</svg>

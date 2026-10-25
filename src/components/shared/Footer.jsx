@@ -25,14 +25,14 @@ export function Footer() {
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-700 shadow-xs flex items-center justify-center">
                 <Image
-                  src="/logo_yayasan_GSM.png"
+                  src="/img/logo/logo_ypabe.jpeg"
                   alt="Logo Yayasan Payung Berkah"
                   width={44}
                   height={44}
                   className="w-full h-full object-contain rounded-sm"
                 />
               </div>
-              <span className="font-semibold text-base sm:text-lg text-white tracking-tight leading-snug">
+              <span className="font-medium text-base sm:text-lg text-white tracking-tight leading-snug">
                 Yayasan Payung Berkah
               </span>
             </div>

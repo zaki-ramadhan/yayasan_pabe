@@ -27,8 +27,7 @@ export function SectionHeader({
   const isLarge = size === "lg";
 
   const titleClasses = cn(
-    "font-semibold text-slate-950 tracking-tight",
-    isLarge ? "text-2xl sm:text-3xl lg:text-4xl" : "text-2xl sm:text-3xl"
+    "font-medium text-slate-950 tracking-tight leading-tight text-2xl sm:text-3xl lg:text-4xl"
   );
 
   const subtitleClasses = "text-base text-slate-700 leading-relaxed font-normal";

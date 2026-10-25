@@ -29,18 +29,20 @@ export function InformationHeroHeader({
       )}
     >
       {/* Background Image Texture */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      <div className="absolute inset-0 z-0 pointer-events-none select-none">
         <Image
           src={imageSrc}
-          alt={imageAlt}
+          alt=""
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center"
+          className="object-cover object-center pointer-events-none select-none"
+          draggable={false}
+          aria-hidden="true"
         />
         {/* Subtle Dark Overlays for Optimal Text Readability & Contrast */}
-        <div className="absolute inset-0 bg-slate-950/40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/50 to-slate-950/90" />
+        <div className="absolute inset-0 bg-slate-950/40 pointer-events-none select-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/50 to-slate-950/90 pointer-events-none select-none" />
       </div>
 
       {/* Inner Content bounded to standard body width to prevent ultra-wide stretching */}

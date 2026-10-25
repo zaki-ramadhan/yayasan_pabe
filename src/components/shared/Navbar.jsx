@@ -66,18 +66,20 @@ export function Navbar() {
             className="flex items-center gap-2 sm:gap-2.5 select-none focus:outline-none"
             title="Beranda Yayasan PABE"
           >
-            <div className="relative w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-md overflow-hidden shrink-0 border border-slate-300 shadow-2xs bg-white flex items-center justify-center p-0.5">
+            {/* Logo Langsung Tanpa Pembungkus Box & Border, Skala Proporsional */}
+            <div className="relative h-9 sm:h-14 w-9 sm:w-14 shrink-0 flex items-center justify-center">
               <Image
-                src="/logo_yayasan_GSM.png"
+                src="/img/logo/logo_ypabe.jpeg"
                 alt="Logo Yayasan PABE"
-                width={32}
-                height={32}
-                className="w-full h-full object-contain rounded-sm select-none pointer-events-none"
+                fill
+                sizes="40px"
+                className="object-contain select-none pointer-events-none"
+                draggable={false}
                 priority
               />
             </div>
             <div className="flex flex-col leading-tight select-none">
-              <span className="font-bold text-xs sm:text-sm text-slate-900 tracking-tight">
+              <span className="font-semibold text-sm text-slate-900 tracking-tight">
                 Yayasan PABE
               </span>
             </div>

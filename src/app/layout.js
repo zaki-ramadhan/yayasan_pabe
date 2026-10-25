@@ -22,13 +22,16 @@ const crustaceans = localFont({
   display: "swap",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yayasanpabe.org";
+
 export const metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "Yayasan Payung Berkah (PABE)",
-    template: "%s",
+    default: "Yayasan Payung Berkah | PABE",
+    template: "%s | Yayasan Payung Berkah",
   },
   description:
-    "Platform resmi donasi, zakat, infak, sedekah, dan wakaf Yayasan Payung Berkah (PABE). Transparan, amanah, dan terpercaya.",
+    "Platform resmi donasi, zakat, infak, sedekah, dan wakaf Yayasan Payung Berkah (PABE). Hidup Berkah dengan Sedekah.",
   keywords: [
     "donasi online",
     "zakat online",
@@ -36,20 +39,36 @@ export const metadata = {
     "wakaf",
     "yayasan payung berkah",
     "pabe",
+    "hidup berkah dengan sedekah",
     "kalkulator zakat",
   ],
   authors: [{ name: "Yayasan Payung Berkah (PABE)" }],
   icons: {
-    icon: "/logo_yayasan_GSM.png",
-    shortcut: "/logo_yayasan_GSM.png",
-    apple: "/logo_yayasan_GSM.png",
+    icon: "/img/logo/logo_ypabe.jpeg",
+    shortcut: "/img/logo/logo_ypabe.jpeg",
+    apple: "/img/logo/logo_ypabe.jpeg",
   },
   openGraph: {
-    title: "Yayasan Payung Berkah (PABE)",
-    description: "Salurkan kepedulian Anda untuk masa depan santri, dakwah Al-Qur'an, dan aksi kemanusiaan.",
+    title: "Yayasan Payung Berkah | PABE",
+    description:
+      "Salurkan kepedulian Anda untuk masa depan santri, dakwah Al-Qur'an, dan aksi kemanusiaan. Hidup Berkah dengan Sedekah.",
     siteName: "Yayasan Payung Berkah",
     locale: "id_ID",
     type: "website",
+    images: [
+      {
+        url: "/img/logo/logo_ypabe.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "Logo Yayasan Payung Berkah",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Yayasan Payung Berkah | PABE",
+    description: "Salurkan kepedulian Anda untuk masa depan santri dan aksi kemanusiaan.",
+    images: ["/img/logo/logo_ypabe.jpeg"],
   },
   robots: {
     index: true,
