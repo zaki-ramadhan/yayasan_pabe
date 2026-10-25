@@ -3,6 +3,13 @@ const nextConfig = {
   reactCompiler: true,
   allowedDevOrigins: ["169.254.236.147", "169.254.236.147:3000", "localhost:3000", "127.0.0.1:3000"],
   images: {
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 31536000,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     remotePatterns: [
       {
         protocol: "https",
@@ -56,6 +63,15 @@ const nextConfig = {
   },
   async headers() {
     return [
+      {
+        source: "/(img|icons)/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
       {
         source: "/:path*",
         headers: [
