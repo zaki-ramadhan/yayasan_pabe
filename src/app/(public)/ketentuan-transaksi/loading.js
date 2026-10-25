@@ -14,58 +14,101 @@ export default function KetentuanTransaksiLoading() {
         </div>
       </div>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6 sm:space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10 lg:space-y-12">
+        {/* Section 1: AkadTermsSection Skeleton (Tanpa outer border/padding) */}
+        <div className="space-y-3">
+          <Skeleton className="h-6 w-64 rounded" />
 
-      {/* Table 1: Virtual Account (VA) */}
-      <div className="rounded-lg border border-slate-200 bg-white shadow-2xs overflow-hidden">
-        <div className="p-4 sm:p-5 sm:py-3.5 border-b border-slate-200 bg-slate-50/60 space-y-1">
-          <Skeleton className="h-5 w-48 rounded" />
-          <Skeleton className="h-3.5 w-72 rounded" />
-        </div>
-        <div className="divide-y divide-slate-100">
-          <div className="px-4 py-3 bg-slate-50/30 flex justify-between">
-            <Skeleton className="h-4 w-40 rounded" />
-            <Skeleton className="h-4 w-28 rounded" />
-            <Skeleton className="h-4 w-28 rounded" />
-          </div>
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="px-4 py-3.5 flex justify-between items-center">
-              <div className="flex items-center gap-3 w-1/2">
-                <Skeleton className="w-8 h-8 rounded-md shrink-0" />
-                <Skeleton className="h-4 w-32 rounded" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+            {/* Card 0: Blue Themed */}
+            <div className="p-4 sm:p-5 rounded-lg border border-blue-900/60 bg-blue-950/80 space-y-2 shadow-xs">
+              <Skeleton className="h-5 w-40 bg-blue-800/80 rounded" />
+              <div className="space-y-1.5 pt-0.5">
+                <Skeleton className="h-3.5 w-full bg-blue-900/60 rounded" />
+                <Skeleton className="h-3.5 w-5/6 bg-blue-900/60 rounded" />
               </div>
-              <Skeleton className="h-4 w-24 w-1/4 rounded" />
-              <Skeleton className="h-4 w-24 w-1/4 rounded" />
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Table 2: E-Wallet & QRIS */}
-      <div className="rounded-lg border border-slate-200 bg-white shadow-2xs overflow-hidden">
-        <div className="p-4 sm:p-5 sm:py-3.5 border-b border-slate-200 bg-slate-50/60 space-y-1">
-          <Skeleton className="h-5 w-40 rounded" />
-          <Skeleton className="h-3.5 w-64 rounded" />
-        </div>
-        <div className="divide-y divide-slate-100">
-          <div className="px-4 py-3 bg-slate-50/30 flex justify-between">
-            <Skeleton className="h-4 w-40 rounded" />
-            <Skeleton className="h-4 w-28 rounded" />
-            <Skeleton className="h-4 w-28 rounded" />
-          </div>
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="px-4 py-3.5 flex justify-between items-center">
-              <div className="flex items-center gap-3 w-1/2">
-                <Skeleton className="w-8 h-8 rounded-md shrink-0" />
-                <Skeleton className="h-4 w-28 rounded" />
+            {/* Card 1: White Card */}
+            <div className="p-4 sm:p-5 rounded-lg border border-slate-200 bg-white space-y-2 shadow-2xs">
+              <Skeleton className="h-5 w-36 rounded" />
+              <div className="space-y-1.5 pt-0.5">
+                <Skeleton className="h-3.5 w-full rounded" />
+                <Skeleton className="h-3.5 w-5/6 rounded" />
               </div>
-              <Skeleton className="h-4 w-24 w-1/4 rounded" />
-              <Skeleton className="h-4 w-24 w-1/4 rounded" />
             </div>
-          ))}
+
+            {/* Card 2: White Card */}
+            <div className="p-4 sm:p-5 rounded-lg border border-slate-200 bg-white space-y-2 shadow-2xs">
+              <Skeleton className="h-5 w-44 rounded" />
+              <div className="space-y-1.5 pt-0.5">
+                <Skeleton className="h-3.5 w-full rounded" />
+                <Skeleton className="h-3.5 w-5/6 rounded" />
+              </div>
+            </div>
+
+            {/* Card 3: Slate Themed */}
+            <div className="p-4 sm:p-5 rounded-lg border border-slate-700/60 bg-slate-900 space-y-2 shadow-xs">
+              <Skeleton className="h-5 w-40 bg-slate-700 rounded" />
+              <div className="space-y-1.5 pt-0.5">
+                <Skeleton className="h-3.5 w-full bg-slate-800 rounded" />
+                <Skeleton className="h-3.5 w-5/6 bg-slate-800 rounded" />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </main>
-  </div>
-);
+
+        {/* Section 2 & 3: Split Kanan-Kiri Tabel Batas Transaksi */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 items-start">
+          {/* Table 1: Virtual Account (VA) (2 channels) */}
+          <div className="space-y-3">
+            <Skeleton className="h-6 w-52 rounded" />
+            <div className="rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
+              <div className="divide-y divide-slate-100">
+                <div className="px-4 py-3 bg-slate-50/50 flex justify-between">
+                  <Skeleton className="h-4 w-36 rounded" />
+                  <Skeleton className="h-4 w-20 rounded" />
+                  <Skeleton className="h-4 w-20 rounded" />
+                </div>
+                {[1, 2].map((i) => (
+                  <div key={i} className="px-4 py-3.5 flex justify-between items-center">
+                    <div className="flex items-center gap-3 w-1/2">
+                      <Skeleton className="w-8 h-8 rounded-md shrink-0" />
+                      <Skeleton className="h-4 w-28 rounded" />
+                    </div>
+                    <Skeleton className="h-4 w-20 rounded" />
+                    <Skeleton className="h-4 w-20 rounded" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Table 2: E-Wallet & QRIS (5 channels) */}
+          <div className="space-y-3">
+            <Skeleton className="h-6 w-56 rounded" />
+            <div className="rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
+              <div className="divide-y divide-slate-100">
+                <div className="px-4 py-3 bg-slate-50/50 flex justify-between">
+                  <Skeleton className="h-4 w-36 rounded" />
+                  <Skeleton className="h-4 w-20 rounded" />
+                  <Skeleton className="h-4 w-20 rounded" />
+                </div>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="px-4 py-3.5 flex justify-between items-center">
+                    <div className="flex items-center gap-3 w-1/2">
+                      <Skeleton className="w-8 h-8 rounded-md shrink-0" />
+                      <Skeleton className="h-4 w-24 rounded" />
+                    </div>
+                    <Skeleton className="h-4 w-20 rounded" />
+                    <Skeleton className="h-4 w-20 rounded" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }

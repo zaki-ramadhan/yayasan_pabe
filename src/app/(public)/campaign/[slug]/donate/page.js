@@ -12,8 +12,8 @@ export async function generateMetadata({ params }) {
   const campaign = await getCampaignBySlug(slug);
   if (!campaign) return { title: "Program Tidak Ditemukan" };
   return {
-    title: `Formulir Donasi: ${campaign.title}`,
-    description: `Salurkan donasi Anda untuk ${campaign.title} melalui Yayasan Payung Berkah.`,
+    title: `Donasi: ${campaign.title}`,
+    description: `Salurkan donasi Anda untuk ${campaign.title} melalui Yayasan Payung Berkah. Hidup Berkah dengan Sedekah.`,
   };
 }
 

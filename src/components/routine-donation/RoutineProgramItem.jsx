@@ -1,7 +1,6 @@
 "use client";
 
 import { Trash2 } from "lucide-react";
-import { CAMPAIGNS } from "@/data/campaigns";
 import { isCampaignClosed } from "@/lib/formatters";
 import { TimeInput24Hour } from "@/components/ui/TimeInput24Hour";
 import { RoutineProgramPicker } from "./RoutineProgramPicker";
@@ -30,13 +29,13 @@ export function RoutineProgramItem({
   item,
   index,
   totalItems,
-  campaigns = CAMPAIGNS,
+  campaigns = [],
   onRemove,
   onChange,
 }) {
-  const rawList = campaigns && campaigns.length > 0 ? campaigns : CAMPAIGNS;
+  const rawList = Array.isArray(campaigns) ? campaigns : [];
   const campaignList = rawList.filter((c) => !isCampaignClosed(c));
-  const selectedCampaign = campaignList.find((c) => c.id === item.campaignId) || campaignList[0];
+  const selectedCampaign = campaignList.find((c) => c.id === item.campaignId) || campaignList[0] || null;
   const currentRoutineType = item.routineType || "REMINDER_ONLY";
   const isAutoDonation = currentRoutineType === "AUTO_DONATION";
 

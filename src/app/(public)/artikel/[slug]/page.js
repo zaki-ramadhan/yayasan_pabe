@@ -13,9 +13,32 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
   if (!article) return { title: "Artikel Tidak Ditemukan" };
+
+  const ogImage = article.bannerUrl || "/img/logo/logo_ypabe.jpeg";
+
   return {
     title: article.title,
     description: article.excerpt,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      type: "article",
+      url: `/artikel/${slug}`,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.excerpt,
+      images: [ogImage],
+    },
   };
 }
 
@@ -60,6 +83,7 @@ export default async function ArticleDetailPage({ params }) {
             <SafeImage
               src={article.bannerUrl}
               alt={article.title}
+              priority
               fallbackText={article.category}
             />
           </div>

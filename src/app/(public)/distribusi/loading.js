@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DistribusiLoading() {
@@ -127,8 +128,8 @@ export default function DistribusiLoading() {
           </div>
         </div>
 
-        {/* Row 2: Section 3 Berada di Tengah Sumbu X (SK Dewan Pengawas Syariah) */}
-        <div className="flex justify-center">
+        {/* Row 2: Section 3 Berada di Tengah Sumbu X (SK Dewan Pengawas Syariah - Chart Terakhir) */}
+        <div className="flex justify-center pb-8 sm:pb-10 border-b border-slate-200">
           <div className="w-full max-w-2xl space-y-4">
             {/* Header: Title + Accent Bar + Action Link */}
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
@@ -159,6 +160,72 @@ export default function DistribusiLoading() {
                   <Skeleton className="h-5 w-32 max-w-full rounded" />
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Daftar Transparansi Penerima Manfaat Skeleton (Setelah Seluruh Chart) */}
+        <div className="space-y-6">
+          {/* Heading: Tanpa padding, font-medium, tanpa subheading */}
+          <div>
+            <Skeleton className="h-7 w-72 rounded-md" />
+          </div>
+
+          {/* Stats Bar Cards Bentuk Folder Putih Polos (2 Baris Tanpa Icon) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="relative w-full aspect-[363/224]"
+              >
+                <img
+                  src="/img/folder%20admin.svg?v=3"
+                  alt=""
+                  aria-hidden="true"
+                  draggable="false"
+                  className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none opacity-80"
+                />
+                <div className="relative z-10 h-full flex flex-col justify-end pb-3.5 sm:pb-4 md:pb-4.5 px-3.5 sm:px-4 md:px-5 space-y-1">
+                  <Skeleton className="h-3.5 w-28 rounded" />
+                  <Skeleton className="h-6 w-32 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Table Toolbar & Single Full-Width Table Skeleton */}
+          <div className="space-y-3.5">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <Skeleton className="h-10 w-full max-w-sm rounded-lg" />
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-10 w-44 rounded-lg" />
+                <Skeleton className="h-10 w-40 sm:w-44 rounded-lg" />
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
+              <div className="divide-y divide-slate-100">
+                <div className="bg-slate-50/90 px-4 py-3 flex items-center justify-between border-b border-slate-200">
+                  <Skeleton className="h-4 w-12 rounded" />
+                  <Skeleton className="h-4 w-52 rounded" />
+                  <Skeleton className="h-4 w-28 rounded" />
+                  <Skeleton className="h-4 w-24 rounded" />
+                </div>
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((rowIdx) => (
+                  <div key={rowIdx} className="px-4 py-3.5 flex items-center justify-between">
+                    <Skeleton className="h-3.5 w-8 rounded" />
+                    <Skeleton className="h-4 w-56 rounded" />
+                    <Skeleton className="h-5 w-24 rounded" />
+                    <Skeleton className="h-3.5 w-20 rounded" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination footer skeleton inside container */}
+              <div className="px-4 py-3 border-t border-slate-200/90 bg-white flex items-center justify-between">
+                <Skeleton className="h-4 w-44 rounded" />
+                <Skeleton className="h-8 w-56 rounded" />
+              </div>
             </div>
           </div>
         </div>

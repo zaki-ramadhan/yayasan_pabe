@@ -15,6 +15,7 @@ import {
 import { getStoredUser } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import {
 	sanitizeName,
 	sanitizePhone,
@@ -45,6 +46,7 @@ export function VolunteerForm() {
 	const [interest, setInterest] = useState("");
 	const [motivation, setMotivation] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [isEmailLocked, setIsEmailLocked] = useState(false);
 
 	// Restore draft if user refreshed the page or experienced disconnect
 	useEffect(() => {
@@ -189,13 +191,8 @@ export function VolunteerForm() {
 					"@facebook.user",
 				)
 			) {
-				setEmail(
-					(
-						prev,
-					) =>
-						prev ||
-						user.email,
-				);
+				setEmail(user.email);
+				setIsEmailLocked(true);
 			}
 		});
 	}, []);
@@ -225,19 +222,18 @@ export function VolunteerForm() {
 			return;
 		}
 
-		if (email) {
-			const emailVal =
-				validateEmail(
-					email,
-				);
-			if (
-				!emailVal.isValid
-			) {
-				toast.error(
-					emailVal.message,
-				);
-				return;
-			}
+		const emailVal =
+			validateEmail(
+				email,
+			);
+		if (
+			!emailVal.isValid
+		) {
+			toast.error(
+				emailVal.message ||
+					"Email wajib diisi dengan format yang benar.",
+			);
+			return;
 		}
 
 		const cleanCity =
@@ -424,10 +420,17 @@ export function VolunteerForm() {
 
 				<div className="space-y-1.5">
 					<label className="text-sm font-semibold text-slate-800 block">
-						Email
+						Email{" "}
+						<span className="text-rose-500">
+							*
+						</span>
 					</label>
 					<Input
 						type="email"
+						required
+						readOnly={
+							isEmailLocked
+						}
 						value={
 							email
 						}
@@ -436,18 +439,36 @@ export function VolunteerForm() {
 						}
 						onChange={(
 							e,
-						) =>
-							setEmail(
-								sanitizeEmail(
-									e
-										.target
-										.value,
-								),
-							)
-						}
+						) => {
+							if (
+								!isEmailLocked
+							) {
+								setEmail(
+									sanitizeEmail(
+										e
+											.target
+											.value,
+									),
+								);
+							}
+						}}
 						placeholder="email@anda.com"
-						className="h-11"
+						className={cn(
+							"h-11",
+							isEmailLocked &&
+								"bg-slate-100 text-slate-600 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200",
+						)}
 					/>
+					{isEmailLocked && (
+						<span className="text-xs text-slate-600 block font-normal">
+							Email
+							terkunci
+							sesuai
+							akun
+							login
+							Anda.
+						</span>
+					)}
 				</div>
 			</div>
 
@@ -576,9 +597,8 @@ export function VolunteerForm() {
 
 			<Button
 				type="submit"
-				disabled={
-					loading
-				}
+				isLoading={loading}
+				disabled={loading}
 				className="w-full h-11 font-medium"
 			>
 				{loading

@@ -5,14 +5,15 @@ import { CareerHeader } from "@/components/careers/CareerHeader";
 import { CareerFilterBar } from "@/components/careers/CareerFilterBar";
 import { CareerMasterList } from "@/components/careers/CareerMasterList";
 import { CareerDetailPanel } from "@/components/careers/CareerDetailPanel";
-import { CAREER_VACANCIES } from "@/data/careers";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
 
 export default function KarierPage() {
-  const [vacancies, setVacancies] = useState(CAREER_VACANCIES);
+  const [vacancies, setVacancies] = useState([]);
+  const [activeJobId, setActiveJobId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [location, setLocation] = useState("Semua Lokasi");
   const [type, setType] = useState("Semua Tipe");
   const [department, setDepartment] = useState("Semua Divisi");
@@ -21,17 +22,15 @@ export default function KarierPage() {
     safeFetch("/api/careers", { timeoutMs: 8000 })
       .then((res) => res.json())
       .then((res) => {
-        if (res.success && Array.isArray(res.data) && res.data.length > 0) {
+        if (res.success && Array.isArray(res.data)) {
           setVacancies(res.data);
+          if (res.data.length > 0) {
+            setActiveJobId((prev) => prev || res.data[0].id);
+          }
         }
       })
-      .catch((err) => console.warn("Failed to fetch vacancies:", err));
+      .catch((err) => console.error("Failed to fetch vacancies:", err));
   }, []);
-
-  // Debounced search query (300ms) for performance and smooth filtering
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
-
-  const [activeJobId, setActiveJobId] = useState(CAREER_VACANCIES[0]?.id || null);
 
   // Secure search change handler with validation & sanitization
   const handleSearchChange = (rawQuery) => {

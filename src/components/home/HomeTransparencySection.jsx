@@ -18,7 +18,7 @@ export function HomeTransparencySection({
   className = "",
 }) {
   return (
-    <section className={cn("py-12 sm:py-16 relative overflow-hidden", className)}>
+    <section className={cn("relative overflow-hidden", className)}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         <SectionHeader
           title={title}

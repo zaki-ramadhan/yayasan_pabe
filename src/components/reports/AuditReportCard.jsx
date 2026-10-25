@@ -54,7 +54,7 @@ export function AuditReportCard({ report }) {
         <div className="py-2 sm:py-0 sm:px-3 space-y-0.5">
           <span className="text-sm font-normal text-slate-600 block">Penerima Manfaat</span>
           <span className="font-medium text-slate-950 text-base block">
-            {formatNumber(report.beneficiaryCount)} Jiwa
+            {formatNumber(report.beneficiaryCount)} Orang
           </span>
         </div>
         <div className="py-2 sm:py-0 sm:px-3 last:pr-0 space-y-0.5">

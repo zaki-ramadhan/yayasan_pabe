@@ -10,7 +10,30 @@ import { DashedDivider } from "@/components/ui/DashedDivider";
 
 export const metadata = {
   title: "Tentang Kami",
-  description: "Profil lengkap, struktur dewan pengurus, legalitas resmi, dan visi misi Yayasan Payung Berkah (PABE).",
+  description:
+    "Profil lengkap, struktur dewan pengurus, legalitas resmi, dan visi misi Yayasan Payung Berkah (PABE). Hidup Berkah dengan Sedekah.",
+  openGraph: {
+    title: "Tentang Kami - Yayasan Payung Berkah (PABE)",
+    description:
+      "Profil lengkap, struktur dewan pengurus, legalitas resmi, dan visi misi Yayasan Payung Berkah (PABE). Hidup Berkah dengan Sedekah.",
+    url: "/tentang-kami",
+    type: "website",
+    images: [
+      {
+        url: "/img/logo/logo_ypabe.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "Profil Resmi Yayasan Payung Berkah",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tentang Kami - Yayasan Payung Berkah (PABE)",
+    description:
+      "Profil lengkap, struktur dewan pengurus, legalitas resmi, dan visi misi Yayasan Payung Berkah (PABE).",
+    images: ["/img/logo/logo_ypabe.jpeg"],
+  },
 };
 
 export default async function TentangKamiPage() {

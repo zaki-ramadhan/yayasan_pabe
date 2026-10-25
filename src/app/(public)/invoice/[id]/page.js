@@ -8,7 +8,7 @@ import { InvoiceDisplay } from "@/components/modules/InvoiceDisplay";
 export async function generateMetadata({ params }) {
   const { id } = await params;
   return {
-    title: `Instruksi Pembayaran Donasi #${id}`,
+    title: `Instruksi Pembayaran #${id}`,
     description: "Selesaikan pembayaran donasi Anda melalui QRIS atau Virtual Account Yayasan Payung Berkah.",
   };
 }

@@ -1,12 +1,9 @@
 import { Input } from "@/components/ui/input";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
-import { SalutationDropdown } from "@/components/routine-donation/SalutationDropdown";
 import { cn } from "@/lib/utils";
 import { sanitizeName, sanitizePhone, sanitizeEmail } from "@/lib/security";
 
 export function RoutineDonorIdentity({
-  salutation = "Bapak",
-  setSalutation,
   fullName,
   setFullName,
   whatsapp,
@@ -29,31 +26,21 @@ export function RoutineDonorIdentity({
         onChange={setIsAnonymous}
       />
 
-      {/* Full Name & Sapaan */}
+      {/* Full Name */}
       {!isAnonymous && (
         <div className="space-y-1.5">
           <label className="text-sm font-semibold text-slate-800 block">
             Nama Lengkap <span className="text-rose-500">*</span>
           </label>
-          <div className="flex gap-2.5">
-            <SalutationDropdown
-              value={salutation}
-              onChange={setSalutation}
-            />
-
-            {/* Input Name using @/components/ui/input */}
-            <div className="flex-1 min-w-0">
-              <Input
-                type="text"
-                required={!isAnonymous}
-                value={fullName}
-                maxLength={60}
-                onChange={(e) => setFullName(sanitizeName(e.target.value))}
-                placeholder="Contoh: Ahmad Fauzi"
-                className="h-11 text-sm sm:text-base border-slate-300 focus:ring-primary font-normal"
-              />
-            </div>
-          </div>
+          <Input
+            type="text"
+            required={!isAnonymous}
+            value={fullName}
+            maxLength={60}
+            onChange={(e) => setFullName(sanitizeName(e.target.value))}
+            placeholder="Contoh: Ahmad Fauzi"
+            className="h-11 text-sm sm:text-base border-slate-300 focus:ring-primary font-normal"
+          />
         </div>
       )}
 

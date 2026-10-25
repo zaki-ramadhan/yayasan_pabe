@@ -8,19 +8,21 @@ import { formatVolunteerId } from "@/lib/volunteerUtils";
 import { ORG_PROFILE } from "@/data/orgProfile";
 
 export function VolunteerIdCard({ volunteer, className = "" }) {
-  if (!volunteer) return null;
-
   const regId = useMemo(() => {
+    if (!volunteer) return "";
     return volunteer.volunteerId || formatVolunteerId(volunteer.id, volunteer.createdAt);
   }, [volunteer]);
 
   // Construct absolute validation URL
   const validationUrl = useMemo(() => {
+    if (!volunteer?.id) return "";
     if (typeof window !== "undefined") {
       return `${window.location.origin}/relawan/validasi/${volunteer.id}`;
     }
     return `https://payungberkah.id/relawan/validasi/${volunteer.id}`;
-  }, [volunteer.id]);
+  }, [volunteer]);
+
+  if (!volunteer) return null;
 
   const initials = getInitials(volunteer.fullName, "R");
 

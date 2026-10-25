@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect, useSyncExternalStore } from "react";
@@ -47,6 +48,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
   const [donorName, setDonorName] = useState("");
   const [donorPhone, setDonorPhone] = useState("");
   const [donorEmail, setDonorEmail] = useState("");
+  const [isEmailLocked, setIsEmailLocked] = useState(false);
   const [prayer, setPrayer] = useState(() => {
     if (typeof window !== "undefined") {
       const sp = new URLSearchParams(window.location.search);
@@ -125,6 +127,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       }
       if (user.email && !user.email.endsWith("@google.user") && !user.email.endsWith("@facebook.user")) {
         setDonorEmail(user.email);
+        setIsEmailLocked(true);
       }
       if (user.phone && user.phone !== "-") {
         const cleanPhone = sanitizePhone(user.phone);
@@ -204,12 +207,10 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       return;
     }
 
-    if (donorEmail) {
-      const emailVal = validateEmail(donorEmail);
-      if (!emailVal.isValid) {
-        toast.error(emailVal.message);
-        return;
-      }
+    const emailVal = validateEmail(donorEmail);
+    if (!emailVal.isValid) {
+      toast.error(emailVal.message || "Email donatur wajib diisi dengan format yang benar.");
+      return;
     }
 
     try {
@@ -277,6 +278,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     setDonorPhone,
     donorEmail,
     setDonorEmail,
+    isEmailLocked,
     prayer,
     setPrayer,
     selectedChannelId,

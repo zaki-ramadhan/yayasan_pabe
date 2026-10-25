@@ -2,12 +2,14 @@
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 export function CareerApplyFormFields({
   job,
   formData,
   onChange,
   onPhoneChange,
+  isEmailLocked = false,
 }) {
   return (
     <>
@@ -47,11 +49,24 @@ export function CareerApplyFormFields({
             type="email"
             placeholder="nama@email.com"
             value={formData.email}
-            onChange={(e) => onChange("email", e.target.value)}
+            readOnly={isEmailLocked}
+            onChange={(e) => {
+              if (!isEmailLocked) {
+                onChange("email", e.target.value);
+              }
+            }}
             required
             autoComplete="email"
-            className="text-xs h-9"
+            className={cn(
+              "text-xs h-9",
+              isEmailLocked && "bg-slate-100 text-slate-600 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
+            )}
           />
+          {isEmailLocked && (
+            <span className="text-[11px] text-slate-500 block">
+              Email terkunci sesuai akun login Anda.
+            </span>
+          )}
         </div>
       </div>
 

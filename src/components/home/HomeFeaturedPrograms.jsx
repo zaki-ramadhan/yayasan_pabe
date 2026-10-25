@@ -24,7 +24,8 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
           src="/img/line%20decoration.svg"
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-fill opacity-8"
+          draggable="false"
+          className="absolute inset-0 w-full h-full object-fill opacity-8 pointer-events-none select-none"
         />
       </div>
 
@@ -33,7 +34,7 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
           {/* Kolom Kiri: Sticky Header & Navigasi Program */}
           <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
             <div className="space-y-2 sm:space-y-2.5">
-              <h2 className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-slate-950 tracking-tight leading-tight">
                 Program Donasi Pilihan
               </h2>
               <p className="text-base text-slate-700 leading-relaxed font-normal">
@@ -60,7 +61,7 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
 
           {/* Kolom Kanan: Grid Kartu Program Minimalis (2 Kolom, Tepat 4 Kartu 2x2) */}
           <div className="lg:col-span-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-4.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
               {displayedCampaigns.map((camp, index) => (
                 <div key={camp.id} className="flex h-full">
                   <CampaignCardMinimal campaign={camp} priority={index === 0} />

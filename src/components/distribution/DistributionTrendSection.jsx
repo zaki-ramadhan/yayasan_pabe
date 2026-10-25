@@ -5,7 +5,6 @@ import { DistributionSectionHeader } from "./DistributionSectionHeader";
 import { DistributionYearFilter } from "./DistributionYearFilter";
 import { DistributionAreaChart } from "./DistributionAreaChart";
 import { DistributionStatGrid } from "./DistributionStatGrid";
-import { DISTRIBUTION_YEAR_OPTIONS } from "@/data/distributionData";
 import { formatRupiah, formatNumber } from "@/lib/formatters";
 
 /**
@@ -15,9 +14,12 @@ import { formatRupiah, formatNumber } from "@/lib/formatters";
  * @param {Record<string, Array>} props.trendData
  */
 export function DistributionTrendSection({ trendData = {} }) {
-  const [selectedYear, setSelectedYear] = useState(DISTRIBUTION_YEAR_OPTIONS[0]);
+  const availableYears = Object.keys(trendData).length > 0
+    ? Object.keys(trendData).sort().reverse()
+    : [`Tahun ${new Date().getFullYear()}`];
+  const [selectedYear, setSelectedYear] = useState(availableYears[0]);
 
-  const activeSeries = trendData[selectedYear] || trendData[DISTRIBUTION_YEAR_OPTIONS[0]] || [];
+  const activeSeries = trendData[selectedYear] || trendData[availableYears[0]] || [];
 
   const totalPeriodAmount = activeSeries.reduce((acc, item) => acc + (item.amount || 0), 0);
   const totalPeriodBeneficiaries = activeSeries.reduce(
@@ -36,7 +38,7 @@ export function DistributionTrendSection({ trendData = {} }) {
     { label: "Akumulasi Penyaluran", value: formatRupiah(totalPeriodAmount) },
     {
       label: "Total Penerima Manfaat",
-      value: `${formatNumber(totalPeriodBeneficiaries)} Jiwa`,
+      value: `${formatNumber(totalPeriodBeneficiaries)} Orang`,
     },
     {
       label: "Rata-rata Bulanan",
@@ -57,7 +59,7 @@ export function DistributionTrendSection({ trendData = {} }) {
         action={
           <DistributionYearFilter
             selectedYear={selectedYear}
-            options={DISTRIBUTION_YEAR_OPTIONS}
+            options={availableYears}
             onYearChange={setSelectedYear}
           />
         }

@@ -46,28 +46,33 @@ export function HomeHero({ defaultCampaignSlug }) {
   return (
     <section className="relative overflow-hidden border-b border-slate-300 py-14 sm:py-20">
       {/* Background Image Slideshow Layer */}
-      <div className="absolute inset-0 z-0">
+      <div
+        className="absolute inset-0 z-0 pointer-events-none select-none"
+        onContextMenu={(e) => e.preventDefault()}
+      >
         {HERO_SLIDES.map((slide, idx) => (
           <div
             key={slide.id}
             className={cn(
-              "absolute inset-0 transition-opacity duration-1000 ease-in-out",
+              "absolute inset-0 transition-opacity duration-1000 ease-in-out pointer-events-none select-none",
               idx === currentSlide ? "opacity-100" : "opacity-0 pointer-events-none"
             )}
           >
             <Image
               src={slide.image}
-              alt={slide.label}
+              alt=""
               fill
               priority={idx === 0}
               sizes="100vw"
-              className="object-cover object-center transform scale-105 transition-transform duration-10000 ease-out"
+              className="object-cover object-center transform scale-105 transition-transform duration-10000 ease-out pointer-events-none select-none"
+              draggable={false}
+              aria-hidden="true"
             />
           </div>
         ))}
 
         {/* Directional Light Overlay: Solid enough on left so text is 100% crisp & non-faint, transparent on right */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/20 sm:to-white/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/20 sm:to-white/10 pointer-events-none select-none" />
       </div>
 
       {/* Foreground Content */}

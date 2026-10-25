@@ -1,21 +1,19 @@
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Bell, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CAMPAIGNS } from "@/data/campaigns";
 import { formatRupiah } from "@/lib/formatters";
 import { formatRoutineSchedule } from "./RoutineProgramItem";
 
 export function RoutineSuccessView({
   isAnonymous,
-  salutation,
   fullName,
   whatsapp,
   selectedPrograms,
-  campaigns = CAMPAIGNS,
+  campaigns = [],
   onReset,
 }) {
   const router = useRouter();
-  const campaignList = campaigns && campaigns.length > 0 ? campaigns : CAMPAIGNS;
+  const campaignList = Array.isArray(campaigns) ? campaigns : [];
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-16 text-center space-y-6">
@@ -27,7 +25,7 @@ export function RoutineSuccessView({
           Jadwal Donasi Rutin Berhasil Dibuat
         </h1>
         <p className="text-sm sm:text-base text-slate-600 max-w-lg mx-auto">
-          Jazakumullah Khairan {isAnonymous ? "Hamba Allah" : `${salutation} ${fullName}`}. Pengingat dan tautan akad donasi akan dikirimkan otomatis ke WhatsApp <strong className="text-slate-900 font-semibold">{whatsapp}</strong> sesuai jadwal pilihan Anda.
+          Jazakumullah Khairan {isAnonymous ? "Hamba Allah" : fullName}. Pengingat dan tautan akad donasi akan dikirimkan otomatis ke WhatsApp <strong className="text-slate-900 font-semibold">{whatsapp}</strong> sesuai jadwal pilihan Anda.
         </p>
       </div>
 
@@ -44,7 +42,7 @@ export function RoutineSuccessView({
         <div className="space-y-3.5">
           {selectedPrograms.map((p, idx) => {
             const camp =
-              campaignList.find((c) => c.id === p.campaignId) || campaignList[0] || CAMPAIGNS[0];
+              campaignList.find((c) => c.id === p.campaignId) || campaignList[0] || null;
             const nominal = p.customAmount
               ? parseInt(p.customAmount.replace(/\D/g, ""), 10) || 0
               : p.amount;

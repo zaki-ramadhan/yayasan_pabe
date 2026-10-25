@@ -8,7 +8,7 @@ import { InstagramIcon } from "@/components/icons/SocialIcons";
 export function InstagramCardActions({ account }) {
   const profileUrl =
     account?.profileUrl ||
-    `https://www.instagram.com/${(account?.username || "zqramadhan_").replace("@", "")}/`;
+    `https://www.instagram.com/${(account?.username || "yayasanpayungberkah").replace("@", "")}/`;
 
   return (
     <div className="px-3 sm:px-3.5 pt-0.5">

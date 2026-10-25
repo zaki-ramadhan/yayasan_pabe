@@ -24,10 +24,9 @@ import {
  */
 export function TransactionLimitTable({ title, description, items = [] }) {
   return (
-    <TableContainer className="bg-white">
-      {/* Table Header Bar */}
-      <div className="p-4 sm:p-5 sm:py-3 border-b border-slate-200 bg-slate-50/60">
-        <h2 className="text-base sm:text-lg font-semibold text-slate-950">
+    <section className="space-y-3">
+      <div>
+        <h2 className="text-lg sm:text-xl font-medium text-slate-950">
           {title}
         </h2>
         {description && (
@@ -37,8 +36,9 @@ export function TransactionLimitTable({ title, description, items = [] }) {
         )}
       </div>
 
-      {/* Responsive Table */}
-      <Table>
+      <TableContainer className="bg-white">
+        {/* Responsive Table */}
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-1/2 font-medium text-slate-900">
@@ -61,10 +61,11 @@ export function TransactionLimitTable({ title, description, items = [] }) {
               />
             ))
           ) : (
-            <TableEmptyRow colSpan={3} message="Belum ada data" />
+            <TableEmptyRow colSpan={3} />
           )}
         </TableBody>
       </Table>
     </TableContainer>
+    </section>
   );
 }

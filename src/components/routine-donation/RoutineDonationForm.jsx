@@ -11,8 +11,6 @@ import { useRoutineDonation } from "./useRoutineDonation";
 
 export function RoutineDonationForm({ campaigns = [] }) {
   const {
-    salutation,
-    setSalutation,
     fullName,
     setFullName,
     whatsapp,
@@ -35,7 +33,6 @@ export function RoutineDonationForm({ campaigns = [] }) {
     return (
       <RoutineSuccessView
         isAnonymous={isAnonymous}
-        salutation={salutation}
         fullName={fullName}
         whatsapp={whatsapp}
         selectedPrograms={selectedPrograms}
@@ -55,8 +52,6 @@ export function RoutineDonationForm({ campaigns = [] }) {
         {/* Left Column (7 Cols): Donor Identity & Program Selection */}
         <div className="lg:col-span-7 space-y-6">
           <RoutineDonorIdentity
-            salutation={salutation}
-            setSalutation={setSalutation}
             fullName={fullName}
             setFullName={setFullName}
             whatsapp={whatsapp}

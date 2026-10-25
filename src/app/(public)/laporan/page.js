@@ -2,6 +2,8 @@ import { getFinancialLedgerData } from "@/services/reportService";
 import { FinancialLedgerDashboard } from "@/components/reports/FinancialLedgerDashboard";
 import { InformationHeroHeader } from "@/components/shared/InformationHeroHeader";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Laporan Akuntabilitas & Keuangan",
   description: "Transparansi penerimaan donasi, penyaluran program mustahik, dan saldo kas Yayasan Payung Berkah.",

@@ -1,4 +1,3 @@
-import { Lock } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
 import { DONATION_LIMITS } from "@/lib/security";
 import { Button } from "@/components/ui/button";
@@ -86,11 +85,6 @@ export function DonationCheckoutSummary({
               ? `Lanjut Pembayaran (${formatRupiah(totalPayment)})`
               : "Lanjut Pembayaran"}
           </Button>
-
-          <div className="flex items-center justify-center gap-1.5 text-sm text-slate-600 text-center pt-0.5">
-            <Lock className="w-3.5 h-3.5 text-primary shrink-0" />
-            <span>Enkripsi data aman &amp; verifikasi otomatis</span>
-          </div>
         </div>
       </div>
     </div>

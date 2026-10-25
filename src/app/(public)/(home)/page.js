@@ -2,28 +2,36 @@ import { getCampaigns, getQuickDonateTargetSlug } from "@/services/campaignServi
 import { getTransparencyMetrics } from "@/services/reportService";
 import { getArticles } from "@/services/articleService";
 import { getInstagramPosts, getInstagramAccount } from "@/services/instagramService";
+import { getFaqs } from "@/services/faqService";
 import { isCampaignClosed } from "@/lib/formatters";
 import { HomeHero } from "@/components/home/HomeHero";
 import { HomePartnersSection } from "@/components/home/HomePartnersSection";
 import { HomeFeaturedPrograms } from "@/components/home/HomeFeaturedPrograms";
 import { HomeTransparencySection } from "@/components/home/HomeTransparencySection";
+import { HomeStrategicRoadmap } from "@/components/home/HomeStrategicRoadmap";
 import { HomeInstagramFeed } from "@/components/home/HomeInstagramFeed";
 import { HomeArticlesSection } from "@/components/home/HomeArticlesSection";
 import { HomeFaqSection } from "@/components/home/HomeFaqSection";
 import { HomeCtaSection } from "@/components/home/HomeCtaSection";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
-  title: "Beranda",
-  description: "Penyaluran zakat, infak, dan sedekah untuk pendidikan santri dan pemberdayaan dhuafa.",
+  title: {
+    absolute: "Yayasan Payung Berkah | PABE",
+  },
+  description:
+    "Penyaluran zakat, infak, dan sedekah untuk pendidikan santri dan pemberdayaan dhuafa. Hidup Berkah dengan Sedekah.",
 };
 
 export default async function HomePage() {
-  const [allCampaigns, metrics, articles, instagramPosts, instagramAccount] = await Promise.all([
+  const [allCampaigns, metrics, articles, instagramPosts, instagramAccount, faqs] = await Promise.all([
     getCampaigns({ status: "ACTIVE" }),
     getTransparencyMetrics(),
     getArticles({ limit: 10 }),
     getInstagramPosts(18),
     getInstagramAccount(),
+    getFaqs({ limit: 6 }),
   ]);
 
   const activeCampaigns = allCampaigns.filter((c) => !isCampaignClosed(c));
@@ -31,7 +39,7 @@ export default async function HomePage() {
   const quickDonateTargetSlug = getQuickDonateTargetSlug(activeCampaigns);
 
   return (
-    <div className="space-y-10 sm:space-y-12 pb-14">
+    <div className="space-y-16 sm:space-y-20 lg:space-y-28 pb-20 sm:pb-24">
       {/* 1. Hero Section with Quick Donate */}
       <HomeHero defaultCampaignSlug={quickDonateTargetSlug} />
 
@@ -47,7 +55,10 @@ export default async function HomePage() {
       {/* 4. Transparansi & Audit Keuangan */}
       <HomeTransparencySection metrics={metrics} />
 
-      {/* 5. Dokumentasi Media Sosial (Instagram Feed) */}
+      {/* 5. Program Kerja Jangka Panjang (Misi Keberlanjutan Yayasan) */}
+      <HomeStrategicRoadmap />
+
+      {/* 6. Dokumentasi Media Sosial (Instagram Feed) */}
       <HomeInstagramFeed posts={instagramPosts} account={instagramAccount} />
 
       {/* 6. Artikel & FAQ */}
@@ -57,7 +68,7 @@ export default async function HomePage() {
             <HomeArticlesSection articles={articles} />
           </div>
           <div className="lg:col-span-5">
-            <HomeFaqSection />
+            <HomeFaqSection faqs={faqs} />
           </div>
         </div>
       </section>

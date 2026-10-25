@@ -1,74 +1,58 @@
-import { Users, Heart, GraduationCap, ShieldCheck } from "lucide-react";
+/* eslint-disable @next/next/no-img-element */
 
 export function BeneficiaryStatsBar({ stats }) {
   const {
     total = 132,
     yatimCount = 98,
     lansiaDhuafaCount = 34,
-    verifiedStatus = "Terdaftar Resmi LKS Cakung 2026",
   } = stats || {};
 
   const statCards = [
     {
-      label: "Total Jiwa Binaan",
-      value: `${total} Jiwa`,
-      desc: "Anak asuh & lansia terlindungi",
-      icon: Users,
-      colorClass: "text-slate-900 bg-slate-100 border-slate-200",
+      label: "Total Penerima Manfaat",
+      value: `${total} Orang`,
     },
     {
       label: "Anak Yatim Piatu",
       value: `${yatimCount} Anak`,
-      desc: "Bimbel PABE Smart & TPA",
-      icon: GraduationCap,
-      colorClass: "text-emerald-700 bg-emerald-50 border-emerald-200",
     },
     {
       label: "Lansia & Dhu'afa",
-      value: `${lansiaDhuafaCount} Jiwa`,
-      desc: "Layanan akupresur & sembako",
-      icon: Heart,
-      colorClass: "text-sky-700 bg-sky-50 border-sky-200",
+      value: `${lansiaDhuafaCount} Orang`,
     },
     {
-      label: "Validasi LKS",
+      label: "Validasi Legalitas LKS",
       value: "100% Terdata",
-      desc: verifiedStatus,
-      icon: ShieldCheck,
-      colorClass: "text-amber-700 bg-amber-50 border-amber-200",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      {statCards.map((card, idx) => {
-        const Icon = card.icon;
-        return (
-          <div
-            key={idx}
-            className="p-3.5 sm:p-4 rounded-xl border border-slate-200 bg-white shadow-2xs flex flex-col justify-between"
-          >
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <span className="text-xs font-medium text-slate-700 line-clamp-1">
-                {card.label}
-              </span>
-              <div
-                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg border flex items-center justify-center shrink-0 ${card.colorClass}`}
-              >
-                <Icon className="w-4 h-4" />
-              </div>
-            </div>
-            <div>
-              <div className="text-lg sm:text-2xl font-bold text-slate-950 tracking-tight">
-                {card.value}
-              </div>
-              <p className="text-[11px] sm:text-xs text-slate-700 mt-0.5 line-clamp-1">
-                {card.desc}
-              </p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+      {statCards.map((card, idx) => (
+        <div
+          key={idx}
+          className="relative w-full aspect-[363/224]"
+        >
+          {/* Background Folder Frame - Putih Polos */}
+          <img
+            src="/img/folder%20admin.svg?v=3"
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+            className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none"
+          />
+
+          {/* Konten Metrik di Dalam Folder (2 Baris Tanpa Icon & Tanpa Baris ke-3) */}
+          <div className="relative z-10 h-full flex flex-col justify-end pb-3.5 sm:pb-4 md:pb-4.5 px-3.5 sm:px-4 md:px-5 space-y-1">
+            <span className="text-xs sm:text-sm font-medium text-slate-600 block leading-tight truncate">
+              {card.label}
+            </span>
+            <div className="text-lg sm:text-2xl font-semibold text-slate-900 tracking-tight truncate">
+              {card.value}
             </div>
           </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
 }

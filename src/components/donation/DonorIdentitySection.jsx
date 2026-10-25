@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { sanitizeName, sanitizePhone, sanitizeEmail } from "@/lib/security";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
@@ -13,6 +14,7 @@ export function DonorIdentitySection({
   setDonorPhone,
   donorEmail,
   setDonorEmail,
+  isEmailLocked = false,
   prayer,
   setPrayer,
   onPrayerChange,
@@ -60,15 +62,31 @@ export function DonorIdentitySection({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-slate-800 block">Email (Opsional)</label>
+          <label className="text-sm font-semibold text-slate-800 block">
+            Email <span className="text-rose-500">*</span>
+          </label>
           <Input
             type="email"
+            required
+            readOnly={isEmailLocked}
             value={donorEmail}
             maxLength={100}
-            onChange={(e) => setDonorEmail(sanitizeEmail(e.target.value))}
+            onChange={(e) => {
+              if (!isEmailLocked) {
+                setDonorEmail(sanitizeEmail(e.target.value));
+              }
+            }}
             placeholder="email@domain.com"
-            className="h-11 text-sm sm:text-base border-slate-300 focus:ring-primary font-normal"
+            className={cn(
+              "h-11 text-sm sm:text-base border-slate-300 focus:ring-primary font-normal",
+              isEmailLocked && "bg-slate-100 text-slate-600 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
+            )}
           />
+          {isEmailLocked && (
+            <span className="text-xs text-slate-600 block font-normal">
+              Email terkunci sesuai akun login Anda untuk integrasi riwayat donasi.
+            </span>
+          )}
         </div>
       </div>
 

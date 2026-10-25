@@ -1,18 +1,17 @@
 import { Accordion } from "@/components/ui/accordion";
 import { FaqItem } from "@/components/shared/FaqItem";
-import { FAQS } from "@/data/articles";
 
 /**
  * Frequently asked questions accordion on home page
  * @param {object} props
  * @param {Array} [props.faqs]
  */
-export function HomeFaqSection({ faqs = FAQS }) {
+export function HomeFaqSection({ faqs = [] }) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl sm:text-2xl font-semibold text-slate-950">
-          FAQ
+        <h2 className="text-xl sm:text-2xl font-medium text-slate-950 tracking-tight">
+          Pertanyaan Umum (FAQ)
         </h2>
       </div>
 

@@ -1,10 +1,11 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { CampaignCardMinimalSkeleton } from "@/components/home/CampaignCardMinimalSkeleton";
 import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
+import { HomeStrategicRoadmapSkeleton } from "@/components/home/HomeStrategicRoadmapSkeleton";
 
 export default function HomeLoading() {
   return (
-    <div className="space-y-10 sm:space-y-12 pb-14 animate-pulse">
+    <div className="space-y-16 sm:space-y-20 lg:space-y-28 pb-20 sm:pb-24 animate-pulse">
       {/* 1. Hero Section with Quick Donate (Light theme matching HomeHero) */}
       <section className="relative overflow-hidden border-b border-slate-300 py-14 sm:py-20 bg-slate-50/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,6 +35,7 @@ export default function HomeLoading() {
                   src="/img/folder%20hero.svg"
                   alt=""
                   aria-hidden="true"
+                  draggable="false"
                   className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none drop-shadow-md opacity-80"
                 />
 
@@ -57,23 +59,18 @@ export default function HomeLoading() {
         </div>
       </section>
 
-      {/* 2. Mitra & Lembaga Resmi Section (Centered Header & Wrapped Logos) */}
-      <section className="py-6 sm:py-8">
+      {/* 2. Mitra & Lembaga Resmi Section (Centered Header & Borderless Logos) */}
+      <section>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <Skeleton className="h-7 sm:h-8 w-60 mx-auto rounded-lg" />
+            <Skeleton className="h-8 sm:h-9 lg:h-10 w-72 max-w-full mx-auto rounded-lg" />
             <Skeleton className="h-4 w-96 max-w-full mx-auto rounded" />
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className="h-14 sm:h-16 w-32 sm:w-36 rounded-lg border border-slate-200 bg-white p-3 flex items-center justify-center shadow-2xs"
-              >
-                <Skeleton className="h-6 w-20 rounded" />
-              </div>
-            ))}
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 lg:gap-12 xl:gap-14 pt-2">
+            <Skeleton className="h-12 sm:h-14 w-28 sm:w-32 rounded-lg" />
+            <Skeleton className="h-11 sm:h-12 w-11 sm:w-12 rounded-lg" />
+            <Skeleton className="h-8 sm:h-9 w-44 sm:w-52 rounded-lg" />
           </div>
         </div>
       </section>
@@ -86,7 +83,8 @@ export default function HomeLoading() {
             src="/img/line%20decoration.svg"
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-fill opacity-20"
+            draggable="false"
+            className="absolute inset-0 w-full h-full object-fill opacity-20 pointer-events-none select-none"
           />
         </div>
 
@@ -95,7 +93,7 @@ export default function HomeLoading() {
             {/* Kolom Kiri: Sticky Header Skeleton */}
             <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
               <div className="space-y-2 sm:space-y-2.5">
-                <Skeleton className="h-8 sm:h-9 w-64 max-w-full rounded-lg" />
+                <Skeleton className="h-8 sm:h-9 lg:h-10 w-72 max-w-full rounded-lg" />
                 <div className="space-y-1.5">
                   <Skeleton className="h-4 sm:h-4.5 w-full max-w-md rounded" />
                   <Skeleton className="h-4 sm:h-4.5 w-4/5 max-w-sm rounded" />
@@ -110,7 +108,7 @@ export default function HomeLoading() {
 
             {/* Kolom Kanan: Grid 2x2 Kartu Program Minimalis (4 Kartu) */}
             <div className="lg:col-span-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-4.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="flex h-full">
                     <CampaignCardMinimalSkeleton />
@@ -123,10 +121,10 @@ export default function HomeLoading() {
       </section>
 
       {/* 4. Transparansi & Audit Keuangan (12-col grid: Chart on Left, Summary on Right) */}
-      <section className="py-12 sm:py-16 relative overflow-hidden">
+      <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <Skeleton className="h-7 sm:h-8 w-80 mx-auto rounded-lg" />
+            <Skeleton className="h-8 sm:h-9 lg:h-10 w-80 sm:w-96 max-w-full mx-auto rounded-lg" />
             <Skeleton className="h-4 w-[28rem] max-w-full mx-auto rounded" />
           </div>
 
@@ -161,10 +159,13 @@ export default function HomeLoading() {
         </div>
       </section>
 
-      {/* 5. Dokumentasi Media Sosial (Instagram Feed Section) */}
+      {/* 5. Program Kerja Jangka Pendek & Jangka Panjang (Roadmap Section) */}
+      <HomeStrategicRoadmapSkeleton />
+
+      {/* 6. Dokumentasi Media Sosial (Instagram Feed Section) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <Skeleton className="h-7 sm:h-8 w-72 mx-auto rounded-lg" />
+          <Skeleton className="h-8 sm:h-9 lg:h-10 w-72 sm:w-80 max-w-full mx-auto rounded-lg" />
           <Skeleton className="h-4 w-96 max-w-full mx-auto rounded" />
         </div>
 
@@ -202,7 +203,7 @@ export default function HomeLoading() {
           {/* Articles Digest (7 col) */}
           <div className="lg:col-span-7 space-y-4">
             <div className="flex items-center justify-between">
-              <Skeleton className="h-6 sm:h-7 w-52 rounded-lg" />
+              <Skeleton className="h-6 sm:h-7 w-48 sm:w-52 rounded-lg" />
               <Skeleton className="h-4 w-20 rounded" />
             </div>
 
@@ -215,7 +216,7 @@ export default function HomeLoading() {
 
           {/* FAQ Accordion (5 col) */}
           <div className="lg:col-span-5 space-y-4">
-            <Skeleton className="h-6 sm:h-7 w-20 rounded-lg" />
+            <Skeleton className="h-6 sm:h-7 w-44 sm:w-48 rounded-lg" />
 
             <div className="space-y-2.5">
               {[1, 2, 3, 4].map((i) => (

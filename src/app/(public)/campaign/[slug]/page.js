@@ -13,9 +13,32 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const campaign = await getCampaignBySlug(slug);
   if (!campaign) return { title: "Program Tidak Ditemukan" };
+
+  const ogImage = campaign.bannerUrl || "/img/logo/logo_ypabe.jpeg";
+
   return {
     title: campaign.title,
     description: campaign.excerpt,
+    openGraph: {
+      title: campaign.title,
+      description: campaign.excerpt,
+      type: "website",
+      url: `/campaign/${slug}`,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: campaign.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: campaign.title,
+      description: campaign.excerpt,
+      images: [ogImage],
+    },
   };
 }
 

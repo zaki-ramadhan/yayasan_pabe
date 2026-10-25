@@ -67,6 +67,7 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-pengh
         src="/img/folder%20hero.svg"
         alt=""
         aria-hidden="true"
+        draggable="false"
         className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none drop-shadow-lg"
       />
 

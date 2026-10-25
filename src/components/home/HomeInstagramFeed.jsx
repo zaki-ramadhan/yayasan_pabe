@@ -42,7 +42,6 @@ export function HomeInstagramFeed({ posts = [], account = DEFAULT_ACCOUNT }) {
         title="Follow Kami di Instagram"
         subtitle="Aktivitas harian santri, penyaluran amanah zakat, dan aksi kemanusiaan terkini."
         align="center"
-        size="lg"
       />
 
       {/* Profile Card Container with Animated CurvedLoop Decorative Backdrop */}

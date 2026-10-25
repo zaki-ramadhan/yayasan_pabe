@@ -59,30 +59,34 @@ export function TransparencySummaryCard({
   const monthlyTrend = Array.isArray(metrics?.monthlyTrend) ? metrics.monthlyTrend : [];
   const total12Months = monthlyTrend.reduce((acc, item) => acc + (item.amount || 0), 0);
   const totalCount = monthlyTrend.reduce((acc, item) => acc + (item.count || 0), 0);
+  const totalAllTime = metrics?.totalDonationsAllTime ?? total12Months;
+  const totalTransactions = metrics?.totalTransactions ?? totalCount;
+  const totalBeneficiaries = metrics?.totalBeneficiaries ?? 0;
+  const auditOpinion = metrics?.kapAuditOpinion || "WTP";
 
   const defaultItems = [
     {
       title: "Penyaluran (12 Bulan Terakhir)",
       prefix: "Rp",
-      value: formatNumber(total12Months),
+      value: formatNumber(total12Months > 0 ? total12Months : totalAllTime),
       isPrimary: true,
     },
     {
-      title: "Total Transaksi",
-      value: formatNumber(totalCount),
+      title: "Total Transaksi Donasi",
+      value: `${formatNumber(totalTransactions)} Transaksi`,
     },
     {
-      title: "Akumulasi Program",
+      title: "Akumulasi Dana Terhimpun",
       prefix: "Rp",
-      value: "12,5 Miliar",
+      value: formatNumber(totalAllTime),
     },
     {
-      title: "Penerima Manfaat",
-      value: "32.400+ Jiwa",
+      title: "Penerima Manfaat Terverifikasi",
+      value: `${formatNumber(totalBeneficiaries)} Jiwa`,
     },
     {
-      title: "Efektivitas Penyaluran",
-      value: "91,2%",
+      title: "Opini Audit KAP",
+      value: auditOpinion,
     },
   ];
 

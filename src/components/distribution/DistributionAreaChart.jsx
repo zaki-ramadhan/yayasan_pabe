@@ -69,7 +69,7 @@ export function DistributionAreaChart({ data = [] }) {
                       <div className="flex items-center justify-between gap-4 text-slate-500 font-normal">
                         <span>Penerima:</span>
                         <span className="font-medium text-slate-900">
-                          {formatNumber(item.beneficiaries)} Jiwa
+                          {formatNumber(item.beneficiaries)} Orang
                         </span>
                       </div>
                     </div>

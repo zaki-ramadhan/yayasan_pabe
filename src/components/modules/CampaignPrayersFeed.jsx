@@ -59,7 +59,7 @@ export function CampaignPrayersFeed({ initialDonors = [] }) {
             Doa &amp; Dukungan Kebaikan
           </h3>
           <p className="text-sm sm:text-base text-slate-600 mt-0.5">
-            Untaian doa tulus dari para donatur untuk mustahik dan sesama.
+            Untaian doa tulus dari para donatur untuk saudara yang membutuhkan dan sesama.
           </p>
         </div>
 

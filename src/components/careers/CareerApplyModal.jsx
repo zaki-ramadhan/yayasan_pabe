@@ -15,6 +15,7 @@ import { CareerApplyFormFields } from "./CareerApplyFormFields";
 import { sanitizeInput } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
+import { getStoredUser } from "@/services/authService";
 
 export function CareerApplyModal({ isOpen, onClose, job }) {
   const [formData, setFormData] = useState({
@@ -27,8 +28,9 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isEmailLocked, setIsEmailLocked] = useState(false);
 
-  // Restore draft when modal opens
+  // Restore draft and prefill logged in user when modal opens
   useEffect(() => {
     if (!isOpen || !job?.id) return;
     try {
@@ -40,6 +42,17 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
         }
       }
     } catch {}
+
+    const user = getStoredUser();
+    if (user?.email && !user.email.endsWith("@google.user") && !user.email.endsWith("@facebook.user")) {
+      setFormData((prev) => ({
+        ...prev,
+        email: user.email,
+        fullName: prev.fullName || (user.name && user.name !== "Pengguna Google" && user.name !== "Pengguna Facebook" ? user.name : ""),
+        phone: prev.phone || (user.phone && user.phone !== "-" ? user.phone : ""),
+      }));
+      setIsEmailLocked(true);
+    }
   }, [isOpen, job?.id]);
 
   // Auto-save draft on input
@@ -166,6 +179,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
                 formData={formData}
                 onChange={handleChange}
                 onPhoneChange={handlePhoneChange}
+                isEmailLocked={isEmailLocked}
               />
             </div>
 

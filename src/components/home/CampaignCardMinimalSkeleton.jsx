@@ -12,26 +12,26 @@ export function CampaignCardMinimalSkeleton({ className }) {
         className
       )}
     >
-      {/* 1. Cover Image Area with Integrated Overlay Skeleton */}
-      <div className="relative aspect-[16/11] w-full bg-slate-900 overflow-hidden">
+      {/* 1. Cover Image Area with Integrated Overlay Skeleton (Neutral Gray) */}
+      <div className="relative aspect-[16/11] w-full bg-slate-100 overflow-hidden">
         {/* Shimmering base background */}
-        <div className="w-full h-full bg-slate-800 animate-pulse" />
+        <div className="w-full h-full bg-slate-200/60 animate-pulse" />
 
         {/* Category Ribbon Placeholder */}
         <div className="absolute top-2.5 left-0 z-20">
-          <Skeleton className="h-5 sm:h-5.5 w-20 rounded-r bg-slate-700/70" />
+          <Skeleton className="h-5 sm:h-5.5 w-20 rounded-r bg-slate-300" />
         </div>
 
         {/* Bottom Overlay Skeleton (Title + Location) */}
         <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-4.5 space-y-2 z-10 pointer-events-none">
           <div className="space-y-1.5">
-            <Skeleton className="h-4.5 sm:h-5 w-full rounded bg-slate-700/80" />
-            <Skeleton className="h-4.5 sm:h-5 w-4/5 rounded bg-slate-700/80" />
+            <Skeleton className="h-4.5 sm:h-5 w-full rounded bg-slate-300" />
+            <Skeleton className="h-4.5 sm:h-5 w-4/5 rounded bg-slate-300" />
           </div>
 
           <div className="flex items-center gap-1.5 pt-0.5">
-            <Skeleton className="w-3.5 h-3.5 rounded-full shrink-0 bg-slate-700/80" />
-            <Skeleton className="h-3.5 w-28 rounded bg-slate-700/80" />
+            <Skeleton className="w-3.5 h-3.5 rounded-full shrink-0 bg-slate-300" />
+            <Skeleton className="h-3.5 w-28 rounded bg-slate-300" />
           </div>
         </div>
       </div>

@@ -1,6 +1,5 @@
 import { HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CAMPAIGNS } from "@/data/campaigns";
 import { formatRupiah } from "@/lib/formatters";
 import { RoutineSummaryItem } from "./RoutineSummaryItem";
 
@@ -8,10 +7,10 @@ export function RoutineSummaryCard({
   selectedPrograms = [],
   totalPerCommitment = 0,
   isSubmitting = false,
-  campaigns = CAMPAIGNS,
+  campaigns = [],
   onStartTour,
 }) {
-  const campaignList = campaigns && campaigns.length > 0 ? campaigns : CAMPAIGNS;
+  const campaignList = Array.isArray(campaigns) ? campaigns : [];
 
   const hasAnyAutoDonation = selectedPrograms.some(
     (p) => (p.routineType || "REMINDER_ONLY") === "AUTO_DONATION"
@@ -32,7 +31,7 @@ export function RoutineSummaryCard({
       <div className="space-y-3.5">
         {selectedPrograms.map((p, idx) => {
           const camp =
-            campaignList.find((c) => c.id === p.campaignId) || campaignList[0] || CAMPAIGNS[0];
+            campaignList.find((c) => c.id === p.campaignId) || campaignList[0] || null;
           return (
             <RoutineSummaryItem
               key={p.id}

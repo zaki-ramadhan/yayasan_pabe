@@ -8,7 +8,6 @@ import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 
 export function useRoutineDonation({ campaigns = [] }) {
-  const [salutation, setSalutation] = useState("Bapak");
   const [fullName, setFullName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -182,7 +181,7 @@ export function useRoutineDonation({ campaigns = [] }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          donorName: isAnonymous ? "Hamba Allah" : `${salutation ? salutation + " " : ""}${fullName}`.trim(),
+          donorName: isAnonymous ? "Hamba Allah" : fullName.trim(),
           donorPhone: whatsapp,
           isAnonymous,
           programs: payloadPrograms,
@@ -204,8 +203,6 @@ export function useRoutineDonation({ campaigns = [] }) {
   };
 
   return {
-    salutation,
-    setSalutation,
     fullName,
     setFullName,
     whatsapp,

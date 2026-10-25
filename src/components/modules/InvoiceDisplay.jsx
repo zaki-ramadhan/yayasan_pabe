@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
 import { copyToClipboard } from "@/lib/clipboard";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
-import { CAMPAIGNS } from "@/data/campaigns";
 import { PostDonationPrayerForm } from "@/components/donation/PostDonationPrayerForm";
 import { saveDonorInvoice } from "@/lib/donorStorage";
 import { InvoicePaymentMethod } from "@/components/invoice/InvoicePaymentMethod";
@@ -97,10 +96,7 @@ export function InvoiceDisplay({ donation }) {
   const channelInfo =
     PAYMENT_CHANNELS.find((c) => c.id === donation.paymentChannelId) || PAYMENT_CHANNELS[0];
 
-  const matchedCampaign = CAMPAIGNS.find(
-    (c) => c.slug === donation.campaignSlug || c.title === donation.campaignTitle
-  );
-  const campaignImage = donation.campaignImage || matchedCampaign?.bannerUrl;
+  const campaignImage = donation.campaignImage || donation.campaign?.imageUrl || "";
 
   const shareText = encodeURIComponent(
     `Saya baru saja berdonasi untuk "${donation.campaignTitle}" melalui Yayasan PABE. Mari bersama dukung generasi Qur'ani dan kaum dhuafa!`

@@ -69,14 +69,16 @@ export function CampaignCTA({
       }`}
     >
       {/* Atmospheric Background image + radial gradient overlay */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         {effectiveBannerUrl && (
           <Image
             src={effectiveBannerUrl}
             alt=""
             fill
             sizes="(max-width: 768px) 100vw, 800px"
-            className="object-cover opacity-40"
+            className="object-cover opacity-40 pointer-events-none select-none"
+            draggable={false}
+            aria-hidden="true"
           />
         )}
         <div

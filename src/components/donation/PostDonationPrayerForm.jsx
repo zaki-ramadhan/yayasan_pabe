@@ -104,6 +104,7 @@ export function PostDonationPrayerForm({
         <div className="flex justify-end pt-0.5">
           <Button
             type="submit"
+            isLoading={isSubmitting}
             disabled={isSubmitting}
             className="text-xs px-3.5 py-1.5 h-auto rounded-lg font-medium cursor-pointer"
           >

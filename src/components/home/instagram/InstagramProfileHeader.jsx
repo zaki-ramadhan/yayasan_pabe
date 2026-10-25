@@ -6,9 +6,9 @@ import { BadgeCheck } from "lucide-react";
  */
 export function InstagramProfileHeader({ account }) {
   const initial =
-    (account?.displayName || account?.username || "Z")[0]?.toUpperCase() || "Z";
-  const username = (account?.handle || account?.username || "zqramadhan_").replace("@", "");
-  const displayName = account?.displayName || "Zaki Ramadhan";
+    (account?.displayName || account?.username || "Y")[0]?.toUpperCase() || "Y";
+  const username = (account?.handle || account?.username || "yayasanpayungberkah").replace("@", "");
+  const displayName = account?.displayName || "Yayasan Payung Berkah";
 
   return (
     <div className="flex items-center gap-3.5 px-3 sm:px-3.5">

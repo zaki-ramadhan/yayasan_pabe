@@ -21,23 +21,20 @@ export default function KetentuanTransaksiPage() {
         imageAlt="Latar Belakang Ketentuan Donasi dan Transaksi Yayasan Payung Berkah"
       />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6 sm:space-y-8">
-        {/* Section 1: Akad Wakalah & Ketentuan Donasi Syariah */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10 lg:space-y-12">
         <AkadTermsSection />
 
-        {/* Section 2: Virtual Account (VA) Limits */}
-        <TransactionLimitTable
-          title="Batas Transaksi Virtual Account (VA)"
-          description="Batas minimum dan maksimum per transfer pembayaran donasi via bank transfer resmi."
-          items={VA_TRANSACTION_LIMITS}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 items-start">
+          <TransactionLimitTable
+            title="Batas Transaksi Virtual Account (VA)"
+            items={VA_TRANSACTION_LIMITS}
+          />
 
-        {/* Section 3: E-Wallet & QRIS Limits */}
-        <TransactionLimitTable
-          title="Batas Transaksi E-Wallet & QRIS"
-          description="Standar Bank Indonesia dan batas pembayaran instan via dompet digital nasional."
-          items={EWALLET_QRIS_TRANSACTION_LIMITS}
-        />
+          <TransactionLimitTable
+            title="Batas Transaksi E-Wallet & QRIS"
+            items={EWALLET_QRIS_TRANSACTION_LIMITS}
+          />
+        </div>
       </main>
     </div>
   );

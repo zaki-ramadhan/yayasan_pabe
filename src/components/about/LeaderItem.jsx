@@ -2,10 +2,10 @@ import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 
 /**
- * Individual leadership team or Syariah advisor member card
+ * Individual leadership team item
  *
  * @param {object} props
- * @param {object} props.leader - Leader object { name, role, bio, image }
+ * @param {object} props.leader - Leader object { name, role, image }
  */
 export function LeaderItem({ leader }) {
   if (!leader) return null;
@@ -39,9 +39,6 @@ export function LeaderItem({ leader }) {
             {leader.role}
           </span>
         </div>
-        <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
-          {leader.bio}
-        </p>
       </div>
     </div>
   );

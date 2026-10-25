@@ -28,16 +28,9 @@ export function TransactionLimitTableRow({ item }) {
               />
             </div>
           )}
-          <div className="space-y-0.5 min-w-0">
-            <span className="text-sm font-medium text-slate-900 block truncate">
-              {item.name}
-            </span>
-            {item.description && (
-              <span className="text-sm font-normal text-slate-500 block leading-relaxed truncate">
-                {item.description}
-              </span>
-            )}
-          </div>
+          <span className="text-sm font-medium text-slate-900 truncate">
+            {item.name}
+          </span>
         </div>
       </TableCell>
 

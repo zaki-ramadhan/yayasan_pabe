@@ -27,10 +27,7 @@ export default function DonasiRutinLoading() {
             </div>
             <div className="space-y-1.5">
               <Skeleton className="h-4 w-28 rounded" />
-              <div className="flex gap-2.5">
-                <Skeleton className="h-11 w-24 rounded-lg shrink-0" />
-                <Skeleton className="h-11 flex-1 rounded-lg" />
-              </div>
+              <Skeleton className="h-11 w-full rounded-lg" />
             </div>
             <div className="space-y-1.5">
               <Skeleton className="h-4 w-36 rounded" />

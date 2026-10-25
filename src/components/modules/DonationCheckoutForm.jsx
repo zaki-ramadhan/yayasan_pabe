@@ -21,6 +21,7 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
     setDonorPhone,
     donorEmail,
     setDonorEmail,
+    isEmailLocked,
     prayer,
     setPrayer,
     selectedChannelId,
@@ -75,6 +76,7 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
           setDonorPhone={setDonorPhone}
           donorEmail={donorEmail}
           setDonorEmail={setDonorEmail}
+          isEmailLocked={isEmailLocked}
           prayer={prayer}
           setPrayer={setPrayer}
           onPrayerChange={handlePrayerChange}

@@ -1,15 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import {
-	ThumbsUp,
-	ThumbsDown,
-	Image as ImageIcon,
-} from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { SafeImage } from "@/components/ui/safe-image";
 import { HighlightText } from "@/components/shared/HighlightText";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
+import { ArticleCardReactions } from "@/components/shared/ArticleCardReactions";
 import { formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
@@ -130,20 +127,12 @@ export function ArticleCard({
 
 				{/* Right: Like, Dislike, and Icon-Only Share Button */}
 				<div className="flex items-center gap-2.5 sm:gap-3 text-xs sm:text-sm font-normal text-slate-600 shrink-0">
-					<span
-						className="flex items-center gap-1 text-slate-600"
-						title={`${article.likeCount || 0} suka`}
-					>
-						<ThumbsUp className="w-3.5 h-3.5 text-slate-500" />
-						<span>{article.likeCount || 0}</span>
-					</span>
-					<span
-						className="flex items-center gap-1 text-slate-600"
-						title={`${article.dislikeCount || 0} tidak suka`}
-					>
-						<ThumbsDown className="w-3.5 h-3.5 text-slate-500" />
-						<span>{article.dislikeCount || 0}</span>
-					</span>
+					<ArticleCardReactions
+						slug={article.slug}
+						articleId={article.id}
+						initialLikes={article.likeCount}
+						initialDislikes={article.dislikeCount}
+					/>
 
 					<ShareDropdown
 						url={`/artikel/${article.slug}`}

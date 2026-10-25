@@ -10,7 +10,7 @@ export function HomeArticlesSection({ articles = [] }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl sm:text-2xl font-semibold text-slate-950">
+        <h2 className="text-xl sm:text-2xl font-medium text-slate-950 tracking-tight">
           Berita &amp; Artikel
         </h2>
         <Link href="/artikel" className="text-sm font-medium text-primary hover:underline">

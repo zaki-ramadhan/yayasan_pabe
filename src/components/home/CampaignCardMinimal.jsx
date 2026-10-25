@@ -23,7 +23,7 @@ export function CampaignCardMinimal({
   return (
     <div
       className={cn(
-        "group flex flex-col h-full w-full rounded-xl border border-slate-300 bg-white overflow-hidden transition-all duration-200 hover:shadow-xs",
+        "flex flex-col h-full w-full rounded-xl border border-slate-300 bg-white overflow-hidden shadow-2xs",
         className
       )}
     >
@@ -34,7 +34,6 @@ export function CampaignCardMinimal({
           alt={campaign.title}
           fallbackText={campaign.categoryName || "Program Donasi"}
           priority={priority}
-          className="group-hover:scale-102 transition-transform duration-300"
         />
 
         {/* Flag Kategori Asli (RibbonBadge) */}

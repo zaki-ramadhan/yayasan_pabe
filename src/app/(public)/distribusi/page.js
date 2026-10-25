@@ -8,21 +8,44 @@ import {
   getDistributionTrendData,
   getDistributionSyariahData,
 } from "@/services/distributionService";
-import { getBeneficiaryStats } from "@/services/beneficiaryService";
-import { ALL_BENEFICIARIES } from "@/data/beneficiaries";
+import { getBeneficiaryStats, getAllBeneficiaries } from "@/services/beneficiaryService";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Laporan Distribusi Penyaluran",
   description:
     "Laporan keuangan audit independen, grafik distribusi penyaluran berkala, transparansi penerima manfaat, dan kepatuhan syariah Yayasan Payung Berkah.",
+  openGraph: {
+    title: "Laporan Distribusi Penyaluran - Yayasan Payung Berkah",
+    description:
+      "Laporan audit, grafik tren penyaluran, dan transparansi 132 penerima manfaat binaan resmi Yayasan Payung Berkah.",
+    url: "/distribusi",
+    type: "website",
+    images: [
+      {
+        url: "/img/logo/logo_ypabe.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "Laporan Penyaluran Yayasan Payung Berkah",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Laporan Distribusi Penyaluran - Yayasan Payung Berkah",
+    description: "Transparansi audit dan penyaluran amanah donasi dan zakat.",
+    images: ["/img/logo/logo_ypabe.jpeg"],
+  },
 };
 
 export default async function DistribusiPage() {
-  const [auditData, trendData, syariahData, beneficiaryStats] = await Promise.all([
+  const [auditData, trendData, syariahData, beneficiaryStats, beneficiaries] = await Promise.all([
     getDistributionAuditData(),
     getDistributionTrendData(),
     getDistributionSyariahData(),
     getBeneficiaryStats(),
+    getAllBeneficiaries(),
   ]);
 
   return (
@@ -36,18 +59,18 @@ export default async function DistribusiPage() {
           <DistributionTrendSection trendData={trendData} />
         </div>
 
-        {/* Direktori Transparansi Penerima Manfaat Binaan (98 Yatim & 34 Lansia) */}
-        <BeneficiaryDirectory
-          initialBeneficiaries={ALL_BENEFICIARIES}
-          stats={beneficiaryStats}
-        />
-
-        {/* Kepatuhan Syariah & Dewan Pengawas */}
-        <div className="flex justify-center pt-2">
+        {/* Kepatuhan Syariah & Dewan Pengawas (Chart Terakhir) */}
+        <div className="flex justify-center pb-8 sm:pb-10 border-b border-slate-200">
           <div className="w-full max-w-2xl">
             <DistributionSyariahSection syariahData={syariahData} />
           </div>
         </div>
+
+        {/* Daftar Transparansi Penerima Manfaat Binaan (Setelah Seluruh Chart) */}
+        <BeneficiaryDirectory
+          initialBeneficiaries={beneficiaries}
+          stats={beneficiaryStats}
+        />
       </main>
     </div>
   );

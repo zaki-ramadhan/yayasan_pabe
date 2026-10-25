@@ -14,11 +14,11 @@ export function HomePartnersSection({
   if (!partners || partners.length === 0) return null;
 
   return (
-    <section className="py-6 sm:py-8">
+    <section>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <SectionHeader title={title} subtitle={subtitle} align="center" />
 
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 lg:gap-12 xl:gap-14 pt-2">
           {partners.map((partner) => (
             <PartnerLogo key={partner.id} partner={partner} />
           ))}

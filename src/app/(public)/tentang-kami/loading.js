@@ -135,19 +135,25 @@ export default function TentangKamiLoading() {
 
           {/* Section 5: Official Bank Accounts */}
           <div className="p-4 sm:p-5 space-y-4">
-            <Skeleton className="h-6 w-56 rounded-md" />
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-              <div className="hidden md:flex md:col-span-5 h-56 items-center justify-center">
-                <Skeleton className="w-48 h-40 rounded-xl" />
+            <Skeleton className="h-6 sm:h-7 w-56 rounded-md" />
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center">
+              {/* Left Showcase Skeleton */}
+              <div className="hidden md:flex md:col-span-6 h-72 sm:h-80 md:h-[340px] items-center justify-center">
+                <Skeleton className="w-full h-full rounded-2xl" />
               </div>
-              <div className="md:col-span-7 space-y-3.5">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="space-y-1 md:text-right">
-                    <Skeleton className="h-4 w-28 md:ml-auto rounded" />
-                    <Skeleton className="h-6 w-44 md:ml-auto rounded" />
-                    <Skeleton className="h-3.5 w-36 md:ml-auto rounded" />
-                  </div>
-                ))}
+
+              {/* Right Bank Accounts Skeleton (2 Akun: BRI & Mandiri) */}
+              <div className="md:col-span-6 space-y-4 md:text-right md:mr-2">
+                <div className="space-y-1 md:text-right">
+                  <Skeleton className="h-4 sm:h-5 w-44 md:ml-auto rounded" />
+                  <Skeleton className="h-6 sm:h-7 w-56 md:ml-auto rounded" />
+                  <Skeleton className="h-3.5 sm:h-4 w-36 md:ml-auto rounded" />
+                </div>
+                <div className="space-y-1 md:text-right pt-3.5 border-t border-slate-200">
+                  <Skeleton className="h-4 sm:h-5 w-32 md:ml-auto rounded" />
+                  <Skeleton className="h-6 sm:h-7 w-52 md:ml-auto rounded" />
+                  <Skeleton className="h-3.5 sm:h-4 w-36 md:ml-auto rounded" />
+                </div>
               </div>
             </div>
           </div>

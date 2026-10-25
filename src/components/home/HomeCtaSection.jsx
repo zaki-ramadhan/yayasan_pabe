@@ -35,14 +35,16 @@ export function HomeCtaSection({ defaultCampaignSlug = "beasiswa-santri-penghafa
 
           {/* Kolom Kanan: Foto dengan Padding Ringkas & Proporsional */}
           <div className="lg:col-span-5 p-1 sm:p-1.5">
-            <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden shadow-inner">
+            <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden shadow-inner pointer-events-none select-none">
               <Image
                 src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200&auto=format&fit=crop&q=80"
-                alt="Pemberdayaan Santri dan Yatim"
+                alt=""
                 fill
                 loading="eager"
                 sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover object-center"
+                className="object-cover object-center pointer-events-none select-none"
+                draggable={false}
+                aria-hidden="true"
               />
             </div>
           </div>

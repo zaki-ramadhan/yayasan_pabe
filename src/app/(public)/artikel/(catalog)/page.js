@@ -7,6 +7,26 @@ import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
 export const metadata = {
   title: "Berita & Artikel",
   description: "Kumpulan artikel edukasi fiqih zakat, sedekah subuh, dan kabar penyaluran bantuan Yayasan Payung Berkah.",
+  openGraph: {
+    title: "Berita & Artikel - Yayasan Payung Berkah",
+    description: "Kumpulan artikel edukasi fiqih zakat, sedekah subuh, dan kabar penyaluran bantuan Yayasan Payung Berkah.",
+    url: "/artikel",
+    type: "website",
+    images: [
+      {
+        url: "/img/logo/logo_ypabe.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "Berita & Artikel Yayasan Payung Berkah",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Berita & Artikel - Yayasan Payung Berkah",
+    description: "Kumpulan artikel edukasi fiqih zakat, sedekah subuh, dan kabar penyaluran bantuan.",
+    images: ["/img/logo/logo_ypabe.jpeg"],
+  },
 };
 
 export default async function ArtikelIndexPage() {
