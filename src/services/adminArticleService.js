@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { ARTICLE_CATEGORIES } from "@/data/articles";
 import { sanitizeInput } from "@/lib/security";
+import { deleteFromR2 } from "@/lib/r2Storage";
 
 function slugify(text) {
   return text
@@ -136,6 +137,11 @@ export async function createAdminArticle(payload) {
  * Memperbarui artikel yang sudah ada.
  */
 export async function updateAdminArticle(id, payload) {
+  const existing = await prisma.article.findUnique({
+    where: { id },
+    select: { bannerUrl: true },
+  });
+
   const updateData = {};
   if (payload.title !== undefined) updateData.title = sanitizeInput(payload.title).trim();
   if (payload.author !== undefined) updateData.author = sanitizeInput(payload.author).trim();
@@ -146,7 +152,12 @@ export async function updateAdminArticle(id, payload) {
   }
   if (payload.excerpt !== undefined) updateData.excerpt = sanitizeInput(payload.excerpt).trim();
   if (payload.content !== undefined) updateData.content = sanitizeInput(payload.content).trim();
-  if (payload.bannerUrl !== undefined) updateData.bannerUrl = sanitizeInput(payload.bannerUrl).trim();
+  if (payload.bannerUrl !== undefined) {
+    updateData.bannerUrl = sanitizeInput(payload.bannerUrl).trim();
+    if (existing?.bannerUrl && existing.bannerUrl !== updateData.bannerUrl) {
+      await deleteFromR2(existing.bannerUrl);
+    }
+  }
 
   return prisma.article.update({
     where: { id },
@@ -155,9 +166,18 @@ export async function updateAdminArticle(id, payload) {
 }
 
 /**
- * Menghapus artikel dari database.
+ * Menghapus artikel dari database dan membersihkan gambar terkait di R2.
  */
 export async function deleteAdminArticle(id) {
+  const existing = await prisma.article.findUnique({
+    where: { id },
+    select: { bannerUrl: true },
+  });
+
+  if (existing?.bannerUrl) {
+    await deleteFromR2(existing.bannerUrl);
+  }
+
   return prisma.article.delete({
     where: { id },
   });

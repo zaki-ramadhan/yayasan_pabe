@@ -29,9 +29,26 @@ export async function createDonation({
     throw new Error(validation.message);
   }
 
-  const cleanDonorName = isAnonymous ? "Hamba Allah" : validateName(donorName);
-  const cleanDonorPhone = validatePhone(donorPhone);
-  const cleanDonorEmail = donorEmail ? validateEmail(donorEmail) : "";
+  const nameVal = validateName(donorName, isAnonymous);
+  if (!nameVal.isValid) {
+    throw new Error(nameVal.message);
+  }
+  const cleanDonorName = isAnonymous ? "Hamba Allah" : (nameVal.sanitized || donorName || "Hamba Allah");
+
+  const phoneVal = validatePhone(donorPhone);
+  if (!phoneVal.isValid) {
+    throw new Error(phoneVal.message);
+  }
+  const cleanDonorPhone = phoneVal.sanitized || donorPhone;
+
+  let cleanDonorEmail = "";
+  if (donorEmail) {
+    const emailVal = validateEmail(donorEmail);
+    if (!emailVal.isValid) {
+      throw new Error(emailVal.message);
+    }
+    cleanDonorEmail = emailVal.sanitized || donorEmail;
+  }
   const cleanPrayer = sanitizePrayer(prayer);
 
   const channel =

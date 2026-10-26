@@ -6,8 +6,16 @@ import {
 } from "@/services/donorService";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function GET(request) {
+  const rateLimitBlocked = checkRateLimit(request, {
+    action: "user_donations_history",
+    limit: 30,
+    windowMs: 60000,
+  });
+  if (rateLimitBlocked) return rateLimitBlocked;
+
   const { user: authUser, errorResponse } = await requireAuth(request);
   if (errorResponse) return errorResponse;
 

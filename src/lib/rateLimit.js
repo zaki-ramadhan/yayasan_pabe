@@ -61,23 +61,46 @@ export class RateLimiter {
   }
 }
 
+export const RATE_LIMIT_TIERS = {
+  PUBLIC_PAGE: { limit: 120, windowMs: 60000 },
+  PUBLIC_API: { limit: 60, windowMs: 60000 },
+  AUTH_ATTEMPT: { limit: 10, windowMs: 60000 },
+  FORM_SUBMIT: { limit: 5, windowMs: 60000 },
+  SENSITIVE_OP: { limit: 5, windowMs: 60000 },
+};
+
 export const globalRateLimiter = new RateLimiter();
 
 /**
- * Extracts client IP from request headers or fallbacks to 127.0.0.1
+ * Extracts client IP safely:
+ * 1. cf-connecting-ip (Cloudflare edge)
+ * 2. x-real-ip (Nginx trusted proxy)
+ * 3. x-forwarded-for (leftmost client IP)
+ * 4. Fallback: 127.0.0.1
  * @param {Request} request
  * @returns {string}
  */
 export function getClientIp(request) {
   if (!request) return "127.0.0.1";
-  const forwarded = request.headers?.get?.("x-forwarded-for");
-  if (forwarded) {
-    return forwarded.split(",")[0].trim();
+
+  const cfIp = request.headers?.get?.("cf-connecting-ip");
+  if (cfIp) {
+    const clean = cfIp.trim();
+    if (clean) return clean;
   }
+
   const realIp = request.headers?.get?.("x-real-ip");
   if (realIp) {
-    return realIp.trim();
+    const clean = realIp.trim();
+    if (clean) return clean;
   }
+
+  const forwarded = request.headers?.get?.("x-forwarded-for");
+  if (forwarded) {
+    const firstIp = forwarded.split(",")[0]?.trim();
+    if (firstIp) return firstIp;
+  }
+
   return "127.0.0.1";
 }
 
@@ -85,12 +108,15 @@ export function getClientIp(request) {
  * Helper to apply rate limiting in Next.js Route Handlers.
  * Returns null if allowed, or NextResponse with HTTP 429 if limit exceeded.
  * @param {Request} request
- * @param {{ action: string, limit: number, windowMs: number }} options
+ * @param {{ action: string, limit: number, windowMs: number, identifier?: string|null }} options
  * @returns {NextResponse|null}
  */
-export function checkRateLimit(request, { action = "api", limit = 10, windowMs = 60000 } = {}) {
-  const ip = getClientIp(request);
-  const key = `${action}:${ip}`;
+export function checkRateLimit(
+  request,
+  { action = "api", limit = 10, windowMs = 60000, identifier = null } = {}
+) {
+  const clientKey = identifier ? String(identifier).trim().toLowerCase() : getClientIp(request);
+  const key = `${action}:${clientKey}`;
   const result = globalRateLimiter.check(key, limit, windowMs);
 
   if (!result.success) {

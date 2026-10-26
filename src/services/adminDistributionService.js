@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
+import { deleteFromR2 } from "@/lib/r2Storage";
 
 /**
  * Mengambil rekam penyaluran distribusi donasi ke mustahik.
@@ -93,6 +94,11 @@ export async function createAdminDistribution(payload) {
  * Memperbarui data rekam penyaluran yang sudah ada.
  */
 export async function updateAdminDistribution(id, payload) {
+  const existing = await prisma.campaignUpdate.findUnique({
+    where: { id },
+    select: { images: true },
+  });
+
   const updateData = {};
   if (payload.title !== undefined) updateData.title = sanitizeInput(payload.title).trim();
   if (payload.content !== undefined) updateData.content = sanitizeInput(payload.content).trim();
@@ -102,7 +108,16 @@ export async function updateAdminDistribution(id, payload) {
   if (payload.campaignId !== undefined) updateData.campaignId = payload.campaignId;
   if (payload.date !== undefined) updateData.date = new Date(payload.date);
   if (Array.isArray(payload.images)) {
-    updateData.images = payload.images.map((img) => sanitizeInput(img).trim());
+    const newImages = payload.images.map((img) => sanitizeInput(img).trim());
+    updateData.images = newImages;
+
+    // Bersihkan foto yang dihapus dari daftar
+    if (Array.isArray(existing?.images)) {
+      const removedImages = existing.images.filter((oldImg) => !newImages.includes(oldImg));
+      if (removedImages.length > 0) {
+        await Promise.allSettled(removedImages.map((img) => deleteFromR2(img)));
+      }
+    }
   }
 
   return prisma.campaignUpdate.update({
@@ -113,9 +128,18 @@ export async function updateAdminDistribution(id, payload) {
 }
 
 /**
- * Menghapus data rekam penyaluran dari database.
+ * Menghapus data rekam penyaluran dari database dan membersihkan foto dokumentasi di R2.
  */
 export async function deleteAdminDistribution(id) {
+  const existing = await prisma.campaignUpdate.findUnique({
+    where: { id },
+    select: { images: true },
+  });
+
+  if (Array.isArray(existing?.images) && existing.images.length > 0) {
+    await Promise.allSettled(existing.images.map((img) => deleteFromR2(img)));
+  }
+
   return prisma.campaignUpdate.delete({
     where: { id },
   });

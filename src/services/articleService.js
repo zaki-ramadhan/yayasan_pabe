@@ -85,12 +85,19 @@ export async function getArticleCategories() {
 
 export async function updateArticleReaction(slug, type = "like") {
   try {
-    const field = type === "dislike" ? "dislikeCount" : "likeCount";
+    let data;
+    if (type === "dislike") {
+      data = { dislikeCount: { increment: 1 } };
+    } else if (type === "undislike") {
+      data = { dislikeCount: { decrement: 1 } };
+    } else if (type === "unlike") {
+      data = { likeCount: { decrement: 1 } };
+    } else {
+      data = { likeCount: { increment: 1 } };
+    }
     const updated = await prisma.article.update({
       where: { slug },
-      data: {
-        [field]: { increment: 1 },
-      },
+      data,
     });
     return formatArticleFromDb(updated);
   } catch (error) {

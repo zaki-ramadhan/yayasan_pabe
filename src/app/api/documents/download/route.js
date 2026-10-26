@@ -9,6 +9,7 @@ import {
   SYARIAH_COMPLIANCE_DATA,
 } from "@/data/distributionData";
 import { formatRupiah } from "@/lib/formatters";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 /**
  * Route handler to serve official PDF reports
@@ -16,6 +17,13 @@ import { formatRupiah } from "@/lib/formatters";
  */
 export async function GET(request) {
   try {
+    const rateLimitBlocked = checkRateLimit(request, {
+      action: "document_download",
+      limit: 15,
+      windowMs: 60000,
+    });
+    if (rateLimitBlocked) return rateLimitBlocked;
+
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type");
     const year = searchParams.get("year") || "2025";

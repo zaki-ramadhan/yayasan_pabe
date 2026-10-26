@@ -9,11 +9,19 @@ import {
   validateName,
   validateUsername,
 } from "@/lib/security";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
+    const rateLimitBlocked = checkRateLimit(request, {
+      action: "auth_register",
+      limit: 5,
+      windowMs: 60000,
+    });
+    if (rateLimitBlocked) return rateLimitBlocked;
+
     const body = await request.json();
     const { username, name, email, phone, password } = body || {};
 

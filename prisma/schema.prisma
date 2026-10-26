@@ -42,6 +42,7 @@ model Campaign {
   @@index([isUrgent])
   @@index([isFeatured])
   @@index([status])
+  @@index([status, createdAt(sort: Desc)])
 }
 
 model CampaignUpdate {
@@ -90,9 +91,11 @@ model Donation {
   idempotencyKey String?   @unique
   createdAt      DateTime  @default(now())
 
-  @@index([invoiceId])
+  @@index([donorEmail])
+  @@index([donorPhone])
   @@index([campaignId])
   @@index([status])
+  @@index([status, paidAt(sort: Desc)])
   @@index([campaignId, status, paidAt(sort: Desc)])
 }
 
@@ -110,7 +113,7 @@ model AuditReport {
   pdfUrl           String?
   publishedAt      DateTime @default(now())
 
-  @@index([year])
+  @@index([year(sort: Desc)])
 }
 
 model Volunteer {
@@ -145,6 +148,8 @@ model Article {
   publishedAt    DateTime @default(now())
 
   @@index([category])
+  @@index([publishedAt(sort: Desc)])
+  @@index([category, publishedAt(sort: Desc)])
 }
 
 model User {
@@ -239,6 +244,7 @@ model JobVacancy {
   @@index([department])
   @@index([location])
   @@index([isActive])
+  @@index([isActive, createdAt(sort: Desc)])
 }
 
 model JobApplication {

@@ -5,6 +5,7 @@ import {
   getAdminArticles,
   createAdminArticle,
 } from "@/services/adminArticleService";
+import { logActivity } from "@/services/activityLogService";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const { errorResponse } = await requireAuth(request, [
+  const { user, errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
     USER_ROLES.ADMIN,
   ]);
@@ -56,6 +57,18 @@ export async function POST(request) {
     }
 
     const article = await createAdminArticle(body);
+
+    await logActivity({
+      userId: user?.id,
+      userName: user?.name,
+      userRole: user?.role,
+      action: "CREATE_ARTICLE",
+      targetType: "Article",
+      targetId: article?.id,
+      description: `Menerbitkan artikel baru: "${article?.title}"`,
+      request,
+    });
+
     return NextResponse.json({
       success: true,
       message: "Artikel berita berhasil diterbitkan.",

@@ -1,11 +1,19 @@
 import { NextResponse } from "next/server";
 import { getDonorPrayers } from "@/services/prayerService";
 import { getAuthenticatedUser } from "@/lib/serverAuth";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request) {
   try {
+    const rateLimitBlocked = checkRateLimit(request, {
+      action: "donor_prayers_query",
+      limit: 30,
+      windowMs: 60000,
+    });
+    if (rateLimitBlocked) return rateLimitBlocked;
+
     const { user } = await getAuthenticatedUser(request);
     const { searchParams } = new URL(request.url);
     const email = searchParams.get("email") || user?.email || "";

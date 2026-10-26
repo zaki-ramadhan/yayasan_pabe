@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
 import { toTitleCase } from "@/lib/formatters";
 import { cleanupOrphanCategories } from "./categoryService";
+import { deleteFromR2 } from "@/lib/r2Storage";
 
 /**
  * Mengambil daftar program kampanye untuk tabel manajemen admin.
@@ -203,7 +204,7 @@ export async function createAdminCampaign(payload) {
 export async function updateAdminCampaign(id, payload) {
   const existingCampaign = await prisma.campaign.findUnique({
     where: { id },
-    select: { categoryId: true },
+    select: { categoryId: true, bannerUrl: true },
   });
   const oldCategoryId = existingCampaign?.categoryId;
 
@@ -219,7 +220,12 @@ export async function updateAdminCampaign(id, payload) {
   }
   if (payload.isUrgent !== undefined) updateData.isUrgent = Boolean(payload.isUrgent);
   if (payload.isFeatured !== undefined) updateData.isFeatured = Boolean(payload.isFeatured);
-  if (payload.bannerUrl !== undefined) updateData.bannerUrl = sanitizeInput(payload.bannerUrl).trim();
+  if (payload.bannerUrl !== undefined) {
+    updateData.bannerUrl = sanitizeInput(payload.bannerUrl).trim();
+    if (existingCampaign?.bannerUrl && existingCampaign.bannerUrl !== updateData.bannerUrl) {
+      await deleteFromR2(existingCampaign.bannerUrl);
+    }
+  }
 
   if (!payload.categoryId && payload.newCategoryName) {
     const rawCat = sanitizeInput(payload.newCategoryName).trim();
@@ -259,4 +265,28 @@ export async function updateAdminCampaign(id, payload) {
   }
 
   return updated;
+}
+
+/**
+ * Menghapus program kampanye dari database dan membersihkan banner terkait di R2.
+ */
+export async function deleteAdminCampaign(id) {
+  const existing = await prisma.campaign.findUnique({
+    where: { id },
+    select: { bannerUrl: true, categoryId: true },
+  });
+
+  if (existing?.bannerUrl) {
+    await deleteFromR2(existing.bannerUrl);
+  }
+
+  const deleted = await prisma.campaign.delete({
+    where: { id },
+  });
+
+  if (existing?.categoryId) {
+    await cleanupOrphanCategories(prisma);
+  }
+
+  return deleted;
 }
