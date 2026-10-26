@@ -1,7 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactCompiler: true,
-  allowedDevOrigins: ["169.254.236.147", "169.254.236.147:3000", "localhost:3000", "127.0.0.1:3000"],
+  allowedDevOrigins: [
+    "*.loca.lt",
+    "*.trycloudflare.com",
+    "172.22.192.1",
+    "172.22.192.1:3000",
+    "localhost:3000",
+    "127.0.0.1:3000",
+  ],
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [75, 80],
@@ -35,6 +42,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "**.cdninstagram.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.r2.dev",
       },
     ],
   },
@@ -77,6 +88,10 @@ const nextConfig = {
         source: "/:path*",
         headers: [
           {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          {
             key: "X-Content-Type-Options",
             value: "nosniff",
           },
@@ -95,6 +110,18 @@ const nextConfig = {
           {
             key: "X-XSS-Protection",
             value: "1; mode=block",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https://images.unsplash.com https://*.googleusercontent.com https://*.fbcdn.net https://*.cdninstagram.com https://*.r2.dev",
+              "font-src 'self' data:",
+              "connect-src 'self'",
+              "frame-ancestors 'self'",
+            ].join("; "),
           },
         ],
       },
