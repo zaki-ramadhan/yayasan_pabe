@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CampaignCardMinimalSkeleton } from "@/components/home/CampaignCardMinimalSkeleton";
 import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
@@ -31,12 +32,14 @@ export default function HomeLoading() {
             {/* Right: Quick Donate Folder Skeleton */}
             <div className="w-full lg:w-[500px] shrink-0 flex justify-center lg:justify-end">
               <div className="relative w-full aspect-[592/458] min-h-[380px] sm:min-h-[390px]">
-                <img
-                  src="/img/folder%20hero.svg"
+                <Image
+                  src="/img/frames/folder-hero.svg"
                   alt=""
                   aria-hidden="true"
-                  draggable="false"
-                  className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none drop-shadow-md opacity-80"
+                  draggable={false}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 500px"
+                  className="object-fill pointer-events-none select-none drop-shadow-md opacity-80"
                 />
 
                 <div className="relative z-10 h-full flex flex-col justify-end pt-12 pb-9 sm:pb-11 px-6 sm:px-7 space-y-3 sm:space-y-3.5">
@@ -79,12 +82,14 @@ export default function HomeLoading() {
       <section className="relative overflow-hidden bg-slate-100/80 border-y border-slate-200 py-12 sm:py-16">
         {/* Background Line Decoration Overlay (Full Lebar & Tinggi, Opacity 20%) */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
-          <img
-            src="/img/line%20decoration.svg"
+          <Image
+            src="/img/decorations/line-accent.svg"
             alt=""
             aria-hidden="true"
-            draggable="false"
-            className="absolute inset-0 w-full h-full object-fill opacity-20 pointer-events-none select-none"
+            draggable={false}
+            fill
+            sizes="100vw"
+            className="object-fill opacity-20 pointer-events-none select-none"
           />
         </div>
 

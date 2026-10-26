@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { BadgeCheck } from "lucide-react";
 
 /**
@@ -9,6 +10,11 @@ export function InstagramProfileHeader({ account }) {
     (account?.displayName || account?.username || "Y")[0]?.toUpperCase() || "Y";
   const username = (account?.handle || account?.username || "yayasanpayungberkah").replace("@", "");
   const displayName = account?.displayName || "Yayasan Payung Berkah";
+  const isUnoptimized =
+    typeof account?.avatarUrl === "string" &&
+    (account.avatarUrl.includes("fbcdn.net") ||
+      account.avatarUrl.includes("cdninstagram.com") ||
+      account.avatarUrl.includes("instagram.com"));
 
   return (
     <div className="flex items-center gap-3.5 px-3 sm:px-3.5">
@@ -16,11 +22,12 @@ export function InstagramProfileHeader({ account }) {
       <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full p-[2.7px] bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shrink-0 shadow-sm">
         <div className="relative w-full h-full rounded-full border-2 border-slate-900 bg-slate-950 overflow-hidden flex items-center justify-center">
           {account?.avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={account.avatarUrl}
               alt={displayName}
-              referrerPolicy="no-referrer"
+              fill
+              sizes="56px"
+              unoptimized={isUnoptimized}
               className="w-full h-full object-cover"
             />
           ) : (

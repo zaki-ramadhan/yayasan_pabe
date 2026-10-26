@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
   const campaign = await getCampaignBySlug(slug);
   if (!campaign) return { title: "Program Tidak Ditemukan" };
 
-  const ogImage = campaign.bannerUrl || "/img/logo/logo_ypabe.jpeg";
+  const ogImage = campaign.bannerUrl || "/img/branding/logo-ypabe.webp";
 
   return {
     title: campaign.title,

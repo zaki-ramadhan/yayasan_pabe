@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
   const article = await getArticleBySlug(slug);
   if (!article) return { title: "Artikel Tidak Ditemukan" };
 
-  const ogImage = article.bannerUrl || "/img/logo/logo_ypabe.jpeg";
+  const ogImage = article.bannerUrl || "/img/branding/logo-ypabe.webp";
 
   return {
     title: article.title,

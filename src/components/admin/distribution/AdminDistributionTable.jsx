@@ -11,7 +11,15 @@ import {
   TableEmptyRow,
   TablePaginationFooter,
 } from "@/components/ui/table";
-import { AdminDistributionModal } from "./AdminDistributionModal";
+import dynamic from "next/dynamic";
+
+const AdminDistributionModal = dynamic(
+  () =>
+    import("./AdminDistributionModal").then(
+      (m) => m.AdminDistributionModal
+    ),
+  { ssr: false }
+);
 import { AdminDistributionDeleteDialog } from "./AdminDistributionDeleteDialog";
 import { AdminDistributionToolbar } from "./AdminDistributionToolbar";
 import { AdminDistributionTableRow } from "./AdminDistributionTableRow";

@@ -11,7 +11,15 @@ import {
   TableEmptyRow,
   TablePaginationFooter,
 } from "@/components/ui/table";
-import { AdminArticleModal } from "@/components/admin/articles/AdminArticleModal";
+import dynamic from "next/dynamic";
+
+const AdminArticleModal = dynamic(
+  () =>
+    import("@/components/admin/articles/AdminArticleModal").then(
+      (m) => m.AdminArticleModal
+    ),
+  { ssr: false }
+);
 import { AdminArticleToolbar } from "@/components/admin/articles/AdminArticleToolbar";
 import { AdminArticleTableRow } from "@/components/admin/articles/AdminArticleTableRow";
 import { useDebounce } from "@/hooks/useDebounce";

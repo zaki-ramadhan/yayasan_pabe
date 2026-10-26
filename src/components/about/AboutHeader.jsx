@@ -6,23 +6,25 @@ import { Button } from "@/components/ui/button";
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
 import { TeamAvatarStack } from "./TeamAvatarStack";
+import { ASSET_PATHS } from "@/lib/assetConstants";
 
 export function AboutHeader({ volunteerCount = 14 }) {
 	return (
 		<section className="bg-white rounded-xl border border-slate-300 overflow-hidden shadow-2xs">
 			{/* Cover Banner Image */}
-			<div className="relative h-36 sm:h-44 lg:h-48 w-full bg-slate-900 overflow-hidden pointer-events-none select-none">
+			<div className="relative h-44 sm:h-56 lg:h-64 w-full bg-slate-900 overflow-hidden pointer-events-none select-none">
 				<Image
-					src="https://images.unsplash.com/photo-1588072432836-e10032774350?w=1600&auto=format&fit=crop&q=80"
-					alt=""
+					src={ASSET_PATHS.BANNERS.ABOUT_COVER}
+					alt="Gedung dan Kantor Sekretariat Yayasan Payung Berkah"
 					fill
 					sizes="100vw"
-					className="object-cover opacity-85 pointer-events-none select-none"
+					className="object-cover pointer-events-none select-none"
+					style={{ objectPosition: "50% 28%" }}
 					draggable={false}
 					aria-hidden="true"
 					priority
 				/>
-				<div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/15 to-transparent pointer-events-none select-none" />
+				<div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none select-none" />
 			</div>
 
 			{/* Profile Details & Overlapping Rounded-Full Avatar */}
@@ -31,7 +33,7 @@ export function AboutHeader({ volunteerCount = 14 }) {
 					{/* Logo Avatar Lingkaran (PFP) */}
 					<div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-white shadow-md p-1.5 shrink-0 flex items-center justify-center overflow-hidden z-10">
 						<Image
-							src="/img/logo/logo_ypabe.jpeg"
+							src="/img/branding/logo-ypabe.webp"
 							alt="Logo Resmi Yayasan PABE"
 							fill
 							sizes="(max-width: 640px) 96px, 112px"

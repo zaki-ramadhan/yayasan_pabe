@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,12 +21,14 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
     <section className="relative overflow-hidden bg-slate-100/80 border-y border-slate-200 py-12 sm:py-16">
       {/* Background Line Decoration Overlay (Full Lebar & Tinggi, Opacity 20%) */}
       <div className="absolute inset-0 pointer-events-none select-none scale-130 overflow-hidden z-0">
-        <img
-          src="/img/line%20decoration.svg"
+        <Image
+          src="/img/decorations/line-accent.svg"
           alt=""
           aria-hidden="true"
-          draggable="false"
-          className="absolute inset-0 w-full h-full object-fill opacity-8 pointer-events-none select-none"
+          draggable={false}
+          fill
+          sizes="100vw"
+          className="object-fill opacity-8 pointer-events-none select-none"
         />
       </div>
 

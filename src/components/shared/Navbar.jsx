@@ -69,7 +69,7 @@ export function Navbar() {
             {/* Logo Langsung Tanpa Pembungkus Box & Border, Skala Proporsional */}
             <div className="relative h-9 sm:h-14 w-9 sm:w-14 shrink-0 flex items-center justify-center">
               <Image
-                src="/img/logo/logo_ypabe.jpeg"
+                src="/img/branding/logo-ypabe.webp"
                 alt="Logo Yayasan PABE"
                 fill
                 sizes="40px"

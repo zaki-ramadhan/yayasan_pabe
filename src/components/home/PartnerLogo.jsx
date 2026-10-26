@@ -1,3 +1,4 @@
+import Image from "next/image";
 
 /**
  * Atom: Satu item logo mitra tanpa pembungkus card / badge.
@@ -38,12 +39,14 @@ export function PartnerLogo({ partner }) {
       className="relative flex items-center justify-center p-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 shrink-0"
     >
       {partner.logo ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           src={partner.logo}
           alt={partner.name}
+          width={240}
+          height={56}
+          sizes="(max-width: 640px) 140px, 240px"
+          style={{ width: "auto", height: "auto" }}
           className={`${getLogoSizeClass(partner.id)} object-contain select-none pointer-events-none`}
-          loading="lazy"
         />
       ) : (
         <span className="text-xs sm:text-sm font-semibold text-slate-700 whitespace-nowrap tracking-tight">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { ASSET_PATHS } from "@/lib/assetConstants";
 
 export function HomeCtaSection({ defaultCampaignSlug = "beasiswa-santri-penghafal-quran" }) {
   return (
@@ -8,7 +9,7 @@ export function HomeCtaSection({ defaultCampaignSlug = "beasiswa-santri-penghafa
       {/* Banner Card dengan Radial Gradient (Fokus di Tengah Bawah) & Warna Biru Lebih Teduh */}
       <div className="relative overflow-hidden text-white rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-4 shadow-xl border border-slate-800/80 bg-[radial-gradient(ellipse_130%_110%_at_50%_100%,#1e3a8a_0%,#172554_45%,#0f172a_100%)]">
         {/* Background Texture Overlay 3 (Samar / Tipis) */}
-        <div className="absolute inset-0 z-0 bg-fit bg-center pointer-events-none opacity-50 mix-blend-overlay bg-[url('/img/texture_overlay_3.jpeg')]" />
+        <div className="absolute inset-0 z-0 bg-fit bg-center pointer-events-none opacity-50 mix-blend-overlay bg-[url('/img/textures/texture-overlay-3.webp')]" />
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-center">
           {/* Kolom Kiri: Teks & Tombol dengan Padding Pas */}
@@ -35,9 +36,9 @@ export function HomeCtaSection({ defaultCampaignSlug = "beasiswa-santri-penghafa
 
           {/* Kolom Kanan: Foto dengan Padding Ringkas & Proporsional */}
           <div className="lg:col-span-5 p-1 sm:p-1.5">
-            <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden shadow-inner pointer-events-none select-none">
+            <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border border-white/10 ring-1 ring-slate-900/60 pointer-events-none select-none">
               <Image
-                src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200&auto=format&fit=crop&q=80"
+                src={ASSET_PATHS.BANNERS.CTA_MAIN}
                 alt=""
                 fill
                 loading="eager"
@@ -46,6 +47,10 @@ export function HomeCtaSection({ defaultCampaignSlug = "beasiswa-santri-penghafa
                 draggable={false}
                 aria-hidden="true"
               />
+
+              {/* Overlay tipis dan natural agar foto tetap cerah & jelas */}
+              <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-slate-950/25 via-transparent to-transparent" />
+              <div className="absolute inset-0 z-10 pointer-events-none bg-slate-950/[0.08]" />
             </div>
           </div>
         </div>

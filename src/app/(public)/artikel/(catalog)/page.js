@@ -14,7 +14,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/img/logo/logo_ypabe.jpeg",
+        url: "/img/branding/logo-ypabe.webp",
         width: 1200,
         height: 630,
         alt: "Berita & Artikel Yayasan Payung Berkah",
@@ -25,7 +25,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Berita & Artikel - Yayasan Payung Berkah",
     description: "Kumpulan artikel edukasi fiqih zakat, sedekah subuh, dan kabar penyaluran bantuan.",
-    images: ["/img/logo/logo_ypabe.jpeg"],
+    images: ["/img/branding/logo-ypabe.webp"],
   },
 };
 

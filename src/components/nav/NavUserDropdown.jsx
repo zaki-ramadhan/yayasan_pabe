@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { User, LogOut, ChevronDown } from "lucide-react";
 import {
@@ -71,11 +71,13 @@ export function NavUserDropdown({ currentUser, onLogout }) {
             )}
           >
             {avatarUrl ? (
-              <img
+              <Image
                 src={avatarUrl}
                 alt={currentUser.name || "Avatar"}
+                fill
+                sizes="32px"
+                unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
                 className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
                 onError={() => setImgError(true)}
               />
             ) : (
@@ -109,11 +111,13 @@ export function NavUserDropdown({ currentUser, onLogout }) {
           <div className="flex items-center gap-2.5">
             <div className="relative w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center">
               {currentUser.avatar ? (
-                <img
+                <Image
                   src={currentUser.avatar}
                   alt={currentUser.name || "Avatar"}
+                  fill
+                  sizes="32px"
+                  unoptimized={typeof currentUser.avatar === "string" && !currentUser.avatar.startsWith("/") && !currentUser.avatar.includes("lh3.googleusercontent.com")}
                   className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
                 />
               ) : (
                 <span className="font-medium text-sm text-slate-800">

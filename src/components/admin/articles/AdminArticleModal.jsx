@@ -10,6 +10,7 @@ import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 import { toTitleCase } from "@/lib/formatters";
+import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 
 const DEFAULT_ARTICLE_CATEGORIES = [
 	"Berita",
@@ -36,9 +37,7 @@ export function AdminArticleModal({
 	const [author, setAuthor] = useState(
 		"Redaksi Yayasan PABE",
 	);
-	const [bannerUrl, setBannerUrl] = useState(
-		"/img/hero_card_1.jpeg",
-	);
+	const [bannerUrl, setBannerUrl] = useState("");
 	const [excerpt, setExcerpt] = useState("");
 	const [content, setContent] = useState("");
 	const [isSubmitting, setIsSubmitting] =
@@ -131,8 +130,7 @@ export function AdminArticleModal({
 					"Redaksi Yayasan PABE",
 			);
 			setBannerUrl(
-				articleToEdit.bannerUrl ||
-					"/img/hero_card_1.jpeg",
+				articleToEdit.bannerUrl || "",
 			);
 			setExcerpt(
 				articleToEdit.excerpt ||
@@ -152,9 +150,7 @@ export function AdminArticleModal({
 			setAuthor(
 				"Redaksi Yayasan PABE",
 			);
-			setBannerUrl(
-				"/img/hero_card_1.jpeg",
-			);
+			setBannerUrl("");
 			setExcerpt(
 				"",
 			);
@@ -356,26 +352,15 @@ export function AdminArticleModal({
 				</FormField>
 			</div>
 
-			{/* Banner URL */}
-			<FormField label="URL Gambar Utama / Banner">
-				<Input
-					type="text"
-					placeholder="/img/hero_card_1.jpeg"
-					value={
-						bannerUrl
-					}
-					onChange={(
-						e,
-					) =>
-						setBannerUrl(
-							e
-								.target
-								.value,
-						)
-					}
-					className="h-10 text-sm bg-white"
-				/>
-			</FormField>
+			{/* Banner Upload / URL */}
+			<FileUploadZone
+				value={bannerUrl}
+				onChange={setBannerUrl}
+				context="ARTICLE_BANNER"
+				identifier={title}
+				label="Foto Sampul / Banner Artikel"
+				helperText="Mendukung JPG, PNG, WebP (Maks. 5MB). Disimpan rapi ke articles/banners."
+			/>
 
 			{/* Ringkasan Singkat (Excerpt) */}
 			<FormField label="Ringkasan Singkat (Lead / Excerpt)">

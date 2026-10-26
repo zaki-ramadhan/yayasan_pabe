@@ -20,7 +20,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/img/logo/logo_ypabe.jpeg",
+        url: "/img/branding/logo-ypabe.webp",
         width: 1200,
         height: 630,
         alt: "Profil Resmi Yayasan Payung Berkah",
@@ -32,7 +32,7 @@ export const metadata = {
     title: "Tentang Kami - Yayasan Payung Berkah (PABE)",
     description:
       "Profil lengkap, struktur dewan pengurus, legalitas resmi, dan visi misi Yayasan Payung Berkah (PABE).",
-    images: ["/img/logo/logo_ypabe.jpeg"],
+    images: ["/img/branding/logo-ypabe.webp"],
   },
 };
 

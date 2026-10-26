@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
 
 /**
@@ -25,11 +26,13 @@ export function AdminUserProfile({ currentUser }) {
       <div className="flex items-center gap-3">
         <div className="relative w-9 h-9 rounded-full overflow-hidden bg-slate-100 border border-slate-200 text-slate-800 text-sm font-semibold flex items-center justify-center shrink-0 select-none">
           {avatarUrl ? (
-            <img
+            <Image
               src={avatarUrl}
               alt={currentUser?.name || "User"}
+              fill
+              sizes="36px"
+              unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
               className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
               onError={() => setImgError(true)}
             />
           ) : (

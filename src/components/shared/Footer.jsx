@@ -14,7 +14,7 @@ export function Footer() {
   return (
     <footer className="relative z-40 overflow-hidden bg-slate-950 text-white pt-12 pb-8 border-t border-slate-800">
       {/* Background Texture Overlay */}
-      <div className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none opacity-100 bg-[url('/img/texture_overlay.jpeg')]" />
+      <div className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none opacity-100 bg-[url('/img/textures/texture-overlay-1.webp')]" />
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-950/70 via-slate-950/90 to-slate-950 pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -25,7 +25,7 @@ export function Footer() {
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-700 shadow-xs flex items-center justify-center">
                 <Image
-                  src="/img/logo/logo_ypabe.jpeg"
+                  src="/img/branding/logo-ypabe.webp"
                   alt="Logo Yayasan Payung Berkah"
                   width={44}
                   height={44}

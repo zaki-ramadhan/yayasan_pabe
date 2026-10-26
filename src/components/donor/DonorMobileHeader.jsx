@@ -34,7 +34,7 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
         <Link href="/" className="flex items-center gap-2" title="Kembali ke Beranda Utama Yayasan PABE">
           <div className="relative w-8 h-8 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
             <Image
-              src="/img/logo/logo_ypabe.jpeg"
+              src="/img/branding/logo-ypabe.webp"
               alt="Logo Yayasan Payung Berkah"
               width={32}
               height={32}
@@ -68,11 +68,13 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
             className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center hover:ring-2 hover:ring-primary/20 transition-all"
           >
             {avatarUrl ? (
-              <img
+              <Image
                 src={avatarUrl}
                 alt={displayName}
+                fill
+                sizes="32px"
+                unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
                 className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
                 onError={() => setImgError(true)}
               />
             ) : (

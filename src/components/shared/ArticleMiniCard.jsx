@@ -34,6 +34,7 @@ export function ArticleMiniCard({
           <SafeImage
             src={article.bannerUrl}
             alt={article.title}
+            sizes="64px"
             fallbackText={article.category}
           />
         ) : (

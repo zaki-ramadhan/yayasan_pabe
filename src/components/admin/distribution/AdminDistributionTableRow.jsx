@@ -14,7 +14,7 @@ export function AdminDistributionTableRow({ item, onEdit, onDelete }) {
 						<Image
 							src={
 								item.campaignBannerUrl ||
-								"/img/hero_card_1.jpeg"
+								"/img/branding/logo-ypabe.webp"
 							}
 							alt={
 								item.campaignTitle ||

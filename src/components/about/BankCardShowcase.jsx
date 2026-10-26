@@ -35,7 +35,7 @@ export function BankCardShowcase() {
           style={{ clipPath: "url(#rounded-trapezoid-clip)" }}
         >
           <Image
-            src="/img/bank account decoration.jpeg"
+            src="/img/decorations/bank-card-gold.webp"
             alt="Dekorasi Background Rekening"
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -47,7 +47,7 @@ export function BankCardShowcase() {
         {/* Image Asset Layer (Pop-out 3D proporsional, proteksi klik kanan & drag) */}
         <div className="relative z-10 w-full h-full flex items-center justify-center overflow-visible pointer-events-none select-none">
           <Image
-            src="/img/bank_account_cards_new.png"
+            src="/img/decorations/bank-cards-showcase.webp"
             alt="Kartu Rekening Resmi Yayasan PABE BRI dan Mandiri"
             fill
             className="object-contain drop-shadow-2xl md:rotate-[-12deg] md:scale-[1.4] md:translate-x-24 md:translate-y-4 transition-transform select-none"

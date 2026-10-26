@@ -51,6 +51,7 @@ export function ArticleCard({
 						<SafeImage
 							src={article.bannerUrl}
 							alt={article.title}
+							sizes="(max-width: 640px) 100vw, 150px"
 							fallbackText={article.category}
 						/>
 					) : (

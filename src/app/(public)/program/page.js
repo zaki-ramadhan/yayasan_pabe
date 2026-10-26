@@ -14,7 +14,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/img/logo/logo_ypabe.jpeg",
+        url: "/img/branding/logo-ypabe.webp",
         width: 1200,
         height: 630,
         alt: "Program Donasi Yayasan Payung Berkah",
@@ -25,7 +25,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Program Donasi & Penyaluran Zakat - Yayasan Payung Berkah",
     description: "Temukan berbagai program kebaikan dan zakat produktif Yayasan Payung Berkah.",
-    images: ["/img/logo/logo_ypabe.jpeg"],
+    images: ["/img/branding/logo-ypabe.webp"],
   },
 };
 

@@ -24,7 +24,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/img/logo/logo_ypabe.jpeg",
+        url: "/img/branding/logo-ypabe.webp",
         width: 1200,
         height: 630,
         alt: "Laporan Penyaluran Yayasan Payung Berkah",
@@ -35,7 +35,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Laporan Distribusi Penyaluran - Yayasan Payung Berkah",
     description: "Transparansi audit dan penyaluran amanah donasi dan zakat.",
-    images: ["/img/logo/logo_ypabe.jpeg"],
+    images: ["/img/branding/logo-ypabe.webp"],
   },
 };
 

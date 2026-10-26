@@ -29,6 +29,7 @@ export function DonationCheckoutSummary({
                   <SafeImage
                     src={campaign.bannerUrl}
                     alt={campaign.title}
+                    sizes="72px"
                     fallbackText="Program PABE"
                   />
                 </div>

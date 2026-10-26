@@ -1,12 +1,14 @@
 
+import Image from "next/image";
+
 const DEFAULT_PAYMENT_LOGOS = [
-  { name: "QRIS", src: "/img/logo/payments/qris.png", alt: "QRIS Nasional" },
-  { name: "Bank BRI", src: "/img/logo/payments/BRI.png", alt: "Bank BRI" },
-  { name: "Bank Mandiri", src: "/img/logo/payments/mandiri.png", alt: "Bank Mandiri" },
-  { name: "GoPay", src: "/img/logo/payments/gopay.png", alt: "GoPay" },
-  { name: "ShopeePay", src: "/img/logo/payments/shopeepay.png", alt: "ShopeePay" },
-  { name: "Indomaret", src: "/img/logo/payments/indomaret.png", alt: "Indomaret" },
-  { name: "Alfamart", src: "/img/logo/payments/alfamart.png", alt: "Alfamart" },
+  { name: "QRIS", src: "/img/branding/payments/qris.webp", alt: "QRIS Nasional" },
+  { name: "Bank BRI", src: "/img/branding/payments/bri.webp", alt: "Bank BRI" },
+  { name: "Bank Mandiri", src: "/img/branding/payments/mandiri.webp", alt: "Bank Mandiri" },
+  { name: "GoPay", src: "/img/branding/payments/gopay.webp", alt: "GoPay" },
+  { name: "ShopeePay", src: "/img/branding/payments/shopeepay.webp", alt: "ShopeePay" },
+  { name: "Indomaret", src: "/img/branding/payments/indomaret.webp", alt: "Indomaret" },
+  { name: "Alfamart", src: "/img/branding/payments/alfamart.webp", alt: "Alfamart" },
 ];
 
 /**
@@ -30,12 +32,14 @@ export function FooterPaymentLogos({ logos = DEFAULT_PAYMENT_LOGOS }) {
             title={m.name}
             className="w-[72px] sm:w-[80px] h-9 sm:h-10 rounded-md bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center hover:bg-slate-50 transition-colors shrink-0 p-2"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`${m.src}?v=2`}
+            <Image
+              src={m.src}
               alt={m.alt}
+              width={72}
+              height={24}
+              sizes="80px"
+              style={{ width: "auto", height: "auto" }}
               className="max-h-5 sm:max-h-6 w-auto max-w-full object-contain select-none pointer-events-none"
-              loading="lazy"
             />
           </div>
         ))}

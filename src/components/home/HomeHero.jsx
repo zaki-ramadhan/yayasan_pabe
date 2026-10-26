@@ -6,24 +6,22 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { QuickDonateFolder } from "@/components/modules/QuickDonateFolder";
 import { cn } from "@/lib/utils";
+import { ASSET_PATHS } from "@/lib/assetConstants";
 
 const HERO_SLIDES = [
   {
     id: 1,
-    image:
-      "https://images.unsplash.com/photo-1588072432836-e10032774350?w=1600&auto=format&fit=crop&q=80",
+    image: ASSET_PATHS.BANNERS.HERO_SLIDE_1,
     label: "Pendidikan Al-Qur'an",
   },
   {
     id: 2,
-    image:
-      "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1600&auto=format&fit=crop&q=80",
+    image: ASSET_PATHS.BANNERS.HERO_SLIDE_2,
     label: "Pemberdayaan Yatim & Dhuafa",
   },
   {
     id: 3,
-    image:
-      "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1600&auto=format&fit=crop&q=80",
+    image: ASSET_PATHS.BANNERS.HERO_SLIDE_3,
     label: "Musyawarah & Halaqah",
   },
 ];

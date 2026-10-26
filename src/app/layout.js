@@ -44,9 +44,9 @@ export const metadata = {
   ],
   authors: [{ name: "Yayasan Payung Berkah (PABE)" }],
   icons: {
-    icon: "/img/logo/logo_ypabe.jpeg",
-    shortcut: "/img/logo/logo_ypabe.jpeg",
-    apple: "/img/logo/logo_ypabe.jpeg",
+    icon: "/img/branding/logo-ypabe.webp",
+    shortcut: "/img/branding/logo-ypabe.webp",
+    apple: "/img/branding/logo-ypabe.webp",
   },
   openGraph: {
     title: "Yayasan Payung Berkah | PABE",
@@ -57,7 +57,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/img/logo/logo_ypabe.jpeg",
+        url: "/img/branding/logo-ypabe.webp",
         width: 1200,
         height: 630,
         alt: "Logo Yayasan Payung Berkah",
@@ -68,7 +68,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Yayasan Payung Berkah | PABE",
     description: "Salurkan kepedulian Anda untuk masa depan santri dan aksi kemanusiaan.",
-    images: ["/img/logo/logo_ypabe.jpeg"],
+    images: ["/img/branding/logo-ypabe.webp"],
   },
   robots: {
     index: true,

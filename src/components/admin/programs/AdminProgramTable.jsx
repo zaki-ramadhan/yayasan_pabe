@@ -11,7 +11,15 @@ import {
   TableEmptyRow,
   TablePaginationFooter,
 } from "@/components/ui/table";
-import { AdminProgramModal } from "./AdminProgramModal";
+import dynamic from "next/dynamic";
+
+const AdminProgramModal = dynamic(
+  () =>
+    import("./AdminProgramModal").then(
+      (m) => m.AdminProgramModal
+    ),
+  { ssr: false }
+);
 import { AdminProgramToolbar } from "./AdminProgramToolbar";
 import { AdminProgramTableRow } from "./AdminProgramTableRow";
 import { useDebounce } from "@/hooks/useDebounce";

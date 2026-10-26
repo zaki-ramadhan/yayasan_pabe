@@ -32,7 +32,7 @@ export function AdminArticleTableRow({
 					<Image
 						src={
 							article.bannerUrl ||
-							"/img/hero_card_1.jpeg"
+							"/img/branding/logo-ypabe.webp"
 						}
 						alt={
 							article.title

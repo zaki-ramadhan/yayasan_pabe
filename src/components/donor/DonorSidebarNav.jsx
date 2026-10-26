@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Link from "next/link";
@@ -86,7 +85,7 @@ export function DonorSidebarNav({
           >
             <div className="relative w-8.5 h-8.5 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
               <Image
-                src="/img/logo/logo_ypabe.jpeg"
+                src="/img/branding/logo-ypabe.webp"
                 alt="Logo Yayasan PABE"
                 width={34}
                 height={34}

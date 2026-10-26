@@ -10,7 +10,7 @@ export function AuthMobileHeader() {
       <Link href="/" className="flex items-center gap-2">
         <div className="relative w-8 h-8 rounded-lg bg-white p-0.5 shadow-xs shrink-0 flex items-center justify-center overflow-hidden border border-slate-200">
           <Image
-            src="/img/logo/logo_ypabe.jpeg"
+            src="/img/branding/logo-ypabe.webp"
             alt="Logo Yayasan PABE"
             fill
             sizes="32px"

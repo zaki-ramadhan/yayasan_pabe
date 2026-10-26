@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { PanelLeft } from "lucide-react";
 
@@ -49,11 +50,13 @@ export function DonorTopHeader({
           aria-label="Buka Profil Saya"
         >
           {avatarUrl ? (
-            <img
+            <Image
               src={avatarUrl}
               alt={displayName}
+              fill
+              sizes="36px"
+              unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-              referrerPolicy="no-referrer"
               onError={() => setImgError(true)}
             />
           ) : (

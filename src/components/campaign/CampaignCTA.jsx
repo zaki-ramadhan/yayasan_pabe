@@ -4,6 +4,7 @@ import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { isCampaignClosed } from "@/lib/formatters";
+import { ASSET_PATHS } from "@/lib/assetConstants";
 
 function subscribeAuth(callback) {
   window.addEventListener("pabe_auth_change", callback);
@@ -59,8 +60,7 @@ export function CampaignCTA({
   const effectiveHref =
     buttonHref || (campaign?.slug ? `/campaign/${campaign.slug}/donate` : "/program");
   const effectiveBannerUrl =
-    campaign?.bannerUrl ||
-    "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80";
+    campaign?.bannerUrl || ASSET_PATHS.BANNERS.CTA_MAIN;
 
   return (
     <div

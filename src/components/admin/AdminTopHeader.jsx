@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { PanelLeft } from "lucide-react";
 import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
 import { SuperAdminNoticeBanner } from "@/components/admin/SuperAdminNoticeBanner";
@@ -61,11 +62,13 @@ export function AdminTopHeader({
           title={currentUser?.name || "Pengurus"}
         >
           {avatarUrl ? (
-            <img
+            <Image
               src={avatarUrl}
               alt={currentUser?.name || "Avatar"}
+              fill
+              sizes="36px"
+              unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
               className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
               onError={() => setImgError(true)}
             />
           ) : (

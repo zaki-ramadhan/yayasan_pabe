@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Camera, MapPin, Calendar, Trash2, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +33,7 @@ export function DonorProfileCover({
 }) {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [newAvatarUrl, setNewAvatarUrl] = useState("");
+  const [avatarLoadError, setAvatarLoadError] = useState(false);
 
   const displayName = profile?.name || "Pengguna";
   const initials = getInitials(profile?.name, profile?.email);
@@ -59,23 +60,21 @@ export function DonorProfileCover({
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-6">
             <div className="relative group shrink-0 -mt-12 sm:-mt-14 z-10">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-sidebar bg-slate-100 shadow-md overflow-hidden flex items-center justify-center">
-                {profile?.avatar ? (
-                  <img
+              <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-sidebar bg-slate-100 shadow-md overflow-hidden flex items-center justify-center">
+                {profile?.avatar && !avatarLoadError ? (
+                  <Image
                     src={profile.avatar}
                     alt={displayName}
-                    referrerPolicy="no-referrer"
+                    fill
+                    sizes="(max-width: 640px) 96px, 112px"
+                    unoptimized={typeof profile.avatar === "string" && !profile.avatar.startsWith("/") && !profile.avatar.includes("unsplash.com") && !profile.avatar.includes("lh3.googleusercontent.com")}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                      const fb = e.currentTarget.parentElement?.querySelector(".avatar-fallback");
-                      if (fb) fb.classList.remove("hidden");
-                    }}
+                    onError={() => setAvatarLoadError(true)}
                   />
                 ) : null}
                 <div
                   className={`avatar-fallback ${
-                    profile?.avatar ? "hidden" : "flex"
+                    profile?.avatar && !avatarLoadError ? "hidden" : "flex"
                   } w-full h-full bg-slate-900 text-white font-medium text-2xl sm:text-3xl items-center justify-center select-none`}
                 >
                   {initials}
@@ -176,16 +175,18 @@ export function DonorProfileCover({
                     key={idx}
                     type="button"
                     onClick={() => setNewAvatarUrl(preset)}
-                    className={`w-12 h-12 rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
+                    className={`relative w-12 h-12 rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
                       newAvatarUrl === preset
                         ? "border-primary ring-2 ring-primary/20 scale-105"
                         : "border-slate-200 hover:border-slate-400"
                     }`}
                   >
-                    <img
+                    <Image
                       src={preset}
                       alt={`Pilihan avatar ${idx + 1}`}
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="48px"
+                      className="object-cover"
                     />
                   </button>
                 ))}

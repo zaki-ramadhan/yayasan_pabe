@@ -55,6 +55,7 @@ export function AdminCampaignOverviewCard({
                       <SafeImage
                         src={campaign.bannerUrl}
                         alt={campaign.title}
+                        sizes="48px"
                         fallbackText={campaign.category || "Program Donasi"}
                         className="object-cover"
                       />

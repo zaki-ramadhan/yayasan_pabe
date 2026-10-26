@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+import Image from "next/image";
 import { formatCompactRupiah, formatRupiah } from "@/lib/formatters";
 
 export function AdminMetricCards({ stats }) {
@@ -54,12 +54,15 @@ export function AdminMetricCards({ stats }) {
           className="relative w-full aspect-[363/224]"
         >
           {/* Background Folder Frame */}
-          <img
-            src="/img/folder%20admin.svg?v=3"
+          <Image
+            src="/img/frames/folder-admin.svg"
             alt=""
             aria-hidden="true"
-            draggable="false"
-            className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none"
+            draggable={false}
+            fill
+            priority
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="object-fill pointer-events-none select-none"
           />
 
           {/* Radial Gradient Overlay */}
@@ -68,8 +71,8 @@ export function AdminMetricCards({ stats }) {
             className="absolute inset-0 pointer-events-none select-none opacity-7"
             style={{
               background: `radial-gradient(ellipse at 100% 100%, ${card.radialColor} 0%, transparent 72%)`,
-              WebkitMaskImage: 'url("/img/folder%20admin.svg?v=3")',
-              maskImage: 'url("/img/folder%20admin.svg?v=3")',
+              WebkitMaskImage: 'url("/img/frames/folder-admin.svg?v=3")',
+              maskImage: 'url("/img/frames/folder-admin.svg?v=3")',
               WebkitMaskSize: "100% 100%",
               maskSize: "100% 100%",
               WebkitMaskRepeat: "no-repeat",
@@ -82,8 +85,8 @@ export function AdminMetricCards({ stats }) {
             aria-hidden="true"
             className="absolute inset-0 pointer-events-none select-none overflow-hidden"
             style={{
-              WebkitMaskImage: 'url("/img/folder%20admin.svg?v=3")',
-              maskImage: 'url("/img/folder%20admin.svg?v=3")',
+              WebkitMaskImage: 'url("/img/frames/folder-admin.svg?v=3")',
+              maskImage: 'url("/img/frames/folder-admin.svg?v=3")',
               WebkitMaskSize: "100% 100%",
               maskSize: "100% 100%",
               WebkitMaskRepeat: "no-repeat",

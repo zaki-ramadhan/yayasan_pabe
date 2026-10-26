@@ -38,7 +38,7 @@ export function HomeStrategicRoadmap() {
       {/* Texture Overlay Decoration - Kanan Atas */}
       <div className="absolute top-0 right-0 w-1/2 aspect-square pointer-events-none select-none mix-blend-multiply opacity-20 z-0 overflow-hidden">
         <Image
-          src="/img/texture_overlay_5.jpeg"
+          src="/img/textures/texture-overlay-5.webp"
           alt=""
           fill
           sizes="(max-width: 1024px) 50vw, 40vw"
@@ -51,7 +51,7 @@ export function HomeStrategicRoadmap() {
       {/* Texture Overlay Decoration - Kiri Bawah (Rotate 180 Terbalik) */}
       <div className="absolute bottom-0 left-0 w-1/2 aspect-square pointer-events-none select-none mix-blend-multiply opacity-20 rotate-180 z-0 overflow-hidden">
         <Image
-          src="/img/texture_overlay_5.jpeg"
+          src="/img/textures/texture-overlay-5.webp"
           alt=""
           fill
           sizes="(max-width: 1024px) 50vw, 40vw"

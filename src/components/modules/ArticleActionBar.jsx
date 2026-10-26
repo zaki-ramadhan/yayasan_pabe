@@ -46,7 +46,7 @@ export function ArticleActionBar({
 					className={cn(
 						"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs sm:text-sm font-medium transition-colors cursor-pointer",
 						hasLiked
-							? "bg-slate-100 border-slate-400 text-slate-900"
+							? "bg-blue-50 border-blue-300 text-blue-700"
 							: "bg-white border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900",
 					)}
 					aria-label={hasLiked ? "Batalkan suka" : "Sukai artikel"}
@@ -56,11 +56,13 @@ export function ArticleActionBar({
 						className={cn(
 							"w-4 h-4 transition-transform active:scale-125",
 							hasLiked
-								? "fill-slate-800 text-slate-800"
+								? "text-blue-700 fill-blue-700"
 								: "text-slate-500",
 						)}
 					/>
-					<span className="font-semibold text-slate-800">{likes}</span>
+					<span className={cn("font-semibold", hasLiked ? "text-blue-700" : "text-slate-800")}>
+						{likes}
+					</span>
 				</button>
 
 				{/* Dislike Button */}
@@ -70,7 +72,7 @@ export function ArticleActionBar({
 					className={cn(
 						"inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs sm:text-sm font-medium transition-colors cursor-pointer",
 						hasDisliked
-							? "bg-slate-100 border-slate-400 text-slate-900"
+							? "bg-rose-50 border-rose-300 text-rose-700"
 							: "bg-white border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900",
 					)}
 					aria-label={
@@ -84,11 +86,11 @@ export function ArticleActionBar({
 						className={cn(
 							"w-4 h-4 transition-transform active:scale-125",
 							hasDisliked
-								? "fill-slate-800 text-slate-800"
+								? "text-rose-700 fill-rose-700"
 								: "text-slate-500",
 						)}
 					/>
-					<span className="font-semibold text-slate-800">
+					<span className={cn("font-semibold", hasDisliked ? "text-rose-700" : "text-slate-800")}>
 						{dislikes}
 					</span>
 				</button>

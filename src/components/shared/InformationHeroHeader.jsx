@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
  * @param {React.ReactNode} props.title - Page title
  * @param {React.ReactNode} [props.description] - Subtitle description
  * @param {React.ReactNode} [props.badge] - Category or status badge pill
- * @param {string} [props.imageSrc="/img/texture_overlay_4.jpeg"] - Background texture image
+ * @param {string} [props.imageSrc="/img/textures/texture-overlay-4.webp"] - Background texture image
  * @param {string} [props.imageAlt="Latar Belakang Header Yayasan PABE"] - Image alt text
  * @param {string} [props.className=""] - Additional custom classes
  */
@@ -17,7 +17,7 @@ export function InformationHeroHeader({
   title,
   description,
   badge,
-  imageSrc = "/img/texture_overlay_4.jpeg",
+  imageSrc = "/img/textures/texture-overlay-4.webp",
   imageAlt = "Latar Belakang Header Yayasan PABE",
   className = "",
 }) {

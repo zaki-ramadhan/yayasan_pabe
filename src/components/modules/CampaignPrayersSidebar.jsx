@@ -198,7 +198,7 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClo
         <div
           className="absolute inset-0 pointer-events-none bg-cover bg-center"
           style={{
-            backgroundImage: "url('/img/wallpaper_chat.jpeg')",
+            backgroundImage: "url('/img/textures/wallpaper-chat.webp')",
           }}
         />
         {/* Dark overlay layer to dim wallpaper smoothly */}

@@ -44,7 +44,19 @@ export function useArticleReaction({
 }) {
   const instanceId = useId();
   const [likes, setLikes] = useState(initialLikes);
+  const [prevInitialLikes, setPrevInitialLikes] = useState(initialLikes);
+  if (prevInitialLikes !== initialLikes) {
+    setPrevInitialLikes(initialLikes);
+    setLikes(initialLikes);
+  }
+
   const [dislikes, setDislikes] = useState(initialDislikes);
+  const [prevInitialDislikes, setPrevInitialDislikes] = useState(initialDislikes);
+  if (prevInitialDislikes !== initialDislikes) {
+    setPrevInitialDislikes(initialDislikes);
+    setDislikes(initialDislikes);
+  }
+
   const targetSlug = slug || articleId;
   const reactionDebounceRef = useRef(null);
 
@@ -62,7 +74,10 @@ export function useArticleReaction({
   const hasLiked = useMemo(() => {
     try {
       const arr = JSON.parse(storedLikesRaw);
-      return Array.isArray(arr) && (arr.includes(articleId) || arr.includes(targetSlug));
+      return Array.isArray(arr) && (
+        (articleId && arr.includes(articleId)) ||
+        (targetSlug && arr.includes(targetSlug))
+      );
     } catch {
       return false;
     }
@@ -71,7 +86,10 @@ export function useArticleReaction({
   const hasDisliked = useMemo(() => {
     try {
       const arr = JSON.parse(storedDislikesRaw);
-      return Array.isArray(arr) && (arr.includes(articleId) || arr.includes(targetSlug));
+      return Array.isArray(arr) && (
+        (articleId && arr.includes(articleId)) ||
+        (targetSlug && arr.includes(targetSlug))
+      );
     } catch {
       return false;
     }
@@ -82,7 +100,11 @@ export function useArticleReaction({
     const handleSync = (e) => {
       const detail = e.detail;
       if (!detail || detail.sourceId === instanceId) return;
-      if (detail.articleId === targetSlug || detail.articleId === articleId) {
+      const matches =
+        (targetSlug && (detail.articleId === targetSlug || detail.alternateId === targetSlug)) ||
+        (articleId && (detail.articleId === articleId || detail.alternateId === articleId));
+
+      if (matches) {
         if (typeof detail.likeDelta === "number") {
           setLikes((prev) => Math.max(0, prev + detail.likeDelta));
         }
@@ -132,12 +154,14 @@ export function useArticleReaction({
       const storedDislikes = JSON.parse(localStorage.getItem(DISLIKE_STORAGE_KEY) || "[]");
 
       const nextLiked = !hasLiked;
+      const identifiersToRemove = [targetSlug, articleId].filter(Boolean);
+
       const updatedLikes = nextLiked
-        ? [...storedLikes, targetSlug]
-        : storedLikes.filter((id) => id !== targetSlug && id !== articleId);
+        ? Array.from(new Set([...storedLikes, targetSlug, articleId].filter(Boolean)))
+        : storedLikes.filter((id) => !identifiersToRemove.includes(id));
 
       const updatedDislikes = hasDisliked
-        ? storedDislikes.filter((id) => id !== targetSlug && id !== articleId)
+        ? storedDislikes.filter((id) => !identifiersToRemove.includes(id))
         : storedDislikes;
 
       localStorage.setItem(LIKE_STORAGE_KEY, JSON.stringify(updatedLikes));
@@ -151,8 +175,15 @@ export function useArticleReaction({
         setDislikes((prev) => Math.max(0, prev - 1));
       }
 
-      if (nextLiked && targetSlug) {
-        scheduleServerReaction(targetSlug, "like");
+      if (targetSlug) {
+        if (nextLiked) {
+          if (hasDisliked) {
+            scheduleServerReaction(targetSlug, "undislike");
+          }
+          scheduleServerReaction(targetSlug, "like");
+        } else {
+          scheduleServerReaction(targetSlug, "unlike");
+        }
       }
 
       window.dispatchEvent(
@@ -160,6 +191,7 @@ export function useArticleReaction({
           detail: {
             sourceId: instanceId,
             articleId: targetSlug,
+            alternateId: articleId,
             hasLiked: nextLiked,
             likeDelta,
             hasDisliked: false,
@@ -180,12 +212,14 @@ export function useArticleReaction({
       const storedDislikes = JSON.parse(localStorage.getItem(DISLIKE_STORAGE_KEY) || "[]");
 
       const nextDisliked = !hasDisliked;
+      const identifiersToRemove = [targetSlug, articleId].filter(Boolean);
+
       const updatedDislikes = nextDisliked
-        ? [...storedDislikes, targetSlug]
-        : storedDislikes.filter((id) => id !== targetSlug && id !== articleId);
+        ? Array.from(new Set([...storedDislikes, targetSlug, articleId].filter(Boolean)))
+        : storedDislikes.filter((id) => !identifiersToRemove.includes(id));
 
       const updatedLikes = hasLiked
-        ? storedLikes.filter((id) => id !== targetSlug && id !== articleId)
+        ? storedLikes.filter((id) => !identifiersToRemove.includes(id))
         : storedLikes;
 
       localStorage.setItem(LIKE_STORAGE_KEY, JSON.stringify(updatedLikes));
@@ -199,8 +233,15 @@ export function useArticleReaction({
         setLikes((prev) => Math.max(0, prev - 1));
       }
 
-      if (nextDisliked && targetSlug) {
-        scheduleServerReaction(targetSlug, "dislike");
+      if (targetSlug) {
+        if (nextDisliked) {
+          if (hasLiked) {
+            scheduleServerReaction(targetSlug, "unlike");
+          }
+          scheduleServerReaction(targetSlug, "dislike");
+        } else {
+          scheduleServerReaction(targetSlug, "undislike");
+        }
       }
 
       window.dispatchEvent(
@@ -208,6 +249,7 @@ export function useArticleReaction({
           detail: {
             sourceId: instanceId,
             articleId: targetSlug,
+            alternateId: articleId,
             hasDisliked: nextDisliked,
             dislikeDelta,
             hasLiked: false,

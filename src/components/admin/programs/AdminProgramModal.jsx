@@ -12,6 +12,7 @@ import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 import { toTitleCase } from "@/lib/formatters";
+import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 
 export function AdminProgramModal({
 	isOpen,
@@ -31,6 +32,7 @@ export function AdminProgramModal({
 	const [location, setLocation] = useState("");
 	const [isUrgent, setIsUrgent] = useState(false);
 	const [story, setStory] = useState("");
+	const [bannerUrl, setBannerUrl] = useState("");
 	const [isSubmitting, setIsSubmitting] =
 		useState(false);
 
@@ -93,6 +95,10 @@ export function AdminProgramModal({
 					campaignToEdit.excerpt ||
 					"",
 			);
+			setBannerUrl(
+				campaignToEdit.bannerUrl ||
+					"",
+			);
 		} else {
 			setTitle(
 				"",
@@ -115,6 +121,9 @@ export function AdminProgramModal({
 				false,
 			);
 			setStory(
+				"",
+			);
+			setBannerUrl(
 				"",
 			);
 		}
@@ -214,6 +223,7 @@ export function AdminProgramModal({
 			location,
 			isUrgent,
 			story,
+			bannerUrl: bannerUrl ? bannerUrl.trim() : null,
 			excerpt: story.slice(
 				0,
 				160,
@@ -453,6 +463,16 @@ export function AdminProgramModal({
 				}
 				label="Tandai sebagai Program Mendesak"
 				description="Program akan mendapat prioritas banner dan badge darurat di beranda utama"
+			/>
+
+			{/* Foto Sampul / Banner R2 */}
+			<FileUploadZone
+				value={bannerUrl}
+				onChange={setBannerUrl}
+				context="CAMPAIGN_BANNER"
+				identifier={title}
+				label="Foto Sampul / Banner Program"
+				helperText="Mendukung JPG, PNG, WebP (Maks. 5MB). Disimpan rapi ke campaigns/banners."
 			/>
 
 			{/* Deskripsi & Cerita Program */}

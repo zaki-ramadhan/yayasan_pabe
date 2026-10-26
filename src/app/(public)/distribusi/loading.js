@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DistribusiLoading() {
@@ -178,12 +178,14 @@ export default function DistribusiLoading() {
                 key={i}
                 className="relative w-full aspect-[363/224]"
               >
-                <img
-                  src="/img/folder%20admin.svg?v=3"
+                <Image
+                  src="/img/frames/folder-admin.svg"
                   alt=""
                   aria-hidden="true"
-                  draggable="false"
-                  className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none opacity-80"
+                  draggable={false}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-fill pointer-events-none select-none opacity-80"
                 />
                 <div className="relative z-10 h-full flex flex-col justify-end pb-3.5 sm:pb-4 md:pb-4.5 px-3.5 sm:px-4 md:px-5 space-y-1">
                   <Skeleton className="h-3.5 w-28 rounded" />

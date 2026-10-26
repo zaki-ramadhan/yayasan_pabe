@@ -64,6 +64,7 @@ export function CampaignUpdateItem({ update }) {
               <SafeImage
                 src={imgUrl}
                 alt={`Dokumentasi ${update.title} ${idx + 1}`}
+                sizes="(max-width: 640px) 50vw, 380px"
                 fallbackText="Dokumentasi"
               />
             </a>

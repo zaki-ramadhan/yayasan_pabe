@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
@@ -62,13 +63,16 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-pengh
 
   return (
     <div className="relative w-full aspect-[592/458] min-h-[380px] sm:min-h-[390px]">
-      {/* Folder Parent Frame dari public/img/folder hero.svg */}
-      <img
-        src="/img/folder%20hero.svg"
+      {/* Folder Parent Frame */}
+      <Image
+        src="/img/frames/folder-hero.svg"
         alt=""
         aria-hidden="true"
-        draggable="false"
-        className="absolute inset-0 w-full h-full object-fill pointer-events-none select-none drop-shadow-lg"
+        draggable={false}
+        fill
+        sizes="(max-width: 1024px) 100vw, 500px"
+        priority
+        className="object-fill pointer-events-none select-none drop-shadow-lg"
       />
 
       {/* Konten Formulir Donasi di Dalam Folder (Align Bawah dengan Jarak Nyaman) */}
