@@ -17,11 +17,11 @@ function subscribe(callback) {
 }
 
 function getAminedSnapshot() {
-  return localStorage.getItem(AMINED_STORAGE_KEY) || localStorage.getItem("ygsm_amined_prayers") || "[]";
+  return localStorage.getItem(AMINED_STORAGE_KEY) || "[]";
 }
 
 function getCountsSnapshot() {
-  return localStorage.getItem(AMIN_COUNTS_KEY) || localStorage.getItem("ygsm_prayer_amin_counts") || "{}";
+  return localStorage.getItem(AMIN_COUNTS_KEY) || "{}";
 }
 
 function getServerSnapshot() {

@@ -13,17 +13,15 @@ import { NavMobileDrawer } from "@/components/nav/NavMobileDrawer";
 
 function subscribeAuth(callback) {
   window.addEventListener("pabe_auth_change", callback);
-  window.addEventListener("ygsm_auth_change", callback);
   window.addEventListener("storage", callback);
   return () => {
     window.removeEventListener("pabe_auth_change", callback);
-    window.removeEventListener("ygsm_auth_change", callback);
     window.removeEventListener("storage", callback);
   };
 }
 
 function getAuthSnapshot() {
-  return localStorage.getItem("pabe_auth_user") || localStorage.getItem("ygsm_auth_user");
+  return localStorage.getItem("pabe_auth_user");
 }
 
 function getAuthServerSnapshot() {
@@ -40,12 +38,9 @@ export function Navbar() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const justLoggedInName =
-      sessionStorage.getItem("pabe_just_logged_in") ||
-      sessionStorage.getItem("ygsm_just_logged_in");
+    const justLoggedInName = sessionStorage.getItem("pabe_just_logged_in");
     if (justLoggedInName) {
       sessionStorage.removeItem("pabe_just_logged_in");
-      sessionStorage.removeItem("ygsm_just_logged_in");
       toast.success(`Selamat datang, ${justLoggedInName}! Berhasil masuk ke akun.`);
     }
   }, [currentUser]);

@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
+import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 
 /**
  * Retrieve active job vacancies directly from PostgreSQL
@@ -129,8 +130,9 @@ export async function submitJobApplication(payload) {
   if (!fullName || typeof fullName !== "string" || fullName.trim().length < 2) {
     throw new Error("Nama lengkap wajib diisi minimal 2 karakter.");
   }
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-    throw new Error("Format email tidak valid.");
+  const emailVal = await verifyEmailDomainDns(email, { isRequired: true });
+  if (!emailVal.isValid) {
+    throw new Error(emailVal.message || "Format alamat email tidak valid.");
   }
   const cleanPhone = (phone || "").replace(/\D/g, "");
   if (cleanPhone.length < 10 || cleanPhone.length > 15) {
@@ -141,7 +143,7 @@ export async function submitJobApplication(payload) {
   }
 
   const cleanFullName = sanitizeInput(fullName.trim());
-  const cleanEmail = email.trim().toLowerCase();
+  const cleanEmail = emailVal.sanitized;
   const cleanLinkedin = linkedinUrl ? sanitizeInput(linkedinUrl.trim()) : null;
   const cleanPortfolio = portfolioUrl ? sanitizeInput(portfolioUrl.trim()) : null;
   const cleanResume = resumeUrl ? sanitizeInput(resumeUrl.trim()) : null;

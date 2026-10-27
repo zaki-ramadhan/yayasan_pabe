@@ -213,6 +213,7 @@ model RoutineDonation {
   isAnonymous  Boolean   @default(false)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  notificationQueues NotificationQueue[]
 
   @@index([donorEmail])
   @@index([donorName])
@@ -328,4 +329,43 @@ model ActivityLog {
   @@index([userId])
   @@index([action])
   @@index([createdAt])
+}
+
+model NotificationQueue {
+  id                String           @id @default(cuid())
+  routineDonationId String?
+  routineDonation   RoutineDonation? @relation(fields: [routineDonationId], references: [id], onDelete: SetNull)
+  type              String           @default("ROUTINE_INVOICE") // ROUTINE_INVOICE, ROUTINE_REMINDER, ROUTINE_COMPLETION
+  recipientPhone    String
+  payload           Json
+  status            String           @default("PENDING") // PENDING, PROCESSING, SENT, FAILED
+  attempts          Int              @default(0)
+  maxAttempts       Int              @default(3)
+  scheduledFor      DateTime         @default(now())
+  processedAt       DateTime?
+  lastError         String?
+  idempotencyKey    String           @unique
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  logs              NotificationLog[]
+
+  @@index([status, scheduledFor])
+  @@index([routineDonationId])
+}
+
+model NotificationLog {
+  id                 String             @id @default(cuid())
+  queueId            String?
+  queue              NotificationQueue? @relation(fields: [queueId], references: [id], onDelete: SetNull)
+  recipientPhone     String
+  provider           String             // mock, meta, fonnte
+  providerMessageId  String?
+  status             String             // DELIVERED, FAILED
+  errorMessage       String?
+  attemptNumber      Int                @default(1)
+  sentAt             DateTime           @default(now())
+
+  @@index([recipientPhone])
+  @@index([queueId])
+  @@index([sentAt(sort: Desc)])
 }

@@ -2,8 +2,18 @@ import { CheckCircle2, Phone, Mail, Clock, MapPin } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { ORG_PROFILE } from "@/data/orgProfile";
 
-export function AboutSidebarInfo() {
-  const whatsappUrl = `https://wa.me/${ORG_PROFILE.contacts.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent("Assalamu'alaikum Yayasan Payung Berkah, mohon info program yayasan.")}`;
+export function AboutSidebarInfo({ orgSettings = null }) {
+  const legal = {
+    ...ORG_PROFILE.legal,
+    ...(orgSettings?.legal || {}),
+  };
+  const contacts = {
+    ...ORG_PROFILE.contacts,
+    ...(orgSettings?.contacts || {}),
+  };
+
+  const cleanWa = (contacts.whatsapp || "").replace(/\D/g, "");
+  const whatsappUrl = `https://wa.me/${cleanWa}?text=${encodeURIComponent("Assalamu'alaikum Yayasan Payung Berkah, mohon info program yayasan.")}`;
 
   return (
     <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-300 space-y-4 shadow-2xs">
@@ -21,7 +31,7 @@ export function AboutSidebarInfo() {
               Akta Notaris
             </span>
             <p className="font-medium text-slate-900 mt-0.5">
-              {ORG_PROFILE.legal.aktaNotaris}
+              {legal.aktaNotaris}
             </p>
           </div>
 
@@ -30,16 +40,16 @@ export function AboutSidebarInfo() {
               SK Menkumham RI
             </span>
             <p className="font-medium text-slate-900 mt-0.5">
-              {ORG_PROFILE.legal.skKemenkumham}
+              {legal.skKemenkumham}
             </p>
           </div>
 
           <div>
             <span className="text-sm font-medium text-primary block">
-              Izin Kegiatan LKS (PMPTSP)
+              Izin Kegiatan LKS (PMPTSP / Dinsos)
             </span>
             <p className="font-medium text-slate-900 mt-0.5">
-              {ORG_PROFILE.legal.izinIzinSosial}
+              {legal.izinIzinSosial}
             </p>
           </div>
 
@@ -48,7 +58,7 @@ export function AboutSidebarInfo() {
               Surat Keterangan Domisili
             </span>
             <p className="font-medium text-slate-900 mt-0.5">
-              {ORG_PROFILE.legal.suratDomisili}
+              {legal.suratDomisili}
             </p>
           </div>
 
@@ -57,7 +67,7 @@ export function AboutSidebarInfo() {
               Nomor Pokok Wajib Pajak (NPWP)
             </span>
             <p className="font-medium text-slate-900 mt-0.5 font-mono">
-              {ORG_PROFILE.legal.npwp}
+              {legal.npwp}
             </p>
           </div>
 
@@ -67,11 +77,11 @@ export function AboutSidebarInfo() {
             </span>
             <div className="flex items-center gap-2 text-emerald-800 text-sm font-medium">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>{ORG_PROFILE.legal.statusLks} ({ORG_PROFILE.legal.lingkupKerja})</span>
+              <span>{legal.statusLks} ({legal.lingkupKerja})</span>
             </div>
             <div className="flex items-center gap-2 text-emerald-800 text-sm font-medium">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Mitra: {ORG_PROFILE.legal.mitraAfiliasi}</span>
+              <span>Mitra: {legal.mitraAfiliasi}</span>
             </div>
           </div>
         </div>
@@ -86,22 +96,22 @@ export function AboutSidebarInfo() {
         <div className="space-y-3 text-sm text-slate-700">
           <div className="flex items-start gap-2.5">
             <MapPin className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
-            <span className="leading-relaxed">{ORG_PROFILE.contacts.address}</span>
+            <span className="leading-relaxed">{contacts.address}</span>
           </div>
 
           <div className="flex items-center gap-2.5">
             <Phone className="w-4 h-4 text-slate-500 shrink-0" />
-            <span>{ORG_PROFILE.contacts.phone} / {ORG_PROFILE.contacts.whatsapp}</span>
+            <span>{contacts.phone} / {contacts.whatsapp}</span>
           </div>
 
           <div className="flex items-center gap-2.5">
             <Mail className="w-4 h-4 text-slate-500 shrink-0" />
-            <span>{ORG_PROFILE.contacts.email}</span>
+            <span>{contacts.email}</span>
           </div>
 
           <div className="flex items-center gap-2.5">
             <Clock className="w-4 h-4 text-slate-500 shrink-0" />
-            <span>{ORG_PROFILE.contacts.officeHours}</span>
+            <span>{contacts.officeHours}</span>
           </div>
 
           <div className="pt-2 border-t border-slate-100">

@@ -82,6 +82,26 @@ export const DEMO_USERS = [
 export const AUTH_STORAGE_KEY = "pabe_auth_user";
 const REMEMBER_KEY = "pabe_remember_identifier";
 
+/**
+ * Durasi Sesi Aman (dalam Detik):
+ * - Admin/Staf: 12 jam (maksimal 24 jam dengan "Ingat Saya" demi keamanan keuangan/data)
+ * - Donatur: 7 hari (30 hari dengan "Ingat Saya")
+ */
+export const SESSION_DURATIONS = {
+  ADMIN_DEFAULT: 12 * 60 * 60, // 12 jam
+  ADMIN_REMEMBER: 24 * 60 * 60, // 24 jam
+  DONOR_DEFAULT: 7 * 24 * 60 * 60, // 7 hari
+  DONOR_REMEMBER: 30 * 24 * 60 * 60, // 30 hari
+};
+
+export function getSessionDuration(role, rememberMe = false) {
+  const isStaff = role && role !== USER_ROLES.DONOR;
+  if (isStaff) {
+    return rememberMe ? SESSION_DURATIONS.ADMIN_REMEMBER : SESSION_DURATIONS.ADMIN_DEFAULT;
+  }
+  return rememberMe ? SESSION_DURATIONS.DONOR_REMEMBER : SESSION_DURATIONS.DONOR_DEFAULT;
+}
+
 export function getInitials(name = "") {
   if (!name) return "U";
   const parts = name.trim().split(/\s+/);
@@ -129,26 +149,59 @@ export function formatSocialUser({
 export function getStoredUser() {
   if (typeof window === "undefined") return null;
   try {
-    const raw = localStorage.getItem(AUTH_STORAGE_KEY) || localStorage.getItem("ygsm_auth_user");
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY) || localStorage.getItem("pabe_auth_session");
     if (!raw) return null;
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed) return null;
+
+    // Periksa apakah sesi lokal sudah kedaluwarsa
+    if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
+      logoutUser();
+      return null;
+    }
+
+    return parsed;
   } catch {
     return null;
   }
 }
 
-export function loginUser(user) {
-  if (typeof window === "undefined") return;
-  const userJson = JSON.stringify(user);
+export function loginUser(user, options = {}) {
+  if (typeof window === "undefined" || !user) return;
+
+  const rememberMe = Boolean(options.rememberMe);
+  const durationSec =
+    user.expiresAt && typeof user.expiresAt === "number"
+      ? Math.max(60, Math.floor((user.expiresAt - Date.now()) / 1000))
+      : getSessionDuration(user?.role, rememberMe);
+
+  const expiresAt = user.expiresAt || Date.now() + durationSec * 1000;
+
+  const userWithSession = {
+    ...user,
+    expiresAt,
+    sessionIssuedAt: user.sessionIssuedAt || Date.now(),
+  };
+
+  const userJson = JSON.stringify(userWithSession);
   localStorage.setItem(AUTH_STORAGE_KEY, userJson);
-  localStorage.setItem("ygsm_auth_user", userJson);
   localStorage.setItem("pabe_auth_session", userJson);
-  localStorage.setItem("ygsm_auth_session", userJson);
   sessionStorage.setItem("pabe_just_logged_in", user.name || "Donatur");
-  sessionStorage.setItem("ygsm_just_logged_in", user.name || "Donatur");
+
+  // Clean up legacy keys if present
+  try {
+    localStorage.removeItem("ygsm_auth_user");
+    localStorage.removeItem("ygsm_auth_session");
+    sessionStorage.removeItem("ygsm_just_logged_in");
+  } catch {}
+
+  // Sync session cookie client-side sesuai durasi terhitung
+  const userId = encodeURIComponent(user?.id || "USR-DONOR");
+  const role = encodeURIComponent(user?.role || "DONOR");
+  document.cookie = `pabe_session=${userId}; path=/; max-age=${durationSec}; SameSite=Lax`;
+  document.cookie = `pabe_role=${role}; path=/; max-age=${durationSec}; SameSite=Lax`;
 
   window.dispatchEvent(new Event("pabe_auth_change"));
-  window.dispatchEvent(new Event("ygsm_auth_change"));
   window.dispatchEvent(new Event("storage"));
 }
 
@@ -175,7 +228,7 @@ export async function loginWithServer({ identifier, password, rememberMe = false
     throw new Error(data.message || "Gagal masuk ke akun.");
   }
 
-  loginUser(data.data);
+  loginUser(data.data, { rememberMe });
   return data.data;
 }
 
@@ -215,19 +268,32 @@ export function redirectToGoogleOAuth(callbackUrl = "/") {
   window.location.href = target;
 }
 
+export function redirectToFacebookOAuth(callbackUrl = "/", mode = "login") {
+  if (typeof window === "undefined") return;
+  const target = `/api/auth/facebook?callbackUrl=${encodeURIComponent(callbackUrl)}&mode=${encodeURIComponent(mode)}`;
+  // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+  window.location.href = target;
+}
+
 export function logoutUser() {
   if (typeof window === "undefined") return;
   localStorage.removeItem(AUTH_STORAGE_KEY);
-  localStorage.removeItem("ygsm_auth_user");
   localStorage.removeItem("pabe_auth_session");
-  localStorage.removeItem("ygsm_auth_session");
   sessionStorage.removeItem("pabe_just_logged_in");
-  sessionStorage.removeItem("ygsm_just_logged_in");
   sessionStorage.removeItem("zakat_calculator_state");
+
+  // Clean legacy keys
+  try {
+    localStorage.removeItem("ygsm_auth_user");
+    localStorage.removeItem("ygsm_auth_session");
+    sessionStorage.removeItem("ygsm_just_logged_in");
+  } catch {}
 
   // Invalidate session cookie immediately
   document.cookie = "pabe_session=; path=/; max-age=0; SameSite=Lax";
+  document.cookie = "pabe_role=; path=/; max-age=0; SameSite=Lax";
   document.cookie = "ygsm_session=; path=/; max-age=0; SameSite=Lax";
+  document.cookie = "ygsm_role=; path=/; max-age=0; SameSite=Lax";
 
   // Trigger server logout if available
   try {
@@ -235,7 +301,6 @@ export function logoutUser() {
   } catch {}
 
   window.dispatchEvent(new Event("pabe_auth_change"));
-  window.dispatchEvent(new Event("ygsm_auth_change"));
   window.dispatchEvent(new Event("storage"));
 }
 

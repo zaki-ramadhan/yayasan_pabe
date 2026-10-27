@@ -2,9 +2,7 @@ import { NextResponse } from "next/server";
 
 export function proxy(request) {
   const { pathname } = request.nextUrl;
-  const session =
-    request.cookies.get("pabe_session")?.value ||
-    request.cookies.get("ygsm_session")?.value;
+  const session = request.cookies.get("pabe_session")?.value;
 
   // 1. Backward-Compatibility Redirect: /dashboard/* -> /admin/*
   if (pathname === "/dashboard" || pathname.startsWith("/dashboard/")) {
@@ -17,7 +15,7 @@ export function proxy(request) {
   // 2. Reverse Guard: If already authenticated, redirect away from /login & /register
   if (pathname === "/login" || pathname === "/register") {
     if (session) {
-      const role = request.cookies.get("pabe_role")?.value || request.cookies.get("ygsm_role")?.value;
+      const role = request.cookies.get("pabe_role")?.value;
       const defaultTarget = role && role !== "DONOR" ? "/admin" : "/donatur/dashboard";
       const redirectUrl = request.nextUrl.searchParams.get("redirect") || defaultTarget;
       return NextResponse.redirect(new URL(redirectUrl, request.url));
@@ -27,7 +25,7 @@ export function proxy(request) {
 
   // 3. Guard Admin Panel Pages (/admin and /admin/*) - Stealth Masking 404
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    const role = request.cookies.get("pabe_role")?.value || request.cookies.get("ygsm_role")?.value;
+    const role = request.cookies.get("pabe_role")?.value;
     const isStaff = Boolean(session && role && role !== "DONOR");
 
     // Jika belum login atau bukan staf yayasan: sembunyikan rute admin dengan mengembalikan 404
@@ -64,7 +62,7 @@ export function proxy(request) {
       return NextResponse.redirect(loginUrl);
     }
 
-    const role = request.cookies.get("pabe_role")?.value || request.cookies.get("ygsm_role")?.value;
+    const role = request.cookies.get("pabe_role")?.value;
     if (role && role !== "DONOR" && (pathname === "/donatur" || pathname === "/donatur/dashboard")) {
       return NextResponse.redirect(new URL("/admin", request.url));
     }
@@ -82,7 +80,7 @@ export function proxy(request) {
 
   // 5. Guard Sensitive Internal API Endpoints (/api/admin/*, /api/user/*, /api/dashboard/*)
   if (pathname.startsWith("/api/admin")) {
-    const role = request.cookies.get("pabe_role")?.value || request.cookies.get("ygsm_role")?.value;
+    const role = request.cookies.get("pabe_role")?.value;
     const isStaff = Boolean(session && role && role !== "DONOR");
 
     // Kembalikan 404 palsu untuk API admin agar bot scanner tidak mendeteksi endpoint admin

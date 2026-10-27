@@ -8,7 +8,13 @@ import { ShareDropdown } from "@/components/shared/ShareDropdown";
 import { TeamAvatarStack } from "./TeamAvatarStack";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 
-export function AboutHeader({ volunteerCount = 14 }) {
+export function AboutHeader({ orgSettings = null, volunteerCount = 14 }) {
+	const orgName = orgSettings?.name || ORG_PROFILE.name;
+	const orgTagline =
+		orgSettings?.tagline !== undefined && orgSettings?.tagline !== null
+			? orgSettings.tagline
+			: ORG_PROFILE.tagline;
+
 	return (
 		<section className="bg-white rounded-xl border border-slate-300 overflow-hidden shadow-2xs">
 			{/* Cover Banner Image */}
@@ -71,7 +77,7 @@ export function AboutHeader({ volunteerCount = 14 }) {
 							</Button>
 						</Link>
 						<ShareDropdown
-							title={ORG_PROFILE.name}
+							title={orgName}
 							align="end"
 							variant="icon"
 							className="h-9 sm:h-10 w-9 sm:w-10 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 flex items-center justify-center shadow-2xs shrink-0"
@@ -83,11 +89,11 @@ export function AboutHeader({ volunteerCount = 14 }) {
 				<div className="space-y-1">
 					<div className="flex items-center gap-2 flex-wrap">
 						<h1 className="text-2xl sm:text-3xl font-medium text-slate-950 leading-tight">
-							{ORG_PROFILE.name}
+							{orgName}
 						</h1>
 					</div>
 					<p className="text-sm sm:text-base text-slate-700">
-						{ORG_PROFILE.tagline}
+						{orgTagline}
 					</p>
 
 					{/* Avatar Stack Pengurus & Relawan */}

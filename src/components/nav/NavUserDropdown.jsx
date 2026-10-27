@@ -77,6 +77,7 @@ export function NavUserDropdown({ currentUser, onLogout }) {
                 fill
                 sizes="32px"
                 unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
                 onError={() => setImgError(true)}
               />
@@ -117,6 +118,7 @@ export function NavUserDropdown({ currentUser, onLogout }) {
                   fill
                   sizes="32px"
                   unoptimized={typeof currentUser.avatar === "string" && !currentUser.avatar.startsWith("/") && !currentUser.avatar.includes("lh3.googleusercontent.com")}
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
                 />
               ) : (

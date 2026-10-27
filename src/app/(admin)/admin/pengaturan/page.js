@@ -7,6 +7,9 @@ export const metadata = {
   description: "Pengaturan identitas resmi yayasan, kontak operasional, legalitas, dan nomor rekening bank resmi.",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminSettingsPage() {
   const settings = await getOrgSettings();
 

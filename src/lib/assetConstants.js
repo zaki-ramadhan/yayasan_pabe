@@ -21,6 +21,8 @@ export const ASSET_PATHS = {
   },
   PAYMENTS: {
     QRIS: "/img/branding/payments/qris.webp",
+    QRIS_BARCODE: "/img/branding/payments/qris-barcode.webp",
+    QRIS_STANDEE: "/img/branding/payments/qris-standee.webp",
     BRI: "/img/branding/payments/bri.webp",
     BNI: "/img/branding/payments/bni.webp",
     MANDIRI: "/img/branding/payments/mandiri.webp",

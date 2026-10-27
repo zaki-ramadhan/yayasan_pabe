@@ -95,7 +95,7 @@ export async function getAuthenticatedUser(request) {
 
   // 1. NextRequest helper (.cookies.get)
   if (request?.cookies && typeof request.cookies.get === "function") {
-    sessionId = request.cookies.get("pabe_session")?.value || request.cookies.get("ygsm_session")?.value;
+    sessionId = request.cookies.get("pabe_session")?.value;
   }
 
   // 2. Fallback: Parse raw Request header 'cookie'
@@ -105,7 +105,7 @@ export async function getAuthenticatedUser(request) {
         ? request.headers.get("cookie") || ""
         : request.headers?.cookie || "";
     if (cookieHeader) {
-      const match = cookieHeader.match(/(?:pabe_session|ygsm_session)=([^;]+)/);
+      const match = cookieHeader.match(/pabe_session=([^;]+)/);
       sessionId = match ? decodeURIComponent(match[1].trim()) : null;
     }
   }
@@ -114,9 +114,7 @@ export async function getAuthenticatedUser(request) {
   if (!sessionId) {
     try {
       const cookieStore = await cookies();
-      sessionId =
-        cookieStore.get("pabe_session")?.value ||
-        cookieStore.get("ygsm_session")?.value;
+      sessionId = cookieStore.get("pabe_session")?.value;
     } catch {
       // Ignored if executed outside server context
     }

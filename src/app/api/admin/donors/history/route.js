@@ -19,8 +19,10 @@ export async function GET(request) {
     const email = searchParams.get("email") || "";
     const phone = searchParams.get("phone") || "";
     const name = searchParams.get("name") || "";
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "8", 10);
 
-    const detail = await getAdminDonorDetail({ email, phone, name });
+    const detail = await getAdminDonorDetail({ email, phone, name, page, limit });
     return NextResponse.json({
       success: true,
       data: detail,

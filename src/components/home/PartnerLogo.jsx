@@ -45,7 +45,7 @@ export function PartnerLogo({ partner }) {
           width={240}
           height={56}
           sizes="(max-width: 640px) 140px, 240px"
-          style={{ width: "auto", height: "auto" }}
+          style={{ width: "auto" }}
           className={`${getLogoSizeClass(partner.id)} object-contain select-none pointer-events-none`}
         />
       ) : (

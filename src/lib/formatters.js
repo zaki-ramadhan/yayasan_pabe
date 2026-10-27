@@ -331,3 +331,54 @@ export function toTitleCase(str) {
     .join(" ");
 }
 
+/**
+ * Format nama metode pembayaran agar ramah pengguna dan tidak menampilkan kode mentah bersambung underscore.
+ * @param {string} channel
+ * @returns {string}
+ */
+export function formatPaymentChannel(channel) {
+  if (!channel || typeof channel !== "string") return "-";
+  const clean = channel.trim().toLowerCase();
+
+  const channelMap = {
+    qris: "QRIS",
+    bri_va: "BRI Virtual Account",
+    mandiri_va: "Mandiri Virtual Account",
+    bca_va: "BCA Virtual Account",
+    bni_va: "BNI Virtual Account",
+    bsi_va: "BSI Virtual Account",
+    cimb_va: "CIMB Virtual Account",
+    danamon_va: "Danamon Virtual Account",
+    permata_va: "Permata Virtual Account",
+    bank_mandiri: "Bank Mandiri",
+    bank_bri: "Bank BRI",
+    bank_bca: "Bank BCA",
+    bank_bni: "Bank BNI",
+    bank_bsi: "Bank BSI",
+    bank_dki: "Bank DKI",
+    mandiri: "Bank Mandiri",
+    bri: "Bank BRI",
+    bca: "Bank BCA",
+    bni: "Bank BNI",
+    bsi: "Bank BSI",
+    gopay: "GoPay",
+    ovo: "OVO",
+    dana: "DANA",
+    shopeepay: "ShopeePay",
+    linkaja: "LinkAja",
+    transfer_manual: "Transfer Manual",
+    cash: "Tunai / Kas Yayasan",
+  };
+
+  if (channelMap[clean]) return channelMap[clean];
+
+  return clean
+    .split("_")
+    .map((part) => {
+      const u = part.toUpperCase();
+      if (["BRI", "BCA", "BNI", "BSI", "VA", "QRIS", "DKI", "ATM"].includes(u)) return u;
+      return part.charAt(0).toUpperCase() + part.slice(1);
+    })
+    .join(" ");
+}
+

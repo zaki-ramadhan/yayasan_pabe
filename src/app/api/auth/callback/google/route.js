@@ -126,7 +126,11 @@ export async function GET(request) {
     const userRole = isSuperAdmin ? "SUPER_ADMIN" : (dbUser?.role || "DONOR");
     const rawUserTitle = isSuperAdmin ? "Super Admin" : (dbUser?.title || "Donatur");
     const userTitle = rawUserTitle.includes("Ketua Yayasan") ? "Super Admin" : rawUserTitle;
-    const userAvatar = dbUser?.avatar || profile.picture || null;
+    const userAvatar = profile.picture || dbUser?.avatar || null;
+
+    const isStaff = userRole && userRole !== "DONOR";
+    const durationSec = isStaff ? 12 * 60 * 60 : 7 * 24 * 60 * 60;
+    const expiresAt = Date.now() + durationSec * 1000;
 
     const sessionPayload = {
       id: userId,
@@ -140,6 +144,8 @@ export async function GET(request) {
       badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
       provider: "google",
       providerId: profile.id,
+      expiresAt,
+      sessionIssuedAt: Date.now(),
     };
 
     // 4. Return HTML bridge to sync localStorage session and redirect smoothly
@@ -193,13 +199,9 @@ export async function GET(request) {
               const session = ${sessionJson};
               const jsonStr = JSON.stringify(session);
               localStorage.setItem('pabe_auth_user', jsonStr);
-              localStorage.setItem('ygsm_auth_user', jsonStr);
               localStorage.setItem('pabe_auth_session', jsonStr);
-              localStorage.setItem('ygsm_auth_session', jsonStr);
               sessionStorage.setItem('pabe_just_logged_in', session.name || 'Donatur');
-              sessionStorage.setItem('ygsm_just_logged_in', session.name || 'Donatur');
               window.dispatchEvent(new Event('pabe_auth_change'));
-              window.dispatchEvent(new Event('ygsm_auth_change'));
               window.dispatchEvent(new Event('storage'));
               window.location.replace('${targetUrl}');
             } catch (err) {
@@ -214,18 +216,16 @@ export async function GET(request) {
       headers: { "Content-Type": "text/html; charset=utf-8" },
     });
 
-    // Set secure session cookie
+    // Set secure session cookie with role-based maxAge
     const cookieOpts = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 30, // 30 days
+      maxAge: durationSec,
       path: "/",
     };
     response.cookies.set("pabe_session", userId, cookieOpts);
-    response.cookies.set("ygsm_session", userId, cookieOpts);
     response.cookies.set("pabe_role", userRole, { ...cookieOpts, httpOnly: false });
-    response.cookies.set("ygsm_role", userRole, { ...cookieOpts, httpOnly: false });
 
     return response;
   } catch (err) {

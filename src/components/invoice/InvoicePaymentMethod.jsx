@@ -1,7 +1,8 @@
 "use client";
 
-import { QRCodeSVG } from "qrcode.react";
+import Image from "next/image";
 import { Check, Copy } from "lucide-react";
+import { ASSET_PATHS } from "@/lib/assetConstants";
 
 /**
  * Payment method presentation (QRIS QR Code or Virtual Account info)
@@ -32,22 +33,35 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
       </div>
 
       {isQris ? (
-        <div className="flex flex-col items-center justify-center py-2 space-y-3 text-center">
-          <div className="p-3 bg-white rounded-lg border border-slate-200 shadow-2xs">
-            <QRCodeSVG
-              value={`00020101021226600016ID.CO.PABE.WWW01189360099900000123450215INV${donation.invoiceId}520458125303360540${donation.totalAmount}5802ID5912PABE_CHARITY6007JAKARTA6304ABCD`}
-              size={190}
-              level="M"
-            />
+        <div className="flex flex-col items-center justify-center py-2 space-y-3.5 text-center">
+          {/* Kotak Barcode QRIS Resmi Yayasan */}
+          <div className="p-3 bg-white rounded-xl border border-slate-300 shadow-2xs flex flex-col items-center">
+            <div className="relative w-[210px] h-[210px] sm:w-[230px] sm:h-[230px] overflow-hidden rounded-lg bg-white flex items-center justify-center">
+              <Image
+                src={ASSET_PATHS.PAYMENTS.QRIS_BARCODE}
+                alt="QRIS Resmi Yayasan Payung Berkah"
+                width={230}
+                height={230}
+                priority
+                className="w-full h-full object-contain select-none pointer-events-none"
+              />
+            </div>
           </div>
-          <div className="space-y-0.5">
-            <span className="text-base font-semibold text-slate-900 block">
-              YAYASAN PABE
+
+          {/* Keterangan Resmi Sesuai Poster Standee */}
+          <div className="space-y-1 text-center">
+            <span className="text-base sm:text-lg font-bold text-slate-900 tracking-tight block">
+              YAYASAN PAYUNG BERKAH
             </span>
-            <span className="text-xs text-slate-500 block">NMID: ID102003948201</span>
+            <div className="flex items-center justify-center gap-2 text-xs text-slate-600 font-medium">
+              <span>NMID : <strong className="text-slate-900 font-semibold">ID1026604741144</strong></span>
+              <span className="text-slate-300">•</span>
+              <span className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-700">A01</span>
+            </div>
           </div>
-          <p className="text-sm text-slate-600 max-w-sm">
-            Scan kode QR menggunakan aplikasi mobile banking (BCA, Livin Mandiri, BRI, BSI) atau e-wallet (GoPay, OVO, Dana, ShopeePay).
+
+          <p className="text-xs sm:text-sm text-slate-600 max-w-sm leading-relaxed">
+            Scan kode QR menggunakan aplikasi mobile banking (Livin&apos; by Mandiri, BRImo, BCA mobile) atau e-wallet berlogo QRIS.
           </p>
         </div>
       ) : (

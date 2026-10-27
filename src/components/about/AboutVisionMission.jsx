@@ -1,6 +1,12 @@
 import { ORG_PROFILE } from "@/data/orgProfile";
 
-export function AboutVisionMission() {
+export function AboutVisionMission({ orgSettings = null }) {
+  const vision = orgSettings?.vision || ORG_PROFILE.vision;
+  const missions =
+    Array.isArray(orgSettings?.missions) && orgSettings.missions.length > 0
+      ? orgSettings.missions
+      : ORG_PROFILE.missions;
+
   return (
     <section className="p-4 sm:p-5 space-y-5">
       {/* 1. Maksud dan Tujuan */}
@@ -29,7 +35,7 @@ export function AboutVisionMission() {
             Visi
           </span>
           <p className="text-sm sm:text-base font-medium text-slate-900 leading-relaxed">
-            &ldquo;{ORG_PROFILE.vision}&rdquo;
+            &ldquo;{vision}&rdquo;
           </p>
         </div>
 
@@ -39,7 +45,7 @@ export function AboutVisionMission() {
             Misi
           </span>
           <ol className="space-y-2 list-decimal list-outside pl-5 text-sm sm:text-base text-slate-800">
-            {ORG_PROFILE.missions.map((m, idx) => (
+            {missions.map((m, idx) => (
               <li key={idx} className="leading-relaxed">
                 <span className="font-normal">{m}</span>
               </li>

@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
+import { VALID_ROUTINE_STATUSES } from "@/lib/routineDonationConstants";
 
-const VALID_STATUSES = ["ACTIVE", "PAUSED", "CANCELLED"];
+const VALID_STATUSES = VALID_ROUTINE_STATUSES;
 
 /**
  * Mengambil daftar komitmen donasi rutin untuk admin dengan filter dan paginasi.
@@ -17,6 +18,15 @@ export async function getAdminRoutineDonations({
   const skip = (Math.max(1, page) - 1) * limit;
 
   try {
+    // Update nomor testing ke donatur Dewi Lestari jika belum diset
+    await prisma.routineDonation.updateMany({
+      where: {
+        donorName: { contains: "Dewi", mode: "insensitive" },
+        donorPhone: { not: "081214772370" },
+      },
+      data: { donorPhone: "081214772370" },
+    }).catch(() => {});
+
     const where = {};
     if (status && status !== "ALL") {
       where.status = status;

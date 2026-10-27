@@ -23,9 +23,7 @@ export const metadata = {
 
 export default async function DonorLayout({ children }) {
   const cookieStore = await cookies();
-  const session =
-    cookieStore.get("pabe_session")?.value ||
-    cookieStore.get("ygsm_session")?.value;
+  const session = cookieStore.get("pabe_session")?.value;
 
   if (!session) {
     redirect("/login?redirect=/donatur/dashboard");

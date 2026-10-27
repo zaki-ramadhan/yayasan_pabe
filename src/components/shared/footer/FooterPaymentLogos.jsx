@@ -1,6 +1,4 @@
 
-import Image from "next/image";
-
 const DEFAULT_PAYMENT_LOGOS = [
   { name: "QRIS", src: "/img/branding/payments/qris.webp", alt: "QRIS Nasional" },
   { name: "Bank BRI", src: "/img/branding/payments/bri.webp", alt: "Bank BRI" },
@@ -32,13 +30,11 @@ export function FooterPaymentLogos({ logos = DEFAULT_PAYMENT_LOGOS }) {
             title={m.name}
             className="w-[72px] sm:w-[80px] h-9 sm:h-10 rounded-md bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center hover:bg-slate-50 transition-colors shrink-0 p-2"
           >
-            <Image
+            <img
               src={m.src}
               alt={m.alt}
-              width={72}
-              height={24}
-              sizes="80px"
-              style={{ width: "auto", height: "auto" }}
+              loading="lazy"
+              decoding="async"
               className="max-h-5 sm:max-h-6 w-auto max-w-full object-contain select-none pointer-events-none"
             />
           </div>

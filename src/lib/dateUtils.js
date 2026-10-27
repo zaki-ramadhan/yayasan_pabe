@@ -14,7 +14,7 @@ export function getDateKey(dateInput) {
   return `${y}-${m}-${d}`;
 }
 
-const ID_DAYS = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+export const ID_DAYS = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
 /**
  * Returns a human-readable date badge label ala WhatsApp:

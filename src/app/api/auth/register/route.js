@@ -9,6 +9,7 @@ import {
   validateName,
   validateUsername,
 } from "@/lib/security";
+import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { checkRateLimit } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
@@ -57,9 +58,9 @@ export async function POST(request) {
       formattedName = nameValidation.sanitized;
     }
 
-    // 2. Validate Email
+    // 2. Validate Email & DNS Domain
     const cleanEmail = String(email || "").trim().toLowerCase();
-    const emailValidation = validateEmail(cleanEmail);
+    const emailValidation = await verifyEmailDomainDns(cleanEmail, { isRequired: true });
     if (!emailValidation.isValid) {
       return NextResponse.json(
         {
@@ -152,18 +153,24 @@ export async function POST(request) {
       },
     });
 
+    const isStaff = assignedRole !== USER_ROLES.DONOR;
+    const durationSec = isStaff ? 12 * 60 * 60 : 7 * 24 * 60 * 60;
+    const expiresAt = Date.now() + durationSec * 1000;
+
     const safeUser = {
       ...createdUser,
       initials: (createdUser.name || createdUser.email).slice(0, 2).toUpperCase(),
+      expiresAt,
+      sessionIssuedAt: Date.now(),
     };
 
-    // 7. Establish Server HttpOnly Session Cookie (7 days)
+    // 7. Establish Server HttpOnly Session Cookie
     const cookieOpts = {
       path: "/",
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60,
+      maxAge: durationSec,
     };
 
     const response = NextResponse.json(
@@ -176,9 +183,7 @@ export async function POST(request) {
     );
 
     response.cookies.set("pabe_session", safeUser.id, cookieOpts);
-    response.cookies.set("ygsm_session", safeUser.id, cookieOpts);
     response.cookies.set("pabe_role", safeUser.role, { ...cookieOpts, httpOnly: false });
-    response.cookies.set("ygsm_role", safeUser.role, { ...cookieOpts, httpOnly: false });
 
     return response;
   } catch (error) {

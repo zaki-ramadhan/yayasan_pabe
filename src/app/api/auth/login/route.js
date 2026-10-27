@@ -172,6 +172,14 @@ export async function POST(request) {
 
     const cleanTitle = (user.title && user.title.includes("Ketua Yayasan")) ? "Super Admin" : (user.title || "Donatur Terdaftar");
 
+    // Calculate cookie expiration: 12-24h for Staff, 7-30d for Donors
+    const isStaff = user.role && user.role !== USER_ROLES.DONOR;
+    const durationSec = isStaff
+      ? (rememberMe ? 24 * 60 * 60 : 12 * 60 * 60)
+      : (rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60);
+
+    const expiresAt = Date.now() + durationSec * 1000;
+
     // Safe user response (exclude passwordHash)
     const safeUser = {
       id: user.id,
@@ -183,16 +191,16 @@ export async function POST(request) {
       phone: user.phone || "-",
       avatar: user.avatar || "",
       initials: (user.name || user.email).slice(0, 2).toUpperCase(),
+      expiresAt,
+      sessionIssuedAt: Date.now(),
     };
 
-    // Calculate cookie expiration: 30 days if rememberMe, else 7 days
-    const maxAge = rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60;
     const cookieOpts = {
       path: "/",
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
-      maxAge,
+      maxAge: durationSec,
     };
 
     const response = NextResponse.json({
@@ -202,9 +210,7 @@ export async function POST(request) {
     });
 
     response.cookies.set("pabe_session", safeUser.id, cookieOpts);
-    response.cookies.set("ygsm_session", safeUser.id, cookieOpts);
     response.cookies.set("pabe_role", safeUser.role, { ...cookieOpts, httpOnly: false });
-    response.cookies.set("ygsm_role", safeUser.role, { ...cookieOpts, httpOnly: false });
 
     return response;
   } catch (error) {

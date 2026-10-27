@@ -6,7 +6,7 @@ import { DEMO_USERS, USER_ROLES } from "@/services/authService";
 export const dynamic = "force-dynamic";
 
 export async function GET(request) {
-  const sessionId = request.cookies.get("pabe_session")?.value || request.cookies.get("ygsm_session")?.value;
+  const sessionId = request.cookies.get("pabe_session")?.value;
 
   if (!sessionId) {
     return NextResponse.json(
@@ -128,7 +128,6 @@ export async function GET(request) {
 
     const cookieOpts = { path: "/", httpOnly: false, sameSite: "lax" };
     response.cookies.set("pabe_role", user.role, cookieOpts);
-    response.cookies.set("ygsm_role", user.role, cookieOpts);
     return response;
   } catch (err) {
     console.error("Fetch current user session error:", err);

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Clock, Copy, Check } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { DashedDivider } from "@/components/ui/DashedDivider";
+import { ASSET_PATHS } from "@/lib/assetConstants";
 
 /**
  * Physical receipt / bill card presentation for donation invoices
@@ -122,8 +123,14 @@ export function InvoiceReceiptCard({
                     className="w-11 h-11 sm:w-12 sm:h-12 rounded-md object-cover shrink-0 border border-slate-200"
                   />
                 ) : (
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-md bg-slate-200 shrink-0 flex items-center justify-center text-slate-500 text-xs font-medium">
-                    PABE
+                  <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-md bg-white border border-slate-200 shrink-0 p-1 flex items-center justify-center">
+                    <Image
+                      src={ASSET_PATHS.BRANDING.LOGO}
+                      alt="Logo Yayasan PABE"
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-contain select-none"
+                    />
                   </div>
                 )}
                 <p className="text-xs sm:text-sm font-medium text-slate-900 line-clamp-2 leading-snug">

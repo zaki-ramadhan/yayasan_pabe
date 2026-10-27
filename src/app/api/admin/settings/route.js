@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import {
@@ -8,10 +9,10 @@ import {
 
 export const dynamic = "force-dynamic";
 
+const ADMIN_ROLES = [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN];
+
 export async function GET(request) {
-  const { errorResponse } = await requireAuth(request, [
-    USER_ROLES.SUPER_ADMIN,
-  ]);
+  const { errorResponse } = await requireAuth(request, ADMIN_ROLES);
   if (errorResponse) return errorResponse;
 
   try {
@@ -29,14 +30,17 @@ export async function GET(request) {
 }
 
 export async function PUT(request) {
-  const { errorResponse } = await requireAuth(request, [
-    USER_ROLES.SUPER_ADMIN,
-  ]);
+  const { user, errorResponse } = await requireAuth(request, ADMIN_ROLES);
   if (errorResponse) return errorResponse;
 
   try {
     const body = await request.json();
-    const updated = await updateOrgSettings(body);
+    const updated = await updateOrgSettings(body, user);
+
+    // Invalidate Next.js server cache agar admin form dan halaman publik langsung menyajikan data terbaru
+    revalidatePath("/admin/pengaturan");
+    revalidatePath("/tentang-kami");
+    revalidatePath("/");
 
     return NextResponse.json({
       success: true,

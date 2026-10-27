@@ -9,8 +9,8 @@ export const metadata = {
 
 export default async function AdminLayout({ children }) {
   const cookieStore = await cookies();
-  const session = cookieStore.get("pabe_session")?.value || cookieStore.get("ygsm_session")?.value;
-  const role = cookieStore.get("pabe_role")?.value || cookieStore.get("ygsm_role")?.value;
+  const session = cookieStore.get("pabe_session")?.value;
+  const role = cookieStore.get("pabe_role")?.value;
 
   if (!session || !role || role === "DONOR") {
     notFound();

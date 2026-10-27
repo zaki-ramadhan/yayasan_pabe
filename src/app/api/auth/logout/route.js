@@ -17,6 +17,8 @@ export async function POST() {
   };
 
   response.cookies.set("pabe_session", "", clearOpts);
+  response.cookies.set("pabe_role", "", clearOpts);
   response.cookies.set("ygsm_session", "", clearOpts);
+  response.cookies.set("ygsm_role", "", clearOpts);
   return response;
 }

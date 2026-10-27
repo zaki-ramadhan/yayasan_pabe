@@ -8,6 +8,7 @@ import {
   sanitizePrayer,
   sanitizeInput,
 } from "@/lib/security";
+import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
 
 export async function createDonation({
@@ -42,12 +43,12 @@ export async function createDonation({
   const cleanDonorPhone = phoneVal.sanitized || donorPhone;
 
   let cleanDonorEmail = "";
-  if (donorEmail) {
-    const emailVal = validateEmail(donorEmail);
+  if (donorEmail && donorEmail.trim()) {
+    const emailVal = await verifyEmailDomainDns(donorEmail);
     if (!emailVal.isValid) {
       throw new Error(emailVal.message);
     }
-    cleanDonorEmail = emailVal.sanitized || donorEmail;
+    cleanDonorEmail = emailVal.sanitized || donorEmail.trim();
   }
   const cleanPrayer = sanitizePrayer(prayer);
 

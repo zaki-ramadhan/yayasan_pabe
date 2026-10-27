@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { sanitizeInput } from "@/lib/security";
 import { validateOrgSettings } from "@/lib/validator";
+import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 
 /**
  * Mengambil data pengaturan profil dan rekening resmi yayasan langsung dari PostgreSQL.
@@ -14,24 +15,28 @@ export async function getOrgSettings() {
 
     if (dbSetting) {
       return {
-        name: dbSetting.name,
-        shortName: dbSetting.shortName,
-        tagline: dbSetting.tagline || ORG_PROFILE.tagline,
+        name: dbSetting.name || ORG_PROFILE.name,
+        shortName: dbSetting.shortName || ORG_PROFILE.shortName,
+        tagline: dbSetting.tagline !== null ? dbSetting.tagline : ORG_PROFILE.tagline,
         legal: {
-          skKemenkumham: dbSetting.legalSk || ORG_PROFILE.legal.skKemenkumham,
-          npwp: dbSetting.npwp || ORG_PROFILE.legal.npwp,
-          izinIzinSosial: dbSetting.izinSosial || ORG_PROFILE.legal.izinIzinSosial,
+          skKemenkumham: dbSetting.legalSk !== null ? dbSetting.legalSk : ORG_PROFILE.legal.skKemenkumham,
+          npwp: dbSetting.npwp !== null ? dbSetting.npwp : ORG_PROFILE.legal.npwp,
+          izinIzinSosial: dbSetting.izinSosial !== null ? dbSetting.izinSosial : ORG_PROFILE.legal.izinIzinSosial,
         },
         contacts: {
-          address: dbSetting.address || ORG_PROFILE.contacts.address,
-          phone: dbSetting.phone || ORG_PROFILE.contacts.phone,
-          whatsapp: dbSetting.whatsapp || ORG_PROFILE.contacts.whatsapp,
-          email: dbSetting.email || ORG_PROFILE.contacts.email,
-          officeHours: dbSetting.officeHours || ORG_PROFILE.contacts.officeHours,
+          address: dbSetting.address !== null ? dbSetting.address : ORG_PROFILE.contacts.address,
+          phone: dbSetting.phone !== null ? dbSetting.phone : ORG_PROFILE.contacts.phone,
+          whatsapp: dbSetting.whatsapp !== null ? dbSetting.whatsapp : ORG_PROFILE.contacts.whatsapp,
+          email: dbSetting.email !== null ? dbSetting.email : ORG_PROFILE.contacts.email,
+          officeHours: dbSetting.officeHours !== null ? dbSetting.officeHours : ORG_PROFILE.contacts.officeHours,
         },
-        officialBankAccounts: dbSetting.bankAccounts || ORG_PROFILE.officialBankAccounts,
-        vision: dbSetting.vision || ORG_PROFILE.vision,
-        missions: dbSetting.missions?.length > 0 ? dbSetting.missions : ORG_PROFILE.missions,
+        officialBankAccounts: Array.isArray(dbSetting.bankAccounts)
+          ? dbSetting.bankAccounts
+          : ORG_PROFILE.officialBankAccounts,
+        vision: dbSetting.vision !== null ? dbSetting.vision : ORG_PROFILE.vision,
+        missions: Array.isArray(dbSetting.missions) && dbSetting.missions.length > 0
+          ? dbSetting.missions
+          : ORG_PROFILE.missions,
       };
     }
   } catch (error) {
@@ -53,7 +58,7 @@ export async function getOrgSettings() {
 /**
  * Memperbarui pengaturan profil dan rekening resmi yayasan secara persisten ke PostgreSQL.
  */
-export async function updateOrgSettings(payload) {
+export async function updateOrgSettings(payload, authUser = null) {
   if (!payload || typeof payload !== "object") {
     throw new Error("Data pengaturan tidak valid.");
   }
@@ -63,19 +68,64 @@ export async function updateOrgSettings(payload) {
     throw new Error(validation.error);
   }
 
+  if (payload.contacts?.email && payload.contacts.email.trim()) {
+    const emailDns = await verifyEmailDomainDns(payload.contacts.email.trim(), {
+      isRequired: true,
+    });
+    if (!emailDns.isValid) {
+      throw new Error(emailDns.message);
+    }
+  }
+
   const current = await getOrgSettings();
 
-  const updatedName = sanitizeInput(payload.name || current.name);
-  const updatedShortName = sanitizeInput(payload.shortName || current.shortName);
-  const updatedTagline = sanitizeInput(payload.tagline || current.tagline);
-  const updatedLegalSk = sanitizeInput(payload.legal?.skKemenkumham || current.legal.skKemenkumham);
-  const updatedNpwp = sanitizeInput(payload.legal?.npwp || current.legal.npwp);
-  const updatedIzinSosial = sanitizeInput(payload.legal?.izinIzinSosial || current.legal.izinIzinSosial);
-  const updatedAddress = sanitizeInput(payload.contacts?.address || current.contacts.address);
-  const updatedPhone = sanitizeInput(payload.contacts?.phone || current.contacts.phone);
-  const updatedWhatsapp = sanitizeInput(payload.contacts?.whatsapp || current.contacts.whatsapp);
-  const updatedEmail = sanitizeInput(payload.contacts?.email || current.contacts.email).toLowerCase();
-  const updatedOfficeHours = sanitizeInput(payload.contacts?.officeHours || current.contacts.officeHours);
+  const updatedName = sanitizeInput(
+    payload.name !== undefined ? payload.name : current.name
+  );
+  const updatedShortName = sanitizeInput(
+    payload.shortName !== undefined ? payload.shortName : current.shortName
+  );
+  const updatedTagline = sanitizeInput(
+    payload.tagline !== undefined ? payload.tagline : current.tagline
+  );
+  const updatedLegalSk = sanitizeInput(
+    payload.legal?.skKemenkumham !== undefined
+      ? payload.legal.skKemenkumham
+      : current.legal.skKemenkumham
+  );
+  const updatedNpwp = sanitizeInput(
+    payload.legal?.npwp !== undefined ? payload.legal.npwp : current.legal.npwp
+  );
+  const updatedIzinSosial = sanitizeInput(
+    payload.legal?.izinIzinSosial !== undefined
+      ? payload.legal.izinIzinSosial
+      : current.legal.izinIzinSosial
+  );
+  const updatedAddress = sanitizeInput(
+    payload.contacts?.address !== undefined
+      ? payload.contacts.address
+      : current.contacts.address
+  );
+  const updatedPhone = sanitizeInput(
+    payload.contacts?.phone !== undefined
+      ? payload.contacts.phone
+      : current.contacts.phone
+  );
+  const updatedWhatsapp = sanitizeInput(
+    payload.contacts?.whatsapp !== undefined
+      ? payload.contacts.whatsapp
+      : current.contacts.whatsapp
+  );
+  const updatedEmail = sanitizeInput(
+    payload.contacts?.email !== undefined
+      ? payload.contacts.email
+      : current.contacts.email
+  ).toLowerCase();
+  const updatedOfficeHours = sanitizeInput(
+    payload.contacts?.officeHours !== undefined
+      ? payload.contacts.officeHours
+      : current.contacts.officeHours
+  );
 
   const updatedBankAccounts = Array.isArray(payload.officialBankAccounts)
     ? payload.officialBankAccounts.map((b) => ({
@@ -86,12 +136,14 @@ export async function updateOrgSettings(payload) {
       }))
     : current.officialBankAccounts;
 
-  const updatedVision = sanitizeInput(payload.vision || current.vision);
+  const updatedVision = sanitizeInput(
+    payload.vision !== undefined ? payload.vision : current.vision
+  );
   const updatedMissions = Array.isArray(payload.missions)
     ? payload.missions.map((m) => sanitizeInput(m))
     : current.missions;
 
-  await prisma.orgSetting.upsert({
+  const saved = await prisma.orgSetting.upsert({
     where: { id: "org_profile" },
     update: {
       name: updatedName,
@@ -127,6 +179,24 @@ export async function updateOrgSettings(payload) {
       missions: updatedMissions,
     },
   });
+
+  if (authUser) {
+    try {
+      await prisma.activityLog.create({
+        data: {
+          userId: authUser.id,
+          userName: authUser.name,
+          userRole: authUser.role,
+          action: "UPDATE_ORG_SETTINGS",
+          targetType: "ORG_SETTING",
+          targetId: "org_profile",
+          description: `Memperbarui profil, legalitas, kontak, dan rekening yayasan (${saved.name}).`,
+        },
+      });
+    } catch (logErr) {
+      console.warn("Failed to create activity log for org settings:", logErr.message);
+    }
+  }
 
   return getOrgSettings();
 }

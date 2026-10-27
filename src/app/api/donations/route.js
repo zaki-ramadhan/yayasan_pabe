@@ -91,7 +91,6 @@ export async function POST(request) {
         httpOnly: true,
       };
       response.cookies.set(`pabe_inv_${donation.invoiceId}`, donation.accessToken, invOpts);
-      response.cookies.set(`ygsm_inv_${donation.invoiceId}`, donation.accessToken, invOpts);
     }
 
     return response;

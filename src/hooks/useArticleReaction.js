@@ -20,12 +20,12 @@ function subscribeReactions(callback) {
 
 function getLikesSnapshot() {
   if (typeof window === "undefined") return "[]";
-  return localStorage.getItem(LIKE_STORAGE_KEY) || localStorage.getItem("ygsm_liked_articles") || "[]";
+  return localStorage.getItem(LIKE_STORAGE_KEY) || "[]";
 }
 
 function getDislikesSnapshot() {
   if (typeof window === "undefined") return "[]";
-  return localStorage.getItem(DISLIKE_STORAGE_KEY) || localStorage.getItem("ygsm_disliked_articles") || "[]";
+  return localStorage.getItem(DISLIKE_STORAGE_KEY) || "[]";
 }
 
 function getServerSnapshot() {

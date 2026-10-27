@@ -176,7 +176,7 @@ export async function getAdminDonors({
 }
 
 
-export async function getAdminDonorDetail({ email, phone, name } = {}) {
+export async function getAdminDonorDetail({ email, phone, name, page = 1, limit = 8 } = {}) {
   try {
     const cleanEmail = normalizeEmail(email);
     const cleanPhone = normalizePhone(phone);
@@ -189,17 +189,30 @@ export async function getAdminDonorDetail({ email, phone, name } = {}) {
     }
 
     if (orConditions.length === 0) {
-      return { donations: [] };
+      return {
+        donations: [],
+        pagination: { page: 1, limit, totalCount: 0, hasMore: false },
+      };
     }
 
-    const donations = await prisma.donation.findMany({
-      where: { OR: orConditions },
-      orderBy: { createdAt: "desc" },
-      take: 20,
-      include: {
-        campaign: { select: { title: true, slug: true } },
-      },
-    });
+    const safePage = Math.max(1, parseInt(page, 10) || 1);
+    const safeLimit = Math.max(1, Math.min(50, parseInt(limit, 10) || 8));
+    const skip = (safePage - 1) * safeLimit;
+
+    const [totalCount, donations] = await Promise.all([
+      prisma.donation.count({
+        where: { OR: orConditions },
+      }),
+      prisma.donation.findMany({
+        where: { OR: orConditions },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: safeLimit,
+        include: {
+          campaign: { select: { title: true, slug: true } },
+        },
+      }),
+    ]);
 
     return {
       donations: donations.map((d) => ({
@@ -214,10 +227,19 @@ export async function getAdminDonorDetail({ email, phone, name } = {}) {
         createdAt: d.createdAt.toISOString(),
         paidAt: d.paidAt ? d.paidAt.toISOString() : null,
       })),
+      pagination: {
+        page: safePage,
+        limit: safeLimit,
+        totalCount,
+        hasMore: skip + donations.length < totalCount,
+      },
     };
   } catch (error) {
     console.warn("Prisma getAdminDonorDetail error:", error.message);
-    return { donations: [] };
+    return {
+      donations: [],
+      pagination: { page: 1, limit: 8, totalCount: 0, hasMore: false },
+    };
   }
 }
 

@@ -3,6 +3,7 @@ import { sanitizeInput } from "@/lib/security";
 import { toTitleCase } from "@/lib/formatters";
 import { cleanupOrphanCategories } from "./categoryService";
 import { deleteFromR2 } from "@/lib/r2Storage";
+import { completeRoutineDonationsForCampaign } from "./routineCompletionService";
 
 /**
  * Mengambil daftar program kampanye untuk tabel manajemen admin.
@@ -259,6 +260,18 @@ export async function updateAdminCampaign(id, payload) {
     data: updateData,
   });
 
+  // Jika status kampanye diubah menjadi COMPLETED, otomatis selesaikan komitmen donasi rutin yang terikat (Opsi A)
+  if (updateData.status === "COMPLETED") {
+    try {
+      await completeRoutineDonationsForCampaign(id, {
+        reason: "Campaign status updated to COMPLETED by admin",
+        notifyDonors: true,
+      });
+    } catch (routineErr) {
+      console.error(`[AdminCampaign] Gagal menyelesaikan donasi rutin untuk program ${id}:`, routineErr);
+    }
+  }
+
   // Auto-cleanup: jika kategori program berganti dan kategori sebelumnya menjadi kosong, hapus otomatis
   if (oldCategoryId && updateData.categoryId && oldCategoryId !== updateData.categoryId) {
     await cleanupOrphanCategories(prisma);
@@ -271,6 +284,16 @@ export async function updateAdminCampaign(id, payload) {
  * Menghapus program kampanye dari database dan membersihkan banner terkait di R2.
  */
 export async function deleteAdminCampaign(id) {
+  // Selesaikan dan lepas komitmen donasi rutin sebelum program dihapus
+  try {
+    await completeRoutineDonationsForCampaign(id, {
+      reason: "Campaign deleted by admin",
+      notifyDonors: true,
+    });
+  } catch (routineErr) {
+    console.error(`[AdminCampaign] Gagal menyelesaikan donasi rutin saat menghapus program ${id}:`, routineErr);
+  }
+
   const existing = await prisma.campaign.findUnique({
     where: { id },
     select: { bannerUrl: true, categoryId: true },

@@ -109,17 +109,17 @@ export function validateBankAccount({ bankAccount, bankAccountName } = {}) {
   }
 
   if (!cleanAccount) {
-    const msg = "Nomor rekening wajib diisi jika nama pemilik rekening diisi.";
+    const msg = "Nomor rekening wajib diisi.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
   if (cleanAccount.length < 5 || cleanAccount.length > 30) {
-    const msg = "Nomor rekening tidak valid (panjang harus antara 5 hingga 30 digit angka).";
+    const msg = "Nomor rekening harus 5-30 digit angka.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
   if (!cleanAccountName) {
-    const msg = "Nama pemilik rekening wajib diisi jika nomor rekening diisi.";
+    const msg = "Nama pemilik rekening wajib diisi.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
@@ -146,7 +146,7 @@ export function validateName(name, isAnonymous = false) {
   }
   const clean = sanitizeName(name).trim();
   if (!clean || clean.length < 2) {
-    const msg = "Nama lengkap minimal 2 karakter dan hanya boleh berisi huruf serta tanda baca gelar/nama wajar.";
+    const msg = "Nama lengkap minimal 2 karakter.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
   if (clean.length > 60) {
@@ -156,7 +156,7 @@ export function validateName(name, isAnonymous = false) {
 
   const reservedCheck = containsReservedKeyword(clean);
   if (reservedCheck.isReserved) {
-    const msg = `Nama tidak boleh menggunakan kata yang dicadangkan sistem atau identitas resmi yayasan ("${reservedCheck.matchedWord}").`;
+    const msg = `Nama tidak boleh menggunakan nama resmi yayasan ("${reservedCheck.matchedWord}").`;
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
@@ -190,13 +190,13 @@ export function validateUsername(username) {
   }
 
   if (!/^[a-zA-Z0-9_.]+$/.test(clean)) {
-    const msg = "Nama pengguna hanya boleh berisi huruf, angka, titik, atau garis bawah.";
+    const msg = "Hanya boleh huruf, angka, titik, atau garis bawah.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
   const reservedCheck = containsReservedKeyword(clean);
   if (reservedCheck.isReserved) {
-    const msg = `Nama pengguna tidak boleh mengandung istilah yang dicadangkan sistem ("${reservedCheck.matchedWord}").`;
+    const msg = `Nama pengguna tidak boleh memakai kata "${reservedCheck.matchedWord}".`;
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
@@ -215,12 +215,12 @@ export function validateUsername(username) {
 export function validatePhone(phone) {
   const digits = sanitizePhone(phone);
   if (!digits) {
-    const msg = "Nomor WhatsApp aktif wajib diisi.";
+    const msg = "Nomor WhatsApp wajib diisi.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
   const isIndonesianFormat = /^(08|628)[1-9][0-9]{7,12}$/.test(digits);
   if (!isIndonesianFormat) {
-    const msg = "Nomor WhatsApp tidak valid. Masukkan nomor seluler Indonesia yang aktif (contoh: 08123456789, 10-14 digit).";
+    const msg = "Nomor tidak valid (contoh: 08123456789).";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
   return { isValid: true, valid: true, message: "", error: "", sanitized: digits };
@@ -240,7 +240,7 @@ const COMMON_TYPO_DOMAINS = {
 };
 
 /**
- * Validasi alamat email standar dengan verifikasi sintaksis domain, RFC 5321/5322, dan proteksi typo.
+ * Validasi alamat email standar dengan verifikasi sintaksis domain dan proteksi typo.
  */
 export function validateEmail(email, isRequired = false) {
   const clean = sanitizeEmail(email).trim().toLowerCase();
@@ -252,16 +252,16 @@ export function validateEmail(email, isRequired = false) {
     return { isValid: true, valid: true, message: "", error: "", sanitized: "" };
   }
 
-  // 1. Batasan panjang standar RFC
+  // 1. Batasan panjang standar
   if (clean.length < 5 || clean.length > 254) {
-    const msg = "Panjang alamat email harus antara 5 hingga 254 karakter.";
+    const msg = "Format email tidak valid.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
   // 2. Pemisahan karakter @ tepat satu
   const atParts = clean.split("@");
   if (atParts.length !== 2) {
-    const msg = "Alamat email harus memuat tepat satu tanda '@' (contoh: nama@email.com).";
+    const msg = "Format email tidak valid (contoh: nama@email.com).";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
@@ -269,17 +269,17 @@ export function validateEmail(email, isRequired = false) {
 
   // 3. Validasi Local Part (sebelum @)
   if (!localPart || localPart.length > 64) {
-    const msg = "Bagian nama akun email tidak valid (maksimal 64 karakter sebelum tanda @).";
+    const msg = "Format email tidak valid.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
   if (localPart.startsWith(".") || localPart.endsWith(".") || localPart.includes("..")) {
-    const msg = "Bagian nama email tidak boleh diawali, diakhiri, atau memuat titik ganda '..'.";
+    const msg = "Format email tidak valid.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
   const localRegex = /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*$/;
   if (!localRegex.test(localPart)) {
-    const msg = "Karakter pada nama email tidak valid (hanya huruf, angka, dan simbol standar).";
+    const msg = "Karakter nama email tidak valid.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
@@ -289,31 +289,21 @@ export function validateEmail(email, isRequired = false) {
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // Domain wajib memiliki titik pemisah TLD
   if (!domainPart.includes(".")) {
-    const msg = "Domain email harus memiliki ekstensi (contoh: @domain.com atau @organisasi.or.id).";
+    const msg = "Domain belum lengkap (contoh: @gmail.com).";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
   if (domainPart.startsWith(".") || domainPart.endsWith(".") || domainPart.includes("..")) {
-    const msg = "Domain email tidak boleh diawali, diakhiri, atau memuat titik ganda '..'.";
+    const msg = "Domain email tidak valid.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // Cek tiap label domain (subdomain / host)
   const domainLabels = domainPart.split(".");
   for (let i = 0; i < domainLabels.length; i++) {
     const label = domainLabels[i];
-    if (!label || label.length > 63) {
-      const msg = "Bagian domain email tidak valid (panjang tiap segmen 1-63 karakter).";
-      return { isValid: false, valid: false, message: msg, error: msg };
-    }
-    if (label.startsWith("-") || label.endsWith("-")) {
-      const msg = "Segmen domain email tidak boleh diawali atau diakhiri tanda hubung '-'.";
-      return { isValid: false, valid: false, message: msg, error: msg };
-    }
-    if (!/^[a-zA-Z0-9-]+$/.test(label)) {
-      const msg = `Segmen domain "${label}" hanya boleh memuat huruf, angka, dan tanda hubung '-'.`;
+    if (!label || label.length > 63 || label.startsWith("-") || label.endsWith("-") || !/^[a-zA-Z0-9-]+$/.test(label)) {
+      const msg = "Domain email tidak valid.";
       return { isValid: false, valid: false, message: msg, error: msg };
     }
   }
@@ -321,14 +311,14 @@ export function validateEmail(email, isRequired = false) {
   // TLD (label terakhir) wajib minimal 2 karakter alfabet
   const tld = domainLabels[domainLabels.length - 1];
   if (!/^[a-zA-Z]{2,24}$/.test(tld)) {
-    const msg = "Ekstensi domain email (TLD) tidak valid (contoh: .com, .id, .org).";
+    const msg = "Ekstensi email tidak valid (contoh: .com, .id).";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
   // 5. Proteksi Typo Domain Populer
   if (COMMON_TYPO_DOMAINS[domainPart]) {
     const suggested = COMMON_TYPO_DOMAINS[domainPart];
-    const msg = `Apakah maksud Anda "${localPart}@${suggested}"? Periksa kembali pengetikan domain "${domainPart}".`;
+    const msg = `Mungkin maksud Anda "${localPart}@${suggested}"?`;
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
@@ -336,7 +326,7 @@ export function validateEmail(email, isRequired = false) {
 }
 
 /**
- * Validasi doa atau pesan donatur (minimal 5 karakter visual, wajib ada kata/kalimat, maksimal 150 karakter).
+ * Validasi doa atau pesan donatur
  */
 export function validatePrayer(prayer, isRequired = false, minLength = PRAYER_LIMITS.MIN_LENGTH, maxLength = PRAYER_LIMITS.MAX_LENGTH) {
   const clean = sanitizePrayer(prayer).trim();
@@ -349,15 +339,15 @@ export function validatePrayer(prayer, isRequired = false, minLength = PRAYER_LI
   }
   const visualLength = countGraphemes(clean);
   if (visualLength < minLength) {
-    const msg = `Untaian doa minimal ${minLength} karakter agar bermakna (contoh: "Semoga berkah & lekas sembuh").`;
+    const msg = `Doa minimal ${minLength} karakter.`;
     return { isValid: false, valid: false, message: msg, error: msg, sanitized: clean };
   }
   if (!hasMeaningfulText(clean)) {
-    const msg = "Untaian doa wajib mengandung kata atau kalimat doa, bukan hanya deretan emoji atau simbol.";
+    const msg = "Sertakan kalimat doa, bukan hanya emoji atau simbol.";
     return { isValid: false, valid: false, message: msg, error: msg, sanitized: clean };
   }
   if (visualLength > maxLength) {
-    const msg = `Untaian doa maksimal ${maxLength} karakter.`;
+    const msg = `Doa maksimal ${maxLength} karakter.`;
     return { isValid: false, valid: false, message: msg, error: msg, sanitized: clean.slice(0, maxLength) };
   }
   return { isValid: true, valid: true, message: "", error: "", sanitized: clean };
@@ -414,12 +404,12 @@ export function validateOrgSettings(formData) {
   // 1. Identitas
   const name = (formData.name || "").trim();
   if (!name || name.length < 3) {
-    errors.name = "Nama resmi yayasan wajib diisi (minimal 3 karakter).";
+    errors.name = "Nama resmi yayasan minimal 3 karakter.";
   }
 
   const shortName = (formData.shortName || "").trim();
   if (!shortName || shortName.length < 2) {
-    errors.shortName = "Singkatan / sebutan brand yayasan wajib diisi (minimal 2 karakter).";
+    errors.shortName = "Singkatan nama yayasan minimal 2 karakter.";
   }
 
   // 2. Kontak
@@ -435,7 +425,7 @@ export function validateOrgSettings(formData) {
   if (whatsapp) {
     const digitsOnly = whatsapp.replace(/\D/g, "");
     if (digitsOnly.length < 8 || digitsOnly.length > 15) {
-      errors.whatsapp = "Nomor WhatsApp resmi harus berupa 8-15 digit angka.";
+      errors.whatsapp = "Nomor WhatsApp harus 8-15 digit angka.";
     }
   }
 
@@ -443,7 +433,7 @@ export function validateOrgSettings(formData) {
   if (phone) {
     const digitsOnly = phone.replace(/\D/g, "");
     if (digitsOnly.length < 6 || digitsOnly.length > 15) {
-      errors.phone = "Nomor telepon kantor harus berupa 6-15 digit angka.";
+      errors.phone = "Nomor telepon harus 6-15 digit angka.";
     }
   }
 
@@ -456,17 +446,17 @@ export function validateOrgSettings(formData) {
       const accHolder = (acc.accountName || "").trim();
 
       if (!bankName && !accNum && !accHolder) {
-        errors[`bankAccount_${i}`] = `Rekening ke-${i + 1} masih kosong. Silakan lengkapi atau hapus baris tersebut.`;
+        errors[`bankAccount_${i}`] = `Lengkapi data rekening ke-${i + 1}.`;
         break;
       }
       if (!bankName) {
-        errors[`bankName_${i}`] = `Nama bank pada rekening ke-${i + 1} wajib diisi.`;
+        errors[`bankName_${i}`] = "Nama bank wajib diisi.";
       }
       if (!accNum || accNum.length < 5 || accNum.length > 25) {
-        errors[`accountNumber_${i}`] = `Nomor rekening ke-${i + 1} tidak valid (harus 5 hingga 25 digit angka murni).`;
+        errors[`accountNumber_${i}`] = "Nomor rekening harus 5-25 digit angka.";
       }
       if (!accHolder || accHolder.length < 2) {
-        errors[`accountName_${i}`] = `Nama pemilik pada rekening ke-${i + 1} wajib diisi (minimal 2 karakter).`;
+        errors[`accountName_${i}`] = "Nama pemilik rekening minimal 2 karakter.";
       }
     }
   }

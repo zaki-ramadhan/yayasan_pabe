@@ -5,6 +5,7 @@ import {
   validatePhone,
   validateEmail,
 } from "@/lib/security";
+import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 
 export async function registerVolunteer({
   fullName,
@@ -22,7 +23,7 @@ export async function registerVolunteer({
 
   let cleanEmail = null;
   if (email) {
-    const emailVal = validateEmail(email);
+    const emailVal = await verifyEmailDomainDns(email, { isRequired: true });
     if (!emailVal.isValid) throw new Error(emailVal.message);
     cleanEmail = emailVal.sanitized;
   }

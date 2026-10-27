@@ -6,7 +6,7 @@ import {
   validateEmail,
   DONATION_LIMITS,
 } from "@/lib/security";
-
+import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 
 /**
  * Service to register routine donations directly into PostgreSQL via Prisma.
@@ -26,8 +26,8 @@ export async function createRoutineDonations({
   if (!phoneVal.isValid) throw new Error(phoneVal.message);
 
   let cleanEmail = null;
-  if (donorEmail) {
-    const emailVal = validateEmail(donorEmail);
+  if (donorEmail && donorEmail.trim()) {
+    const emailVal = await verifyEmailDomainDns(donorEmail);
     if (!emailVal.isValid) throw new Error(emailVal.message);
     cleanEmail = emailVal.sanitized;
   }

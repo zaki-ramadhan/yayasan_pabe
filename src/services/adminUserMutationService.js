@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { hashPassword } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import { sanitizeEmail, sanitizePhoneInput, sanitizeText } from "@/lib/userParser";
+import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 
 export const STAFF_ROLES = [
   USER_ROLES.SUPER_ADMIN,
@@ -23,13 +24,17 @@ export async function createAdminUser({
   password = "",
 }) {
   const cleanName = sanitizeText(name);
-  const cleanEmail = sanitizeEmail(email);
+  if (!cleanName) {
+    throw new Error("Nama lengkap pengurus wajib diisi.");
+  }
+
+  const emailVal = await verifyEmailDomainDns(email, { isRequired: true });
+  if (!emailVal.isValid) {
+    throw new Error(emailVal.message || "Format alamat email tidak valid.");
+  }
+  const cleanEmail = emailVal.sanitized;
   const cleanPhone = sanitizePhoneInput(phone);
   const cleanTitle = sanitizeText(title) || (role === USER_ROLES.ADMIN ? "Admin Operasional" : role);
-
-  if (!cleanName || !cleanEmail) {
-    throw new Error("Nama lengkap dan alamat email wajib diisi.");
-  }
 
   if (!STAFF_ROLES.includes(role)) {
     throw new Error("Role pengurus yang dipilih tidak valid.");

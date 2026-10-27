@@ -2,7 +2,13 @@ import { ORG_PROFILE } from "@/data/orgProfile";
 import { BankAccountItem } from "./BankAccountItem";
 import { BankCardShowcase } from "./BankCardShowcase";
 
-export function AboutBankAccounts() {
+export function AboutBankAccounts({ orgSettings = null }) {
+  const accounts =
+    Array.isArray(orgSettings?.officialBankAccounts) &&
+    orgSettings.officialBankAccounts.length > 0
+      ? orgSettings.officialBankAccounts
+      : ORG_PROFILE.officialBankAccounts;
+
   return (
     <section id="rekening-resmi" className="p-4 sm:p-5 space-y-4 overflow-hidden scroll-mt-20">
       <div>
@@ -20,9 +26,9 @@ export function AboutBankAccounts() {
 
         {/* Right: Clean Plain Text Bank Account List (Right-Aligned & Matched Text Size) */}
         <div className="md:col-span-6 space-y-4 md:text-right md:mr-2">
-          {ORG_PROFILE.officialBankAccounts.map((acc, idx) => (
+          {accounts.map((acc, idx) => (
             <BankAccountItem
-              key={acc.bank}
+              key={acc.bank || idx}
               account={acc}
               isFirst={idx === 0}
             />
