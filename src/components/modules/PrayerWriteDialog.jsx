@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { sanitizePrayer } from "@/lib/security";
@@ -28,6 +29,7 @@ export function PrayerWriteDialog({
   const [prayer, setPrayer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [nameError, setNameError] = useState("");
 
   const handlePrayerChange = (e) => {
     const clean = sanitizePrayer(e.target.value);
@@ -46,8 +48,14 @@ export function PrayerWriteDialog({
       return;
     }
 
+    if (!isAnonymous && !donorName.trim()) {
+      setNameError("Nama wajib diisi atau pilih opsi kirim sebagai hamba Allah.");
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage("");
+    setNameError("");
 
     try {
       const displayName = isAnonymous
@@ -85,7 +93,7 @@ export function PrayerWriteDialog({
       <DialogContent className="sm:max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950 leading-tight">
-            Titipkan Doa Kebaikan
+            Titipkan doa kebaikan
           </DialogTitle>
         </DialogHeader>
 
@@ -93,26 +101,31 @@ export function PrayerWriteDialog({
           <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-4">
             {/* Input Nama Donatur / Pengirim */}
             <div className="space-y-1.5">
-              <label htmlFor="prayer-donor-name" className="text-xs font-medium text-slate-800">
-                Nama Anda
-              </label>
-              <Input
-                id="prayer-donor-name"
-                type="text"
-                autoComplete="name"
-                disabled={isAnonymous}
-                placeholder={isAnonymous ? "Hamba Allah" : "Nama lengkap / panggilan"}
-                value={donorName}
-                onChange={(e) => setDonorName(e.target.value)}
-                className="h-9 text-xs sm:text-sm"
-                maxLength={40}
-              />
+              <FormField label="Nama Anda" error={nameError}>
+                <Input
+                  id="prayer-donor-name"
+                  type="text"
+                  autoComplete="name"
+                  disabled={isAnonymous}
+                  placeholder={isAnonymous ? "Hamba Allah" : "Nama lengkap / panggilan"}
+                  value={donorName}
+                  onChange={(e) => {
+                    setDonorName(e.target.value);
+                    if (nameError) setNameError("");
+                  }}
+                  className="h-9 text-xs sm:text-sm"
+                  maxLength={40}
+                />
+              </FormField>
 
               {/* Opsi Anonim */}
               <AnonymousCheckbox
                 id="prayer-anonymous-checkbox"
                 checked={isAnonymous}
-                onChange={setIsAnonymous}
+                onChange={(checked) => {
+                  setIsAnonymous(checked);
+                  if (checked && nameError) setNameError("");
+                }}
                 variant="inline"
                 className="pt-0.5"
               />
@@ -132,11 +145,11 @@ export function PrayerWriteDialog({
           <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex flex-col gap-2">
             <Button
               type="submit"
-              disabled={isSubmitting || !prayer.trim()}
+              disabled={isSubmitting}
               className="w-full h-9 text-xs sm:text-sm font-medium bg-primary hover:bg-primary-hover text-white gap-2 cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
-              <span>{isSubmitting ? "Mengirim Doa..." : "Kirimkan Doa"}</span>
+              <span>{isSubmitting ? "Mengirim doa..." : "Kirimkan doa"}</span>
             </Button>
 
             {/* Subtle callout to donate */}

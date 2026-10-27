@@ -3,6 +3,7 @@
 import { PRESET_AMOUNTS } from "@/data/routineDonation";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
 import { PaymentChannelPicker } from "@/components/donation/PaymentChannelPicker";
+import { FormField } from "@/components/ui/form-field";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { NominalGridPicker } from "@/components/donation/NominalGridPicker";
 import { formatRupiah } from "@/lib/formatters";
@@ -39,21 +40,23 @@ export function RoutineAutoDonationConfig({ item, onChange }) {
         />
 
         {item.isCustom && (
-          <div className="space-y-1.5 pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
-            <label className="text-sm font-semibold text-slate-800 block">
-              Nominal Lainnya (Min. {formatRupiah(DONATION_LIMITS.MIN_AMOUNT)})
-            </label>
-            <CurrencyInput
-              autoFocus
-              placeholder="0"
-              value={item.customAmount}
-              max={DONATION_LIMITS.MAX_AMOUNT}
-              onChange={(clamped, raw) => {
-                onChange(item.id, "customAmount", raw);
-                onChange(item.id, "amount", clamped);
-              }}
-              className="h-11 border-slate-300 text-base text-slate-950 placeholder:text-slate-400 focus:ring-2 focus:ring-primary"
-            />
+          <div className="pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
+            <FormField
+              label={`Nominal lainnya (min. ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)})`}
+              error={item.amountError}
+            >
+              <CurrencyInput
+                autoFocus
+                placeholder="0"
+                value={item.customAmount}
+                max={DONATION_LIMITS.MAX_AMOUNT}
+                onChange={(clamped, raw) => {
+                  onChange(item.id, "customAmount", raw);
+                  onChange(item.id, "amount", clamped);
+                }}
+                className="h-11 border-slate-300 text-base text-slate-950 placeholder:text-slate-400 focus:ring-2 focus:ring-primary"
+              />
+            </FormField>
           </div>
         )}
       </div>

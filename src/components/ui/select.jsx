@@ -4,6 +4,7 @@ import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useFormField } from "@/components/ui/form-field";
 
 const Select = ({ modal = false, ...props }) => (
   <SelectPrimitive.Root modal={modal} {...props} />
@@ -11,21 +12,35 @@ const Select = ({ modal = false, ...props }) => (
 const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 
-const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "group flex h-11 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors cursor-pointer [&[data-state=open]>svg]:rotate-180 [&[data-state=open]>span>svg]:rotate-180",
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 ml-2 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-));
+const SelectTrigger = React.forwardRef(({ className, children, error, isInvalid, ...props }, ref) => {
+  const formContext = useFormField();
+  const hasError =
+    isInvalid !== undefined
+      ? Boolean(isInvalid)
+      : error !== undefined
+      ? Boolean(error)
+      : formContext?.isInvalid || false;
+
+  return (
+    <SelectPrimitive.Trigger
+      ref={ref}
+      aria-invalid={hasError ? "true" : undefined}
+      className={cn(
+        "group flex h-11 w-full items-center justify-between rounded-lg border bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none transition-colors cursor-pointer [&[data-state=open]>svg]:rotate-180 [&[data-state=open]>span>svg]:rotate-180 disabled:cursor-not-allowed disabled:opacity-50",
+        hasError
+          ? "border-rose-500 bg-rose-50/15 text-rose-950 focus:ring-1 focus:ring-rose-500 focus:border-rose-500"
+          : "border-slate-300 focus:ring-1 focus:ring-primary focus:border-primary",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon asChild>
+        <ChevronDown className={cn("h-4 w-4 shrink-0 ml-2 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180", hasError ? "text-rose-400" : "text-slate-500")} />
+      </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+  );
+});
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 
 const SelectScrollUpButton = React.forwardRef(({ className, ...props }, ref) => (

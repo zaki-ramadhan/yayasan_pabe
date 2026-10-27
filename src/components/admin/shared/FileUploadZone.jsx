@@ -19,10 +19,11 @@ export function FileUploadZone({
   onChange,
   context = "ARTICLE_BANNER",
   identifier = "",
-  label = "Foto Sampul / Banner",
+  label = "Foto sampul / banner",
   helperText = "Mendukung format JPEG, PNG, dan WebP (Maks. 5MB). Otomatis dikonversi ke WebP.",
   accept = "image/jpeg,image/png,image/webp",
   isPdf = false,
+  error = "",
 }) {
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -132,44 +133,52 @@ export function FileUploadZone({
         </button>
       </div>
 
-      {isManualUrl ? (
-        <div className="flex gap-2">
-          <Input
-            type="text"
-            placeholder="https://... atau /img/..."
-            value={manualInput}
-            onChange={(e) => setManualInput(e.target.value)}
-            className="h-10 text-sm bg-white"
+      <div className={error ? "rounded-lg ring-1 ring-rose-500/80 p-0.5" : ""}>
+        {isManualUrl ? (
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              placeholder="https://... atau /img/..."
+              value={manualInput}
+              onChange={(e) => setManualInput(e.target.value)}
+              className="h-10 text-sm bg-white"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleApplyManual}
+              className="h-10 px-4 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              Terapkan
+            </Button>
+          </div>
+        ) : value ? (
+          <FileUploadPreview
+            value={value}
+            isPdf={isPdf}
+            uploadMeta={uploadMeta}
+            isUploading={isUploading}
+            onReplace={() => fileInputRef.current?.click()}
+            onRemove={handleRemove}
           />
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleApplyManual}
-            className="h-10 px-4 text-xs font-semibold text-slate-700 hover:bg-slate-50"
-          >
-            Terapkan
-          </Button>
-        </div>
-      ) : value ? (
-        <FileUploadPreview
-          value={value}
-          isPdf={isPdf}
-          uploadMeta={uploadMeta}
-          isUploading={isUploading}
-          onReplace={() => fileInputRef.current?.click()}
-          onRemove={handleRemove}
-        />
-      ) : (
-        <FileUploadDropzone
-          isDragging={isDragging}
-          isUploading={isUploading}
-          isPdf={isPdf}
-          helperText={helperText}
-          onClick={() => fileInputRef.current?.click()}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-        />
+        ) : (
+          <FileUploadDropzone
+            isDragging={isDragging}
+            isUploading={isUploading}
+            isPdf={isPdf}
+            helperText={helperText}
+            onClick={() => fileInputRef.current?.click()}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+          />
+        )}
+      </div>
+
+      {error && (
+        <p className="text-xs text-rose-500 font-medium leading-relaxed" role="alert">
+          {error}
+        </p>
       )}
 
       {/* Hidden File Input */}

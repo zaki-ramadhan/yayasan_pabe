@@ -1,7 +1,12 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import { DONATION_LIMITS, validateName, validatePhone, sanitizePhone } from "@/lib/security";
+import {
+  DONATION_LIMITS,
+  validateName,
+  validatePhone,
+  validateEmail,
+  sanitizePhone,
+  sanitizeEmail,
+} from "@/lib/security";
 import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
 import { getStoredUser } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
@@ -10,7 +15,9 @@ import { toast } from "@/hooks/use-toast";
 export function useRoutineDonation({ campaigns = [] }) {
   const [fullName, setFullName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [email, setEmail] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -33,6 +40,9 @@ export function useRoutineDonation({ campaigns = [] }) {
         if (cleanPhone) {
           setWhatsapp(cleanPhone);
         }
+      }
+      if (user.email) {
+        setEmail(user.email);
       }
     });
   }, []);
@@ -109,23 +119,38 @@ export function useRoutineDonation({ campaigns = [] }) {
     e.preventDefault();
 
     // 1. Validasi Identitas
+    const newErrors = {};
     const nameVal = validateName(fullName, isAnonymous);
     if (!nameVal.isValid) {
-      toast.error(nameVal.message);
-      return;
+      newErrors.fullName = nameVal.message;
     }
 
     const phoneVal = validatePhone(whatsapp);
     if (!phoneVal.isValid) {
-      toast.error(phoneVal.message);
+      newErrors.whatsapp = phoneVal.message;
+    }
+
+    if (email && email.trim()) {
+      const emailVal = validateEmail(email.trim(), false);
+      if (!emailVal.isValid) {
+        newErrors.email = emailVal.message;
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      const firstError = Object.values(newErrors)[0];
+      toast.error(firstError);
       return;
     }
+    setErrors({});
 
     // 2. Validasi Tiap Program
     for (let i = 0; i < selectedPrograms.length; i++) {
       const p = selectedPrograms[i];
 
       if (p.hasCustomPeriod && p.startDate && p.endDate && p.startDate > p.endDate) {
+        handleProgramChange(p.id, "startDateError", "Tanggal mulai tidak boleh lebih lambat dari tanggal berakhir");
         toast.error(`Tanggal mulai tidak boleh lebih lambat dari tanggal berakhir pada Program ${i + 1}.`);
         return;
       }
@@ -136,6 +161,7 @@ export function useRoutineDonation({ campaigns = [] }) {
           : p.amount;
 
         if (!nominal || nominal < DONATION_LIMITS.MIN_AMOUNT) {
+          handleProgramChange(p.id, "amountError", `Nominal minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`);
           toast.error(
             `Nominal Program ${i + 1} minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`
           );
@@ -143,6 +169,7 @@ export function useRoutineDonation({ campaigns = [] }) {
         }
 
         if (nominal > DONATION_LIMITS.MAX_AMOUNT) {
+          handleProgramChange(p.id, "amountError", `Nominal maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`);
           toast.error(
             `Nominal Program ${i + 1} maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`
           );
@@ -183,6 +210,7 @@ export function useRoutineDonation({ campaigns = [] }) {
         body: JSON.stringify({
           donorName: isAnonymous ? "Hamba Allah" : fullName.trim(),
           donorPhone: whatsapp,
+          donorEmail: email && email.trim() ? email.trim() : null,
           isAnonymous,
           programs: payloadPrograms,
         }),
@@ -207,8 +235,12 @@ export function useRoutineDonation({ campaigns = [] }) {
     setFullName,
     whatsapp,
     setWhatsapp,
+    email,
+    setEmail,
     isAnonymous,
     setIsAnonymous,
+    errors,
+    setErrors,
     isSubmitting,
     isSubmitted,
     setIsSubmitted,

@@ -28,7 +28,7 @@ function subscribePrayers(callback) {
 }
 
 function getPrayersSnapshot() {
-  return localStorage.getItem("pabe_user_prayers") || localStorage.getItem("ygsm_user_prayers") || "[]";
+  return localStorage.getItem("pabe_user_prayers") || "[]";
 }
 
 function getPrayersServerSnapshot() {
@@ -49,6 +49,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
   const [donorPhone, setDonorPhone] = useState("");
   const [donorEmail, setDonorEmail] = useState("");
   const [isEmailLocked, setIsEmailLocked] = useState(false);
+  const [errors, setErrors] = useState({});
   const [prayer, setPrayer] = useState(() => {
     if (typeof window !== "undefined") {
       const sp = new URLSearchParams(window.location.search);
@@ -186,32 +187,35 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const newErrors = {};
     if (amount < DONATION_LIMITS.MIN_AMOUNT) {
-      toast.error(`Nominal donasi minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`);
-      return;
-    }
-    if (amount > DONATION_LIMITS.MAX_AMOUNT) {
-      toast.error(`Nominal donasi maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`);
-      return;
+      newErrors.amount = `Nominal donasi minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`;
+    } else if (amount > DONATION_LIMITS.MAX_AMOUNT) {
+      newErrors.amount = `Nominal donasi maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`;
     }
 
     const nameVal = validateName(donorName, isAnonymous);
     if (!nameVal.isValid) {
-      toast.error(nameVal.message);
-      return;
+      newErrors.donorName = nameVal.message;
     }
 
     const phoneVal = validatePhone(donorPhone);
     if (!phoneVal.isValid) {
-      toast.error(phoneVal.message);
-      return;
+      newErrors.donorPhone = phoneVal.message;
     }
 
-    const emailVal = validateEmail(donorEmail);
+    const emailVal = validateEmail(donorEmail, true);
     if (!emailVal.isValid) {
-      toast.error(emailVal.message || "Email donatur wajib diisi dengan format yang benar.");
+      newErrors.donorEmail = emailVal.message || "Email donatur wajib diisi dengan format yang benar.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      const firstError = Object.values(newErrors)[0];
+      toast.error(firstError);
       return;
     }
+    setErrors({});
 
     try {
       setIsSubmitting(true);
@@ -279,6 +283,8 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     donorEmail,
     setDonorEmail,
     isEmailLocked,
+    errors,
+    setErrors,
     prayer,
     setPrayer,
     selectedChannelId,

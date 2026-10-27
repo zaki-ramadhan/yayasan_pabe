@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { Button } from "@/components/ui/button";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
@@ -9,12 +11,35 @@ export function ZakatEmasForm({
   onSubmit,
   onReset,
 }) {
-  const hasValidInput = (values.jumlahGram || 0) > 0 && (values.hargaPerGram || 0) > 0;
+  const [errors, setErrors] = useState({});
+
+  const handleFieldChange = (field, val) => {
+    onChange(field, val);
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!hasValidInput) return;
+    const errs = {};
+    if (!(Number(values.jumlahGram) > 0)) {
+      errs.jumlahGram = "Jumlah gram emas wajib diisi lebih dari 0";
+    }
+    if (!(Number(values.hargaPerGram) > 0)) {
+      errs.hargaPerGram = "Harga emas per gram wajib diisi lebih dari 0";
+    }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+    setErrors({});
     onSubmit();
+  };
+
+  const handleReset = () => {
+    setErrors({});
+    onReset();
   };
 
   return (
@@ -29,9 +54,13 @@ export function ZakatEmasForm({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <ZakatFieldGroup id="jumlahGram" label="Jumlah emas yang dimiliki">
+        <ZakatFieldGroup
+          id="jumlahGram"
+          label="Jumlah emas yang dimiliki"
+          error={errors.jumlahGram}
+        >
           <div className="relative w-full">
-            <input
+            <Input
               id="jumlahGram"
               type="number"
               min="0"
@@ -44,10 +73,10 @@ export function ZakatEmasForm({
               }}
               onChange={(e) => {
                 const raw = parseFloat(e.target.value);
-                onChange("jumlahGram", isNaN(raw) || raw < 0 ? 0 : raw);
+                handleFieldChange("jumlahGram", isNaN(raw) || raw < 0 ? 0 : raw);
               }}
               placeholder="0"
-              className="w-full h-11 pl-3.5 pr-14 rounded-md border border-slate-300 text-sm font-normal text-slate-950 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all bg-white"
+              className="h-11 pr-14 text-sm font-normal text-slate-950 placeholder:text-slate-400 bg-white"
             />
             <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-sm font-normal text-slate-600 pointer-events-none select-none">
               gram
@@ -59,11 +88,12 @@ export function ZakatEmasForm({
           id="hargaPerGram"
           label="Harga emas per gram"
           helperText="Harga acuan dapat disesuaikan dengan harga pasaran saat ini"
+          error={errors.hargaPerGram}
         >
           <CurrencyInput
             id="hargaPerGram"
             value={values.hargaPerGram}
-            onChange={(val) => onChange("hargaPerGram", val)}
+            onChange={(val) => handleFieldChange("hargaPerGram", val)}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -80,19 +110,17 @@ export function ZakatEmasForm({
         <Button
           type="submit"
           variant="default"
-          disabled={!hasValidInput}
-          title={!hasValidInput ? "Masukkan jumlah gram emas untuk menghitung zakat" : undefined}
-          className="rounded-md px-5 h-10 text-sm font-medium"
+          className="rounded-md px-5 h-10 text-sm font-medium cursor-pointer"
         >
-          Hitung Zakat
+          Hitung zakat
         </Button>
         <Button
           type="button"
           variant="outline"
-          onClick={onReset}
-          className="rounded-md px-4 h-10 text-sm font-medium text-slate-700 hover:text-slate-900 border-slate-300"
+          onClick={handleReset}
+          className="rounded-md px-4 h-10 text-sm font-medium text-slate-700 hover:text-slate-900 border-slate-300 cursor-pointer"
         >
-          Atur Ulang
+          Atur ulang
         </Button>
       </div>
     </form>

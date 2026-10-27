@@ -13,6 +13,7 @@ import {
 
 export function AdminSettingsBankSection({
   bankAccounts = [],
+  errors = {},
   onAddBankAccount,
   onRemoveBankAccount,
   onBankAccountChange,
@@ -41,7 +42,12 @@ export function AdminSettingsBankSection({
             key={idx}
             className="p-3.5 bg-slate-50/70 border border-slate-200/80 rounded-lg grid grid-cols-1 sm:grid-cols-12 gap-3 items-end"
           >
-            <FormField label="Nama bank" required className="sm:col-span-3 space-y-1">
+            <FormField
+              label="Nama bank"
+              required
+              error={errors[`bankName_${idx}`] || errors[`bankAccount_${idx}`]}
+              className="sm:col-span-3 space-y-1"
+            >
               <Input
                 value={account.bank || ""}
                 onChange={(e) =>
@@ -54,7 +60,12 @@ export function AdminSettingsBankSection({
               />
             </FormField>
 
-            <FormField label="Nomor rekening" required className="sm:col-span-3 space-y-1">
+            <FormField
+              label="Nomor rekening"
+              required
+              error={errors[`bankAcc_${idx}`]}
+              className="sm:col-span-3 space-y-1"
+            >
               <Input
                 value={account.accountNumber || ""}
                 onChange={(e) =>
@@ -68,7 +79,12 @@ export function AdminSettingsBankSection({
               />
             </FormField>
 
-            <FormField label="Atas nama pemilik rekening" required className="sm:col-span-3 space-y-1">
+            <FormField
+              label="Atas nama pemilik rekening"
+              required
+              error={errors[`bankHolder_${idx}`]}
+              className="sm:col-span-3 space-y-1"
+            >
               <Input
                 value={account.accountName || ""}
                 onChange={(e) =>

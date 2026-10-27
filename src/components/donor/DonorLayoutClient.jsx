@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { DonorSidebarNav } from "@/components/donor/DonorSidebarNav";
 import { DonorTopHeader } from "@/components/donor/DonorTopHeader";
-import { logoutUser, USER_ROLES } from "@/services/authService";
+import { logoutUser, getStoredUser, USER_ROLES } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 
@@ -19,11 +19,8 @@ export function DonorLayoutClient({ children }) {
   // Tampilkan toast sambutan setelah login donatur berhasil
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const justLoggedIn =
-        sessionStorage.getItem("ygsm_just_logged_in") ||
-        sessionStorage.getItem("pabe_just_logged_in");
+      const justLoggedIn = sessionStorage.getItem("pabe_just_logged_in");
       if (justLoggedIn) {
-        sessionStorage.removeItem("ygsm_just_logged_in");
         sessionStorage.removeItem("pabe_just_logged_in");
         toast.success(`Selamat datang, ${justLoggedIn}! Berhasil masuk ke akun donatur.`);
       }
@@ -50,15 +47,13 @@ export function DonorLayoutClient({ children }) {
   useEffect(() => {
     let isMounted = true;
 
-    // 1. Fast preliminary check on client storage
-    if (typeof window !== "undefined") {
-      const stored =
-        localStorage.getItem("pabe_auth_user") ||
-        localStorage.getItem("ygsm_auth_user");
-      if (!stored) {
-        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
-        return;
-      }
+    // 1. Fast preliminary check on client storage via getStoredUser (with expiration verification)
+    const stored = getStoredUser();
+    if (!stored) {
+      logoutUser();
+      toast.error("Sesi donatur telah berakhir. Silakan masuk kembali.");
+      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      return;
     }
 
     // 2. Authoritative server verification
@@ -69,25 +64,32 @@ export function DonorLayoutClient({ children }) {
 
         if (res.status === 401) {
           logoutUser();
+          toast.error("Sesi donatur telah berakhir. Silakan masuk kembali.");
           router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
         }
       } catch {
         // Fallback for temporary network offline state
-        if (!isAuthenticated && typeof window !== "undefined") {
-          const stored =
-            localStorage.getItem("pabe_auth_user") ||
-            localStorage.getItem("ygsm_auth_user");
-          if (!stored) {
-            router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
-          }
+        if (!getStoredUser()) {
+          router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
         }
       }
     }
 
     verifySessionWithServer();
 
+    // Check expiration on window focus
+    const handleFocus = () => {
+      if (!getStoredUser()) {
+        logoutUser();
+        toast.error("Sesi donatur telah berakhir. Silakan masuk kembali.");
+        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      }
+    };
+    window.addEventListener("focus", handleFocus);
+
     return () => {
       isMounted = false;
+      window.removeEventListener("focus", handleFocus);
     };
   }, [pathname, router, isAuthenticated]);
 

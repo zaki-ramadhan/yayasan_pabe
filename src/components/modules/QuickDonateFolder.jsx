@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/ui/form-field";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { NominalGridPicker } from "@/components/donation/NominalGridPicker";
 import { DONATION_LIMITS } from "@/lib/security";
@@ -15,12 +16,14 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-pengh
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState(50000);
   const [customAmount, setCustomAmount] = useState("");
+  const [amountError, setAmountError] = useState("");
   const router = useRouter();
 
   const handlePresetSelect = (amt) => {
     setIsCustomMode(false);
     setSelectedAmount(amt);
     setCustomAmount("");
+    setAmountError("");
   };
 
   const handleCustomModeClick = () => {
@@ -32,6 +35,7 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-pengh
   const handleCustomChange = (clamped, raw) => {
     setCustomAmount(raw);
     setSelectedAmount(clamped);
+    if (amountError) setAmountError("");
   };
 
   const handleCustomBlur = () => {
@@ -39,6 +43,7 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-pengh
     if (customAmount !== "" && num < 10000) {
       setCustomAmount("10000");
       setSelectedAmount(10000);
+      setAmountError("");
     }
   };
 
@@ -46,7 +51,15 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-pengh
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
-    if (finalAmount < 10000 || finalAmount > 100000000) return;
+    if (finalAmount < 10000) {
+      setAmountError("Nominal donasi minimal Rp 10.000.");
+      return;
+    }
+    if (finalAmount > 100000000) {
+      setAmountError("Nominal donasi maksimal Rp 100.000.000.");
+      return;
+    }
+    setAmountError("");
 
     const user = getStoredUser();
     const targetUrl = `/campaign/${defaultCampaignSlug}/donate?amount=${finalAmount}`;
@@ -75,7 +88,7 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-pengh
         className="object-fill pointer-events-none select-none drop-shadow-lg"
       />
 
-      {/* Konten Formulir Donasi di Dalam Folder (Align Bawah dengan Jarak Nyaman) */}
+      {/* Konten Formulir Donasi di Dalam Folder */}
       <form
         onSubmit={handleSubmit}
         className="relative z-10 h-full flex flex-col justify-end pt-12 pb-9 sm:pb-11 px-6 sm:px-7 space-y-3 sm:space-y-3.5"
@@ -83,7 +96,7 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-pengh
         {/* Header Form */}
         <div className="space-y-0.5 min-w-0">
           <h2 className="text-base font-semibold text-slate-950">
-            Formulir Donasi Cepat
+            Formulir donasi cepat
           </h2>
           <p className="text-sm text-slate-700">Pilih atau tentukan nominal sedekah</p>
         </div>
@@ -98,24 +111,24 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-pengh
             onSelectCustom={handleCustomModeClick}
             columns="2"
             buttonHeight="lg"
+            customLabel="Nominal lainnya"
           />
         </div>
 
         {/* Custom Nominal Input */}
         {isCustomMode && (
-          <div className="space-y-2 animate-in fade-in slide-in-from-top-1 duration-150">
-            <label className="text-sm font-semibold text-slate-800 block">
-              Nominal Lainnya (Min. Rp 10.000)
-            </label>
-            <CurrencyInput
-              autoFocus
-              min={DONATION_LIMITS.MIN_AMOUNT}
-              max={DONATION_LIMITS.MAX_AMOUNT}
-              placeholder="10.000"
-              value={customAmount}
-              onChange={handleCustomChange}
-              onBlur={handleCustomBlur}
-            />
+          <div className="animate-in fade-in slide-in-from-top-1 duration-150">
+            <FormField label="Nominal lainnya (min. Rp 10.000)" error={amountError}>
+              <CurrencyInput
+                autoFocus
+                min={DONATION_LIMITS.MIN_AMOUNT}
+                max={DONATION_LIMITS.MAX_AMOUNT}
+                placeholder="10.000"
+                value={customAmount}
+                onChange={handleCustomChange}
+                onBlur={handleCustomBlur}
+              />
+            </FormField>
           </div>
         )}
 
@@ -123,11 +136,10 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-pengh
         <div className="pt-1">
           <Button
             type="submit"
-            disabled={finalAmount < 10000}
             variant="primary3d"
-            className="w-full h-12 rounded-lg text-base font-medium"
+            className="w-full h-12 rounded-lg text-base font-medium cursor-pointer"
           >
-            Donasi Sekarang
+            Donasi sekarang
           </Button>
         </div>
       </form>

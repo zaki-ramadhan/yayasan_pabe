@@ -17,6 +17,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { AdminRoutineDonationStatusBadge } from "./AdminRoutineDonationStatusBadge";
+import { AdminRoutineTriggerButton } from "./AdminRoutineTriggerButton";
 import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
 import { Mail, Phone, Calendar, Clock, HeartHandshake, User, ArrowUpRight, Loader2 } from "lucide-react";
@@ -177,6 +178,9 @@ export function AdminRoutineDonationDetailDialog({
                   <SelectItem value="CANCELLED" className="text-sm font-normal">
                     Dibatalkan (Berhenti)
                   </SelectItem>
+                  <SelectItem value="COMPLETED" className="text-sm font-normal">
+                    Selesai (Program Selesai / Ditutup)
+                  </SelectItem>
                 </SelectContent>
               </Select>
               {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-emerald-600 shrink-0" />}
@@ -184,7 +188,11 @@ export function AdminRoutineDonationDetailDialog({
           </FormField>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex-col sm:flex-row sm:justify-between items-center gap-2">
+          <AdminRoutineTriggerButton
+            routineId={donation.id}
+            routineType={donation.routineType}
+          />
           <Button
             type="button"
             variant="outline"

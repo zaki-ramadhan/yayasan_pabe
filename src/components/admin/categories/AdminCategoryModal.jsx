@@ -16,8 +16,10 @@ export function AdminCategoryModal({
 	const isEdit = Boolean(category);
 	const [name, setName] = useState("");
 	const [slug, setSlug] = useState("");
+	const [errors, setErrors] = useState({});
 
 	useEffect(() => {
+		setErrors({});
 		if (category) {
 			setName(
 				category.name ||
@@ -40,6 +42,9 @@ export function AdminCategoryModal({
 	const handleNameChange = (e) => {
 		const val = e.target.value;
 		setName(val);
+		if (errors.name) {
+			setErrors((prev) => ({ ...prev, name: "" }));
+		}
 		if (!isEdit) {
 			setSlug(
 				val
@@ -53,12 +58,30 @@ export function AdminCategoryModal({
 						"",
 					),
 			);
+			if (errors.slug) {
+				setErrors((prev) => ({ ...prev, slug: "" }));
+			}
 		}
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (!name.trim()) return;
+		const newErrors = {};
+
+		if (!name.trim() || name.trim().length < 3) {
+			newErrors.name = "Nama kategori wajib diisi (minimal 3 karakter).";
+		}
+		const cleanSlug = slug.trim() || name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+		if (!cleanSlug || cleanSlug.length < 2) {
+			newErrors.slug = "Pengenal URL (slug) wajib diisi (minimal 2 karakter).";
+		}
+
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			return;
+		}
+
+		setErrors({});
 		onSubmit({
 			...(category
 				? {
@@ -66,40 +89,22 @@ export function AdminCategoryModal({
 					}
 				: {}),
 			name: name.trim(),
-			slug:
-				slug.trim() ||
-				name
-					.toLowerCase()
-					.replace(
-						/[^a-z0-9]+/g,
-						"-",
-					),
+			slug: cleanSlug,
 		});
 	};
 
 	return (
 		<FormDialog
-			isOpen={
-				isOpen
-			}
-			onClose={
-				onClose
-			}
-			onSubmit={
-				handleSubmit
-			}
+			isOpen={isOpen}
+			onClose={onClose}
+			onSubmit={handleSubmit}
 			maxWidth="max-w-md"
 			title={
 				isEdit
 					? "Edit kategori program"
 					: "Tambah kategori program baru"
 			}
-			isSubmitting={
-				isSubmitting
-			}
-			submitDisabled={
-				!name.trim()
-			}
+			isSubmitting={isSubmitting}
 			submitText={
 				isEdit
 					? "Simpan perubahan"
@@ -110,14 +115,11 @@ export function AdminCategoryModal({
 			<FormField
 				label="Nama kategori"
 				required
+				error={errors.name}
 			>
 				<Input
-					value={
-						name
-					}
-					onChange={
-						handleNameChange
-					}
+					value={name}
+					onChange={handleNameChange}
 					placeholder="Contoh: Pendidikan & Dakwah"
 					className="text-sm font-normal"
 					required
@@ -125,22 +127,18 @@ export function AdminCategoryModal({
 			</FormField>
 
 			<FormField
-				label="Pengenal URL (Slug)"
+				label="Pengenal URL (slug)"
 				required
+				error={errors.slug}
 			>
 				<Input
-					value={
-						slug
-					}
-					onChange={(
-						e,
-					) =>
-						setSlug(
-							e
-								.target
-								.value,
-						)
-					}
+					value={slug}
+					onChange={(e) => {
+						setSlug(e.target.value);
+						if (errors.slug) {
+							setErrors((prev) => ({ ...prev, slug: "" }));
+						}
+					}}
 					placeholder="contoh: pendidikan-dakwah"
 					className="text-sm font-normal font-mono"
 					required

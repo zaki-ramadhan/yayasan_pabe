@@ -34,15 +34,15 @@ export function AdminDistributionModal({
 			)[0],
 	);
 	const [content, setContent] = useState("");
-	const [isSubmitting, setIsSubmitting] =
-		useState(false);
+	const [errors, setErrors] = useState({});
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
+		setErrors({});
 		if (distributionToEdit) {
 			setCampaignId(
 				distributionToEdit.campaignId ||
-					campaigns[0]
-						?.id ||
+					campaigns[0]?.id ||
 					"",
 			);
 			setTitle(
@@ -73,16 +73,11 @@ export function AdminDistributionModal({
 			);
 		} else {
 			setCampaignId(
-				campaigns[0]
-					?.id ||
+				campaigns[0]?.id ||
 					"",
 			);
-			setTitle(
-				"",
-			);
-			setDisbursedAmount(
-				0,
-			);
+			setTitle("");
+			setDisbursedAmount(0);
 			setDate(
 				new Date()
 					.toISOString()
@@ -90,34 +85,38 @@ export function AdminDistributionModal({
 						"T",
 					)[0],
 			);
-			setContent(
-				"",
-			);
+			setContent("");
 		}
 	}, [distributionToEdit, isOpen, campaigns]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!title.trim()) {
-			toast.error(
-				"Judul penyaluran wajib diisi.",
-			);
-			return;
-		}
+		const newErrors = {};
+
 		if (!campaignId) {
-			toast.error(
-				"Pilih program donasi asal penyaluran.",
-			);
+			newErrors.campaignId = "Pilih program donasi asal penyaluran.";
+		}
+		if (!title.trim() || title.trim().length < 5) {
+			newErrors.title = "Judul kegiatan penyaluran wajib diisi (minimal 5 karakter).";
+		}
+		if (!disbursedAmount || disbursedAmount <= 0) {
+			newErrors.disbursedAmount = "Nominal dana penyaluran wajib lebih dari Rp 0.";
+		}
+		if (!date) {
+			newErrors.date = "Tanggal penyaluran wajib dipilih.";
+		}
+		if (!content.trim() || content.trim().length < 10) {
+			newErrors.content = "Rincian penyaluran wajib diisi (minimal 10 karakter).";
+		}
+
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			const firstError = Object.values(newErrors)[0];
+			toast.error(firstError);
 			return;
 		}
 
-		if (disbursedAmount <= 0) {
-			toast.error(
-				"Nominal dana penyaluran wajib lebih dari Rp 0.",
-			);
-			return;
-		}
-
+		setErrors({});
 		setIsSubmitting(true);
 		try {
 			const url =
@@ -218,26 +217,20 @@ export function AdminDistributionModal({
 			<FormField
 				label="Program donasi terkait"
 				required
+				error={errors.campaignId}
 			>
 				<CreatableCombobox
-					options={campaigns.map(
-						(
-							c,
-						) => ({
-							value: c.id,
-							label: c.title,
-						}),
-					)}
-					value={
-						campaignId
-					}
-					onChange={(
-						val,
-					) =>
-						setCampaignId(
-							val,
-						)
-					}
+					options={campaigns.map((c) => ({
+						value: c.id,
+						label: c.title,
+					}))}
+					value={campaignId}
+					onChange={(val) => {
+						setCampaignId(val);
+						if (errors.campaignId) {
+							setErrors((prev) => ({ ...prev, campaignId: "" }));
+						}
+					}}
 					placeholder="Pilih program donasi terkait..."
 					searchPlaceholder="Ketik untuk mencari program donasi..."
 					emptyMessage="Program donasi tidak ditemukan."
@@ -247,25 +240,19 @@ export function AdminDistributionModal({
 			<FormField
 				label="Judul kegiatan penyaluran"
 				required
+				error={errors.title}
 			>
 				<Input
 					type="text"
 					placeholder="Contoh: Penyaluran Paket Sembako & Santunan 50 Yatim Dhuafa"
-					value={
-						title
-					}
-					maxLength={
-						120
-					}
-					onChange={(
-						e,
-					) =>
-						setTitle(
-							e
-								.target
-								.value,
-						)
-					}
+					value={title}
+					maxLength={120}
+					onChange={(e) => {
+						setTitle(e.target.value);
+						if (errors.title) {
+							setErrors((prev) => ({ ...prev, title: "" }));
+						}
+					}}
 					className="h-10 text-sm font-normal text-slate-900 border-slate-300 rounded-lg"
 					required
 				/>
@@ -275,19 +262,17 @@ export function AdminDistributionModal({
 				<FormField
 					label="Alokasi dana tersalurkan (Rp)"
 					required
+					error={errors.disbursedAmount}
 				>
 					<CurrencyInput
 						placeholder="0"
-						value={
-							disbursedAmount
-						}
-						onChange={(
-							val,
-						) =>
-							setDisbursedAmount(
-								val,
-							)
-						}
+						value={disbursedAmount}
+						onChange={(val) => {
+							setDisbursedAmount(val);
+							if (errors.disbursedAmount) {
+								setErrors((prev) => ({ ...prev, disbursedAmount: "" }));
+							}
+						}}
 						className="h-10 text-sm font-normal"
 						required
 					/>
@@ -296,21 +281,17 @@ export function AdminDistributionModal({
 				<FormField
 					label="Tanggal penyaluran"
 					required
+					error={errors.date}
 				>
 					<Input
 						type="date"
-						value={
-							date
-						}
-						onChange={(
-							e,
-						) =>
-							setDate(
-								e
-									.target
-									.value,
-							)
-						}
+						value={date}
+						onChange={(e) => {
+							setDate(e.target.value);
+							if (errors.date) {
+								setErrors((prev) => ({ ...prev, date: "" }));
+							}
+						}}
 						className="h-10 text-sm font-normal text-slate-900 border-slate-300 rounded-lg"
 						required
 					/>
@@ -320,24 +301,18 @@ export function AdminDistributionModal({
 			<FormField
 				label="Deskripsi berita & rincian penyaluran"
 				required
+				error={errors.content}
 			>
 				<Textarea
-					rows={
-						4
-					}
+					rows={4}
 					placeholder="Rincian jumlah penerima manfaat, lokasi penyerahan, dan ucapan doa dari mustahik..."
-					value={
-						content
-					}
-					onChange={(
-						e,
-					) =>
-						setContent(
-							e
-								.target
-								.value,
-						)
-					}
+					value={content}
+					onChange={(e) => {
+						setContent(e.target.value);
+						if (errors.content) {
+							setErrors((prev) => ({ ...prev, content: "" }));
+						}
+					}}
 					className="w-full text-sm font-normal leading-relaxed border-slate-300"
 					required
 				/>

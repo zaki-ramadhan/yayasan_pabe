@@ -74,6 +74,7 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
                 fill
                 sizes="32px"
                 unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
                 onError={() => setImgError(true)}
               />

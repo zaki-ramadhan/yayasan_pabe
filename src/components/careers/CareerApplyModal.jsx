@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { CareerApplySuccessState } from "./CareerApplySuccessState";
 import { CareerApplyFormFields } from "./CareerApplyFormFields";
 import { sanitizeInput } from "@/lib/security";
+import { validateEmail } from "@/lib/validator";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 import { getStoredUser } from "@/services/authService";
@@ -29,6 +30,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isEmailLocked, setIsEmailLocked] = useState(false);
+  const [errors, setErrors] = useState({});
 
   // Restore draft and prefill logged in user when modal opens
   useEffect(() => {
@@ -72,6 +74,9 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
       ...prev,
       [field]: value,
     }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
   };
 
   const handlePhoneChange = (e) => {
@@ -88,26 +93,31 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     const phoneTrimmed = formData.phone.trim();
     const coverLetterTrimmed = sanitizeInput(formData.coverLetter.trim());
 
+    const newErrors = {};
     if (!fullNameTrimmed || fullNameTrimmed.length < 2) {
-      toast.error("Nama lengkap wajib diisi minimal 2 karakter.");
-      return;
+      newErrors.fullName = "Nama lengkap wajib diisi minimal 2 karakter.";
     }
-    if (!emailTrimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed)) {
-      toast.error("Format email tidak valid.");
-      return;
+    const emailValidation = validateEmail(emailTrimmed, true);
+    if (!emailValidation.isValid) {
+      newErrors.email = emailValidation.message || "Format alamat email tidak valid.";
     }
     if (phoneTrimmed.length < 10) {
-      toast.error("Nomor WhatsApp/HP minimal 10 digit angka.");
-      return;
+      newErrors.phone = "Nomor WhatsApp/HP minimal 10 digit angka.";
     }
     if (!formData.resumeUrl.trim()) {
-      toast.error("Tautan resume / CV (Google Drive/PDF) wajib dicantumkan.");
-      return;
+      newErrors.resumeUrl = "Tautan resume / CV (Google Drive/PDF) wajib dicantumkan.";
     }
     if (coverLetterTrimmed.length < 10) {
-      toast.error("Surat pengantar wajib diisi minimal 10 karakter.");
+      newErrors.coverLetter = "Surat pengantar wajib diisi minimal 10 karakter.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      const firstError = Object.values(newErrors)[0];
+      toast.error(firstError);
       return;
     }
+    setErrors({});
 
     setIsSubmitting(true);
     try {
@@ -180,6 +190,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
                 onChange={handleChange}
                 onPhoneChange={handlePhoneChange}
                 isEmailLocked={isEmailLocked}
+                errors={errors}
               />
             </div>
 

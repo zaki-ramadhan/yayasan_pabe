@@ -183,7 +183,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Posisi &amp; Kode</TableHead>
+              <TableHead className="min-w-[200px] w-52">Posisi &amp; Kode</TableHead>
               <TableHead className="w-48">Divisi &amp; Sistem</TableHead>
               <TableHead className="w-44">Lokasi</TableHead>
               <TableHead className="w-36">Batas Waktu</TableHead>

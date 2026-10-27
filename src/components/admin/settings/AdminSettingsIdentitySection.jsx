@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { sanitizeStandardText } from "@/lib/security";
 
-export function AdminSettingsIdentitySection({ formData, onFieldChange }) {
+export function AdminSettingsIdentitySection({ formData, errors = {}, onFieldChange }) {
   return (
     <Card className="shadow-2xs">
       <CardHeader className="p-4 sm:p-5 pb-2.5 border-b border-slate-100">
@@ -17,7 +17,7 @@ export function AdminSettingsIdentitySection({ formData, onFieldChange }) {
 
       <CardContent className="p-4 sm:p-5 pt-3.5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm font-normal">
-          <FormField label="Nama resmi yayasan" required className="sm:col-span-2">
+          <FormField label="Nama resmi yayasan" required error={errors.name} className="sm:col-span-2">
             <Input
               value={formData.name || ""}
               onChange={(e) => onFieldChange(null, "name", sanitizeStandardText(e.target.value, 80))}
@@ -28,7 +28,7 @@ export function AdminSettingsIdentitySection({ formData, onFieldChange }) {
             />
           </FormField>
 
-          <FormField label="Singkatan / sebutan brand" required>
+          <FormField label="Singkatan / sebutan brand" required error={errors.shortName}>
             <Input
               value={formData.shortName || ""}
               onChange={(e) => onFieldChange(null, "shortName", sanitizeStandardText(e.target.value, 20))}

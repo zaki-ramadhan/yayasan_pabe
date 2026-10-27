@@ -37,6 +37,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const debouncedSearch = useDebounce(search.trim(), 300);
+  const isSearching = Boolean(search.trim().length > 0 && search.trim() !== debouncedSearch);
 
   const handleCopyInvoice = async (invoiceId) => {
     if (!invoiceId) return;
@@ -181,6 +182,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
         onExportCsv={handleExportCsv}
         onRefresh={refreshList}
         isLoading={isLoading}
+        isSearching={isSearching}
       />
 
       {/* Table Container */}

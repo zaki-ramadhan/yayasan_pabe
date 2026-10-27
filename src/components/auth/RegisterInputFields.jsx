@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
 import { AuthPasswordInput } from "@/components/auth/AuthPasswordInput";
 import {
   sanitizeEmail,
@@ -31,10 +32,11 @@ export function RegisterInputFields({
   return (
     <>
       {/* 1. Nama Pengguna (Username) */}
-      <div className="space-y-1.5">
-        <label className="block text-sm font-semibold text-slate-800">
-          Nama pengguna <span className="text-rose-500">*</span>
-        </label>
+      <FormField
+        label="Nama pengguna"
+        required
+        error={errors.username}
+      >
         <Input
           type="text"
           placeholder="contoh: ahmad_fauzi"
@@ -67,21 +69,16 @@ export function RegisterInputFields({
             }
           }}
           autoComplete="username"
-          className={cn(
-            "h-11 text-sm text-slate-900 border-slate-300 rounded-lg transition-colors",
-            errors.username && "border-rose-500 bg-rose-50/20 focus-visible:ring-rose-500"
-          )}
+          className="h-11 text-sm font-normal"
         />
-        {errors.username && (
-          <p className="text-xs text-rose-600 font-medium mt-1">{errors.username}</p>
-        )}
-      </div>
+      </FormField>
 
       {/* 2. Email */}
-      <div className="space-y-1.5">
-        <label className="block text-sm font-semibold text-slate-800">
-          Alamat email <span className="text-rose-500">*</span>
-        </label>
+      <FormField
+        label="Alamat email"
+        required
+        error={errors.email}
+      >
         <Input
           type="email"
           placeholder="nama@email.com"
@@ -101,21 +98,16 @@ export function RegisterInputFields({
             }
           }}
           autoComplete="email"
-          className={cn(
-            "h-11 text-sm text-slate-900 border-slate-300 rounded-lg transition-colors",
-            errors.email && "border-rose-500 bg-rose-50/20 focus-visible:ring-rose-500"
-          )}
+          className="h-11 text-sm font-normal"
         />
-        {errors.email && (
-          <p className="text-xs text-rose-600 font-medium mt-1">{errors.email}</p>
-        )}
-      </div>
+      </FormField>
 
       {/* 3. Nomor WhatsApp Aktif */}
-      <div className="space-y-1.5">
-        <label className="block text-sm font-semibold text-slate-800">
-          Nomor WhatsApp aktif <span className="text-rose-500">*</span>
-        </label>
+      <FormField
+        label="Nomor WhatsApp aktif"
+        required
+        error={errors.phone}
+      >
         <Input
           type="tel"
           inputMode="tel"
@@ -136,15 +128,9 @@ export function RegisterInputFields({
             }
           }}
           autoComplete="tel"
-          className={cn(
-            "h-11 text-sm text-slate-900 border-slate-300 rounded-lg transition-colors",
-            errors.phone && "border-rose-500 bg-rose-50/20 focus-visible:ring-rose-500"
-          )}
+          className="h-11 text-sm font-normal"
         />
-        {errors.phone && (
-          <p className="text-xs text-rose-600 font-medium mt-1">{errors.phone}</p>
-        )}
-      </div>
+      </FormField>
 
       {/* 4. Kata Sandi */}
       <AuthPasswordInput

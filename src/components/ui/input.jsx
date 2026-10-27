@@ -3,6 +3,7 @@
 import * as React from "react";
 import { X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useFormField } from "@/components/ui/form-field";
 
 const Input = React.forwardRef(
   (
@@ -14,10 +15,20 @@ const Input = React.forwardRef(
       value,
       icon: Icon,
       leftIcon,
+      error,
+      isInvalid,
       ...props
     },
     ref
   ) => {
+    const formContext = useFormField();
+    const hasError =
+      isInvalid !== undefined
+        ? Boolean(isInvalid)
+        : error !== undefined
+        ? Boolean(error)
+        : formContext?.isInvalid || false;
+
     const ResolvedIcon = Icon || leftIcon;
     const hasValue = value !== undefined && value !== null && String(value).length > 0;
 
@@ -25,13 +36,17 @@ const Input = React.forwardRef(
       if (!ResolvedIcon) return null;
       if (React.isValidElement(ResolvedIcon)) return ResolvedIcon;
       const IconComponent = ResolvedIcon;
-      return <IconComponent className="w-4 h-4 text-slate-500" />;
+      return (
+        <IconComponent
+          className={cn("w-4 h-4 transition-colors", hasError ? "text-rose-400" : "text-slate-500")}
+        />
+      );
     };
 
     return (
       <div className="relative w-full flex items-center">
         {ResolvedIcon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none flex items-center shrink-0 z-10">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center shrink-0 z-10">
             {renderLeftIcon()}
           </div>
         )}
@@ -40,8 +55,12 @@ const Input = React.forwardRef(
           type={type}
           value={value}
           suppressHydrationWarning
+          aria-invalid={hasError ? "true" : undefined}
           className={cn(
-            "flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 placeholder:text-slate-500 placeholder:text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden",
+            "flex h-10 w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-950 placeholder:text-slate-400 placeholder:text-sm focus:outline-none transition-colors [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden disabled:cursor-not-allowed disabled:opacity-50",
+            hasError
+              ? "border-rose-500 bg-rose-50/15 text-rose-950 placeholder:text-rose-300 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+              : "border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary",
             ResolvedIcon && "pl-9",
             (isLoading || (onClear && hasValue)) && "pr-9",
             className

@@ -1,12 +1,22 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "@/lib/utils";
+import { useFormField } from "@/components/ui/form-field";
 
 /**
  * Controlled 24-Hour Numeric Time Input (HH:MM)
  * Strict validation: 00-23 hours, 00-59 minutes, auto-pad with leading zero, keyboard step, and paste handler.
  */
-export function TimeInput24Hour({ value = "05:00", onChange }) {
+export function TimeInput24Hour({ value = "05:00", onChange, error, isInvalid }) {
+  const formContext = useFormField();
+  const hasError =
+    isInvalid !== undefined
+      ? Boolean(isInvalid)
+      : error !== undefined
+      ? Boolean(error)
+      : formContext?.isInvalid || false;
+
   const [initH = "05", initM = "00"] = (value || "05:00").split(":");
   const [prevValue, setPrevValue] = React.useState(value);
   const [hour, setHour] = React.useState(initH);
@@ -186,6 +196,13 @@ export function TimeInput24Hour({ value = "05:00", onChange }) {
     }
   };
 
+  const inputClass = cn(
+    "w-16 h-11 text-center font-semibold text-base sm:text-lg rounded-lg focus:outline-none transition-all tracking-wider shadow-2xs",
+    hasError
+      ? "border border-rose-500 bg-rose-50/15 text-rose-950 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+      : "bg-white border border-slate-300 text-slate-900 focus:ring-1 focus:ring-primary focus:border-primary"
+  );
+
   return (
     <div className="flex items-center gap-2">
       <div className="relative">
@@ -197,6 +214,7 @@ export function TimeInput24Hour({ value = "05:00", onChange }) {
           maxLength={2}
           placeholder="05"
           aria-label="Jam pengingat (00-23)"
+          aria-invalid={hasError ? "true" : undefined}
           value={hour}
           onChange={handleHourChange}
           onBlur={handleHourBlur}
@@ -204,12 +222,12 @@ export function TimeInput24Hour({ value = "05:00", onChange }) {
           onClick={(e) => e.target.select()}
           onKeyDown={handleHourKeyDown}
           onPaste={handlePaste}
-          className="w-16 h-11 text-center font-semibold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all tracking-wider shadow-2xs"
+          className={inputClass}
         />
         <span className="sr-only">Jam</span>
       </div>
 
-      <span className="text-xl font-bold text-slate-400 select-none pb-0.5">:</span>
+      <span className={cn("text-xl font-bold select-none pb-0.5", hasError ? "text-rose-400" : "text-slate-400")}>:</span>
 
       <div className="relative">
         <input
@@ -220,6 +238,7 @@ export function TimeInput24Hour({ value = "05:00", onChange }) {
           maxLength={2}
           placeholder="00"
           aria-label="Menit pengingat (00-59)"
+          aria-invalid={hasError ? "true" : undefined}
           value={minute}
           onChange={handleMinuteChange}
           onBlur={handleMinuteBlur}
@@ -227,7 +246,7 @@ export function TimeInput24Hour({ value = "05:00", onChange }) {
           onClick={(e) => e.target.select()}
           onKeyDown={handleMinuteKeyDown}
           onPaste={handlePaste}
-          className="w-16 h-11 text-center font-semibold text-base sm:text-lg text-slate-900 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all tracking-wider shadow-2xs"
+          className={inputClass}
         />
         <span className="sr-only">Menit</span>
       </div>

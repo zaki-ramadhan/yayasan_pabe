@@ -15,8 +15,12 @@ export function RoutineDonationForm({ campaigns = [] }) {
     setFullName,
     whatsapp,
     setWhatsapp,
+    email,
+    setEmail,
     isAnonymous,
     setIsAnonymous,
+    errors,
+    setErrors,
     isSubmitting,
     isSubmitted,
     setIsSubmitted,
@@ -56,8 +60,12 @@ export function RoutineDonationForm({ campaigns = [] }) {
             setFullName={setFullName}
             whatsapp={whatsapp}
             setWhatsapp={setWhatsapp}
+            email={email}
+            setEmail={setEmail}
             isAnonymous={isAnonymous}
             setIsAnonymous={setIsAnonymous}
+            errors={errors}
+            setErrors={setErrors}
           />
 
           {/* Step 2: Selected Programs Selection List */}

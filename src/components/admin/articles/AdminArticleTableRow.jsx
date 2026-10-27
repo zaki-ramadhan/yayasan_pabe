@@ -46,10 +46,11 @@ export function AdminArticleTableRow({
 
 			<TableCell className="py-2.5 align-middle">
 				<div className="space-y-0.5">
-					<span className="text-sm font-medium text-slate-900 block line-clamp-1">
-						{
-							article.title
-						}
+					<span
+						className="text-sm font-medium text-slate-900 block line-clamp-2 leading-snug"
+						title={article.title}
+					>
+						{article.title}
 					</span>
 					<div className="flex items-center gap-1 text-sm text-slate-500">
 						<span>

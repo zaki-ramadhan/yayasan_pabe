@@ -21,13 +21,9 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
             <span className="font-medium text-sm text-slate-900 block leading-tight truncate" title={donor.name}>
               {donor.name}
             </span>
-            {donor.email ? (
+            {donor.email && (
               <span className="text-sm text-slate-500 block truncate font-normal" title={donor.email}>
                 {maskEmail(donor.email)}
-              </span>
-            ) : (
-              <span className="text-sm text-slate-400 block italic font-normal">
-                Email tidak dicantumkan
               </span>
             )}
           </div>

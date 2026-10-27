@@ -40,6 +40,7 @@ export function AdminFaqModal({
 		useState(false);
 	const [customCategories, setCustomCategories] =
 		useState([]);
+	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] =
 		useState(false);
 
@@ -57,6 +58,7 @@ export function AdminFaqModal({
 	}, [categories, customCategories]);
 
 	useEffect(() => {
+		setErrors({});
 		if (faqToEdit) {
 			setQuestion(
 				faqToEdit.question ||
@@ -113,23 +115,33 @@ export function AdminFaqModal({
 				"",
 			);
 		}
+		if (errors.category) {
+			setErrors((prev) => ({ ...prev, category: "" }));
+		}
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!question.trim()) {
-			toast.error(
-				"Pertanyaan wajib diisi.",
-			);
-			return;
+		const newErrors = {};
+
+		if (!question.trim() || question.trim().length < 5) {
+			newErrors.question = "Pertanyaan wajib diisi (minimal 5 karakter).";
 		}
-		if (!answer.trim()) {
-			toast.error(
-				"Jawaban wajib diisi.",
-			);
+		if (isCustomMode && !category.trim()) {
+			newErrors.category = "Nama topik baru wajib diisi.";
+		}
+		if (!answer.trim() || answer.trim().length < 10) {
+			newErrors.answer = "Jawaban wajib diisi (minimal 10 karakter).";
+		}
+
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			const firstError = Object.values(newErrors)[0];
+			toast.error(firstError);
 			return;
 		}
 
+		setErrors({});
 		const finalCategory =
 			category.trim() ||
 			"Umum";
@@ -247,22 +259,18 @@ export function AdminFaqModal({
 			<FormField
 				label="Pertanyaan"
 				required
+				error={errors.question}
 			>
 				<Input
 					type="text"
 					placeholder="Contoh: Bagaimana cara donatur mendapatkan kuitansi resmi?"
-					value={
-						question
-					}
-					onChange={(
-						e,
-					) =>
-						setQuestion(
-							e
-								.target
-								.value,
-						)
-					}
+					value={question}
+					onChange={(e) => {
+						setQuestion(e.target.value);
+						if (errors.question) {
+							setErrors((prev) => ({ ...prev, question: "" }));
+						}
+					}}
 					required
 					className="h-10 text-sm font-normal bg-white border-slate-300"
 				/>
@@ -270,12 +278,11 @@ export function AdminFaqModal({
 
 			<FormField
 				label="Kategori / topik"
+				error={errors.category}
 				action={
 					<button
 						type="button"
-						onClick={
-							handleToggleCustomMode
-						}
+						onClick={handleToggleCustomMode}
 						className="text-sm font-medium text-primary hover:underline cursor-pointer"
 					>
 						{isCustomMode
@@ -288,57 +295,39 @@ export function AdminFaqModal({
 					<Input
 						type="text"
 						placeholder="Tulis nama topik baru (misal: Relawan, Beasiswa)..."
-						value={
-							category
-						}
-						onChange={(
-							e,
-						) =>
-							setCategory(
-								e
-									.target
-									.value,
-							)
-						}
+						value={category}
+						onChange={(e) => {
+							setCategory(e.target.value);
+							if (errors.category) {
+								setErrors((prev) => ({ ...prev, category: "" }));
+							}
+						}}
 						className="h-10 text-sm font-normal bg-white border-slate-300"
 						autoFocus
 					/>
 				) : (
 					<Select
-						value={
-							category
-						}
-						onValueChange={(
-							val,
-						) =>
-							setCategory(
-								val,
-							)
-						}
+						value={category}
+						onValueChange={(val) => {
+							setCategory(val);
+							if (errors.category) {
+								setErrors((prev) => ({ ...prev, category: "" }));
+							}
+						}}
 					>
 						<SelectTrigger className="h-10 text-sm font-normal bg-white border border-slate-300 rounded-lg w-full">
 							<SelectValue placeholder="Pilih topik FAQ" />
 						</SelectTrigger>
 						<SelectContent className="bg-white border border-slate-200 z-50">
-							{categoryList.map(
-								(
-									cat,
-								) => (
-									<SelectItem
-										key={
-											cat
-										}
-										value={
-											cat
-										}
-										className="cursor-pointer text-sm font-normal py-2"
-									>
-										{
-											cat
-										}
-									</SelectItem>
-								),
-							)}
+							{categoryList.map((cat) => (
+								<SelectItem
+									key={cat}
+									value={cat}
+									className="cursor-pointer text-sm font-normal py-2"
+								>
+									{cat}
+								</SelectItem>
+							))}
 						</SelectContent>
 					</Select>
 				)}
@@ -347,24 +336,18 @@ export function AdminFaqModal({
 			<FormField
 				label="Jawaban lengkap"
 				required
+				error={errors.answer}
 			>
 				<Textarea
-					rows={
-						4
-					}
+					rows={4}
 					placeholder="Tuliskan jawaban yang ramah, informatif, dan jelas bagi calon donatur..."
-					value={
-						answer
-					}
-					onChange={(
-						e,
-					) =>
-						setAnswer(
-							e
-								.target
-								.value,
-						)
-					}
+					value={answer}
+					onChange={(e) => {
+						setAnswer(e.target.value);
+						if (errors.answer) {
+							setErrors((prev) => ({ ...prev, answer: "" }));
+						}
+					}}
 					required
 					className="w-full text-sm font-normal leading-relaxed bg-white border-slate-300"
 				/>

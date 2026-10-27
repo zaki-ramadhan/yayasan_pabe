@@ -33,6 +33,7 @@ export function AdminProgramModal({
 	const [isUrgent, setIsUrgent] = useState(false);
 	const [story, setStory] = useState("");
 	const [bannerUrl, setBannerUrl] = useState("");
+	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] =
 		useState(false);
 
@@ -59,6 +60,7 @@ export function AdminProgramModal({
 	}, [categories, createdCategories]);
 
 	useEffect(() => {
+		setErrors({});
 		if (campaignToEdit) {
 			setTitle(
 				campaignToEdit.title ||
@@ -195,18 +197,29 @@ export function AdminProgramModal({
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!title.trim()) {
-			toast.error(
-				"Judul program wajib diisi.",
-			);
-			return;
+		const newErrors = {};
+
+		if (!title.trim() || title.trim().length < 5) {
+			newErrors.title = "Judul program wajib diisi (minimal 5 karakter).";
 		}
 		if (!categoryId) {
-			toast.error(
-				"Kategori program wajib dipilih.",
-			);
+			newErrors.categoryId = "Kategori program wajib dipilih.";
+		}
+		if (targetAmount < 0) {
+			newErrors.targetAmount = "Target pendanaan tidak boleh bernilai negatif.";
+		}
+		if (story.trim() && story.trim().length < 10) {
+			newErrors.story = "Cerita latar belakang program minimal 10 karakter.";
+		}
+
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			const firstError = Object.values(newErrors)[0];
+			toast.error(firstError);
 			return;
 		}
+
+		setErrors({});
 
 		const isNewCat =
 			categoryId.startsWith(
@@ -328,57 +341,45 @@ export function AdminProgramModal({
 				isSubmitting
 			}
 		>
-			{/* Judul Program */}
+			{/* Judul program */}
 			<FormField
-				label="Judul Program"
+				label="Judul program"
 				required
+				error={errors.title}
 			>
 				<Input
 					type="text"
 					placeholder="Contoh: Beasiswa Santri Penghafal Al-Qur'an"
-					value={
-						title
-					}
-					maxLength={
-						120
-					}
-					onChange={(
-						e,
-					) =>
-						setTitle(
-							e
-								.target
-								.value,
-						)
-					}
+					value={title}
+					maxLength={120}
+					onChange={(e) => {
+						setTitle(e.target.value);
+						if (errors.title) {
+							setErrors((prev) => ({ ...prev, title: "" }));
+						}
+					}}
 					className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
 					required
 				/>
 			</FormField>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-				{/* Kategori Program */}
+				{/* Kategori program */}
 				<FormField
-					label="Kategori Program"
+					label="Kategori program"
 					required
+					error={errors.categoryId}
 				>
 					<CreatableCombobox
-						options={
-							categoryList
-						}
-						value={
-							categoryId
-						}
-						onChange={(
-							val,
-						) =>
-							setCategoryId(
-								val,
-							)
-						}
-						onCreate={
-							handleCreateCategory
-						}
+						options={categoryList}
+						value={categoryId}
+						onChange={(val) => {
+							setCategoryId(val);
+							if (errors.categoryId) {
+								setErrors((prev) => ({ ...prev, categoryId: "" }));
+							}
+						}}
+						onCreate={handleCreateCategory}
 						placeholder="Pilih kategori..."
 						searchPlaceholder="Cari kategori atau buat baru..."
 						createPrefix="Buat kategori"
@@ -386,114 +387,80 @@ export function AdminProgramModal({
 					/>
 				</FormField>
 
-				{/* Target Donasi (Dengan CurrencyInput Pemisah Ribuan 3-Digit Terpusat) */}
+				{/* Target donasi */}
 				<FormField
-					label="Target Pendanaan (Rp)"
-					required
+					label="Target pendanaan (Rp)"
+					error={errors.targetAmount}
 				>
 					<CurrencyInput
 						placeholder="0 (atau kosongkan jika tak terbatas)"
-						value={
-							targetAmount
-						}
-						onChange={(
-							val,
-						) =>
-							setTargetAmount(
-								val,
-							)
-						}
+						value={targetAmount}
+						onChange={(val) => {
+							setTargetAmount(val);
+							if (errors.targetAmount) {
+								setErrors((prev) => ({ ...prev, targetAmount: "" }));
+							}
+						}}
 						className="h-10"
 					/>
 				</FormField>
 			</div>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-				{/* Tenggat Waktu (End Date) */}
-				<FormField label="Batas Waktu Penggalangan">
+				{/* Tenggat waktu */}
+				<FormField label="Batas waktu penggalangan">
 					<Input
 						type="date"
-						value={
-							endDate
-						}
-						onChange={(
-							e,
-						) =>
-							setEndDate(
-								e
-									.target
-									.value,
-							)
-						}
+						value={endDate}
+						onChange={(e) => setEndDate(e.target.value)}
 						className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
 					/>
 				</FormField>
 
-				{/* Wilayah Penyaluran */}
-				<FormField label="Wilayah / Lokasi Penyaluran">
+				{/* Wilayah penyaluran */}
+				<FormField label="Wilayah atau lokasi penyaluran">
 					<Input
 						type="text"
 						placeholder="Contoh: Jawa Barat & Banten"
-						value={
-							location
-						}
-						onChange={(
-							e,
-						) =>
-							setLocation(
-								e
-									.target
-									.value,
-							)
-						}
+						value={location}
+						onChange={(e) => setLocation(e.target.value)}
 						className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
 					/>
 				</FormField>
 			</div>
 
-			{/* Urgent Program Checkbox */}
+			{/* Urgent program checkbox */}
 			<Checkbox
 				id="isUrgent"
 				variant="card"
-				checked={
-					isUrgent
-				}
-				onCheckedChange={
-					setIsUrgent
-				}
-				label="Tandai sebagai Program Mendesak"
+				checked={isUrgent}
+				onCheckedChange={setIsUrgent}
+				label="Tandai sebagai program mendesak"
 				description="Program akan mendapat prioritas banner dan badge darurat di beranda utama"
 			/>
 
-			{/* Foto Sampul / Banner R2 */}
+			{/* Foto sampul / banner R2 */}
 			<FileUploadZone
 				value={bannerUrl}
 				onChange={setBannerUrl}
 				context="CAMPAIGN_BANNER"
 				identifier={title}
-				label="Foto Sampul / Banner Program"
+				label="Foto sampul / banner program"
 				helperText="Mendukung JPG, PNG, WebP (Maks. 5MB). Disimpan rapi ke campaigns/banners."
 			/>
 
-			{/* Deskripsi & Cerita Program */}
-			<FormField label="Cerita & Latar Belakang Program">
+			{/* Deskripsi & cerita program */}
+			<FormField label="Cerita & latar belakang program" error={errors.story}>
 				<Textarea
-					rows={
-						4
-					}
+					rows={4}
 					placeholder="Ceritakan latar belakang mustahik, tujuan penyaluran dana, dan kebutuhan mendesak..."
-					value={
-						story
-					}
-					onChange={(
-						e,
-					) =>
-						setStory(
-							e
-								.target
-								.value,
-						)
-					}
+					value={story}
+					onChange={(e) => {
+						setStory(e.target.value);
+						if (errors.story) {
+							setErrors((prev) => ({ ...prev, story: "" }));
+						}
+					}}
 					className="w-full text-sm leading-relaxed"
 				/>
 			</FormField>

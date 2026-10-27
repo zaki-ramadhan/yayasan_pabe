@@ -10,7 +10,7 @@ import {
   sanitizeEmail,
 } from "@/lib/security";
 
-export function AdminSettingsContactSection({ formData, onFieldChange }) {
+export function AdminSettingsContactSection({ formData, errors = {}, onFieldChange }) {
   return (
     <Card className="shadow-2xs">
       <CardHeader className="p-4 sm:p-5 pb-2.5 border-b border-slate-100">
@@ -33,7 +33,7 @@ export function AdminSettingsContactSection({ formData, onFieldChange }) {
             />
           </FormField>
 
-          <FormField label="WhatsApp resmi layanan">
+          <FormField label="WhatsApp resmi layanan" error={errors.whatsapp}>
             <Input
               value={formData.contacts?.whatsapp || ""}
               onChange={(e) =>
@@ -46,7 +46,7 @@ export function AdminSettingsContactSection({ formData, onFieldChange }) {
             />
           </FormField>
 
-          <FormField label="Email resmi layanan">
+          <FormField label="Email resmi layanan" error={errors.email}>
             <Input
               value={formData.contacts?.email || ""}
               onChange={(e) =>
@@ -60,7 +60,7 @@ export function AdminSettingsContactSection({ formData, onFieldChange }) {
             />
           </FormField>
 
-          <FormField label="Telepon kantor">
+          <FormField label="Telepon kantor" error={errors.phone}>
             <Input
               value={formData.contacts?.phone || ""}
               onChange={(e) =>

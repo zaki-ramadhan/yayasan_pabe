@@ -59,8 +59,15 @@ export function AdminCareerModal({
 		useState("");
 	const [benefitsText, setBenefitsText] = useState("");
 	const [isActive, setIsActive] = useState(true);
+	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] =
 		useState(false);
+
+	const handleClearError = (field) => {
+		if (errors[field]) {
+			setErrors((prev) => ({ ...prev, [field]: "" }));
+		}
+	};
 
 	const handleCreateDepartment = (newDept) => {
 		const trimmed =
@@ -82,6 +89,7 @@ export function AdminCareerModal({
 			setDepartment(
 				trimmed,
 			);
+			handleClearError("department");
 			toast.success(
 				`Divisi "${trimmed}" siap digunakan.`,
 			);
@@ -109,6 +117,7 @@ export function AdminCareerModal({
 			setLocation(
 				trimmed,
 			);
+			handleClearError("location");
 			toast.success(
 				`Lokasi "${trimmed}" siap digunakan.`,
 			);
@@ -117,6 +126,7 @@ export function AdminCareerModal({
 	};
 
 	useEffect(() => {
+		setErrors({});
 		if (vacancyToEdit) {
 			setTitle(
 				vacancyToEdit.title ||
@@ -222,18 +232,29 @@ export function AdminCareerModal({
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!title.trim()) {
-			toast.error(
-				"Nama posisi pekerjaan wajib diisi.",
-			);
+		const newErrors = {};
+
+		if (!title.trim() || title.trim().length < 3) {
+			newErrors.title = "Nama posisi pekerjaan wajib diisi (minimal 3 karakter).";
+		}
+		if (!department) {
+			newErrors.department = "Divisi pekerjaan wajib dipilih.";
+		}
+		if (!location) {
+			newErrors.location = "Lokasi penempatan wajib dipilih.";
+		}
+		if (!overview.trim() || overview.trim().length < 10) {
+			newErrors.overview = "Deskripsi ringkasan posisi wajib diisi (minimal 10 karakter).";
+		}
+
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			const firstError = Object.values(newErrors)[0];
+			toast.error(firstError);
 			return;
 		}
-		if (!overview.trim()) {
-			toast.error(
-				"Deskripsi ringkasan posisi wajib diisi.",
-			);
-			return;
-		}
+
+		setErrors({});
 
 		const responsibilities =
 			responsibilitiesText
@@ -366,104 +387,54 @@ export function AdminCareerModal({
 			maxWidth="max-w-2xl"
 			title={
 				isEditing
-					? "Edit Lowongan Pekerjaan"
-					: "Buka Lowongan Pekerjaan Baru"
+					? "Edit lowongan pekerjaan"
+					: "Buka lowongan pekerjaan baru"
 			}
 			isSubmitting={
 				isSubmitting
 			}
 			submitText={
 				isEditing
-					? "Simpan Perubahan"
-					: "Terbitkan Lowongan"
+					? "Simpan perubahan"
+					: "Terbitkan lowongan"
 			}
 			submittingText="Menyimpan..."
 		>
 			<AdminCareerBasicInfoFields
-				title={
-					title
-				}
-				onTitleChange={
-					setTitle
-				}
-				department={
-					department
-				}
-				onDepartmentChange={
-					setDepartment
-				}
-				departmentList={
-					departmentList
-				}
-				onCreateDepartment={
-					handleCreateDepartment
-				}
-				type={
-					type
-				}
-				onTypeChange={
-					setType
-				}
-				employmentTypes={
-					EMPLOYMENT_TYPES
-				}
-				location={
-					location
-				}
-				onLocationChange={
-					setLocation
-				}
-				locationList={
-					locationList
-				}
-				onCreateLocation={
-					handleCreateLocation
-				}
-				workplace={
-					workplace
-				}
-				onWorkplaceChange={
-					setWorkplace
-				}
-				experience={
-					experience
-				}
-				onExperienceChange={
-					setExperience
-				}
-				deadline={
-					deadline
-				}
-				onDeadlineChange={
-					setDeadline
-				}
-				isActive={
-					isActive
-				}
-				onIsActiveChange={
-					setIsActive
-				}
+				title={title}
+				onTitleChange={setTitle}
+				department={department}
+				onDepartmentChange={setDepartment}
+				departmentList={departmentList}
+				onCreateDepartment={handleCreateDepartment}
+				type={type}
+				onTypeChange={setType}
+				employmentTypes={EMPLOYMENT_TYPES}
+				location={location}
+				onLocationChange={setLocation}
+				locationList={locationList}
+				onCreateLocation={handleCreateLocation}
+				workplace={workplace}
+				onWorkplaceChange={setWorkplace}
+				experience={experience}
+				onExperienceChange={setExperience}
+				deadline={deadline}
+				onDeadlineChange={setDeadline}
+				isActive={isActive}
+				onIsActiveChange={setIsActive}
+				errors={errors}
+				onClearError={handleClearError}
 			/>
 
 			<AdminCareerDetailFields
-				overview={
-					overview
-				}
-				onOverviewChange={
-					setOverview
-				}
-				responsibilitiesText={
-					responsibilitiesText
-				}
-				onResponsibilitiesChange={
-					setResponsibilitiesText
-				}
-				requirementsText={
-					requirementsText
-				}
-				onRequirementsChange={
-					setRequirementsText
-				}
+				overview={overview}
+				onOverviewChange={setOverview}
+				responsibilitiesText={responsibilitiesText}
+				onResponsibilitiesChange={setResponsibilitiesText}
+				requirementsText={requirementsText}
+				onRequirementsChange={setRequirementsText}
+				errors={errors}
+				onClearError={handleClearError}
 			/>
 		</FormDialog>
 	);

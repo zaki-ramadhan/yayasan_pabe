@@ -18,7 +18,7 @@ export function PrayerTextarea({
     <div className="space-y-1.5 w-full">
       <div className="flex items-center justify-between">
         <label htmlFor={id} className="text-sm font-semibold text-slate-800 block">
-          Doa atau Titipan Harapan (Opsional)
+          Doa atau titipan harapan (opsional)
         </label>
         <span
           className={cn(
@@ -41,14 +41,14 @@ export function PrayerTextarea({
         className={cn(
           "w-full rounded-lg border bg-white p-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors font-normal resize-none",
           error
-            ? "border-rose-400 focus:ring-rose-200"
+            ? "border-rose-500 bg-rose-50/15 text-rose-950 placeholder:text-rose-300 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
             : "border-slate-300 focus:ring-primary/20 focus:border-primary",
           className
         )}
       />
 
       {error && (
-        <p className="text-xs text-rose-600 font-medium" role="alert">
+        <p className="text-xs text-rose-500 font-medium leading-relaxed" role="alert">
           {error}
         </p>
       )}

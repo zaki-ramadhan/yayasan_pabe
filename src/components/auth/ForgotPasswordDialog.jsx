@@ -5,6 +5,7 @@ import { CheckCircle2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
 import {
   Dialog,
   DialogContent,
@@ -93,10 +94,11 @@ export function ForgotPasswordDialog({ isOpen, onOpenChange, initialIdentifier =
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden" noValidate>
             <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-4">
-              <div className="space-y-1">
-                <label className="block text-sm font-semibold text-slate-800">
-                  Email atau nomor WhatsApp <span className="text-rose-500">*</span>
-                </label>
+              <FormField
+                label="Email atau nomor WhatsApp"
+                required
+                error={forgotError}
+              >
                 <Input
                   type="text"
                   placeholder="nama@email.com atau 081234567890"
@@ -107,15 +109,9 @@ export function ForgotPasswordDialog({ isOpen, onOpenChange, initialIdentifier =
                     setForgotInput(clean);
                     if (forgotError) setForgotError("");
                   }}
-                  className={cn(
-                    "h-10 text-sm text-slate-900 border-slate-300",
-                    forgotError && "border-rose-500 bg-rose-50/20 focus-visible:ring-rose-500"
-                  )}
+                  className="h-10 text-sm font-normal"
                 />
-                {forgotError && (
-                  <p className="text-xs text-rose-600 font-medium mt-1">{forgotError}</p>
-                )}
-              </div>
+              </FormField>
             </div>
 
             <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex gap-2 justify-end">

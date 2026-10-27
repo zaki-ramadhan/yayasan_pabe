@@ -34,19 +34,30 @@ export function DonorProfileCover({
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [newAvatarUrl, setNewAvatarUrl] = useState("");
   const [avatarLoadError, setAvatarLoadError] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
 
   const displayName = profile?.name || "Pengguna";
   const initials = getInitials(profile?.name, profile?.email);
 
   const handleSaveAvatar = async () => {
-    const cleanUrl = sanitizeImageUrl(newAvatarUrl);
-    if (!cleanUrl) return;
+    const trimmed = newAvatarUrl.trim();
+    if (!trimmed) {
+      setAvatarError("URL foto profil wajib diisi");
+      return;
+    }
+    const cleanUrl = sanitizeImageUrl(trimmed);
+    if (!cleanUrl) {
+      setAvatarError("URL foto profil tidak valid atau format tidak didukung");
+      return;
+    }
+    setAvatarError("");
     await onUpdateImage({ avatar: cleanUrl });
     setIsAvatarModalOpen(false);
     setNewAvatarUrl("");
   };
 
   const handleRemoveAvatar = async () => {
+    setAvatarError("");
     await onUpdateImage({ avatar: "" });
     setIsAvatarModalOpen(false);
     setNewAvatarUrl("");
@@ -68,6 +79,7 @@ export function DonorProfileCover({
                     fill
                     sizes="(max-width: 640px) 96px, 112px"
                     unoptimized={typeof profile.avatar === "string" && !profile.avatar.startsWith("/") && !profile.avatar.includes("unsplash.com") && !profile.avatar.includes("lh3.googleusercontent.com")}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                     onError={() => setAvatarLoadError(true)}
                   />
@@ -154,13 +166,16 @@ export function DonorProfileCover({
           </DialogHeader>
 
           <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-4">
-            <FormField label="URL foto profil">
+            <FormField label="URL foto profil" error={avatarError}>
               <Input
                 id="input-avatar-url"
                 type="url"
                 placeholder="https://..."
                 value={newAvatarUrl}
-                onChange={(e) => setNewAvatarUrl(e.target.value)}
+                onChange={(e) => {
+                  setNewAvatarUrl(e.target.value);
+                  if (avatarError) setAvatarError("");
+                }}
                 className="text-sm h-9.5 rounded-md border-slate-200"
               />
             </FormField>
@@ -174,7 +189,10 @@ export function DonorProfileCover({
                   <button
                     key={idx}
                     type="button"
-                    onClick={() => setNewAvatarUrl(preset)}
+                    onClick={() => {
+                      setNewAvatarUrl(preset);
+                      if (avatarError) setAvatarError("");
+                    }}
                     className={`relative w-12 h-12 rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
                       newAvatarUrl === preset
                         ? "border-primary ring-2 ring-primary/20 scale-105"
@@ -221,7 +239,7 @@ export function DonorProfileCover({
             </Button>
             <Button
               size="sm"
-              disabled={!newAvatarUrl || isUpdating}
+              disabled={isUpdating}
               onClick={handleSaveAvatar}
               className="h-9 px-4 min-w-[96px] text-sm font-medium rounded-md cursor-pointer"
             >

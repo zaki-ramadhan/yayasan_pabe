@@ -125,8 +125,8 @@ export function AdminPrayerTableRow({
           &ldquo;{item.prayer}&rdquo;
         </p>
         {item.aminCount > 0 && (
-          <span className="inline-flex items-center gap-1 text-sm text-rose-600 font-normal">
-            <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
+          <span className="inline-flex items-center gap-1 text-xs text-rose-600 font-normal">
+            <Heart className="w-3 h-3 fill-rose-500 text-rose-500" />
             <span>{item.aminCount} orang mengaminkan</span>
           </span>
         )}

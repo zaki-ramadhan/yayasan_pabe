@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -9,6 +10,15 @@ export function ZakatPerusahaanForm({
   onSubmit,
   onReset,
 }) {
+  const [errors, setErrors] = useState({});
+
+  const handleFieldChange = (field, val) => {
+    onChange(field, val);
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
   const isJasa = values.submode === "jasa";
   const hasValidInput = isJasa
     ? (values.pendapatanSebelumPajak || 0) > 0 || (values.aktivaLancar || 0) > 0
@@ -16,8 +26,25 @@ export function ZakatPerusahaanForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!hasValidInput) return;
+    if (!hasValidInput) {
+      if (isJasa) {
+        setErrors({
+          pendapatanSebelumPajak: "Masukkan nilai pendapatan sebelum pajak atau aktiva lancar",
+        });
+      } else {
+        setErrors({
+          aktivaLancar: "Masukkan nilai aktiva lancar atau laba usaha berjalan",
+        });
+      }
+      return;
+    }
+    setErrors({});
     onSubmit();
+  };
+
+  const handleReset = () => {
+    setErrors({});
+    onReset();
   };
 
   return (
@@ -63,11 +90,15 @@ export function ZakatPerusahaanForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {isJasa ? (
           <>
-            <ZakatFieldGroup id="pendapatanSebelumPajak" label="Pendapatan sebelum pajak">
+            <ZakatFieldGroup
+              id="pendapatanSebelumPajak"
+              label="Pendapatan sebelum pajak"
+              error={errors.pendapatanSebelumPajak}
+            >
               <CurrencyInput
                 id="pendapatanSebelumPajak"
                 value={values.pendapatanSebelumPajak}
-                onChange={(val) => onChange("pendapatanSebelumPajak", val)}
+                onChange={(val) => handleFieldChange("pendapatanSebelumPajak", val)}
                 placeholder="0"
               />
             </ZakatFieldGroup>
@@ -76,7 +107,7 @@ export function ZakatPerusahaanForm({
               <CurrencyInput
                 id="aktivaLancar"
                 value={values.aktivaLancar}
-                onChange={(val) => onChange("aktivaLancar", val)}
+                onChange={(val) => handleFieldChange("aktivaLancar", val)}
                 placeholder="0"
               />
             </ZakatFieldGroup>
@@ -85,18 +116,22 @@ export function ZakatPerusahaanForm({
               <CurrencyInput
                 id="pasivaLancar"
                 value={values.pasivaLancar}
-                onChange={(val) => onChange("pasivaLancar", val)}
+                onChange={(val) => handleFieldChange("pasivaLancar", val)}
                 placeholder="0"
               />
             </ZakatFieldGroup>
           </>
         ) : (
           <>
-            <ZakatFieldGroup id="aktivaLancar" label="Aktiva lancar">
+            <ZakatFieldGroup
+              id="aktivaLancar"
+              label="Aktiva lancar"
+              error={errors.aktivaLancar}
+            >
               <CurrencyInput
                 id="aktivaLancar"
                 value={values.aktivaLancar}
-                onChange={(val) => onChange("aktivaLancar", val)}
+                onChange={(val) => handleFieldChange("aktivaLancar", val)}
                 placeholder="0"
               />
             </ZakatFieldGroup>
@@ -105,7 +140,7 @@ export function ZakatPerusahaanForm({
               <CurrencyInput
                 id="labaUsaha"
                 value={values.labaUsaha}
-                onChange={(val) => onChange("labaUsaha", val)}
+                onChange={(val) => handleFieldChange("labaUsaha", val)}
                 placeholder="0"
               />
             </ZakatFieldGroup>
@@ -114,7 +149,7 @@ export function ZakatPerusahaanForm({
               <CurrencyInput
                 id="pasivaLancar"
                 value={values.pasivaLancar}
-                onChange={(val) => onChange("pasivaLancar", val)}
+                onChange={(val) => handleFieldChange("pasivaLancar", val)}
                 placeholder="0"
               />
             </ZakatFieldGroup>
@@ -126,19 +161,17 @@ export function ZakatPerusahaanForm({
         <Button
           type="submit"
           variant="default"
-          disabled={!hasValidInput}
-          title={!hasValidInput ? "Masukkan nilai pendapatan atau aktiva untuk menghitung zakat perusahaan" : undefined}
-          className="rounded-md px-5 h-10 text-sm font-medium"
+          className="rounded-md px-5 h-10 text-sm font-medium cursor-pointer"
         >
-          Hitung Zakat
+          Hitung zakat
         </Button>
         <Button
           type="button"
           variant="outline"
-          onClick={onReset}
-          className="rounded-md px-4 h-10 text-sm font-medium text-slate-700 hover:text-slate-900 border-slate-300"
+          onClick={handleReset}
+          className="rounded-md px-4 h-10 text-sm font-medium text-slate-700 hover:text-slate-900 border-slate-300 cursor-pointer"
         >
-          Atur Ulang
+          Atur ulang
         </Button>
       </div>
     </form>

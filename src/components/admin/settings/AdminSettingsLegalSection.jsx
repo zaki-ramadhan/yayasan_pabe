@@ -5,7 +5,7 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { sanitizeStandardText, sanitizeNPWP } from "@/lib/security";
 
-export function AdminSettingsLegalSection({ formData, onFieldChange }) {
+export function AdminSettingsLegalSection({ formData, errors = {}, onFieldChange }) {
   return (
     <Card className="shadow-2xs">
       <CardHeader className="p-4 sm:p-5 pb-2.5 border-b border-slate-100">
@@ -16,7 +16,7 @@ export function AdminSettingsLegalSection({ formData, onFieldChange }) {
 
       <CardContent className="p-4 sm:p-5 pt-3.5">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-sm font-normal">
-          <FormField label="SK Kemenkumham RI">
+          <FormField label="SK Kemenkumham RI" error={errors.skKemenkumham}>
             <Input
               value={formData.legal?.skKemenkumham || ""}
               onChange={(e) =>
@@ -28,7 +28,7 @@ export function AdminSettingsLegalSection({ formData, onFieldChange }) {
             />
           </FormField>
 
-          <FormField label="Nomor Pokok Wajib Pajak (NPWP)">
+          <FormField label="Nomor pokok wajib pajak (NPWP)" error={errors.npwp}>
             <Input
               value={formData.legal?.npwp || ""}
               onChange={(e) =>
@@ -41,7 +41,7 @@ export function AdminSettingsLegalSection({ formData, onFieldChange }) {
             />
           </FormField>
 
-          <FormField label="Izin operasional dinsos">
+          <FormField label="Izin operasional dinsos" error={errors.izinIzinSosial}>
             <Input
               value={formData.legal?.izinIzinSosial || ""}
               onChange={(e) =>

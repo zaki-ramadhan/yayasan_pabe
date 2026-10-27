@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
 import { cn } from "@/lib/utils";
 import { sanitizeName, sanitizePhone, sanitizeEmail } from "@/lib/security";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
@@ -15,11 +16,19 @@ export function DonorIdentitySection({
   donorEmail,
   setDonorEmail,
   isEmailLocked = false,
+  errors = {},
+  setErrors,
   prayer,
   setPrayer,
   onPrayerChange,
   hasExistingPrayer = false,
 }) {
+  const clearError = (field) => {
+    if (setErrors && errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
   return (
     <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
       <CheckoutStepHeader step={3} title="Data Donatur & Doa Kebaikan" />
@@ -27,44 +36,65 @@ export function DonorIdentitySection({
       {/* Anonim checkbox */}
       <AnonymousCheckbox
         checked={isAnonymous}
-        onChange={setIsAnonymous}
+        onChange={(val) => {
+          setIsAnonymous(val);
+          if (val) clearError("donorName");
+        }}
       />
 
       {!isAnonymous && (
-        <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-slate-800 block">Nama Lengkap <span className="text-rose-500">*</span></label>
+        <FormField
+          label="Nama lengkap"
+          required
+          error={errors.donorName}
+        >
           <Input
             type="text"
             required={!isAnonymous}
             value={donorName}
             maxLength={60}
-            onChange={(e) => setDonorName(sanitizeName(e.target.value))}
+            onChange={(e) => {
+              setDonorName(sanitizeName(e.target.value));
+              clearError("donorName");
+            }}
             placeholder="Nama lengkap Anda"
-            className="h-11 text-sm sm:text-base border-slate-300 focus:ring-primary font-normal"
+            className="h-11 text-sm sm:text-base font-normal"
           />
-        </div>
+        </FormField>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-slate-800 block">Nomor WhatsApp <span className="text-rose-500">*</span></label>
+        <FormField
+          label="Nomor WhatsApp"
+          required
+          error={errors.donorPhone}
+          hint="Untuk pengiriman invoice & bukti donasi"
+        >
           <Input
             type="tel"
             inputMode="tel"
             required
             value={donorPhone}
             maxLength={15}
-            onChange={(e) => setDonorPhone(sanitizePhone(e.target.value))}
+            onChange={(e) => {
+              setDonorPhone(sanitizePhone(e.target.value));
+              clearError("donorPhone");
+            }}
             placeholder="08xxxxxxxxxx"
-            className="h-11 text-sm sm:text-base border-slate-300 focus:ring-primary font-normal"
+            className="h-11 text-sm sm:text-base font-normal"
           />
-          <span className="text-sm text-slate-600 block font-normal">Untuk pengiriman invoice &amp; bukti donasi</span>
-        </div>
+        </FormField>
 
-        <div className="space-y-1.5">
-          <label className="text-sm font-semibold text-slate-800 block">
-            Email <span className="text-rose-500">*</span>
-          </label>
+        <FormField
+          label="Email"
+          required
+          error={errors.donorEmail}
+          hint={
+            isEmailLocked
+              ? "Email terkunci sesuai akun login Anda untuk integrasi riwayat donasi."
+              : undefined
+          }
+        >
           <Input
             type="email"
             required
@@ -74,20 +104,16 @@ export function DonorIdentitySection({
             onChange={(e) => {
               if (!isEmailLocked) {
                 setDonorEmail(sanitizeEmail(e.target.value));
+                clearError("donorEmail");
               }
             }}
             placeholder="email@domain.com"
             className={cn(
-              "h-11 text-sm sm:text-base border-slate-300 focus:ring-primary font-normal",
+              "h-11 text-sm sm:text-base font-normal",
               isEmailLocked && "bg-slate-100 text-slate-600 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
             )}
           />
-          {isEmailLocked && (
-            <span className="text-xs text-slate-600 block font-normal">
-              Email terkunci sesuai akun login Anda untuk integrasi riwayat donasi.
-            </span>
-          )}
-        </div>
+        </FormField>
       </div>
 
       {/* Doa / Pesan Kebaikan (Maksimal 1 doa per orang) */}

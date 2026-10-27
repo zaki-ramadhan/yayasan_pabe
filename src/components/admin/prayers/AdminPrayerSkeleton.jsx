@@ -105,6 +105,7 @@ export function AdminPrayerSkeleton() {
                   <TableCell className="min-w-[240px] max-w-md py-3 align-top space-y-1.5">
                     <Skeleton className="h-4 w-full rounded" />
                     <Skeleton className="h-4 w-3/4 rounded" />
+                    <Skeleton className="h-3 w-28 rounded" />
                   </TableCell>
 
                   {/* 6. Waktu Kirim */}

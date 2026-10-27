@@ -3,6 +3,7 @@
 import { Download } from "lucide-react";
 import { TableToolbar } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { AdminRoutineTriggerButton } from "./AdminRoutineTriggerButton";
 import {
   Select,
   SelectTrigger,
@@ -49,6 +50,9 @@ export function AdminRoutineDonationToolbar({
               <SelectItem value="CANCELLED" className="text-sm font-normal">
                 Dibatalkan
               </SelectItem>
+              <SelectItem value="COMPLETED" className="text-sm font-normal">
+                Selesai
+              </SelectItem>
             </SelectContent>
           </Select>
 
@@ -75,6 +79,7 @@ export function AdminRoutineDonationToolbar({
       }
       onRefresh={onRefresh}
       isLoading={isLoading}
+      extraActions={<AdminRoutineTriggerButton isGlobal onSuccess={() => onRefresh?.({ silent: true })} />}
       primaryAction={
         onExportCsv
           ? {

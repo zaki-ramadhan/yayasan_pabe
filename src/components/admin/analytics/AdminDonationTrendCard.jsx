@@ -3,7 +3,6 @@
 
 import * as React from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import { AdminDonationTrendCanvas } from "./AdminDonationTrendCanvas";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -52,7 +51,15 @@ export function AdminDonationTrendCard({
     const monthlyList = initialTrends?.monthlyTrend || [];
 
     if (timeRange === "12m") {
-      const data = monthlyList;
+      const data = monthlyList.map((item, idx) => {
+        const cumulativeAmount = monthlyList
+          .slice(0, idx + 1)
+          .reduce((sum, curr) => sum + Number(curr.inflow || 0), 0);
+        return {
+          ...item,
+          cumulativeAmount,
+        };
+      });
       const total = data.reduce((acc, curr) => acc + (Number(curr.inflow) || 0), 0);
       const txCount = data.reduce((acc, curr) => acc + (Number(curr.count) || 0), 0);
       const avg = data.length > 0 ? Math.round(total / data.length) : 0;
@@ -65,9 +72,7 @@ export function AdminDonationTrendCard({
       };
     }
 
-    let sliceDays = 30;
-    if (timeRange === "7d") sliceDays = 7;
-    if (timeRange === "90d") sliceDays = 90;
+    const sliceDays = timeRange === "7d" ? 7 : timeRange === "90d" ? 90 : 30;
 
     const data = dailyList.slice(-sliceDays);
     const total = data.reduce((acc, curr) => acc + (Number(curr.dailyAmount) || 0), 0);
@@ -88,19 +93,9 @@ export function AdminDonationTrendCard({
       {/* Header Kartu */}
       <CardHeader className="p-3.5 sm:p-4 pb-3.5 border-b border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3 space-y-0">
         <div>
-          <div className="flex items-center gap-2">
-            <CardTitle className="text-base font-semibold text-slate-900 leading-tight">
-              Tren Dinamika Donasi
-            </CardTitle>
-            {isSuperAdmin && (
-              <Badge variant="secondary" className="px-1.5 py-0.5 text-[11px] font-medium">
-                Super admin
-              </Badge>
-            )}
-          </div>
-          <CardDescription className="text-sm text-slate-500 mt-0.5 font-normal">
-            Analitik perolehan donasi masuk dan arus kas operasional yayasan
-          </CardDescription>
+          <CardTitle className="text-base font-medium text-slate-900 leading-tight">
+            Grafik Donasi & Penyaluran
+          </CardTitle>
         </div>
 
         {/* Filter Bar */}
@@ -155,7 +150,7 @@ export function AdminDonationTrendCard({
               <span>Donasi masuk</span>
             </div>
           )}
-          {!isMonthly && (viewMode === "all" || viewMode === "cumulative") && (
+          {(viewMode === "all" || viewMode === "cumulative") && (
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />
               <span>Total akumulasi</span>

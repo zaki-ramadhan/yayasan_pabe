@@ -34,10 +34,7 @@ export function AdminDashboardSkeleton() {
         <div className="lg:col-span-8 xl:col-span-9 flex flex-col">
           <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden h-full flex flex-col">
             <div className="p-3.5 sm:p-4 border-b border-slate-200/90 flex items-center justify-between gap-3">
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-48 rounded" />
-                <Skeleton className="h-3.5 w-64 rounded" />
-              </div>
+              <Skeleton className="h-5 w-48 rounded" />
               <Skeleton className="h-4 w-28 rounded" />
             </div>
 
@@ -72,10 +69,7 @@ export function AdminDashboardSkeleton() {
         <div className="lg:col-span-4 xl:col-span-3 flex flex-col">
           <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden h-full flex flex-col">
             <div className="p-3.5 sm:p-4 border-b border-slate-200/90 flex items-center justify-between gap-3">
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-44 rounded" />
-                <Skeleton className="h-3.5 w-48 rounded" />
-              </div>
+              <Skeleton className="h-5 w-44 rounded" />
               <Skeleton className="h-4 w-12 rounded" />
             </div>
 
@@ -84,16 +78,15 @@ export function AdminDashboardSkeleton() {
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="flex flex-row items-start gap-2.5">
                     <Skeleton className="w-11 h-11 sm:w-12 sm:h-12 shrink-0 rounded-md aspect-square" />
-                    <div className="flex-1 min-w-0 space-y-1.5">
-                      <Skeleton className="h-4 w-full rounded" />
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <Skeleton className="h-3.5 w-full rounded" />
                       <Skeleton className="h-3.5 w-3/4 rounded" />
-                      <div className="flex items-center gap-2 pt-0.5">
-                        <Skeleton className="h-1.5 flex-1 rounded-full" />
-                        <Skeleton className="h-3.5 w-7 rounded" />
-                      </div>
-                      <div className="space-y-1 pt-0.5">
-                        <Skeleton className="h-3 w-32 rounded" />
-                        <Skeleton className="h-3 w-28 rounded" />
+                      <div className="mt-1 space-y-1">
+                        <Skeleton className="h-1.5 w-full rounded-full" />
+                        <div className="flex items-center justify-between pt-0.5">
+                          <Skeleton className="h-3 w-16 rounded" />
+                          <Skeleton className="h-3 w-8 rounded" />
+                        </div>
                       </div>
                     </div>
                   </div>

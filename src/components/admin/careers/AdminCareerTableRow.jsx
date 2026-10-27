@@ -15,7 +15,7 @@ export function AdminCareerTableRow({
 }) {
 	return (
 		<TableRow key={job.id}>
-			<TableCell className="py-3 align-middle">
+			<TableCell className="min-w-[200px] w-52 py-3 align-middle">
 				<div className="space-y-0.5">
 					<span
 						className="text-sm font-medium text-slate-900 block leading-snug line-clamp-2"
@@ -67,24 +67,33 @@ export function AdminCareerTableRow({
 			</TableCell>
 
 			<TableCell className="py-3 text-center whitespace-nowrap align-middle">
-				<Button
-					type="button"
-					variant="outline"
-					size="sm"
-					onClick={() =>
-						onOpenApplicants(
-							job,
-						)
-					}
-					className="h-8 px-2.5 rounded-md text-sm font-medium text-primary border-primary/30 hover:bg-primary/5 flex items-center gap-1.5 mx-auto cursor-pointer"
-				>
-					<Users className="w-3.5 h-3.5" />
-					<span>
-						{job.applicantCount ||
-							0}{" "}
-						Berkas
-					</span>
-				</Button>
+				{(() => {
+					const count = Number(job.applicantCount) || 0;
+					const hasApplicants = count > 0;
+					return (
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							onClick={() =>
+								onOpenApplicants(
+									job,
+								)
+							}
+							className={`h-7 px-2 rounded-md text-xs font-medium flex items-center gap-1.5 mx-auto cursor-pointer transition-colors ${
+								hasApplicants
+									? "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50"
+									: "text-slate-400 border-slate-200 bg-transparent hover:bg-slate-50 hover:text-slate-600"
+							}`}
+						>
+							<Users className={`w-3 h-3 ${hasApplicants ? "text-primary" : "text-slate-400"}`} />
+							<span>
+								{count}{" "}
+								Berkas
+							</span>
+						</Button>
+					);
+				})()}
 			</TableCell>
 
 			<TableCell className="py-3 text-center whitespace-nowrap align-middle">

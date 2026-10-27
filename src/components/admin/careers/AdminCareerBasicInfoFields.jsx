@@ -34,16 +34,21 @@ export function AdminCareerBasicInfoFields({
   onDeadlineChange,
   isActive,
   onIsActiveChange,
+  errors = {},
+  onClearError,
 }) {
   return (
     <>
-      {/* Judul Posisi */}
-      <FormField label="Nama Posisi / Jabatan" required>
+      {/* Judul posisi */}
+      <FormField label="Nama posisi / jabatan" required error={errors.title}>
         <Input
           type="text"
           placeholder="Contoh: Staff Monitoring & Evaluasi Mustahik"
           value={title}
-          onChange={(e) => onTitleChange(e.target.value)}
+          onChange={(e) => {
+            onTitleChange(e.target.value);
+            if (onClearError) onClearError("title");
+          }}
           required
           className="h-10 text-sm bg-white"
         />
@@ -51,11 +56,14 @@ export function AdminCareerBasicInfoFields({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         {/* Divisi */}
-        <FormField label="Divisi / Departemen" required>
+        <FormField label="Divisi / departemen" required error={errors.department}>
           <CreatableCombobox
             options={departmentList}
             value={department}
-            onChange={onDepartmentChange}
+            onChange={(val) => {
+              onDepartmentChange(val);
+              if (onClearError) onClearError("department");
+            }}
             onCreate={onCreateDepartment}
             placeholder="Pilih divisi..."
             searchPlaceholder="Cari divisi atau buat baru..."
@@ -64,11 +72,11 @@ export function AdminCareerBasicInfoFields({
           />
         </FormField>
 
-        {/* Tipe Pekerjaan */}
-        <FormField label="Tipe Kepegawaian" required>
+        {/* Tipe pekerjaan */}
+        <FormField label="Tipe kepegawaian" required>
           <Select value={type} onValueChange={onTypeChange} required>
             <SelectTrigger className="h-10 text-sm bg-white">
-              <SelectValue placeholder="Pilih Tipe" />
+              <SelectValue placeholder="Pilih tipe" />
             </SelectTrigger>
             <SelectContent>
               {employmentTypes.map((tp) => (
@@ -80,12 +88,15 @@ export function AdminCareerBasicInfoFields({
           </Select>
         </FormField>
 
-        {/* Lokasi Kerja */}
-        <FormField label="Lokasi Penempatan" required>
+        {/* Lokasi kerja */}
+        <FormField label="Lokasi penempatan" required error={errors.location}>
           <CreatableCombobox
             options={locationList}
             value={location}
-            onChange={onLocationChange}
+            onChange={(val) => {
+              onLocationChange(val);
+              if (onClearError) onClearError("location");
+            }}
             onCreate={onCreateLocation}
             placeholder="Pilih lokasi..."
             searchPlaceholder="Cari lokasi atau buat baru..."
@@ -94,11 +105,11 @@ export function AdminCareerBasicInfoFields({
           />
         </FormField>
 
-        {/* Sistem Kerja (Workplace) */}
-        <FormField label="Sistem Kerja">
+        {/* Sistem kerja */}
+        <FormField label="Sistem kerja">
           <Select value={workplace} onValueChange={onWorkplaceChange}>
             <SelectTrigger className="h-10 text-sm bg-white">
-              <SelectValue placeholder="Pilih Sistem Kerja" />
+              <SelectValue placeholder="Pilih sistem kerja" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="On-site">On-site (Kantor/Asrama)</SelectItem>
@@ -108,8 +119,8 @@ export function AdminCareerBasicInfoFields({
           </Select>
         </FormField>
 
-        {/* Batas Pengalaman */}
-        <FormField label="Pengalaman Kerja">
+        {/* Batas pengalaman */}
+        <FormField label="Pengalaman kerja">
           <Input
             type="text"
             placeholder="Contoh: 1 - 2 tahun / Fresh graduate"
@@ -119,8 +130,8 @@ export function AdminCareerBasicInfoFields({
           />
         </FormField>
 
-        {/* Batas Akhir Lamar (Deadline) */}
-        <FormField label="Batas Akhir Pendaftaran">
+        {/* Batas akhir lamar */}
+        <FormField label="Batas akhir pendaftaran">
           <Input
             type="text"
             placeholder="Contoh: 30 November 2026"
@@ -131,13 +142,13 @@ export function AdminCareerBasicInfoFields({
         </FormField>
       </div>
 
-      {/* Status Aktif Lowongan */}
+      {/* Status aktif lowongan */}
       <Checkbox
         id="isActive"
         variant="card"
         checked={isActive}
         onCheckedChange={onIsActiveChange}
-        label="Buka Lowongan untuk Publik"
+        label="Buka lowongan untuk publik"
         description="Pelamar dapat melihat detail posisi dan mengirimkan formulir lamaran di halaman karier"
       />
     </>

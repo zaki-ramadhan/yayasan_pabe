@@ -22,6 +22,8 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
     donorEmail,
     setDonorEmail,
     isEmailLocked,
+    errors,
+    setErrors,
     prayer,
     setPrayer,
     selectedChannelId,
@@ -59,6 +61,7 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
           onPresetClick={handlePresetClick}
           onCustomModeClick={handleCustomModeClick}
           onCustomInputChange={handleCustomInputChange}
+          error={errors.amount}
         />
 
         <PaymentChannelPicker
@@ -77,6 +80,8 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
           donorEmail={donorEmail}
           setDonorEmail={setDonorEmail}
           isEmailLocked={isEmailLocked}
+          errors={errors}
+          setErrors={setErrors}
           prayer={prayer}
           setPrayer={setPrayer}
           onPrayerChange={handlePrayerChange}

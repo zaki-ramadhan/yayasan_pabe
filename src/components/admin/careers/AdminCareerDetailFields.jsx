@@ -8,23 +8,28 @@ export function AdminCareerDetailFields({
   onResponsibilitiesChange,
   requirementsText,
   onRequirementsChange,
+  errors = {},
+  onClearError,
 }) {
   return (
     <>
-      {/* Ringkasan Posisi (Overview) */}
-      <FormField label="Ringkasan & Tujuan Posisi" required>
+      {/* Ringkasan posisi */}
+      <FormField label="Ringkasan & tujuan posisi" required error={errors.overview}>
         <Textarea
           rows={3}
           placeholder="Jelaskan peran penting posisi ini dalam mengemban amanah yayasan..."
           value={overview}
-          onChange={(e) => onOverviewChange(e.target.value)}
+          onChange={(e) => {
+            onOverviewChange(e.target.value);
+            if (onClearError) onClearError("overview");
+          }}
           required
           className="w-full text-sm leading-relaxed bg-white"
         />
       </FormField>
 
-      {/* Tanggung Jawab (1 per baris) */}
-      <FormField label="Tanggung Jawab Utama (Satu butir per baris)">
+      {/* Tanggung jawab */}
+      <FormField label="Tanggung jawab utama (satu butir per baris)">
         <Textarea
           rows={3}
           placeholder="Memimpin pendataan mustahik secara berkala&#10;Menyusun laporan pertanggungjawaban penyaluran&#10;Berkoordinasi dengan relawan lapangan"
@@ -34,8 +39,8 @@ export function AdminCareerDetailFields({
         />
       </FormField>
 
-      {/* Kualifikasi & Persyaratan */}
-      <FormField label="Kualifikasi & Persyaratan (Satu butir per baris)">
+      {/* Kualifikasi & persyaratan */}
+      <FormField label="Kualifikasi & persyaratan (satu butir per baris)">
         <Textarea
           rows={3}
           placeholder="Pendidikan minimal D3/S1 semua jurusan&#10;Memiliki empati sosial dan komitmen integritas tinggi&#10;Mampu mengoperasikan spreadsheet dan aplikasi pelaporan"

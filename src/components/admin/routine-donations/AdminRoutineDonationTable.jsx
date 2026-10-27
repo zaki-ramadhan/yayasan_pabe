@@ -65,19 +65,24 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
     setCurrentPage(1);
   };
 
-  const refreshList = async () => {
+  const refreshList = async (options = {}) => {
+    const isSilent = Boolean(typeof options === "object" && options?.silent);
     setIsLoading(true);
     try {
       const res = await safeFetch("/api/admin/routine-donations?limit=100");
       const data = await res.json();
       if (data.success && data.data) {
         setItems(data.data);
-        toast.success("Data komitmen donasi rutin berhasil diperbarui.");
-      } else {
+        if (!isSilent) {
+          toast.success("Data komitmen donasi rutin berhasil disegarkan.");
+        }
+      } else if (!isSilent) {
         toast.error(data.message || "Gagal menyegarkan data donasi rutin.");
       }
     } catch {
-      toast.error("Gagal menyegarkan data donasi rutin.");
+      if (!isSilent) {
+        toast.error("Gagal menyegarkan data donasi rutin.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -182,7 +187,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                 <TableHead className="w-60 font-medium text-slate-600 text-sm py-2.5">
                   Donatur &amp; kontak
                 </TableHead>
-                <TableHead className="font-medium text-slate-600 text-sm py-2.5 min-w-[200px]">
+                <TableHead className="font-medium text-slate-600 text-sm py-2.5 min-w-[280px] max-w-[360px]">
                   Program kebaikan
                 </TableHead>
                 <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">

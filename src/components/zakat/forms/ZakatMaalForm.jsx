@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { Button } from "@/components/ui/button";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
@@ -9,18 +10,37 @@ export function ZakatMaalForm({
   onSubmit,
   onReset,
 }) {
+  const [errors, setErrors] = useState({});
+
+  const handleFieldChange = (field, val) => {
+    onChange(field, val);
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
   const totalAssets =
     (values.uangTunaiTabungan || 0) +
     (values.deposito || 0) +
     (values.investasi || 0) +
     (values.piutang || 0) +
     (values.hartaLain || 0);
-  const hasValidInput = totalAssets > 0;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!hasValidInput) return;
+    if (totalAssets <= 0) {
+      setErrors({
+        uangTunaiTabungan: "Masukkan setidaknya salah satu nilai aset atau simpanan",
+      });
+      return;
+    }
+    setErrors({});
     onSubmit();
+  };
+
+  const handleReset = () => {
+    setErrors({});
+    onReset();
   };
 
   return (
@@ -35,11 +55,15 @@ export function ZakatMaalForm({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <ZakatFieldGroup id="uangTunaiTabungan" label="Uang tunai & tabungan">
+        <ZakatFieldGroup
+          id="uangTunaiTabungan"
+          label="Uang tunai & tabungan"
+          error={errors.uangTunaiTabungan}
+        >
           <CurrencyInput
             id="uangTunaiTabungan"
             value={values.uangTunaiTabungan}
-            onChange={(val) => onChange("uangTunaiTabungan", val)}
+            onChange={(val) => handleFieldChange("uangTunaiTabungan", val)}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -48,7 +72,7 @@ export function ZakatMaalForm({
           <CurrencyInput
             id="deposito"
             value={values.deposito}
-            onChange={(val) => onChange("deposito", val)}
+            onChange={(val) => handleFieldChange("deposito", val)}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -57,7 +81,7 @@ export function ZakatMaalForm({
           <CurrencyInput
             id="investasi"
             value={values.investasi}
-            onChange={(val) => onChange("investasi", val)}
+            onChange={(val) => handleFieldChange("investasi", val)}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -66,7 +90,7 @@ export function ZakatMaalForm({
           <CurrencyInput
             id="piutang"
             value={values.piutang}
-            onChange={(val) => onChange("piutang", val)}
+            onChange={(val) => handleFieldChange("piutang", val)}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -75,7 +99,7 @@ export function ZakatMaalForm({
           <CurrencyInput
             id="hartaLain"
             value={values.hartaLain}
-            onChange={(val) => onChange("hartaLain", val)}
+            onChange={(val) => handleFieldChange("hartaLain", val)}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -84,7 +108,7 @@ export function ZakatMaalForm({
           <CurrencyInput
             id="utangJatuhTempo"
             value={values.utangJatuhTempo}
-            onChange={(val) => onChange("utangJatuhTempo", val)}
+            onChange={(val) => handleFieldChange("utangJatuhTempo", val)}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -101,19 +125,17 @@ export function ZakatMaalForm({
         <Button
           type="submit"
           variant="default"
-          disabled={!hasValidInput}
-          title={!hasValidInput ? "Masukkan setidaknya salah satu nilai aset/simpanan untuk menghitung" : undefined}
-          className="rounded-md px-5 h-10 text-sm font-medium"
+          className="rounded-md px-5 h-10 text-sm font-medium cursor-pointer"
         >
-          Hitung Zakat
+          Hitung zakat
         </Button>
         <Button
           type="button"
           variant="outline"
-          onClick={onReset}
-          className="rounded-md px-4 h-10 text-sm font-medium text-slate-700 hover:text-slate-900 border-slate-300"
+          onClick={handleReset}
+          className="rounded-md px-4 h-10 text-sm font-medium text-slate-700 hover:text-slate-900 border-slate-300 cursor-pointer"
         >
-          Atur Ulang
+          Atur ulang
         </Button>
       </div>
     </form>

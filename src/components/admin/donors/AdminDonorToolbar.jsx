@@ -10,6 +10,7 @@ export function AdminDonorToolbar({
   onExportCsv,
   onRefresh,
   isLoading,
+  isSearching,
 }) {
   return (
     <TableToolbar
@@ -33,6 +34,7 @@ export function AdminDonorToolbar({
       }
       onRefresh={onRefresh}
       isLoading={isLoading}
+      isSearching={isSearching}
     />
   );
 }

@@ -26,12 +26,9 @@ export function AdminCampaignOverviewCard({
     <Card className={cn("shadow-2xs overflow-hidden flex flex-col", stretch ? "h-full" : "h-auto")}>
       {/* Card Header */}
       <CardHeader className="p-3.5 sm:p-4 border-b border-slate-200/90">
-        <CardTitle className="text-base font-semibold text-slate-900 leading-tight">
+        <CardTitle className="text-base font-medium text-slate-900 leading-tight">
           Capaian Program Prioritas
         </CardTitle>
-        <CardDescription className="text-sm text-slate-500 mt-0.5">
-          Progres perolehan dana program donasi aktif
-        </CardDescription>
       </CardHeader>
 
       {/* Flat List Items */}
@@ -73,7 +70,7 @@ export function AdminCampaignOverviewCard({
                           value={percent ?? 100}
                           className="h-1.5 bg-slate-100"
                         />
-                        <div className="flex items-center justify-between text-2xs text-slate-500">
+                        <div className="flex items-center justify-between text-xs text-slate-500">
                           <span>{formatRupiah(collected)}</span>
                           <span className="font-medium text-slate-700">
                             {percent !== null ? `${percent}%` : "Tanpa Target"}

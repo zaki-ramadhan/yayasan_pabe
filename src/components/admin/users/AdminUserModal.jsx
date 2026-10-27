@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { MANAGEABLE_ROLES } from "@/lib/userParser";
 import { USER_ROLES } from "@/services/authService";
+import { validateEmail } from "@/lib/validator";
 
 export function AdminUserModal({
   isOpen,
@@ -34,6 +35,7 @@ export function AdminUserModal({
   });
 
   const [errorMsg, setErrorMsg] = useState("");
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (user) {
@@ -56,19 +58,27 @@ export function AdminUserModal({
       });
     }
     setErrorMsg("");
+    setErrors({});
   }, [user, isOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const newErrors = {};
     if (!formData.name.trim()) {
-      setErrorMsg("Nama lengkap wajib diisi.");
-      return;
+      newErrors.name = "Nama lengkap wajib diisi.";
     }
-    if (!formData.email.trim()) {
-      setErrorMsg("Alamat email wajib diisi.");
+    const emailVal = validateEmail(formData.email.trim(), true);
+    if (!emailVal.isValid) {
+      newErrors.email = emailVal.message || "Format alamat email tidak valid.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setErrorMsg(Object.values(newErrors)[0]);
       return;
     }
 
+    setErrors({});
     setErrorMsg("");
     onSubmit(formData);
   };
@@ -91,24 +101,30 @@ export function AdminUserModal({
         </div>
       )}
 
-      <FormField label="Nama lengkap" required>
+      <FormField label="Nama lengkap" required error={errors.name}>
         <Input
           type="text"
           required
           value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          onChange={(e) => {
+            setFormData({ ...formData, name: e.target.value });
+            if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+          }}
           placeholder="Contoh: Ust. Ahmad Fauzi, S.Pd"
         />
       </FormField>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <FormField label="Alamat email" required>
+        <FormField label="Alamat email" required error={errors.email}>
           <Input
             type="email"
             required
             disabled={isEdit}
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={(e) => {
+              setFormData({ ...formData, email: e.target.value });
+              if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+            }}
             placeholder="nama@pabe.or.id"
           />
         </FormField>

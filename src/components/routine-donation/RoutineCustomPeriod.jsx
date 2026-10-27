@@ -2,6 +2,8 @@
 
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FormField } from "@/components/ui/form-field";
+import { Input } from "@/components/ui/input";
 
 /**
  * Optional date validity range for routine donation
@@ -29,29 +31,30 @@ export function RoutineCustomPeriod({ item, onChange }) {
       {item.hasCustomPeriod && (
         <div className="space-y-2 pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium text-slate-700 block">
-                Tanggal Mulai
-              </label>
-              <input
+            <FormField label="Tanggal mulai" error={item.startDateError}>
+              <Input
                 type="date"
                 value={item.startDate || ""}
-                onChange={(e) => onChange(item.id, "startDate", e.target.value)}
-                className="w-full h-11 px-3 rounded-lg border border-slate-300 text-sm font-normal text-slate-900 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors bg-white cursor-pointer"
+                onChange={(e) => {
+                  onChange(item.id, "startDate", e.target.value);
+                  if (item.startDateError) onChange(item.id, "startDateError", null);
+                }}
+                className="h-11 bg-white cursor-pointer"
               />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs sm:text-sm font-medium text-slate-700 block">
-                Tanggal Berakhir
-              </label>
-              <input
+            </FormField>
+
+            <FormField label="Tanggal berakhir" error={item.endDateError}>
+              <Input
                 type="date"
                 value={item.endDate || ""}
                 min={item.startDate || ""}
-                onChange={(e) => onChange(item.id, "endDate", e.target.value)}
-                className="w-full h-11 px-3 rounded-lg border border-slate-300 text-sm font-normal text-slate-900 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors bg-white cursor-pointer"
+                onChange={(e) => {
+                  onChange(item.id, "endDate", e.target.value);
+                  if (item.endDateError) onChange(item.id, "endDateError", null);
+                }}
+                className="h-11 bg-white cursor-pointer"
               />
-            </div>
+            </FormField>
           </div>
           <p className="mt-1 text-sm text-slate-600 italic font-normal">
             *Jadwal donasi rutin akan otomatis berakhir setelah tanggal batas selesai terlewati.
@@ -61,3 +64,4 @@ export function RoutineCustomPeriod({ item, onChange }) {
     </div>
   );
 }
+

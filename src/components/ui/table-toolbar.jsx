@@ -30,11 +30,52 @@ export function TableToolbar({
   limitOptions = [10, 25, 50],
   onRefresh,
   isLoading = false,
+  isSearching = false,
   primaryAction,
   secondaryAction,
+  extraActions,
   className = "",
   children,
 }) {
+  const [isDebouncing, setIsDebouncing] = React.useState(false);
+  const debounceTimerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, []);
+
+  const handleSearchChange = (e) => {
+    if (!onSearchChange) return;
+    const val = e.target.value;
+    if (val && String(val).trim().length > 0) {
+      setIsDebouncing(true);
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = setTimeout(() => {
+        setIsDebouncing(false);
+      }, 300);
+    } else {
+      setIsDebouncing(false);
+    }
+    const dualParam = Object.assign(new String(val), {
+      target: { value: val },
+      currentTarget: { value: val },
+      value: val,
+    });
+    onSearchChange(dualParam);
+  };
+
+  const handleClear = () => {
+    setIsDebouncing(false);
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    if (onClearSearch) {
+      onClearSearch();
+    } else if (onSearchChange) {
+      onSearchChange("");
+    }
+  };
+
   const hasHeaderInfo = Boolean(title || description);
 
   return (
@@ -61,21 +102,11 @@ export function TableToolbar({
                 icon={Search}
                 placeholder={searchPlaceholder}
                 value={search ?? ""}
-                onChange={(e) => {
-                  if (!onSearchChange) return;
-                  const val = e.target.value;
-                  const dualParam = Object.assign(new String(val), {
-                    target: { value: val },
-                    currentTarget: { value: val },
-                    value: val,
-                  });
-                  onSearchChange(dualParam);
-                }}
-                onClear={onClearSearch ? onClearSearch : () => onSearchChange("")}
-                isLoading={isLoading}
+                onChange={handleSearchChange}
+                onClear={handleClear}
+                isLoading={isLoading || isSearching || isDebouncing}
                 className="h-10 text-sm bg-white border-slate-300 focus:border-primary"
               />
-
             </div>
           )}
 
@@ -85,6 +116,7 @@ export function TableToolbar({
 
         {/* Right Side: Limit Selector, Refresh Button, Primary CTA */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {extraActions}
           {onLimitChange && limit !== undefined && (
             <div className="flex items-center gap-1.5 shrink-0">
               <span className="text-sm font-medium text-slate-600">Baris:</span>

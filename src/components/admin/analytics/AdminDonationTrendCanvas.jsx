@@ -137,6 +137,18 @@ export function AdminDonationTrendCanvas({
 
           {isMonthly ? (
             <>
+              {(viewMode === "all" || viewMode === "cumulative") && (
+                <Area
+                  type="monotone"
+                  dataKey="cumulativeAmount"
+                  name="cumulativeAmount"
+                  stroke="#2563eb"
+                  strokeWidth={2}
+                  fill="url(#adminFillCumulative)"
+                  dot={{ r: 3, fill: "#ffffff", stroke: "#2563eb", strokeWidth: 1.5 }}
+                  activeDot={{ r: 5, fill: "#2563eb", stroke: "#ffffff", strokeWidth: 2 }}
+                />
+              )}
               {(viewMode === "all" || viewMode === "daily") && (
                 <Area
                   type="monotone"

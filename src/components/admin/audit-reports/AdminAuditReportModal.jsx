@@ -37,8 +37,10 @@ export function AdminAuditReportModal({
 		useState("12.4%");
 	const [pdfUrl, setPdfUrl] = useState("");
 	const [summary, setSummary] = useState("");
+	const [errors, setErrors] = useState({});
 
 	useEffect(() => {
+		setErrors({});
 		if (report) {
 			setYear(
 				String(
@@ -129,22 +131,38 @@ export function AdminAuditReportModal({
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if (
-			!year ||
-			!auditorName.trim()
-		)
-			return;
+		const newErrors = {};
 
+		const parsedYear = parseInt(year, 10);
+		if (!year || isNaN(parsedYear) || parsedYear < 2015 || parsedYear > 2050) {
+			newErrors.year = "Tahun buku harus berupa 4 digit tahun yang valid (2015-2050).";
+		}
+		if (!auditorName.trim() || auditorName.trim().length < 3) {
+			newErrors.auditorName = "Nama kantor akuntan publik / auditor wajib diisi (minimal 3 karakter).";
+		}
+		if (!totalFundsIn.trim()) {
+			newErrors.totalFundsIn = "Total penghimpunan dana wajib diisi.";
+		}
+		if (!totalFundsOut.trim()) {
+			newErrors.totalFundsOut = "Total penyaluran donasi wajib diisi.";
+		}
+		if (!beneficiaryCount.trim()) {
+			newErrors.beneficiaryCount = "Jumlah penerima manfaat wajib diisi.";
+		}
+
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			return;
+		}
+
+		setErrors({});
 		onSubmit({
 			...(report
 				? {
 						id: report.id,
 					}
 				: {}),
-			year: parseInt(
-				year,
-				10,
-			),
+			year: parsedYear,
 			title:
 				title.trim() ||
 				`Laporan Keuangan & Audit Tahun ${year}`,
@@ -186,13 +204,7 @@ export function AdminAuditReportModal({
 					? "Edit laporan audit tahunan"
 					: "Catat laporan audit tahunan baru"
 			}
-			isSubmitting={
-				isSubmitting
-			}
-			submitDisabled={
-				!year ||
-				!auditorName.trim()
-			}
+			isSubmitting={isSubmitting}
 			submitText={
 				isEdit
 					? "Simpan perubahan"
@@ -204,28 +216,20 @@ export function AdminAuditReportModal({
 				<FormField
 					label="Tahun buku laporan"
 					required
+					error={errors.year}
 				>
 					<Input
 						type="number"
-						value={
-							year
-						}
-						onChange={(
-							e,
-						) =>
-							setYear(
-								e
-									.target
-									.value,
-							)
-						}
+						value={year}
+						onChange={(e) => {
+							setYear(e.target.value);
+							if (errors.year) {
+								setErrors((prev) => ({ ...prev, year: "" }));
+							}
+						}}
 						placeholder="2024"
-						min={
-							2015
-						}
-						max={
-							2050
-						}
+						min={2015}
+						max={2050}
 						className="text-sm font-normal"
 						required
 					/>
@@ -236,34 +240,21 @@ export function AdminAuditReportModal({
 					required
 				>
 					<Select
-						value={
-							opinionStatus
-						}
-						onValueChange={
-							setOpinionStatus
-						}
+						value={opinionStatus}
+						onValueChange={setOpinionStatus}
 					>
 						<SelectTrigger className="h-10 text-sm font-normal bg-white">
 							<SelectValue placeholder="Pilih opini" />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value="WTP">
-								WTP
-								(Wajar
-								Tanpa
-								Pengecualian)
+								WTP (Wajar Tanpa Pengecualian)
 							</SelectItem>
 							<SelectItem value="WDP">
-								WDP
-								(Wajar
-								Dengan
-								Pengecualian)
+								WDP (Wajar Dengan Pengecualian)
 							</SelectItem>
 							<SelectItem value="TMP">
-								TMP
-								(Tidak
-								Menyatakan
-								Pendapat)
+								TMP (Tidak Menyatakan Pendapat)
 							</SelectItem>
 						</SelectContent>
 					</Select>
@@ -273,20 +264,16 @@ export function AdminAuditReportModal({
 			<FormField
 				label="Nama kantor akuntan publik / auditor independen"
 				required
+				error={errors.auditorName}
 			>
 				<Input
-					value={
-						auditorName
-					}
-					onChange={(
-						e,
-					) =>
-						setAuditorName(
-							e
-								.target
-								.value,
-						)
-					}
+					value={auditorName}
+					onChange={(e) => {
+						setAuditorName(e.target.value);
+						if (errors.auditorName) {
+							setErrors((prev) => ({ ...prev, auditorName: "" }));
+						}
+					}}
 					placeholder="Contoh: KAP Ahmad, Rasyid & Rekan (Registered Public Accountants)"
 					className="text-sm font-normal"
 					required
@@ -295,18 +282,8 @@ export function AdminAuditReportModal({
 
 			<FormField label="Judul resmi laporan">
 				<Input
-					value={
-						title
-					}
-					onChange={(
-						e,
-					) =>
-						setTitle(
-							e
-								.target
-								.value,
-						)
-					}
+					value={title}
+					onChange={(e) => setTitle(e.target.value)}
 					placeholder="Contoh: Laporan Audit Keuangan & Transparansi 2024"
 					className="text-sm font-normal"
 				/>
@@ -317,22 +294,16 @@ export function AdminAuditReportModal({
 				<FormField
 					label="Total penghimpunan dana (Rp)"
 					required
+					error={errors.totalFundsIn}
 				>
 					<Input
-						value={
-							totalFundsIn
-						}
-						onChange={(
-							e,
-						) =>
-							setTotalFundsIn(
-								formatThousandsInput(
-									e
-										.target
-										.value,
-								),
-							)
-						}
+						value={totalFundsIn}
+						onChange={(e) => {
+							setTotalFundsIn(formatThousandsInput(e.target.value));
+							if (errors.totalFundsIn) {
+								setErrors((prev) => ({ ...prev, totalFundsIn: "" }));
+							}
+						}}
 						placeholder="0"
 						className="text-sm font-normal"
 						required
@@ -342,22 +313,16 @@ export function AdminAuditReportModal({
 				<FormField
 					label="Total penyaluran donasi (Rp)"
 					required
+					error={errors.totalFundsOut}
 				>
 					<Input
-						value={
-							totalFundsOut
-						}
-						onChange={(
-							e,
-						) =>
-							setTotalFundsOut(
-								formatThousandsInput(
-									e
-										.target
-										.value,
-								),
-							)
-						}
+						value={totalFundsOut}
+						onChange={(e) => {
+							setTotalFundsOut(formatThousandsInput(e.target.value));
+							if (errors.totalFundsOut) {
+								setErrors((prev) => ({ ...prev, totalFundsOut: "" }));
+							}
+						}}
 						placeholder="0"
 						className="text-sm font-normal"
 						required
@@ -367,24 +332,18 @@ export function AdminAuditReportModal({
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 				<FormField
-					label="Jumlah penerima manfaat (Orang)"
+					label="Jumlah penerima manfaat (orang)"
 					required
+					error={errors.beneficiaryCount}
 				>
 					<Input
-						value={
-							beneficiaryCount
-						}
-						onChange={(
-							e,
-						) =>
-							setBeneficiaryCount(
-								formatThousandsInput(
-									e
-										.target
-										.value,
-								),
-							)
-						}
+						value={beneficiaryCount}
+						onChange={(e) => {
+							setBeneficiaryCount(formatThousandsInput(e.target.value));
+							if (errors.beneficiaryCount) {
+								setErrors((prev) => ({ ...prev, beneficiaryCount: "" }));
+							}
+						}}
 						placeholder="0"
 						className="text-sm font-normal"
 						required

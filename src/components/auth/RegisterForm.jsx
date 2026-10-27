@@ -17,6 +17,7 @@ import {
   getRedirectPathForRole,
   simulateSocialAuth,
   redirectToGoogleOAuth,
+  redirectToFacebookOAuth,
 } from "@/services/authService";
 import {
   validateEmail,
@@ -62,13 +63,20 @@ export function RegisterForm() {
     if (errorParam) {
       handledErrorRef.current = true;
       const errorMessages = {
-        access_denied: "Persetujuan akun Google dibatalkan.",
-        no_code_provided: "Kode autentikasi Google tidak ditemukan.",
-        oauth_credentials_missing: "Kredensial GOOGLE_CLIENT_SECRET belum lengkap di .env.",
+        access_denied: "Persetujuan akun dibatalkan.",
+        no_code_provided: "Kode autentikasi tidak ditemukan.",
+        oauth_credentials_missing: "Kredensial OAuth belum lengkap di .env.",
         token_exchange_failed: "Gagal menukar token dengan Google. Pastikan Client Secret valid.",
         userinfo_fetch_failed: "Gagal mengambil data profil dari Google.",
         no_email_provided: "Akun Google tidak menyediakan alamat email.",
         internal_oauth_error: "Terjadi kesalahan internal pada server autentikasi.",
+        fb_missing_app_id: "NEXT_PUBLIC_FACEBOOK_APP_ID belum diatur di file .env.",
+        fb_cancelled: "Persetujuan akun Facebook dibatalkan.",
+        fb_error: "Autentikasi Facebook mengalami kendala atau ditolak.",
+        fb_state_mismatch: "Sesi validasi keamanan Facebook kedaluwarsa. Silakan coba lagi.",
+        fb_token_failed: "Gagal memverifikasi token Facebook. Pastikan App Secret di Meta valid.",
+        fb_profile_failed: "Gagal mengambil profil akun dari Facebook.",
+        fb_internal_error: "Terjadi kesalahan sistem saat memproses pendaftaran Facebook.",
       };
       toast.error(errorMessages[errorParam] || `Gagal registrasi: ${errorParam}`);
     }
@@ -145,13 +153,7 @@ export function RegisterForm() {
 
   const handleFacebookSignUp = () => {
     setIsFacebookLoading(true);
-    setTimeout(() => {
-      const fbUser = simulateSocialAuth("facebook");
-      loginUser(fbUser);
-      setIsFacebookLoading(false);
-      toast.success(`Berhasil mendaftar dengan Facebook: ${fbUser.name}`);
-      router.push(redirectUrl || getRedirectPathForRole(fbUser.role));
-    }, 700);
+    redirectToFacebookOAuth(redirectUrl || "/", "register");
   };
 
   return (

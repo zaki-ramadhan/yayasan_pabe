@@ -27,6 +27,8 @@ export function AdminUserTableRow({
               alt={user.name}
               width={32}
               height={32}
+              unoptimized={typeof user.avatar === "string" && !user.avatar.startsWith("/") && !user.avatar.includes("lh3.googleusercontent.com")}
+              referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
             />
           ) : (

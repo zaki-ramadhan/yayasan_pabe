@@ -16,6 +16,7 @@ export function DonorSecurityFormCard({
   borderless = false,
 }) {
   const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const { bind, getCleanValues, setValues } = useSanitizedForm({
     oldPassword: "",
@@ -27,13 +28,9 @@ export function DonorSecurityFormCard({
     e.preventDefault();
     const passwordData = getCleanValues();
 
+    const newErrors = {};
     if (!passwordData.oldPassword) {
-      toast({
-        title: "Perhatian",
-        description: "Kata sandi saat ini wajib diisi untuk verifikasi keamanan.",
-        variant: "destructive",
-      });
-      return;
+      newErrors.oldPassword = "Kata sandi saat ini wajib diisi untuk verifikasi keamanan.";
     }
 
     const newPassValidation = validatePasswordInput(
@@ -41,31 +38,26 @@ export function DonorSecurityFormCard({
       "Kata sandi baru"
     );
     if (!newPassValidation.isValid) {
-      toast({
-        title: "Perhatian",
-        description: newPassValidation.message,
-        variant: "destructive",
-      });
-      return;
+      newErrors.newPassword = newPassValidation.message;
+    } else if (passwordData.newPassword === passwordData.oldPassword) {
+      newErrors.newPassword = "Kata sandi baru harus berbeda dari kata sandi saat ini.";
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      toast({
-        title: "Perhatian",
-        description: "Konfirmasi kata sandi baru tidak cocok. Periksa kembali pengetikan Anda.",
-        variant: "destructive",
-      });
-      return;
+      newErrors.confirmPassword = "Konfirmasi kata sandi baru tidak cocok. Periksa kembali pengetikan Anda.";
     }
 
-    if (passwordData.newPassword === passwordData.oldPassword) {
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      const firstError = Object.values(newErrors)[0];
       toast({
         title: "Perhatian",
-        description: "Kata sandi baru harus berbeda dari kata sandi saat ini.",
+        description: firstError,
         variant: "destructive",
       });
       return;
     }
+    setErrors({});
 
     setIsSaving(true);
     try {
@@ -117,44 +109,56 @@ export function DonorSecurityFormCard({
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
         <div className="space-y-4">
-          <FormField label="Kata Sandi Saat Ini" required>
+          <FormField label="Kata sandi saat ini" required error={errors.oldPassword}>
             <Input
               id="input-old-password"
               name="oldPassword"
               type="password"
               autoComplete="current-password"
               {...bind("oldPassword")}
+              onChange={(e) => {
+                bind("oldPassword").onChange(e);
+                if (errors.oldPassword) setErrors((prev) => ({ ...prev, oldPassword: undefined }));
+              }}
               placeholder="Masukkan sandi saat ini"
               maxLength={128}
-              className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
+              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
               required
             />
           </FormField>
 
-          <FormField label="Kata Sandi Baru" required>
+          <FormField label="Kata sandi baru" required error={errors.newPassword}>
             <Input
               id="input-new-password"
               name="newPassword"
               type="password"
               autoComplete="new-password"
               {...bind("newPassword")}
+              onChange={(e) => {
+                bind("newPassword").onChange(e);
+                if (errors.newPassword) setErrors((prev) => ({ ...prev, newPassword: undefined }));
+              }}
               placeholder="Minimal 6 karakter"
               maxLength={128}
-              className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
+              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
               required
             />
           </FormField>
 
-          <FormField label="Ulangi Sandi Baru" required>
+          <FormField label="Ulangi sandi baru" required error={errors.confirmPassword}>
             <Input
               id="input-confirm-password"
               name="confirmPassword"
               type="password"
               autoComplete="new-password"
               {...bind("confirmPassword")}
+              onChange={(e) => {
+                bind("confirmPassword").onChange(e);
+                if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+              }}
               placeholder="Ulangi kata sandi baru"
               maxLength={128}
-              className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
+              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
               required
             />
           </FormField>

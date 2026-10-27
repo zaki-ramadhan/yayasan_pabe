@@ -5,10 +5,7 @@ export function AdminDonationTrendSkeleton() {
     <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden animate-pulse">
       {/* Header Skeleton */}
       <div className="p-3.5 sm:p-4 border-b border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div className="space-y-1">
-          <Skeleton className="h-5 w-48 rounded" />
-          <Skeleton className="h-3.5 w-72 rounded" />
-        </div>
+        <Skeleton className="h-5 w-48 rounded" />
         <div className="flex items-center gap-2">
           <Skeleton className="h-9 w-38 rounded-md" />
           <Skeleton className="h-9 w-42 rounded-md" />

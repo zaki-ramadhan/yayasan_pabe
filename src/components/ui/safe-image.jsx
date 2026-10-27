@@ -49,6 +49,7 @@ export function SafeImage({
         priority={priority}
         {...(quality ? { quality } : {})}
         unoptimized={isUnoptimized}
+        referrerPolicy="no-referrer"
         onError={() => setHasError(true)}
         className={cn("object-cover transition-opacity duration-300", className)}
       />
@@ -65,6 +66,7 @@ export function SafeImage({
       priority={priority}
       {...(quality ? { quality } : {})}
       unoptimized={isUnoptimized}
+      referrerPolicy="no-referrer"
       onError={() => setHasError(true)}
       className={cn("object-cover transition-opacity duration-300", className)}
     />

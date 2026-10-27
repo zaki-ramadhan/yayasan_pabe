@@ -21,6 +21,7 @@ export function AdminTransactionToolbar({
   onExportCsv,
   onRefresh,
   isLoading,
+  isSearching,
 }) {
   return (
     <TableToolbar
@@ -77,6 +78,7 @@ export function AdminTransactionToolbar({
       }
       onRefresh={onRefresh}
       isLoading={isLoading}
+      isSearching={isSearching}
       primaryAction={
         onExportCsv
           ? {

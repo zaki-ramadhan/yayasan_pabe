@@ -26,6 +26,7 @@ export function DonorPersonalFormCard({
   borderless = false,
 }) {
   const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const { bind, getCleanValues } = useSanitizedForm(
     {
@@ -48,27 +49,30 @@ export function DonorPersonalFormCard({
     e.preventDefault();
     const cleanPayload = getCleanValues();
 
+    const newErrors = {};
     const nameValidation = validateName(cleanPayload.name);
     if (!nameValidation.isValid) {
-      toast({
-        title: "Perhatian",
-        description: nameValidation.message,
-        variant: "destructive",
-      });
-      return;
+      newErrors.name = nameValidation.message;
     }
 
     if (cleanPayload.phone) {
       const phoneValidation = validatePhone(cleanPayload.phone);
       if (!phoneValidation.isValid) {
-        toast({
-          title: "Perhatian",
-          description: phoneValidation.message,
-          variant: "destructive",
-        });
-        return;
+        newErrors.phone = phoneValidation.message;
       }
     }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      const firstError = Object.values(newErrors)[0];
+      toast({
+        title: "Perhatian",
+        description: firstError,
+        variant: "destructive",
+      });
+      return;
+    }
+    setErrors({});
 
     setIsSaving(true);
     try {
@@ -109,21 +113,25 @@ export function DonorPersonalFormCard({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <FormField label="Nama Lengkap" required>
+        <FormField label="Nama lengkap" required error={errors.name}>
           <Input
             id="input-full-name"
             name="fullName"
             type="text"
             autoComplete="name"
             {...bind("name")}
+            onChange={(e) => {
+              bind("name").onChange(e);
+              if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+            }}
             placeholder="Contoh: Hendra Wijaya"
-            className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
+            className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
             required
             maxLength={60}
           />
         </FormField>
 
-        <FormField label="Bio / Moto Pribadi">
+        <FormField label="Bio / moto pribadi">
           <Textarea
             id="input-bio"
             name="bio"
@@ -131,12 +139,12 @@ export function DonorPersonalFormCard({
             {...bind("bio")}
             placeholder="Tuliskan moto atau harapan kebaikan Anda..."
             maxLength={200}
-            className="rounded-md border-slate-200 bg-white"
+            className="rounded-md bg-white font-normal"
           />
         </FormField>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <FormField label="Domisili / Kota">
+          <FormField label="Domisili / kota">
             <Input
               id="input-city"
               name="city"
@@ -145,11 +153,11 @@ export function DonorPersonalFormCard({
               {...bind("city")}
               placeholder="Contoh: Kota Bandung"
               maxLength={50}
-              className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
+              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
             />
           </FormField>
 
-          <FormField label="Nomor Telepon / WhatsApp">
+          <FormField label="Nomor telepon / WhatsApp" error={errors.phone}>
             <Input
               id="input-phone"
               name="phone"
@@ -157,9 +165,13 @@ export function DonorPersonalFormCard({
               inputMode="tel"
               autoComplete="tel"
               {...bind("phone")}
+              onChange={(e) => {
+                bind("phone").onChange(e);
+                if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+              }}
               placeholder="Contoh: 08123456789"
               maxLength={15}
-              className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
+              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
             />
           </FormField>
         </div>

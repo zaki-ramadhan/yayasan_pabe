@@ -40,6 +40,7 @@ export function AdminArticleModal({
 	const [bannerUrl, setBannerUrl] = useState("");
 	const [excerpt, setExcerpt] = useState("");
 	const [content, setContent] = useState("");
+	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] =
 		useState(false);
 
@@ -87,6 +88,9 @@ export function AdminArticleModal({
 				setCategory(
 					existing,
 				);
+				if (errors.category) {
+					setErrors((prev) => ({ ...prev, category: "" }));
+				}
 				toast.info(
 					`Menggunakan kategori yang sudah ada: "${existing}".`,
 				);
@@ -108,6 +112,9 @@ export function AdminArticleModal({
 			setCategory(
 				formatted,
 			);
+			if (errors.category) {
+				setErrors((prev) => ({ ...prev, category: "" }));
+			}
 			toast.success(
 				`Kategori "${formatted}" siap digunakan.`,
 			);
@@ -116,6 +123,7 @@ export function AdminArticleModal({
 	};
 
 	useEffect(() => {
+		setErrors({});
 		if (articleToEdit) {
 			setTitle(
 				articleToEdit.title ||
@@ -162,18 +170,26 @@ export function AdminArticleModal({
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (!title.trim()) {
-			toast.error(
-				"Judul artikel wajib diisi.",
-			);
+		const newErrors = {};
+
+		if (!title.trim() || title.trim().length < 5) {
+			newErrors.title = "Judul artikel wajib diisi (minimal 5 karakter).";
+		}
+		if (!category) {
+			newErrors.category = "Kategori berita wajib dipilih.";
+		}
+		if (!content.trim() || content.trim().length < 20) {
+			newErrors.content = "Isi konten artikel wajib diisi (minimal 20 karakter).";
+		}
+
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			const firstError = Object.values(newErrors)[0];
+			toast.error(firstError);
 			return;
 		}
-		if (!content.trim()) {
-			toast.error(
-				"Isi konten artikel wajib diisi.",
-			);
-			return;
-		}
+
+		setErrors({});
 
 		setIsSubmitting(true);
 		try {
@@ -262,39 +278,35 @@ export function AdminArticleModal({
 			maxWidth="max-w-2xl"
 			title={
 				isEditing
-					? "Edit Artikel Berita"
-					: "Tulis Artikel & Berita Baru"
+					? "Edit artikel berita"
+					: "Tulis artikel & berita baru"
 			}
 			submitText={
 				isEditing
-					? "Simpan Perubahan"
-					: "Terbitkan Artikel"
+					? "Simpan perubahan"
+					: "Terbitkan artikel"
 			}
 			submittingText="Menyimpan..."
 			isSubmitting={
 				isSubmitting
 			}
 		>
-			{/* Judul Artikel */}
+			{/* Judul artikel */}
 			<FormField
-				label="Judul Artikel"
+				label="Judul artikel"
 				required
+				error={errors.title}
 			>
 				<Input
 					type="text"
 					placeholder="Contoh: Distribusi 500 Paket Sembako untuk Lansia Dhuafa"
-					value={
-						title
-					}
-					onChange={(
-						e,
-					) =>
-						setTitle(
-							e
-								.target
-								.value,
-						)
-					}
+					value={title}
+					onChange={(e) => {
+						setTitle(e.target.value);
+						if (errors.title) {
+							setErrors((prev) => ({ ...prev, title: "" }));
+						}
+					}}
 					required
 					className="h-10 text-sm bg-white"
 				/>
@@ -303,26 +315,20 @@ export function AdminArticleModal({
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
 				{/* Kategori */}
 				<FormField
-					label="Kategori Berita"
+					label="Kategori berita"
 					required
+					error={errors.category}
 				>
 					<CreatableCombobox
-						options={
-							categoryList
-						}
-						value={
-							category
-						}
-						onChange={(
-							val,
-						) =>
-							setCategory(
-								val,
-							)
-						}
-						onCreate={
-							handleCreateCategory
-						}
+						options={categoryList}
+						value={category}
+						onChange={(val) => {
+							setCategory(val);
+							if (errors.category) {
+								setErrors((prev) => ({ ...prev, category: "" }));
+							}
+						}}
+						onCreate={handleCreateCategory}
 						placeholder="Pilih kategori berita..."
 						searchPlaceholder="Cari kategori atau buat baru..."
 						createPrefix="Buat kategori"
@@ -331,22 +337,12 @@ export function AdminArticleModal({
 				</FormField>
 
 				{/* Penulis / Redaksi */}
-				<FormField label="Nama Penulis / Redaksi">
+				<FormField label="Nama penulis / redaksi">
 					<Input
 						type="text"
 						placeholder="Contoh: Tim Humas PABE"
-						value={
-							author
-						}
-						onChange={(
-							e,
-						) =>
-							setAuthor(
-								e
-									.target
-									.value,
-							)
-						}
+						value={author}
+						onChange={(e) => setAuthor(e.target.value)}
 						className="h-10 text-sm bg-white"
 					/>
 				</FormField>
@@ -358,55 +354,37 @@ export function AdminArticleModal({
 				onChange={setBannerUrl}
 				context="ARTICLE_BANNER"
 				identifier={title}
-				label="Foto Sampul / Banner Artikel"
+				label="Foto sampul / banner artikel"
 				helperText="Mendukung JPG, PNG, WebP (Maks. 5MB). Disimpan rapi ke articles/banners."
 			/>
 
 			{/* Ringkasan Singkat (Excerpt) */}
-			<FormField label="Ringkasan Singkat (Lead / Excerpt)">
+			<FormField label="Ringkasan singkat (lead / excerpt)">
 				<Textarea
-					rows={
-						2
-					}
+					rows={2}
 					placeholder="Ringkasan 1-2 kalimat pengantar artikel untuk kartu dan preview..."
-					value={
-						excerpt
-					}
-					onChange={(
-						e,
-					) =>
-						setExcerpt(
-							e
-								.target
-								.value,
-						)
-					}
+					value={excerpt}
+					onChange={(e) => setExcerpt(e.target.value)}
 					className="w-full text-sm leading-relaxed bg-white"
 				/>
 			</FormField>
 
 			{/* Isi Konten Lengkap */}
 			<FormField
-				label="Isi Konten Berita Lengkap"
+				label="Isi konten berita lengkap"
 				required
+				error={errors.content}
 			>
 				<Textarea
-					rows={
-						6
-					}
+					rows={6}
 					placeholder="Tuliskan berita lengkap mengenai kegiatan, narasumber, kronologi, serta ucapan terima kasih kepada donatur..."
-					value={
-						content
-					}
-					onChange={(
-						e,
-					) =>
-						setContent(
-							e
-								.target
-								.value,
-						)
-					}
+					value={content}
+					onChange={(e) => {
+						setContent(e.target.value);
+						if (errors.content) {
+							setErrors((prev) => ({ ...prev, content: "" }));
+						}
+					}}
 					required
 					className="w-full text-sm leading-relaxed bg-white"
 				/>

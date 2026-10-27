@@ -30,6 +30,7 @@ export function AdminDonorTable({ initialData = {} }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const debouncedSearch = useDebounce(search.trim(), 300);
+  const isSearching = Boolean(search.trim().length > 0 && search.trim() !== debouncedSearch);
 
   const filtered = useMemo(() => {
     if (!debouncedSearch) return donors;
@@ -122,6 +123,7 @@ export function AdminDonorTable({ initialData = {} }) {
         onExportCsv={handleExportCsv}
         onRefresh={handleRefresh}
         isLoading={isLoading}
+        isSearching={isSearching}
       />
 
       <TableContainer>

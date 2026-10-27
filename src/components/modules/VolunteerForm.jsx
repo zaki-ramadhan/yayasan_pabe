@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { FormField } from "@/components/ui/form-field";
 import {
 	Select,
 	SelectContent,
@@ -47,6 +49,7 @@ export function VolunteerForm() {
 	const [motivation, setMotivation] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [isEmailLocked, setIsEmailLocked] = useState(false);
+	const [errors, setErrors] = useState({});
 
 	// Restore draft if user refreshed the page or experienced disconnect
 	useEffect(() => {
@@ -200,68 +203,40 @@ export function VolunteerForm() {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		const nameVal =
-			validateName(
-				fullName,
-			);
+		const newErrors = {};
+		const nameVal = validateName(fullName);
 		if (!nameVal.isValid) {
-			toast.error(
-				nameVal.message,
-			);
-			return;
+			newErrors.fullName = nameVal.message;
 		}
 
-		const phoneVal =
-			validatePhone(
-				phone,
-			);
+		const phoneVal = validatePhone(phone);
 		if (!phoneVal.isValid) {
-			toast.error(
-				phoneVal.message,
-			);
-			return;
+			newErrors.phone = phoneVal.message;
 		}
 
-		const emailVal =
-			validateEmail(
-				email,
-			);
-		if (
-			!emailVal.isValid
-		) {
-			toast.error(
-				emailVal.message ||
-					"Email wajib diisi dengan format yang benar.",
-			);
-			return;
+		const emailVal = validateEmail(email, true);
+		if (!emailVal.isValid) {
+			newErrors.email = emailVal.message || "Email wajib diisi dengan format yang benar.";
 		}
 
-		const cleanCity =
-			stripEmojis(
-				city,
-			)
-				.replace(
-					/[^a-zA-ZÀ-ÿ\s.,'\-]/g,
-					"",
-				)
-				.trim();
-		if (
-			!cleanCity ||
-			cleanCity.length <
-				2
-		) {
-			toast.error(
-				"Mohon masukkan kota / kabupaten domisili yang valid.",
-			);
-			return;
+		const cleanCity = stripEmojis(city)
+			.replace(/[^a-zA-ZÀ-ÿ\s.,'\-]/g, "")
+			.trim();
+		if (!cleanCity || cleanCity.length < 2) {
+			newErrors.city = "Mohon masukkan kota / kabupaten domisili yang valid.";
 		}
 
 		if (!interest) {
-			toast.error(
-				"Mohon pilih peminatan aksi relawan.",
-			);
+			newErrors.interest = "Mohon pilih peminatan aksi relawan.";
+		}
+
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			const firstError = Object.values(newErrors)[0];
+			toast.error(firstError);
 			return;
 		}
+		setErrors({});
 
 		try {
 			setLoading(
@@ -350,250 +325,140 @@ export function VolunteerForm() {
 			}
 			className="bg-white p-6 sm:p-8 rounded-xl border border-border-subtle space-y-4 shadow-sm"
 		>
-			<div className="space-y-1.5">
-				<label className="text-sm font-semibold text-slate-800 block">
-					Nama
-					Lengkap{" "}
-					<span className="text-rose-500">
-						*
-					</span>
-				</label>
+			<FormField
+				label="Nama lengkap"
+				required
+				error={errors.fullName}
+			>
 				<Input
 					type="text"
 					required
-					value={
-						fullName
-					}
-					maxLength={
-						60
-					}
-					onChange={(
-						e,
-					) =>
-						setFullName(
-							sanitizeName(
-								e
-									.target
-									.value,
-							),
-						)
-					}
+					value={fullName}
+					maxLength={60}
+					onChange={(e) => {
+						setFullName(sanitizeName(e.target.value));
+						if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: undefined }));
+					}}
 					placeholder="Nama Anda"
-					className="h-11"
+					className="h-11 font-normal"
 				/>
-			</div>
+			</FormField>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-				<div className="space-y-1.5">
-					<label className="text-sm font-semibold text-slate-800 block">
-						Nomor
-						WhatsApp{" "}
-						<span className="text-rose-500">
-							*
-						</span>
-					</label>
+				<FormField
+					label="Nomor WhatsApp"
+					required
+					error={errors.phone}
+				>
 					<Input
 						type="tel"
 						inputMode="tel"
 						required
-						value={
-							phone
-						}
-						maxLength={
-							15
-						}
-						onChange={(
-							e,
-						) =>
-							setPhone(
-								sanitizePhone(
-									e
-										.target
-										.value,
-								),
-							)
-						}
+						value={phone}
+						maxLength={15}
+						onChange={(e) => {
+							setPhone(sanitizePhone(e.target.value));
+							if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+						}}
 						placeholder="0812xxxxxxxx"
-						className="h-11"
+						className="h-11 font-normal"
 					/>
-				</div>
+				</FormField>
 
-				<div className="space-y-1.5">
-					<label className="text-sm font-semibold text-slate-800 block">
-						Email{" "}
-						<span className="text-rose-500">
-							*
-						</span>
-					</label>
+				<FormField
+					label="Alamat email"
+					required
+					error={errors.email}
+					hint={isEmailLocked ? "Email terkunci sesuai akun login Anda." : undefined}
+				>
 					<Input
 						type="email"
 						required
-						readOnly={
-							isEmailLocked
-						}
-						value={
-							email
-						}
-						maxLength={
-							100
-						}
-						onChange={(
-							e,
-						) => {
-							if (
-								!isEmailLocked
-							) {
-								setEmail(
-									sanitizeEmail(
-										e
-											.target
-											.value,
-									),
-								);
+						readOnly={isEmailLocked}
+						value={email}
+						maxLength={100}
+						onChange={(e) => {
+							if (!isEmailLocked) {
+								setEmail(sanitizeEmail(e.target.value));
+								if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
 							}
 						}}
 						placeholder="email@anda.com"
 						className={cn(
-							"h-11",
+							"h-11 font-normal",
 							isEmailLocked &&
-								"bg-slate-100 text-slate-600 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200",
+								"bg-slate-100 text-slate-600 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
 						)}
 					/>
-					{isEmailLocked && (
-						<span className="text-xs text-slate-600 block font-normal">
-							Email
-							terkunci
-							sesuai
-							akun
-							login
-							Anda.
-						</span>
-					)}
-				</div>
+				</FormField>
 			</div>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-				<div className="space-y-1.5">
-					<label className="text-sm font-semibold text-slate-800 block">
-						Kota
-						/
-						Kabupaten
-						Domisili{" "}
-						<span className="text-rose-500">
-							*
-						</span>
-					</label>
+				<FormField
+					label="Kota / kabupaten domisili"
+					required
+					error={errors.city}
+				>
 					<Input
 						type="text"
 						required
-						value={
-							city
-						}
-						maxLength={
-							50
-						}
-						onChange={(
-							e,
-						) =>
+						value={city}
+						maxLength={50}
+						onChange={(e) => {
 							setCity(
-								stripEmojis(
-									e
-										.target
-										.value,
-								)
-									.replace(
-										/[^a-zA-ZÀ-ÿ\s.,'\-]/g,
-										"",
-									)
-									.slice(
-										0,
-										50,
-									),
-							)
-						}
+								stripEmojis(e.target.value)
+									.replace(/[^a-zA-ZÀ-ÿ\s.,'\-]/g, "")
+									.slice(0, 50)
+							);
+							if (errors.city) setErrors((prev) => ({ ...prev, city: undefined }));
+						}}
 						placeholder="Contoh: Jakarta Timur / Bekasi"
-						className="h-11"
+						className="h-11 font-normal"
 					/>
-				</div>
+				</FormField>
 
-				<div className="space-y-1.5">
-					<label className="text-sm font-semibold text-slate-800 block">
-						Peminatan
-						Aksi{" "}
-						<span className="text-rose-500">
-							*
-						</span>
-					</label>
+				<FormField
+					label="Peminatan aksi"
+					required
+					error={errors.interest}
+				>
 					<Select
-						value={
-							interest
-						}
-						onValueChange={
-							setInterest
-						}
+						value={interest}
+						onValueChange={(val) => {
+							setInterest(val);
+							if (errors.interest) setErrors((prev) => ({ ...prev, interest: undefined }));
+						}}
 					>
-						<SelectTrigger className="w-full h-11 text-sm rounded-lg border-border-strong bg-white">
+						<SelectTrigger className="w-full h-11 text-sm rounded-lg bg-white">
 							<SelectValue placeholder="Pilih peminatan aksi..." />
 						</SelectTrigger>
 						<SelectContent>
-							{INTEREST_OPTIONS.map(
-								(
-									opt,
-								) => (
-									<SelectItem
-										key={
-											opt
-										}
-										value={
-											opt
-										}
-									>
-										{
-											opt
-										}
-									</SelectItem>
-								),
-							)}
+							{INTEREST_OPTIONS.map((opt) => (
+								<SelectItem key={opt} value={opt}>
+									{opt}
+								</SelectItem>
+							))}
 						</SelectContent>
 					</Select>
-				</div>
+				</FormField>
 			</div>
 
-			<div className="space-y-1.5">
-				<label className="text-sm font-semibold text-slate-800 block">
-					Motivasi
-					&amp;
-					Pengalaman
-					Singkat
-				</label>
-				<textarea
-					rows={
-						3
-					}
-					value={
-						motivation
-					}
-					maxLength={
-						500
-					}
-					onChange={(
-						e,
-					) =>
-						setMotivation(
-							stripEmojis(
-								e
-									.target
-									.value,
-							).slice(
-								0,
-								500,
-							),
-						)
-					}
+			<FormField
+				label="Motivasi & pengalaman singkat"
+				error={errors.motivation}
+			>
+				<Textarea
+					rows={3}
+					value={motivation}
+					maxLength={500}
+					onChange={(e) => {
+						setMotivation(stripEmojis(e.target.value).slice(0, 500));
+						if (errors.motivation) setErrors((prev) => ({ ...prev, motivation: undefined }));
+					}}
 					placeholder="Ceritakan keahlian atau alasan Anda ingin bergabung..."
-					className="w-full rounded-lg border border-border-strong bg-white p-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary transition-colors resize-none"
+					className="resize-none"
 				/>
-			</div>
+			</FormField>
 
 			<Button
 				type="submit"

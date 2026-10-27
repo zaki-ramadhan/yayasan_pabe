@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
 import { AdminTopHeader } from "@/components/admin/AdminTopHeader";
-import { USER_ROLES } from "@/services/authService";
+import { getStoredUser, logoutUser, USER_ROLES } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 
@@ -18,11 +18,8 @@ export function AdminLayoutClient({ children, initialUser }) {
   // Tampilkan toast notifikasi sambutan setelah login berhasil
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const justLoggedIn =
-        sessionStorage.getItem("ygsm_just_logged_in") ||
-        sessionStorage.getItem("pabe_just_logged_in");
+      const justLoggedIn = sessionStorage.getItem("pabe_just_logged_in");
       if (justLoggedIn) {
-        sessionStorage.removeItem("ygsm_just_logged_in");
         sessionStorage.removeItem("pabe_just_logged_in");
         toast.success(`Selamat datang kembali, ${justLoggedIn}! Sesi pengurus berhasil diaktifkan.`);
       }
@@ -34,25 +31,89 @@ export function AdminLayoutClient({ children, initialUser }) {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Pantau perubahan session storage/auth
+  // Pantau sesi, batas kedaluwarsa, dan idle timeout (2 jam untuk admin)
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("ygsm_auth_user") || localStorage.getItem("pabe_auth_user");
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (parsed && parsed.role !== USER_ROLES.DONOR) {
-            setCurrentUser(parsed);
-          } else {
-            router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
-          }
-        } catch {
+    let isMounted = true;
+    const IDLE_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 jam tanpa aktivitas
+
+    const checkSession = () => {
+      const user = getStoredUser();
+      if (!user || user.role === USER_ROLES.DONOR) {
+        logoutUser();
+        toast.error("Sesi pengurus telah berakhir. Silakan masuk kembali.");
+        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+        return false;
+      }
+      setCurrentUser(user);
+
+      // Cek batas waktu idle
+      const lastActivity = Number(sessionStorage.getItem("pabe_last_activity") || Date.now());
+      if (Date.now() - lastActivity > IDLE_TIMEOUT_MS) {
+        logoutUser();
+        sessionStorage.removeItem("pabe_last_activity");
+        toast.error("Sesi Anda kedaluwarsa karena tidak ada aktivitas selama 2 jam.");
+        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+        return false;
+      }
+      return true;
+    };
+
+    if (!checkSession()) return;
+
+    // Inisialisasi aktivitas awal
+    sessionStorage.setItem("pabe_last_activity", String(Date.now()));
+
+    let lastRecorded = Date.now();
+    const handleUserInteraction = () => {
+      const now = Date.now();
+      if (now - lastRecorded > 60000) {
+        lastRecorded = now;
+        sessionStorage.setItem("pabe_last_activity", String(now));
+      }
+    };
+
+    window.addEventListener("click", handleUserInteraction, { passive: true });
+    window.addEventListener("keydown", handleUserInteraction, { passive: true });
+    window.addEventListener("scroll", handleUserInteraction, { passive: true });
+    window.addEventListener("focus", checkSession);
+
+    // Verifikasi berkala ke server dan cek kedaluwarsa setiap 60 detik
+    const intervalId = setInterval(async () => {
+      if (!isMounted) return;
+      const valid = checkSession();
+      if (!valid) return;
+
+      try {
+        const res = await safeFetch("/api/auth/me", {}, 5000);
+        if (res.status === 401 && isMounted) {
+          logoutUser();
+          toast.error("Sesi pengurus telah berakhir. Silakan masuk kembali.");
           router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
         }
-      } else {
-        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      } catch {
+        // Abaikan gangguan jaringan sementara
       }
-    }
+    }, 60000);
+
+    // Verifikasi server saat pertama kali mount
+    safeFetch("/api/auth/me", {}, 5000)
+      .then((res) => {
+        if (res.status === 401 && isMounted) {
+          logoutUser();
+          toast.error("Sesi pengurus telah berakhir. Silakan masuk kembali.");
+          router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+      window.removeEventListener("click", handleUserInteraction);
+      window.removeEventListener("keydown", handleUserInteraction);
+      window.removeEventListener("scroll", handleUserInteraction);
+      window.removeEventListener("focus", checkSession);
+    };
   }, [pathname, router]);
 
   const handleToggleSidebar = () => {

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -12,8 +13,16 @@ import { AdminSettingsBankSection } from "./AdminSettingsBankSection";
 import { validateOrgSettings } from "@/lib/validator";
 
 export function AdminSettingsForm({ initialSettings }) {
+  const router = useRouter();
   const [formData, setFormData] = useState(initialSettings || {});
+  const [prevInitial, setPrevInitial] = useState(initialSettings);
   const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  if (initialSettings !== prevInitial) {
+    setPrevInitial(initialSettings);
+    setFormData(initialSettings || {});
+  }
 
   const handleFieldChange = (section, field, value) => {
     if (section) {
@@ -29,6 +38,9 @@ export function AdminSettingsForm({ initialSettings }) {
         ...prev,
         [field]: value,
       }));
+    }
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -69,9 +81,11 @@ export function AdminSettingsForm({ initialSettings }) {
     // 1. Validasi menyeluruh input dan aturan bisnis
     const validation = validateOrgSettings(formData);
     if (!validation.isValid) {
+      setErrors(validation.errors || {});
       toast.error(validation.error);
       return;
     }
+    setErrors({});
 
     // 2. Bersihkan dan trim seluruh field sebelum dikirim
     const cleanedPayload = {
@@ -112,6 +126,7 @@ export function AdminSettingsForm({ initialSettings }) {
       if (data.success) {
         setFormData(data.data);
         toast.success("Pengaturan profil yayasan berhasil disimpan.");
+        router.refresh();
       } else {
         toast.error(data.message || "Gagal menyimpan pengaturan.");
       }
@@ -127,24 +142,28 @@ export function AdminSettingsForm({ initialSettings }) {
       {/* 1. Identitas Yayasan */}
       <AdminSettingsIdentitySection
         formData={formData}
+        errors={errors}
         onFieldChange={handleFieldChange}
       />
 
       {/* 2. Legalitas & Perizinan */}
       <AdminSettingsLegalSection
         formData={formData}
+        errors={errors}
         onFieldChange={handleFieldChange}
       />
 
       {/* 3. Kontak & Kantor */}
       <AdminSettingsContactSection
         formData={formData}
+        errors={errors}
         onFieldChange={handleFieldChange}
       />
 
       {/* 4. Rekening Bank Resmi */}
       <AdminSettingsBankSection
         bankAccounts={formData.officialBankAccounts || []}
+        errors={errors}
         onAddBankAccount={handleAddBankAccount}
         onRemoveBankAccount={handleRemoveBankAccount}
         onBankAccountChange={handleBankAccountChange}

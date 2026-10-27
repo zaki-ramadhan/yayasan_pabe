@@ -68,8 +68,9 @@ export function AdminArticleSkeleton() {
 
                   {/* Title & Slug */}
                   <TableCell className="space-y-1.5 py-2.5 align-middle">
-                    <Skeleton className="h-4 w-60 rounded" />
-                    <Skeleton className="h-3 w-40 rounded" />
+                    <Skeleton className="h-4 w-64 max-w-full rounded" />
+                    <Skeleton className="h-4 w-40 rounded" />
+                    <Skeleton className="h-3 w-32 rounded" />
                   </TableCell>
 
                   {/* Category */}

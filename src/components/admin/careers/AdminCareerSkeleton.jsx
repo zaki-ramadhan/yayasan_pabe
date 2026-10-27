@@ -35,7 +35,7 @@ export function AdminCareerSkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
-                <TableHead className="py-2.5">
+                <TableHead className="min-w-[200px] w-52 py-2.5">
                   <Skeleton className="h-4 w-32 rounded" />
                 </TableHead>
                 <TableHead className="w-48 py-2.5">
@@ -48,7 +48,7 @@ export function AdminCareerSkeleton() {
                   <Skeleton className="h-4 w-24 rounded" />
                 </TableHead>
                 <TableHead className="w-32 py-2.5 text-center">
-                  <Skeleton className="h-4 w-24 rounded mx-auto" />
+                  <Skeleton className="h-4 w-20 rounded mx-auto" />
                 </TableHead>
                 <TableHead className="w-28 py-2.5 text-center">
                   <Skeleton className="h-4 w-16 rounded mx-auto" />
@@ -62,8 +62,11 @@ export function AdminCareerSkeleton() {
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
                   {/* Position & Code */}
-                  <TableCell className="space-y-1.5 py-3 align-middle">
-                    <Skeleton className="h-4 w-48 rounded" />
+                  <TableCell className="min-w-[200px] w-52 space-y-1.5 py-3 align-middle">
+                    <div className="space-y-1">
+                      <Skeleton className="h-3.5 w-44 rounded" />
+                      <Skeleton className="h-3.5 w-28 rounded" />
+                    </div>
                     <Skeleton className="h-3 w-32 rounded" />
                   </TableCell>
 
@@ -85,7 +88,7 @@ export function AdminCareerSkeleton() {
 
                   {/* Applicants */}
                   <TableCell className="w-32 py-3 text-center align-middle">
-                    <Skeleton className="h-6 w-16 rounded-full mx-auto" />
+                    <Skeleton className="h-7 w-20 rounded-md mx-auto" />
                   </TableCell>
 
                   {/* Status */}

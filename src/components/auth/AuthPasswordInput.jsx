@@ -38,11 +38,9 @@ export function AuthPasswordInput({
           value={value}
           onChange={onChange}
           onBlur={onBlur}
+          error={Boolean(error)}
           autoComplete={autoComplete}
-          className={cn(
-            "h-11 pr-10 text-sm text-slate-900 border-slate-300 rounded-lg transition-colors font-normal",
-            error && "border-rose-500 bg-rose-50/20 focus-visible:ring-rose-500"
-          )}
+          className={cn("h-11 pr-10 text-sm font-normal", className)}
           {...props}
         />
         <button

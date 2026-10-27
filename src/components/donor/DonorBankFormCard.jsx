@@ -39,6 +39,7 @@ export function DonorBankFormCard({
   borderless = false,
 }) {
   const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const { values, bind, getCleanValues, setValues } = useSanitizedForm(
     {
@@ -56,15 +57,32 @@ export function DonorBankFormCard({
     e.preventDefault();
     const cleanData = getCleanValues();
 
-    const validation = validateBankAccount(cleanData);
-    if (!validation.isValid) {
+    const newErrors = {};
+    if (cleanData.bankAccount || cleanData.bankAccountName) {
+      if (!cleanData.bankAccount) {
+        newErrors.bankAccount = "Nomor rekening wajib diisi.";
+      } else if (cleanData.bankAccount.length < 5 || cleanData.bankAccount.length > 30) {
+        newErrors.bankAccount = "Nomor rekening harus antara 5 hingga 30 digit angka.";
+      }
+
+      if (!cleanData.bankAccountName) {
+        newErrors.bankAccountName = "Nama pemilik rekening wajib diisi.";
+      } else if (cleanData.bankAccountName.length < 2) {
+        newErrors.bankAccountName = "Nama pemilik rekening minimal 2 karakter.";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      const firstError = Object.values(newErrors)[0];
       toast({
         title: "Perhatian",
-        description: validation.message,
+        description: firstError,
         variant: "destructive",
       });
       return;
     }
+    setErrors({});
 
     setIsSaving(true);
     try {
@@ -106,13 +124,13 @@ export function DonorBankFormCard({
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
         <div className="space-y-4">
-          <FormField label="Nama Bank">
+          <FormField label="Nama bank">
             <Select
               value={values.bankName}
               onValueChange={(val) => setValues((prev) => ({ ...prev, bankName: val }))}
             >
-              <SelectTrigger id="select-bank-name" className="h-9.5 text-sm rounded-md border-slate-200 bg-white">
-                <SelectValue placeholder="Pilih Bank" />
+              <SelectTrigger id="select-bank-name" className="h-9.5 text-sm rounded-md bg-white">
+                <SelectValue placeholder="Pilih bank" />
               </SelectTrigger>
               <SelectContent>
                 {BANK_OPTIONS.map((bank) => (
@@ -124,7 +142,7 @@ export function DonorBankFormCard({
             </Select>
           </FormField>
 
-          <FormField label="Nomor Rekening">
+          <FormField label="Nomor rekening" error={errors.bankAccount}>
             <Input
               id="input-bank-account"
               name="bankAccount"
@@ -133,22 +151,30 @@ export function DonorBankFormCard({
               pattern="[0-9]*"
               autoComplete="off"
               {...bind("bankAccount")}
+              onChange={(e) => {
+                bind("bankAccount").onChange(e);
+                if (errors.bankAccount) setErrors((prev) => ({ ...prev, bankAccount: undefined }));
+              }}
               placeholder="Contoh: 7123456789"
               maxLength={30}
-              className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
+              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
             />
           </FormField>
 
-          <FormField label="Atas Nama Rekening">
+          <FormField label="Atas nama rekening" error={errors.bankAccountName}>
             <Input
               id="input-bank-account-name"
               name="bankAccountName"
               type="text"
               autoComplete="name"
               {...bind("bankAccountName")}
+              onChange={(e) => {
+                bind("bankAccountName").onChange(e);
+                if (errors.bankAccountName) setErrors((prev) => ({ ...prev, bankAccountName: undefined }));
+              }}
               placeholder="Sesuai buku tabungan"
               maxLength={60}
-              className="h-9.5 text-sm sm:text-sm rounded-md border-slate-200 bg-white"
+              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
             />
           </FormField>
         </div>

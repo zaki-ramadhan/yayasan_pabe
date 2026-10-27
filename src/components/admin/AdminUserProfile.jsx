@@ -32,6 +32,7 @@ export function AdminUserProfile({ currentUser }) {
               fill
               sizes="36px"
               unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
+              referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
               onError={() => setImgError(true)}
             />

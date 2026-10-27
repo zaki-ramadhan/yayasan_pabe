@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Copy, Check, RefreshCw } from "lucide-react";
-import { formatRupiah } from "@/lib/formatters";
+import { formatRupiah, formatPaymentChannel } from "@/lib/formatters";
 import { toast } from "@/hooks/use-toast";
 import { copyToClipboard } from "@/lib/clipboard";
 import { safeFetch } from "@/lib/safeFetch";
@@ -65,12 +65,9 @@ export function AdminRecentTransactionsCard({
     <Card className="shadow-2xs overflow-hidden h-full flex flex-col">
       <CardHeader className="p-3.5 sm:p-4 border-b border-slate-200/90 flex flex-row items-center justify-between gap-3 space-y-0">
         <div>
-          <CardTitle className="text-base font-semibold text-slate-900 leading-tight">
+          <CardTitle className="text-base font-medium text-slate-900 leading-tight">
             Mutasi Donasi Masuk Terkini
           </CardTitle>
-          <CardDescription className="text-sm text-slate-500 mt-0.5">
-            Pencatatan kas masuk real-time seluruh metode pembayaran
-          </CardDescription>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <Button
@@ -102,7 +99,7 @@ export function AdminRecentTransactionsCard({
             <TableRow>
               <TableHead className="w-[170px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Invoice</TableHead>
               <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Donatur</TableHead>
-              <TableHead className="w-full font-medium text-slate-600 text-sm py-2.5 min-w-[160px]">Program</TableHead>
+              <TableHead className="w-full font-medium text-slate-600 text-sm py-2.5 min-w-[280px] sm:min-w-[340px]">Program</TableHead>
               <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Nominal</TableHead>
               <TableHead className="w-px text-center font-medium text-slate-600 text-sm py-1.5 leading-tight whitespace-nowrap">
                 Metode<br />Pembayaran
@@ -140,15 +137,20 @@ export function AdminRecentTransactionsCard({
                   <TableCell className="w-px text-sm font-medium text-slate-900 py-3 whitespace-nowrap align-middle">
                     {item.donorName}
                   </TableCell>
-                  <TableCell className="text-sm text-slate-700 py-3 align-middle">
-                    <span className="line-clamp-2 leading-snug font-normal text-slate-800 block">{item.campaignTitle}</span>
+                  <TableCell className="text-sm text-slate-700 py-3 align-middle min-w-[280px] sm:min-w-[340px]">
+                    <span className="line-clamp-2 leading-snug font-normal text-slate-800 block" title={item.campaignTitle}>
+                      {item.campaignTitle}
+                    </span>
                   </TableCell>
                   <TableCell className="w-px text-sm font-medium text-slate-900 py-3 whitespace-nowrap align-middle">
                     {formatRupiah(item.amount)}
                   </TableCell>
-                  <TableCell className="w-px text-center py-3 whitespace-nowrap uppercase align-middle">
-                    <span className="inline-flex items-center justify-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 max-w-[110px] truncate whitespace-nowrap">
-                      {item.paymentChannel}
+                  <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
+                    <span
+                      className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap"
+                      title={formatPaymentChannel(item.paymentChannel)}
+                    >
+                      {formatPaymentChannel(item.paymentChannel)}
                     </span>
                   </TableCell>
                   <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
