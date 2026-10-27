@@ -61,7 +61,6 @@ export function AdminSettingsForm({ initialSettings }) {
           bank: "",
           accountNumber: "",
           accountName: prev.name || "Yayasan Payung Berkah",
-          category: "Infaq & Sedekah",
         },
       ],
     }));
@@ -110,7 +109,6 @@ export function AdminSettingsForm({ initialSettings }) {
         bank: (b.bank || "").trim(),
         accountNumber: (b.accountNumber || "").trim().replace(/\D/g, ""),
         accountName: (b.accountName || "").trim(),
-        category: (b.category || "").trim(),
       })),
     };
 

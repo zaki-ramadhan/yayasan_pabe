@@ -36,13 +36,11 @@ export const ORG_PROFILE = {
       bank: "Bank Rakyat Indonesia (BRI)",
       accountNumber: "0424-01-000858-568",
       accountName: "Yayasan Payung Berkah",
-      category: "Zakat, Infaq & Sedekah",
     },
     {
       bank: "Bank Mandiri",
       accountNumber: "166-00036-44-119",
       accountName: "Yayasan Payung Berkah",
-      category: "Operasional, Wakaf & Kemanusiaan",
     },
   ],
   vision: "Terwujudnya masyarakat yang berdaya melalui pelayanan, pengayoman, dan pemberdayaan, dengan sistem yang berperikemanusiaan dan berkeadilan.",

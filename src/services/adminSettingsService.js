@@ -31,8 +31,8 @@ export async function getOrgSettings() {
           officeHours: dbSetting.officeHours !== null ? dbSetting.officeHours : ORG_PROFILE.contacts.officeHours,
         },
         officialBankAccounts: Array.isArray(dbSetting.bankAccounts)
-          ? dbSetting.bankAccounts
-          : ORG_PROFILE.officialBankAccounts,
+          ? dbSetting.bankAccounts.map(({ category, ...b }) => b)
+          : ORG_PROFILE.officialBankAccounts.map(({ category, ...b }) => b),
         vision: dbSetting.vision !== null ? dbSetting.vision : ORG_PROFILE.vision,
         missions: Array.isArray(dbSetting.missions) && dbSetting.missions.length > 0
           ? dbSetting.missions
@@ -132,9 +132,8 @@ export async function updateOrgSettings(payload, authUser = null) {
         bank: sanitizeInput(b.bank || ""),
         accountNumber: sanitizeInput(b.accountNumber || "").replace(/\D/g, ""),
         accountName: sanitizeInput(b.accountName || ""),
-        category: sanitizeInput(b.category || "Infaq & Sedekah"),
       }))
-    : current.officialBankAccounts;
+    : current.officialBankAccounts.map(({ category, ...b }) => b);
 
   const updatedVision = sanitizeInput(
     payload.vision !== undefined ? payload.vision : current.vision

@@ -46,7 +46,7 @@ export function AdminSettingsBankSection({
               label="Nama bank"
               required
               error={errors[`bankName_${idx}`] || errors[`bankAccount_${idx}`]}
-              className="sm:col-span-3 space-y-1"
+              className="sm:col-span-4 space-y-1"
             >
               <Input
                 value={account.bank || ""}
@@ -64,7 +64,7 @@ export function AdminSettingsBankSection({
               label="Nomor rekening"
               required
               error={errors[`bankAcc_${idx}`]}
-              className="sm:col-span-3 space-y-1"
+              className="sm:col-span-4 space-y-1"
             >
               <Input
                 value={account.accountNumber || ""}
@@ -94,18 +94,6 @@ export function AdminSettingsBankSection({
                 placeholder="Atas nama yayasan"
                 className="h-9 text-sm font-normal bg-white"
                 required
-              />
-            </FormField>
-
-            <FormField label="Kategori alokasi" className="sm:col-span-2 space-y-1">
-              <Input
-                value={account.category || ""}
-                onChange={(e) =>
-                  onBankAccountChange(idx, "category", sanitizeStandardText(e.target.value, 40))
-                }
-                onBlur={(e) => onBankAccountChange(idx, "category", e.target.value.trim())}
-                placeholder="Infaq / Zakat / Operasional"
-                className="h-9 text-sm font-normal bg-white"
               />
             </FormField>
 
