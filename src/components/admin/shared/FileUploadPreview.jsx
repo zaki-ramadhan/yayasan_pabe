@@ -1,6 +1,7 @@
 "use client";
 
-import { FileCheck, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { FileCheck, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -9,28 +10,41 @@ import { Button } from "@/components/ui/button";
  */
 export function FileUploadPreview({
   value,
+  previewSrc = "",
   isPdf = false,
   uploadMeta = null,
   isUploading = false,
   onReplace,
   onRemove,
 }) {
-  const fileName = value.split("/").pop() || "Berkas terpilih";
+  const [imgError, setImgError] = useState(false);
+  const activeSrc = previewSrc || value;
+  const fileName = (value || "").split("/").pop() || "Berkas terpilih";
+
+  useEffect(() => {
+    setImgError(false);
+  }, [activeSrc]);
 
   return (
     <div className="relative rounded-xl border border-slate-200 bg-slate-50/70 p-3 overflow-hidden">
       <div className="flex items-center gap-3">
         {!isPdf ? (
-          <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-white shrink-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={value}
-              alt="Preview Berkas"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
+          <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shrink-0 flex items-center justify-center">
+            {imgError || !activeSrc ? (
+              <div className="flex flex-col items-center justify-center text-slate-400 p-1">
+                <ImageIcon className="w-5 h-5 text-slate-400" />
+              </div>
+            ) : (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={activeSrc}
+                alt="Preview Berkas"
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+                crossOrigin="anonymous"
+                onError={() => setImgError(true)}
+              />
+            )}
           </div>
         ) : (
           <div className="w-12 h-12 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shrink-0">
@@ -39,13 +53,15 @@ export function FileUploadPreview({
         )}
 
         <div className="flex-1 min-w-0 pr-2">
-          <p className="text-sm font-medium text-slate-800 truncate">{fileName}</p>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+          <p className="text-xs font-normal text-slate-700 truncate" title={fileName}>
+            {fileName}
+          </p>
+          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+            <span className="inline-flex items-center rounded-md border border-emerald-200/80 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
               Tersimpan di Cloudflare R2
             </span>
             {uploadMeta && (
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-500 font-normal">
                 {uploadMeta.sizeKb} KB
               </span>
             )}

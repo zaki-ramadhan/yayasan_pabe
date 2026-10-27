@@ -29,6 +29,7 @@ export function FileUploadZone({
   const [isDragging, setIsDragging] = useState(false);
   const [isManualUrl, setIsManualUrl] = useState(false);
   const [manualInput, setManualInput] = useState(value || "");
+  const [localPreview, setLocalPreview] = useState("");
   const [uploadMeta, setUploadMeta] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -70,6 +71,12 @@ export function FileUploadZone({
         });
         return;
       }
+    }
+
+    // Instant local preview untuk visual responsif tanpa menunggu CDN
+    if (!isPdf && file.type?.startsWith("image/")) {
+      const objectUrl = URL.createObjectURL(file);
+      setLocalPreview(objectUrl);
     }
 
     try {
@@ -130,6 +137,10 @@ export function FileUploadZone({
   };
 
   const handleRemove = () => {
+    if (localPreview) {
+      URL.revokeObjectURL(localPreview);
+      setLocalPreview("");
+    }
     onChange("");
     setManualInput("");
     setUploadMeta(null);
@@ -185,6 +196,7 @@ export function FileUploadZone({
         ) : value ? (
           <FileUploadPreview
             value={value}
+            previewSrc={localPreview || value}
             isPdf={isPdf}
             uploadMeta={uploadMeta}
             isUploading={isUploading}
