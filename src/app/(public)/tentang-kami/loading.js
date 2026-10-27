@@ -7,7 +7,7 @@ export default function TentangKamiLoading() {
       {/* 1. Profile Header Card */}
       <section className="bg-white rounded-xl border border-slate-300 overflow-hidden shadow-2xs">
         {/* Banner */}
-        <div className="relative h-40 sm:h-52 lg:h-60 w-full bg-slate-200">
+        <div className="relative h-44 sm:h-56 lg:h-64 w-full bg-slate-200">
           <Skeleton className="w-full h-full rounded-none" />
         </div>
 

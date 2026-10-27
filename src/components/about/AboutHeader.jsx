@@ -30,7 +30,9 @@ export function AboutHeader({ orgSettings = null, volunteerCount = 14 }) {
 					aria-hidden="true"
 					priority
 				/>
-				<div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none select-none" />
+				{/* Darkening Overlay & Depth Gradient */}
+				<div className="absolute inset-0 bg-slate-950/25 pointer-events-none select-none" />
+				<div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-slate-950/15 to-slate-950/20 pointer-events-none select-none" />
 			</div>
 
 			{/* Profile Details & Overlapping Rounded-Full Avatar */}
