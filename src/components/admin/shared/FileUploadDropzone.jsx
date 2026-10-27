@@ -22,7 +22,7 @@ export function FileUploadDropzone({
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onClick={!isUploading ? onClick : undefined}
-      className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
+      className={`relative flex flex-col items-center justify-center py-8 px-6 min-h-[200px] border-2 border-dashed rounded-xl cursor-pointer transition-all ${
         isDragging
           ? "border-emerald-500 bg-emerald-50/50 scale-[0.99]"
           : "border-slate-200 hover:border-slate-300 bg-slate-50/50 hover:bg-slate-50"
