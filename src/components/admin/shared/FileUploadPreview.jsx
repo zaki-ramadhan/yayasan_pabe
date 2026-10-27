@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileCheck, Trash2, RefreshCw, Image as ImageIcon } from "lucide-react";
+import { FileCheck, Trash2, Edit2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -78,7 +78,7 @@ export function FileUploadPreview({
           title="Ganti berkas"
           aria-label="Ganti berkas"
         >
-          <RefreshCw className="w-4 h-4" />
+          <Edit2 className="w-4 h-4" />
         </Button>
         <Button
           type="button"
