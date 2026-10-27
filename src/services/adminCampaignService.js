@@ -53,7 +53,6 @@ export async function getAdminCampaigns({ search = "", status = "", page = 1, li
         donorCount: c._count?.donations || c.donorCount || 0,
         endDate: c.endDate ? c.endDate.toISOString() : null,
         status: c.status,
-        isUrgent: c.isUrgent,
         isFeatured: c.isFeatured,
         location: c.location || "Nasional",
         bannerUrl: c.bannerUrl || null,
@@ -123,7 +122,6 @@ export async function createAdminCampaign(payload) {
   const story = sanitizeInput(payload.story || "").trim();
   const excerpt = sanitizeInput(payload.excerpt || story.slice(0, 160)).trim();
   const targetAmount = Math.max(0, parseInt(payload.targetAmount, 10) || 0);
-  const isUrgent = Boolean(payload.isUrgent);
   const isFeatured = Boolean(payload.isFeatured);
   const bannerUrl = payload.bannerUrl ? sanitizeInput(payload.bannerUrl).trim() : null;
   let categoryId = payload.categoryId;
@@ -165,7 +163,6 @@ export async function createAdminCampaign(payload) {
           collectedAmount: 0,
           donorCount: 0,
           endDate,
-          isUrgent,
           isFeatured,
           location,
           excerpt,
@@ -187,7 +184,6 @@ export async function createAdminCampaign(payload) {
       collectedAmount: 0,
       donorCount: 0,
       endDate,
-      isUrgent,
       isFeatured,
       location,
       excerpt,
@@ -219,7 +215,6 @@ export async function updateAdminCampaign(id, payload) {
   if (payload.status !== undefined && ["ACTIVE", "PAUSED", "COMPLETED"].includes(payload.status)) {
     updateData.status = payload.status;
   }
-  if (payload.isUrgent !== undefined) updateData.isUrgent = Boolean(payload.isUrgent);
   if (payload.isFeatured !== undefined) updateData.isFeatured = Boolean(payload.isFeatured);
   if (payload.bannerUrl !== undefined) {
     updateData.bannerUrl = sanitizeInput(payload.bannerUrl).trim();

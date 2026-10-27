@@ -37,7 +37,7 @@ export function ConfirmDialog({
         )}
       >
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
+          <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
             {title}
           </DialogTitle>
         </DialogHeader>

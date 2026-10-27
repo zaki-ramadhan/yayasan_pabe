@@ -37,7 +37,7 @@ export function AdminUserResetDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
+          <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
             Kata sandi baru dibuat
           </DialogTitle>
         </DialogHeader>

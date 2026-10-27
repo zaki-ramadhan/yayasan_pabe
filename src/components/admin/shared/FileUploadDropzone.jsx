@@ -39,12 +39,12 @@ export function FileUploadDropzone({
       </div>
 
       <div className="text-center">
-        <p className="text-xs font-semibold text-slate-700">
+        <p className="text-sm font-medium text-slate-700">
           {isUploading
             ? "Mengompresi dan mengunggah ke R2..."
             : "Klik untuk memilih atau seret berkas ke sini"}
         </p>
-        <p className="text-[11px] text-slate-500 mt-1 max-w-sm">
+        <p className="text-xs text-slate-500 mt-1 max-w-sm">
           {helperText}
         </p>
       </div>

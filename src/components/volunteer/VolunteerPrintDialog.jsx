@@ -48,7 +48,7 @@ export function VolunteerPrintDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader className="border-b border-slate-100">
-          <DialogTitle className="text-base font-semibold text-slate-900 leading-tight">
+          <DialogTitle className="text-base font-medium text-slate-900 leading-tight">
             Kartu Tanda Anggota Relawan
           </DialogTitle>
         </DialogHeader>

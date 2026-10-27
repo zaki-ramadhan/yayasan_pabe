@@ -1,6 +1,5 @@
 export const PROGRAM_SORT_OPTIONS = [
   { value: "terbaru", label: "Terbaru" },
-  { value: "mendesak", label: "Termendesak" },
   { value: "terpopuler", label: "Terbanyak Donasi" },
   { value: "dana-terbanyak", label: "Dana Terkumpul Terbanyak" },
 ];

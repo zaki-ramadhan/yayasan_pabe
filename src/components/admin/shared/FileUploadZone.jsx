@@ -46,6 +46,32 @@ export function FileUploadZone({
       return;
     }
 
+    // Pre-flight client validation format berkas
+    if (accept) {
+      const allowedList = accept.split(",").map((t) => t.trim().toLowerCase());
+      const fileType = (file.type || "").toLowerCase();
+      const fileExt = `.${(file.name || "").split(".").pop()}`.toLowerCase();
+      const isAllowed = allowedList.some((allowed) => {
+        if (allowed.startsWith(".")) return fileExt === allowed;
+        if (allowed.endsWith("/*")) {
+          const baseType = allowed.split("/")[0];
+          return fileType.startsWith(`${baseType}/`);
+        }
+        return fileType === allowed;
+      });
+
+      if (!isAllowed) {
+        toast({
+          title: "Format berkas tidak didukung",
+          description: isPdf
+            ? "Format berkas harus berupa dokumen PDF."
+            : "Format berkas harus berupa gambar (JPG, PNG, atau WebP).",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     try {
       setIsUploading(true);
       const data = await uploadFileToServer({
@@ -120,7 +146,7 @@ export function FileUploadZone({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-slate-700 tracking-wide">
+        <label className="text-sm font-medium text-slate-900">
           {label}
         </label>
         <button
@@ -129,7 +155,11 @@ export function FileUploadZone({
           className="text-xs text-emerald-700 hover:text-emerald-800 font-medium flex items-center gap-1 transition-colors"
         >
           <Link2 className="w-3.5 h-3.5" />
-          {isManualUrl ? "Gunakan upload berkas" : "Input URL manual"}
+          {isManualUrl
+            ? "Unggah berkas"
+            : isPdf
+            ? "Gunakan tautan dokumen"
+            : "Gunakan tautan gambar"}
         </button>
       </div>
 
@@ -147,7 +177,7 @@ export function FileUploadZone({
               type="button"
               variant="outline"
               onClick={handleApplyManual}
-              className="h-10 px-4 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              className="h-10 px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
               Terapkan
             </Button>

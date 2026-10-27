@@ -160,7 +160,7 @@ export function DonorProfileCover({
       <Dialog open={isAvatarModalOpen} onOpenChange={setIsAvatarModalOpen}>
         <DialogContent className="max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
           <DialogHeader>
-            <DialogTitle className="text-base font-semibold text-slate-950 leading-tight">
+            <DialogTitle className="text-base font-medium text-slate-950 leading-tight">
               Pengaturan foto profil
             </DialogTitle>
           </DialogHeader>

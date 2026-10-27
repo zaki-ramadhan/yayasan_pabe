@@ -50,7 +50,7 @@ export function AdminTopHeader({
           <span className="text-sm font-medium text-slate-900 block leading-tight">
             {currentUser?.name || "Administrator"}
           </span>
-          <span className="text-sm text-slate-500 font-normal block leading-tight mt-0.5">
+          <span className="text-xs text-slate-500 font-normal block leading-tight mt-0.5">
             {(ROLE_LABELS[userRole] || currentUser?.title || userRole || "Administrator")
               .replace(/\s*\(Ketua Yayasan\)/gi, "")
               .replace(/\s*Ketua Yayasan/gi, "")}

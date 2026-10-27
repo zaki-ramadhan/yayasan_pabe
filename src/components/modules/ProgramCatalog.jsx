@@ -33,9 +33,7 @@ function filterCampaign(campaign, { category, searchQuery, categories }) {
 
 function sortCampaigns(items, sortBy) {
   const sorted = [...items];
-  if (sortBy === "mendesak") {
-    sorted.sort((a, b) => (b.isUrgent ? 1 : 0) - (a.isUrgent ? 1 : 0));
-  } else if (sortBy === "terpopuler") {
+  if (sortBy === "terpopuler") {
     sorted.sort((a, b) => b.donorCount - a.donorCount);
   } else if (sortBy === "dana-terbanyak") {
     sorted.sort((a, b) => b.collectedAmount - a.collectedAmount);

@@ -39,13 +39,13 @@ export function FileUploadPreview({
         )}
 
         <div className="flex-1 min-w-0 pr-2">
-          <p className="text-xs font-semibold text-slate-800 truncate">{fileName}</p>
+          <p className="text-sm font-medium text-slate-800 truncate">{fileName}</p>
           <div className="flex items-center gap-2 mt-1">
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
               Tersimpan di Cloudflare R2
             </span>
             {uploadMeta && (
-              <span className="text-[11px] text-slate-500">
+              <span className="text-xs text-slate-500">
                 {uploadMeta.sizeKb} KB
               </span>
             )}
@@ -59,7 +59,7 @@ export function FileUploadPreview({
             size="sm"
             onClick={onReplace}
             disabled={isUploading}
-            className="h-8 px-2.5 text-xs text-slate-700 hover:bg-white"
+            className="h-8 px-2.5 text-xs font-medium text-slate-700 hover:bg-white"
           >
             Ganti
           </Button>

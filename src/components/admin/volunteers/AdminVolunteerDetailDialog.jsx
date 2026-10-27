@@ -40,7 +40,7 @@ export function AdminVolunteerDetailDialog({
       <DialogContent className="max-w-lg max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader className="border-b border-slate-100">
           <div className="flex items-center gap-2.5">
-            <DialogTitle className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
+            <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
               Profil pendaftar relawan
             </DialogTitle>
             <AdminVolunteerStatusBadge status={volunteer.status} />

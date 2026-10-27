@@ -13,7 +13,7 @@ export function AdminHeader({ userRole = USER_ROLES.SUPER_ADMIN }) {
         <h1 className="text-base font-medium text-slate-900">
           Panel Admin Yayasan
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-xs text-slate-500">
           Hak Akses Aktif: <span className="font-medium text-slate-700">{ROLE_LABELS[userRole] || userRole}</span>
         </p>
       </div>

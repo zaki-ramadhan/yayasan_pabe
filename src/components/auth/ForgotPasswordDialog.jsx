@@ -67,7 +67,7 @@ export function ForgotPasswordDialog({ isOpen, onOpenChange, initialIdentifier =
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950 leading-tight">
+          <DialogTitle className="text-base sm:text-lg font-medium text-slate-950 leading-tight">
             Atur Ulang Kata Sandi
           </DialogTitle>
         </DialogHeader>

@@ -106,7 +106,7 @@ export function AdminApplicantDrawer({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader className="border-b border-slate-100">
-          <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950">
+          <DialogTitle className="text-base sm:text-lg font-medium text-slate-950">
             Daftar pelamar: {vacancy?.title || "Lowongan"}
           </DialogTitle>
         </DialogHeader>

@@ -44,7 +44,7 @@ export function AdminUserProfile({ currentUser }) {
           <span className="text-sm font-medium text-slate-900 block truncate">
             {currentUser?.name || "Pengguna"}
           </span>
-          <span className="text-sm text-slate-500 font-normal block truncate">
+          <span className="text-xs text-slate-500 font-normal block truncate">
             {(ROLE_LABELS[userRole] || currentUser?.title || userRole || "Pengurus")
               .replace(/\s*\(Ketua Yayasan\)/gi, "")
               .replace(/\s*Ketua Yayasan/gi, "")}

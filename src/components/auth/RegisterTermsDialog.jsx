@@ -15,7 +15,7 @@ export function RegisterTermsDialog({ isOpen, onOpenChange, onAccept }) {
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950 leading-tight">
+          <DialogTitle className="text-base sm:text-lg font-medium text-slate-950 leading-tight">
             Ketentuan Akad &amp; Kebijakan Privasi
           </DialogTitle>
         </DialogHeader>

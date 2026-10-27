@@ -83,7 +83,7 @@ const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (
 	<DialogPrimitive.Title
 		ref={ref}
 		className={cn(
-			"text-base sm:text-lg font-semibold leading-snug tracking-tight text-slate-900",
+			"text-base sm:text-lg font-medium leading-snug tracking-tight text-slate-900",
 			className,
 		)}
 		{...props}
@@ -113,7 +113,7 @@ function DialogHeaderWithIcon({
 }) {
 	return (
 		<DialogHeader className={className} hideCloseButton={hideCloseButton}>
-			<DialogTitle className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
+			<DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
 				{title}
 			</DialogTitle>
 		</DialogHeader>
@@ -203,7 +203,7 @@ function FormDialog({
 			>
 				{title && (
 					<DialogHeader>
-						<DialogTitle className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
+						<DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
 							{title}
 						</DialogTitle>
 					</DialogHeader>

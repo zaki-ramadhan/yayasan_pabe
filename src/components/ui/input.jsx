@@ -61,6 +61,7 @@ const Input = React.forwardRef(
             hasError
               ? "border-rose-500 bg-rose-50/15 text-rose-950 placeholder:text-rose-300 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
               : "border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary",
+            type === "date" && "[&::-webkit-calendar-picker-indicator]:ml-auto [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:p-0.5",
             ResolvedIcon && "pl-9",
             (isLoading || (onClear && hasValue)) && "pr-9",
             className

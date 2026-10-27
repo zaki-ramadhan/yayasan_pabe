@@ -7,7 +7,6 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import { Checkbox } from "@/components/ui/checkbox";
 import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
@@ -30,7 +29,6 @@ export function AdminProgramModal({
 	const [targetAmount, setTargetAmount] = useState(0);
 	const [endDate, setEndDate] = useState("");
 	const [location, setLocation] = useState("");
-	const [isUrgent, setIsUrgent] = useState(false);
 	const [story, setStory] = useState("");
 	const [bannerUrl, setBannerUrl] = useState("");
 	const [errors, setErrors] = useState({});
@@ -87,11 +85,6 @@ export function AdminProgramModal({
 				campaignToEdit.location ||
 					"",
 			);
-			setIsUrgent(
-				Boolean(
-					campaignToEdit.isUrgent,
-				),
-			);
 			setStory(
 				campaignToEdit.story ||
 					campaignToEdit.excerpt ||
@@ -118,9 +111,6 @@ export function AdminProgramModal({
 			);
 			setLocation(
 				"Wilayah Binaan PABE",
-			);
-			setIsUrgent(
-				false,
 			);
 			setStory(
 				"",
@@ -209,7 +199,7 @@ export function AdminProgramModal({
 			newErrors.targetAmount = "Target pendanaan tidak boleh bernilai negatif.";
 		}
 		if (story.trim() && story.trim().length < 10) {
-			newErrors.story = "Cerita latar belakang program minimal 10 karakter.";
+			newErrors.story = "Deskripsi program minimal 10 karakter.";
 		}
 
 		if (Object.keys(newErrors).length > 0) {
@@ -234,7 +224,6 @@ export function AdminProgramModal({
 					).toISOString()
 				: null,
 			location,
-			isUrgent,
 			story,
 			bannerUrl: bannerUrl ? bannerUrl.trim() : null,
 			excerpt: story.slice(
@@ -393,7 +382,7 @@ export function AdminProgramModal({
 					error={errors.targetAmount}
 				>
 					<CurrencyInput
-						placeholder="0 (atau kosongkan jika tak terbatas)"
+						placeholder="0"
 						value={targetAmount}
 						onChange={(val) => {
 							setTargetAmount(val);
@@ -403,6 +392,9 @@ export function AdminProgramModal({
 						}}
 						className="h-10"
 					/>
+					<p className="text-xs text-slate-500 mt-1">
+						Kosongkan atau isi 0 jika program penggalangan dana berkelanjutan tanpa batas target.
+					</p>
 				</FormField>
 			</div>
 
@@ -429,16 +421,6 @@ export function AdminProgramModal({
 				</FormField>
 			</div>
 
-			{/* Urgent program checkbox */}
-			<Checkbox
-				id="isUrgent"
-				variant="card"
-				checked={isUrgent}
-				onCheckedChange={setIsUrgent}
-				label="Tandai sebagai program mendesak"
-				description="Program akan mendapat prioritas banner dan badge darurat di beranda utama"
-			/>
-
 			{/* Foto sampul / banner R2 */}
 			<FileUploadZone
 				value={bannerUrl}
@@ -446,14 +428,14 @@ export function AdminProgramModal({
 				context="CAMPAIGN_BANNER"
 				identifier={title}
 				label="Foto sampul / banner program"
-				helperText="Mendukung JPG, PNG, WebP (Maks. 5MB). Disimpan rapi ke campaigns/banners."
+				helperText="Mendukung JPG, PNG, WebP (Maks. 5MB). Otomatis dioptimasi dan disimpan ke R2."
 			/>
 
-			{/* Deskripsi & cerita program */}
-			<FormField label="Cerita & latar belakang program" error={errors.story}>
+			{/* Deskripsi & uraian program */}
+			<FormField label="Deskripsi program" error={errors.story}>
 				<Textarea
 					rows={4}
-					placeholder="Ceritakan latar belakang mustahik, tujuan penyaluran dana, dan kebutuhan mendesak..."
+					placeholder="Jelaskan rincian program, sasaran penerima manfaat, dan rencana penyaluran donasi..."
 					value={story}
 					onChange={(e) => {
 						setStory(e.target.value);

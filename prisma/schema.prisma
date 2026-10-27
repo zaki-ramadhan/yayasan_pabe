@@ -25,7 +25,6 @@ model Campaign {
   collectedAmount Float            @default(0)
   donorCount      Int              @default(0)
   endDate         DateTime?
-  isUrgent        Boolean          @default(false)
   isFeatured      Boolean          @default(false)
   location        String?
   excerpt         String?
@@ -39,7 +38,6 @@ model Campaign {
   routineDonations RoutineDonation[]
 
   @@index([categoryId])
-  @@index([isUrgent])
   @@index([isFeatured])
   @@index([status])
   @@index([status, createdAt(sort: Desc)])

@@ -41,7 +41,7 @@ export function AdminTransactionDetailModal({
       <DialogContent className="max-w-lg max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader className="border-b border-slate-100">
           <div className="flex items-center gap-2.5">
-            <DialogTitle className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">
+            <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
               Rincian mutasi donasi
             </DialogTitle>
             <StatusBadge status={transaction.status} />

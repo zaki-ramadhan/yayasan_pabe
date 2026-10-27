@@ -22,9 +22,7 @@ export async function getCampaigns({ category = "all", search = "", sort = "terb
     }
 
     let orderBy = { endDate: "desc" };
-    if (sort === "mendesak") {
-      orderBy = [{ isUrgent: "desc" }, { endDate: "asc" }];
-    } else if (sort === "terpopuler") {
+    if (sort === "terpopuler") {
       orderBy = { donorCount: "desc" };
     } else if (sort === "dana-terbanyak") {
       orderBy = { collectedAmount: "desc" };
@@ -64,23 +62,6 @@ export async function getFeaturedCampaigns() {
     return dbFeatured.map(formatCampaignFromDb);
   } catch (error) {
     console.error("Prisma getFeaturedCampaigns error:", error);
-    return [];
-  }
-}
-
-export async function getUrgentCampaigns() {
-  try {
-    const dbUrgent = await prisma.campaign.findMany({
-      where: { isUrgent: true, status: "ACTIVE" },
-      include: {
-        category: true,
-        updates: true,
-        donations: { where: { status: "PAID" }, take: 5, orderBy: { createdAt: "desc" } },
-      },
-    });
-    return dbUrgent.map(formatCampaignFromDb);
-  } catch (error) {
-    console.error("Prisma getUrgentCampaigns error:", error);
     return [];
   }
 }
@@ -161,9 +142,8 @@ export { getCampaignUpdates } from "./campaignFeedService";
 
 /**
  * Menentukan target program untuk formulir Donasi Cepat berdasarkan hierarki kebutuhan:
- * 1. Program AKTIF dengan isUrgent === true yang BELUM mencapai target (collected < target).
- * 2. Jika tidak ada, program AKTIF dengan tenggat waktu (endDate) terdekat yang BELUM mencapai target.
- * 3. Jika tidak ada yang mendesak, fallback ke program aktif pertama / program induk.
+ * 1. Program AKTIF dengan tenggat waktu (endDate) terdekat yang BELUM mencapai target.
+ * 2. Fallback ke program aktif pertama / program default.
  */
 export function getQuickDonateTargetSlug(campaigns = []) {
   if (!Array.isArray(campaigns) || campaigns.length === 0) {
@@ -179,11 +159,7 @@ export function getQuickDonateTargetSlug(campaigns = []) {
 
   const pool = unfulfilled.length > 0 ? unfulfilled : campaigns.filter((c) => !isCampaignClosed(c));
 
-  // 2. Prioritas 1: Program Urgent yang belum capai target
-  const urgent = pool.find((c) => c.isUrgent);
-  if (urgent?.slug) return urgent.slug;
-
-  // 3. Prioritas 2: Tenggat waktu (endDate) terdekat yang belum capai target
+  // 2. Prioritas: Tenggat waktu (endDate) terdekat yang belum capai target
   const sortedByEndDate = [...pool].sort((a, b) => {
     const timeA = a.endDate ? new Date(a.endDate).getTime() : Infinity;
     const timeB = b.endDate ? new Date(b.endDate).getTime() : Infinity;
