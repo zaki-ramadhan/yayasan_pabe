@@ -23,8 +23,8 @@ export function DashboardMetricCards({ userRole, stats }) {
           statusColor="slate"
         />
         <DashboardMetricCard
-          label="Santri yang Didukung"
-          value={`${formatNumber(supportedBeneficiaries)} Santri Yatim`}
+          label="Anak Asuh Didukung"
+          value={`${formatNumber(supportedBeneficiaries)} Anak Yatim`}
           subtitle="Bimbel PABE Smart Cakung"
           statusColor="slate"
         />

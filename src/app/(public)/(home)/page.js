@@ -21,7 +21,7 @@ export const metadata = {
     absolute: "Yayasan Payung Berkah | PABE",
   },
   description:
-    "Penyaluran zakat, infak, dan sedekah untuk pendidikan santri dan pemberdayaan dhuafa. Hidup Berkah dengan Sedekah.",
+    "Penyaluran zakat, infak, dan sedekah untuk pendidikan anak yatim dan pemberdayaan dhuafa. Hidup Berkah dengan Sedekah.",
 };
 
 export default async function HomePage() {

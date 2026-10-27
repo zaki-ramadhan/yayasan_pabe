@@ -12,8 +12,8 @@ export const INSTAGRAM_POSTS = [
   {
     id: "ig-1",
     imageUrl: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?w=600&auto=format&fit=crop&q=80",
-    alt: "Penyaluran 500 Mushaf Al-Quran dan Paket Gizi Santri Tahfidz di Lebak",
-    caption: "Alhamdulillah, penyaluran 500 Mushaf Al-Qur'an dan paket gizi santri telah terlaksana dengan lancar di Lebak, Banten.",
+    alt: "Penyaluran 500 Mushaf Al-Quran dan Paket Gizi Anak Binaan Tahfidz",
+    caption: "Alhamdulillah, penyaluran 500 Mushaf Al-Qur'an dan paket gizi anak binaan telah terlaksana dengan lancar di wilayah binaan.",
     date: "18 Sep 2026",
     likes: 1240,
     comments: 86,
@@ -23,8 +23,8 @@ export const INSTAGRAM_POSTS = [
   {
     id: "ig-2",
     imageUrl: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600&auto=format&fit=crop&q=80",
-    alt: "Distribusi Sedekah Pangan dan Makan Siang Berkah Santri Yatim",
-    caption: "Senyum bahagia adik-adik santri yatim saat menerima hidangan makan siang sehat dari sedekah rutin para donatur.",
+    alt: "Distribusi Sedekah Pangan dan Makan Siang Berkah Anak Yatim",
+    caption: "Senyum bahagia adik-adik anak yatim saat menerima hidangan makan siang sehat dari sedekah rutin para donatur.",
     date: "16 Sep 2026",
     likes: 2450,
     comments: 142,
@@ -56,7 +56,7 @@ export const INSTAGRAM_POSTS = [
   {
     id: "ig-5",
     imageUrl: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=600&auto=format&fit=crop&q=80",
-    alt: "Pelatihan Keterampilan dan Kewirausahaan Mandiri Santri",
+    alt: "Pelatihan Keterampilan dan Kewirausahaan Mandiri Anak Binaan",
     caption: "Membekali generasi muda dengan ilmu agama dan keahlian wirausaha mandiri untuk masa depan yang berdaya.",
     date: "10 Sep 2026",
     likes: 1560,
@@ -68,7 +68,7 @@ export const INSTAGRAM_POSTS = [
     id: "ig-6",
     imageUrl: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb0?w=600&auto=format&fit=crop&q=80",
     alt: "Kajian Doa Bersama dan Istighosah Jumat Berkah Para Donatur",
-    caption: "Mendoakan keberkahan rezeki dan kesehatan seluruh donatur dalam doa bersama santri penghafal Quran.",
+    caption: "Mendoakan keberkahan rezeki dan kesehatan seluruh donatur dalam doa bersama anak-anak yatim penghafal Quran.",
     date: "8 Sep 2026",
     likes: 2780,
     comments: 183,
@@ -78,7 +78,7 @@ export const INSTAGRAM_POSTS = [
   {
     id: "ig-7",
     imageUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&auto=format&fit=crop&q=80",
-    alt: "Progres Pembangunan Ruang Kelas dan Asrama Tahfidz",
+    alt: "Progres Pembangunan Ruang Belajar dan Fasilitas Pembinaan",
     caption: "Setiap bata dan semen yang diwakafkan menjadi amal jariyah yang terus mengalir pahalanya tanpa henti.",
     date: "5 Sep 2026",
     likes: 1940,
@@ -100,7 +100,7 @@ export const INSTAGRAM_POSTS = [
   {
     id: "ig-9",
     imageUrl: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=600&auto=format&fit=crop&q=80",
-    alt: "Pemberian Santunan dan Beasiswa Pendidikan Santri Dhuafa",
+    alt: "Pemberian Santunan dan Beasiswa Pendidikan Anak Yatim Dhuafa",
     caption: "Menghadirkan senyum dan harapan baru bagi anak-anak berprestasi dari keluarga prasejahtera.",
     date: "1 Sep 2026",
     likes: 2180,
@@ -122,8 +122,8 @@ export const INSTAGRAM_POSTS = [
   {
     id: "ig-11",
     imageUrl: "https://images.unsplash.com/photo-1526976668912-1a811878dd37?w=600&auto=format&fit=crop&q=80",
-    alt: "Pembangunan Sumur Bor Air Bersih Sumber Kehidupan Santri",
-    caption: "Air bersih mengalir untuk wudhu dan kebutuhan harian pondok pesantren tahfidz di daerah rawan kekeringan.",
+    alt: "Pembangunan Sumur Bor Air Bersih Sumber Kehidupan Warga Binaan",
+    caption: "Air bersih mengalir untuk wudhu dan kebutuhan harian warga dan anak binaan di daerah rawan kekeringan.",
     date: "25 Agu 2026",
     likes: 3120,
     comments: 204,

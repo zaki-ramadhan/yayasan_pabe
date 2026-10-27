@@ -12,7 +12,7 @@ const AUTH_SLIDES = [
     id: 1,
     image: ASSET_PATHS.BANNERS.AUTH_SLIDE_1,
     title: "Mari Melangkah Bersama, Wujudkan Kebaikan Nyata",
-    desc: "Satu langkah kepedulian Anda menghadirkan masa depan yang lebih mandiri dan penuh harapan bagi santri, yatim, dan dhuafa.",
+    desc: "Satu langkah kepedulian Anda menghadirkan masa depan yang lebih mandiri dan penuh harapan bagi anak-anak yatim dan kaum dhuafa.",
   },
   {
     id: 2,

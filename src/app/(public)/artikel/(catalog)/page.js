@@ -39,7 +39,7 @@ export default async function ArtikelIndexPage() {
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
       <PageHeader
         title="Berita &amp; Artikel"
-        description="Wawasan panduan zakat, infak, sedekah, serta laporan aktual kegiatan pemberdayaan santri dan dhuafa di lapangan."
+        description="Wawasan panduan zakat, infak, sedekah, serta laporan aktual kegiatan pemberdayaan anak yatim dan dhuafa di lapangan."
       />
 
       <Suspense

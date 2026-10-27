@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createRoutineDonations } from "@/services/routineDonationService";
 import { POST as routineDonationPost } from "@/app/api/routine-donations/route";
 import { POST as aminPost } from "@/app/api/donations/amin/route";
+import prisma from "@/lib/prisma";
 
 describe("Backend Integration & Real Persistence Audit", () => {
   describe("Donasi Rutin (PostgreSQL & Service Integration)", () => {
@@ -13,7 +14,7 @@ describe("Backend Integration & Real Persistence Audit", () => {
         programs: [
           {
             campaignId: "camp-001",
-            programTitle: "Beasiswa Santri Tahfidz",
+            programTitle: "Beasiswa Anak Yatim Tahfidz",
             amount: 50000,
             frequency: "WEEKLY",
             routineType: "AUTO_DONATION",
@@ -100,11 +101,14 @@ describe("Backend Integration & Real Persistence Audit", () => {
     });
 
     it("berhasil menerima permintaan penambahan aamiin doa dengan aman", async () => {
+      const sampleDonation = await prisma.donation.findFirst({ select: { id: true } });
+      const targetId = sampleDonation?.id || "don-001";
+
       const req = new Request("http://localhost:3000/api/donations/amin", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-forwarded-for": "192.168.1.103" },
         body: JSON.stringify({
-          donationId: "don-001",
+          donationId: targetId,
           action: "increment",
         }),
       });
@@ -113,7 +117,7 @@ describe("Backend Integration & Real Persistence Audit", () => {
       const json = await res.json();
       expect(res.status).toBe(200);
       expect(json.success).toBe(true);
-      expect(json.data.id).toBe("don-001");
+      expect(json.data.id).toBe(targetId);
     });
   });
 

@@ -235,7 +235,7 @@ ET
 BT
 /F2 8.5 Tf
 62 505 Td
-(${escapePdfText("Pendidikan & Beasiswa Santri Tahfidz")}) Tj
+(${escapePdfText("Pendidikan & Beasiswa Anak Yatim")}) Tj
 270 0 Td
 (${escapePdfText("Rp 6.500.000.000")}) Tj
 135 0 Td

@@ -6,10 +6,10 @@ import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 
 export const metadata = {
   title: "Program Donasi & Penyaluran Zakat",
-  description: "Temukan berbagai program kebaikan, beasiswa santri, tanggap bencana, dan zakat produktif Yayasan Payung Berkah.",
+  description: "Temukan berbagai program kebaikan, beasiswa anak yatim, tanggap bencana, dan zakat produktif Yayasan Payung Berkah.",
   openGraph: {
     title: "Program Donasi & Penyaluran Zakat - Yayasan Payung Berkah",
-    description: "Temukan berbagai program kebaikan, beasiswa santri, tanggap bencana, dan zakat produktif Yayasan Payung Berkah.",
+    description: "Temukan berbagai program kebaikan, beasiswa anak yatim, tanggap bencana, dan zakat produktif Yayasan Payung Berkah.",
     url: "/program",
     type: "website",
     images: [

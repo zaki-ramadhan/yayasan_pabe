@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 
-export function HomeCtaSection({ defaultCampaignSlug = "beasiswa-santri-penghafal-quran" }) {
+export function HomeCtaSection({ defaultCampaignSlug = "beasiswa-pendidikan-anak-yatim" }) {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Banner Card dengan Radial Gradient (Fokus di Tengah Bawah) & Warna Biru Lebih Teduh */}
@@ -19,7 +19,7 @@ export function HomeCtaSection({ defaultCampaignSlug = "beasiswa-santri-penghafa
             </h2>
 
             <p className="text-base text-slate-300 leading-relaxed max-w-xl font-normal">
-              Salurkan kepedulian Anda melalui program pendidikan Al-Qur&apos;an dan kemandirian santri yatim secara amanah, transparan, dan tepat sasaran.
+              Salurkan kepedulian Anda melalui program pendidikan Al-Qur&apos;an dan kemandirian anak-anak yatim secara amanah, transparan, dan tepat sasaran.
             </p>
 
             <div className="pt-1.5">

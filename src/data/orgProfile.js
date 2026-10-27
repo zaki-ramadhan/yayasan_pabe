@@ -174,7 +174,7 @@ Yayasan Payung Berkah bercita-cita mewujudkan interaksi antara masyarakat kurang
       number: "01",
       title: "Pembangunan Asrama Yatim",
       desc: "Pembangunan fasilitas asrama terpadu yang aman, nyaman, dan berorientasi pendidikan karakter bagi anak-anak yatim binaan.",
-      target: "Kemandirian Santri",
+      target: "Kemandirian Anak Asuh",
     },
     {
       id: "pkbm",

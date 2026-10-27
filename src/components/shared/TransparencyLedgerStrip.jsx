@@ -53,14 +53,14 @@ export function TransparencyLedgerStrip({
             <div className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight">
               {formatNumber(metrics.totalBeneficiaries || 0)}+ Orang
             </div>
-            <span className="text-sm text-slate-600 block pt-0.5">Santri, yatim &amp; dhuafa</span>
+            <span className="text-sm text-slate-600 block pt-0.5">Anak yatim &amp; dhuafa</span>
           </div>
 
-          {/* 4. Pesantren Mitra */}
+          {/* 4. Titik Binaan */}
           <div className="py-3 sm:py-0 sm:px-6 last:pr-0 space-y-1">
-            <span className="text-sm font-medium text-slate-700 block">Pesantren Mitra</span>
+            <span className="text-sm font-medium text-slate-700 block">Titik Binaan</span>
             <div className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight">
-              {metrics.partnerPesantrenCount || 0} Pesantren
+              {metrics.partnerPesantrenCount || 0} Lokasi
             </div>
             <span className="text-sm text-slate-600 block pt-0.5">Penerima distribusi rutin</span>
           </div>
@@ -86,13 +86,13 @@ export function TransparencyLedgerStrip({
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-950 tracking-tight">
               {(metrics.totalBeneficiaries || 0).toLocaleString("id-ID")}+ Orang
             </div>
-            <span className="text-sm sm:text-base text-slate-700 block">Santri, yatim &amp; dhuafa</span>
+            <span className="text-sm sm:text-base text-slate-700 block">Anak yatim &amp; dhuafa</span>
           </div>
 
           <div className="py-4 sm:py-0 sm:px-6 space-y-1.5">
-            <span className="text-sm sm:text-base font-medium text-slate-700 block">Pesantren Mitra</span>
+            <span className="text-sm sm:text-base font-medium text-slate-700 block">Titik Binaan</span>
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-950 tracking-tight">
-              {(metrics.partnerPesantrenCount || 0).toLocaleString("id-ID")} Pondok
+              {(metrics.partnerPesantrenCount || 0).toLocaleString("id-ID")} Lokasi
             </div>
             <span className="text-sm sm:text-base text-slate-700 block">Tersebar di pelosok daerah</span>
           </div>

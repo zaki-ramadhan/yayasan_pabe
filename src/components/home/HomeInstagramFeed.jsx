@@ -40,7 +40,7 @@ export function HomeInstagramFeed({ posts = [], account = DEFAULT_ACCOUNT }) {
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
       <SectionHeader
         title="Follow Kami di Instagram"
-        subtitle="Aktivitas harian santri, penyaluran amanah zakat, dan aksi kemanusiaan terkini."
+        subtitle="Aktivitas pembinaan anak yatim, penyaluran amanah zakat, dan aksi kemanusiaan terkini."
         align="center"
       />
 
@@ -83,7 +83,7 @@ export function HomeInstagramFeed({ posts = [], account = DEFAULT_ACCOUNT }) {
           variant="dashed"
           icon={InstagramIcon}
           title="Belum ada postingan yang disorot"
-          description="Ikuti akun resmi kami di Instagram untuk melihat dokumentasi kegiatan santri, penyaluran donasi, dan informasi terkini."
+          description="Ikuti akun resmi kami di Instagram untuk melihat dokumentasi kegiatan anak asuh, penyaluran donasi, dan informasi terkini."
           action={
             <a
               href={currentAccount.profileUrl}

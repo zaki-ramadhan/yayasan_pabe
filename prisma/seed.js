@@ -16,7 +16,7 @@ const prisma = new PrismaClient({ adapter });
 const REAL_PROGRAMS = [
   {
     id: "camp-001",
-    slug: "beasiswa-santri-penghafal-quran",
+    slug: "beasiswa-pendidikan-anak-yatim",
     title: "Bimbel PABE Smart & Beasiswa Belajar 98 Anak Yatim Piatu",
     categoryId: "pendidikan",
     targetAmount: 150000000,
@@ -38,7 +38,7 @@ const REAL_PROGRAMS = [
       {
         id: "upd-002",
         title: "Wisuda Bimbingan Tahfidz Juz 'Amma & Apresiasi Juara Kelas",
-        content: "Apresiasi prestasi untuk anak-anak yatim berprestasi di sekolah formal dan kelulusan hafalan Juz 'Amma santri TPA Yayasan Payung Berkah.",
+        content: "Apresiasi prestasi untuk anak-anak yatim berprestasi di sekolah formal dan kelulusan hafalan Juz 'Amma anak-anak TPA Yayasan Payung Berkah.",
         disbursedAmount: 18000000,
         date: new Date("2026-02-20T14:00:00Z"),
         images: ["https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80"],
@@ -109,20 +109,20 @@ const REAL_PROGRAMS = [
   },
   {
     id: "camp-004",
-    slug: "sedekah-subuh-beras-santri",
-    title: "Sedekah Subuh: Pasokan Beras & Pangan Santri Penghafal Qur'an",
+    slug: "sedekah-subuh-beras-yatim",
+    title: "Sedekah Subuh: Pasokan Beras & Pangan Yatim Dhuafa",
     categoryId: "zakat",
     targetAmount: 60000000,
     isUrgent: false,
     isFeatured: false,
     location: "Jakarta Timur & Sekitarnya",
     bannerUrl: "https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=800&q=80",
-    excerpt: "Penyaluran sedekah subuh harian untuk mencukupi kebutuhan makan sehat bergizi para santri tahfidz dan anak asuh yayasan.",
-    story: "Awali pagi dengan doa malaikat yang mustajab melalui sedekah subuh. Dana yang terkumpul dialokasikan untuk beras premium dan lauk pauk bergizi para santri.",
+    excerpt: "Penyaluran sedekah subuh harian untuk mencukupi kebutuhan makan sehat bergizi anak-anak yatim dan dhuafa binaan yayasan.",
+    story: "Awali pagi dengan doa malaikat yang mustajab melalui sedekah subuh. Dana yang terkumpul dialokasikan untuk beras premium dan lauk pauk bergizi anak asuh dan dhuafa.",
     updates: [
       {
         id: "upd-007",
-        title: "Pengadaan 1 Ton Beras Lumbung Pangan Santri",
+        title: "Pengadaan 1 Ton Beras Lumbung Pangan Yatim Dhuafa",
         content: "Alhamdulillah 1 ton beras berkualitas telah didistribusikan ke dapur umum yayasan.",
         disbursedAmount: 14500000,
         date: new Date("2026-05-02T13:00:00Z"),
@@ -133,7 +133,7 @@ const REAL_PROGRAMS = [
   {
     id: "camp-005",
     slug: "wakaf-sarana-belajar-komputer",
-    title: "Wakaf Fasilitas Komputer & Literasi Digital Santri PABE Smart",
+    title: "Wakaf Fasilitas Komputer & Literasi Digital Anak Binaan PABE Smart",
     categoryId: "pendidikan",
     targetAmount: 95000000,
     isUrgent: false,
@@ -141,7 +141,7 @@ const REAL_PROGRAMS = [
     location: "Cakung, Jakarta Timur",
     bannerUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
     excerpt: "Pengadaan 15 unit komputer PC dan akses internet edukasi untuk laboratorium belajar adik-adik yatim di Rawa Bebek.",
-    story: "Menyiapkan generasi muda yang tangguh teknologi. Program ini membuka akses kursus komputer, coding dasar, dan desain grafis bagi santri binaan.",
+    story: "Menyiapkan generasi muda yang tangguh teknologi. Program ini membuka akses kursus komputer, coding dasar, dan desain grafis bagi anak binaan.",
     updates: [
       {
         id: "upd-008",
@@ -243,12 +243,12 @@ const KNOWN_DONORS = [
 ];
 
 const PRAYERS_POOL = [
-  "Semoga berkah untuk adik-adik santri dan anak-anak yatim.",
+  "Semoga berkah untuk adik-adik binaan dan anak-anak yatim.",
   "Bismillah semoga menjadi pembuka pintu rezeki dan kesehatan sekeluarga.",
   "Pahala sedekah ini kami niatkan khusus untuk almarhum kedua orang tua kami tercinta. Aamiin.",
   "Semoga anak-anak binaan yayasan tumbuh menjadi generasi sholeh, cerdas, dan mandiri.",
   "Ya Allah lapangkanlah rezeki kami, sembuhkanlah keluarga kami yang sedang sakit.",
-  "Semoga program bimbingan belajar PABE Smart lancar dan melahirkan banyak santri berprestasi.",
+  "Semoga program bimbingan belajar PABE Smart lancar dan melahirkan banyak generasi berprestasi.",
   "Alhamdulillah semoga sedekah subuh ini membawa ketenangan dan keberkahan hidup.",
   "Semoga para pengurus dan relawan yayasan selalu diberikan keistiqomahan dalam berkhidmat.",
   "Doa terbaik untuk kelancaran pembangunan fasilitas belajar anak yatim.",
@@ -671,7 +671,7 @@ async function main() {
       donorName: "Siti Rahmawati",
       donorEmail: "siti.rahmawati@yahoo.co.id",
       donorPhone: "081387654321",
-      programTitle: "Sedekah Subuh: Pasokan Beras & Pangan Santri Penghafal Qur'an",
+      programTitle: "Sedekah Subuh: Pasokan Beras & Pangan Yatim Dhuafa",
       amount: 25000,
       frequency: "DAILY",
       routineType: "REMINDER_ONLY",
@@ -705,7 +705,7 @@ async function main() {
       donorName: "Hamba Allah",
       donorEmail: null,
       donorPhone: "081234567899",
-      programTitle: "Sedekah Subuh: Pasokan Beras & Pangan Santri Penghafal Qur'an",
+      programTitle: "Sedekah Subuh: Pasokan Beras & Pangan Yatim Dhuafa",
       amount: 15000,
       frequency: "DAILY",
       routineType: "REMINDER_ONLY",
@@ -779,7 +779,7 @@ async function main() {
       phone: "081233441122",
       city: "Jakarta Pusat",
       interest: "Pengajar Komputer & IT",
-      motivation: "Siap mengajarkan dasar komputer dan office untuk santri binaan PABE Smart.",
+      motivation: "Siap mengajarkan dasar komputer dan office untuk anak binaan PABE Smart.",
       status: "PENDING",
       createdAt: new Date("2026-08-10T13:40:00Z"),
     },

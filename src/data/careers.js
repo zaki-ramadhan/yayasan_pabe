@@ -127,7 +127,7 @@ export const CAREER_VACANCIES = [
     deadline: "15 November 2026",
     applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
-      "Merancang narasi visual dakwah, liputan dokumenter kegiatan santri dan dhuafa, serta mengelola publikasi media sosial yayasan dengan estetika modern dan edukatif.",
+      "Merancang narasi visual dakwah, liputan dokumenter kegiatan anak asuh dan dhuafa, serta mengelola publikasi media sosial yayasan dengan estetika modern dan edukatif.",
     responsibilities: [
       "Membuat konten video pendek (Reels / TikTok / YouTube Shorts) bertema kisah inspiratif penerima manfaat",
       "Merancang infografis laporan transparansi penyaluran donasi bulanan bersama tim keuangan",
@@ -187,7 +187,7 @@ export const CAREER_VACANCIES = [
   },
   {
     id: "JOB-05",
-    title: "Koordinator Pendidikan Tahfidz & Santri",
+    title: "Koordinator Pendidikan Al-Qur'an & Binaan Yatim",
     department: "Pendidikan & Dakwah",
     location: "Jakarta Timur / Depok",
     type: "Penuh Waktu (Full-time)",
@@ -199,13 +199,13 @@ export const CAREER_VACANCIES = [
     deadline: "20 November 2026",
     applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
-      "Mengawasi jalannya kurikulum tahfidz Al-Qur'an, pembinaan adab santri mukim, dan memfasilitasi kebutuhan pendampingan asatidz di rumah tahfidz naungan yayasan.",
+      "Mengawasi jalannya kurikulum tahfidz Al-Qur'an (TPA & Juz 'Amma), pembinaan karakter anak asuh, dan memfasilitasi kebutuhan pendampingan asatidz di program binaan naungan yayasan.",
     responsibilities: [
-      "Menyusun dan mengevaluasi target hafalan santri binaan secara terstruktur dan bertahap",
-      "Mengkoordinir jadwal pengajaran asatidz dan pendampingan tahsin harian santri",
-      "Memantau perkembangan karakter, kesehatan, dan kesejahteraan santri yatim dhuafa mukim",
-      "Menyelenggarakan kegiatan tasmi', wisuda tahfidz berkala, dan kajian bulanan wali santri",
-      "Menyusun laporan perkembangan santri untuk disampaikan kepada para donatur orang tua asuh",
+      "Menyusun dan mengevaluasi target hafalan anak asuh binaan secara terstruktur dan bertahap",
+      "Mengkoordinir jadwal pengajaran asatidz dan pendampingan tahsin harian anak binaan",
+      "Memantau perkembangan karakter, kesehatan, dan kesejahteraan anak yatim dhuafa binaan",
+      "Menyelenggarakan kegiatan tasmi', wisuda tahfidz berkala, dan kajian bulanan wali asuh",
+      "Menyusun laporan perkembangan anak asuh untuk disampaikan kepada para donatur orang tua asuh",
     ],
     requirements: [
       "Memiliki hafalan Al-Qur'an mutqin (minimal 5 juz, diutamakan 30 juz)",
@@ -215,7 +215,7 @@ export const CAREER_VACANCIES = [
       "Memahami metode pembelajaran Al-Qur'an terkini (Tahsin bersanad adalah nilai plus)",
     ],
     benefits: [
-      "Gaji bulanan dan tunjangan pengasuhan santri",
+      "Gaji bulanan dan tunjangan pengasuhan anak binaan",
       "Fasilitas tempat tinggal / mess pengajar di lingkungan asri yayasan",
       "Lingkungan pengabdian Qur'ani yang tenang dan penuh berkah",
       "Dukungan pengembangan sanad tahsin dan kelanjutan studi keagamaan",

@@ -20,9 +20,9 @@ export function VolunteerDashboardView() {
                 Misi Aktif Minggu Ini
               </span>
               <h3 className="text-sm font-bold text-slate-950">
-                Distribusi 500 Mushaf &amp; Paket Gizi Santri Lebak
+                Distribusi 500 Mushaf &amp; Paket Gizi Anak Binaan
               </h3>
-              <p className="text-xs text-slate-600">Lokasi: Ponpes Tahfidz Hidayatul Quran, Kab. Lebak, 20 September 2026</p>
+              <p className="text-xs text-slate-600">Lokasi: Wilayah Binaan Cakung, 20 September 2026</p>
             </div>
             <div className="flex items-center gap-2">
               <Button

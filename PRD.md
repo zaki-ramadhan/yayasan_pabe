@@ -9,7 +9,7 @@ Dokumen ini merupakan panduan spesifikasi produk, arsitektur teknis, dan cetak b
 
 ### 1.1 Entitas & Misi
 - **Nama Lembaga:** Yayasan PABE.
-- **Fokus Gerakan:** Pendidikan & Dakwah Al-Qur'an, Kemandirian Santri/Yatim, Zakat-Infak-Sedekah-Wakaf (ZISWAF), Tanggap Bencana & Pemberdayaan Ekonomi Umat.
+- **Fokus Gerakan:** Pendidikan & Dakwah Al-Qur'an, Kemandirian Anak Yatim, Zakat-Infak-Sedekah-Wakaf (ZISWAF), Tanggap Bencana & Pemberdayaan Ekonomi Umat.
 - **Visi Digital:** Membangun platform filantropi modern berbasis web yang transparan, akuntabel, mobile-friendly, dan memiliki konversi donasi tinggi.
 - **Bahasa & Internasionalisasi:**
   - Bahasa Indonesia (ID - Bahasa Utama)
@@ -110,9 +110,9 @@ yayasan_generasi_sejahtera_mandiri/
 ## 3. Spesifikasi Fitur Detail & Alur Halaman
 
 ### 3.1 Beranda (Home Page)
-1. **Hero Slider Prioritas:** Banner carousel program tanggap darurat (Gempa, Bencana, Santri Yatim) dengan tombol CTA *Donasi Sekarang*.
+1. **Hero Slider Prioritas:** Banner carousel program tanggap darurat (Gempa, Bencana, Anak Yatim) dengan tombol CTA *Donasi Sekarang*.
 2. **Live Counter Dampak:** Statistik live yang dihitung dari database (`Total Donasi Terkumpul`, `Penerima Manfaat`, `Jumlah Donatur`).
-3. **Kategori Cepat:** Card icon 8 pilar: *Donasi Rutin, ZIS, Santri, Infrastruktur, Pangan & Air, Pemberdayaan, Kemanusiaan, Bencana Alam*.
+3. **Kategori Cepat:** Card icon 8 pilar: *Donasi Rutin, ZIS, Pendidikan Yatim, Infrastruktur, Pangan & Air, Pemberdayaan, Kemanusiaan, Bencana Alam*.
 4. **Grid Program Pilihan:**
    - Thumbnail 16:9, badge kategori, judul program (maksimal 2 baris truncate).
    - Penyelenggara: *Yayasan PABE* (verified checkmark).
@@ -201,7 +201,7 @@ Alat hitung kewajiban zakat sesuai fatwa BAZNAS dan MUI:
 
 ### 3.6 Modul Donasi Rutin (`/donasi-rutin`)
 1. **Formulir Pendaftaran Rutin:**
-   - Pilihan Program: *Sedekah Subuh, Santri Penghafal Qur'an, Pangan Dhuafa, Zakat Maal Rutin*.
+   - Pilihan Program: *Sedekah Subuh, Beasiswa Anak Yatim, Pangan Dhuafa, Zakat Maal Rutin*.
    - Pilihan Frekuensi: *Harian, Mingguan (Setiap Hari Jumat), Bulanan (Tanggal tertentu)*.
    - Waktu Pengingat WhatsApp: *Subuh (05:00 WIB), Pagi (08:00 WIB), Siang (12:00 WIB)*.
    - Data Donatur: Nama lengkap dan Nomor WhatsApp aktif.

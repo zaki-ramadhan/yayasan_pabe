@@ -148,7 +148,7 @@ export async function getCategories() {
   }
   return [
     { id: "all", name: "Semua Program", slug: "semua" },
-    { id: "pendidikan", name: "Pendidikan & Santri", slug: "pendidikan" },
+    { id: "pendidikan", name: "Pendidikan & Beasiswa", slug: "pendidikan" },
     { id: "bencana", name: "Tanggap Bencana", slug: "bencana" },
     { id: "zakat", name: "ZISWAF", slug: "zakat" },
     { id: "yatim", name: "Kemandirian Yatim", slug: "yatim" },
@@ -167,7 +167,7 @@ export { getCampaignUpdates } from "./campaignFeedService";
  */
 export function getQuickDonateTargetSlug(campaigns = []) {
   if (!Array.isArray(campaigns) || campaigns.length === 0) {
-    return "beasiswa-santri-penghafal-quran";
+    return "beasiswa-pendidikan-anak-yatim";
   }
 
   // 1. Filter hanya program aktif yang belum 100% mencapai target dana (atau program berkelanjutan tanpa target)
@@ -194,5 +194,5 @@ export function getQuickDonateTargetSlug(campaigns = []) {
     return sortedByEndDate[0].slug;
   }
 
-  return "beasiswa-santri-penghafal-quran";
+  return "beasiswa-pendidikan-anak-yatim";
 }

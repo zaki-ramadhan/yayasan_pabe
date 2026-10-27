@@ -15,7 +15,7 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 6 0 obj
-<< /Length 4023 >>
+<< /Length 3994 >>
 stream
 
 % --- KOP SURAT RESMI (LETTERHEAD) ---
@@ -23,7 +23,7 @@ stream
 BT
 /F1 13 Tf
 48 786 Td
-(Yayasan Generasi Sejahtera Mandiri \(Yayasan PABE\)) Tj
+(Yayasan Payung Berkah \(Yayasan PABE\)) Tj
 ET
 
 0.39 0.45 0.55 rg
@@ -169,7 +169,7 @@ ET
 BT
 /F2 8.5 Tf
 62 505 Td
-(Pendidikan & Beasiswa Santri Tahfidz) Tj
+(Pendidikan & Beasiswa Anak Yatim) Tj
 270 0 Td
 (Rp 6.500.000.000) Tj
 135 0 Td
@@ -271,7 +271,7 @@ ET
 BT
 /F2 7.5 Tf
 62 265 Td
-(Dokumen elektronik resmi | Terverifikasi per 20 Oktober 2026 | Yayasan PABE) Tj
+(Dokumen elektronik resmi | Terverifikasi per 27 Oktober 2026 | Yayasan PABE) Tj
 ET
 
 % --- FOOTER HALAMAN ---
@@ -283,7 +283,7 @@ ET
 BT
 /F2 7.5 Tf
 48 202 Td
-(Yayasan Generasi Sejahtera Mandiri - Portal Akuntabilitas Publik \(localhost:3000/distribusi\)) Tj
+(Yayasan Payung Berkah - Portal Akuntabilitas Publik \(payungberkah.id/distribusi\)) Tj
 395 0 Td
 (Halaman 1 dari 1) Tj
 ET
@@ -302,5 +302,5 @@ xref
 trailer
 << /Size 7 /Root 1 0 R >>
 startxref
-4477
+4448
 %%EOF

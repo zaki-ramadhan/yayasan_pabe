@@ -4,7 +4,7 @@ import { RoutineDonationForm } from "@/components/routine-donation/RoutineDonati
 
 export const metadata = {
   title: "Donasi Rutin (Sedekah Subuh & Bulanan)",
-  description: "Atur jadwal sedekah subuh, infak jumat, atau donasi bulanan rutin untuk santri tahfidz dan yatim dhuafa.",
+  description: "Atur jadwal sedekah subuh, infak jumat, atau donasi bulanan rutin untuk pendidikan anak yatim dan dhuafa.",
 };
 
 export default async function DonasiRutinPage() {

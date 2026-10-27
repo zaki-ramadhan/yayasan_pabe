@@ -26,7 +26,7 @@ export function getFallbackAnalytics() {
 export function aggregateFinancialAnalytics(donations = [], updates = [], totalIncome = 0, totalExpenses = 0) {
   const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
   const CATEGORY_COLOR_MAP = {
-    "Pendidikan & Santri": "#059669",
+    "Pendidikan & Beasiswa": "#059669",
     "Zakat": "#2563eb",
     "ZISWAF": "#2563eb",
     "Infaq & Sedekah": "#f59e0b",

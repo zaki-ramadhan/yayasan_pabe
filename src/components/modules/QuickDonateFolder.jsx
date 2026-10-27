@@ -12,7 +12,7 @@ import { getStoredUser } from "@/services/authService";
 
 const PRESET_AMOUNTS = [25000, 50000, 100000];
 
-export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-santri-penghafal-quran" }) {
+export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-anak-yatim" }) {
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState(50000);
   const [customAmount, setCustomAmount] = useState("");

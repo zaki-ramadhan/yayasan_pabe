@@ -172,8 +172,8 @@ test.describe("Master User Journey - Eksplorasi Penuh Seluruh Halaman Yayasan", 
         await page.waitForTimeout(300);
       }
 
-      // Pencarian valid kata kunci 'santri'
-      await searchInput.fill("santri");
+      // Pencarian valid kata kunci 'yatim'
+      await searchInput.fill("yatim");
       await page.waitForTimeout(450);
       await expect(page.locator("a[href^='/campaign/']").first()).toBeVisible();
 
@@ -271,7 +271,7 @@ test.describe("Master User Journey - Eksplorasi Penuh Seluruh Halaman Yayasan", 
     // =========================================================================
     // TAHAP 5: DETAIL PROGRAM (/campaign/[slug]) - TABS & CHAT INJEKSI DOA
     // =========================================================================
-    await page.goto("/campaign/beasiswa-santri-penghafal-quran");
+    await page.goto("/campaign/beasiswa-pendidikan-anak-yatim");
     await expect(page.locator("h1")).toBeVisible();
     await expect(page.getByRole("tablist")).toBeVisible();
 
@@ -506,7 +506,7 @@ test.describe("Master User Journey - Eksplorasi Penuh Seluruh Halaman Yayasan", 
 
       const motivationArea = page.locator("textarea");
       if (await motivationArea.isVisible()) {
-        await motivationArea.fill("Berkhidmat membantu santri dan korban bencana.");
+        await motivationArea.fill("Berkhidmat membantu anak yatim dan korban bencana.");
       }
 
       const submitVolBtn = page.getByRole("button", { name: /Daftar sebagai relawan/i });

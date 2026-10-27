@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 
 export const metadata = {
   title: "Gabung Jadi Relawan Aksi",
-  description: "Daftarkan diri Anda sebagai relawan aksi kemanusiaan dan pendidikan santri tahfidz Yayasan Payung Berkah.",
+  description: "Daftarkan diri Anda sebagai relawan aksi kemanusiaan dan pendidikan anak yatim Yayasan Payung Berkah.",
 };
 
 export default function VolunteerPage() {

@@ -24,7 +24,7 @@ export function FinancialCategoryBarChart({ data = [], categories = [] }) {
   const displayCategories = categories.length > 0
     ? categories
     : [
-        { id: "Pendidikan & Santri", name: "Pendidikan & Santri", color: "#059669" },
+        { id: "Pendidikan & Beasiswa", name: "Pendidikan & Beasiswa", color: "#059669" },
         { id: "Zakat", name: "Zakat", color: "#2563eb" },
         { id: "Kemandirian Yatim", name: "Kemandirian Yatim", color: "#7c3aed" },
         { id: "Infaq & Sedekah", name: "Infaq & Sedekah", color: "#f59e0b" },

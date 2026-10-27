@@ -1,10 +1,10 @@
 export const CAMPAIGNS = [
   {
     "id": "camp-001",
-    "slug": "beasiswa-santri-penghafal-quran",
+    "slug": "beasiswa-pendidikan-anak-yatim",
     "title": "Bimbel PABE Smart & Beasiswa Belajar 98 Anak Yatim Piatu",
     "categoryId": "pendidikan",
-    "categoryName": "Pendidikan & Santri",
+    "categoryName": "Pendidikan & Beasiswa",
     "targetAmount": 150000000,
     "collectedAmount": 118450000,
     "donorCount": 482,
@@ -30,7 +30,7 @@ export const CAMPAIGNS = [
         "id": "upd-002",
         "date": "2026-07-01",
         "title": "Wisuda Bimbingan Tahfidz Juz 'Amma & Apresiasi Juara Kelas",
-        "content": "Apresiasi prestasi untuk anak-anak yatim berprestasi di sekolah formal dan kelulusan hafalan Juz 'Amma santri TPA Yayasan Payung Berkah.",
+        "content": "Apresiasi prestasi untuk anak-anak yatim berprestasi di sekolah formal dan kelulusan hafalan Juz 'Amma anak-anak TPA Yayasan Payung Berkah.",
         "disbursedAmount": 18000000,
         "images": [
           "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80"
@@ -187,7 +187,7 @@ export const CAMPAIGNS = [
         "avatar": null,
         "amount": 250000,
         "date": "2026-09-17T08:00:00Z",
-        "prayer": "Bismillah, semoga Allah mudahkan seluruh santri dan mustahik dalam meraih keberkahan.",
+        "prayer": "Bismillah, semoga Allah mudahkan seluruh anak binaan dan mustahik dalam meraih keberkahan.",
         "aminCount": 11,
         "isAnonymous": true
       },
@@ -275,7 +275,7 @@ export const CAMPAIGNS = [
         "avatar": "https://images.unsplash.com/photo-1594824813501-48950d4b4a3f?auto=format&fit=crop&w=150&q=80",
         "amount": 250000,
         "date": "2026-09-07T08:16:00Z",
-        "prayer": "Bismillah, semoga Allah mudahkan seluruh santri dan mustahik dalam meraih keberkahan.",
+        "prayer": "Bismillah, semoga Allah mudahkan seluruh anak binaan dan mustahik dalam meraih keberkahan.",
         "aminCount": 24,
         "isAnonymous": false
       },
@@ -537,7 +537,7 @@ export const CAMPAIGNS = [
         "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
         "amount": 250000,
         "date": "2026-09-10T14:42:00Z",
-        "prayer": "Bismillah, semoga Allah mudahkan seluruh santri dan mustahik dalam meraih keberkahan.",
+        "prayer": "Bismillah, semoga Allah mudahkan seluruh anak binaan dan mustahik dalam meraih keberkahan.",
         "aminCount": 20,
         "isAnonymous": false
       },
@@ -591,7 +591,7 @@ export const CAMPAIGNS = [
     "location": "Gunungkidul, D.I. Yogyakarta",
     "bannerUrl": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80",
     "excerpt": "Air bersih adalah sumber kehidupan. Alirkan pahala jariyah abadi dengan membangun sumur bor di desa kekeringan.",
-    "story": "Setiap musim kemarau, ratusan kepala keluarga di perbukitan kapur harus menempuh jarak berkilo-kilo meter demi mendapatkan beberapa jerigen air bersih.\n\nDengan pengeboran sumur sedalam 80 meter, instalasi pompa tenaga surya, dan pembangunan tandon penampungan 5.000 liter, warga dan santri musholla setempat tidak lagi kesulitan berwudhu dan memenuhi kebutuhan hidup dasar.",
+    "story": "Setiap musim kemarau, ratusan kepala keluarga di perbukitan kapur harus menempuh jarak berkilo-kilo meter demi mendapatkan beberapa jerigen air bersih.\n\nDengan pengeboran sumur sedalam 80 meter, instalasi pompa tenaga surya, dan pembangunan tandon penampungan 5.000 liter, warga dan jamaah musholla setempat tidak lagi kesulitan berwudhu dan memenuhi kebutuhan hidup dasar.",
     "updates": [
       {
         "id": "upd-005",
@@ -797,7 +797,7 @@ export const CAMPAIGNS = [
         "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80",
         "amount": 250000,
         "date": "2026-09-12T08:08:00Z",
-        "prayer": "Bismillah, semoga Allah mudahkan seluruh santri dan mustahik dalam meraih keberkahan.",
+        "prayer": "Bismillah, semoga Allah mudahkan seluruh anak binaan dan mustahik dalam meraih keberkahan.",
         "aminCount": 24,
         "isAnonymous": false
       },
@@ -860,10 +860,10 @@ export const CAMPAIGNS = [
   },
   {
     "id": "camp-007",
-    "slug": "renovasi-asrama-ruang-belajar-santri",
+    "slug": "renovasi-ruang-belajar-anak-yatim",
     "title": "Wakaf Sarana Asrama Yatim Berkah Mandiri & Ruang Belajar PKBM",
     "categoryId": "pendidikan",
-    "categoryName": "Pendidikan & Santri",
+    "categoryName": "Pendidikan & Beasiswa",
     "targetAmount": 95000000,
     "collectedAmount": 96500000,
     "donorCount": 245,
@@ -879,8 +879,8 @@ export const CAMPAIGNS = [
       {
         "id": "upd-007-1",
         "date": "2026-09-05",
-        "title": "Penyelesaian Renovasi Ruang Belajar PKBM & Syukuran Bersama Santri",
-        "content": "Alhamdulillah, penataan ruang belajar dan sarana penunjang kegiatan bimbingan belajar anak yatim telah selesai 100%. Santri kini dapat belajar dengan tenang dan kondusif.",
+        "title": "Penyelesaian Renovasi Ruang Belajar PKBM & Syukuran Bersama Anak Asuh",
+        "content": "Alhamdulillah, penataan ruang belajar dan sarana penunjang kegiatan bimbingan belajar anak yatim telah selesai 100%. Anak-anak kini dapat belajar dengan tenang dan kondusif.",
         "disbursedAmount": 95000000,
         "images": [
           "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80"
@@ -1058,7 +1058,7 @@ export const CAMPAIGNS = [
         "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80",
         "amount": 250000,
         "date": "2026-09-15T14:34:00Z",
-        "prayer": "Bismillah, semoga Allah mudahkan seluruh santri dan mustahik dalam meraih keberkahan.",
+        "prayer": "Bismillah, semoga Allah mudahkan seluruh anak binaan dan mustahik dalam meraih keberkahan.",
         "aminCount": 38,
         "isAnonymous": false
       },
@@ -1296,14 +1296,14 @@ export const CAMPAIGNS = [
     "isFeatured": false,
     "location": "Jawa Barat & Jawa Tengah",
     "bannerUrl": "https://images.unsplash.com/photo-1594708767771-a7502209ff51?auto=format&fit=crop&w=800&q=80",
-    "excerpt": "Pastikan ketersediaan beras kualitas terbaik setiap hari untuk 300 santri dhuafa dan 150 lansia sebatang kara.",
-    "story": "Kebutuhan pokok pangan merupakan prioritas harian. Program Sedekah Beras Mandiri menyalurkan 2 ton beras premium setiap bulan ke 6 pondok pesantren binaan dan rumah-rumah lansia dhuafa.\n\nDengan berdonasi Rp 15.000, Anda telah menyedekahkan 1 kilogram beras bersih yang mengenyangkan para penghafal Al-Qur'an dan orang tua renta.",
+    "excerpt": "Pastikan ketersediaan beras kualitas terbaik setiap hari untuk anak-anak yatim dhuafa dan 150 lansia sebatang kara.",
+    "story": "Kebutuhan pokok pangan merupakan prioritas harian. Program Sedekah Beras Mandiri menyalurkan 2 ton beras premium setiap bulan ke wilayah binaan dan rumah-rumah lansia dhuafa.\n\nDengan berdonasi Rp 15.000, Anda telah menyedekahkan 1 kilogram beras bersih yang mengenyangkan anak-anak yatim dan orang tua renta.",
     "updates": [
       {
         "id": "upd-008",
         "date": "2026-09-01",
         "title": "Penyaluran 2 Ton Beras Bulan September",
-        "content": "Alhamdulillah, 2.000 kg beras telah didistribusikan langsung ke 6 asrama santri dan 150 KK lansia dhuafa.",
+        "content": "Alhamdulillah, 2.000 kg beras telah didistribusikan langsung ke keluarga yatim binaan dan 150 KK lansia dhuafa.",
         "disbursedAmount": 30000000,
         "images": [
           "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80",
@@ -1319,7 +1319,7 @@ export const CAMPAIGNS = [
         "avatar": null,
         "amount": 250000,
         "date": "2026-09-17T08:00:00Z",
-        "prayer": "Bismillah, semoga Allah mudahkan seluruh santri dan mustahik dalam meraih keberkahan.",
+        "prayer": "Bismillah, semoga Allah mudahkan seluruh anak binaan dan mustahik dalam meraih keberkahan.",
         "aminCount": 51,
         "isAnonymous": true
       },
@@ -1407,7 +1407,7 @@ export const CAMPAIGNS = [
         "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80",
         "amount": 250000,
         "date": "2026-09-07T08:16:00Z",
-        "prayer": "Bismillah, semoga Allah mudahkan seluruh santri dan mustahik dalam meraih keberkahan.",
+        "prayer": "Bismillah, semoga Allah mudahkan seluruh anak binaan dan mustahik dalam meraih keberkahan.",
         "aminCount": 35,
         "isAnonymous": false
       },
@@ -1481,7 +1481,7 @@ export const CAMPAIGNS = [
   {
     "id": "camp-012",
     "slug": "wakaf-pembangunan-asrama-tahfidz-putri",
-    "title": "Wakaf Pembebasan Lahan & Asrama Santriwati Penghafal Al-Qur'an",
+    "title": "Wakaf Pembebasan Lahan & Sarana Belajar Yatim",
     "categoryId": "zakat",
     "categoryName": "ZISWAF",
     "targetAmount": 300000000,
@@ -1493,14 +1493,14 @@ export const CAMPAIGNS = [
     "isFeatured": false,
     "location": "Cianjur, Jawa Barat",
     "bannerUrl": "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80",
-    "excerpt": "Investasikan tabungan akhirat Anda melalui wakaf abadi pembebasan lahan seluas 1.200 m² untuk asrama santriwati yatim dhuafa.",
-    "story": "Wakaf tanah dan fasilitas pendidikan adalah salah satu amalan yang pahalanya terus mengalir bahkan setelah seorang insan berpulang.\n\nPesantren Tahfidz Putri PABE membutuhkan perluasan area asrama agar dapat menampung 80 santriwati dhuafa dari berbagai pelosok Indonesia.",
+    "excerpt": "Investasikan tabungan akhirat Anda melalui wakaf abadi pembebasan lahan seluas 1.200 m² untuk sarana belajar anak yatim dhuafa.",
+    "story": "Wakaf tanah dan fasilitas pendidikan adalah salah satu amalan yang pahalanya terus mengalir bahkan setelah seorang insan berpulang.\n\nPusat Pembinaan Belajar PABE membutuhkan perluasan area agar dapat membina anak-anak yatim dhuafa secara optimal.",
     "updates": [
       {
         "id": "upd-012-1",
         "date": "2026-08-30",
-        "title": "Pembayaran Uang Muka Pembebasan Lahan Asrama Putri",
-        "content": "Alhamdulillah, dana wakaf sebesar Rp 75.000.000 telah diserahkan kepada pemilik tanah sebagai pembayaran termin pertama pembebasan lahan asrama seluas 1.200 m².",
+        "title": "Pembayaran Uang Muka Pembebasan Lahan Sarana Belajar",
+        "content": "Alhamdulillah, dana wakaf sebesar Rp 75.000.000 telah diserahkan kepada pemilik tanah sebagai pembayaran termin pertama pembebasan lahan sarana belajar seluas 1.200 m².",
         "disbursedAmount": 75000000,
         "images": [
           "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"
@@ -1526,7 +1526,7 @@ export const CAMPAIGNS = [
     "slug": "pengadaan-mushaf-alquran-braille-difabel-netra",
     "title": "Pengadaan Mushaf Al-Qur'an Braille untuk Sahabat Difabel Netra",
     "categoryId": "pendidikan",
-    "categoryName": "Pendidikan & Santri",
+    "categoryName": "Pendidikan & Beasiswa",
     "targetAmount": 35000000,
     "collectedAmount": 0,
     "donorCount": 0,

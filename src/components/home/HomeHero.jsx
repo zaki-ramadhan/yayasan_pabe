@@ -80,7 +80,7 @@ export function HomeHero({ defaultCampaignSlug }) {
           <div className="flex-1 max-w-2xl space-y-6">
             <div className="space-y-1.5 sm:space-y-2">
               <h1 className="text-5xl sm:text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-crustaceans text-slate-950 leading-[1.08] sm:leading-[1.1] break-words">
-                Penyaluran Zakat, Infak, dan Sedekah untuk Santri &amp; Dhuafa
+                Penyaluran Zakat, Infak, dan Sedekah untuk Yatim &amp; Dhuafa
               </h1>
 
               <p className="text-base text-slate-800 leading-relaxed max-w-xl font-normal -mt-1 sm:-mt-2">

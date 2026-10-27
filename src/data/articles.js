@@ -49,7 +49,7 @@ export const ARTICLES = [
     category: "Edukasi Fiqih",
     tags: ["Sedekah Subuh", "Fiqih", "Rezeki", "Amalan Pagi"],
     bannerUrl: "https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=800&q=80",
-    imageSource: "Dokumentasi Santri Bina Insan Mandiri / Unsplash",
+    imageSource: "Dokumentasi Anak Binaan / Unsplash",
     imageSourceUrl: "https://unsplash.com",
     excerpt: "Mengapa waktu subuh menjadi waktu paling istimewa untuk berinfak? Simak ulasan hadits shahih mengenai doa malaikat bagi orang yang gemar bersedekah di pagi hari.",
     content: `Sedekah subuh memiliki keistimewaan luar biasa dalam ajaran Islam. Dari Abu Hurairah radhiyallahu 'anhu, Rasulullah shallallahu 'alaihi wa sallam bersabda:
@@ -58,7 +58,7 @@ export const ARTICLES = [
 
 Waktu fajar merupakan saat di mana para malaikat malam dan siang berkumpul menyaksikan hamba yang bersujud dan berbuat kebaikan. Ketika seorang mukmin menyisihkan sebagian rezekinya di awal hari, ia mengawali harinya dengan keberkahan dan doa mustajab para malaikat.
 
-Amalan sedekah subuh kini dapat ditunaikan secara mudah melalui kanal digital Yayasan PABE. Setiap donasi subuh langsung dialokasikan untuk sarapan santri penghafal Al-Qur'an dan kebutuhan pangan lansia dhuafa di pondok binaan.`,
+Amalan sedekah subuh kini dapat ditunaikan secara mudah melalui kanal digital Yayasan PABE. Setiap donasi subuh langsung dialokasikan untuk sarapan anak yatim penghafal Al-Qur'an dan kebutuhan pangan lansia dhuafa di wilayah binaan.`,
     author: "Ust. M. Ridwan, Lc.",
     publishedAt: "2026-09-10T05:30:00+07:00",
     likeCount: 64,
@@ -91,19 +91,19 @@ Jika penghasilan Anda telah mencapai nisab bulanan, menunaikan zakat profesi ses
   },
   {
     id: "art-3",
-    slug: "kisah-santri-penghafal-quran-pelosok",
-    title: "Kisah Perjuangan Santri Dhuafa Menghafal 30 Juz di Pelosok Banten",
+    slug: "kisah-anak-asuh-penghafal-quran-pelosok",
+    title: "Kisah Perjuangan Anak Asuh Dhuafa Menghafal Al-Qur'an di Wilayah Binaan",
     category: "Kisah Inspiratif",
-    tags: ["Santri Penghafal Quran", "Pendidikan", "Kisah Inspiratif", "Yatim Dhuafa"],
+    tags: ["Penghafal Quran", "Pendidikan Yatim", "Kisah Inspiratif", "Yatim Dhuafa"],
     bannerUrl: "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=800&q=80",
-    imageSource: "Dokumentasi Program Pendidikan PABE Banten",
+    imageSource: "Dokumentasi Program Pendidikan PABE",
     imageSourceUrl: null,
-    excerpt: "Keterbatasan fasilitas dan jarak dari orang tua tak menyurutkan semangat santri binaan PABE untuk menyetorkan hafalan Al-Qur'an setiap ba'da subuh.",
-    content: `Di lereng perbukitan Lebak Banten, lantunan ayat suci Al-Qur'an bersahutan setiap fajar menyingsing. Puluhan santri yatim dan dhuafa binaan Yayasan PABE memulai hari mereka dengan murajaah dan setoran hafalan baru.
+    excerpt: "Keterbatasan fasilitas dan ketiadaan orang tua tak menyurutkan semangat anak binaan PABE untuk menyetorkan hafalan Al-Qur'an setiap ba'da subuh.",
+    content: `Di wilayah binaan Cakung dan sekitarnya, lantunan ayat suci Al-Qur'an bersahutan setiap fajar menyingsing. Puluhan anak yatim dan dhuafa binaan Yayasan PABE memulai hari mereka dengan murajaah dan setoran hafalan baru.
 
-Salah satunya adalah Ahmad (13 tahun), santri asal pelosok yang telah menyelesaikan 18 juz hafalan mutqin. Di tengah kesederhanaan asrama bambu, tekadnya untuk memakaikan mahkota kemuliaan bagi kedua orang tuanya di akhirat menjadi motivasi terbesarnya.
+Salah satunya adalah Ahmad (13 tahun), anak binaan yang tekun belajar dan telah menyelesaikan hafalan Juz 'Amma mutqin. Di tengah kesederhanaan, tekadnya untuk memakaikan mahkota kemuliaan bagi kedua orang tuanya di akhirat menjadi motivasi terbesarnya.
 
-Berkat beasiswa penuh dan dukungan sarana belajar dari para donatur PABE, santri-santri seperti Ahmad kini dapat menuntut ilmu agama dan formal secara gratis tanpa dibebani biaya asrama maupun kitab.`,
+Berkat beasiswa penuh dan dukungan sarana belajar dari para donatur PABE, anak-anak binaan seperti Ahmad kini dapat menuntut ilmu agama dan formal secara gratis tanpa dibebani biaya perlengkapan maupun buku belajar.`,
     author: "Tim Redaksi PABE",
     publishedAt: "2026-08-28T14:00:00+07:00",
     likeCount: 112,
@@ -334,7 +334,7 @@ Menunaikan zakat portofolio investasi merupakan ikhtiar menyucikan aset digital 
 
 Selama 4 tahun menempuh kuliah, Fajar menerima pembiayaan SPP penuh, uang saku bulanan, serta pembinaan karakter kepemimpinan Islam di asrama mahasiswa binaan.
 
-Kini, Fajar telah bekerja sebagai software engineer di perusahaan teknologi nasional dan berkomitmen menjadi orang tua asuh bagi 3 santri yatim di yayasan.`,
+Kini, Fajar telah bekerja sebagai software engineer di perusahaan teknologi nasional dan berkomitmen menjadi orang tua asuh bagi 3 anak yatim di yayasan.`,
     author: "Tim Redaksi PABE",
     publishedAt: "2026-06-01T16:00:00+07:00",
     likeCount: 145,
@@ -342,22 +342,22 @@ Kini, Fajar telah bekerja sebagai software engineer di perusahaan teknologi nasi
   },
   {
     id: "art-15",
-    slug: "wakaf-tanah-pesantren-amal-jariyah-abadi",
-    title: "Wakaf Tanah Pesantren: Jejak Amal Jariyah Abadi yang Mengalirkan Berkah Tiada Akhir",
+    slug: "wakaf-tanah-sarana-pendidikan-amal-jariyah",
+    title: "Wakaf Tanah Sarana Pendidikan: Jejak Amal Jariyah Abadi yang Mengalirkan Berkah Tiada Akhir",
     category: "Kajian Wakaf",
-    tags: ["Wakaf Tanah", "Pesantren Tahfidz", "Wakaf Produktif", "Jariyah"],
+    tags: ["Wakaf Tanah", "Sarana Belajar Yatim", "Wakaf Produktif", "Jariyah"],
     bannerUrl: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
-    imageSource: "Dokumentasi Pembebasan Lahan Pesantren PABE",
+    imageSource: "Dokumentasi Pembebasan Lahan Sarana Pendidikan PABE",
     imageSourceUrl: "https://unsplash.com",
-    excerpt: "Pembebasan lahan seluas 2.500 m² untuk pembangunan asrama santri dan masjid binaan membuka peluang wakaf uang mulai dari Rp 50.000 per meter persegi.",
+    excerpt: "Pembebasan lahan seluas 2.500 m² untuk pembangunan sarana belajar yatim dan masjid binaan membuka peluang wakaf uang mulai dari Rp 50.000 per meter persegi.",
     content: `Wakaf adalah instrumen sedekah abadi di mana pokok asetnya ditahan (tidak boleh dijual atau diwariskan), sedangkan manfaatnya terus dialirkan untuk kemaslahatan umum.
 
 Lahan wakaf yang saat ini sedang dikembangkan oleh Yayasan PABE akan difungsikan sebagai kompleks terpadu:
-- Pondok Tahfidz Al-Qur'an 30 Juz Gratis untuk santri dhuafa.
-- Rumah Singgah Yatim dan Ruang Belajar Komputer.
-- Kebun hidroponik produktif sebagai sumber pangan mandiri asrama.
+- Pendidikan Al-Qur'an dan Tahfidz Juz 'Amma Gratis untuk anak dhuafa.
+- Rumah Belajar Yatim dan Laboratorium Komputer PABE Smart.
+- Kebun hidroponik produktif sebagai sumber pangan mandiri warga binaan.
 
-Pahala kebaikan dari setiap lantunan ayat suci yang dibaca santri di atas tanah wakaf ini akan terus mengalir kepada para waqif hingga hari kiamat.`,
+Pahala kebaikan dari setiap lantunan ayat suci yang dibaca anak-anak binaan di atas tanah wakaf ini akan terus mengalir kepada para waqif hingga hari kiamat.`,
     author: "Dr. H. Ahmad Syafi'i, M.A.",
     publishedAt: "2026-05-22T08:40:00+07:00",
     likeCount: 91,

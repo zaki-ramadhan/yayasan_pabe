@@ -349,7 +349,7 @@ export function AdminProgramModal({
 			>
 				<Input
 					type="text"
-					placeholder="Contoh: Beasiswa Santri Penghafal Al-Qur'an"
+					placeholder="Contoh: Beasiswa Pendidikan Anak Yatim Piatu"
 					value={title}
 					maxLength={120}
 					onChange={(e) => {

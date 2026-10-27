@@ -41,7 +41,7 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
                 Program Donasi Pilihan
               </h2>
               <p className="text-base text-slate-700 leading-relaxed font-normal">
-                Salurkan kepedulian Anda untuk program pendidikan santri, kemanusiaan, dan pemberdayaan umat secara amanah serta transparan.
+                Salurkan kepedulian Anda untuk program pendidikan yatim, kemanusiaan, dan pemberdayaan umat secara amanah serta transparan.
               </p>
             </div>
 

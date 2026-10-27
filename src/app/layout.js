@@ -51,7 +51,7 @@ export const metadata = {
   openGraph: {
     title: "Yayasan Payung Berkah | PABE",
     description:
-      "Salurkan kepedulian Anda untuk masa depan santri, dakwah Al-Qur'an, dan aksi kemanusiaan. Hidup Berkah dengan Sedekah.",
+      "Salurkan kepedulian Anda untuk masa depan anak yatim, dakwah Al-Qur'an, dan aksi kemanusiaan. Hidup Berkah dengan Sedekah.",
     siteName: "Yayasan Payung Berkah",
     locale: "id_ID",
     type: "website",
@@ -67,7 +67,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Yayasan Payung Berkah | PABE",
-    description: "Salurkan kepedulian Anda untuk masa depan santri dan aksi kemanusiaan.",
+    description: "Salurkan kepedulian Anda untuk masa depan anak yatim dan aksi kemanusiaan.",
     images: ["/img/branding/logo-ypabe.webp"],
   },
   robots: {
