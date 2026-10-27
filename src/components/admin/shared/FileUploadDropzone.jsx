@@ -28,15 +28,13 @@ export function FileUploadDropzone({
           : "border-slate-200 hover:border-slate-300 bg-slate-50/50 hover:bg-slate-50"
       } ${isUploading ? "pointer-events-none opacity-80" : ""}`}
     >
-      <div className="w-10 h-10 rounded-full bg-white shadow-xs border border-slate-200 flex items-center justify-center text-slate-500 mb-2">
-        {isUploading ? (
-          <Loader2 className="w-5 h-5 text-emerald-600 animate-spin" />
-        ) : isPdf ? (
-          <FileCheck className="w-5 h-5 text-emerald-600" />
-        ) : (
-          <UploadCloud className="w-5 h-5 text-emerald-600" />
-        )}
-      </div>
+      {isUploading ? (
+        <Loader2 className="w-8 h-8 text-slate-400 animate-spin mb-2" />
+      ) : isPdf ? (
+        <FileCheck className="w-8 h-8 text-slate-400 mb-2" />
+      ) : (
+        <UploadCloud className="w-8 h-8 text-slate-400 mb-2" />
+      )}
 
       <div className="text-center">
         <p className="text-sm font-medium text-slate-700">
