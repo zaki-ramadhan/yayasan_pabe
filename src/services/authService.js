@@ -187,6 +187,7 @@ export function loginUser(user, options = {}) {
   localStorage.setItem(AUTH_STORAGE_KEY, userJson);
   localStorage.setItem("pabe_auth_session", userJson);
   sessionStorage.setItem("pabe_just_logged_in", user.name || "Donatur");
+  sessionStorage.setItem("pabe_last_activity", String(Date.now()));
 
   // Clean up legacy keys if present
   try {

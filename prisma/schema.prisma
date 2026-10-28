@@ -367,3 +367,18 @@ model NotificationLog {
   @@index([queueId])
   @@index([sentAt(sort: Desc)])
 }
+
+model GalleryItem {
+  id           String    @id @default(cuid())
+  title        String?
+  imageUrl     String
+  category     String    @default("Kegiatan")
+  description  String?
+  activityDate DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([category])
+  @@index([createdAt(sort: Desc)])
+  @@index([activityDate(sort: Desc)])
+}

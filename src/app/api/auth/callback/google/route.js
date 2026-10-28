@@ -201,6 +201,7 @@ export async function GET(request) {
               localStorage.setItem('pabe_auth_user', jsonStr);
               localStorage.setItem('pabe_auth_session', jsonStr);
               sessionStorage.setItem('pabe_just_logged_in', session.name || 'Donatur');
+              sessionStorage.setItem('pabe_last_activity', String(Date.now()));
               window.dispatchEvent(new Event('pabe_auth_change'));
               window.dispatchEvent(new Event('storage'));
               window.location.replace('${targetUrl}');

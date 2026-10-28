@@ -22,7 +22,8 @@ if (
   globalForPrisma.prisma &&
   (!globalForPrisma.prisma.faq ||
     !globalForPrisma.prisma.beneficiary ||
-    !globalForPrisma.prisma.activityLog)
+    !globalForPrisma.prisma.activityLog ||
+    !globalForPrisma.prisma.galleryItem)
 ) {
   globalForPrisma.prisma = undefined;
 }
