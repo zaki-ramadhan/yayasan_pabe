@@ -20,12 +20,18 @@ export async function optimizeImageIfNeeded(
   const isImage =
     mimeType === "image/jpeg" || mimeType === "image/png" || mimeType === "image/webp";
 
-  // Pertahankan dokumen PDF dan berkas non-gambar murni apa adanya
+  // Pertahankan dokumen PDF dan berkas video non-gambar murni apa adanya
   if (!isImage) {
+    const NON_IMG_EXTS = {
+      "application/pdf": "pdf",
+      "video/mp4": "mp4",
+      "video/webm": "webm",
+      "video/quicktime": "mov",
+    };
     return {
       buffer: Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer),
       mimeType,
-      extension: mimeType === "application/pdf" ? "pdf" : "bin",
+      extension: NON_IMG_EXTS[mimeType] || "bin",
       isOptimized: false,
     };
   }

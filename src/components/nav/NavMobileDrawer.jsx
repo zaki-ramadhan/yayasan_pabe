@@ -16,6 +16,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
   const isHomeActive = isNavItemActive("/", pathname);
   const isTentangKamiActive = isNavItemActive("/tentang-kami", pathname);
   const isProgramActive = isParentMenuActive(PROGRAM_MENU, pathname);
+  const isGaleriActive = isNavItemActive("/galeri", pathname);
   const isArtikelActive = isNavItemActive("/artikel", pathname);
   const isInformasiActive = isParentMenuActive(INFORMASI_MENU, pathname);
 
@@ -67,6 +68,18 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
           onToggle={toggleAccordion}
           onClose={onClose}
         />
+
+        {/* Galeri (Direct Link) */}
+        <Link
+          href="/galeri"
+          onClick={onClose}
+          className={cn(
+            "block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+            isGaleriActive ? "bg-slate-100 text-primary" : "text-slate-800 hover:bg-slate-50"
+          )}
+        >
+          Galeri
+        </Link>
 
         {/* Artikel (Direct Link) */}
         <Link

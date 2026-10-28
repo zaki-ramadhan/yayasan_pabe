@@ -66,7 +66,16 @@ export function extractR2Key(urlOrKey, publicUrlEnv = process.env.R2_PUBLIC_URL)
   const trimmed = urlOrKey.trim();
   const validFolders = Object.values(STORAGE_CONTEXTS).map((c) => c.folder);
 
-  // 1. Cek apakah sudah berupa relative key lokal yang valid
+  // 1. Cek apakah sudah berupa relative key lokal yang valid atau melalui proxy /api/media/
+  if (trimmed.startsWith("/api/media/")) {
+    const extracted = trimmed.replace(/^\/api\/media\//, "");
+    for (const folder of validFolders) {
+      if (extracted.startsWith(`${folder}/`)) {
+        return extracted;
+      }
+    }
+  }
+
   for (const folder of validFolders) {
     if (trimmed.startsWith(`${folder}/`)) {
       return trimmed;

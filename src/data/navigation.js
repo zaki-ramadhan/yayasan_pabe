@@ -17,6 +17,7 @@ export const FOOTER_QUICK_LINKS = [
   { label: "Program Donasi", href: "/program" },
   { label: "Donasi Rutin", href: "/donasi-rutin" },
   { label: "Berita & Artikel", href: "/artikel" },
+  { label: "Galeri Dokumentasi", href: "/galeri" },
   { label: "Laporan Akuntabilitas", href: "/laporan" },
   { label: "Distribusi", href: "/distribusi" },
   { label: "Kalkulator Zakat", href: "/kalkulator-zakat" },
@@ -35,6 +36,9 @@ export function isNavItemActive(href, pathname) {
   }
   if (href === "/artikel") {
     return pathname === "/artikel" || pathname.startsWith("/artikel/");
+  }
+  if (href === "/galeri") {
+    return pathname === "/galeri" || pathname.startsWith("/galeri/");
   }
   return pathname === href || pathname.startsWith(`${href}/`);
 }

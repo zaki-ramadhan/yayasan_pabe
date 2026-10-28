@@ -50,3 +50,51 @@ export async function uploadFileToServer({ file, context, identifier = "" }) {
 
   return result.data;
 }
+
+/**
+ * Mengunduh gambar dari tautan web eksternal dan menyimpannya ke Cloudflare R2 via API /api/upload.
+ *
+ * @param {{
+ *   imageUrl: string,
+ *   context: string,
+ *   identifier?: string
+ * }} params
+ * @returns {Promise<{
+ *   url: string,
+ *   key: string,
+ *   mimeType: string,
+ *   size: number,
+ *   originalSize: number,
+ *   savingsPercent: number
+ * }>}
+ */
+export async function uploadImageUrlToServer({ imageUrl, context, identifier = "" }) {
+  if (!imageUrl || typeof imageUrl !== "string") {
+    throw new Error("Tautan gambar tidak boleh kosong.");
+  }
+
+  if (!context) {
+    throw new Error("Konteks pengunggahan (context) wajib disertakan.");
+  }
+
+  const formData = new FormData();
+  formData.append("imageUrl", imageUrl.trim());
+  formData.append("context", context);
+
+  if (identifier && typeof identifier === "string") {
+    formData.append("identifier", identifier.trim());
+  }
+
+  const response = await fetch("/api/upload", {
+    method: "POST",
+    body: formData,
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    throw new Error(result.message || "Gagal mengunduh gambar dari tautan.");
+  }
+
+  return result.data;
+}

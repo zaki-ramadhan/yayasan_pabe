@@ -22,6 +22,7 @@ export function NavDesktopMenu({ pathname }) {
 	const [isInformasiOpen, setIsInformasiOpen] = useState(false);
 
 	const isProgramActive = isParentMenuActive(PROGRAM_MENU, pathname);
+	const isGaleriActive = isNavItemActive("/galeri", pathname);
 	const isArtikelActive = isNavItemActive("/artikel", pathname);
 	const isInformasiActive = isParentMenuActive(INFORMASI_MENU, pathname);
 
@@ -116,7 +117,20 @@ export function NavDesktopMenu({ pathname }) {
 				</DropdownMenuContent>
 			</DropdownMenu>
 
-			{/* 4. Artikel (Direct Link) */}
+			{/* 4. Galeri (Direct Link) */}
+			<Link
+				href="/galeri"
+				className={cn(
+					"inline-flex items-center px-3.5 text-sm font-medium border-b-2 transition-all cursor-pointer h-full",
+					isGaleriActive
+						? "text-primary border-primary -mb-px"
+						: "text-slate-700 hover:text-slate-950 border-transparent hover:border-slate-300 -mb-px",
+				)}
+			>
+				Galeri
+			</Link>
+
+			{/* 5. Artikel (Direct Link) */}
 			<Link
 				href="/artikel"
 				className={cn(
@@ -129,7 +143,7 @@ export function NavDesktopMenu({ pathname }) {
 				Artikel
 			</Link>
 
-			{/* 5. Informasi Dropdown (Click to toggle) */}
+			{/* 6. Informasi Dropdown (Click to toggle) */}
 			<DropdownMenu open={isInformasiOpen} onOpenChange={setIsInformasiOpen}>
 				<DropdownMenuTrigger asChild>
 					<button

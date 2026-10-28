@@ -1,4 +1,10 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  DeleteObjectsCommand,
+  ListObjectsV2Command,
+} from "@aws-sdk/client-s3";
 import { validateUploadFile, FILE_UPLOAD_LIMITS } from "./fileValidator";
 import { getStorageContext } from "./storageConstants";
 import { generateR2Key, extractR2Key } from "./r2KeyUtils";
@@ -138,6 +144,9 @@ export async function uploadToR2({
       "image/png": "png",
       "image/webp": "webp",
       "application/pdf": "pdf",
+      "video/mp4": "mp4",
+      "video/webm": "webm",
+      "video/quicktime": "mov",
     };
     finalExtension = EXT_MAP[verifiedMime] || "bin";
   }
@@ -182,7 +191,9 @@ export async function uploadToR2({
     })
   );
 
-  const finalUrl = `${publicUrl}/${key}`;
+  // Gunakan proxy lokal /api/media/ jika publicUrl menggunakan *.r2.dev bawaan yang diblokir ISP Indonesia
+  const isBlockedDevDomain = publicUrl.includes(".r2.dev");
+  const finalUrl = isBlockedDevDomain || !publicUrl ? `/api/media/${key}` : `${publicUrl}/${key}`;
 
   return {
     success: true,
@@ -217,5 +228,118 @@ export async function deleteFromR2(urlOrKey) {
     );
   } catch (err) {
     console.warn(`Peringatan: Gagal menghapus berkas R2 [${key}]:`, err?.message);
+  }
+}
+
+/**
+ * Membaca daftar objek di Cloudflare R2 berdasarkan prefix folder.
+ *
+ * @param {{
+ *   prefix?: string,
+ *   maxKeys?: number,
+ *   continuationToken?: string,
+ * }} [options]
+ * @returns {Promise<{
+ *   objects: Array<{ key: string, size: number, lastModified: Date, etag: string, url: string }>,
+ *   isTruncated: boolean,
+ *   nextContinuationToken?: string,
+ * }>}
+ */
+export async function listR2Objects({ prefix = "", maxKeys = 1000, continuationToken } = {}) {
+  if (!isR2Configured()) {
+    return { objects: [], isTruncated: false };
+  }
+
+  try {
+    const client = getR2Client();
+    const command = new ListObjectsV2Command({
+      Bucket: bucketName,
+      Prefix: prefix,
+      MaxKeys: maxKeys,
+      ContinuationToken: continuationToken,
+    });
+
+    const response = await client.send(command);
+    const isBlockedDevDomain = publicUrl.includes(".r2.dev");
+
+    const contents = (response.Contents || []).map((item) => ({
+      key: item.Key,
+      size: item.Size || 0,
+      lastModified: item.LastModified || new Date(),
+      etag: item.ETag || "",
+      url: isBlockedDevDomain || !publicUrl ? `/api/media/${item.Key}` : `${publicUrl}/${item.Key}`,
+    }));
+
+    return {
+      objects: contents,
+      isTruncated: Boolean(response.IsTruncated),
+      nextContinuationToken: response.NextContinuationToken,
+    };
+  } catch (err) {
+    console.error("Gagal membaca daftar objek Cloudflare R2:", err.message);
+    return { objects: [], isTruncated: false };
+  }
+}
+
+/**
+ * Menghapus banyak berkas sekaligus dari Cloudflare R2 (Batch Delete).
+ *
+ * @param {string[]} keysOrUrls
+ * @returns {Promise<{ success: boolean, deletedCount: number, errors: string[] }>}
+ */
+export async function deleteMultipleFromR2(keysOrUrls) {
+  if (!Array.isArray(keysOrUrls) || keysOrUrls.length === 0) {
+    return { success: true, deletedCount: 0, errors: [] };
+  }
+
+  const validKeys = Array.from(
+    new Set(
+      keysOrUrls
+        .map((target) => extractR2Key(target, publicUrl) || (target.includes("/") && !target.startsWith("http") ? target : null))
+        .filter(Boolean)
+    )
+  );
+
+  if (validKeys.length === 0) {
+    return { success: true, deletedCount: 0, errors: [] };
+  }
+
+  try {
+    const client = getR2Client();
+    const command = new DeleteObjectsCommand({
+      Bucket: bucketName,
+      Delete: {
+        Objects: validKeys.map((Key) => ({ Key })),
+        Quiet: false,
+      },
+    });
+
+    const response = await client.send(command);
+    const deletedCount = response.Deleted?.length || validKeys.length;
+    const errors = (response.Errors || []).map((err) => `${err.Key}: ${err.Message}`);
+
+    return {
+      success: errors.length === 0,
+      deletedCount,
+      errors,
+    };
+  } catch (err) {
+    console.error("Gagal menghapus batch berkas di R2:", err.message);
+    // Fallback: hapus satuan jika batch command gagal
+    let successCount = 0;
+    const fallbackErrors = [];
+    for (const key of validKeys) {
+      try {
+        await deleteFromR2(key);
+        successCount++;
+      } catch (singleErr) {
+        fallbackErrors.push(`${key}: ${singleErr.message}`);
+      }
+    }
+    return {
+      success: fallbackErrors.length === 0,
+      deletedCount: successCount,
+      errors: fallbackErrors,
+    };
   }
 }

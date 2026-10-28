@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { getStoredUser, logoutUser } from "@/services/authService";
+import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 import { NavDesktopMenu } from "@/components/nav/NavDesktopMenu";
 import { NavUserDropdown } from "@/components/nav/NavUserDropdown";
@@ -21,7 +22,9 @@ function subscribeAuth(callback) {
 }
 
 function getAuthSnapshot() {
-  return localStorage.getItem("pabe_auth_user");
+  if (typeof window === "undefined") return null;
+  const user = getStoredUser();
+  return user ? JSON.stringify(user) : null;
 }
 
 function getAuthServerSnapshot() {
@@ -43,7 +46,19 @@ export function Navbar() {
       sessionStorage.removeItem("pabe_just_logged_in");
       toast.success(`Selamat datang, ${justLoggedInName}! Berhasil masuk ke akun.`);
     }
-  }, [currentUser]);
+
+    // Validasi keselarasan sesi lokal dengan sesi server aktif
+    if (currentUser) {
+      safeFetch("/api/auth/me")
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data?.authenticated) {
+            logoutUser();
+          }
+        })
+        .catch(() => {});
+    }
+  }, [pathname, currentUser]);
 
   const handleLogout = () => {
     logoutUser();

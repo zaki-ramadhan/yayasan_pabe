@@ -13,6 +13,72 @@ export function CategoryTabs({
   className,
   showBorder = false,
 }) {
+  const hasCounts = counts && Object.keys(counts).length > 0;
+  const totalCount = hasCounts
+    ? typeof counts.all === "number"
+      ? counts.all
+      : Object.values(counts).reduce((acc, curr) => (typeof curr === "number" ? acc + curr : acc), 0)
+    : undefined;
+
+  // Jika total data benar-benar 0, sembunyikan seluruh chip tabs agar tampilan clean
+  if (totalCount === 0) {
+    return null;
+  }
+
+  const visibleCategories = categories.filter((cat) => {
+    const catId = typeof cat === "string" ? (cat === "Semua Kategori" ? "all" : cat) : cat.id;
+    const catName = typeof cat === "string" ? cat : cat.name;
+    const isAll =
+      catId === "all" ||
+      catId === "semua" ||
+      catId === "Semua Kategori" ||
+      catName === "Semua Kategori" ||
+      catName === "Semua Program" ||
+      catName === "Semua Artikel";
+
+    // Opsi "Semua" dipertahankan jika masih ada data dalam katalog
+    if (isAll) return true;
+
+    // Sembunyikan kategori jika counts disediakan dan nilainya 0
+    if (hasCounts) {
+      const count = counts[catId] ?? counts[catName];
+      if (typeof count === "number") {
+        return count > 0;
+      }
+    }
+
+    // Jika objek category dari database memiliki properti count
+    if (typeof cat?.count === "number") {
+      return cat.count > 0;
+    }
+
+    return true;
+  });
+
+  // Jika tidak ada kategori yang valid tersisa
+  if (visibleCategories.length === 0) {
+    return null;
+  }
+
+  // Jika hanya tersisa 1 tab dan itu adalah opsi "Semua" dengan data 0
+  if (visibleCategories.length === 1) {
+    const single = visibleCategories[0];
+    const singleId = typeof single === "string" ? (single === "Semua Kategori" ? "all" : single) : single.id;
+    const singleName = typeof single === "string" ? single : single.name;
+    const isSingleAll =
+      singleId === "all" ||
+      singleId === "semua" ||
+      singleId === "Semua Kategori" ||
+      singleName === "Semua Kategori" ||
+      singleName === "Semua Program" ||
+      singleName === "Semua Artikel";
+
+    const singleCount = counts?.[singleId] ?? counts?.[singleName] ?? single?.count;
+    if (isSingleAll && singleCount === 0) {
+      return null;
+    }
+  }
+
   return (
     <div
       className={cn(
@@ -21,9 +87,15 @@ export function CategoryTabs({
         className
       )}
     >
-      {categories.map((cat) => {
-        const isActive = selectedCategory === cat.id;
-        const count = counts[cat.id];
+      {visibleCategories.map((cat) => {
+        const catId = typeof cat === "string" ? (cat === "Semua Kategori" ? "all" : cat) : cat.id;
+        const catName = typeof cat === "string" ? cat : cat.name;
+        const isActive =
+          selectedCategory === catId ||
+          selectedCategory === catName ||
+          ((catId === "all" || catId === "Semua Kategori") &&
+            (selectedCategory === "all" || selectedCategory === "Semua Kategori"));
+        const count = counts[catId] ?? counts[catName];
         const hasCount = typeof count === "number";
 
         const baseClasses = cn(
@@ -35,7 +107,7 @@ export function CategoryTabs({
 
         const content = (
           <span className="flex items-center gap-1.5">
-            <span>{cat.name}</span>
+            <span>{catName}</span>
             {hasCount && (
               <span
                 className={cn(
@@ -51,11 +123,11 @@ export function CategoryTabs({
 
         if (basePath) {
           const href =
-            cat.id === "all"
+            catId === "all"
               ? basePath
-              : `${basePath}${basePath.includes("?") ? "&" : "?"}${categoryParam}=${encodeURIComponent(cat.id)}`;
+              : `${basePath}${basePath.includes("?") ? "&" : "?"}${categoryParam}=${encodeURIComponent(catId)}`;
           return (
-            <Link key={cat.id} href={href} className={baseClasses}>
+            <Link key={catId} href={href} className={baseClasses}>
               {content}
             </Link>
           );
@@ -63,9 +135,9 @@ export function CategoryTabs({
 
         return (
           <button
-            key={cat.id}
+            key={catId}
             type="button"
-            onClick={() => onSelectCategory?.(cat.id)}
+            onClick={() => onSelectCategory?.(catId)}
             className={baseClasses}
           >
             {content}

@@ -58,6 +58,45 @@ export function detectMagicBytesMime(bytes) {
     return "image/webp";
   }
 
+  // WebM / EBML signature: 1A 45 DF A3
+  if (
+    bytes[0] === 0x1a &&
+    bytes[1] === 0x45 &&
+    bytes[2] === 0xdf &&
+    bytes[3] === 0xa3
+  ) {
+    return "video/webm";
+  }
+
+  // MP4 / MOV signature: ....ftyp (offset 4)
+  if (
+    bytes.length >= 8 &&
+    bytes[4] === 0x66 && // f
+    bytes[5] === 0x74 && // t
+    bytes[6] === 0x79 && // y
+    bytes[7] === 0x70 // p
+  ) {
+    if (
+      bytes.length >= 12 &&
+      bytes[8] === 0x71 && // q
+      bytes[9] === 0x74 // t
+    ) {
+      return "video/quicktime";
+    }
+    return "video/mp4";
+  }
+
+  // QuickTime classic moov signature: ....moov
+  if (
+    bytes.length >= 8 &&
+    bytes[4] === 0x6d && // m
+    bytes[5] === 0x6f && // o
+    bytes[6] === 0x6f && // o
+    bytes[7] === 0x76 // v
+  ) {
+    return "video/quicktime";
+  }
+
   return null;
 }
 
@@ -101,7 +140,7 @@ export function validateUploadFile({
   if (!detectedMime) {
     return {
       valid: false,
-      error: "Format file tidak dikenali atau rusak. Hanya format JPEG, PNG, WebP, dan PDF yang diizinkan.",
+      error: "Format berkas tidak dikenali atau rusak. Hanya format JPEG, PNG, WebP, PDF, dan Video (MP4/WebM/MOV) yang didukung.",
     };
   }
 
@@ -112,17 +151,22 @@ export function validateUploadFile({
     };
   }
 
-  // Jika declaredType ada, pastikan tidak bertentangan secara ekstrim (misal mengklaim image tapi isinya pdf)
+  // Jika declaredType ada, pastikan tidak bertentangan secara ekstrim (misal mengklaim image tapi isinya video)
   if (declaredType && declaredType !== detectedMime && declaredType !== "application/octet-stream") {
     // Normalisasi image/jpg vs image/jpeg
     const isJpgMismatch =
       (declaredType === "image/jpg" && detectedMime === "image/jpeg") ||
       (declaredType === "image/pjpeg" && detectedMime === "image/jpeg");
 
-    if (!isJpgMismatch) {
+    // Normalisasi video/mp4 vs video/quicktime (kontainer MP4/MOV serupa)
+    const isVideoCrossFormat =
+      (declaredType === "video/quicktime" && detectedMime === "video/mp4") ||
+      (declaredType === "video/mp4" && detectedMime === "video/quicktime");
+
+    if (!isJpgMismatch && !isVideoCrossFormat) {
       return {
         valid: false,
-        error: "Isi file tidak sesuai dengan ekstensi berkas yang diunggah.",
+        error: "Isi berkas tidak sesuai dengan tipe berkas yang diunggah.",
       };
     }
   }

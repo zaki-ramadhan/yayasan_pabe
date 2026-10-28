@@ -25,12 +25,16 @@ export async function POST(request) {
 
     const formData = await request.formData();
     const file = formData.get("file");
+    const rawImageUrl = formData.get("imageUrl");
     const contextKey = formData.get("context");
     const identifier = formData.get("identifier") || "";
 
-    if (!file || typeof file === "string") {
+    const hasFile = file && typeof file !== "string";
+    const hasUrl = typeof rawImageUrl === "string" && rawImageUrl.trim().length > 0;
+
+    if (!hasFile && !hasUrl) {
       return NextResponse.json(
-        { success: false, message: "Berkas tidak ditemukan dalam formulir unggahan." },
+        { success: false, message: "Berkas atau tautan gambar wajib disertakan." },
         { status: 400 }
       );
     }
@@ -58,11 +62,80 @@ export async function POST(request) {
       if (errorResponse) return errorResponse;
     }
 
-    const arrayBuffer = await file.arrayBuffer();
+    let arrayBuffer;
+    let originalName = "upload";
+    let declaredType = "image/jpeg";
+
+    if (hasFile) {
+      arrayBuffer = await file.arrayBuffer();
+      originalName = file.name || "upload";
+      declaredType = file.type;
+    } else {
+      const targetUrl = rawImageUrl.trim();
+      try {
+        let fetchRes;
+        if (targetUrl.startsWith("data:")) {
+          fetchRes = await fetch(targetUrl);
+          declaredType = (fetchRes.headers.get("content-type") || "image/jpeg").split(";")[0].trim();
+          arrayBuffer = await fetchRes.arrayBuffer();
+          originalName = "pasted-image";
+        } else {
+          fetchRes = await fetch(targetUrl, {
+            headers: {
+              "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+              "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+            },
+            redirect: "follow",
+            signal: AbortSignal.timeout(10000),
+          });
+
+          if (!fetchRes.ok) {
+            return NextResponse.json(
+              {
+                success: false,
+                message: `Gagal mengunduh gambar dari tautan tersebut (Server merespons HTTP ${fetchRes.status} ${fetchRes.statusText}). Tautan mungkin kedaluwarsa atau diblokir oleh pemilik situs. Silakan unduh gambar ke komputer dan unggah langsung.`,
+              },
+              { status: 400 }
+            );
+          }
+
+          const contentType = fetchRes.headers.get("content-type") || "";
+          if (!contentType.startsWith("image/") && !contentType.includes("octet-stream")) {
+            return NextResponse.json(
+              {
+                success: false,
+                message:
+                  "Tautan yang dimasukkan bukan file gambar langsung (konten berupa dokumen web HTML). Silakan buka gambar di tab baru lalu salin URL gambar aslinya.",
+              },
+              { status: 400 }
+            );
+          }
+
+          declaredType = contentType.split(";")[0].trim();
+          arrayBuffer = await fetchRes.arrayBuffer();
+          try {
+            const pathname = new URL(targetUrl).pathname;
+            originalName = pathname.split("/").pop() || "web-image";
+          } catch {
+            originalName = "web-image";
+          }
+        }
+      } catch (err) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: `Koneksi gagal saat mengunduh gambar dari tautan: ${err.message}.`,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     const result = await uploadToR2({
       data: arrayBuffer,
-      originalName: file.name || "upload",
-      declaredType: file.type,
+      originalName,
+      declaredType,
       context: contextKey,
       identifier: typeof identifier === "string" ? identifier.trim() : "",
     });

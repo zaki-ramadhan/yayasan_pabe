@@ -53,6 +53,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "**.gstatic.com",
+      },
+      {
+        protocol: "https",
         hostname: "**.r2.dev",
       },
     ],
@@ -125,7 +129,7 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://images.unsplash.com https://*.googleusercontent.com https://*.fbcdn.net https://*.fbsbx.com https://*.facebook.com https://*.cdninstagram.com https://*.r2.dev",
+              "img-src 'self' data: blob: https://images.unsplash.com https://*.googleusercontent.com https://*.gstatic.com https://*.fbcdn.net https://*.fbsbx.com https://*.facebook.com https://*.cdninstagram.com https://*.r2.dev",
               "font-src 'self' data:",
               "connect-src 'self'",
               "frame-ancestors 'self'",

@@ -82,6 +82,14 @@ export const STORAGE_CONTEXTS = {
     maxBytes: 5 * 1024 * 1024, // 5MB
     allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN],
   },
+  GALLERY_VIDEO: {
+    folder: "gallery/videos",
+    prefix: "gal-vid",
+    optimize: false,
+    allowedTypes: ["video/mp4", "video/webm", "video/quicktime"],
+    maxBytes: 25 * 1024 * 1024, // 25MB
+    allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN],
+  },
 };
 
 /**

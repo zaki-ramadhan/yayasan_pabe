@@ -23,20 +23,16 @@ export function proxy(request) {
     return NextResponse.next();
   }
 
-  // 3. Guard Admin Panel Pages (/admin and /admin/*) - Stealth Masking 404
+  // 3. Guard Admin Panel Pages (/admin and /admin/*)
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     const role = request.cookies.get("pabe_role")?.value;
     const isStaff = Boolean(session && role && role !== "DONOR");
 
-    // Jika belum login atau bukan staf yayasan: sembunyikan rute admin dengan mengembalikan 404
+    // Jika belum login atau bukan staf yayasan: alihkan ke halaman login
     if (!isStaff) {
-      const notFoundUrl = new URL("/_not-found", request.url);
-      const stealthResponse = NextResponse.rewrite(notFoundUrl, { status: 404 });
-      stealthResponse.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
-      stealthResponse.headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate");
-      stealthResponse.headers.set("X-Frame-Options", "DENY");
-      stealthResponse.headers.set("X-Content-Type-Options", "nosniff");
-      return stealthResponse;
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
     }
 
     // Khusus rute manajemen pengurus: hanya SUPER_ADMIN yang diizinkan
