@@ -47,8 +47,17 @@ export function AdminLayoutClient({ children, initialUser }) {
       setCurrentUser(user);
 
       // Cek batas waktu idle
-      const lastActivity = Number(sessionStorage.getItem("pabe_last_activity") || Date.now());
-      if (Date.now() - lastActivity > IDLE_TIMEOUT_MS) {
+      const storedLastActivity = sessionStorage.getItem("pabe_last_activity");
+      const justLoggedIn = sessionStorage.getItem("pabe_just_logged_in");
+
+      // Jika baru login atau belum ada rekam aktivitas, inisialisasi ulang tanpa memicu timeout
+      if (justLoggedIn || !storedLastActivity) {
+        sessionStorage.setItem("pabe_last_activity", String(Date.now()));
+        return true;
+      }
+
+      const lastActivity = Number(storedLastActivity);
+      if (!isNaN(lastActivity) && Date.now() - lastActivity > IDLE_TIMEOUT_MS) {
         logoutUser();
         sessionStorage.removeItem("pabe_last_activity");
         toast.error("Sesi Anda kedaluwarsa karena tidak ada aktivitas selama 2 jam.");
@@ -60,7 +69,7 @@ export function AdminLayoutClient({ children, initialUser }) {
 
     if (!checkSession()) return;
 
-    // Inisialisasi aktivitas awal
+    // Pastikan aktivitas saat ini tercatat
     sessionStorage.setItem("pabe_last_activity", String(Date.now()));
 
     let lastRecorded = Date.now();
@@ -150,7 +159,7 @@ export function AdminLayoutClient({ children, initialUser }) {
           onToggleSidebar={handleToggleSidebar}
           isSidebarExpanded={true}
         />
-        <main className="p-4 sm:p-6 lg:p-8 flex-1 w-full max-w-7xl mx-auto space-y-6">
+        <main className="px-4 sm:px-6 lg:px-8 pt-3.5 sm:pt-4.5 lg:pt-5 pb-6 sm:pb-8 flex-1 w-full max-w-7xl mx-auto space-y-5">
           {children}
         </main>
       </div>

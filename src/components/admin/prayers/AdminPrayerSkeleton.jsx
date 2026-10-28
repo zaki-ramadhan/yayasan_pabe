@@ -11,12 +11,6 @@ import {
 export function AdminPrayerSkeleton() {
   return (
     <div className="space-y-4">
-      {/* Title Skeleton */}
-      <div className="space-y-1.5">
-        <Skeleton className="h-6 w-56 rounded" />
-        <Skeleton className="h-4 w-96 max-w-full rounded" />
-      </div>
-
       {/* Filter and Control Toolbar */}
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
         <div className="flex flex-1 flex-wrap items-center gap-2.5">

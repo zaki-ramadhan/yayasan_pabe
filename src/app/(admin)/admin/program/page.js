@@ -7,7 +7,8 @@ export const metadata = {
   description: "Manajemen kampanye penggalangan donasi, target nominal, status penggalangan, dan kabar penyaluran yayasan.",
 };
 
-export default async function AdminProgramPage() {
+export default async function AdminProgramPage({ searchParams }) {
+  const resolvedParams = searchParams ? await searchParams : {};
   const { items, categories } = await getAdminCampaigns({ limit: 50 });
 
   return (
@@ -17,7 +18,11 @@ export default async function AdminProgramPage() {
         description="Kelola daftar program galang dana dan target donasi."
       />
 
-      <AdminProgramTable initialCampaigns={items} categories={categories} />
+      <AdminProgramTable
+        initialCampaigns={items}
+        categories={categories}
+        initialEditId={resolvedParams?.edit}
+      />
     </div>
   );
 }

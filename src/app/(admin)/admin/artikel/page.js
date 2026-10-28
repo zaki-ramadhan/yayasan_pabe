@@ -7,7 +7,8 @@ export const metadata = {
   description: "Manajemen publikasi artikel, edukasi ziswaf, dan transparansi kabar kegiatan yayasan.",
 };
 
-export default async function AdminArticlePage() {
+export default async function AdminArticlePage({ searchParams }) {
+  const resolvedParams = searchParams ? await searchParams : {};
   const { items, categories } = await getAdminArticles({ limit: 50 });
 
   return (
@@ -17,7 +18,11 @@ export default async function AdminArticlePage() {
         description="Kelola berita, kabar kegiatan, dan artikel yayasan."
       />
 
-      <AdminArticleTable initialArticles={items} categories={categories} />
+      <AdminArticleTable
+        initialArticles={items}
+        categories={categories}
+        initialEditId={resolvedParams?.edit}
+      />
     </div>
   );
 }

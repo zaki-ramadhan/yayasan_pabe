@@ -33,16 +33,23 @@ export function SafeImage({
     );
   }
 
+  const resolvedSrc =
+    typeof src === "string" && src.includes(".r2.dev/")
+      ? `/api/media/${src.split(".r2.dev/")[1]}`
+      : src;
+
   const isUnoptimized =
-    typeof src === "string" &&
-    (src.includes("fbcdn.net") ||
-      src.includes("cdninstagram.com") ||
-      src.includes("instagram.com"));
+    typeof resolvedSrc === "string" &&
+    (resolvedSrc.includes("fbcdn.net") ||
+      resolvedSrc.includes("cdninstagram.com") ||
+      resolvedSrc.includes("instagram.com") ||
+      resolvedSrc.startsWith("http://") ||
+      resolvedSrc.startsWith("https://"));
 
   if (fill) {
     return (
       <Image
-        src={src}
+        src={resolvedSrc}
         alt={alt}
         fill
         sizes={sizes}
@@ -58,7 +65,7 @@ export function SafeImage({
 
   return (
     <Image
-      src={src}
+      src={resolvedSrc}
       alt={alt}
       width={width || 600}
       height={height || 400}

@@ -157,16 +157,19 @@ export function TableToolbar({
             <Button
               type="button"
               onClick={primaryAction.onClick}
-              disabled={primaryAction.disabled || isLoading}
+              disabled={primaryAction.disabled || isLoading || primaryAction.isLoading}
+              isLoading={Boolean(isLoading || primaryAction.isLoading)}
               className={cn(
                 "h-10 px-4 text-sm font-medium gap-1.5 cursor-pointer shrink-0",
                 primaryAction.className
               )}
             >
-              {primaryAction.icon ? (
-                <primaryAction.icon className="w-4 h-4" />
-              ) : (
-                <Plus className="w-4 h-4" />
+              {!isLoading && !primaryAction.isLoading && (
+                primaryAction.icon ? (
+                  <primaryAction.icon className="w-4 h-4" />
+                ) : (
+                  <Plus className="w-4 h-4" />
+                )
               )}
               <span>{primaryAction.label}</span>
             </Button>

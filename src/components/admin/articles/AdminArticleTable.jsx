@@ -29,12 +29,25 @@ import { toast } from "@/hooks/use-toast";
 
 const PAGE_SIZE = 10;
 
-export function AdminArticleTable({ initialArticles = [], categories = [] }) {
+export function AdminArticleTable({
+  initialArticles = [],
+  categories = [],
+  initialEditId,
+}) {
+  const initialEditArticle = useMemo(() => {
+    if (!initialEditId) return null;
+    return (
+      initialArticles.find(
+        (a) => String(a.id) === String(initialEditId) || a.slug === initialEditId
+      ) || null
+    );
+  }, [initialEditId, initialArticles]);
+
   const [articles, setArticles] = useState(initialArticles);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(Boolean(initialEditArticle));
+  const [selectedArticle, setSelectedArticle] = useState(initialEditArticle);
   const [isLoading, setIsLoading] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);

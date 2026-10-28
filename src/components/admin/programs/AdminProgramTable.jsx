@@ -30,13 +30,23 @@ import { toast } from "@/hooks/use-toast";
 export function AdminProgramTable({
   initialCampaigns = [],
   categories = [],
+  initialEditId,
 }) {
+  const initialEditCampaign = useMemo(() => {
+    if (!initialEditId) return null;
+    return (
+      initialCampaigns.find(
+        (c) => String(c.id) === String(initialEditId) || c.slug === initialEditId
+      ) || null
+    );
+  }, [initialEditId, initialCampaigns]);
+
   const [campaigns, setCampaigns] = useState(initialCampaigns);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCampaign, setEditingCampaign] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(Boolean(initialEditCampaign));
+  const [editingCampaign, setEditingCampaign] = useState(initialEditCampaign);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const PAGE_SIZE = 10;
@@ -166,7 +176,7 @@ export function AdminProgramTable({
               <TableRow>
                 <TableHead className="min-w-[240px] font-medium text-slate-600 text-sm py-2.5">Program Donasi</TableHead>
                 <TableHead className="w-32 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Kategori</TableHead>
-                <TableHead className="w-48 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Capaian &amp; Target</TableHead>
+                <TableHead className="w-56 min-w-[220px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Capaian &amp; Target</TableHead>
                 <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Donatur &amp; Waktu</TableHead>
                 <TableHead className="w-44 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Penyaluran Dana</TableHead>
                 <TableHead className="w-24 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Status</TableHead>

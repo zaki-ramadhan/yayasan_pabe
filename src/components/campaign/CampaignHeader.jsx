@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { formatRupiah } from "@/lib/formatters";

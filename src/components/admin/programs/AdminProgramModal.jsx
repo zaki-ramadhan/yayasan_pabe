@@ -12,6 +12,7 @@ import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
 import { toTitleCase } from "@/lib/formatters";
 import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
+import { DatePicker } from "@/components/ui/date-picker";
 
 export function AdminProgramModal({
 	isOpen,
@@ -401,11 +402,10 @@ export function AdminProgramModal({
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
 				{/* Tenggat waktu */}
 				<FormField label="Batas waktu penggalangan">
-					<Input
-						type="date"
+					<DatePicker
 						value={endDate}
-						onChange={(e) => setEndDate(e.target.value)}
-						className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
+						onChange={setEndDate}
+						placeholder="Pilih batas waktu..."
 					/>
 				</FormField>
 

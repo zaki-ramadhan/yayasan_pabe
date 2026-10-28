@@ -382,3 +382,32 @@ export function formatPaymentChannel(channel) {
     .join(" ");
 }
 
+/**
+ * Format ukuran byte menjadi satuan yang mudah dibaca (B, KB, MB, GB).
+ *
+ * @param {number} bytes
+ * @param {number} [decimals=1]
+ * @returns {string}
+ */
+export function formatBytes(bytes, decimals = 1) {
+  if (!bytes || isNaN(bytes) || bytes === 0) return "0 B";
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
+
+/**
+ * Format durasi detik menjadi format menit:detik (contoh: 65 -> "1:05").
+ *
+ * @param {number} seconds
+ * @returns {string}
+ */
+export function formatDuration(seconds) {
+  if (!seconds || isNaN(seconds)) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+

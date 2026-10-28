@@ -46,7 +46,7 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
 
       {/* 4. Frekuensi Donasi */}
       <TableCell className="w-px text-center text-sm font-normal text-slate-700 py-3 whitespace-nowrap align-middle">
-        {donor.paidCount} kali
+        {donor.paidCount}x
       </TableCell>
 
       {/* 5. Donasi Terakhir */}

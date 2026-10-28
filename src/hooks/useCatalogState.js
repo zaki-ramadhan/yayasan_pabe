@@ -97,9 +97,20 @@ export function useCatalogState({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const isFiltered =
+    (selectedCategory !== "all" &&
+      selectedCategory !== "semua" &&
+      selectedCategory !== "Semua Kategori") ||
+    Boolean(searchQuery.trim());
+
   const handleReset = () => {
-    handleCategoryChange("all");
-    handleClearSearch();
+    if (isFiltered) {
+      startTransition(() => {
+        setInternalCategory("all");
+        setSearchQuery("");
+        setCurrentPage(1);
+      });
+    }
   };
 
   return {
@@ -110,6 +121,7 @@ export function useCatalogState({
     currentPage,
     isPending,
     isDebouncing,
+    isFiltered,
     categoryCounts,
     filteredItems,
     paginatedItems,

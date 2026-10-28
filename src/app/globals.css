@@ -42,9 +42,42 @@ body {
   outline: none;
 }
 
-/* Prevent layout shift and reserve scrollbar gutter globally */
+/* Hindari ghost scrollbar gutter di sisi kanan layar saat konten tidak overflow */
 html {
-  scrollbar-gutter: stable;
+  scrollbar-gutter: auto;
+}
+
+/* Standarisasi scrollbar universal tanpa terkecuali (Tabel, Modal, Drawer, Section, Dropdown, dsb) */
+*, *::before, *::after {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Utilitas untuk menyembunyikan scrollbar pada pill chips horizontal bila diperlukan */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* Prevent Radix UI / react-remove-scroll from locking body scroll and removing scrollbar */

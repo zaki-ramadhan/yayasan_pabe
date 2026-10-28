@@ -17,6 +17,7 @@ export function AuthPasswordInput({
   required = true,
   autoComplete = "current-password",
   extraAction,
+  className = "",
   ...props
 }) {
   const [showPassword, setShowPassword] = useState(false);

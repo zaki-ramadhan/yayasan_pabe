@@ -11,12 +11,6 @@ import {
 export default function AdminDonorsLoading() {
   return (
     <div className="space-y-4">
-      {/* Page Header Skeleton */}
-      <div className="space-y-1">
-        <div className="h-6 w-48 bg-slate-200 rounded animate-pulse" />
-        <div className="h-4 w-72 bg-slate-100 rounded animate-pulse" />
-      </div>
-
       {/* Toolbar Skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-pulse">
         <div className="flex items-center gap-2 flex-1 max-w-sm">

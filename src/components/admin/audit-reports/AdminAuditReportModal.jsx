@@ -14,6 +14,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { formatThousandsInput, parseThousandsToNumber } from "@/lib/formatters";
+import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 
 export function AdminAuditReportModal({
 	report,
@@ -370,24 +371,18 @@ export function AdminAuditReportModal({
 				</FormField>
 			</div>
 
-			<FormField label="Tautan unduh berkas PDF laporan resmi">
-				<Input
-					value={
-						pdfUrl
-					}
-					onChange={(
-						e,
-					) =>
-						setPdfUrl(
-							e
-								.target
-								.value,
-						)
-					}
-					placeholder="https://... atau /documents/audit-2024.pdf"
-					className="text-sm font-normal"
-				/>
-			</FormField>
+			{/* Berkas PDF Laporan Resmi */}
+			<FileUploadZone
+				value={pdfUrl}
+				onChange={setPdfUrl}
+				isPdf={true}
+				context="AUDIT_REPORT"
+				identifier={`audit-${year || "laporan"}`}
+				label="Berkas laporan audit resmi (PDF)"
+				helperText="Format dokumen PDF resmi (Maks. 15MB). Otomatis disimpan ke Cloudflare R2 atau gunakan tautan dokumen."
+				accept="application/pdf"
+				error={errors.pdfUrl}
+			/>
 
 			<FormField label="Ringkasan catatan auditor">
 				<Textarea

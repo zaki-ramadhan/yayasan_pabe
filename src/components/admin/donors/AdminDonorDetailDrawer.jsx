@@ -200,7 +200,7 @@ export function AdminDonorDetailDrawer({
               <div>
                 <span className="text-slate-500 font-normal block">Frekuensi</span>
                 <span className="text-slate-900 font-medium block mt-0.5">
-                  {donor.paidCount} kali
+                  {donor.paidCount}x
                 </span>
               </div>
             </div>

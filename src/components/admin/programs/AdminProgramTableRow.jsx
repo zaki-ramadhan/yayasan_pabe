@@ -79,8 +79,8 @@ export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
 				</Badge>
 			</TableCell>
 
-			<TableCell className="space-y-1.5 py-3 align-middle">
-				<div className="flex items-center justify-between text-sm">
+			<TableCell className="space-y-1.5 py-3 align-middle w-56 min-w-[220px]">
+				<div className="flex items-center justify-between text-xs whitespace-nowrap">
 					<span className="font-medium text-slate-900">
 						{formatRupiah(
 							collected,
@@ -105,7 +105,7 @@ export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
 							}
 							className="h-1.5"
 						/>
-						<span className="text-sm text-slate-500 block">
+						<span className="text-xs text-slate-500 block whitespace-nowrap">
 							Target:{" "}
 							{formatRupiah(
 								target,

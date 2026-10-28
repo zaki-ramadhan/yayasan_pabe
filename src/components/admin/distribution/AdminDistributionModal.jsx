@@ -10,6 +10,7 @@ import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { CreatableCombobox } from "@/components/ui/creatable-combobox";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/use-toast";
+import { DatePicker } from "@/components/ui/date-picker";
 
 export function AdminDistributionModal({
 	isOpen,
@@ -283,17 +284,15 @@ export function AdminDistributionModal({
 					required
 					error={errors.date}
 				>
-					<Input
-						type="date"
+					<DatePicker
 						value={date}
-						onChange={(e) => {
-							setDate(e.target.value);
+						onChange={(val) => {
+							setDate(val);
 							if (errors.date) {
 								setErrors((prev) => ({ ...prev, date: "" }));
 							}
 						}}
-						className="h-10 text-sm font-normal text-slate-900 border-slate-300 rounded-lg"
-						required
+						placeholder="Pilih tanggal penyaluran..."
 					/>
 				</FormField>
 			</div>

@@ -13,3 +13,9 @@ export const PRAYER_SORT_OPTIONS = [
   { value: "terbaru", label: "Terbaru" },
   { value: "terpopuler", label: "Terbanyak Diaminkan" },
 ];
+
+export const GALLERY_SORT_OPTIONS = [
+  { value: "terbaru", label: "Terbaru" },
+  { value: "terlama", label: "Terlama" },
+];
+

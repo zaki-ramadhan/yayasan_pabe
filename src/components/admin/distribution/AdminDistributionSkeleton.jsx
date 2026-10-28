@@ -11,12 +11,6 @@ import {
 export function AdminDistributionSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
-      {/* Page Header */}
-      <div className="space-y-1.5">
-        <Skeleton className="h-6 w-72 rounded-md" />
-        <Skeleton className="h-4 w-96 max-w-full rounded" />
-      </div>
-
       {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex-1 max-w-md">

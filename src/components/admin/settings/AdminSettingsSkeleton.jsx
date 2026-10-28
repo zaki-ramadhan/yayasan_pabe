@@ -3,12 +3,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function AdminSettingsSkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
-      {/* Page Header */}
-      <div className="space-y-1">
-        <Skeleton className="h-6 w-64 rounded-md" />
-        <Skeleton className="h-4 w-96 max-w-full rounded" />
-      </div>
-
       {/* 1. Identitas Yayasan Card */}
       <div className="bg-white rounded-lg border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-3">
         <div className="pb-2.5 border-b border-slate-100">

@@ -16,15 +16,7 @@ import {
 export function AdminRoutineDonationSkeleton() {
   return (
     <div className="space-y-4">
-      {/* 1. Page Header Skeleton (Matches AdminPageHeader) */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-1">
-        <div className="space-y-1">
-          <Skeleton className="h-6 w-56 rounded-md" />
-          <Skeleton className="h-4 w-80 max-w-full rounded" />
-        </div>
-      </div>
-
-      {/* 2. Filter & Action Toolbar Skeleton (Matches AdminRoutineDonationToolbar) */}
+      {/* 1. Filter & Action Toolbar Skeleton (Matches AdminRoutineDonationToolbar) */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Left Side: Search + 2 Select Filters */}
         <div className="flex flex-1 flex-wrap items-center gap-2.5">

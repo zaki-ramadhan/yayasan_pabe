@@ -8,6 +8,7 @@ import { formatDate } from "@/lib/formatters";
 import { SafeImage } from "@/components/ui/safe-image";
 import { ArticleActionBar } from "@/components/modules/ArticleActionBar";
 import { RelatedArticles } from "@/components/modules/RelatedArticles";
+import { AdminInlineEditButton } from "@/components/shared/AdminInlineEditButton";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -66,13 +67,20 @@ export default async function ArticleDetailPage({ params }) {
           {article.title}
         </h1>
 
-        {/* Metadata Header */}
-        <div className="flex items-center divide-x divide-slate-300 text-xs sm:text-sm text-slate-600 flex-wrap gap-y-1">
-          <span className="pr-3 font-semibold text-slate-900">{article.category}</span>
-          {article.author && <span className="px-3">Oleh {article.author}</span>}
-          <span className="pl-3">
-            {formatDate(article.publishedAt, { withDay: true, withTime: true })}
-          </span>
+        {/* Metadata Header & Admin Quick Edit */}
+        <div className="flex items-center justify-between flex-wrap gap-2 pt-0.5">
+          <div className="flex items-center divide-x divide-slate-300 text-xs sm:text-sm text-slate-600 flex-wrap gap-y-1">
+            <span className="pr-3 font-semibold text-slate-900">{article.category}</span>
+            {article.author && <span className="px-3">Oleh {article.author}</span>}
+            <span className="pl-3">
+              {formatDate(article.publishedAt, { withDay: true, withTime: true })}
+            </span>
+          </div>
+
+          <AdminInlineEditButton
+            href={`/admin/artikel?edit=${article.id || article.slug}`}
+            label="Edit artikel"
+          />
         </div>
       </div>
 

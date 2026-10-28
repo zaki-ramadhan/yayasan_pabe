@@ -6,7 +6,6 @@ import { CATEGORIES } from "@/data/categories";
 import { PROGRAM_SORT_OPTIONS } from "@/data/sortOptions";
 import { useCatalogState } from "@/hooks/useCatalogState";
 import { CampaignCard } from "@/components/shared/CampaignCard";
-import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 import { CatalogSearchBar } from "@/components/shared/CatalogSearchBar";
 import { CategoryTabs } from "@/components/shared/CategoryTabs";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -51,6 +50,7 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
     sortBy,
     isPending,
     isDebouncing,
+    isFiltered,
     categoryCounts,
     filteredItems,
     handlers,
@@ -135,13 +135,7 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
         searchPlaceholder="Cari judul program donasi..."
       />
 
-      {isPending ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-2">
-          {[1, 2, 3, 4, 5, 6].map((n) => (
-            <CampaignCardSkeleton key={n} />
-          ))}
-        </div>
-      ) : visibleItems.length > 0 ? (
+      {visibleItems.length > 0 ? (
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-2">
             {visibleItems.map((camp, index) => (
@@ -174,17 +168,23 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
         </div>
       ) : (
         <EmptyState
-          title="Program Tidak Ditemukan"
-          description="Tidak ada program donasi yang cocok dengan kata kunci atau filter yang Anda pilih."
+          title={initialCampaigns.length === 0 ? "Belum Ada Program Donasi" : "Program Tidak Ditemukan"}
+          description={
+            initialCampaigns.length === 0
+              ? "Program donasi dan amanah kebaikan akan segera hadir di sini."
+              : "Tidak ada program donasi yang cocok dengan kata kunci atau filter yang Anda pilih."
+          }
           variant="card"
           action={
-            <button
-              type="button"
-              onClick={handlers.onReset}
-              className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
-            >
-              Reset Semua Filter
-            </button>
+            isFiltered ? (
+              <button
+                type="button"
+                onClick={handlers.onReset}
+                className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
+              >
+                Reset Semua Filter
+              </button>
+            ) : null
           }
         />
       )}

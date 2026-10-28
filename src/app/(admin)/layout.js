@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { AdminLayoutClient } from "@/components/admin/AdminLayoutClient";
 
 export const metadata = {
@@ -12,8 +12,12 @@ export default async function AdminLayout({ children }) {
   const session = cookieStore.get("pabe_session")?.value;
   const role = cookieStore.get("pabe_role")?.value;
 
-  if (!session || !role || role === "DONOR") {
-    notFound();
+  if (!session) {
+    redirect("/login?redirect=/admin");
+  }
+
+  if (!role || role === "DONOR") {
+    redirect("/login?error=forbidden&redirect=/admin");
   }
 
   return <AdminLayoutClient>{children}</AdminLayoutClient>;

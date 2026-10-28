@@ -11,12 +11,6 @@ import {
 export function AdminProgramSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
-      {/* Page Header */}
-      <div className="space-y-1.5">
-        <Skeleton className="h-6 w-52 rounded-md" />
-        <Skeleton className="h-4 w-96 max-w-full rounded" />
-      </div>
-
       {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex flex-1 flex-wrap items-center gap-2.5 max-w-2xl">
@@ -39,7 +33,7 @@ export function AdminProgramSkeleton() {
                 <TableHead className="w-32 py-2.5 text-center">
                   <Skeleton className="h-4 w-16 rounded mx-auto" />
                 </TableHead>
-                <TableHead className="w-48 py-2.5">
+                <TableHead className="w-56 min-w-[220px] py-2.5">
                   <Skeleton className="h-4 w-28 rounded" />
                 </TableHead>
                 <TableHead className="w-36 py-2.5">
@@ -71,7 +65,7 @@ export function AdminProgramSkeleton() {
                   </TableCell>
 
                   {/* Target & Progress */}
-                  <TableCell className="space-y-2 py-3 align-middle">
+                  <TableCell className="space-y-2 py-3 align-middle w-56 min-w-[220px]">
                     <div className="flex items-center justify-between">
                       <Skeleton className="h-4 w-24 rounded" />
                       <Skeleton className="h-4 w-8 rounded" />

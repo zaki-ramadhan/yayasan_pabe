@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FileCheck, Trash2, Edit2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -17,36 +17,57 @@ export function FileUploadPreview({
   onReplace,
   onRemove,
 }) {
-  const [imgError, setImgError] = useState(false);
+  const [failedSrc, setFailedSrc] = useState(null);
   const activeSrc = previewSrc || value;
-  const fileName = (value || "").split("/").pop() || "Berkas terpilih";
 
-  useEffect(() => {
-    setImgError(false);
-  }, [activeSrc]);
+  // Otomatis arahkan domain *.r2.dev ke proxy internal /api/media/... jika diblokir oleh ISP Indonesia
+  const resolvedSrc =
+    typeof activeSrc === "string" && activeSrc.includes(".r2.dev/")
+      ? `/api/media/${activeSrc.split(".r2.dev/")[1]}`
+      : activeSrc;
+
+  // Derived state: error hanya aktif jika URL yang gagal memuat identik dengan resolvedSrc aktif
+  const isError = Boolean(failedSrc && failedSrc === resolvedSrc);
+  
+  let fileName = "Berkas terpilih";
+  if (typeof value === "string" && value) {
+    if (value.startsWith("data:")) {
+      fileName = "Gambar Base64";
+    } else {
+      try {
+        const urlObj = new URL(value);
+        const pathLeaf = urlObj.pathname.split("/").filter(Boolean).pop();
+        fileName = decodeURIComponent(pathLeaf || urlObj.hostname || "Berkas terpilih");
+      } catch {
+        fileName = decodeURIComponent((value || "").split("/").pop() || "Berkas terpilih");
+      }
+    }
+  }
 
   return (
-    <div className="flex items-center gap-3.5 py-1">
+    <div className="flex items-center gap-3.5 p-3 rounded-xl border border-slate-200 bg-white shadow-2xs">
       {!isPdf ? (
-        <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shrink-0 flex items-center justify-center">
-          {imgError || !activeSrc ? (
+        <div
+          className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shrink-0 flex items-center justify-center"
+          title={isError ? "Pratinjau gambar tidak dapat dimuat dari tautan" : "Pratinjau gambar"}
+        >
+          {isError || !resolvedSrc ? (
             <div className="flex flex-col items-center justify-center text-slate-400 p-1">
               <ImageIcon className="w-5 h-5 text-slate-400" />
             </div>
           ) : (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
-              src={activeSrc}
+              key={resolvedSrc}
+              src={resolvedSrc}
               alt="Preview Berkas"
               className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-              crossOrigin="anonymous"
-              onError={() => setImgError(true)}
+              onError={() => setFailedSrc(resolvedSrc)}
             />
           )}
         </div>
       ) : (
-        <div className="w-12 h-12 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shrink-0">
+        <div className="w-14 h-14 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shrink-0">
           <FileCheck className="w-6 h-6" />
         </div>
       )}
@@ -56,9 +77,15 @@ export function FileUploadPreview({
           {fileName}
         </p>
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-          <span className="inline-flex items-center rounded-md border border-emerald-200/80 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-            Tersimpan di Cloudflare R2
-          </span>
+          {typeof value === "string" && (value.includes(".r2.dev") || value.includes("r2.cloudflarestorage.com") || value.startsWith("/api/media/")) ? (
+            <span className="inline-flex items-center rounded-md border border-emerald-200/80 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+              Tersimpan di Cloudflare R2
+            </span>
+          ) : (
+            <span className="inline-flex items-center rounded-md border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
+              Tautan gambar eksternal
+            </span>
+          )}
           {uploadMeta && (
             <span className="text-xs text-slate-500 font-normal">
               {uploadMeta.sizeKb} KB

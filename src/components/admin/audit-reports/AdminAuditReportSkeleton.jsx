@@ -11,12 +11,6 @@ import {
 export function AdminAuditReportSkeleton() {
   return (
     <div className="space-y-4">
-      {/* Title Skeleton */}
-      <div className="space-y-1.5">
-        <Skeleton className="h-6 w-64 rounded" />
-        <Skeleton className="h-4 w-96 max-w-full rounded" />
-      </div>
-
       {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex-1 max-w-sm">

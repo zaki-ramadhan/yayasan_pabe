@@ -29,7 +29,7 @@ export function DonorSummaryCards({ metrics, isLoading = false }) {
     },
     {
       title: "Frekuensi Donasi",
-      value: `${(metrics?.totalTransactions || 0).toLocaleString("id-ID")} Kali`,
+      value: `${(metrics?.totalTransactions || 0).toLocaleString("id-ID")}x`,
     },
     {
       title: "Program Didukung",

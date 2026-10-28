@@ -55,6 +55,7 @@ export function ArticleCatalog({ initialArticles = [], categories = ARTICLE_CATE
     currentPage,
     isPending,
     isDebouncing,
+    isFiltered,
     categoryCounts,
     paginatedItems,
     totalPages,
@@ -108,17 +109,23 @@ export function ArticleCatalog({ initialArticles = [], categories = ARTICLE_CATE
         </div>
       ) : (
         <EmptyState
-          title="Tidak Ada Artikel Ditemukan"
-          description="Coba kata kunci lain atau pilih kategori lain."
+          title={initialArticles.length === 0 ? "Belum Ada Artikel Dipublikasikan" : "Tidak Ada Artikel Ditemukan"}
+          description={
+            initialArticles.length === 0
+              ? "Artikel, kabar kegiatan, dan edukasi ziswaf yayasan akan segera hadir di sini."
+              : "Coba kata kunci lain atau pilih kategori lain."
+          }
           variant="dashed"
           action={
-            <button
-              type="button"
-              onClick={handlers.onReset}
-              className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
-            >
-              Reset Semua Filter
-            </button>
+            isFiltered ? (
+              <button
+                type="button"
+                onClick={handlers.onReset}
+                className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
+              >
+                Reset Semua Filter
+              </button>
+            ) : null
           }
         />
       )}

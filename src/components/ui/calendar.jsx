@@ -10,6 +10,7 @@ function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  fixedWeeks = true,
   ...props
 }) {
   const defaultClassNames = getDefaultClassNames();
@@ -17,6 +18,7 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      fixedWeeks={fixedWeeks}
       className={cn("p-3 bg-white rounded-xl", className)}
       classNames={{
         root: `${defaultClassNames.root || ""} shadow-none`,
@@ -24,14 +26,14 @@ function Calendar({
         month: "flex flex-col gap-4",
         month_caption: "flex justify-center pt-1 relative items-center h-8",
         caption_label: "text-sm font-semibold text-slate-900",
-        nav: "flex items-center gap-1",
+        nav: "w-full absolute top-1 inset-x-0 px-1 flex items-center justify-between z-20 pointer-events-none",
         button_previous: cn(
           buttonVariants({ variant: "outline", size: "icon" }),
-          "absolute left-1 top-0 h-7 w-7 bg-transparent p-0 text-slate-600 opacity-80 hover:opacity-100 hover:bg-slate-100 cursor-pointer"
+          "h-7 w-7 bg-transparent p-0 text-slate-600 opacity-80 hover:opacity-100 hover:bg-slate-100 cursor-pointer pointer-events-auto"
         ),
         button_next: cn(
           buttonVariants({ variant: "outline", size: "icon" }),
-          "absolute right-1 top-0 h-7 w-7 bg-transparent p-0 text-slate-600 opacity-80 hover:opacity-100 hover:bg-slate-100 cursor-pointer"
+          "h-7 w-7 bg-transparent p-0 text-slate-600 opacity-80 hover:opacity-100 hover:bg-slate-100 cursor-pointer pointer-events-auto"
         ),
         month_grid: "w-full border-collapse space-y-1",
         weekdays: "flex",

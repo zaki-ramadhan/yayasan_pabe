@@ -1,18 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { PanelLeft } from "lucide-react";
+
+const DONOR_PAGE_TITLES = {
+  "/donatur": "Dashboard",
+  "/donatur/dashboard": "Dashboard",
+  "/donatur/riwayat": "Riwayat Donasi & Zakat",
+  "/donatur/relawan": "Kartu Relawan",
+  "/donatur/profil": "Profil Saya",
+};
 
 export function DonorTopHeader({
   currentUser,
   onToggleSidebar,
   isSidebarExpanded = false,
 }) {
+  const pathname = usePathname();
   const firstName = currentUser?.name ? currentUser.name.split(" ")[0] : "";
   const displayName = currentUser?.name || "Akun Saya";
   const [imgError, setImgError] = useState(false);
+
+  const pageTitle = useMemo(() => {
+    if (!pathname || pathname === "/donatur" || pathname === "/donatur/dashboard") {
+      return firstName ? `Halo, ${firstName}` : "Selamat Datang";
+    }
+    return DONOR_PAGE_TITLES[pathname] || "Dashboard";
+  }, [pathname, firstName]);
 
   const avatarUrl = !imgError
     ? (currentUser?.avatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
@@ -24,7 +41,7 @@ export function DonorTopHeader({
 
   return (
     <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-      {/* Left: Sidebar Toggle Button + Greeting Text */}
+      {/* Left: Sidebar Toggle Button + Page Title */}
       <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
         <button
           type="button"
@@ -36,9 +53,9 @@ export function DonorTopHeader({
           <PanelLeft className="w-5 h-5" />
         </button>
 
-        <span className="text-base sm:text-lg font-medium text-slate-950 leading-tight truncate">
-          {firstName ? `Halo, ${firstName}` : "Selamat Datang"}
-        </span>
+        <h1 className="text-base sm:text-lg font-medium text-slate-950 leading-tight truncate">
+          {pageTitle}
+        </h1>
       </div>
 
       {/* Right: Donor Profile Avatar Link */}

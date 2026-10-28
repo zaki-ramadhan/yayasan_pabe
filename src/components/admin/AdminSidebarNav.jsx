@@ -3,12 +3,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { LogOut, ExternalLink } from "lucide-react";
 import { logoutUser } from "@/services/authService";
 import { USER_ROLES } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { isInfrastructureEmail } from "@/lib/infrastructureConstants";
 
 const ADMIN_NAV_GROUPS = [
   {
@@ -27,6 +28,7 @@ const ADMIN_NAV_GROUPS = [
     title: "Konten & Informasi",
     items: [
       { href: "/admin/artikel", label: "Berita & Artikel", short: "BA" },
+      { href: "/admin/galeri", label: "Galeri Dokumentasi", short: "GD" },
       { href: "/admin/laporan-audit", label: "Laporan Audit Keuangan", short: "LK" },
       { href: "/admin/karier", label: "Lowongan Karier", short: "KA" },
       { href: "/admin/relawan", label: "Kelola Relawan", short: "KR" },
@@ -43,6 +45,9 @@ export function AdminSidebarNav({
   const router = useRouter();
   const { currentUser } = useCurrentUser();
   const isSuperAdmin = currentUser?.role === USER_ROLES.SUPER_ADMIN;
+  const userEmail = (currentUser?.email || "").toLowerCase().trim();
+  const isInfrastructureAdmin =
+    isSuperAdmin && isInfrastructureEmail(userEmail);
 
   const navGroups = [
     ...ADMIN_NAV_GROUPS,
@@ -53,6 +58,32 @@ export function AdminSidebarNav({
             items: [
               { href: "/admin/pengguna", label: "Kelola Pengurus", short: "KP" },
               { href: "/admin/pengaturan", label: "Pengaturan Yayasan", short: "PY" },
+            ],
+          },
+        ]
+      : []),
+    ...(isInfrastructureAdmin
+      ? [
+          {
+            title: "Infrastruktur & Sistem",
+            items: [
+              {
+                href: "/admin/penyimpanan",
+                label: "Penyimpanan Media R2",
+                short: "R2",
+              },
+              {
+                href: "/api/admin/external/google-oauth",
+                label: "Console Google OAuth",
+                short: "GO",
+                isExternal: true,
+              },
+              {
+                href: "/api/admin/external/facebook-oauth",
+                label: "Meta Developers OAuth",
+                short: "FB",
+                isExternal: true,
+              },
             ],
           },
         ]
@@ -102,7 +133,7 @@ export function AdminSidebarNav({
       </div>
 
       {/* Main Navigation Groups (Scrollable if many items) */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 sidebar-scrollbar">
         {navGroups.map((group) => (
           <div key={group.title} className="space-y-1.5">
             {!isCollapsed && (
@@ -112,6 +143,32 @@ export function AdminSidebarNav({
             )}
             <nav className="space-y-0.5">
               {group.items.map((item) => {
+                if (item.isExternal) {
+                  return (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={onCloseMobile}
+                      title={isCollapsed ? item.label : undefined}
+                      className={cn(
+                        "flex items-center rounded-md text-sm transition-all font-normal text-slate-900 hover:bg-slate-200/50",
+                        isCollapsed ? "justify-center p-2 text-xs" : "px-3 py-2 justify-between"
+                      )}
+                    >
+                      {isCollapsed ? (
+                        <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
+                      ) : (
+                        <>
+                          <span className="truncate font-normal">{item.label}</span>
+                          <ExternalLink className="w-3.5 h-3.5 text-slate-500 shrink-0 ml-1.5" />
+                        </>
+                      )}
+                    </a>
+                  );
+                }
+
                 const isActive = item.exact
                   ? pathname === item.href
                   : pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -123,11 +180,11 @@ export function AdminSidebarNav({
                     onClick={onCloseMobile}
                     title={isCollapsed ? item.label : undefined}
                     className={cn(
-                      "flex items-center rounded-md text-sm transition-all font-normal",
+                      "flex items-center rounded-md text-sm transition-all font-normal text-slate-900",
                       isCollapsed ? "justify-center p-2 text-xs" : "px-3 py-2",
                       isActive
-                        ? "text-slate-950 bg-slate-200/90 shadow-2xs"
-                        : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/50"
+                        ? "bg-slate-200/90 shadow-2xs"
+                        : "hover:bg-slate-200/50"
                     )}
                   >
                     {isCollapsed ? (

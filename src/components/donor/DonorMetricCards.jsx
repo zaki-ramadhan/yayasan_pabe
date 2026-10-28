@@ -53,7 +53,7 @@ export function DonorMetricCards({ metrics, lastDonation, isLoading = false }) {
   const STAT_CARDS = [
     {
       title: "Frekuensi Donasi",
-      value: `${totalTransactions.toLocaleString("id-ID")} Kali`,
+      value: `${totalTransactions.toLocaleString("id-ID")}x`,
     },
     {
       title: "Program Didukung",
