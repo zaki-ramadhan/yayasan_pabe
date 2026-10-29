@@ -35,12 +35,12 @@ export function getYouTubeThumbnail(url) {
 }
 
 /**
- * Memeriksa apakah sebuah URL mengarah ke file media video atau penyedia video (R2/YouTube/Vimeo).
+ * Memeriksa apakah sebuah URL mengarah langsung ke berkas media video (MP4, WebM, MOV, dll).
  *
  * @param {string} url - URL berkas media
- * @returns {boolean} True jika berkas adalah video
+ * @returns {boolean} True jika berkas adalah video langsung
  */
-export function isVideoUrl(url) {
+export function isDirectVideoUrl(url) {
   if (!url || typeof url !== "string") return false;
   const clean = url.split("?")[0].toLowerCase();
   return (
@@ -49,10 +49,19 @@ export function isVideoUrl(url) {
     clean.endsWith(".mov") ||
     clean.endsWith(".ogg") ||
     clean.endsWith(".m4v") ||
-    clean.includes("/video/") ||
-    isYouTubeUrl(url) ||
-    url.includes("vimeo.com")
+    clean.includes("/video/")
   );
+}
+
+/**
+ * Memeriksa apakah sebuah URL mengarah ke file media video atau penyedia video (R2/YouTube/Vimeo).
+ *
+ * @param {string} url - URL berkas media
+ * @returns {boolean} True jika berkas adalah video
+ */
+export function isVideoUrl(url) {
+  if (!url || typeof url !== "string") return false;
+  return isDirectVideoUrl(url) || isYouTubeUrl(url) || url.toLowerCase().includes("vimeo.com");
 }
 
 /**

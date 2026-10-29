@@ -19,6 +19,12 @@ export const ASSET_PATHS = {
     DINSOS_DARK: "/img/branding/partners/logo-dinsos-dark.webp",
     DINSOS_WHITE: "/img/branding/partners/logo-dinsos-white.webp",
   },
+  LEGAL: {
+    AKTA_NOTARIS: "/img/legal/akta-notaris-yayasan.webp",
+    IZIN_LKS: "/img/legal/izin-operasional-lks.webp",
+    DOMISILI: "/img/legal/surat-keterangan-domisili.webp",
+    WATERMARK: "/img/legal/watermark-ypabe.webp",
+  },
   PAYMENTS: {
     QRIS: "/img/branding/payments/qris.webp",
     QRIS_BARCODE: "/img/branding/payments/qris-barcode.webp",

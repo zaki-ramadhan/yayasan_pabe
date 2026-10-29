@@ -29,7 +29,13 @@ export async function GET(request, { params }) {
     return new NextResponse("Berkas tidak ditemukan", { status: 404 });
   }
 
-  const key = path.join("/");
+  let rawPath = [...path];
+  const lastSegment = rawPath[rawPath.length - 1];
+  if (lastSegment === "stream" || lastSegment === "play") {
+    rawPath.pop();
+  }
+
+  const key = rawPath.join("/");
 
   try {
     const client = getClient();
@@ -45,8 +51,30 @@ export async function GET(request, { params }) {
     });
     const response = await client.send(command);
 
+    const ext = key.split(".").pop().toLowerCase();
+    const MIME_TYPES = {
+      mp4: "video/mp4",
+      webm: "video/webm",
+      mov: "video/quicktime",
+      ogg: "video/ogg",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      png: "image/png",
+      webp: "image/webp",
+      svg: "image/svg+xml",
+      pdf: "application/pdf",
+    };
+
+    const resolvedContentType =
+      response.ContentType && response.ContentType !== "application/octet-stream"
+        ? response.ContentType
+        : (MIME_TYPES[ext] || "application/octet-stream");
+
+    const fileName = key.split("/").pop() || "media";
+
     const headers = new Headers();
-    headers.set("Content-Type", response.ContentType || "application/octet-stream");
+    headers.set("Content-Type", resolvedContentType);
+    headers.set("Content-Disposition", `inline; filename="${encodeURIComponent(fileName)}"`);
     headers.set("Cache-Control", "public, max-age=31536000, immutable");
     headers.set("Accept-Ranges", "bytes");
     if (response.ContentLength) {

@@ -2,13 +2,9 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
-import {
-  isVideoUrl,
-  isYouTubeUrl,
-  getYouTubeVideoId,
-  getYouTubeThumbnail,
-} from "@/lib/galleryGroupHelper";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { isVideoUrl } from "@/lib/galleryGroupHelper";
+import { VideoPlayer } from "@/components/shared/VideoPlayer";
 
 /**
  * Sub-komponen Carousel Media ala Instagram untuk kartu galeri kegiatan.
@@ -17,7 +13,7 @@ import {
  * - Mendukung navigasi gestur swipe geser di smartphone
  * - Indikator urutan foto (misal: 1/5) di pojok kanan atas berlatar putih
  * - Indikator titik (dots indicator) di bagian bawah foto
- * - Deteksi otomatis video Cloudflare R2 (loop autoplay) dan video YouTube (poster + embed player)
+ * - Pemutar media mandiri (VideoPlayer) untuk video R2 maupun YouTube tanpa auto-play liar
  *
  * @param {object} props
  * @param {Array<string>} props.images - Daftar URL foto/video
@@ -25,7 +21,6 @@ import {
  */
 export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan" }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [activeYtIndex, setActiveYtIndex] = useState(null);
   const touchStartX = useRef(0);
 
   const mediaList = Array.isArray(images) && images.length > 0
@@ -36,13 +31,11 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
 
   const handlePrev = (e) => {
     e.stopPropagation();
-    setActiveYtIndex(null);
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
 
   const handleNext = (e) => {
     e.stopPropagation();
-    setActiveYtIndex(null);
     setCurrentIndex((prev) => (prev < total - 1 ? prev + 1 : prev));
   };
 
@@ -55,10 +48,8 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
     const threshold = 35; // Jarak minimal swipe dalam pixel
 
     if (diff > threshold && currentIndex < total - 1) {
-      setActiveYtIndex(null);
       setCurrentIndex((prev) => prev + 1);
     } else if (diff < -threshold && currentIndex > 0) {
-      setActiveYtIndex(null);
       setCurrentIndex((prev) => prev - 1);
     }
   };
@@ -75,66 +66,19 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {mediaList.map((url, idx) => {
-          const isYt = isYouTubeUrl(url);
           const isVid = isVideoUrl(url);
+          const companionPhoto = isVid ? mediaList.find((u) => !isVideoUrl(u)) : null;
 
           return (
             <div key={idx} className="relative w-full h-full shrink-0">
-              {isYt ? (
-                <div className="relative w-full h-full bg-slate-900">
-                  {activeYtIndex === idx ? (
-                    <iframe
-                      src={`https://www.youtube-nocookie.com/embed/${getYouTubeVideoId(url)}?autoplay=1&rel=0&modestbranding=1`}
-                      title={`${title} - Video YouTube`}
-                      className="w-full h-full border-0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveYtIndex(idx);
-                      }}
-                      className="relative w-full h-full cursor-pointer group/yt"
-                    >
-                      <Image
-                        src={getYouTubeThumbnail(url)}
-                        alt={`${title} - Video YouTube`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        unoptimized
-                      />
-                      <div className="absolute inset-0 bg-slate-950/25 group-hover/yt:bg-slate-950/40 transition-colors flex items-center justify-center">
-                        <div className="w-12 h-8.5 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg group-hover/yt:scale-110 transition-transform">
-                          <Play className="w-4 h-4 fill-white text-white ml-0.5" />
-                        </div>
-                      </div>
-                      <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-slate-950/80 text-white text-2xs font-medium tracking-wide">
-                        YouTube
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ) : isVid ? (
-                <div className="relative w-full h-full">
-                  <video
-                    src={url}
-                    muted
-                    playsInline
-                    autoPlay={idx === currentIndex}
-                    loop
-                    preload="metadata"
-                    className="w-full h-full object-cover"
-                  />
-                  {/* Indikator Pemutar Video Halus */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-slate-950/15">
-                    <div className="w-10 h-10 rounded-full bg-slate-950/65 text-white flex items-center justify-center shadow-md">
-                      <Play className="w-4 h-4 fill-white text-white ml-0.5" />
-                    </div>
-                  </div>
-                </div>
+              {isVid ? (
+                <VideoPlayer
+                  src={url}
+                  poster={companionPhoto}
+                  title={`${title} - Video ${idx + 1}`}
+                  isActive={idx === currentIndex}
+                  objectFit="cover"
+                />
               ) : (
                 <Image
                   src={url}

@@ -9,9 +9,9 @@ import { formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import {
   isVideoUrl,
   isYouTubeUrl,
-  getYouTubeVideoId,
   getYouTubeThumbnail,
 } from "@/lib/galleryGroupHelper";
+import { VideoPlayer } from "@/components/shared/VideoPlayer";
 import { AdminInlineEditButton } from "@/components/shared/AdminInlineEditButton";
 
 /**
@@ -101,23 +101,14 @@ export function GalleryLightboxModal({ item = null, onClose }) {
 
             {/* Container Foto Utama / Video / High-Res Viewport */}
             <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-slate-950 flex items-center justify-center overflow-hidden select-none">
-              {isYouTubeUrl(activeImageUrl) ? (
-                <iframe
-                  key={activeImageUrl}
-                  src={`https://www.youtube-nocookie.com/embed/${getYouTubeVideoId(activeImageUrl)}?autoplay=1&rel=0`}
-                  title={displayTitle}
-                  className="w-full h-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : isVideoUrl(activeImageUrl) ? (
-                <video
+              {isVideoUrl(activeImageUrl) ? (
+                <VideoPlayer
                   key={activeImageUrl}
                   src={activeImageUrl}
-                  controls
-                  autoPlay
-                  playsInline
-                  className="w-full h-full object-contain"
+                  poster={images.find((u) => !isVideoUrl(u))}
+                  title={`${displayTitle} - Media ${currentIndex + 1}`}
+                  isActive={true}
+                  objectFit="contain"
                 />
               ) : (
                 <Image

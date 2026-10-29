@@ -1,4 +1,4 @@
-import { CheckCircle2, Phone, Mail, Clock, MapPin } from "lucide-react";
+import { CheckCircle2, Phone, Mail, Clock, MapPin, ExternalLink } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
@@ -30,9 +30,21 @@ export function AboutSidebarInfo({ orgSettings = null }) {
 
         <div className="space-y-3 text-sm text-slate-700">
           <div>
-            <span className="text-sm font-medium text-primary block">
-              Akta Notaris
-            </span>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm font-medium text-primary">
+                Akta Notaris
+              </span>
+              <a
+                href="/legalitas/akta-notaris"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors"
+                title="Buka salinan akta notaris di tab baru"
+              >
+                <span>Lihat salinan</span>
+                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+              </a>
+            </div>
             <p className="font-medium text-slate-900 mt-0.5">
               {legal.aktaNotaris}
             </p>
@@ -48,18 +60,42 @@ export function AboutSidebarInfo({ orgSettings = null }) {
           </div>
 
           <div>
-            <span className="text-sm font-medium text-primary block">
-              Izin Kegiatan LKS (PMPTSP / Dinsos)
-            </span>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm font-medium text-primary">
+                Izin Kegiatan LKS (PMPTSP / Dinsos)
+              </span>
+              <a
+                href="/legalitas/izin-lks"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors"
+                title="Buka salinan izin LKS Dinas Sosial di tab baru"
+              >
+                <span>Lihat salinan</span>
+                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+              </a>
+            </div>
             <p className="font-medium text-slate-900 mt-0.5">
               {legal.izinIzinSosial}
             </p>
           </div>
 
           <div>
-            <span className="text-sm font-medium text-primary block">
-              Surat Keterangan Domisili
-            </span>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm font-medium text-primary">
+                Surat Keterangan Domisili
+              </span>
+              <a
+                href="/legalitas/surat-domisili"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors"
+                title="Buka salinan surat domisili di tab baru"
+              >
+                <span>Lihat salinan</span>
+                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+              </a>
+            </div>
             <p className="font-medium text-slate-900 mt-0.5">
               {legal.suratDomisili}
             </p>
