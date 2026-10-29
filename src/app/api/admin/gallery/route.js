@@ -4,6 +4,7 @@ import { USER_ROLES } from "@/services/authService";
 import {
   getAdminGalleryItems,
   createGalleryBatch,
+  deleteGalleryItemsBatch,
 } from "@/services/adminGalleryService";
 
 export const dynamic = "force-dynamic";
@@ -77,6 +78,39 @@ export async function POST(request) {
   } catch (error) {
     return NextResponse.json(
       { success: false, message: error.message || "Gagal menyimpan dokumentasi galeri." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request) {
+  const { errorResponse } = await requireAuth(request, [
+    USER_ROLES.SUPER_ADMIN,
+    USER_ROLES.ADMIN,
+  ]);
+  if (errorResponse) return errorResponse;
+
+  try {
+    const body = await request.json();
+    const ids = Array.isArray(body?.ids) ? body.ids : [];
+
+    if (ids.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Daftar ID dokumentasi tidak boleh kosong." },
+        { status: 400 }
+      );
+    }
+
+    const result = await deleteGalleryItemsBatch(ids);
+
+    return NextResponse.json({
+      success: true,
+      message: `${result.count} foto dokumentasi berhasil dihapus.`,
+      data: result,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message || "Gagal menghapus dokumentasi kegiatan." },
       { status: 500 }
     );
   }

@@ -3,8 +3,8 @@
 import * as React from "react";
 import { Check, ChevronsUpDown, Plus, Search, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/Popover";
+import { Input } from "@/components/ui/Input";
 import { useDebounce } from "@/hooks/useDebounce";
 
 /**
@@ -128,7 +128,7 @@ export function CreatableCombobox({
           disabled={disabled}
           aria-expanded={open}
           className={cn(
-            "flex h-10 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-colors cursor-pointer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50 text-left",
+            "flex h-10 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-colors cursor-pointer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 text-left",
             className
           )}
         >
@@ -190,7 +190,7 @@ export function CreatableCombobox({
                 type="button"
                 onClick={handleCreate}
                 disabled={isCreating}
-                className="w-full text-left px-2.5 py-2 rounded-md hover:bg-primary/10 text-primary border-t border-slate-100 mt-1 flex items-center gap-2 font-medium text-xs sm:text-sm transition-colors cursor-pointer disabled:opacity-50"
+                className="w-full text-left px-2.5 py-2 rounded-md hover:bg-primary/10 text-primary border-t border-slate-100 mt-1 flex items-center gap-2 font-medium text-xs sm:text-sm transition-colors cursor-pointer disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
               >
                 {isCreating ? (
                   <Loader2 className="w-4 h-4 animate-spin shrink-0" />

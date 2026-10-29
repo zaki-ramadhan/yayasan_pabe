@@ -1,7 +1,8 @@
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Bell, Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { formatRupiah } from "@/lib/formatters";
+import { getRoutineProgramAmount } from "@/lib/routineDonationConstants";
 import { formatRoutineSchedule } from "./RoutineProgramItem";
 
 export function RoutineSuccessView({
@@ -43,9 +44,7 @@ export function RoutineSuccessView({
           {selectedPrograms.map((p, idx) => {
             const camp =
               campaignList.find((c) => c.id === p.campaignId) || campaignList[0] || null;
-            const nominal = p.customAmount
-              ? parseInt(p.customAmount.replace(/\D/g, ""), 10) || 0
-              : p.amount;
+            const nominal = getRoutineProgramAmount(p);
             const isReminderOnly = (p.routineType || "REMINDER_ONLY") === "REMINDER_ONLY";
 
             return (

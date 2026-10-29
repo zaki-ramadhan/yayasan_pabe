@@ -45,7 +45,7 @@ export default async function ProgramPage() {
       {/* Catalog Component with Suspense */}
       <Suspense
         fallback={
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             {[1, 2, 3, 4, 5, 6].map((n) => (
               <CampaignCardSkeleton key={n} />
             ))}

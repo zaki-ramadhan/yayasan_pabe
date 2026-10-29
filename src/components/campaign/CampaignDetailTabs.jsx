@@ -1,6 +1,6 @@
 "use client";
 
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
 import { CampaignStory } from "./CampaignStory";
 import { CampaignUpdatesFeed } from "./CampaignUpdatesFeed";
 import { CampaignPrayersFeed } from "@/components/modules/CampaignPrayersFeed";

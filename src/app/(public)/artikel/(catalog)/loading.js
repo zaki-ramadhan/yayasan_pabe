@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
 
 export default function ArtikelCatalogLoading() {
@@ -25,22 +25,25 @@ export default function ArtikelCatalogLoading() {
         <Skeleton className="h-[38px] w-40 rounded-full shrink-0" />
       </div>
 
-      {/* 3. Search Bar & Sort Control (matching CatalogSearchBar) */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
-        <div className="w-full sm:max-w-md">
-          <Skeleton className="h-11 w-full rounded-lg" />
+      {/* 3. Search Bar & Horizontal Cards Grid Container with space-y-4 */}
+      <div className="space-y-4">
+        {/* Search Bar & Sort Control (matching CatalogSearchBar) */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+          <div className="w-full sm:max-w-md">
+            <Skeleton className="h-11 w-full rounded-lg" />
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            <Skeleton className="h-4 w-16 rounded" />
+            <Skeleton className="h-10 w-36 rounded-lg" />
+          </div>
         </div>
-        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-          <Skeleton className="h-4 w-16 rounded" />
-          <Skeleton className="h-10 w-36 rounded-lg" />
-        </div>
-      </div>
 
-      {/* 4. Horizontal Cards Grid (2 columns matching ArticleCatalog, 8 items) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-3">
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-          <ArticleCardSkeleton key={i} />
-        ))}
+        {/* 4. Horizontal Cards Grid (2 columns matching ArticleCatalog, 8 items) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-3">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <ArticleCardSkeleton key={i} />
+          ))}
+        </div>
       </div>
     </main>
   );

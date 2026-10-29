@@ -6,7 +6,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from "@/components/ui/Chart";
 import { formatRupiah, formatCompactRupiah, formatNumber } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 

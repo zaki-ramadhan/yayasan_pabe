@@ -2,12 +2,32 @@
 
 import { ShieldCheck, Download } from "lucide-react";
 import { formatRupiah, formatNumber } from "@/lib/formatters";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
 
-export function AdminAuditReportTableRow({ item, onEdit, onDelete }) {
-	return (
-		<TableRow className="hover:bg-slate-50/70 transition-colors">
-			<TableCell className="text-center py-3.5 align-middle">
+export function AdminAuditReportTableRow({
+  item,
+  isSelected = false,
+  onToggleSelect,
+  onEdit,
+  onDelete,
+}) {
+  return (
+    <TableRow
+      className={`hover:bg-slate-50/70 transition-colors ${
+        isSelected ? "bg-emerald-50/60 hover:bg-emerald-50/80" : ""
+      }`}
+    >
+      {/* 0. Selection Checkbox */}
+      <TableCell className="w-12 text-center py-3.5 px-3 align-middle" onClick={(e) => e.stopPropagation()}>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelect?.(item.id)}
+          aria-label={`Pilih laporan tahun ${item.year}`}
+        />
+      </TableCell>
+
+      <TableCell className="text-center py-3.5 align-middle">
 				<span className="font-medium text-sm text-slate-900 block">
 					{
 						item.year

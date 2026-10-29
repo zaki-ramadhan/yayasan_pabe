@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-60 cursor-pointer select-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer select-none",
   {
     variants: {
       variant: {
@@ -50,9 +50,18 @@ const Button = React.forwardRef(
     },
     ref
   ) => {
+    const isEffectivelyDisabled = Boolean(disabled || isLoading);
+
     if (asChild) {
       return (
-        <Slot className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
+        <Slot
+          className={cn(
+            buttonVariants({ variant, size, className }),
+            isEffectivelyDisabled && "pointer-events-none cursor-not-allowed"
+          )}
+          ref={ref}
+          {...props}
+        >
           {children}
         </Slot>
       );
@@ -60,8 +69,11 @@ const Button = React.forwardRef(
 
     return (
       <button
-        className={cn(buttonVariants({ variant, size, className }))}
-        disabled={disabled || isLoading}
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          isEffectivelyDisabled && "pointer-events-none cursor-not-allowed"
+        )}
+        disabled={isEffectivelyDisabled}
         ref={ref}
         {...props}
       >

@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { DonorMetricCardsSkeleton } from "@/components/donor/DonorMetricCards";
 import {
   DonorListSkeleton,

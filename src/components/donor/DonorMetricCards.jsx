@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Card } from "@/components/ui/Card";
 import { DonorStatCard, DonorAmountDisplay } from "@/components/donor/DonorDashboardPrimitives";
 
 export function DonorMetricCardsSkeleton() {

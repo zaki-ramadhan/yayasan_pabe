@@ -7,8 +7,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/DropdownMenu";
+import { Button } from "@/components/ui/Button";
 import { USER_ROLES } from "@/services/authService";
 
 export function AdminUserActionMenu({

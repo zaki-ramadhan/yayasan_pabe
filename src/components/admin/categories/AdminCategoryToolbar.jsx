@@ -1,4 +1,4 @@
-import { TableToolbar } from "@/components/ui/table";
+import { TableToolbar } from "@/components/ui/Table";
 
 export function AdminCategoryToolbar({
   search,

@@ -8,9 +8,10 @@ import {
   sanitizeEmail,
 } from "@/lib/security";
 import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
+import { getRoutineProgramAmount } from "@/lib/routineDonationConstants";
 import { getStoredUser } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function useRoutineDonation({ campaigns = [] }) {
   const [fullName, setFullName] = useState("");
@@ -109,10 +110,7 @@ export function useRoutineDonation({ campaigns = [] }) {
 
   const totalPerCommitment = selectedPrograms.reduce((sum, item) => {
     if (item.routineType === "REMINDER_ONLY") return sum;
-    const val = item.customAmount
-      ? parseInt(item.customAmount.replace(/\D/g, ""), 10) || 0
-      : item.amount;
-    return sum + val;
+    return sum + getRoutineProgramAmount(item);
   }, 0);
 
   const handleSubmit = async (e) => {
@@ -156,9 +154,7 @@ export function useRoutineDonation({ campaigns = [] }) {
       }
 
       if (p.routineType === "AUTO_DONATION") {
-        const nominal = p.customAmount
-          ? parseInt(p.customAmount.replace(/\D/g, ""), 10) || 0
-          : p.amount;
+        const nominal = getRoutineProgramAmount(p);
 
         if (!nominal || nominal < DONATION_LIMITS.MIN_AMOUNT) {
           handleProgramChange(p.id, "amountError", `Nominal minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`);
@@ -188,9 +184,7 @@ export function useRoutineDonation({ campaigns = [] }) {
       setIsSubmitting(true);
       const payloadPrograms = selectedPrograms.map((p) => {
         const camp = activeCampaigns.find((c) => c.id === p.campaignId) || activeCampaigns[0];
-        const nominal = p.customAmount
-          ? parseInt(p.customAmount.replace(/\D/g, ""), 10) || 0
-          : p.amount;
+        const nominal = getRoutineProgramAmount(p);
 
         return {
           campaignId: p.campaignId,

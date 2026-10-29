@@ -7,8 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 /**
@@ -58,7 +58,7 @@ export function ConfirmDialog({
             variant="outline"
             disabled={isLoading}
             onClick={onClose}
-            className="w-full sm:w-auto min-w-[84px] h-9 whitespace-nowrap cursor-pointer"
+            className="w-full sm:w-auto min-w-[84px] h-9 whitespace-nowrap cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
           >
             {cancelLabel}
           </Button>
@@ -68,7 +68,7 @@ export function ConfirmDialog({
             disabled={isLoading}
             isLoading={isLoading}
             onClick={onConfirm}
-            className="w-full sm:w-auto min-w-[96px] h-9 whitespace-nowrap cursor-pointer"
+            className="w-full sm:w-auto min-w-[96px] h-9 whitespace-nowrap cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
           >
             {confirmLabel}
           </Button>

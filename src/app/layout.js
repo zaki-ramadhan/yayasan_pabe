@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
-import { Toaster } from "@/components/ui/toast";
+import { Toaster } from "@/components/ui/Toast";
 import { OfflineStatusBanner } from "@/components/shared/OfflineStatusBanner";
 import "./globals.css";
 

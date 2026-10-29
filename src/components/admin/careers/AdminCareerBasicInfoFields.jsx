@@ -1,16 +1,17 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { FormField } from "@/components/ui/form-field";
+import { Input } from "@/components/ui/Input";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { FormField } from "@/components/ui/FormField";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { CreatableCombobox } from "@/components/ui/creatable-combobox";
+} from "@/components/ui/Select";
+import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
+import { sanitizeStandardText } from "@/lib/sanitizer";
 
 export function AdminCareerBasicInfoFields({
   title,
@@ -45,10 +46,12 @@ export function AdminCareerBasicInfoFields({
           type="text"
           placeholder="Contoh: Staff Monitoring & Evaluasi Mustahik"
           value={title}
+          maxLength={100}
           onChange={(e) => {
-            onTitleChange(e.target.value);
+            onTitleChange(sanitizeStandardText(e.target.value, 100));
             if (onClearError) onClearError("title");
           }}
+          onBlur={() => onTitleChange(title.trim())}
           required
           className="h-10 text-sm bg-white"
         />
@@ -125,7 +128,9 @@ export function AdminCareerBasicInfoFields({
             type="text"
             placeholder="Contoh: 1 - 2 tahun / Fresh graduate"
             value={experience}
-            onChange={(e) => onExperienceChange(e.target.value)}
+            maxLength={50}
+            onChange={(e) => onExperienceChange(sanitizeStandardText(e.target.value, 50))}
+            onBlur={() => onExperienceChange(experience.trim())}
             className="h-10 text-sm bg-white"
           />
         </FormField>
@@ -136,7 +141,9 @@ export function AdminCareerBasicInfoFields({
             type="text"
             placeholder="Contoh: 30 November 2026"
             value={deadline}
-            onChange={(e) => onDeadlineChange(e.target.value)}
+            maxLength={50}
+            onChange={(e) => onDeadlineChange(sanitizeStandardText(e.target.value, 50))}
+            onBlur={() => onDeadlineChange(deadline.trim())}
             className="h-10 text-sm bg-white"
           />
         </FormField>

@@ -2,17 +2,19 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect, useMemo } from "react";
-import { FormDialog } from "@/components/ui/form-dialog";
-import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { FormDialog } from "@/components/ui/FormDialog";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import { CreatableCombobox } from "@/components/ui/creatable-combobox";
+import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { toTitleCase } from "@/lib/formatters";
 import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
-import { DatePicker } from "@/components/ui/date-picker";
+import { DatePicker } from "@/components/ui/DatePicker";
+import { isFormDirty } from "@/lib/formUtils";
+import { sanitizeStandardText } from "@/lib/sanitizer";
 
 export function AdminProgramModal({
 	isOpen,
@@ -302,34 +304,66 @@ export function AdminProgramModal({
 		}
 	};
 
+	const isDirty = useMemo(() => {
+		if (!isEditing || !campaignToEdit) {
+			return Boolean(title.trim() || targetAmount > 0 || story.trim() || bannerUrl.trim());
+		}
+		const initialEndDate = campaignToEdit.endDate
+			? campaignToEdit.endDate.split("T")[0]
+			: "";
+		return isFormDirty(
+			{
+				title: campaignToEdit.title || "",
+				categoryId: campaignToEdit.categoryId || categories[0]?.id || "",
+				targetAmount: Number(campaignToEdit.targetAmount) || 0,
+				endDate: initialEndDate,
+				location: campaignToEdit.location || "",
+				story: campaignToEdit.story || "",
+				bannerUrl: campaignToEdit.bannerUrl || "",
+			},
+			{
+				title,
+				categoryId,
+				targetAmount: Number(targetAmount) || 0,
+				endDate,
+				location,
+				story,
+				bannerUrl,
+			}
+		);
+	}, [
+		isEditing,
+		campaignToEdit,
+		title,
+		categoryId,
+		categories,
+		targetAmount,
+		endDate,
+		location,
+		story,
+		bannerUrl,
+	]);
+
+	const isFormValid = useMemo(() => {
+		return Boolean(
+			title.trim().length >= 5 &&
+			categoryId &&
+			targetAmount >= 0 &&
+			(!story.trim() || story.trim().length >= 10)
+		);
+	}, [title, categoryId, targetAmount, story]);
+
 	return (
 		<FormDialog
-			isOpen={
-				isOpen
-			}
-			onClose={() =>
-				onOpenChange(
-					false,
-				)
-			}
-			onSubmit={
-				handleSubmit
-			}
+			isOpen={isOpen}
+			onClose={() => onOpenChange(false)}
+			onSubmit={handleSubmit}
 			maxWidth="max-w-xl"
-			title={
-				isEditing
-					? "Edit Program Donasi"
-					: "Tambah Program Donasi Baru"
-			}
-			submitText={
-				isEditing
-					? "Perbarui Program"
-					: "Publikasikan Program"
-			}
+			title={isEditing ? "Edit Program Donasi" : "Tambah Program Donasi Baru"}
+			submitText="Simpan"
 			submittingText="Menyimpan..."
-			isSubmitting={
-				isSubmitting
-			}
+			isSubmitting={isSubmitting}
+			submitDisabled={!isFormValid || (isEditing && !isDirty)}
 		>
 			{/* Judul program */}
 			<FormField
@@ -343,11 +377,12 @@ export function AdminProgramModal({
 					value={title}
 					maxLength={120}
 					onChange={(e) => {
-						setTitle(e.target.value);
+						setTitle(sanitizeStandardText(e.target.value, 120));
 						if (errors.title) {
 							setErrors((prev) => ({ ...prev, title: "" }));
 						}
 					}}
+					onBlur={() => setTitle((prev) => prev.trim())}
 					className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
 					required
 				/>
@@ -415,7 +450,9 @@ export function AdminProgramModal({
 						type="text"
 						placeholder="Contoh: Jawa Barat & Banten"
 						value={location}
-						onChange={(e) => setLocation(e.target.value)}
+						maxLength={100}
+						onChange={(e) => setLocation(sanitizeStandardText(e.target.value, 100))}
+						onBlur={() => setLocation((prev) => prev.trim())}
 						className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
 					/>
 				</FormField>
@@ -428,13 +465,14 @@ export function AdminProgramModal({
 				context="CAMPAIGN_BANNER"
 				identifier={title}
 				label="Foto sampul / banner program"
-				helperText="Mendukung JPG, PNG, WebP (Maks. 5MB). Otomatis dioptimasi dan disimpan ke R2."
+				helperText="Mendukung JPG, PNG, WebP (Maks. 10MB) • Bisa Ctrl + V. Otomatis dikonversi ke WebP."
 			/>
 
 			{/* Deskripsi & uraian program */}
 			<FormField label="Deskripsi program" error={errors.story}>
 				<Textarea
 					rows={4}
+					maxLength={2000}
 					placeholder="Jelaskan rincian program, sasaran penerima manfaat, dan rencana penyaluran donasi..."
 					value={story}
 					onChange={(e) => {
@@ -443,6 +481,7 @@ export function AdminProgramModal({
 							setErrors((prev) => ({ ...prev, story: "" }));
 						}
 					}}
+					onBlur={() => setStory((prev) => prev.trim())}
 					className="w-full text-sm leading-relaxed"
 				/>
 			</FormField>

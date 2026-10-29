@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { TableRow, TableCell } from "@/components/ui/table";
+import { TableRow, TableCell } from "@/components/ui/Table";
 import { AdminUserRoleBadge, AdminUserStatusBadge } from "./AdminUserStatusBadge";
 import { AdminUserActionMenu } from "./AdminUserActionMenu";
 import { formatPhoneNumber } from "@/lib/userParser";

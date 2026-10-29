@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { formatRupiah, formatNumber } from "@/lib/formatters";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
-import { Bookmark, Check } from "lucide-react";
 import { ZakatEmptyState } from "./ZakatEmptyState";
 
 export function ZakatResultPanel({
@@ -133,7 +132,7 @@ export function ZakatResultPanel({
         <Button
           onClick={onPay}
           disabled={!isNisabMet || zakatAmount <= 0}
-          className="w-full h-11 text-sm font-medium rounded-md cursor-pointer"
+          className="w-full h-11 text-sm font-medium rounded-md cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
         >
           Tunaikan Zakat Sekarang
         </Button>
@@ -142,19 +141,9 @@ export function ZakatResultPanel({
           type="button"
           variant="outline"
           onClick={handleSaveResult}
-          className="w-full h-10 text-sm font-medium rounded-md border-slate-300 text-slate-700 hover:text-slate-900 cursor-pointer flex items-center justify-center gap-2"
+          className="w-full h-10 text-sm font-medium rounded-md border-slate-300 text-slate-700 hover:text-slate-900 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
         >
-          {isSaved ? (
-            <>
-              <Check className="w-4 h-4 text-emerald-600 stroke-[2]" />
-              <span>Hasil Tersimpan</span>
-            </>
-          ) : (
-            <>
-              <Bookmark className="w-4 h-4 stroke-[1.75]" />
-              <span>Simpan Hasil Perhitungan</span>
-            </>
-          )}
+          {isSaved ? "Hasil tersimpan" : "Simpan hasil perhitungan"}
         </Button>
 
         {!isNisabMet && (

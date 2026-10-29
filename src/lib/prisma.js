@@ -23,7 +23,9 @@ if (
   (!globalForPrisma.prisma.faq ||
     !globalForPrisma.prisma.beneficiary ||
     !globalForPrisma.prisma.activityLog ||
-    !globalForPrisma.prisma.galleryItem)
+    !globalForPrisma.prisma.galleryItem ||
+    !globalForPrisma.prisma.instagramProfile ||
+    !globalForPrisma.prisma.instagramPost)
 ) {
   globalForPrisma.prisma = undefined;
 }

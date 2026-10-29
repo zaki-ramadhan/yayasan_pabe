@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/ui/form-field";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { cn } from "@/lib/utils";
 import { sanitizeName, sanitizePhone, sanitizeEmail } from "@/lib/security";
@@ -54,6 +54,7 @@ export function RoutineDonorIdentity({
               setFullName(sanitizeName(e.target.value));
               clearError("fullName");
             }}
+            onBlur={() => setFullName((prev) => prev.trim())}
             placeholder="Contoh: Ahmad Fauzi"
             className="h-11 text-sm sm:text-base font-normal"
           />
@@ -78,6 +79,7 @@ export function RoutineDonorIdentity({
               setWhatsapp(sanitizePhone(e.target.value));
               clearError("whatsapp");
             }}
+            onBlur={() => setWhatsapp((prev) => prev.trim())}
             placeholder="0812xxxxxxxx"
             className="h-11 text-sm sm:text-base font-normal"
           />
@@ -90,12 +92,15 @@ export function RoutineDonorIdentity({
           >
             <Input
               type="email"
+              inputMode="email"
+              spellCheck={false}
               value={email}
               maxLength={100}
               onChange={(e) => {
                 setEmail(sanitizeEmail(e.target.value));
                 clearError("email");
               }}
+              onBlur={() => setEmail((prev) => prev.trim())}
               placeholder="email@anda.com"
               className="h-11 text-sm sm:text-base font-normal"
             />

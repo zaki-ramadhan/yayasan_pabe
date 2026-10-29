@@ -92,7 +92,7 @@ export function sanitizePhone(input) {
  */
 export function sanitizeEmail(input) {
   if (typeof input !== "string") return "";
-  return stripEmojis(input).replace(/\s/g, "").slice(0, 100);
+  return stripEmojis(input).replace(/\s/g, "").toLowerCase().slice(0, 100);
 }
 
 /**
@@ -133,6 +133,7 @@ export function sanitizeSearchQuery(query) {
   if (typeof query !== "string") return "";
   return stripEmojis(query)
     .replace(/[<>'";\\`$={}[\]()]/g, "")
+    .replace(/^\s+/, "")
     .replace(/\s{2,}/g, " ")
     .slice(0, 80);
 }
@@ -229,4 +230,18 @@ export function sanitizeLandlinePhone(input) {
     .replace(/\s{2,}/g, " ")
     .slice(0, 25);
 }
+
+/**
+ * Sanitasi slug URL (hanya huruf kecil, angka, dan strip; tanpa spasi atau karakter asing).
+ */
+export function sanitizeSlug(input, maxLength = 60) {
+  if (typeof input !== "string") return "";
+  return stripEmojis(input)
+    .toLowerCase()
+    .replace(/[^a-z0-9\-]/g, "-")
+    .replace(/-{2,}/g, "-")
+    .replace(/^-+/, "")
+    .slice(0, maxLength);
+}
+
 

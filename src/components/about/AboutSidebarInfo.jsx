@@ -1,6 +1,7 @@
 import { CheckCircle2, Phone, Mail, Clock, MapPin } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { ORG_PROFILE } from "@/data/orgProfile";
+import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 
 export function AboutSidebarInfo({ orgSettings = null }) {
   const legal = {
@@ -12,8 +13,10 @@ export function AboutSidebarInfo({ orgSettings = null }) {
     ...(orgSettings?.contacts || {}),
   };
 
-  const cleanWa = (contacts.whatsapp || "").replace(/\D/g, "");
-  const whatsappUrl = `https://wa.me/${cleanWa}?text=${encodeURIComponent("Assalamu'alaikum Yayasan Payung Berkah, mohon info program yayasan.")}`;
+  const whatsappUrl = buildWhatsAppUrl(
+    contacts.whatsapp,
+    "Assalamu'alaikum Yayasan Payung Berkah, mohon info program yayasan."
+  );
 
   return (
     <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-300 space-y-4 shadow-2xs">

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { FormFieldContext } from "@/components/ui/form-field";
+import { FormFieldContext } from "@/components/ui/FormField";
 
 /**
  * Molecule: Wrapper standar input field kalkulator zakat dengan integrasi context error.

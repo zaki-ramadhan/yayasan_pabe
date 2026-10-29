@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { FormField } from "@/components/ui/form-field";
-import { toast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { toast } from "@/hooks/useToast";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
 import { validatePasswordInput } from "@/lib/security";
@@ -18,11 +18,21 @@ export function DonorSecurityFormCard({
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const { bind, getCleanValues, setValues } = useSanitizedForm({
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const { bind, getCleanValues, setValues, isDirty, isValid } = useSanitizedForm(
+    {
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    {},
+    (vals) => {
+      if (!vals.oldPassword) return false;
+      if (!validatePasswordInput(vals.newPassword).isValid) return false;
+      if (vals.newPassword === vals.oldPassword) return false;
+      if (vals.newPassword !== vals.confirmPassword) return false;
+      return true;
+    }
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -167,12 +177,12 @@ export function DonorSecurityFormCard({
         <div className="pt-2 flex justify-start">
           <Button
             type="submit"
-            disabled={isSaving}
+            disabled={!isDirty || !isValid || isSaving}
             variant="outline"
-            className="h-9 px-4 rounded-md text-sm font-medium border-slate-300 bg-white text-slate-800 hover:bg-slate-50 gap-1.5 cursor-pointer"
+            className="h-9 px-4 rounded-md text-sm font-medium border-slate-300 bg-white text-slate-800 hover:bg-slate-50 gap-1.5 cursor-pointer disabled:cursor-not-allowed"
           >
             {isSaving && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
-            <span>Perbarui Kata Sandi</span>
+            <span>{isSaving ? "Menyimpan..." : "Simpan"}</span>
           </Button>
         </div>
       </form>

@@ -1,6 +1,6 @@
 import { formatRupiah } from "@/lib/formatters";
 import { DONATION_LIMITS } from "@/lib/security";
-import { FormField } from "@/components/ui/form-field";
+import { FormField } from "@/components/ui/FormField";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { NominalGridPicker } from "@/components/donation/NominalGridPicker";
 import { CheckoutStepHeader } from "@/components/donation/CheckoutStepHeader";

@@ -1,12 +1,32 @@
 "use client";
 
 import { formatDate } from "@/lib/formatters";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
 
-export function AdminFaqTableRow({ faq, onEdit, onDelete }) {
-	return (
-		<TableRow className="hover:bg-slate-50/70 transition-colors">
-			{/* Question & Answer snippet */}
+export function AdminFaqTableRow({
+  faq,
+  isSelected = false,
+  onToggleSelect,
+  onEdit,
+  onDelete,
+}) {
+  return (
+    <TableRow
+      className={`hover:bg-slate-50/70 transition-colors ${
+        isSelected ? "bg-emerald-50/60 hover:bg-emerald-50/80" : ""
+      }`}
+    >
+      {/* 0. Selection Checkbox */}
+      <TableCell className="w-12 text-center py-3 px-3 align-middle" onClick={(e) => e.stopPropagation()}>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelect?.(faq.id)}
+          aria-label={`Pilih FAQ: ${faq.question}`}
+        />
+      </TableCell>
+
+      {/* Question & Answer snippet */}
 			<TableCell className="py-3 px-4 align-middle">
 				<div className="space-y-0.5">
 					<span

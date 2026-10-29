@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { formatRupiah } from "@/lib/formatters";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { DonorCard, DonorAmountDisplay } from "@/components/donor/DonorDashboardPrimitives";
 
 export function DonorMonthlyTargetCard({

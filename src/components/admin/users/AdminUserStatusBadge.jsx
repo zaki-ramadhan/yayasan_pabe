@@ -1,4 +1,4 @@
-import { RoleBadge, StatusBadge } from "@/components/ui/badge";
+import { RoleBadge, StatusBadge } from "@/components/ui/Badge";
 
 export function AdminUserRoleBadge({ role, className = "" }) {
   return <RoleBadge role={role} className={className} />;

@@ -3,7 +3,7 @@
 import { SearchX } from "lucide-react";
 import { CareerListItem } from "./CareerListItem";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 
 /**
  * Organism component: Left master list of jobs

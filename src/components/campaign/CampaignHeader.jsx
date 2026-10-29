@@ -1,5 +1,5 @@
 import { MapPin } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@/components/ui/Progress";
 import { formatRupiah } from "@/lib/formatters";
 import { FundedAmountDisplay } from "@/components/campaign/FundedAmountDisplay";
 

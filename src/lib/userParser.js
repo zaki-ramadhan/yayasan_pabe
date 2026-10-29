@@ -44,25 +44,7 @@ export function sanitizePhoneInput(phone) {
   return digits;
 }
 
-/**
- * Normalisasi email murni (lowercase & auto-trim).
- * @param {string} email
- * @returns {string}
- */
-export function sanitizeEmail(email) {
-  if (!email || typeof email !== "string") return "";
-  return email.trim().toLowerCase();
-}
-
-/**
- * Sanitasi teks umum (nama, gelar) tanpa spasi ganda.
- * @param {string} text
- * @returns {string}
- */
-export function sanitizeText(text) {
-  if (!text || typeof text !== "string") return "";
-  return text.trim().replace(/\s+/g, " ");
-}
+export { sanitizeEmail, sanitizeStandardText as sanitizeText } from "@/lib/sanitizer";
 
 /**
  * Daftar opsi role untuk pemilihan pengurus yayasan.

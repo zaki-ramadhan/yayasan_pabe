@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import { formatRupiah } from "@/lib/formatters";
 import { exportTransactionsToCsv } from "@/lib/exportCsv";
@@ -18,7 +18,8 @@ import {
   TableEmptyRow,
   TablePaginationFooter,
   useTableSort,
-} from "@/components/ui/table";
+  usePagination,
+} from "@/components/ui/Table";
 
 const PERIOD_OPTIONS = [
   { label: "7 Hari Terakhir", value: "7d" },
@@ -44,7 +45,6 @@ export function AdminTransactionLedger({
 }) {
   const [selectedPeriod, setSelectedPeriod] = useState("30d");
   const [selectedType, setSelectedType] = useState("ALL");
-  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredTransactions = useMemo(() => {
     if (!transactions || transactions.length === 0) return [];
@@ -104,20 +104,22 @@ export function AdminTransactionLedger({
     };
   }, [filteredTransactions]);
 
-  const totalPages = Math.ceil(sortedTransactions.length / PAGE_SIZE) || 1;
-  const paginatedTransactions = useMemo(() => {
-    const startIndex = (currentPage - 1) * PAGE_SIZE;
-    return sortedTransactions.slice(startIndex, startIndex + PAGE_SIZE);
-  }, [sortedTransactions, currentPage]);
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems: paginatedTransactions,
+    resetPage,
+  } = usePagination(sortedTransactions, { pageSize: PAGE_SIZE });
 
   const handlePeriodChange = (val) => {
     setSelectedPeriod(val);
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleTypeChange = (val) => {
     setSelectedType(val);
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleExportCsv = () => {
@@ -126,7 +128,6 @@ export function AdminTransactionLedger({
 
   return (
     <div className="space-y-6">
-      {/* Top Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <FinancialMetricCard
           label="Total Donasi Masuk"
@@ -145,9 +146,7 @@ export function AdminTransactionLedger({
         />
       </div>
 
-      {/* Main Ledger Content Card */}
       <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs p-5 sm:p-6 space-y-5">
-        {/* Controls Row */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-sm font-medium text-slate-700">Filter Transaksi:</span>
@@ -190,7 +189,7 @@ export function AdminTransactionLedger({
             size="sm"
             onClick={handleExportCsv}
             disabled={filteredTransactions.length === 0}
-            className="h-10 px-3.5 text-sm font-medium border-slate-300 text-slate-800 hover:bg-slate-50 gap-2 rounded-lg cursor-pointer self-start sm:self-auto shadow-2xs"
+            className="h-10 px-3.5 text-sm font-medium border-slate-300 text-slate-800 hover:bg-slate-50 gap-2 rounded-lg cursor-pointer self-start sm:self-auto shadow-2xs disabled:pointer-events-none disabled:cursor-not-allowed"
           >
             <Download className="w-4 h-4 text-slate-600 shrink-0" />
             <span>Export CSV</span>

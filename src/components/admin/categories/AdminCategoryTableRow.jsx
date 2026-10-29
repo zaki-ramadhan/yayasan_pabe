@@ -1,10 +1,30 @@
 import { FolderCheck } from "lucide-react";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
 
-export function AdminCategoryTableRow({ item, onEdit, onDelete }) {
-	return (
-		<TableRow className="hover:bg-slate-50/70 transition-colors">
-			<TableCell className="py-3.5 align-middle font-medium text-sm text-slate-900">
+export function AdminCategoryTableRow({
+  item,
+  isSelected = false,
+  onToggleSelect,
+  onEdit,
+  onDelete,
+}) {
+  return (
+    <TableRow
+      className={`hover:bg-slate-50/70 transition-colors ${
+        isSelected ? "bg-emerald-50/60 hover:bg-emerald-50/80" : ""
+      }`}
+    >
+      {/* 0. Selection Checkbox */}
+      <TableCell className="w-12 text-center py-3.5 px-3 align-middle" onClick={(e) => e.stopPropagation()}>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelect?.(item.id)}
+          aria-label={`Pilih kategori: ${item.name}`}
+        />
+      </TableCell>
+
+      <TableCell className="py-3.5 align-middle font-medium text-sm text-slate-900">
 				<div className="flex items-center gap-2">
 					<FolderCheck className="w-4 h-4 text-primary shrink-0" />
 					<span>

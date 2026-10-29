@@ -3,17 +3,20 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ExternalLink, Eye, EyeOff, Heart, Copy, Check, Loader2 } from "lucide-react";
-import { TableCell, TableRow } from "@/components/ui/table";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { formatDate, formatRupiah, getInitials } from "@/lib/formatters";
+import { TableCell, TableRow } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { UserAvatar } from "@/components/ui/Avatar";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { formatDate, formatRupiah } from "@/lib/formatters";
 import { maskEmail } from "@/lib/security";
 import { copyToClipboard } from "@/lib/clipboard";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function AdminPrayerTableRow({
   item,
+  isSelected = false,
+  onToggleSelect,
   isToggling = false,
   onToggleHide,
 }) {
@@ -35,9 +38,21 @@ export function AdminPrayerTableRow({
     <TableRow
       key={item.id}
       className={`hover:bg-slate-50/70 transition-colors ${
-        item.isPrayerHidden ? "bg-slate-50/60 opacity-80" : ""
+        isSelected
+          ? "bg-emerald-50/60 hover:bg-emerald-50/80"
+          : item.isPrayerHidden
+          ? "bg-slate-50/60 opacity-80"
+          : ""
       }`}
     >
+      {/* 0. Checkbox Selection */}
+      <TableCell className="w-12 text-center py-3 align-top" onClick={(e) => e.stopPropagation()}>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelect?.(item.id)}
+          aria-label={`Pilih doa dari ${item.donorName}`}
+        />
+      </TableCell>
       {/* 1. No. Invoice (Persis gaya & posisi seperti Mutasi Transaksi) */}
       <TableCell className="w-[170px] text-sm py-3 align-top">
         <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
@@ -66,12 +81,12 @@ export function AdminPrayerTableRow({
       {/* 2. Donatur (Email disensor & ukuran teks minimal sm) */}
       <TableCell className="w-52 py-3 align-top">
         <div className="flex items-center gap-2.5">
-          <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
-            {item.donorAvatar && <AvatarImage src={item.donorAvatar} alt={item.donorName} />}
-            <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
-              {item.isAnonymous ? "HA" : getInitials(item.donorName, "D")}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            src={item.donorAvatar}
+            name={item.donorName}
+            fallback="D"
+            isAnonymous={item.isAnonymous}
+          />
           <div className="min-w-0 space-y-0.5">
             <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
               {item.donorName}
@@ -162,7 +177,7 @@ export function AdminPrayerTableRow({
             disabled={isToggling}
             onClick={() => onToggleHide(item)}
             title={item.isPrayerHidden ? "Tampilkan kembali ke publik" : "Sembunyikan dari feed publik"}
-            className={`h-8 w-8 p-0 cursor-pointer ${
+            className={`h-8 w-8 p-0 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed ${
               item.isPrayerHidden
                 ? "text-rose-700 bg-rose-100/70 hover:bg-rose-200/70"
                 : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"

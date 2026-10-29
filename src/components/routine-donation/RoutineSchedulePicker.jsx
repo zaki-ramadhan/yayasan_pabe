@@ -8,14 +8,14 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+} from "@/components/ui/DropdownMenu";
+import { Button } from "@/components/ui/Button";
+import { Calendar } from "@/components/ui/Calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/ui/Popover";
 import { DAYS_OF_WEEK, FREQUENCY_OPTIONS, normalizeFrequency } from "@/data/routineDonation";
 import { cn } from "@/lib/utils";
 

@@ -1,8 +1,8 @@
 "use client";
 
-import { formatRupiah, formatDate, getInitials } from "@/lib/formatters";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { formatRupiah, formatDate } from "@/lib/formatters";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { UserAvatar } from "@/components/ui/Avatar";
 import { maskEmail, maskPhone } from "@/lib/security";
 
 export function AdminDonorTableRow({ donor, onOpenDetail }) {
@@ -11,12 +11,12 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
       {/* 1. Donatur (Avatar, Nama & Email) */}
       <TableCell className="w-[260px] py-3 align-middle">
         <div className="flex items-center gap-2.5">
-          <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
-            {donor.avatar && <AvatarImage src={donor.avatar} alt={donor.name} />}
-            <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
-              {donor.name === "Hamba Allah" ? "HA" : getInitials(donor.name, "D")}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            src={donor.avatar}
+            name={donor.name}
+            fallback="D"
+            isAnonymous={donor.name === "Hamba Allah"}
+          />
           <div className="min-w-0 space-y-0.5">
             <span className="font-medium text-sm text-slate-900 block leading-tight truncate" title={donor.name}>
               {donor.name}

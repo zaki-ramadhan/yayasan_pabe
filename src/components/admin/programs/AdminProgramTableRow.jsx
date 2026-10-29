@@ -10,16 +10,16 @@ import {
 	CheckCircle,
 } from "lucide-react";
 import { formatRupiah, calculateDaysLeft } from "@/lib/formatters";
-import { Progress } from "@/components/ui/progress";
-import { TableRow, TableCell } from "@/components/ui/table";
-import { Badge, StatusBadge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/Progress";
+import { TableRow, TableCell } from "@/components/ui/Table";
+import { Badge, StatusBadge } from "@/components/ui/Badge";
 import {
 	DropdownMenu,
 	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/DropdownMenu";
 
 export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
 	const target = Number(item.targetAmount || 0);

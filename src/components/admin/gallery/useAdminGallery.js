@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useTransition, useRef, useCallback } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
+import { useTableSelection } from "@/hooks/useTableSelection";
 
 export function useAdminGallery({
   initialItems = [],
@@ -27,6 +28,12 @@ export function useAdminGallery({
   const [selectedItem, setSelectedItem] = useState(initialEditItem);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Bulk Selection & Deletion State
+  const selection = useTableSelection(items);
+  const { clearSelection } = selection;
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
   const handleOpenCreate = () => {
     setSelectedItem(null);
@@ -57,6 +64,7 @@ export function useAdminGallery({
         if (json.success) {
           setItems(json.data || []);
           setPagination(json.pagination || {});
+          clearSelection();
           if (json.categories) setCategories(json.categories);
         } else {
           toast.error(json.message || "Gagal memuat dokumentasi kegiatan.");
@@ -65,7 +73,7 @@ export function useAdminGallery({
         toast.error("Terjadi kendala jaringan saat memuat dokumentasi.");
       }
     },
-    [category, debouncedSearch]
+    [category, debouncedSearch, clearSelection]
   );
 
   useEffect(() => {
@@ -124,6 +132,34 @@ export function useAdminGallery({
     }
   };
 
+  const handleConfirmBulkDelete = async () => {
+    const ids = Array.from(selection.selectedIds);
+    if (ids.length === 0) return;
+
+    setIsBulkDeleting(true);
+    try {
+      const res = await safeFetch("/api/admin/gallery", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success(`${ids.length} dokumentasi kegiatan berhasil dihapus.`);
+        setIsBulkDeleteOpen(false);
+        clearSelection();
+        fetchItems(pagination.page || 1, category, debouncedSearch);
+      } else {
+        toast.error(data.message || "Gagal menghapus dokumentasi terpilih.");
+      }
+    } catch {
+      toast.error("Terjadi kendala jaringan saat menghapus dokumentasi terpilih.");
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
+
   const isFiltered = Boolean(debouncedSearch || (category && category !== "Semua Kategori"));
 
   return {
@@ -149,5 +185,10 @@ export function useAdminGallery({
     handleCategoryChange,
     handlePageChange,
     handleDeleteConfirm,
+    selection,
+    isBulkDeleteOpen,
+    setIsBulkDeleteOpen,
+    isBulkDeleting,
+    handleConfirmBulkDelete,
   };
 }

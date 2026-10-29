@@ -6,7 +6,7 @@ import {
   TableHead,
   TableBody,
   TableSkeletonRows,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 
 export default function AdminDonorsLoading() {
   return (

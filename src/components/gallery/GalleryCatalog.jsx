@@ -9,7 +9,7 @@ import { CatalogSearchBar } from "@/components/shared/CatalogSearchBar";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { groupGalleryItems } from "@/lib/galleryGroupHelper";
 import { GalleryCard } from "./GalleryCard";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 
 const BATCH_SIZE = 9;
 
@@ -137,78 +137,80 @@ export function GalleryCatalog({
         onSelectCategory={handlers.onCategoryChange}
       />
 
-      {/* Toolbar with Search Input & Dropdown Sort matching Donation & Article Catalogs */}
-      <CatalogSearchBar
-        searchQuery={searchQuery}
-        sortBy={sortBy}
-        sortOptions={GALLERY_SORT_OPTIONS}
-        onSearch={handlers.onSearchChange}
-        onClear={handlers.onClearSearch}
-        onSort={handlers.onSortChange}
-        isLoading={isPending || isDebouncing}
-        searchPlaceholder="Cari judul atau dokumentasi kegiatan..."
-      />
-
-      {/* Content State: Grid vs Empty */}
-      {visibleItems.length > 0 ? (
-        <div className="space-y-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-2">
-            {visibleItems.map((item) => (
-              <GalleryCard key={item.id} item={item} />
-            ))}
-          </div>
-
-          {/* Load More Button */}
-          {hasMore && (
-            <div className="flex justify-center pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                size="lg"
-                disabled={isLoadingMore}
-                onClick={handleLoadMore}
-                className="h-11 px-6 rounded-xl border-slate-300 text-slate-700 hover:text-slate-950 hover:bg-slate-50 cursor-pointer text-sm font-medium gap-2 shadow-2xs"
-              >
-                {isLoadingMore ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                    <span>Memuat foto lainnya...</span>
-                  </>
-                ) : (
-                  <span>Muat Lebih Banyak Dokumentasi</span>
-                )}
-              </Button>
-            </div>
-          )}
-
-          {!hasMore && filteredItems.length > BATCH_SIZE && (
-            <div className="text-center py-6 text-xs sm:text-sm text-slate-500 select-none">
-              Seluruh dokumentasi ({filteredItems.length}) telah ditampilkan
-            </div>
-          )}
-        </div>
-      ) : (
-        <EmptyState
-          title={initialItems.length === 0 ? "Belum Ada Dokumentasi Kegiatan" : "Dokumentasi Tidak Ditemukan"}
-          description={
-            initialItems.length === 0
-              ? "Dokumentasi kegiatan dan rekam jejak penyaluran amanah akan segera kami publikasikan di sini."
-              : "Tidak ada dokumentasi kegiatan yang cocok dengan kata kunci atau filter yang Anda pilih."
-          }
-          variant="card"
-          action={
-            isFiltered ? (
-              <button
-                type="button"
-                onClick={handlers.onReset}
-                className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
-              >
-                Reset Semua Filter
-              </button>
-            ) : null
-          }
+      <div className="space-y-4">
+        {/* Toolbar with Search Input & Dropdown Sort matching Donation & Article Catalogs */}
+        <CatalogSearchBar
+          searchQuery={searchQuery}
+          sortBy={sortBy}
+          sortOptions={GALLERY_SORT_OPTIONS}
+          onSearch={handlers.onSearchChange}
+          onClear={handlers.onClearSearch}
+          onSort={handlers.onSortChange}
+          isLoading={isPending || isDebouncing}
+          searchPlaceholder="Cari judul atau dokumentasi kegiatan..."
         />
-      )}
+
+        {/* Content State: Grid vs Empty */}
+        {visibleItems.length > 0 ? (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {visibleItems.map((item) => (
+                <GalleryCard key={item.id} item={item} />
+              ))}
+            </div>
+
+            {/* Load More Button */}
+            {hasMore && (
+              <div className="flex justify-center pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  disabled={isLoadingMore}
+                  onClick={handleLoadMore}
+                  className="h-11 px-6 rounded-xl border-slate-300 text-slate-700 hover:text-slate-950 hover:bg-slate-50 cursor-pointer text-sm font-medium gap-2 shadow-2xs"
+                >
+                  {isLoadingMore ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                      <span>Memuat foto lainnya...</span>
+                    </>
+                  ) : (
+                    <span>Muat Lebih Banyak Dokumentasi</span>
+                  )}
+                </Button>
+              </div>
+            )}
+
+            {!hasMore && filteredItems.length > BATCH_SIZE && (
+              <div className="text-center py-6 text-xs sm:text-sm text-slate-500 select-none">
+                Seluruh dokumentasi ({filteredItems.length}) telah ditampilkan
+              </div>
+            )}
+          </div>
+        ) : (
+          <EmptyState
+            title={initialItems.length === 0 ? "Belum Ada Dokumentasi Kegiatan" : "Dokumentasi Tidak Ditemukan"}
+            description={
+              initialItems.length === 0
+                ? "Dokumentasi kegiatan dan rekam jejak penyaluran amanah akan segera kami publikasikan di sini."
+                : "Tidak ada dokumentasi kegiatan yang cocok dengan kata kunci atau filter yang Anda pilih."
+            }
+            variant="card"
+            action={
+              isFiltered ? (
+                <button
+                  type="button"
+                  onClick={handlers.onReset}
+                  className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
+                >
+                  Reset Semua Filter
+                </button>
+              ) : null
+            }
+          />
+        )}
+      </div>
 
     </div>
   );

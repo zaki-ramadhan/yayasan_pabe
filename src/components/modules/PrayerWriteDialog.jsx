@@ -2,20 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Send } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/ui/form-field";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
-import { sanitizePrayer } from "@/lib/security";
-import { toast } from "@/hooks/use-toast";
+import { sanitizePrayer, sanitizeName } from "@/lib/security";
+import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 
 export function PrayerWriteDialog({
@@ -38,6 +37,12 @@ export function PrayerWriteDialog({
       if (errorMessage) setErrorMessage("");
     }
   };
+
+  const isFormValid = Boolean(
+    prayer.trim().length > 0 &&
+    !errorMessage &&
+    (isAnonymous || donorName.trim().length >= 2)
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -110,9 +115,10 @@ export function PrayerWriteDialog({
                   placeholder={isAnonymous ? "Hamba Allah" : "Nama lengkap / panggilan"}
                   value={donorName}
                   onChange={(e) => {
-                    setDonorName(e.target.value);
+                    setDonorName(sanitizeName(e.target.value));
                     if (nameError) setNameError("");
                   }}
+                  onBlur={() => setDonorName((prev) => prev.trim())}
                   className="h-9 text-xs sm:text-sm"
                   maxLength={40}
                 />
@@ -145,10 +151,9 @@ export function PrayerWriteDialog({
           <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex flex-col gap-2">
             <Button
               type="submit"
-              disabled={isSubmitting}
-              className="w-full h-9 text-xs sm:text-sm font-medium bg-primary hover:bg-primary-hover text-white gap-2 cursor-pointer"
+              disabled={!isFormValid || isSubmitting}
+              className="w-full h-9 text-xs sm:text-sm font-medium bg-primary hover:bg-primary-hover text-white cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
             >
-              <Send className="w-3.5 h-3.5" />
               <span>{isSubmitting ? "Mengirim doa..." : "Kirimkan doa"}</span>
             </Button>
 

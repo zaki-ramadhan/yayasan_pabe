@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { logoutUser, USER_ROLES } from "@/services/authService";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 
 export function DonorSidebarNav({

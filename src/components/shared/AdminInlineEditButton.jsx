@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Pencil } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 /**

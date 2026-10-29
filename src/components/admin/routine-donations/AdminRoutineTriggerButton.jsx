@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { Send, Loader2, Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/Button";
+import { safeFetch } from "@/lib/safeFetch";
+import { toast } from "@/hooks/useToast";
 
 /**
  * Modular action button to trigger routine donation invoice & WhatsApp notification testing.
@@ -25,7 +26,7 @@ export function AdminRoutineTriggerButton({
     setIsTriggering(true);
     try {
       const payload = routineId ? { forceRoutineId: routineId } : {};
-      const response = await fetch("/api/cron/routine-donations", {
+      const response = await safeFetch("/api/cron/routine-donations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -79,7 +80,7 @@ export function AdminRoutineTriggerButton({
         variant="outline"
         onClick={handleTrigger}
         disabled={isTriggering}
-        className="h-10 gap-1.5 text-sm font-medium bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer shrink-0"
+        className="h-10 gap-1.5 text-sm font-medium bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer shrink-0 disabled:pointer-events-none disabled:cursor-not-allowed"
         title="Jalankan pengecekan cron jadwal donasi rutin sekarang"
       >
         {isTriggering ? (
@@ -104,7 +105,7 @@ export function AdminRoutineTriggerButton({
       size="sm"
       onClick={handleTrigger}
       disabled={isTriggering}
-      className="h-9 gap-1.5 text-xs font-medium text-slate-700 border-slate-300 hover:bg-slate-50 cursor-pointer"
+      className="h-9 gap-1.5 text-xs font-medium text-slate-700 border-slate-300 hover:bg-slate-50 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
     >
       {isTriggering ? (
         <>

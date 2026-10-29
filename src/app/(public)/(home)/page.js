@@ -55,7 +55,7 @@ export default async function HomePage() {
       {/* 4. Transparansi & Audit Keuangan */}
       <HomeTransparencySection metrics={metrics} />
 
-      {/* 5. Program Kerja Jangka Panjang (Misi Keberlanjutan Yayasan) */}
+      {/* 5. Program Kerja Jangka Pendek & Jangka Panjang (Roadmap Strategis Yayasan) */}
       <HomeStrategicRoadmap />
 
       {/* 6. Dokumentasi Media Sosial (Instagram Feed) */}

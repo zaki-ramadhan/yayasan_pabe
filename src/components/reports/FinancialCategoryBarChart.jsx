@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { ChartTooltipCard } from "./ChartTooltipCard";
 import { formatCompactRupiah, formatRupiah } from "@/lib/formatters";
 

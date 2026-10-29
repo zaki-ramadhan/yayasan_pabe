@@ -1,21 +1,21 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect } from "react";
-import { Loader2, Send } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import { CareerApplySuccessState } from "./CareerApplySuccessState";
 import { CareerApplyFormFields } from "./CareerApplyFormFields";
-import { sanitizeInput } from "@/lib/security";
+import { sanitizeInput, sanitizeName, sanitizePhone, sanitizeEmail } from "@/lib/security";
 import { validateEmail } from "@/lib/validator";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { getStoredUser } from "@/services/authService";
 
 export function CareerApplyModal({ isOpen, onClose, job }) {
@@ -67,21 +67,46 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     } catch {}
   }, [formData, job?.id]);
 
+  const isFormValid = useMemo(() => {
+    const isNameOk = formData.fullName.trim().length >= 2;
+    const isEmailOk = validateEmail(formData.email.trim(), true).isValid;
+    const isPhoneOk = formData.phone.trim().length >= 10;
+    const isResumeOk = formData.resumeUrl.trim().length > 0;
+    const isCoverOk = formData.coverLetter.trim().length >= 10;
+    return Boolean(isNameOk && isEmailOk && isPhoneOk && isResumeOk && isCoverOk);
+  }, [formData]);
+
   if (!job) return null;
 
   const handleChange = (field, value) => {
+    let cleanValue = value;
+    if (field === "fullName") cleanValue = sanitizeName(value);
+    else if (field === "email") cleanValue = sanitizeEmail(value);
+    else if (field === "phone") cleanValue = sanitizePhone(value);
+    else if (field === "linkedinUrl") cleanValue = value.replace(/\s+/g, "").slice(0, 200);
+    else if (field === "resumeUrl") cleanValue = value.replace(/\s+/g, "").slice(0, 300);
+    else if (field === "coverLetter") cleanValue = value.replace(/^\s+/, "").replace(/\s{2,}/g, " ").slice(0, 1000);
+
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: cleanValue,
     }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
+  const handleBlur = (field) => () => {
+    setFormData((prev) => {
+      const val = prev[field];
+      if (typeof val !== "string") return prev;
+      return { ...prev, [field]: val.trim() };
+    });
+  };
+
   const handlePhoneChange = (e) => {
     const raw = e.target.value;
-    const cleanDigits = raw.replace(/\D/g, "").slice(0, 15);
+    const cleanDigits = sanitizePhone(raw);
     handleChange("phone", cleanDigits);
   };
 
@@ -188,6 +213,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
                 job={job}
                 formData={formData}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 onPhoneChange={handlePhoneChange}
                 isEmailLocked={isEmailLocked}
                 errors={errors}
@@ -201,27 +227,18 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
                 size="sm"
                 onClick={handleClose}
                 disabled={isSubmitting}
-                className="h-9 text-xs cursor-pointer"
+                className="h-9 text-xs cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
               >
                 Batal
               </Button>
               <Button
                 type="submit"
                 size="sm"
-                disabled={isSubmitting}
-                className="h-9 text-xs bg-primary hover:bg-primary-hover text-white font-medium px-4 cursor-pointer"
+                disabled={!isFormValid || isSubmitting}
+                className="h-9 text-xs bg-primary hover:bg-primary-hover text-white font-medium px-4 cursor-pointer gap-1.5 disabled:pointer-events-none disabled:cursor-not-allowed"
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-                    Mengirimkan...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-3.5 h-3.5 mr-1.5" />
-                    Kirim Lamaran
-                  </>
-                )}
+                {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />}
+                <span>{isSubmitting ? "Mengirimkan..." : "Kirim Lamaran"}</span>
               </Button>
             </div>
           </form>

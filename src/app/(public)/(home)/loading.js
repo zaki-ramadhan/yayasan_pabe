@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { CampaignCardMinimalSkeleton } from "@/components/home/CampaignCardMinimalSkeleton";
 import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
 import { HomeStrategicRoadmapSkeleton } from "@/components/home/HomeStrategicRoadmapSkeleton";

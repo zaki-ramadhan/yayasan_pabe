@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export function SocialAuthButton({
@@ -23,7 +23,7 @@ export function SocialAuthButton({
       disabled={disabled || isLoading}
       onClick={onClick}
       className={cn(
-        "w-full h-11 border-slate-300 hover:bg-slate-50 text-slate-800 font-medium text-sm flex items-center justify-center gap-2.5 shadow-none rounded-lg cursor-pointer transition-colors",
+        "w-full h-11 border-slate-300 hover:bg-slate-50 text-slate-800 font-medium text-sm flex items-center justify-center gap-2.5 shadow-none rounded-lg cursor-pointer transition-colors disabled:pointer-events-none disabled:cursor-not-allowed",
         className
       )}
     >

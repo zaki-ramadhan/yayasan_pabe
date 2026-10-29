@@ -1,13 +1,13 @@
 "use client";
 
-import { TableToolbar } from "@/components/ui/table";
+import { TableToolbar } from "@/components/ui/Table";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { MANAGEABLE_ROLES } from "@/lib/userParser";
 
 export function AdminUserToolbar({

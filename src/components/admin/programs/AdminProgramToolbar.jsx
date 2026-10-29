@@ -1,14 +1,14 @@
 "use client";
 
-import { TableToolbar } from "@/components/ui/table";
-import { CreatableCombobox } from "@/components/ui/creatable-combobox";
+import { TableToolbar } from "@/components/ui/Table";
+import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 
 export function AdminProgramToolbar({
   search,

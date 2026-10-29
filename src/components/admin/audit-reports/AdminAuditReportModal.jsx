@@ -1,20 +1,22 @@
 "use client";
 /* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect } from "react";
-import { FormDialog } from "@/components/ui/form-dialog";
-import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { useState, useEffect, useMemo } from "react";
+import { FormDialog } from "@/components/ui/FormDialog";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { formatThousandsInput, parseThousandsToNumber } from "@/lib/formatters";
 import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
+import { isFormDirty } from "@/lib/formUtils";
+import { sanitizeDigitsOnly, sanitizeStandardText } from "@/lib/sanitizer";
 
 export function AdminAuditReportModal({
 	report,
@@ -188,17 +190,68 @@ export function AdminAuditReportModal({
 		});
 	};
 
+	const isDirty = useMemo(() => {
+		if (!isEdit || !report) {
+			return Boolean(year.trim() || title.trim() || auditorName.trim() || pdfUrl.trim());
+		}
+		return isFormDirty(
+			{
+				year: String(report.year || ""),
+				title: report.title || "",
+				auditorName: report.auditorName || "",
+				opinionStatus: report.opinionStatus || "WTP",
+				totalFundsIn: String(report.totalFundsIn || ""),
+				totalFundsOut: String(report.totalFundsOut || ""),
+				beneficiaryCount: String(report.beneficiaryCount || ""),
+				operationalRatio: report.operationalRatio || "12.4%",
+				pdfUrl: report.pdfUrl || "",
+				summary: report.summary || "",
+			},
+			{
+				year,
+				title,
+				auditorName,
+				opinionStatus,
+				totalFundsIn: parseThousandsToNumber(totalFundsIn) ? String(parseThousandsToNumber(totalFundsIn)) : "",
+				totalFundsOut: parseThousandsToNumber(totalFundsOut) ? String(parseThousandsToNumber(totalFundsOut)) : "",
+				beneficiaryCount: parseThousandsToNumber(beneficiaryCount) ? String(parseThousandsToNumber(beneficiaryCount)) : "",
+				operationalRatio,
+				pdfUrl,
+				summary,
+			}
+		);
+	}, [
+		isEdit,
+		report,
+		year,
+		title,
+		auditorName,
+		opinionStatus,
+		totalFundsIn,
+		totalFundsOut,
+		beneficiaryCount,
+		operationalRatio,
+		pdfUrl,
+		summary,
+	]);
+
+	const isFormValid = useMemo(() => {
+		const parsedYear = parseInt(year, 10);
+		const isYearValid = Boolean(year && !isNaN(parsedYear) && parsedYear >= 2015 && parsedYear <= 2050);
+		return Boolean(
+			isYearValid &&
+			auditorName.trim().length >= 3 &&
+			totalFundsIn.trim() &&
+			totalFundsOut.trim() &&
+			beneficiaryCount.trim()
+		);
+	}, [year, auditorName, totalFundsIn, totalFundsOut, beneficiaryCount]);
+
 	return (
 		<FormDialog
-			isOpen={
-				isOpen
-			}
-			onClose={
-				onClose
-			}
-			onSubmit={
-				handleSubmit
-			}
+			isOpen={isOpen}
+			onClose={onClose}
+			onSubmit={handleSubmit}
 			maxWidth="max-w-2xl"
 			title={
 				isEdit
@@ -206,12 +259,9 @@ export function AdminAuditReportModal({
 					: "Catat laporan audit tahunan baru"
 			}
 			isSubmitting={isSubmitting}
-			submitText={
-				isEdit
-					? "Simpan perubahan"
-					: "Tambah laporan"
-			}
+			submitText="Simpan"
 			submittingText="Menyimpan..."
+			submitDisabled={!isFormValid || (isEdit && !isDirty)}
 		>
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 				<FormField
@@ -220,17 +270,19 @@ export function AdminAuditReportModal({
 					error={errors.year}
 				>
 					<Input
-						type="number"
+						type="text"
+						inputMode="numeric"
+						maxLength={4}
 						value={year}
 						onChange={(e) => {
-							setYear(e.target.value);
+							const clean = sanitizeDigitsOnly(e.target.value, 4);
+							setYear(clean);
 							if (errors.year) {
 								setErrors((prev) => ({ ...prev, year: "" }));
 							}
 						}}
+						onBlur={() => setYear((prev) => prev.trim())}
 						placeholder="2024"
-						min={2015}
-						max={2050}
 						className="text-sm font-normal"
 						required
 					/>
@@ -269,12 +321,15 @@ export function AdminAuditReportModal({
 			>
 				<Input
 					value={auditorName}
+					maxLength={100}
 					onChange={(e) => {
-						setAuditorName(e.target.value);
+						const clean = sanitizeStandardText(e.target.value, 100);
+						setAuditorName(clean);
 						if (errors.auditorName) {
 							setErrors((prev) => ({ ...prev, auditorName: "" }));
 						}
 					}}
+					onBlur={() => setAuditorName((prev) => prev.trim())}
 					placeholder="Contoh: KAP Ahmad, Rasyid & Rekan (Registered Public Accountants)"
 					className="text-sm font-normal"
 					required
@@ -284,7 +339,9 @@ export function AdminAuditReportModal({
 			<FormField label="Judul resmi laporan">
 				<Input
 					value={title}
-					onChange={(e) => setTitle(e.target.value)}
+					maxLength={150}
+					onChange={(e) => setTitle(sanitizeStandardText(e.target.value, 150))}
+					onBlur={() => setTitle((prev) => prev.trim())}
 					placeholder="Contoh: Laporan Audit Keuangan & Transparansi 2024"
 					className="text-sm font-normal"
 				/>
@@ -353,18 +410,10 @@ export function AdminAuditReportModal({
 
 				<FormField label="Rasio operasional yayasan">
 					<Input
-						value={
-							operationalRatio
-						}
-						onChange={(
-							e,
-						) =>
-							setOperationalRatio(
-								e
-									.target
-									.value,
-							)
-						}
+						value={operationalRatio}
+						maxLength={20}
+						onChange={(e) => setOperationalRatio(sanitizeStandardText(e.target.value, 20))}
+						onBlur={() => setOperationalRatio((prev) => prev.trim())}
 						placeholder="Contoh: 12.4%"
 						className="text-sm font-normal"
 					/>
@@ -386,22 +435,12 @@ export function AdminAuditReportModal({
 
 			<FormField label="Ringkasan catatan auditor">
 				<Textarea
-					value={
-						summary
-					}
-					onChange={(
-						e,
-					) =>
-						setSummary(
-							e
-								.target
-								.value,
-						)
-					}
+					value={summary}
+					maxLength={500}
+					onChange={(e) => setSummary(e.target.value)}
+					onBlur={() => setSummary((prev) => prev.trim())}
 					placeholder="Catatan ringkas opini dan transparansi..."
-					rows={
-						3
-					}
+					rows={3}
 					className="text-sm font-normal"
 				/>
 			</FormField>

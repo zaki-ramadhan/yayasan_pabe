@@ -1,5 +1,6 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
 import {
   Table,
   TableContainer,
@@ -9,7 +10,11 @@ import {
   TableRow,
   TableEmptyRow,
   TablePaginationFooter,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Button } from "@/components/ui/Button";
+import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AdminGalleryToolbar } from "./AdminGalleryToolbar";
 import { AdminGalleryTableRow } from "./AdminGalleryTableRow";
 import { AdminGalleryModal } from "./AdminGalleryModal";
@@ -44,6 +49,11 @@ export function AdminGalleryTable({
     handleCategoryChange,
     handlePageChange,
     handleDeleteConfirm,
+    selection,
+    isBulkDeleteOpen,
+    setIsBulkDeleteOpen,
+    isBulkDeleting,
+    handleConfirmBulkDelete,
   } = useAdminGallery({
     initialItems,
     initialPagination,
@@ -53,7 +63,6 @@ export function AdminGalleryTable({
 
   return (
     <div className="space-y-4">
-      {/* Standard Table Toolbar */}
       <AdminGalleryToolbar
         search={search}
         onSearchChange={handleSearchChange}
@@ -65,12 +74,41 @@ export function AdminGalleryTable({
         onOpenUpload={handleOpenCreate}
       />
 
-      {/* Main Table Container */}
+      {/* Bilah Aksi Massal Reusable */}
+      <TableSelectionBar
+        selectedCount={selection.selectedCount}
+        totalCount={items.length}
+        label="foto"
+        onSelectAll={selection.selectAll}
+        isAllSelected={selection.allSelected}
+        onClearSelection={selection.clearSelection}
+      >
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          onClick={() => setIsBulkDeleteOpen(true)}
+          className="h-8 text-xs gap-1.5 cursor-pointer shadow-2xs"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          <span>Hapus {selection.selectedCount} foto terpilih</span>
+        </Button>
+      </TableSelectionBar>
+
       <TableContainer>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-12 text-center py-2.5">
+                  <Checkbox
+                    checked={selection.allSelected}
+                    indeterminate={selection.isIndeterminate}
+                    onCheckedChange={selection.toggleSelectAll}
+                    disabled={items.length === 0}
+                    aria-label="Pilih semua foto di halaman ini"
+                  />
+                </TableHead>
                 <TableHead className="w-20 font-medium text-slate-600 text-sm py-2.5">
                   Media
                 </TableHead>
@@ -91,7 +129,7 @@ export function AdminGalleryTable({
             <TableBody className="divide-y divide-slate-100">
               {items.length === 0 ? (
                 <TableEmptyRow
-                  colSpan={5}
+                  colSpan={6}
                   isFiltered={isFiltered}
                 />
               ) : (
@@ -99,6 +137,8 @@ export function AdminGalleryTable({
                   <AdminGalleryTableRow
                     key={item.id}
                     item={item}
+                    isSelected={selection.isSelected(item.id)}
+                    onToggleSelect={selection.toggleSelect}
                     onEdit={(it) => handleOpenEdit(it)}
                     onDelete={(it) => setItemToDelete(it)}
                   />
@@ -124,13 +164,24 @@ export function AdminGalleryTable({
         onSuccess={() => fetchItems(pagination.page || 1, category, search)}
       />
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation Dialog Satuan */}
       <AdminGalleryDeleteDialog
         isOpen={Boolean(itemToDelete)}
         onClose={() => !isDeleting && setItemToDelete(null)}
         onConfirm={handleDeleteConfirm}
         item={itemToDelete}
         isLoading={isDeleting}
+      />
+
+      {/* Delete Confirmation Dialog Massal */}
+      <ConfirmDialog
+        isOpen={isBulkDeleteOpen}
+        onClose={() => !isBulkDeleting && setIsBulkDeleteOpen(false)}
+        onConfirm={handleConfirmBulkDelete}
+        isLoading={isBulkDeleting}
+        title={`Hapus ${selection.selectedCount} dokumentasi kegiatan?`}
+        description="Seluruh foto dan video yang dipilih akan dihapus permanen dari basis data dan penyimpanan Cloudflare R2. Tindakan ini tidak dapat dibatalkan."
+        confirmLabel={`Hapus ${selection.selectedCount} foto`}
       />
     </div>
   );

@@ -6,19 +6,20 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { StatusBadge } from "@/components/ui/badge";
+} from "@/components/ui/Select";
+import { UserAvatar } from "@/components/ui/Avatar";
+import { StatusBadge } from "@/components/ui/Badge";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { formatDate } from "@/lib/formatters";
+import { toast } from "@/hooks/useToast";
 import { Mail, Phone, ExternalLink, FileText, Loader2 } from "lucide-react";
 import { maskEmail, maskPhone } from "@/lib/security";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -122,21 +123,17 @@ export function AdminApplicantDrawer({
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
                     <div className="flex items-center gap-3">
-                      <Avatar className="w-9 h-9 rounded-full border border-slate-200 shrink-0 bg-slate-100">
-                        <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
-                          {(app.fullName || "P").slice(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
+                      <UserAvatar
+                        name={app.fullName}
+                        fallback="P"
+                        className="w-9 h-9"
+                      />
                       <div>
                         <h4 className="text-sm font-medium text-slate-950">
                           {app.fullName}
                         </h4>
                         <p className="text-sm text-slate-500">
-                          Melamar pada {new Date(app.createdAt).toLocaleDateString("id-ID", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
+                          Melamar pada {formatDate(app.createdAt, { month: "short" })}
                         </p>
                       </div>
                     </div>

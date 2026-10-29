@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { formatCompactRupiah, formatRupiah } from "@/lib/formatters";
+import { formatCompactRupiah, formatRupiah, formatNumber } from "@/lib/formatters";
 
 export function AdminMetricCards({ stats }) {
   const totalCollected = stats?.totalCollected || 0;
@@ -7,40 +7,31 @@ export function AdminMetricCards({ stats }) {
   const activeDonors = stats?.activeDonors || 0;
   const activeCampaigns = stats?.activeCampaigns || 0;
 
-  const formatDetailedRupiah = (amount) => {
-    const num = Number(amount);
-    if (isNaN(num)) return "Rp 0";
-    return `Rp ${new Intl.NumberFormat("id-ID", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
-    }).format(num)}`;
-  };
-
   const cards = [
     {
       label: "Total Donasi Terhimpun",
       value: formatCompactRupiah(totalCollected),
-      detailValue: formatDetailedRupiah(totalCollected),
-      fullValue: formatDetailedRupiah(totalCollected),
+      detailValue: formatRupiah(totalCollected),
+      fullValue: formatRupiah(totalCollected),
       radialColor: "#10B981", // Emerald (Kas Masuk)
     },
     {
       label: "Dana Telah Disalurkan",
       value: formatCompactRupiah(totalDisbursed),
-      detailValue: formatDetailedRupiah(totalDisbursed),
-      fullValue: formatDetailedRupiah(totalDisbursed),
+      detailValue: formatRupiah(totalDisbursed),
+      fullValue: formatRupiah(totalDisbursed),
       radialColor: "#0284C7", // Sky/Blue (Penyaluran)
     },
     {
       label: "Donatur Terdaftar",
-      value: `${new Intl.NumberFormat("id-ID").format(activeDonors)} Orang`,
-      fullValue: `${new Intl.NumberFormat("id-ID").format(activeDonors)} Orang`,
+      value: `${formatNumber(activeDonors)} Orang`,
+      fullValue: `${formatNumber(activeDonors)} Orang`,
       radialColor: "#D97706", // Warm Amber (Komunitas Donatur)
     },
     {
       label: "Program Donasi Aktif",
-      value: `${activeCampaigns} Program`,
-      fullValue: `${activeCampaigns} Program`,
+      value: `${formatNumber(activeCampaigns)} Program`,
+      fullValue: `${formatNumber(activeCampaigns)} Program`,
       radialColor: "#E11D48", // Rose (Program Aktif)
     },
   ];

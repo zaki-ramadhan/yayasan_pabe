@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
   Table,
   TableHeader,
@@ -6,7 +6,7 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 
 export function AdminVolunteerSkeleton() {
   return (

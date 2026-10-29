@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { SafeImage } from "@/components/ui/safe-image";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Progress } from "@/components/ui/Progress";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { formatRupiah } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 

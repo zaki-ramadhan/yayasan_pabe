@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/useToast";
+import { Button } from "@/components/ui/Button";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { sanitizePrayer } from "@/lib/security";

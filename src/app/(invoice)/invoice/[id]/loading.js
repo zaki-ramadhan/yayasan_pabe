@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Clock, ChevronDown } from "lucide-react";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { DashedDivider } from "@/components/ui/DashedDivider";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 

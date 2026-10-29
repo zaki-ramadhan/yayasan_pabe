@@ -1,8 +1,7 @@
-import { User } from "lucide-react";
-import { formatRupiah, getInitials } from "@/lib/formatters";
+import { formatRupiah } from "@/lib/formatters";
 import { formatClockTime } from "@/lib/dateUtils";
 import { maskEmail } from "@/lib/security";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/ui/Avatar";
 
 /**
  * Individual donation transaction row item
@@ -10,20 +9,17 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
  */
 export function CampaignTransactionItem({ item }) {
   const isAnon = !item.name || item.name.toLowerCase().includes("hamba allah");
-  const initial = isAnon ? "HA" : getInitials(item.name, "D");
 
   return (
     <div className="p-2 flex items-center justify-between gap-2.5 shadow-2xs">
       {/* Left: Avatar & Donor Info */}
       <div className="flex items-center gap-2.5 min-w-0">
-        <Avatar className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-slate-700 shrink-0 overflow-hidden">
-          {item.avatar && (
-            <AvatarImage src={item.avatar} alt={item.name || "Donatur"} className="object-cover" />
-          )}
-          <AvatarFallback className="text-xs font-medium bg-slate-100 text-slate-700">
-            {isAnon ? <User className="w-5 h-5 text-slate-500" /> : initial}
-          </AvatarFallback>
-        </Avatar>
+        <UserAvatar
+          src={item.avatar}
+          name={item.name}
+          fallback="D"
+          isAnonymous={isAnon}
+        />
         <div className="min-w-0">
           <span className="text-xs sm:text-sm font-medium text-slate-900 truncate block">
             {item.name || "Hamba Allah"}

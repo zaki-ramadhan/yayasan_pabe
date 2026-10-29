@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@/components/ui/Progress";
 import { USER_ROLES } from "@/services/authService";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
@@ -13,8 +13,8 @@ import {
   TableSortHeader,
   TableEmptyRow,
   useTableSort,
-} from "@/components/ui/table";
-import { StatusBadge } from "@/components/ui/badge";
+} from "@/components/ui/Table";
+import { StatusBadge } from "@/components/ui/Badge";
 
 export function AdminDashboardView({ userRole, stats }) {
   const transactions = stats?.recentTransactions || [];

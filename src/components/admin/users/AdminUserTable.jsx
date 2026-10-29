@@ -9,7 +9,7 @@ import {
 	TableBody,
 	TableEmptyRow,
 	TablePaginationFooter,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { AdminUserModal } from "./AdminUserModal";
 import { AdminUserResetDialog } from "./AdminUserResetDialog";
 import { AdminUserConfirmDialog } from "./AdminUserConfirmDialog";
@@ -53,7 +53,6 @@ export function AdminUserTable({
 
 	return (
 		<div className="space-y-4">
-			{/* Filter and Search Bar */}
 			<AdminUserToolbar
 				search={
 					search
@@ -91,7 +90,6 @@ export function AdminUserTable({
 				}
 			/>
 
-			{/* Main Table */}
 			<TableContainer>
 				<div className="overflow-x-auto">
 					<Table>
@@ -193,7 +191,6 @@ export function AdminUserTable({
 				)}
 			</TableContainer>
 
-			{/* Modal Dialog: Tambah / Edit Pengurus */}
 			<AdminUserModal
 				isOpen={
 					isModalOpen

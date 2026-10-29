@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { formatRupiah, calculateProgress, isCampaignClosed } from "@/lib/formatters";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { SafeImage } from "@/components/ui/safe-image";
-import { RibbonBadge } from "@/components/ui/ribbon-badge";
+import { Button } from "@/components/ui/Button";
+import { Progress } from "@/components/ui/Progress";
+import { SafeImage } from "@/components/ui/SafeImage";
+import { RibbonBadge } from "@/components/ui/RibbonBadge";
 import { cn } from "@/lib/utils";
 
 /**

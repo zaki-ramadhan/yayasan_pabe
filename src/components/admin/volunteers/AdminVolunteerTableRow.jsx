@@ -1,23 +1,44 @@
 "use client";
 
 import { MapPin, QrCode } from "lucide-react";
-import { formatDate, getInitials } from "@/lib/formatters";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
+import { formatDate } from "@/lib/formatters";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { AdminVolunteerStatusBadge } from "./AdminVolunteerStatusBadge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/ui/Avatar";
 import { maskEmail, maskPhone } from "@/lib/security";
 
-export function AdminVolunteerTableRow({ item, onViewDetail, onPrintCard, onDelete }) {
+export function AdminVolunteerTableRow({
+  item,
+  isSelected = false,
+  onToggleSelect,
+  onViewDetail,
+  onPrintCard,
+  onDelete,
+}) {
   return (
-    <TableRow className="hover:bg-slate-50/70 transition-colors">
+    <TableRow
+      className={`hover:bg-slate-50/70 transition-colors ${
+        isSelected ? "bg-emerald-50/60 hover:bg-emerald-50/80" : ""
+      }`}
+    >
+      {/* 0. Selection Checkbox */}
+      <TableCell className="w-12 text-center py-3 px-3 align-middle" onClick={(e) => e.stopPropagation()}>
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelect?.(item.id)}
+          aria-label={`Pilih relawan: ${item.fullName}`}
+        />
+      </TableCell>
+
       {/* Nama & Kontak */}
       <TableCell className="w-64 py-3 align-middle">
         <div className="flex items-center gap-2.5">
-          <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
-            <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
-              {getInitials(item.fullName, "R")}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            src={item.avatar}
+            name={item.fullName}
+            fallback="R"
+          />
           <div className="min-w-0 space-y-0.5">
             <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
               {item.fullName}

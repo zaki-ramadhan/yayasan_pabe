@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isSuperAdminEmail } from "@/lib/serverAuth";
+import { getOAuthSessionDuration, USER_ROLES } from "@/services/authService";
 
 export const dynamic = "force-dynamic";
 
@@ -128,8 +129,8 @@ export async function GET(request) {
     const userTitle = rawUserTitle.includes("Ketua Yayasan") ? "Super Admin" : rawUserTitle;
     const userAvatar = profile.picture || dbUser?.avatar || null;
 
-    const isStaff = userRole && userRole !== "DONOR";
-    const durationSec = isStaff ? 12 * 60 * 60 : 7 * 24 * 60 * 60;
+    const isStaff = userRole && userRole !== USER_ROLES.DONOR;
+    const durationSec = getOAuthSessionDuration(userRole);
     const expiresAt = Date.now() + durationSec * 1000;
 
     const sessionPayload = {

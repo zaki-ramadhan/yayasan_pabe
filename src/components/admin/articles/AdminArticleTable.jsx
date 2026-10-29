@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { Trash2 } from "lucide-react";
 import {
   Table,
   TableContainer,
@@ -10,7 +11,12 @@ import {
   TableHead,
   TableEmptyRow,
   TablePaginationFooter,
-} from "@/components/ui/table";
+  usePagination,
+} from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Button } from "@/components/ui/Button";
+import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import dynamic from "next/dynamic";
 
 const AdminArticleModal = dynamic(
@@ -22,10 +28,11 @@ const AdminArticleModal = dynamic(
 );
 import { AdminArticleToolbar } from "@/components/admin/articles/AdminArticleToolbar";
 import { AdminArticleTableRow } from "@/components/admin/articles/AdminArticleTableRow";
+import { useTableSelection } from "@/hooks/useTableSelection";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 const PAGE_SIZE = 10;
 
@@ -49,8 +56,10 @@ export function AdminArticleTable({
   const [isModalOpen, setIsModalOpen] = useState(Boolean(initialEditArticle));
   const [selectedArticle, setSelectedArticle] = useState(initialEditArticle);
   const [isLoading, setIsLoading] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 
@@ -78,25 +87,32 @@ export function AdminArticleTable({
     });
   }, [articles, debouncedSearch, categoryFilter]);
 
-  const totalPages = Math.ceil(filteredArticles.length / PAGE_SIZE) || 1;
-  const paginatedArticles = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filteredArticles.slice(start, start + PAGE_SIZE);
-  }, [filteredArticles, currentPage]);
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems: paginatedArticles,
+    resetPage,
+  } = usePagination(filteredArticles, { pageSize: PAGE_SIZE });
+
+  const selection = useTableSelection(paginatedArticles);
 
   const handleSearchChange = (e) => {
     setSearch(sanitizeSearchQuery(e.target.value));
-    setCurrentPage(1);
+    selection.clearSelection();
+    resetPage();
   };
 
   const handleClearSearch = () => {
     setSearch("");
-    setCurrentPage(1);
+    selection.clearSelection();
+    resetPage();
   };
 
   const handleCategoryChange = (val) => {
     setCategoryFilter(val);
-    setCurrentPage(1);
+    selection.clearSelection();
+    resetPage();
   };
 
   const handleOpenAdd = () => {
@@ -109,10 +125,13 @@ export function AdminArticleTable({
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Yakin ingin menghapus artikel "${title}"?`)) {
-      return;
-    }
+  const handleDelete = (id, title) => {
+    setArticleToDelete({ id, title });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!articleToDelete) return;
+    const { id } = articleToDelete;
 
     setDeletingId(id);
     try {
@@ -123,6 +142,7 @@ export function AdminArticleTable({
       if (data.success) {
         toast.success("Artikel berhasil dihapus.");
         setArticles((prev) => prev.filter((a) => a.id !== id));
+        setArticleToDelete(null);
       } else {
         toast.error(data.message || "Gagal menghapus artikel.");
       }
@@ -133,6 +153,32 @@ export function AdminArticleTable({
     }
   };
 
+  const handleConfirmBulkDelete = async () => {
+    if (selection.selectedCount === 0) return;
+    setIsBulkDeleting(true);
+    try {
+      const res = await safeFetch("/api/admin/articles", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selection.selectedIds }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message || `${selection.selectedCount} artikel berhasil dihapus.`);
+        const selectedSet = selection.selectedKeys;
+        setArticles((prev) => prev.filter((a) => !selectedSet.has(a.id)));
+        selection.clearSelection();
+        setIsBulkDeleteOpen(false);
+      } else {
+        toast.error(data.message || "Gagal menghapus artikel terpilih.");
+      }
+    } catch {
+      toast.error("Terjadi kendala jaringan saat menghapus artikel.");
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
+
   const refreshList = async () => {
     setIsLoading(true);
     try {
@@ -140,6 +186,7 @@ export function AdminArticleTable({
       const data = await res.json();
       if (data.success && data.data) {
         setArticles(data.data);
+        selection.clearSelection();
         toast.success("Data artikel berhasil diperbarui.");
       } else {
         toast.error(data.message || "Gagal menyegarkan data artikel.");
@@ -153,7 +200,6 @@ export function AdminArticleTable({
 
   return (
     <div className="space-y-4">
-      {/* Filter and Action Bar */}
       <AdminArticleToolbar
         search={search}
         onSearchChange={handleSearchChange}
@@ -166,11 +212,39 @@ export function AdminArticleTable({
         onOpenAdd={handleOpenAdd}
       />
 
-      {/* Main Table */}
+      {/* Reusable Bulk Action Bar */}
+      <TableSelectionBar
+        selectedCount={selection.selectedCount}
+        totalCount={paginatedArticles.length}
+        label="artikel"
+        onSelectAll={selection.selectAll}
+        isAllSelected={selection.allSelected}
+        onClearSelection={selection.clearSelection}
+      >
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          onClick={() => setIsBulkDeleteOpen(true)}
+          className="font-medium h-8 text-xs gap-1.5 cursor-pointer"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          <span>Hapus {selection.selectedCount} artikel terpilih</span>
+        </Button>
+      </TableSelectionBar>
+
       <TableContainer>
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-12 text-center py-2.5 px-3">
+                <Checkbox
+                  checked={selection.allSelected}
+                  indeterminate={selection.isIndeterminate}
+                  onCheckedChange={selection.toggleSelectAll}
+                  aria-label="Pilih semua artikel di halaman ini"
+                />
+              </TableHead>
               <TableHead className="w-16">Banner</TableHead>
               <TableHead>Judul Artikel</TableHead>
               <TableHead className="w-36 text-center">Kategori</TableHead>
@@ -186,6 +260,8 @@ export function AdminArticleTable({
                 <AdminArticleTableRow
                   key={article.id}
                   article={article}
+                  isSelected={selection.isSelected(article.id)}
+                  onToggleSelect={selection.toggleSelect}
                   onEdit={handleOpenEdit}
                   onDelete={handleDelete}
                   isDeleting={deletingId === article.id}
@@ -193,7 +269,7 @@ export function AdminArticleTable({
               ))
             ) : (
               <TableEmptyRow
-                colSpan={7}
+                colSpan={8}
                 isFiltered={Boolean(search || categoryFilter !== "ALL")}
               />
             )}
@@ -206,18 +282,42 @@ export function AdminArticleTable({
             totalPages={totalPages}
             total={filteredArticles.length}
             limit={PAGE_SIZE}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => {
+              selection.clearSelection();
+              setCurrentPage(page);
+            }}
           />
         )}
       </TableContainer>
 
-      {/* Modal Dialog */}
       <AdminArticleModal
         isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
         articleToEdit={selectedArticle}
         categories={categories}
         onSuccess={refreshList}
+      />
+
+      <ConfirmDialog
+        isOpen={Boolean(articleToDelete)}
+        onClose={() => setArticleToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        isLoading={Boolean(deletingId)}
+        title="Hapus Artikel"
+        description={`Apakah Anda yakin ingin menghapus artikel "${articleToDelete?.title}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus sekarang"
+        confirmVariant="destructive"
+      />
+
+      <ConfirmDialog
+        isOpen={isBulkDeleteOpen}
+        onClose={() => setIsBulkDeleteOpen(false)}
+        onConfirm={handleConfirmBulkDelete}
+        isLoading={isBulkDeleting}
+        title={`Hapus ${selection.selectedCount} Artikel`}
+        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} artikel berita terpilih? Banner dan konten artikel akan dihapus secara permanen.`}
+        confirmLabel="Hapus sekarang"
+        confirmVariant="destructive"
       />
     </div>
   );

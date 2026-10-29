@@ -8,15 +8,15 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { StatusBadge } from "@/components/ui/badge";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { UserAvatar } from "@/components/ui/Avatar";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { StatusBadge } from "@/components/ui/Badge";
 import { safeFetch } from "@/lib/safeFetch";
-import { formatRupiah, formatDate, getInitials, formatPaymentChannel } from "@/lib/formatters";
+import { formatRupiah, formatDate, formatPaymentChannel } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function AdminDonorDetailDrawer({
   isOpen,
@@ -156,18 +156,14 @@ export function AdminDonorDetailDrawer({
           {/* Identitas & Ringkasan Terpadu (Non-Bento Card) */}
           <div className="bg-slate-50/70 border border-slate-200/90 rounded-lg p-3.5 sm:p-4">
             <div className="flex items-center gap-3 pb-3 border-b border-slate-200/70">
-              <Avatar className="w-11 h-11 rounded-full border border-slate-200 shrink-0 bg-white">
-                {donor.avatar && (
-                  <AvatarImage
-                    src={donor.avatar}
-                    alt={donor.name}
-                    referrerPolicy="no-referrer"
-                  />
-                )}
-                <AvatarFallback className="bg-slate-100 text-slate-700 text-sm font-medium">
-                  {donor.name === "Hamba Allah" ? "HA" : getInitials(donor.name, "D")}
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar
+                src={donor.avatar}
+                name={donor.name}
+                fallback="D"
+                isAnonymous={donor.name === "Hamba Allah"}
+                className="w-11 h-11 bg-white"
+                fallbackClassName="text-sm"
+              />
               <div className="min-w-0 flex-1">
                 <h4 className="text-sm sm:text-base font-medium text-slate-900 leading-tight truncate">
                   {donor.name}

@@ -7,7 +7,7 @@ import {
   TableRow,
   TableHead,
   TableEmptyRow,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 
 /**
  * Reusable table component for displaying transaction limits.

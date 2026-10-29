@@ -9,6 +9,7 @@ import {
   countGraphemes,
   hasMeaningfulText,
 } from "./sanitizer";
+import { formatRupiah } from "./formatters";
 
 export const RESERVED_KEYWORDS = [
   "admin",
@@ -361,13 +362,13 @@ export function validateDonationAmount(amount) {
   if (isNaN(numericAmount) || numericAmount < DONATION_LIMITS.MIN_AMOUNT) {
     return {
       isValid: false,
-      message: `Nominal donasi minimal Rp ${new Intl.NumberFormat("id-ID").format(DONATION_LIMITS.MIN_AMOUNT)}`,
+      message: `Nominal donasi minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`,
     };
   }
   if (numericAmount > DONATION_LIMITS.MAX_AMOUNT) {
     return {
       isValid: false,
-      message: `Nominal donasi maksimal Rp ${new Intl.NumberFormat("id-ID").format(DONATION_LIMITS.MAX_AMOUNT)}`,
+      message: `Nominal donasi maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`,
     };
   }
   return { isValid: true, message: "" };

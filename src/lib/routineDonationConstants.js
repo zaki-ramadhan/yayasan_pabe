@@ -21,3 +21,20 @@ export const ROUTINE_FREQUENCY = {
   WEEKLY: "WEEKLY",
   MONTHLY: "MONTHLY",
 };
+
+import { parseThousandsToNumber } from "@/lib/formatters";
+
+/**
+ * Resolves the effective numeric amount for a routine donation program item,
+ * whether provided as a formatted customAmount string or preset number.
+ *
+ * @param {object} program
+ * @returns {number}
+ */
+export function getRoutineProgramAmount(program) {
+  if (!program) return 0;
+  if (program.customAmount) {
+    return parseThousandsToNumber(program.customAmount);
+  }
+  return typeof program.amount === "number" ? program.amount : 0;
+}

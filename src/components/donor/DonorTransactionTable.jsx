@@ -1,6 +1,6 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
   Table,
   TableContainer,
@@ -13,7 +13,7 @@ import {
   TableSkeletonRows,
   TablePaginationFooter,
   TableToolbar,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { DonorTransactionTableRow } from "./DonorTransactionTableRow";
 
 export function DonorTransactionTable({

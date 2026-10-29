@@ -16,14 +16,14 @@ import {
   TableEmptyRow,
   TablePaginationFooter,
   TableToolbar,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 
 export function BeneficiaryDirectory({ initialBeneficiaries = [], stats = {} }) {
   const [category, setCategory] = useState(BENEFICIARY_CATEGORIES.ALL);

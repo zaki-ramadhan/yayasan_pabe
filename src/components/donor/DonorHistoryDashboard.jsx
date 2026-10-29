@@ -12,7 +12,7 @@ import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function DonorHistoryDashboard() {
   const router = useRouter();

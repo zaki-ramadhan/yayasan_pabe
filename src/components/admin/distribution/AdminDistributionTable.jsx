@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { Trash2 } from "lucide-react";
 import {
   Table,
   TableContainer,
@@ -10,7 +11,12 @@ import {
   TableHead,
   TableEmptyRow,
   TablePaginationFooter,
-} from "@/components/ui/table";
+  usePagination,
+} from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Button } from "@/components/ui/Button";
+import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import dynamic from "next/dynamic";
 
 const AdminDistributionModal = dynamic(
@@ -23,10 +29,11 @@ const AdminDistributionModal = dynamic(
 import { AdminDistributionDeleteDialog } from "./AdminDistributionDeleteDialog";
 import { AdminDistributionToolbar } from "./AdminDistributionToolbar";
 import { AdminDistributionTableRow } from "./AdminDistributionTableRow";
+import { useTableSelection } from "@/hooks/useTableSelection";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function AdminDistributionTable({
   initialDistributions = [],
@@ -39,7 +46,8 @@ export function AdminDistributionTable({
   const [deletingDistribution, setDeletingDistribution] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const PAGE_SIZE = 10;
 
   const debouncedSearch = useDebounce(search.trim(), 300);
@@ -55,20 +63,24 @@ export function AdminDistributionTable({
     });
   }, [distributions, debouncedSearch]);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
-  const paginatedDistributions = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, currentPage]);
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems: paginatedDistributions,
+    resetPage,
+  } = usePagination(filtered, { pageSize: PAGE_SIZE });
+
+  const selection = useTableSelection(paginatedDistributions);
 
   const handleSearchChange = (e) => {
     setSearch(sanitizeSearchQuery(e.target.value));
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleClearSearch = () => {
     setSearch("");
-    setCurrentPage(1);
+    resetPage();
   };
 
   const refreshList = async () => {
@@ -78,6 +90,7 @@ export function AdminDistributionTable({
       const data = await res.json();
       if (data.success && data.data) {
         setDistributions(data.data);
+        selection.clearSelection();
         toast.success("Data rekam penyaluran berhasil diperbarui.");
       } else {
         toast.error(data.message || "Gagal menyegarkan data penyaluran.");
@@ -114,6 +127,7 @@ export function AdminDistributionTable({
       if (data.success) {
         toast.success("Rekam penyaluran berhasil dihapus.");
         setDistributions((prev) => prev.filter((d) => d.id !== deletingDistribution.id));
+        selection.clearSelection();
         setDeletingDistribution(null);
       } else {
         toast.error(data.message || "Gagal menghapus penyaluran.");
@@ -122,6 +136,31 @@ export function AdminDistributionTable({
       toast.error("Terjadi kendala jaringan saat menghapus penyaluran.");
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleConfirmBulkDelete = async () => {
+    if (selection.selectedCount === 0) return;
+    setIsBulkDeleting(true);
+    try {
+      const res = await safeFetch("/api/admin/distributions", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selection.selectedIds }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message || "Rekam penyaluran terpilih berhasil dihapus.");
+        setDistributions((prev) => prev.filter((d) => !selection.selectedIds.includes(d.id)));
+        selection.clearSelection();
+        setIsBulkDeleteDialogOpen(false);
+      } else {
+        toast.error(data.message || "Gagal menghapus rekam penyaluran terpilih.");
+      }
+    } catch {
+      toast.error("Terjadi kendala jaringan saat menghapus data terpilih.");
+    } finally {
+      setIsBulkDeleting(false);
     }
   };
 
@@ -137,12 +176,41 @@ export function AdminDistributionTable({
         onOpenAdd={handleOpenAdd}
       />
 
+      {/* Floating Bulk Action Bar */}
+      <TableSelectionBar
+        selectedCount={selection.selectedCount}
+        totalCount={paginatedDistributions.length}
+        itemLabel="penyaluran"
+        onSelectAll={selection.selectAll}
+        isAllSelected={selection.allSelected}
+        onClearSelection={selection.clearSelection}
+      >
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          onClick={() => setIsBulkDeleteDialogOpen(true)}
+          className="h-8 gap-1.5 text-xs font-medium"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          Hapus ({selection.selectedCount})
+        </Button>
+      </TableSelectionBar>
+
       {/* Table Container */}
       <TableContainer>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-12 px-4 py-2.5">
+                  <Checkbox
+                    checked={selection.allSelected}
+                    indeterminate={selection.isIndeterminate}
+                    onCheckedChange={selection.toggleSelectAll}
+                    aria-label="Pilih semua data penyaluran pada halaman ini"
+                  />
+                </TableHead>
                 <TableHead className="w-72 font-medium text-slate-600 text-sm py-2.5">
                   Program donasi asal
                 </TableHead>
@@ -166,12 +234,14 @@ export function AdminDistributionTable({
                   <AdminDistributionTableRow
                     key={item.id}
                     item={item}
+                    isSelected={selection.isSelected(item.id)}
+                    onToggleSelect={() => selection.toggleSelect(item.id)}
                     onEdit={handleOpenEdit}
                     onDelete={handleOpenDelete}
                   />
                 ))
               ) : (
-                <TableEmptyRow colSpan={5} isFiltered={Boolean(debouncedSearch)} />
+                <TableEmptyRow colSpan={6} isFiltered={Boolean(debouncedSearch)} />
               )}
             </TableBody>
           </Table>
@@ -188,7 +258,6 @@ export function AdminDistributionTable({
         )}
       </TableContainer>
 
-      {/* Distribution Modal (Create/Edit) */}
       <AdminDistributionModal
         isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
@@ -197,13 +266,23 @@ export function AdminDistributionTable({
         onSuccess={refreshList}
       />
 
-      {/* Delete Confirmation Dialog */}
       <AdminDistributionDeleteDialog
         isOpen={Boolean(deletingDistribution)}
         onClose={() => setDeletingDistribution(null)}
         onConfirm={handleConfirmDelete}
         distribution={deletingDistribution}
         isLoading={isDeleting}
+      />
+
+      <ConfirmDialog
+        isOpen={isBulkDeleteDialogOpen}
+        onClose={() => setIsBulkDeleteDialogOpen(false)}
+        onConfirm={handleConfirmBulkDelete}
+        isLoading={isBulkDeleting}
+        title={`Hapus ${selection.selectedCount} Data Penyaluran`}
+        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} data rekam penyaluran bantuan terpilih? Berkas foto dokumentasi terkait di penyimpanan R2 juga akan dibersihkan.`}
+        confirmLabel="Hapus sekarang"
+        confirmVariant="destructive"
       />
     </div>
   );

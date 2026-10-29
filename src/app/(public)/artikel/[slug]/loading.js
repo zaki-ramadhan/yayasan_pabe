@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
 
 export default function ArtikelDetailLoading() {

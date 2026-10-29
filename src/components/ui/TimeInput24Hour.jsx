@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { useFormField } from "@/components/ui/form-field";
+import { useFormField } from "@/components/ui/FormField";
 
 /**
  * Controlled 24-Hour Numeric Time Input (HH:MM)

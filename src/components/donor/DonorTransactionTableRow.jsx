@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { formatRupiah, formatDate, getInitials } from "@/lib/formatters";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { TableRow, TableCell } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { formatRupiah, formatDate } from "@/lib/formatters";
+import { UserAvatar } from "@/components/ui/Avatar";
+import { TableRow, TableCell } from "@/components/ui/Table";
+import { Button } from "@/components/ui/Button";
 
 export function DonorTransactionTableRow({ item }) {
   return (
@@ -14,12 +14,12 @@ export function DonorTransactionTableRow({ item }) {
       </TableCell>
       <TableCell className="font-medium text-slate-900 align-middle">
         <div className="flex items-center gap-2.5">
-          <Avatar className="w-7 h-7 rounded-full border border-slate-200 shrink-0 bg-slate-100">
-            {item.donorAvatar && <AvatarImage src={item.donorAvatar} alt={item.donorName} />}
-            <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
-              {getInitials(item.donorName, "D")}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            src={item.donorAvatar}
+            name={item.donorName}
+            fallback="D"
+            className="w-7 h-7"
+          />
           <span className="truncate">{item.donorName}</span>
         </div>
       </TableCell>

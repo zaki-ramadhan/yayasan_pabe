@@ -1,7 +1,7 @@
 "use client";
 
-import { TableToolbar } from "@/components/ui/table";
-import { CreatableCombobox } from "@/components/ui/creatable-combobox";
+import { TableToolbar } from "@/components/ui/Table";
+import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 
 export function AdminArticleToolbar({
   search,

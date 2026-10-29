@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/shared/PageHeader";
 import { GallerySkeleton } from "@/components/gallery/GallerySkeleton";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function GalleryLoading() {
   return (
@@ -21,19 +21,22 @@ export default function GalleryLoading() {
         <Skeleton className="h-[38px] w-36 rounded-full shrink-0" />
       </div>
 
-      {/* 3. Search Bar & Sort Dropdown Skeleton */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
-        <div className="w-full sm:max-w-md">
-          <Skeleton className="h-11 w-full rounded-lg" />
+      {/* 3. Search Bar & Gallery Grid Container with space-y-4 */}
+      <div className="space-y-4">
+        {/* Search Bar & Sort Dropdown Skeleton */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+          <div className="w-full sm:max-w-md">
+            <Skeleton className="h-11 w-full rounded-lg" />
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            <Skeleton className="h-4 w-16 rounded" />
+            <Skeleton className="h-10 w-36 rounded-lg" />
+          </div>
         </div>
-        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-          <Skeleton className="h-4 w-16 rounded" />
-          <Skeleton className="h-10 w-36 rounded-lg" />
-        </div>
-      </div>
 
-      {/* 4. Gallery Photos Grid */}
-      <GallerySkeleton count={9} />
+        {/* 4. Gallery Photos Grid */}
+        <GallerySkeleton count={9} />
+      </div>
     </main>
   );
 }

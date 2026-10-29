@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/ui/Dialog";
 
 export function RegisterTermsDialog({ isOpen, onOpenChange, onAccept }) {
   return (

@@ -11,7 +11,7 @@ import { DonorPersonalFormCard } from "@/components/donor/DonorPersonalFormCard"
 import { DonorBankFormCard } from "@/components/donor/DonorBankFormCard";
 import { DonorSecurityFormCard } from "@/components/donor/DonorSecurityFormCard";
 import { Loader2 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
 
 export function DonorProfileView() {
@@ -68,7 +68,6 @@ export function DonorProfileView() {
     }
   }, [currentUser?.email, fetchProfile]);
 
-  // Handle profile updates (personal info / bank)
   const handleUpdateProfile = async (profileData) => {
     if (!currentUser?.email) throw new Error("Sesi login berakhir.");
 
@@ -99,7 +98,6 @@ export function DonorProfileView() {
     return json.data;
   };
 
-  // Handle Cover / Avatar image update
   const handleUpdateImage = async (imageUpdate) => {
     setIsUpdatingImage(true);
     try {
@@ -120,7 +118,6 @@ export function DonorProfileView() {
     }
   };
 
-  // Handle password update
   const handleUpdatePassword = async ({ oldPassword, newPassword }) => {
     if (!currentUser?.email) throw new Error("Sesi login berakhir.");
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatDate } from "@/lib/formatters";
 
 export function AdminGalleryDeleteDialog({

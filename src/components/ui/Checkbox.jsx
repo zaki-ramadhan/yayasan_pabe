@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Checkbox = React.forwardRef(
@@ -9,6 +9,7 @@ export const Checkbox = React.forwardRef(
     {
       className,
       checked = false,
+      indeterminate = false,
       onCheckedChange,
       onChange,
       id,
@@ -20,29 +21,42 @@ export const Checkbox = React.forwardRef(
     },
     ref
   ) => {
+    const internalRef = React.useRef(null);
+    const resolvedRef = ref || internalRef;
+
     const isChecked = Boolean(checked);
+    const isIndeterminate = Boolean(indeterminate) && !isChecked;
+
+    React.useEffect(() => {
+      if (resolvedRef && typeof resolvedRef === "object" && resolvedRef.current) {
+        resolvedRef.current.indeterminate = isIndeterminate;
+      }
+    }, [resolvedRef, isIndeterminate]);
 
     const handleChange = (e) => {
       if (disabled) return;
       if (onCheckedChange) {
-        onCheckedChange(e.target.checked);
+        onCheckedChange(isIndeterminate ? true : e.target.checked);
       }
       if (onChange) {
         onChange(e);
       }
     };
 
+    const isFilled = isChecked || isIndeterminate;
+
     const checkboxIndicator = (
       <div
         className={cn(
           "w-4.5 h-4.5 rounded border flex items-center justify-center transition-all shrink-0 cursor-pointer",
-          isChecked
+          isFilled
             ? "bg-primary border-primary text-white"
             : "bg-white border-slate-300 hover:border-slate-400",
-          disabled && "opacity-50 cursor-not-allowed bg-slate-100"
+          disabled && "opacity-50 cursor-not-allowed bg-slate-100 pointer-events-none"
         )}
       >
         {isChecked && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
+        {isIndeterminate && <Minus className="w-3.5 h-3.5 stroke-[2.5]" />}
       </div>
     );
 
@@ -55,12 +69,12 @@ export const Checkbox = React.forwardRef(
             isChecked
               ? "bg-primary/5 border-primary/40 ring-1 ring-primary/20"
               : "bg-white border-slate-200/90 hover:bg-slate-50/70 hover:border-slate-300",
-            disabled && "opacity-50 cursor-not-allowed",
+            disabled && "opacity-50 cursor-not-allowed pointer-events-none",
             className
           )}
         >
           <input
-            ref={ref}
+            ref={resolvedRef}
             id={id}
             type="checkbox"
             checked={isChecked}
@@ -91,12 +105,12 @@ export const Checkbox = React.forwardRef(
         htmlFor={id}
         className={cn(
           "inline-flex items-center gap-2 cursor-pointer select-none",
-          disabled && "opacity-50 cursor-not-allowed",
+          disabled && "opacity-50 cursor-not-allowed pointer-events-none",
           className
         )}
       >
         <input
-          ref={ref}
+          ref={resolvedRef}
           id={id}
           type="checkbox"
           checked={isChecked}

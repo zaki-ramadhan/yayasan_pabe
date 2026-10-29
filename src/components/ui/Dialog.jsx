@@ -146,7 +146,7 @@ function DialogFooterActions({
 				type="button"
 				onClick={onCancel}
 				disabled={isSubmitting}
-				className="inline-flex items-center justify-center h-9 px-4 min-w-[84px] rounded-lg text-sm font-normal border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap"
+				className="inline-flex items-center justify-center h-9 px-4 min-w-[84px] rounded-lg text-sm font-normal border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed whitespace-nowrap"
 			>
 				{activeCancelText}
 			</button>
@@ -154,7 +154,7 @@ function DialogFooterActions({
 				type="submit"
 				disabled={isSubmitting || submitDisabled}
 				className={cn(
-					"inline-flex items-center justify-center gap-2 h-9 px-4 min-w-[96px] rounded-lg text-sm font-medium transition-colors cursor-pointer disabled:opacity-60 whitespace-nowrap",
+					"inline-flex items-center justify-center gap-2 h-9 px-4 min-w-[96px] rounded-lg text-sm font-medium transition-colors cursor-pointer disabled:opacity-60 disabled:pointer-events-none disabled:cursor-not-allowed whitespace-nowrap",
 					submitVariant === "destructive"
 						? "bg-rose-600 text-white hover:bg-rose-700"
 						: "bg-primary text-white hover:bg-primary/90"

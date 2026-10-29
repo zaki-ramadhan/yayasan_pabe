@@ -1,5 +1,5 @@
 import { HelpCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { formatRupiah } from "@/lib/formatters";
 import { RoutineSummaryItem } from "./RoutineSummaryItem";
 

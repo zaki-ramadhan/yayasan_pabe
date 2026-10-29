@@ -107,17 +107,14 @@ export function ZakatCalculator() {
     }
   }, [activeMode, penghasilan, maal, perusahaan, perdagangan, emas, calculatedState]);
 
-  // Handler update field per mode
   const updateField = (setter) => (field, value) => {
     setter((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Handler kalkulasi
   const handleCalculate = (mode) => {
     setCalculatedState((prev) => ({ ...prev, [mode]: true }));
   };
 
-  // Handler reset
   const handleReset = (mode) => {
     setCalculatedState((prev) => ({ ...prev, [mode]: false }));
     switch (mode) {
@@ -141,7 +138,6 @@ export function ZakatCalculator() {
     }
   };
 
-  // Hasil perhitungan terderivasi
   const currentResult = useMemo(() => {
     switch (activeMode) {
       case "penghasilan":
@@ -159,7 +155,6 @@ export function ZakatCalculator() {
     }
   }, [activeMode, penghasilan, maal, perusahaan, perdagangan, emas]);
 
-  // Handler donasi zakat
   const handlePay = () => {
     if (!currentResult || currentResult.zakatAmount <= 0) return;
     const targetUrl = `/campaign/zakat-penghasilan-pemberdayaan-mustahik/donate?amount=${currentResult.zakatAmount}&type=${currentResult.categoryKey}`;

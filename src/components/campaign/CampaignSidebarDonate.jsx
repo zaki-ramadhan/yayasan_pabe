@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/Progress";
+import { Button } from "@/components/ui/Button";
 import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
 import { CampaignPrayersSidebar } from "@/components/modules/CampaignPrayersSidebar";
 import { FundedAmountDisplay } from "@/components/campaign/FundedAmountDisplay";

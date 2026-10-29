@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { USER_ROLES } from "@/services/authService";
+import { USER_ROLES, getSessionDuration } from "@/services/authService";
 import { hashPassword, isSuperAdminEmail, isSuperAdminIdentifier } from "@/lib/serverAuth";
 import {
   stripEmojis,
@@ -153,8 +153,7 @@ export async function POST(request) {
       },
     });
 
-    const isStaff = assignedRole !== USER_ROLES.DONOR;
-    const durationSec = isStaff ? 12 * 60 * 60 : 7 * 24 * 60 * 60;
+    const durationSec = getSessionDuration(assignedRole, false);
     const expiresAt = Date.now() + durationSec * 1000;
 
     const safeUser = {

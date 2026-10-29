@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { X, Calendar, Tag, ChevronLeft, ChevronRight, Images, Play } from "lucide-react";
-import { Dialog, DialogOverlay, DialogPortal } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogOverlay, DialogPortal } from "@/components/ui/Dialog";
+import { Badge } from "@/components/ui/Badge";
 import { formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import {
   isVideoUrl,

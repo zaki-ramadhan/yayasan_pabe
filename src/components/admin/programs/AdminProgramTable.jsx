@@ -10,7 +10,8 @@ import {
   TableHead,
   TableEmptyRow,
   TablePaginationFooter,
-} from "@/components/ui/table";
+  usePagination,
+} from "@/components/ui/Table";
 import dynamic from "next/dynamic";
 
 const AdminProgramModal = dynamic(
@@ -25,7 +26,7 @@ import { AdminProgramTableRow } from "./AdminProgramTableRow";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function AdminProgramTable({
   initialCampaigns = [],
@@ -47,7 +48,6 @@ export function AdminProgramTable({
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [isModalOpen, setIsModalOpen] = useState(Boolean(initialEditCampaign));
   const [editingCampaign, setEditingCampaign] = useState(initialEditCampaign);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const PAGE_SIZE = 10;
 
@@ -76,30 +76,32 @@ export function AdminProgramTable({
     });
   }, [campaigns, statusFilter, categoryFilter, debouncedSearch]);
 
-  const totalPages = Math.ceil(filteredCampaigns.length / PAGE_SIZE) || 1;
-  const paginatedCampaigns = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filteredCampaigns.slice(start, start + PAGE_SIZE);
-  }, [filteredCampaigns, currentPage]);
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems: paginatedCampaigns,
+    resetPage,
+  } = usePagination(filteredCampaigns, { pageSize: PAGE_SIZE });
 
   const handleSearchChange = (e) => {
     setSearch(sanitizeSearchQuery(e.target.value));
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleClearSearch = () => {
     setSearch("");
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleStatusChange = (val) => {
     setStatusFilter(val);
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleCategoryChange = (val) => {
     setCategoryFilter(val);
-    setCurrentPage(1);
+    resetPage();
   };
 
   const refreshList = async () => {

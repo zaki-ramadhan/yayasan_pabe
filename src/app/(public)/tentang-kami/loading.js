@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { DashedDivider } from "@/components/ui/DashedDivider";
 
 export default function TentangKamiLoading() {

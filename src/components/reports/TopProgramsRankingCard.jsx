@@ -7,13 +7,13 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from "@/components/ui/card";
+} from "@/components/ui/Card";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import {
   getTopProgramsData,
   getDynamicYearOptions,
   MODE_OPTIONS,
-} from "./topProgramsData";
+} from "@/lib/topProgramsHelper";
 import { TopProgramCardItem } from "./TopProgramCardItem";
 import { cn } from "@/lib/utils";
 

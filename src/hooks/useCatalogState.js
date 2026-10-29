@@ -3,6 +3,7 @@
 import { useState, useMemo, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { useDebounce } from "@/hooks/useDebounce";
+import { sanitizeSearchQuery } from "@/lib/sanitizer";
 
 /**
  * Generic catalog state hook: category, search, sort, pagination.
@@ -75,9 +76,14 @@ export function useCatalogState({
   };
 
   const handleSearchChange = (e) => {
-    const val = e.target.value.replace(/[<>'"`;\\{}]/g, "").slice(0, 60);
+    const raw = e && e.target ? e.target.value : (e || "");
+    const val = sanitizeSearchQuery(raw);
     setSearchQuery(val);
     setCurrentPage(1);
+  };
+
+  const handleSearchBlur = () => {
+    setSearchQuery((prev) => prev.trim());
   };
 
   const handleClearSearch = () => {
@@ -129,6 +135,7 @@ export function useCatalogState({
     handlers: {
       onCategoryChange: handleCategoryChange,
       onSearchChange: handleSearchChange,
+      onSearchBlur: handleSearchBlur,
       onClearSearch: handleClearSearch,
       onSortChange: handleSortChange,
       onPageChange: handlePageChange,

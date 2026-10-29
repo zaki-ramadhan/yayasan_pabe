@@ -7,7 +7,7 @@ import {
   CartesianGrid,
   XAxis,
 } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/Chart";
 import { formatRupiah, formatNumber } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 

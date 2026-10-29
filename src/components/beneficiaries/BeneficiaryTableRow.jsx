@@ -1,5 +1,5 @@
-import { TableRow, TableCell } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { TableRow, TableCell } from "@/components/ui/Table";
+import { Badge } from "@/components/ui/Badge";
 import { BENEFICIARY_CATEGORIES } from "@/data/beneficiaries";
 
 export function BeneficiaryTableRow({ item, index }) {

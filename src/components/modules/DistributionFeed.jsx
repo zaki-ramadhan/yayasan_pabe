@@ -1,20 +1,18 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Pagination } from "@/components/ui/pagination";
+import { Pagination } from "@/components/ui/Pagination";
 import { DistributionRecordCard } from "@/components/distribution/DistributionRecordCard";
+import { usePagination } from "@/hooks/usePagination";
 
 const ITEMS_PER_PAGE = 4;
 
 export function DistributionFeed({ records = [] }) {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const totalPages = Math.ceil(records.length / ITEMS_PER_PAGE);
-
-  const paginatedRecords = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return records.slice(start, start + ITEMS_PER_PAGE);
-  }, [records, currentPage]);
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems: paginatedRecords,
+  } = usePagination(records, { pageSize: ITEMS_PER_PAGE });
 
   const handlePageChange = (page) => {
     setCurrentPage(page);

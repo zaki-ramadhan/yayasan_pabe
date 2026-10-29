@@ -1,5 +1,5 @@
 import { Filter, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/Input";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 
 /**
@@ -10,6 +10,7 @@ export function CatalogSearchBar({
   sortBy,
   sortOptions,
   onSearch,
+  onBlur,
   onClear,
   onSort,
   isLoading = false,
@@ -24,6 +25,7 @@ export function CatalogSearchBar({
           placeholder={searchPlaceholder}
           value={searchQuery}
           onChange={onSearch}
+          onBlur={onBlur || (() => onSearch && onSearch({ target: { value: searchQuery.trim() } }))}
           onClear={onClear}
           maxLength={60}
           isLoading={isLoading}

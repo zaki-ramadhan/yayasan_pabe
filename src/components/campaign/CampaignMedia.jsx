@@ -1,4 +1,4 @@
-import { SafeImage } from "@/components/ui/safe-image";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 export function CampaignMedia({ bannerUrl, title }) {
   return (

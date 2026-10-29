@@ -6,6 +6,7 @@ import {
   WhatsAppIcon,
 } from "@/components/icons/SocialIcons";
 import { ORG_PROFILE } from "@/data/orgProfile";
+import { getFoundationWhatsAppUrl } from "@/lib/whatsappUtils";
 
 /**
  * Social media links list for footer
@@ -14,9 +15,7 @@ import { ORG_PROFILE } from "@/data/orgProfile";
  * @param {string} [props.whatsappUrl] - Custom WhatsApp consultation URL
  */
 export function FooterSocialLinks({ whatsappUrl }) {
-  const cleanWa = (ORG_PROFILE.contacts.whatsapp || "").replace(/\D/g, "") || "6281284079912";
-  const defaultWa = `https://wa.me/${cleanWa}?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan Payung Berkah, saya ingin bertanya seputar donasi & ZISWAF.")}`;
-  const wa = whatsappUrl || defaultWa;
+  const wa = whatsappUrl || getFoundationWhatsAppUrl();
 
   const socialLinks = [
     {

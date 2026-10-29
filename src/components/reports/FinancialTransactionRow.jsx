@@ -1,5 +1,5 @@
 import { formatRupiah, formatDate } from "@/lib/formatters";
-import { TableRow, TableCell } from "@/components/ui/table";
+import { TableRow, TableCell } from "@/components/ui/Table";
 
 /**
  * Single table row for financial transactions.

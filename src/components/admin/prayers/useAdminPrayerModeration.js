@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useTransition, useRef } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
-import { toast } from "@/hooks/use-toast";
+import { useTableSelection } from "@/hooks/useTableSelection";
+import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
 
 export function useAdminPrayerModeration({
@@ -17,7 +18,10 @@ export function useAdminPrayerModeration({
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [campaignFilter, setCampaignFilter] = useState("ALL");
   const [togglingId, setTogglingId] = useState(null);
+  const [isBulkProcessing, setIsBulkProcessing] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const selection = useTableSelection(prayers);
 
   const debouncedSearch = useDebounce(search.trim(), 350);
   const isInitialMount = useRef(true);
@@ -56,6 +60,7 @@ export function useAdminPrayerModeration({
       isInitialMount.current = false;
       return;
     }
+    selection.clearSelection();
     setCurrentPage(1);
     startTransition(() => {
       fetchPrayers({ page: 1, searchTerm: debouncedSearch });
@@ -79,6 +84,7 @@ export function useAdminPrayerModeration({
   };
 
   const handleStatusFilterChange = (val) => {
+    selection.clearSelection();
     setStatusFilter(val);
     setCurrentPage(1);
     startTransition(() => {
@@ -87,6 +93,7 @@ export function useAdminPrayerModeration({
   };
 
   const handleCampaignFilterChange = (val) => {
+    selection.clearSelection();
     setCampaignFilter(val);
     setCurrentPage(1);
     startTransition(() => {
@@ -95,6 +102,7 @@ export function useAdminPrayerModeration({
   };
 
   const handlePageChange = (page) => {
+    selection.clearSelection();
     setCurrentPage(page);
     startTransition(() => {
       fetchPrayers({ page });
@@ -135,6 +143,43 @@ export function useAdminPrayerModeration({
     }
   };
 
+  const handleBulkToggleHide = async (isHidden) => {
+    if (selection.selectedCount === 0) return;
+    setIsBulkProcessing(true);
+    try {
+      const res = await safeFetch("/api/admin/prayers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: isHidden ? "BULK_HIDE" : "BULK_SHOW",
+          donationIds: selection.selectedIds,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const selectedSet = selection.selectedKeys;
+        setPrayers((prev) =>
+          prev.map((p) =>
+            selectedSet.has(p.id) ? { ...p, isPrayerHidden: isHidden } : p
+          )
+        );
+        toast.success(
+          data.message ||
+            `${selection.selectedCount} doa berhasil ${
+              isHidden ? "disembunyikan" : "ditampilkan"
+            }.`
+        );
+        selection.clearSelection();
+      } else {
+        toast.error(data.message || "Gagal memproses moderasi massal doa.");
+      }
+    } catch {
+      toast.error("Terjadi kendala jaringan saat memproses moderasi.");
+    } finally {
+      setIsBulkProcessing(false);
+    }
+  };
+
   return {
     prayers,
     total,
@@ -144,7 +189,9 @@ export function useAdminPrayerModeration({
     statusFilter,
     campaignFilter,
     togglingId,
+    isBulkProcessing,
     isPending,
+    selection,
     handleRefresh,
     handleSearchChange,
     handleClearSearch,
@@ -152,5 +199,6 @@ export function useAdminPrayerModeration({
     handleCampaignFilterChange,
     handlePageChange,
     handleToggleHide,
+    handleBulkToggleHide,
   };
 }

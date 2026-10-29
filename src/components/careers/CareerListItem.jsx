@@ -1,7 +1,7 @@
 "use client";
 
 import { MapPin, Briefcase } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/Card";
 import { CareerMetaItem } from "./CareerMetaItem";
 import { CareerNewBadge } from "./CareerNewBadge";
 import { CareerCardFooter } from "./CareerCardFooter";

@@ -2,7 +2,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@/components/ui/Accordion";
 import { cn } from "@/lib/utils";
 
 /**

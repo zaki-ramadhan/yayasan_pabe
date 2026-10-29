@@ -7,7 +7,7 @@ import {
   Cell,
   Tooltip,
 } from "recharts";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { ChartLegendGrid } from "./ChartLegendGrid";
 import { formatRupiah } from "@/lib/formatters";
 

@@ -4,6 +4,7 @@ import {
   createAuditReport,
   updateAuditReport,
   deleteAuditReport,
+  deleteAuditReportsBatch,
 } from "@/services/auditReportAdminService";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
@@ -86,8 +87,28 @@ export async function DELETE(request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
+
     if (!id) {
-      return NextResponse.json({ success: false, message: "ID laporan audit wajib diisi." }, { status: 400 });
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        body = null;
+      }
+
+      if (body?.ids && Array.isArray(body.ids) && body.ids.length > 0) {
+        const result = await deleteAuditReportsBatch({ ids: body.ids });
+        return NextResponse.json({
+          success: true,
+          message: `${result.count} laporan audit berhasil dihapus.`,
+          data: result,
+        });
+      }
+
+      return NextResponse.json(
+        { success: false, message: "ID laporan audit wajib disertakan." },
+        { status: 400 }
+      );
     }
 
     const deleted = await deleteAuditReport({

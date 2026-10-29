@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 export function AdminUserConfirmDialog({
   isOpen,

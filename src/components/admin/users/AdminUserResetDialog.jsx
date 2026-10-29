@@ -8,11 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { FormField } from "@/components/ui/form-field";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
 import { copyToClipboard } from "@/lib/clipboard";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function AdminUserResetDialog({
   isOpen,

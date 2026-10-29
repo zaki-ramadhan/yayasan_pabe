@@ -2,17 +2,17 @@
 
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { FormField } from "@/components/ui/form-field";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { toast } from "@/hooks/use-toast";
+} from "@/components/ui/Select";
+import { toast } from "@/hooks/useToast";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
 import {
@@ -41,7 +41,7 @@ export function DonorBankFormCard({
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const { values, bind, getCleanValues, setValues } = useSanitizedForm(
+  const { values, bind, getCleanValues, setValues, isDirty, isValid } = useSanitizedForm(
     {
       bankName: profile?.bankName || "BSI (Bank Syariah Indonesia)",
       bankAccount: profile?.bankAccount || "",
@@ -50,7 +50,8 @@ export function DonorBankFormCard({
     {
       bankAccount: sanitizeBankAccount,
       bankAccountName: sanitizeBankAccountName,
-    }
+    },
+    (vals) => validateBankAccount({ bankAccount: vals.bankAccount, bankAccountName: vals.bankAccountName }).isValid
   );
 
   const handleSubmit = async (e) => {
@@ -182,11 +183,11 @@ export function DonorBankFormCard({
         <div className="pt-2 flex justify-start">
           <Button
             type="submit"
-            disabled={isSaving}
-            className="h-9 px-4 rounded-md text-sm font-medium gap-1.5 cursor-pointer"
+            disabled={!isDirty || !isValid || isSaving}
+            className="h-9 px-4 rounded-md text-sm font-medium gap-1.5 cursor-pointer disabled:cursor-not-allowed"
           >
             {isSaving && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
-            <span>Simpan Rekening Bank</span>
+            <span>{isSaving ? "Menyimpan..." : "Simpan"}</span>
           </Button>
         </div>
       </form>

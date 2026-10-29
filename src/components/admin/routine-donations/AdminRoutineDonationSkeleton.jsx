@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
   Table,
   TableContainer,
@@ -7,7 +7,7 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 
 /**
  * Accurate Skeleton loader for Admin Routine Donation Page.

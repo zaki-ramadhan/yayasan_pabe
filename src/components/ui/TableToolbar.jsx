@@ -2,16 +2,17 @@
 
 import * as React from "react";
 import { Search, RefreshCw, Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { cn } from "@/lib/utils";
+import { sanitizeSearchQuery } from "@/lib/sanitizer";
 
 /**
  * Komponen toolbar terstandarisasi untuk seluruh tabel Admin, Superadmin, dan Donor
@@ -48,7 +49,8 @@ export function TableToolbar({
 
   const handleSearchChange = (e) => {
     if (!onSearchChange) return;
-    const val = e.target.value;
+    const raw = e && e.target ? e.target.value : (e || "");
+    const val = sanitizeSearchQuery(raw);
     if (val && String(val).trim().length > 0) {
       setIsDebouncing(true);
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
@@ -64,6 +66,19 @@ export function TableToolbar({
       value: val,
     });
     onSearchChange(dualParam);
+  };
+
+  const handleSearchBlur = () => {
+    if (!onSearchChange || typeof search !== "string") return;
+    const trimmed = search.trim();
+    if (trimmed !== search) {
+      const dualParam = Object.assign(new String(trimmed), {
+        target: { value: trimmed },
+        currentTarget: { value: trimmed },
+        value: trimmed,
+      });
+      onSearchChange(dualParam);
+    }
   };
 
   const handleClear = () => {
@@ -102,7 +117,9 @@ export function TableToolbar({
                 icon={Search}
                 placeholder={searchPlaceholder}
                 value={search ?? ""}
+                maxLength={80}
                 onChange={handleSearchChange}
+                onBlur={handleSearchBlur}
                 onClear={handleClear}
                 isLoading={isLoading || isSearching || isDebouncing}
                 className="h-10 text-sm bg-white border-slate-300 focus:border-primary"
@@ -145,7 +162,7 @@ export function TableToolbar({
               size="icon"
               onClick={onRefresh}
               disabled={isLoading}
-              className="h-10 w-10 rounded-md border-slate-300 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50"
+              className="h-10 w-10 rounded-md border-slate-300 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
               title="Segarkan data tabel"
               aria-label="Segarkan data tabel"
             >
@@ -160,7 +177,7 @@ export function TableToolbar({
               disabled={primaryAction.disabled || isLoading || primaryAction.isLoading}
               isLoading={Boolean(isLoading || primaryAction.isLoading)}
               className={cn(
-                "h-10 px-4 text-sm font-medium gap-1.5 cursor-pointer shrink-0",
+                "h-10 px-4 text-sm font-medium gap-1.5 cursor-pointer shrink-0 disabled:pointer-events-none disabled:cursor-not-allowed",
                 primaryAction.className
               )}
             >

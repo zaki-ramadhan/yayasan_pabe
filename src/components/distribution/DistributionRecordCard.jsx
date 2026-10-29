@@ -1,6 +1,6 @@
 import { Calendar, MapPin, Users } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/formatters";
-import { SafeImage } from "@/components/ui/safe-image";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 /**
  * Distribution record card displaying completed aid distributions

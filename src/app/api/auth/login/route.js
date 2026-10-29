@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { DEMO_USERS, USER_ROLES } from "@/services/authService";
+import { DEMO_USERS, USER_ROLES, getSessionDuration } from "@/services/authService";
 import { verifyPassword, hashPassword, isSuperAdminEmail, isSuperAdminIdentifier } from "@/lib/serverAuth";
 import { stripEmojis } from "@/lib/security";
 import { checkRateLimit } from "@/lib/rateLimit";
@@ -172,12 +172,8 @@ export async function POST(request) {
 
     const cleanTitle = (user.title && user.title.includes("Ketua Yayasan")) ? "Super Admin" : (user.title || "Donatur Terdaftar");
 
-    // Calculate cookie expiration: 12-24h for Staff, 7-30d for Donors
-    const isStaff = user.role && user.role !== USER_ROLES.DONOR;
-    const durationSec = isStaff
-      ? (rememberMe ? 24 * 60 * 60 : 12 * 60 * 60)
-      : (rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60);
-
+    // Calculate cookie expiration: 12-24h for Staff, 7-30d for Donors via SSOT helper
+    const durationSec = getSessionDuration(user.role, rememberMe);
     const expiresAt = Date.now() + durationSec * 1000;
 
     // Safe user response (exclude passwordHash)

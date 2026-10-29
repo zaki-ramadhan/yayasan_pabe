@@ -1,8 +1,8 @@
 "use client";
 
 import { Download } from "lucide-react";
-import { TableToolbar } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import { TableToolbar } from "@/components/ui/Table";
+import { Button } from "@/components/ui/Button";
 import { AdminRoutineTriggerButton } from "./AdminRoutineTriggerButton";
 import {
   Select,
@@ -10,7 +10,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 
 export function AdminRoutineDonationToolbar({
   search,

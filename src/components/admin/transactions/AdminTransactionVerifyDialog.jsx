@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertCircle } from "lucide-react";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatRupiah } from "@/lib/formatters";
 
 export function AdminTransactionVerifyDialog({

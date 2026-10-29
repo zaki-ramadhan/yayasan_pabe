@@ -3,7 +3,7 @@
 import { PRESET_AMOUNTS } from "@/data/routineDonation";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
 import { PaymentChannelPicker } from "@/components/donation/PaymentChannelPicker";
-import { FormField } from "@/components/ui/form-field";
+import { FormField } from "@/components/ui/FormField";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { NominalGridPicker } from "@/components/donation/NominalGridPicker";
 import { formatRupiah } from "@/lib/formatters";

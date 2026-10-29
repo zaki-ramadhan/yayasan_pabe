@@ -6,11 +6,11 @@ import Image from "next/image";
 import { Printer, Copy, Check, ExternalLink, Clock, UserCheck } from "lucide-react";
 import { VolunteerIdCard } from "@/components/volunteer/VolunteerIdCard";
 import { CampaignCTA } from "@/components/campaign/CampaignCTA";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { copyToClipboard } from "@/lib/clipboard";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export function DonorVolunteerCardView() {

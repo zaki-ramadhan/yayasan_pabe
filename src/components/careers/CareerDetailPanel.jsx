@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/Card";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { CareerDetailHeader } from "./CareerDetailHeader";
 import { CareerDetailSection } from "./CareerDetailSection";

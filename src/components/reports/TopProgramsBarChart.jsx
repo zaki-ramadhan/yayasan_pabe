@@ -5,7 +5,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from "@/components/ui/Chart";
 import { formatRupiah, formatCompactRupiah } from "@/lib/formatters";
 
 const chartConfig = {

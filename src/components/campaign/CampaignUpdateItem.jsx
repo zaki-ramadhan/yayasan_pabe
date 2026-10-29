@@ -1,6 +1,6 @@
 import { Calendar } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/formatters";
-import { SafeImage } from "@/components/ui/safe-image";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 /**
  * Individual campaign progress update item with photos and disbursed amounts

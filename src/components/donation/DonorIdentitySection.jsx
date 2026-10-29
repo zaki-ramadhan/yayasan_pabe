@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/ui/form-field";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 import { cn } from "@/lib/utils";
 import { sanitizeName, sanitizePhone, sanitizeEmail } from "@/lib/security";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
@@ -57,6 +57,7 @@ export function DonorIdentitySection({
               setDonorName(sanitizeName(e.target.value));
               clearError("donorName");
             }}
+            onBlur={() => setDonorName((prev) => prev.trim())}
             placeholder="Nama lengkap Anda"
             className="h-11 text-sm sm:text-base font-normal"
           />
@@ -80,6 +81,7 @@ export function DonorIdentitySection({
               setDonorPhone(sanitizePhone(e.target.value));
               clearError("donorPhone");
             }}
+            onBlur={() => setDonorPhone((prev) => prev.trim())}
             placeholder="08xxxxxxxxxx"
             className="h-11 text-sm sm:text-base font-normal"
           />
@@ -97,6 +99,8 @@ export function DonorIdentitySection({
         >
           <Input
             type="email"
+            inputMode="email"
+            spellCheck={false}
             required
             readOnly={isEmailLocked}
             value={donorEmail}
@@ -107,6 +111,7 @@ export function DonorIdentitySection({
                 clearError("donorEmail");
               }
             }}
+            onBlur={() => setDonorEmail((prev) => prev.trim())}
             placeholder="email@domain.com"
             className={cn(
               "h-11 text-sm sm:text-base font-normal",

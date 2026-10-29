@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/Card";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 /**
  * Wrapper kartu section standar pada dashboard donatur

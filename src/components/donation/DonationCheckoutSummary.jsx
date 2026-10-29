@@ -1,8 +1,8 @@
 import { formatRupiah } from "@/lib/formatters";
 import { DONATION_LIMITS } from "@/lib/security";
-import { Button } from "@/components/ui/button";
-import { SafeImage } from "@/components/ui/safe-image";
-import { RibbonBadge } from "@/components/ui/ribbon-badge";
+import { Button } from "@/components/ui/Button";
+import { SafeImage } from "@/components/ui/SafeImage";
+import { RibbonBadge } from "@/components/ui/RibbonBadge";
 import { SummaryRow } from "@/components/donation/SummaryRow";
 
 export function DonationCheckoutSummary({

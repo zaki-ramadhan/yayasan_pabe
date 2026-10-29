@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 
 export default function ProgramLoading() {
@@ -20,22 +20,25 @@ export default function ProgramLoading() {
         <Skeleton className="h-[38px] w-44 rounded-full shrink-0" />
       </div>
 
-      {/* 3. Search Bar & Sort Dropdown Control (matching CatalogSearchBar) */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
-        <div className="w-full sm:max-w-md">
-          <Skeleton className="h-11 w-full rounded-lg" />
+      {/* 3. Search Bar & Cards Container with space-y-4 */}
+      <div className="space-y-4">
+        {/* Search Bar & Sort Dropdown Control (matching CatalogSearchBar) */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
+          <div className="w-full sm:max-w-md">
+            <Skeleton className="h-11 w-full rounded-lg" />
+          </div>
+          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            <Skeleton className="h-4 w-16 rounded" />
+            <Skeleton className="h-10 w-36 rounded-lg" />
+          </div>
         </div>
-        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-          <Skeleton className="h-4 w-16 rounded" />
-          <Skeleton className="h-10 w-36 rounded-lg" />
-        </div>
-      </div>
 
-      {/* 4. Campaign Cards Grid (6 initial items matching batch, gap-2 pt-2) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-2">
-        {[1, 2, 3, 4, 5, 6].map((n) => (
-          <CampaignCardSkeleton key={n} />
-        ))}
+        {/* 4. Campaign Cards Grid (6 initial items matching batch, gap-2) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <CampaignCardSkeleton key={n} />
+          ))}
+        </div>
       </div>
     </main>
   );

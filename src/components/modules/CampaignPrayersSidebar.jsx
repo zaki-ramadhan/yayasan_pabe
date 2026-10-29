@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/DropdownMenu";
 import { PrayerChatBubble } from "@/components/modules/PrayerChatBubble";
 import { PrayerInputBar } from "@/components/modules/PrayerInputBar";
 import { usePrayersSync } from "@/hooks/usePrayersSync";
@@ -19,7 +19,7 @@ import { PRAYER_SORT_OPTIONS } from "@/data/sortOptions";
 import { DateStickyBadge } from "@/components/shared/DateStickyBadge";
 import { getDateKey, getDateBadgeLabel } from "@/lib/dateUtils";
 import { validatePrayer } from "@/lib/security";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 5;

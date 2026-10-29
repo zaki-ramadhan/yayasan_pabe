@@ -7,7 +7,7 @@ import { LogOut, ExternalLink } from "lucide-react";
 import { logoutUser } from "@/services/authService";
 import { USER_ROLES } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import { isInfrastructureEmail } from "@/lib/infrastructureConstants";
 
@@ -29,6 +29,7 @@ const ADMIN_NAV_GROUPS = [
     items: [
       { href: "/admin/artikel", label: "Berita & Artikel", short: "BA" },
       { href: "/admin/galeri", label: "Galeri Dokumentasi", short: "GD" },
+      { href: "/admin/instagram", label: "Feed Instagram", short: "IG" },
       { href: "/admin/laporan-audit", label: "Laporan Audit Keuangan", short: "LK" },
       { href: "/admin/karier", label: "Lowongan Karier", short: "KA" },
       { href: "/admin/relawan", label: "Kelola Relawan", short: "KR" },

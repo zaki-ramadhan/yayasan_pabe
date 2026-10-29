@@ -1,7 +1,7 @@
 import * as React from "react";
 import { formatNumber } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
-import { useFormField } from "@/components/ui/form-field";
+import { useFormField } from "@/components/ui/FormField";
 
 export function CurrencyInput({
   value,

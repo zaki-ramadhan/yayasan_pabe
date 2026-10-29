@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
 import { sanitizeStandardText, sanitizeNPWP } from "@/lib/security";
 
 export function AdminSettingsLegalSection({ formData, errors = {}, onFieldChange }) {

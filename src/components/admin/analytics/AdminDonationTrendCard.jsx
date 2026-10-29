@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import { AdminDonationTrendCanvas } from "./AdminDonationTrendCanvas";
 import { useCurrentUser } from "@/hooks/useCurrentUser";

@@ -5,14 +5,14 @@ import { format, isValid, parseISO } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Calendar as CalendarIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/Button";
+import { Calendar } from "@/components/ui/Calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { useFormField } from "@/components/ui/form-field";
+} from "@/components/ui/Popover";
+import { useFormField } from "@/components/ui/FormField";
 
 /**
  * Komponen DatePicker berbasis Shadcn UI (Radix Popover + React Day Picker).
@@ -113,7 +113,7 @@ export function DatePicker({
           id={resolvedId}
           disabled={disabled}
           className={cn(
-            "flex h-10 w-full items-center justify-between rounded-lg border bg-white px-3 text-sm text-slate-900 shadow-xs transition-colors hover:bg-slate-50 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 text-left",
+            "flex h-10 w-full items-center justify-between rounded-lg border bg-white px-3 text-sm text-slate-900 shadow-xs transition-colors hover:bg-slate-50 focus:outline-none disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 text-left",
             hasError
               ? "border-rose-500 bg-rose-50/15 text-rose-950 placeholder:text-rose-300 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
               : "border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary",

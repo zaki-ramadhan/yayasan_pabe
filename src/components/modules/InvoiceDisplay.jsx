@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
 import { PostDonationPrayerForm } from "@/components/donation/PostDonationPrayerForm";

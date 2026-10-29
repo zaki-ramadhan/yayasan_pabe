@@ -3,7 +3,7 @@
 import * as React from "react";
 import { X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useFormField } from "@/components/ui/form-field";
+import { useFormField } from "@/components/ui/FormField";
 
 const Input = React.forwardRef(
   (

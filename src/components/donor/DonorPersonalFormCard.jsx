@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { FormField } from "@/components/ui/form-field";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
+import { Textarea } from "@/components/ui/Textarea";
+import { toast } from "@/hooks/useToast";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
 import {
@@ -28,7 +28,7 @@ export function DonorPersonalFormCard({
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const { bind, getCleanValues } = useSanitizedForm(
+  const { bind, getCleanValues, isDirty, isValid } = useSanitizedForm(
     {
       name: profile?.name || "",
       bio: profile?.bio || "",
@@ -42,6 +42,11 @@ export function DonorPersonalFormCard({
       city: sanitizeCity,
       phone: sanitizePhone,
       address: sanitizeAddress,
+    },
+    (vals) => {
+      const nameValid = validateName(vals.name).isValid;
+      const phoneValid = !vals.phone || validatePhone(vals.phone).isValid;
+      return nameValid && phoneValid;
     }
   );
 
@@ -192,11 +197,11 @@ export function DonorPersonalFormCard({
         <div className="pt-2 flex justify-end">
           <Button
             type="submit"
-            disabled={isSaving}
-            className="h-9 px-4 rounded-md text-sm font-medium gap-1.5 cursor-pointer"
+            disabled={!isDirty || !isValid || isSaving}
+            className="h-9 px-4 rounded-md text-sm font-medium gap-1.5 cursor-pointer disabled:cursor-not-allowed"
           >
             {isSaving && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
-            <span>Simpan Data Diri</span>
+            <span>{isSaving ? "Menyimpan..." : "Simpan"}</span>
           </Button>
         </div>
       </form>

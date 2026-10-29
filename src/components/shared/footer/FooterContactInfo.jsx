@@ -2,6 +2,8 @@ import { MapPin, Phone, Mail } from "lucide-react";
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 
+import { getFoundationWhatsAppUrl } from "@/lib/whatsappUtils";
+
 /**
  * Contact details and WhatsApp consultation button for footer
  *
@@ -13,9 +15,7 @@ export function FooterContactInfo({
   contacts = ORG_PROFILE.contacts,
   whatsappUrl,
 }) {
-  const cleanWa = (contacts.whatsapp || "").replace(/\D/g, "") || "6281284079912";
-  const defaultWa = `https://wa.me/${cleanWa}?text=${encodeURIComponent("Assalamu'alaikum Admin Yayasan Payung Berkah, saya ingin bertanya seputar donasi & ZISWAF.")}`;
-  const wa = whatsappUrl || defaultWa;
+  const wa = whatsappUrl || getFoundationWhatsAppUrl();
 
   return (
     <div className="space-y-3.5">

@@ -1,5 +1,5 @@
-import { Textarea } from "@/components/ui/textarea";
-import { FormField } from "@/components/ui/form-field";
+import { Textarea } from "@/components/ui/Textarea";
+import { FormField } from "@/components/ui/FormField";
 
 export function AdminCareerDetailFields({
   overview,

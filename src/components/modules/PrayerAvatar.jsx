@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/Avatar";
 import { cn } from "@/lib/utils";
 
 export function PrayerAvatar({ name = "H", size = "md", className }) {

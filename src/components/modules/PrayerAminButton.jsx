@@ -25,13 +25,13 @@ export function PrayerAminButton({
           ? cn(
               "gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium shadow-2xs border",
               isAmined
-                ? "bg-rose-50 border-rose-200 text-rose-700 cursor-default"
+                ? "bg-rose-50 border-rose-200 text-rose-700 cursor-default pointer-events-none"
                 : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 cursor-pointer"
             )
           : cn(
               "gap-1.5 px-2 py-1 rounded-md text-xs font-medium",
               isAmined
-                ? "cursor-default text-slate-700"
+                ? "cursor-default text-slate-700 pointer-events-none"
                 : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
             ),
         className

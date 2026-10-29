@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { CheckCircle2 } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/ui/form-field";
+import { toast } from "@/hooks/useToast";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/ui/Dialog";
 import { cn } from "@/lib/utils";
 import { stripEmojis, validateEmail, validatePhone } from "@/lib/security";
 
@@ -20,6 +20,15 @@ export function ForgotPasswordDialog({ isOpen, onOpenChange, initialIdentifier =
   const [forgotError, setForgotError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [forgotSent, setForgotSent] = useState(false);
+
+  const isInputValid = useMemo(() => {
+    const clean = stripEmojis(forgotInput).trim();
+    if (!clean) return false;
+    if (clean.includes("@")) {
+      return Boolean(validateEmail(clean, true).isValid);
+    }
+    return Boolean(validatePhone(clean).isValid);
+  }, [forgotInput]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -104,11 +113,16 @@ export function ForgotPasswordDialog({ isOpen, onOpenChange, initialIdentifier =
                   placeholder="nama@email.com atau 081234567890"
                   value={forgotInput}
                   maxLength={100}
+                  spellCheck={false}
+                  autoCapitalize="none"
                   onChange={(e) => {
-                    const clean = stripEmojis(e.target.value).slice(0, 100);
+                    const clean = stripEmojis(e.target.value)
+                      .replace(/\s/g, "")
+                      .slice(0, 100);
                     setForgotInput(clean);
                     if (forgotError) setForgotError("");
                   }}
+                  onBlur={() => setForgotInput((prev) => prev.trim())}
                   className="h-10 text-sm font-normal"
                 />
               </FormField>
@@ -126,7 +140,7 @@ export function ForgotPasswordDialog({ isOpen, onOpenChange, initialIdentifier =
               <Button
                 type="submit"
                 isLoading={isSubmitting}
-                disabled={isSubmitting}
+                disabled={!isInputValid || isSubmitting}
                 className="h-9 px-4 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg cursor-pointer"
               >
                 {isSubmitting ? "Mengirim..." : "Kirim Tautan Reset"}

@@ -1,3 +1,3 @@
 "use client";
 
-export { FormDialog } from "./dialog";
+export { FormDialog } from "./Dialog";

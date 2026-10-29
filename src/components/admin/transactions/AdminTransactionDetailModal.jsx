@@ -7,13 +7,13 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/ui/badge";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { StatusBadge } from "@/components/ui/Badge";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
 import { copyToClipboard } from "@/lib/clipboard";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function AdminTransactionDetailModal({
   isOpen,

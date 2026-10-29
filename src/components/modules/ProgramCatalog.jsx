@@ -124,70 +124,72 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
         onSelectCategory={handlers.onCategoryChange}
       />
 
-      <CatalogSearchBar
-        searchQuery={searchQuery}
-        sortBy={sortBy}
-        sortOptions={PROGRAM_SORT_OPTIONS}
-        onSearch={handlers.onSearchChange}
-        onClear={handlers.onClearSearch}
-        onSort={handlers.onSortChange}
-        isLoading={isPending || isDebouncing}
-        searchPlaceholder="Cari judul program donasi..."
-      />
-
-      {visibleItems.length > 0 ? (
-        <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-2">
-            {visibleItems.map((camp, index) => (
-              <CampaignCard
-                key={camp.id}
-                campaign={camp}
-                highlightQuery={debouncedSearchQuery}
-                priority={index === 0}
-              />
-            ))}
-          </div>
-
-          {/* Sentinel trigger untuk memuat lebih banyak program saat discroll */}
-          <div ref={sentinelRef} className="h-4 w-full pointer-events-none" />
-
-          {/* Loading Indicator saat infinite scroll berlangsung */}
-          {isLoadingMore && (
-            <div className="flex items-center justify-center gap-2.5 py-8 text-sm text-slate-600">
-              <Loader2 className="w-5 h-5 text-primary animate-spin" />
-              <span className="font-medium">Memuat program kebaikan lainnya...</span>
-            </div>
-          )}
-
-          {/* Keterangan akhir saat semua program telah dimuat */}
-          {!hasMore && filteredItems.length > BATCH_SIZE && (
-            <div className="text-center py-8 text-xs sm:text-sm text-slate-500 select-none">
-              Seluruh program ({filteredItems.length}) telah ditampilkan
-            </div>
-          )}
-        </div>
-      ) : (
-        <EmptyState
-          title={initialCampaigns.length === 0 ? "Belum Ada Program Donasi" : "Program Tidak Ditemukan"}
-          description={
-            initialCampaigns.length === 0
-              ? "Program donasi dan amanah kebaikan akan segera hadir di sini."
-              : "Tidak ada program donasi yang cocok dengan kata kunci atau filter yang Anda pilih."
-          }
-          variant="card"
-          action={
-            isFiltered ? (
-              <button
-                type="button"
-                onClick={handlers.onReset}
-                className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
-              >
-                Reset Semua Filter
-              </button>
-            ) : null
-          }
+      <div className="space-y-4">
+        <CatalogSearchBar
+          searchQuery={searchQuery}
+          sortBy={sortBy}
+          sortOptions={PROGRAM_SORT_OPTIONS}
+          onSearch={handlers.onSearchChange}
+          onClear={handlers.onClearSearch}
+          onSort={handlers.onSortChange}
+          isLoading={isPending || isDebouncing}
+          searchPlaceholder="Cari judul program donasi..."
         />
-      )}
+
+        {visibleItems.length > 0 ? (
+          <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {visibleItems.map((camp, index) => (
+                <CampaignCard
+                  key={camp.id}
+                  campaign={camp}
+                  highlightQuery={debouncedSearchQuery}
+                  priority={index === 0}
+                />
+              ))}
+            </div>
+
+            {/* Sentinel trigger untuk memuat lebih banyak program saat discroll */}
+            <div ref={sentinelRef} className="h-4 w-full pointer-events-none" />
+
+            {/* Loading Indicator saat infinite scroll berlangsung */}
+            {isLoadingMore && (
+              <div className="flex items-center justify-center gap-2.5 py-8 text-sm text-slate-600">
+                <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                <span className="font-medium">Memuat program kebaikan lainnya...</span>
+              </div>
+            )}
+
+            {/* Keterangan akhir saat semua program telah dimuat */}
+            {!hasMore && filteredItems.length > BATCH_SIZE && (
+              <div className="text-center py-8 text-xs sm:text-sm text-slate-500 select-none">
+                Seluruh program ({filteredItems.length}) telah ditampilkan
+              </div>
+            )}
+          </div>
+        ) : (
+          <EmptyState
+            title={initialCampaigns.length === 0 ? "Belum Ada Program Donasi" : "Program Tidak Ditemukan"}
+            description={
+              initialCampaigns.length === 0
+                ? "Program donasi dan amanah kebaikan akan segera hadir di sini."
+                : "Tidak ada program donasi yang cocok dengan kata kunci atau filter yang Anda pilih."
+            }
+            variant="card"
+            action={
+              isFiltered ? (
+                <button
+                  type="button"
+                  onClick={handlers.onReset}
+                  className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
+                >
+                  Reset Semua Filter
+                </button>
+              ) : null
+            }
+          />
+        )}
+      </div>
     </div>
   );
 }

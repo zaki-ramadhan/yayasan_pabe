@@ -1,5 +1,6 @@
 import { Bell, Calendar } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
+import { getRoutineProgramAmount } from "@/lib/routineDonationConstants";
 import { formatRoutineSchedule } from "./RoutineProgramItem";
 
 /**
@@ -9,9 +10,7 @@ import { formatRoutineSchedule } from "./RoutineProgramItem";
  * @param {object} campaign - Matching campaign object
  */
 export function RoutineSummaryItem({ program, index, campaign }) {
-  const nominal = program.customAmount
-    ? parseInt(program.customAmount.replace(/\D/g, ""), 10) || 0
-    : program.amount;
+  const nominal = getRoutineProgramAmount(program);
   const isReminderOnly = (program.routineType || "REMINDER_ONLY") === "REMINDER_ONLY";
 
   return (

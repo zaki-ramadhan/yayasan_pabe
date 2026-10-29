@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 
 export function HomeCtaSection({ defaultCampaignSlug = "beasiswa-pendidikan-anak-yatim" }) {

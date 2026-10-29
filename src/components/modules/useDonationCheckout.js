@@ -18,7 +18,7 @@ import { getStoredUser } from "@/services/authService";
 import { saveDonationDraft, loadDonationDraft, clearDonationDraft } from "@/lib/donationDraft";
 import { saveDonorInvoice } from "@/lib/donorStorage";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export const NOMINAL_PRESETS = [25000, 50000, 100000, 250000, 500000];
 

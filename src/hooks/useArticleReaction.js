@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useSyncExternalStore, useId, useRef, useEffect, useCallback } from "react";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export const LIKE_STORAGE_KEY = "pabe_liked_articles";
 export const DISLIKE_STORAGE_KEY = "pabe_disliked_articles";

@@ -1,5 +1,5 @@
 import { formatRupiah } from "@/lib/formatters";
-import { TableRow, TableCell } from "@/components/ui/table";
+import { TableRow, TableCell } from "@/components/ui/Table";
 
 /**
  * Single row for the transaction limits table.

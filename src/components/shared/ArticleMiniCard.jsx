@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Image as ImageIcon } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { SafeImage } from "@/components/ui/safe-image";
+import { Card } from "@/components/ui/Card";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { HighlightText } from "@/components/shared/HighlightText";
 import { cn } from "@/lib/utils";
 

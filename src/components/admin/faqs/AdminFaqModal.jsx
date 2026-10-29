@@ -2,19 +2,21 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect, useMemo } from "react";
-import { FormDialog } from "@/components/ui/form-dialog";
-import { FormField } from "@/components/ui/form-field";
+import { FormDialog } from "@/components/ui/FormDialog";
+import { FormField } from "@/components/ui/FormField";
 import {
 	Select,
 	SelectTrigger,
 	SelectValue,
 	SelectContent,
 	SelectItem,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/components/ui/Select";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
+import { isFormDirty } from "@/lib/formUtils";
+import { sanitizeStandardText } from "@/lib/sanitizer";
 
 const DEFAULT_FAQ_CATEGORIES = [
 	"Umum",
@@ -227,34 +229,46 @@ export function AdminFaqModal({
 		}
 	};
 
+	const isDirty = useMemo(() => {
+		if (!isEditing || !faqToEdit) {
+			return Boolean(question.trim() || answer.trim());
+		}
+		return isFormDirty(
+			{
+				question: faqToEdit.question || "",
+				answer: faqToEdit.answer || "",
+				category: faqToEdit.category || "Umum",
+			},
+			{
+				question,
+				answer,
+				category,
+			}
+		);
+	}, [isEditing, faqToEdit, question, answer, category]);
+
+	const isFormValid = useMemo(() => {
+		const isQuestionValid = question.trim().length >= 5;
+		const isCategoryValid = !isCustomMode || category.trim().length > 0;
+		const isAnswerValid = answer.trim().length >= 10;
+		return Boolean(isQuestionValid && isCategoryValid && isAnswerValid);
+	}, [question, isCustomMode, category, answer]);
+
 	return (
 		<FormDialog
-			isOpen={
-				isOpen
-			}
-			onClose={() =>
-				onOpenChange(
-					false,
-				)
-			}
-			onSubmit={
-				handleSubmit
-			}
+			isOpen={isOpen}
+			onClose={() => onOpenChange(false)}
+			onSubmit={handleSubmit}
 			maxWidth="max-w-xl"
 			title={
 				isEditing
 					? "Edit tanya jawab (FAQ)"
 					: "Tambah tanya jawab (FAQ) baru"
 			}
-			isSubmitting={
-				isSubmitting
-			}
-			submitText={
-				isEditing
-					? "Simpan perubahan"
-					: "Simpan FAQ"
-			}
+			isSubmitting={isSubmitting}
+			submitText="Simpan"
 			submittingText="Menyimpan..."
+			submitDisabled={!isFormValid || (isEditing && !isDirty)}
 		>
 			<FormField
 				label="Pertanyaan"
@@ -265,12 +279,14 @@ export function AdminFaqModal({
 					type="text"
 					placeholder="Contoh: Bagaimana cara donatur mendapatkan kuitansi resmi?"
 					value={question}
+					maxLength={150}
 					onChange={(e) => {
-						setQuestion(e.target.value);
+						setQuestion(sanitizeStandardText(e.target.value, 150));
 						if (errors.question) {
 							setErrors((prev) => ({ ...prev, question: "" }));
 						}
 					}}
+					onBlur={() => setQuestion((prev) => prev.trim())}
 					required
 					className="h-10 text-sm font-normal bg-white border-slate-300"
 				/>
@@ -296,12 +312,14 @@ export function AdminFaqModal({
 						type="text"
 						placeholder="Tulis nama topik baru (misal: Relawan, Beasiswa)..."
 						value={category}
+						maxLength={50}
 						onChange={(e) => {
-							setCategory(e.target.value);
+							setCategory(sanitizeStandardText(e.target.value, 50));
 							if (errors.category) {
 								setErrors((prev) => ({ ...prev, category: "" }));
 							}
 						}}
+						onBlur={() => setCategory((prev) => prev.trim())}
 						className="h-10 text-sm font-normal bg-white border-slate-300"
 						autoFocus
 					/>
@@ -340,6 +358,7 @@ export function AdminFaqModal({
 			>
 				<Textarea
 					rows={4}
+					maxLength={3000}
 					placeholder="Tuliskan jawaban yang ramah, informatif, dan jelas bagi calon donatur..."
 					value={answer}
 					onChange={(e) => {
@@ -348,6 +367,7 @@ export function AdminFaqModal({
 							setErrors((prev) => ({ ...prev, answer: "" }));
 						}
 					}}
+					onBlur={() => setAnswer((prev) => prev.trim())}
 					required
 					className="w-full text-sm font-normal leading-relaxed bg-white border-slate-300"
 				/>

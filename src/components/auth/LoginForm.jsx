@@ -4,10 +4,10 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/ui/form-field";
+import { toast } from "@/hooks/useToast";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 import { SocialAuthGroup } from "@/components/auth/SocialAuthGroup";
 import { AuthFormHeader } from "@/components/auth/AuthFormHeader";
 import { AuthNoticeBanner } from "@/components/auth/AuthNoticeBanner";

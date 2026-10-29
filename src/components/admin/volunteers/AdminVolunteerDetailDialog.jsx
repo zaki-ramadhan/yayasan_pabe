@@ -7,17 +7,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { formatDate } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
+import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 import { AdminVolunteerStatusBadge } from "./AdminVolunteerStatusBadge";
 
 export function AdminVolunteerDetailDialog({
@@ -30,10 +31,7 @@ export function AdminVolunteerDetailDialog({
 }) {
   if (!volunteer) return null;
 
-  const cleanPhone = (volunteer.phone || "").replace(/[^0-9]/g, "");
-  const waUrl = cleanPhone
-    ? `https://wa.me/${cleanPhone.startsWith("0") ? "62" + cleanPhone.slice(1) : cleanPhone}`
-    : null;
+  const waUrl = buildWhatsAppUrl(volunteer.phone) || null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

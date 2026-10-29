@@ -73,7 +73,7 @@ export function Pagination({
         className={cn(
           "inline-flex items-center justify-center h-9 min-w-9 px-2.5 rounded-lg border text-sm font-medium transition-colors select-none",
           currentPage <= 1
-            ? "border-slate-200 text-slate-300 bg-slate-50 cursor-not-allowed opacity-60"
+            ? "border-slate-200 text-slate-300 bg-slate-50 cursor-not-allowed opacity-60 pointer-events-none"
             : "border-slate-300 text-slate-700 bg-white hover:bg-slate-100 hover:border-slate-400 cursor-pointer"
         )}
       >
@@ -106,7 +106,7 @@ export function Pagination({
               className={cn(
                 "h-9 min-w-9 px-3 rounded-lg text-sm transition-all select-none flex items-center justify-center",
                 isActive
-                  ? "font-medium text-white bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 border-t border-t-slate-500 border-x border-x-slate-700 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.25)] cursor-default"
+                  ? "font-medium text-white bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 border-t border-t-slate-500 border-x border-x-slate-700 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_2px_4px_rgba(0,0,0,0.25)] cursor-default pointer-events-none"
                   : "font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-100 hover:border-slate-400 cursor-pointer"
               )}
             >
@@ -125,7 +125,7 @@ export function Pagination({
         className={cn(
           "inline-flex items-center justify-center h-9 min-w-9 px-2.5 rounded-lg border text-sm font-medium transition-colors select-none",
           currentPage >= totalPages
-            ? "border-slate-200 text-slate-300 bg-slate-50 cursor-not-allowed opacity-60"
+            ? "border-slate-200 text-slate-300 bg-slate-50 cursor-not-allowed opacity-60 pointer-events-none"
             : "border-slate-300 text-slate-700 bg-white hover:bg-slate-100 hover:border-slate-400 cursor-pointer"
         )}
       >

@@ -11,15 +11,17 @@ import {
   TableHead,
   TableEmptyRow,
   TablePaginationFooter,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { AdminTransactionDetailModal } from "@/components/admin/transactions/AdminTransactionDetailModal";
 import { AdminTransactionVerifyDialog } from "@/components/admin/transactions/AdminTransactionVerifyDialog";
 import { AdminTransactionToolbar } from "@/components/admin/transactions/AdminTransactionToolbar";
 import { AdminTransactionTableRow } from "@/components/admin/transactions/AdminTransactionTableRow";
+import { usePagination } from "@/hooks/usePagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery, maskEmail } from "@/lib/security";
+import { downloadCsv } from "@/lib/exportCsv";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
 
 const PAGE_SIZE = 10;
@@ -30,7 +32,6 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [channelFilter, setChannelFilter] = useState("ALL");
   const [copiedId, setCopiedId] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [verifyingTx, setVerifyingTx] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -68,30 +69,32 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
     });
   }, [transactions, statusFilter, channelFilter, debouncedSearch]);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
-  const paginatedTransactions = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, currentPage]);
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems: paginatedTransactions,
+    resetPage,
+  } = usePagination(filtered, { pageSize: PAGE_SIZE });
 
   const handleSearchChange = (e) => {
     setSearch(sanitizeSearchQuery(e.target.value));
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleClearSearch = () => {
     setSearch("");
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleStatusChange = (val) => {
     setStatusFilter(val);
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleChannelChange = (val) => {
     setChannelFilter(val);
-    setCurrentPage(1);
+    resetPage();
   };
 
   const refreshList = async () => {
@@ -155,22 +158,13 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       formatDate(t.createdAt),
     ]);
 
-    const csvContent = "\uFEFF" + [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `rekap-mutasi-transaksi-${new Date().toISOString().slice(0, 10)}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    downloadCsv(`rekap-mutasi-transaksi-${new Date().toISOString().slice(0, 10)}.csv`, csvContent);
     toast.success("Laporan mutasi berhasil diunduh.");
   };
 
   return (
     <div className="space-y-4">
-      {/* Filter and Actions Bar */}
       <AdminTransactionToolbar
         search={search}
         onSearchChange={handleSearchChange}
@@ -185,7 +179,6 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
         isSearching={isSearching}
       />
 
-      {/* Table Container */}
       <TableContainer>
         <div className="overflow-x-auto">
           <Table>

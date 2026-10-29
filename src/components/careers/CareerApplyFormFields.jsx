@@ -1,14 +1,15 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { FormField } from "@/components/ui/form-field";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
+import { FormField } from "@/components/ui/FormField";
 import { cn } from "@/lib/utils";
 
 export function CareerApplyFormFields({
   job,
   formData,
   onChange,
+  onBlur,
   onPhoneChange,
   isEmailLocked = false,
   errors = {},
@@ -34,7 +35,9 @@ export function CareerApplyFormFields({
             type="text"
             placeholder="Contoh: Muhammad Ihsan"
             value={formData.fullName}
+            maxLength={60}
             onChange={(e) => onChange("fullName", e.target.value)}
+            onBlur={onBlur ? onBlur("fullName") : undefined}
             required
             autoComplete="name"
             className="text-xs h-9 font-normal"
@@ -49,6 +52,9 @@ export function CareerApplyFormFields({
         >
           <Input
             type="email"
+            inputMode="email"
+            maxLength={100}
+            spellCheck={false}
             placeholder="nama@email.com"
             value={formData.email}
             readOnly={isEmailLocked}
@@ -57,6 +63,7 @@ export function CareerApplyFormFields({
                 onChange("email", e.target.value);
               }
             }}
+            onBlur={onBlur ? onBlur("email") : undefined}
             required
             autoComplete="email"
             className={cn(
@@ -75,10 +82,12 @@ export function CareerApplyFormFields({
         >
           <Input
             type="tel"
-            inputMode="numeric"
+            inputMode="tel"
+            maxLength={15}
             placeholder="081234567890"
             value={formData.phone}
             onChange={onPhoneChange}
+            onBlur={onBlur ? onBlur("phone") : undefined}
             required
             autoComplete="tel"
             className="text-xs h-9 font-normal"
@@ -91,9 +100,13 @@ export function CareerApplyFormFields({
         >
           <Input
             type="url"
+            inputMode="url"
+            maxLength={200}
+            spellCheck={false}
             placeholder="https://linkedin.com/in/..."
             value={formData.linkedinUrl}
             onChange={(e) => onChange("linkedinUrl", e.target.value)}
+            onBlur={onBlur ? onBlur("linkedinUrl") : undefined}
             className="text-xs h-9 font-normal"
           />
         </FormField>
@@ -107,9 +120,13 @@ export function CareerApplyFormFields({
       >
         <Input
           type="url"
+          inputMode="url"
+          maxLength={300}
+          spellCheck={false}
           placeholder="https://drive.google.com/file/d/..."
           value={formData.resumeUrl}
           onChange={(e) => onChange("resumeUrl", e.target.value)}
+          onBlur={onBlur ? onBlur("resumeUrl") : undefined}
           required
           className="text-xs h-9 font-normal"
         />
@@ -123,7 +140,9 @@ export function CareerApplyFormFields({
         <Textarea
           placeholder="Ceritakan secara ringkas latar belakang, keahlian, dan motivasi Anda bergabung bersama yayasan..."
           value={formData.coverLetter}
+          maxLength={1000}
           onChange={(e) => onChange("coverLetter", e.target.value)}
+          onBlur={onBlur ? onBlur("coverLetter") : undefined}
           rows={3}
           required
           className="text-xs resize-none"

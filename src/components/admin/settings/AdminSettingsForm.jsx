@@ -1,16 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/useToast";
+import { Button } from "@/components/ui/Button";
 import { AdminSettingsIdentitySection } from "./AdminSettingsIdentitySection";
 import { AdminSettingsLegalSection } from "./AdminSettingsLegalSection";
 import { AdminSettingsContactSection } from "./AdminSettingsContactSection";
 import { AdminSettingsBankSection } from "./AdminSettingsBankSection";
 
 import { validateOrgSettings } from "@/lib/validator";
+import { isFormDirty } from "@/lib/formUtils";
 
 export function AdminSettingsForm({ initialSettings }) {
   const router = useRouter();
@@ -23,6 +24,14 @@ export function AdminSettingsForm({ initialSettings }) {
     setPrevInitial(initialSettings);
     setFormData(initialSettings || {});
   }
+
+  const isDirty = useMemo(() => {
+    return isFormDirty(initialSettings, formData);
+  }, [initialSettings, formData]);
+
+  const isFormValid = useMemo(() => {
+    return validateOrgSettings(formData).isValid;
+  }, [formData]);
 
   const handleFieldChange = (section, field, value) => {
     if (section) {
@@ -172,10 +181,10 @@ export function AdminSettingsForm({ initialSettings }) {
         <Button
           type="submit"
           isLoading={isSaving}
-          disabled={isSaving}
-          className="h-10 px-5 text-sm font-medium"
+          disabled={!isDirty || !isFormValid || isSaving}
+          className="h-10 px-5 text-sm font-medium disabled:cursor-not-allowed"
         >
-          {isSaving ? "Menyimpan perubahan..." : "Simpan pengaturan"}
+          {isSaving ? "Menyimpan..." : "Simpan"}
         </Button>
       </div>
     </form>

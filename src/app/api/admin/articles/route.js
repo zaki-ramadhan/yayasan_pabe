@@ -4,6 +4,7 @@ import { USER_ROLES } from "@/services/authService";
 import {
   getAdminArticles,
   createAdminArticle,
+  deleteAdminArticlesBatch,
 } from "@/services/adminArticleService";
 import { logActivity } from "@/services/activityLogService";
 
@@ -77,6 +78,48 @@ export async function POST(request) {
   } catch (error) {
     return NextResponse.json(
       { success: false, message: error.message || "Gagal membuat artikel baru." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request) {
+  const { user, errorResponse } = await requireAuth(request, [
+    USER_ROLES.SUPER_ADMIN,
+    USER_ROLES.ADMIN,
+  ]);
+  if (errorResponse) return errorResponse;
+
+  try {
+    const body = await request.json();
+    const { ids } = body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Daftar ID artikel untuk dihapus wajib disertakan." },
+        { status: 400 }
+      );
+    }
+
+    const result = await deleteAdminArticlesBatch(ids);
+
+    await logActivity({
+      userId: user?.id,
+      userName: user?.name,
+      userRole: user?.role,
+      action: "DELETE_ARTICLES_BATCH",
+      targetType: "Article",
+      description: `Menghapus ${result.count} artikel secara massal`,
+      request,
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `${result.count} artikel berhasil dihapus.`,
+      data: result,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message || "Gagal menghapus artikel secara massal." },
       { status: 500 }
     );
   }

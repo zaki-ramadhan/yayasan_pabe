@@ -10,14 +10,16 @@ import {
   TableHead,
   TableEmptyRow,
   TablePaginationFooter,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { AdminRoutineDonationDetailDialog } from "./AdminRoutineDonationDetailDialog";
 import { AdminRoutineDonationToolbar } from "./AdminRoutineDonationToolbar";
 import { AdminRoutineDonationTableRow } from "./AdminRoutineDonationTableRow";
+import { usePagination } from "@/hooks/usePagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
+import { downloadCsv } from "@/lib/exportCsv";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 const PAGE_SIZE = 10;
 
@@ -26,7 +28,6 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [frequencyFilter, setFrequencyFilter] = useState("ALL");
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,20 +50,22 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
     });
   }, [items, statusFilter, frequencyFilter, debouncedSearch]);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
-  const paginatedItems = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, currentPage]);
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems,
+    resetPage,
+  } = usePagination(filtered, { pageSize: PAGE_SIZE });
 
   const handleSearchChange = (e) => {
     setSearch(sanitizeSearchQuery(e.target.value));
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleClearSearch = () => {
     setSearch("");
-    setCurrentPage(1);
+    resetPage();
   };
 
   const refreshList = async (options = {}) => {
@@ -148,23 +151,13 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
       `"${r.createdAt}"`,
     ]);
 
-    const csvContent =
-      "data:text/csv;charset=utf-8,\uFEFF" +
-      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `donasi-rutin-gsm-${new Date().toISOString().slice(0, 10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const csvContent = [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    downloadCsv(`donasi-rutin-gsm-${new Date().toISOString().slice(0, 10)}.csv`, csvContent);
     toast.success("Buku komitmen donasi rutin berhasil diunduh (CSV).");
   };
 
   return (
     <div className="space-y-4">
-      {/* Filter and Action Bar */}
       <AdminRoutineDonationToolbar
         search={search}
         onSearchChange={handleSearchChange}
@@ -178,7 +171,6 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
         isLoading={isLoading}
       />
 
-      {/* Main Table */}
       <TableContainer>
         <div className="overflow-x-auto">
           <Table>

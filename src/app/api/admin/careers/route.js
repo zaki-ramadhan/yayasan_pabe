@@ -4,6 +4,7 @@ import { USER_ROLES } from "@/services/authService";
 import {
   getAdminVacancies,
   createAdminVacancy,
+  deleteAdminVacanciesBatch,
 } from "@/services/adminCareerService";
 
 export const dynamic = "force-dynamic";
@@ -60,6 +61,37 @@ export async function POST(request) {
   } catch (error) {
     return NextResponse.json(
       { success: false, message: error.message || "Gagal membuat lowongan baru." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request) {
+  const { errorResponse } = await requireAuth(request, [
+    USER_ROLES.SUPER_ADMIN,
+    USER_ROLES.ADMIN,
+  ]);
+  if (errorResponse) return errorResponse;
+
+  try {
+    const body = await request.json();
+    const { ids } = body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Daftar ID lowongan untuk dihapus wajib disertakan." },
+        { status: 400 }
+      );
+    }
+
+    const result = await deleteAdminVacanciesBatch(ids);
+    return NextResponse.json({
+      success: true,
+      message: `${result.count} lowongan pekerjaan berhasil dihapus.`,
+      data: result,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message || "Gagal menghapus lowongan secara massal." },
       { status: 500 }
     );
   }

@@ -2,17 +2,18 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect, useMemo } from "react";
-import { FormDialog } from "@/components/ui/form-dialog";
-import { FormField } from "@/components/ui/form-field";
-import { Textarea } from "@/components/ui/textarea";
+import { FormDialog } from "@/components/ui/FormDialog";
+import { FormField } from "@/components/ui/FormField";
+import { Textarea } from "@/components/ui/Textarea";
 import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 import { AdminGalleryMetadataFields } from "./AdminGalleryMetadataFields";
 import { uploadFileToServer } from "@/services/uploadService";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { toTitleCase } from "@/lib/formatters";
 import { DEFAULT_GALLERY_CATEGORY } from "@/lib/galleryConstants";
 import { isYouTubeUrl } from "@/lib/galleryGroupHelper";
+import { isFormDirty } from "@/lib/formUtils";
 
 /**
  * Modal coordinator untuk tambah banyak foto/video (Batch) dan edit tunggal dokumentasi galeri.
@@ -224,10 +225,46 @@ export function AdminGalleryModal({
   const totalCount = selectedFiles.length + (hasValidYoutube ? 1 : 0);
 
   const submitLabel = isEditing
-    ? "Perbarui dokumentasi"
-    : totalCount > 0
+    ? "Simpan"
+    : totalCount > 1
     ? `Simpan ${totalCount} berkas`
-    : "Simpan dokumentasi";
+    : "Simpan";
+
+  const isDirty = useMemo(() => {
+    if (!isEditing || !itemToEdit) {
+      return Boolean(totalCount > 0 || title.trim() || description.trim());
+    }
+    const initialActivityDate = itemToEdit.activityDate
+      ? new Date(itemToEdit.activityDate).toISOString().split("T")[0]
+      : "";
+    return isFormDirty(
+      {
+        title: itemToEdit.title || "",
+        category: itemToEdit.category || DEFAULT_GALLERY_CATEGORY,
+        activityDate: initialActivityDate,
+        description: itemToEdit.description || "",
+        imageUrl: itemToEdit.imageUrl || "",
+      },
+      {
+        title,
+        category,
+        activityDate,
+        description,
+        imageUrl: singleImageUrl,
+      }
+    );
+  }, [isEditing, itemToEdit, totalCount, title, description, category, activityDate, singleImageUrl]);
+
+  const isFormValid = useMemo(() => {
+    const cleanYt = youtubeUrl ? youtubeUrl.trim() : "";
+    const hasYoutube = cleanYt.length > 0;
+    if (hasYoutube && !isYouTubeUrl(cleanYt)) return false;
+    if (!category) return false;
+    if (isEditing) {
+      return Boolean(singleImageUrl || hasYoutube);
+    }
+    return Boolean(selectedFiles.length > 0 || hasYoutube);
+  }, [youtubeUrl, category, isEditing, singleImageUrl, selectedFiles.length]);
 
   return (
     <FormDialog
@@ -239,6 +276,7 @@ export function AdminGalleryModal({
       submitText={submitLabel}
       submittingText={uploadProgressText || "Menyimpan..."}
       isSubmitting={isSubmitting}
+      submitDisabled={!isFormValid || (isEditing && !isDirty)}
     >
       <AdminGalleryMetadataFields
         title={title}
@@ -282,8 +320,8 @@ export function AdminGalleryModal({
         required={!isEditing && !hasValidYoutube}
         helperText={
           isEditing
-            ? "Mendukung JPG, PNG, WebP (Maks. 5MB). Otomatis dioptimasi dan disimpan ke R2."
-            : "JPG, PNG, WebP (Maks. 5MB) • Video MP4/WebM (Maks. 1 video, 25MB, 60 dtk)"
+            ? "Mendukung JPG, PNG, WebP (Maks. 10MB) • Bisa Ctrl + V. Otomatis dikonversi ke WebP."
+            : "JPG, PNG, WebP (Maks. 10MB) • Video MP4/WebM (Maks. 1 video, 25MB, 60 dtk) • Bisa Ctrl + V"
         }
         isUploading={isSubmitting}
         uploadProgressText={uploadProgressText}

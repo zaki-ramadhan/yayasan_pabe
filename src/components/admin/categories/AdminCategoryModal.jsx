@@ -1,10 +1,12 @@
 "use client";
 /* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect } from "react";
-import { FormDialog } from "@/components/ui/form-dialog";
-import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect, useMemo } from "react";
+import { FormDialog } from "@/components/ui/FormDialog";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { isFormDirty } from "@/lib/formUtils";
+import { sanitizeStandardText, sanitizeSlug } from "@/lib/sanitizer";
 
 export function AdminCategoryModal({
 	category,
@@ -40,24 +42,13 @@ export function AdminCategoryModal({
 	}, [category, isOpen]);
 
 	const handleNameChange = (e) => {
-		const val = e.target.value;
+		const val = sanitizeStandardText(e.target.value, 60);
 		setName(val);
 		if (errors.name) {
 			setErrors((prev) => ({ ...prev, name: "" }));
 		}
 		if (!isEdit) {
-			setSlug(
-				val
-					.toLowerCase()
-					.replace(
-						/[^a-z0-9]+/g,
-						"-",
-					)
-					.replace(
-						/(^-|-$)+/g,
-						"",
-					),
-			);
+			setSlug(sanitizeSlug(val, 60));
 			if (errors.slug) {
 				setErrors((prev) => ({ ...prev, slug: "" }));
 			}
@@ -93,6 +84,27 @@ export function AdminCategoryModal({
 		});
 	};
 
+	const isDirty = useMemo(() => {
+		if (!isEdit || !category) {
+			return Boolean(name.trim() || slug.trim());
+		}
+		return isFormDirty(
+			{
+				name: category.name || "",
+				slug: category.slug || "",
+			},
+			{
+				name,
+				slug,
+			}
+		);
+	}, [isEdit, category, name, slug]);
+
+	const isFormValid = useMemo(() => {
+		const cleanSlug = slug.trim() || name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+		return name.trim().length >= 3 && cleanSlug.length >= 2;
+	}, [name, slug]);
+
 	return (
 		<FormDialog
 			isOpen={isOpen}
@@ -105,12 +117,9 @@ export function AdminCategoryModal({
 					: "Tambah kategori program baru"
 			}
 			isSubmitting={isSubmitting}
-			submitText={
-				isEdit
-					? "Simpan perubahan"
-					: "Tambah kategori"
-			}
+			submitText="Simpan"
 			submittingText="Menyimpan..."
+			submitDisabled={!isFormValid || (isEdit && !isDirty)}
 		>
 			<FormField
 				label="Nama kategori"
@@ -119,7 +128,9 @@ export function AdminCategoryModal({
 			>
 				<Input
 					value={name}
+					maxLength={60}
 					onChange={handleNameChange}
+					onBlur={() => setName((prev) => prev.trim())}
 					placeholder="Contoh: Pendidikan & Dakwah"
 					className="text-sm font-normal"
 					required
@@ -133,12 +144,16 @@ export function AdminCategoryModal({
 			>
 				<Input
 					value={slug}
+					maxLength={60}
+					spellCheck={false}
 					onChange={(e) => {
-						setSlug(e.target.value);
+						const clean = sanitizeSlug(e.target.value, 60);
+						setSlug(clean);
 						if (errors.slug) {
 							setErrors((prev) => ({ ...prev, slug: "" }));
 						}
 					}}
+					onBlur={() => setSlug((prev) => prev.trim())}
 					placeholder="contoh: pendidikan-dakwah"
 					className="text-sm font-normal font-mono"
 					required

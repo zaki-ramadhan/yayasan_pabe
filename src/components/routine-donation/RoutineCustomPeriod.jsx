@@ -2,8 +2,8 @@
 
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
 
 /**
  * Optional date validity range for routine donation

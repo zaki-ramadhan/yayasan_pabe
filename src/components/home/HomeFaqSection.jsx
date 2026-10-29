@@ -1,4 +1,4 @@
-import { Accordion } from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/Accordion";
 import { FaqItem } from "@/components/shared/FaqItem";
 
 /**

@@ -17,13 +17,12 @@ export default function VolunteerPage() {
           {/* Cover Image Landscape (Tinggi lebih ramping/kompak) */}
           <div className="relative w-full h-36 sm:h-44 rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200 shadow-2xs bg-slate-100 pointer-events-none select-none">
             <Image
-              src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1200&auto=format&fit=crop&q=80"
-              alt=""
+              src="/img/banners/covers/volunteer-cover.webp"
+              alt="Relawan Kebaikan Yayasan Payung Berkah"
               fill
               sizes="(max-width: 1024px) 100vw, 40vw"
               className="object-cover pointer-events-none select-none"
               draggable={false}
-              aria-hidden="true"
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/25 via-transparent to-transparent pointer-events-none select-none" />

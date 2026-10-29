@@ -4,7 +4,7 @@ import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useFormField } from "@/components/ui/form-field";
+import { useFormField } from "@/components/ui/FormField";
 
 const Select = ({ modal = false, ...props }) => (
   <SelectPrimitive.Root modal={modal} {...props} />
@@ -26,7 +26,7 @@ const SelectTrigger = React.forwardRef(({ className, children, error, isInvalid,
       ref={ref}
       aria-invalid={hasError ? "true" : undefined}
       className={cn(
-        "group flex h-11 w-full items-center justify-between rounded-lg border bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none transition-colors cursor-pointer [&[data-state=open]>svg]:rotate-180 [&[data-state=open]>span>svg]:rotate-180 disabled:cursor-not-allowed disabled:opacity-50",
+        "group flex h-11 w-full items-center justify-between rounded-lg border bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none transition-colors cursor-pointer [&[data-state=open]>svg]:rotate-180 [&[data-state=open]>span>svg]:rotate-180 disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50",
         hasError
           ? "border-rose-500 bg-rose-50/15 text-rose-950 focus:ring-1 focus:ring-rose-500 focus:border-rose-500"
           : "border-slate-300 focus:ring-1 focus:ring-primary focus:border-primary",

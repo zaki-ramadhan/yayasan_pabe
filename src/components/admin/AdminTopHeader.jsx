@@ -18,6 +18,7 @@ const ADMIN_PAGE_TITLES = {
   "/admin/doa": "Moderasi Doa",
   "/admin/artikel": "Berita & Artikel",
   "/admin/galeri": "Galeri Dokumentasi",
+  "/admin/instagram": "Feed Instagram",
   "/admin/laporan-audit": "Laporan Audit Keuangan",
   "/admin/karier": "Lowongan Karier",
   "/admin/relawan": "Kelola Relawan",

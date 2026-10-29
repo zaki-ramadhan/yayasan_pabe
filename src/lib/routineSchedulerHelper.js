@@ -1,23 +1,6 @@
 import { getDateKey, ID_DAYS } from "@/lib/dateUtils";
 
-/**
- * Normalizes an Indonesian phone number to international WhatsApp format (628xxx).
- * @param {string} phone
- * @returns {string}
- */
-export function normalizeWhatsAppNumber(phone) {
-  if (!phone) return "";
-  let cleaned = String(phone).replace(/\D/g, "");
-  if (cleaned.startsWith("0")) {
-    cleaned = "62" + cleaned.slice(1);
-  } else if (cleaned.startsWith("8")) {
-    cleaned = "62" + cleaned;
-  }
-  if (cleaned.length < 9) {
-    return "";
-  }
-  return cleaned;
-}
+export { normalizeWhatsAppNumber } from "@/lib/whatsappUtils";
 
 /**
  * Checks if a routine donation schedule matches the current target time (in WIB).

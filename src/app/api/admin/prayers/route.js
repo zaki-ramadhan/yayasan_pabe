@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   getAdminPrayers,
   toggleHidePrayer,
+  toggleHidePrayerBatch,
   togglePinPrayer,
   replyPrayer,
 } from "@/services/prayerService";
@@ -45,7 +46,25 @@ export async function PATCH(request) {
 
   try {
     const body = await request.json();
-    const { action, donationId } = body;
+    const { action, donationId, donationIds } = body;
+
+    // Penanganan Moderasi Massal (Bulk Moderation)
+    if (action === "BULK_HIDE" || action === "BULK_SHOW") {
+      const ids = Array.isArray(donationIds) ? donationIds : donationId ? [donationId] : [];
+      if (ids.length === 0) {
+        return NextResponse.json(
+          { success: false, message: "Daftar ID doa donatur tidak boleh kosong." },
+          { status: 400 }
+        );
+      }
+      const isHidden = action === "BULK_HIDE";
+      const result = await toggleHidePrayerBatch({ donationIds: ids, isHidden });
+      return NextResponse.json({
+        success: true,
+        message: `${result.count} doa berhasil ${isHidden ? "disembunyikan" : "ditampilkan ke publik"}.`,
+        data: result,
+      });
+    }
 
     if (!donationId) {
       return NextResponse.json(

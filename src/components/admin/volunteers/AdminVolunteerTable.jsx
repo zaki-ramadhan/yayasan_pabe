@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { Trash2, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import {
   Table,
   TableContainer,
@@ -10,15 +11,21 @@ import {
   TableHead,
   TableEmptyRow,
   TablePaginationFooter,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Button } from "@/components/ui/Button";
+import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import { AdminVolunteerDetailDialog } from "./AdminVolunteerDetailDialog";
 import { AdminVolunteerToolbar } from "./AdminVolunteerToolbar";
 import { AdminVolunteerTableRow } from "./AdminVolunteerTableRow";
 import { VolunteerPrintDialog } from "@/components/volunteer/VolunteerPrintDialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { useTableSelection } from "@/hooks/useTableSelection";
+import { usePagination } from "@/hooks/usePagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 const PAGE_SIZE = 10;
 
@@ -26,10 +33,14 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   const [volunteers, setVolunteers] = useState(initialVolunteers);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedVolunteer, setSelectedVolunteer] = useState(null);
   const [cardVolunteer, setCardVolunteer] = useState(null);
+  const [volunteerToDelete, setVolunteerToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [isBulkStatusUpdating, setIsBulkStatusUpdating] = useState(false);
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const debouncedSearch = useDebounce(search.trim(), 300);
@@ -49,25 +60,32 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
     });
   }, [volunteers, statusFilter, debouncedSearch]);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
-  const paginatedVolunteers = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, currentPage]);
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems: paginatedVolunteers,
+    resetPage,
+  } = usePagination(filtered, { pageSize: PAGE_SIZE });
+
+  const selection = useTableSelection(paginatedVolunteers);
 
   const handleSearchChange = (e) => {
     setSearch(sanitizeSearchQuery(e.target.value));
-    setCurrentPage(1);
+    selection.clearSelection();
+    resetPage();
   };
 
   const handleClearSearch = () => {
     setSearch("");
-    setCurrentPage(1);
+    selection.clearSelection();
+    resetPage();
   };
 
   const handleStatusFilterChange = (val) => {
     setStatusFilter(val);
-    setCurrentPage(1);
+    selection.clearSelection();
+    resetPage();
   };
 
   const refreshList = async () => {
@@ -77,6 +95,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
       const data = await res.json();
       if (data.success && data.data) {
         setVolunteers(data.data);
+        selection.clearSelection();
         toast.success("Data pendaftar relawan berhasil diperbarui.");
       } else {
         toast.error(data.message || "Gagal menyegarkan data relawan.");
@@ -115,9 +134,15 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
     }
   };
 
-  const handleDelete = async (id, name) => {
-    if (!window.confirm(`Hapus berkas pendaftaran relawan atas nama "${name}"?`)) return;
+  const handleDelete = (id, name) => {
+    setVolunteerToDelete({ id, name });
+  };
 
+  const handleConfirmDelete = async () => {
+    if (!volunteerToDelete) return;
+    const { id } = volunteerToDelete;
+
+    setIsDeleting(true);
     try {
       const res = await safeFetch(`/api/admin/volunteers?id=${id}`, {
         method: "DELETE",
@@ -129,17 +154,75 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         if (selectedVolunteer?.id === id) {
           setSelectedVolunteer(null);
         }
+        setVolunteerToDelete(null);
       } else {
         toast.error(data.message || "Gagal menghapus data relawan.");
       }
     } catch {
       toast.error("Terjadi kendala jaringan saat menghapus data.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleConfirmBulkDelete = async () => {
+    if (selection.selectedCount === 0) return;
+    setIsBulkDeleting(true);
+    try {
+      const res = await safeFetch("/api/admin/volunteers", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selection.selectedIds }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message || `${selection.selectedCount} relawan berhasil dihapus.`);
+        const selectedSet = selection.selectedKeys;
+        setVolunteers((prev) => prev.filter((v) => !selectedSet.has(v.id)));
+        selection.clearSelection();
+        setIsBulkDeleteOpen(false);
+      } else {
+        toast.error(data.message || "Gagal menghapus relawan terpilih.");
+      }
+    } catch {
+      toast.error("Terjadi kendala jaringan saat menghapus relawan.");
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
+
+  const handleBulkUpdateStatus = async (newStatus) => {
+    if (selection.selectedCount === 0) return;
+    setIsBulkStatusUpdating(true);
+    try {
+      const res = await safeFetch("/api/admin/volunteers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selection.selectedIds, status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        const selectedSet = selection.selectedKeys;
+        setVolunteers((prev) =>
+          prev.map((v) => (selectedSet.has(v.id) ? { ...v, status: newStatus } : v))
+        );
+        toast.success(
+          data.message ||
+            `${selection.selectedCount} relawan berhasil diperbarui menjadi ${newStatus}.`
+        );
+        selection.clearSelection();
+      } else {
+        toast.error(data.message || "Gagal memperbarui status relawan terpilih.");
+      }
+    } catch {
+      toast.error("Terjadi kendala jaringan saat memperbarui status.");
+    } finally {
+      setIsBulkStatusUpdating(false);
     }
   };
 
   return (
     <div className="space-y-4">
-      {/* Top Filter and Actions Bar */}
       <AdminVolunteerToolbar
         search={search}
         onSearchChange={handleSearchChange}
@@ -150,12 +233,70 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         onRefresh={refreshList}
       />
 
-      {/* Main Table */}
+      {/* Reusable Bulk Action Bar */}
+      <TableSelectionBar
+        selectedCount={selection.selectedCount}
+        totalCount={paginatedVolunteers.length}
+        label="relawan"
+        onSelectAll={selection.selectAll}
+        isAllSelected={selection.allSelected}
+        onClearSelection={selection.clearSelection}
+      >
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={isBulkStatusUpdating}
+          onClick={() => handleBulkUpdateStatus("APPROVED")}
+          className="bg-white border-slate-300 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 font-medium h-8 text-xs gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
+        >
+          {isBulkStatusUpdating ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+          )}
+          <span>Setujui</span>
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={isBulkStatusUpdating}
+          onClick={() => handleBulkUpdateStatus("REJECTED")}
+          className="bg-white border-slate-300 text-rose-700 hover:bg-rose-50 hover:border-rose-300 font-medium h-8 text-xs gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
+        >
+          {isBulkStatusUpdating ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <XCircle className="w-3.5 h-3.5 text-rose-600" />
+          )}
+          <span>Tolak</span>
+        </Button>
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          onClick={() => setIsBulkDeleteOpen(true)}
+          className="font-medium h-8 text-xs gap-1.5 cursor-pointer"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          <span>Hapus</span>
+        </Button>
+      </TableSelectionBar>
+
       <TableContainer>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-12 text-center py-2.5 px-3">
+                  <Checkbox
+                    checked={selection.allSelected}
+                    indeterminate={selection.isIndeterminate}
+                    onCheckedChange={selection.toggleSelectAll}
+                    aria-label="Pilih semua relawan di halaman ini"
+                  />
+                </TableHead>
                 <TableHead className="w-64 font-medium text-slate-600 text-sm py-2.5">
                   Nama &amp; kontak
                 </TableHead>
@@ -182,6 +323,8 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                   <AdminVolunteerTableRow
                     key={item.id}
                     item={item}
+                    isSelected={selection.isSelected(item.id)}
+                    onToggleSelect={selection.toggleSelect}
                     onViewDetail={setSelectedVolunteer}
                     onPrintCard={setCardVolunteer}
                     onDelete={handleDelete}
@@ -189,7 +332,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                 ))
               ) : (
                 <TableEmptyRow
-                  colSpan={6}
+                  colSpan={7}
                   isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL")}
                 />
               )}
@@ -203,12 +346,14 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
             totalPages={totalPages}
             total={filtered.length}
             limit={PAGE_SIZE}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => {
+              selection.clearSelection();
+              setCurrentPage(page);
+            }}
           />
         )}
       </TableContainer>
 
-      {/* Detail Dialog */}
       <AdminVolunteerDetailDialog
         isOpen={Boolean(selectedVolunteer)}
         onClose={() => setSelectedVolunteer(null)}
@@ -221,11 +366,32 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         isUpdating={isUpdatingStatus}
       />
 
-      {/* Print KTA / ID Card Dialog */}
       <VolunteerPrintDialog
         isOpen={Boolean(cardVolunteer)}
         onClose={() => setCardVolunteer(null)}
         volunteer={cardVolunteer}
+      />
+
+      <ConfirmDialog
+        isOpen={Boolean(volunteerToDelete)}
+        onClose={() => setVolunteerToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
+        title="Hapus Data Relawan"
+        description={`Hapus berkas pendaftaran relawan atas nama "${volunteerToDelete?.name}"? Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus sekarang"
+        confirmVariant="destructive"
+      />
+
+      <ConfirmDialog
+        isOpen={isBulkDeleteOpen}
+        onClose={() => setIsBulkDeleteOpen(false)}
+        onConfirm={handleConfirmBulkDelete}
+        isLoading={isBulkDeleting}
+        title={`Hapus ${selection.selectedCount} Data Relawan`}
+        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} data pendaftar relawan terpilih? Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus sekarang"
+        confirmVariant="destructive"
       />
     </div>
   );

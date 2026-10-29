@@ -1,7 +1,7 @@
 "use client";
 
 import { Download } from "lucide-react";
-import { TableToolbar } from "@/components/ui/table";
+import { TableToolbar } from "@/components/ui/Table";
 
 export function AdminDonorToolbar({
   search,

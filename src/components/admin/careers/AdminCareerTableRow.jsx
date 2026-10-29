@@ -1,12 +1,15 @@
 "use client";
 
 import { Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
-import { StatusBadge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/Button";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { StatusBadge } from "@/components/ui/Badge";
 
 export function AdminCareerTableRow({
 	job,
+	isSelected = false,
+	onToggleSelect,
 	onOpenApplicants,
 	onToggleStatus,
 	onEdit,
@@ -14,7 +17,21 @@ export function AdminCareerTableRow({
 	isDeleting,
 }) {
 	return (
-		<TableRow key={job.id}>
+		<TableRow
+			key={job.id}
+			className={`hover:bg-slate-50/70 transition-colors ${
+				isSelected ? "bg-emerald-50/60 hover:bg-emerald-50/80" : ""
+			}`}
+		>
+			{/* 0. Selection Checkbox */}
+			<TableCell className="w-12 text-center py-3 px-3 align-middle" onClick={(e) => e.stopPropagation()}>
+				<Checkbox
+					checked={isSelected}
+					onCheckedChange={() => onToggleSelect?.(job.id)}
+					aria-label={`Pilih lowongan: ${job.title}`}
+				/>
+			</TableCell>
+
 			<TableCell className="min-w-[200px] w-52 py-3 align-middle">
 				<div className="space-y-0.5">
 					<span

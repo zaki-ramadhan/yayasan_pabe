@@ -1,8 +1,8 @@
 "use client";
 /* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useEffect } from "react";
-import { FormDialog } from "@/components/ui/form-dialog";
+import { useState, useEffect, useMemo } from "react";
+import { FormDialog } from "@/components/ui/FormDialog";
 import { AdminCareerBasicInfoFields } from "./AdminCareerBasicInfoFields";
 import { AdminCareerDetailFields } from "./AdminCareerDetailFields";
 import {
@@ -11,7 +11,8 @@ import {
 	LOCATION_OPTIONS,
 } from "@/data/careers";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
+import { isFormDirty } from "@/lib/formUtils";
 
 const INITIAL_DEPARTMENTS = DEPARTMENT_OPTIONS.filter(
 	(d) => d !== "Semua Divisi",
@@ -371,34 +372,88 @@ export function AdminCareerModal({
 		}
 	};
 
+	const isDirty = useMemo(() => {
+		if (!isEditing || !vacancyToEdit) {
+			return Boolean(title.trim() || overview.trim() || requirementsText.trim());
+		}
+		const initialResponsibilities = Array.isArray(vacancyToEdit.responsibilities)
+			? vacancyToEdit.responsibilities.join("\n")
+			: "";
+		const initialRequirements = Array.isArray(vacancyToEdit.requirements)
+			? vacancyToEdit.requirements.join("\n")
+			: "";
+		const initialBenefits = Array.isArray(vacancyToEdit.benefits)
+			? vacancyToEdit.benefits.join("\n")
+			: "";
+
+		return isFormDirty(
+			{
+				title: vacancyToEdit.title || "",
+				department: vacancyToEdit.department || "Operasional & Penyaluran",
+				location: vacancyToEdit.location || "Jakarta Timur / Depok",
+				type: vacancyToEdit.type || "Penuh Waktu (Full-time)",
+				workplace: vacancyToEdit.workplace || "On-site",
+				experience: vacancyToEdit.experience || "1 - 3 tahun",
+				deadline: vacancyToEdit.deadline || "30 November 2026",
+				overview: vacancyToEdit.overview || "",
+				responsibilities: initialResponsibilities,
+				requirements: initialRequirements,
+				benefits: initialBenefits,
+			},
+			{
+				title,
+				department,
+				location,
+				type,
+				workplace,
+				experience,
+				deadline,
+				overview,
+				responsibilities: responsibilitiesText,
+				requirements: requirementsText,
+				benefits: benefitsText,
+			}
+		);
+	}, [
+		isEditing,
+		vacancyToEdit,
+		title,
+		department,
+		location,
+		type,
+		workplace,
+		experience,
+		deadline,
+		overview,
+		responsibilitiesText,
+		requirementsText,
+		benefitsText,
+	]);
+
+	const isFormValid = useMemo(() => {
+		return Boolean(
+			title.trim().length >= 3 &&
+			department &&
+			location &&
+			overview.trim().length >= 10
+		);
+	}, [title, department, location, overview]);
+
 	return (
 		<FormDialog
-			isOpen={
-				isOpen
-			}
-			onClose={() =>
-				onOpenChange(
-					false,
-				)
-			}
-			onSubmit={
-				handleSubmit
-			}
+			isOpen={isOpen}
+			onClose={() => onOpenChange(false)}
+			onSubmit={handleSubmit}
 			maxWidth="max-w-2xl"
 			title={
 				isEditing
 					? "Edit lowongan pekerjaan"
 					: "Buka lowongan pekerjaan baru"
 			}
-			isSubmitting={
-				isSubmitting
-			}
-			submitText={
-				isEditing
-					? "Simpan perubahan"
-					: "Terbitkan lowongan"
-			}
+			isSubmitting={isSubmitting}
+			submitText="Simpan"
 			submittingText="Menyimpan..."
+			submitDisabled={!isFormValid || (isEditing && !isDirty)}
 		>
 			<AdminCareerBasicInfoFields
 				title={title}

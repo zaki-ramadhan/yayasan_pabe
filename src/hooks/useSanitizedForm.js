@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { isFormDirty } from "@/lib/formUtils";
 
 /**
  * Hook terpusat untuk formulir dengan sanitasi karakter real-time,
- * auto-trim saat blur, dan pembersihan nilai saat submit.
+ * auto-trim saat blur, pembersihan nilai saat submit,
+ * serta deteksi perubahan nilai (isDirty / hasChanges) berbasis SSOT.
  */
-export function useSanitizedForm(initialValues = {}, fieldSanitizers = {}) {
+export function useSanitizedForm(initialValues = {}, fieldSanitizers = {}, validator = null) {
   const [values, setValues] = useState(() => {
     const initialized = {};
     for (const [key, val] of Object.entries(initialValues)) {
@@ -15,6 +17,18 @@ export function useSanitizedForm(initialValues = {}, fieldSanitizers = {}) {
     }
     return initialized;
   });
+
+  // Sinkronisasi otomatis saat initialValues berubah dari luar (pola resmi React tanpa cascading effect)
+  const [prevInitial, setPrevInitial] = useState(initialValues);
+  if (initialValues !== prevInitial) {
+    setPrevInitial(initialValues);
+    const initialized = {};
+    for (const [key, val] of Object.entries(initialValues || {})) {
+      const sanitizer = fieldSanitizers[key];
+      initialized[key] = sanitizer && typeof val === "string" ? sanitizer(val) : (val ?? "");
+    }
+    setValues(initialized);
+  }
 
   const handleChange = useCallback(
     (field, sanitizer) => (e) => {
@@ -64,6 +78,27 @@ export function useSanitizedForm(initialValues = {}, fieldSanitizers = {}) {
     [values, fieldSanitizers, handleChange, handleBlur]
   );
 
+  // SSOT dirty checking: membandingkan values saat ini dengan initialValues
+  const isDirty = useMemo(() => {
+    return isFormDirty(initialValues, values);
+  }, [initialValues, values]);
+
+  // SSOT validasi formulir real-time
+  const isValid = useMemo(() => {
+    if (!validator) return true;
+    const res = validator(values);
+    return typeof res === "boolean" ? res : Boolean(res?.isValid);
+  }, [validator, values]);
+
+  const resetForm = useCallback(() => {
+    const initialized = {};
+    for (const [key, val] of Object.entries(initialValues || {})) {
+      const sanitizer = fieldSanitizers[key];
+      initialized[key] = sanitizer && typeof val === "string" ? sanitizer(val) : (val ?? "");
+    }
+    setValues(initialized);
+  }, [initialValues, fieldSanitizers]);
+
   return {
     values,
     setValues,
@@ -71,5 +106,10 @@ export function useSanitizedForm(initialValues = {}, fieldSanitizers = {}) {
     handleBlur,
     getCleanValues,
     bind,
+    isDirty,
+    hasChanges: isDirty,
+    isValid,
+    isSubmitDisabled: !isValid || !isDirty,
+    resetForm,
   };
 }

@@ -2,11 +2,32 @@
 
 import Image from "next/image";
 import { formatRupiah, formatDate } from "@/lib/formatters";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
 
-export function AdminDistributionTableRow({ item, onEdit, onDelete }) {
+export function AdminDistributionTableRow({
+	item,
+	isSelected = false,
+	onToggleSelect,
+	onEdit,
+	onDelete,
+}) {
 	return (
-		<TableRow className="hover:bg-slate-50/70 transition-colors">
+		<TableRow
+			data-state={isSelected ? "selected" : undefined}
+			className={`transition-colors ${
+				isSelected ? "bg-emerald-50/60" : "hover:bg-slate-50/70"
+			}`}
+		>
+			{/* Checkbox Pemilihan */}
+			<TableCell className="w-12 px-4 py-3 align-middle">
+				<Checkbox
+					checked={isSelected}
+					onCheckedChange={onToggleSelect}
+					aria-label={`Pilih data penyaluran ${item.title}`}
+				/>
+			</TableCell>
+
 			{/* Program Donasi Asal */}
 			<TableCell className="w-72 py-3 align-middle">
 				<div className="flex items-center gap-2.5">

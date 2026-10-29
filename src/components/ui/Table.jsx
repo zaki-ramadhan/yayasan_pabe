@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Pagination } from "@/components/ui/pagination";
+import { Pagination } from "@/components/ui/Pagination";
 
 const Table = React.forwardRef(
   ({ className, containerClassName, ...props }, ref) => (
@@ -360,8 +360,9 @@ export {
   TableCaption,
 };
 
-export { TableRowActions } from "./table-actions";
-export { TableToolbar } from "./table-toolbar";
+export { TableRowActions } from "./TableActions";
+export { TableToolbar } from "./TableToolbar";
 export { useTableSort } from "@/hooks/useTableSort";
+export { usePagination } from "@/hooks/usePagination";
 
 

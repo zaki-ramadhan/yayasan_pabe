@@ -1,8 +1,8 @@
 "use client";
 
 import { formatRupiah } from "@/lib/formatters";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Card } from "@/components/ui/Card";
 
 export function DonorSummaryCardsSkeleton() {
   return (

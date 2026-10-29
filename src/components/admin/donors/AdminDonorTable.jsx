@@ -11,21 +11,22 @@ import {
   TableEmptyRow,
   TablePaginationFooter,
   TableSkeletonRows,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 import { AdminDonorToolbar } from "./AdminDonorToolbar";
 import { AdminDonorTableRow } from "./AdminDonorTableRow";
 import { AdminDonorDetailDrawer } from "./AdminDonorDetailDrawer";
+import { usePagination } from "@/hooks/usePagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
+import { downloadCsv } from "@/lib/exportCsv";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 const PAGE_SIZE = 10;
 
 export function AdminDonorTable({ initialData = {} }) {
   const [donors, setDonors] = useState(initialData.items || []);
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedDonor, setSelectedDonor] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,20 +44,22 @@ export function AdminDonorTable({ initialData = {} }) {
     });
   }, [donors, debouncedSearch]);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
-  const paginatedDonors = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, currentPage]);
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems: paginatedDonors,
+    resetPage,
+  } = usePagination(filtered, { pageSize: PAGE_SIZE });
 
   const handleSearchChange = (e) => {
     setSearch(sanitizeSearchQuery(e.target.value));
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleClearSearch = () => {
     setSearch("");
-    setCurrentPage(1);
+    resetPage();
   };
 
   const handleRefresh = useCallback(async () => {
@@ -102,15 +105,7 @@ export function AdminDonorTable({ initialData = {} }) {
     ]);
 
     const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", `daftar_donatur_${new Date().toISOString().slice(0, 10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    downloadCsv(`daftar_donatur_${new Date().toISOString().slice(0, 10)}.csv`, csvContent);
     toast.success("Berkas CSV daftar donatur berhasil diunduh.");
   };
 

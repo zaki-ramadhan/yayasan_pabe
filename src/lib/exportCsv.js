@@ -39,7 +39,20 @@ export function exportTransactionsToCsv(transactions = [], filename = "laporan-t
     ...rows.map((r) => r.join(",")),
   ].join("\r\n");
 
-  const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+  downloadCsv(filename, csvContent);
+}
+
+/**
+ * Generic browser download trigger for CSV content.
+ * Guarantees UTF-8 BOM (\uFEFF) for Microsoft Excel compatibility.
+ *
+ * @param {string} filename - Output filename (e.g. data.csv)
+ * @param {string} csvContent - Raw CSV text content
+ */
+export function downloadCsv(filename, csvContent) {
+  if (!csvContent) return;
+  const normalized = csvContent.startsWith("\uFEFF") ? csvContent : "\uFEFF" + csvContent;
+  const blob = new Blob([normalized], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.setAttribute("href", url);

@@ -7,10 +7,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/DropdownMenu";
+import { Button } from "@/components/ui/Button";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
 import { cn } from "@/lib/utils";
 

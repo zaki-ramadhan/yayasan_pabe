@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/useToast";
+import { Button } from "@/components/ui/Button";
 import { RegisterTermsDialog } from "@/components/auth/RegisterTermsDialog";
 import { RegisterInputFields } from "@/components/auth/RegisterInputFields";
 import { SocialAuthGroup } from "@/components/auth/SocialAuthGroup";

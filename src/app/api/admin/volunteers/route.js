@@ -4,7 +4,9 @@ import { USER_ROLES } from "@/services/authService";
 import {
   getAdminVolunteers,
   updateVolunteerStatus,
+  updateVolunteersStatusBatch,
   deleteVolunteer,
+  deleteVolunteersBatch,
 } from "@/services/adminVolunteerService";
 
 export const dynamic = "force-dynamic";
@@ -48,11 +50,27 @@ export async function PATCH(request) {
 
   try {
     const body = await request.json();
-    const { id, status } = body;
+    const { id, ids, status } = body;
 
-    if (!id || !status) {
+    if (!status) {
       return NextResponse.json(
-        { success: false, message: "ID relawan dan status baru wajib dikirim." },
+        { success: false, message: "Status baru relawan wajib dikirim." },
+        { status: 400 }
+      );
+    }
+
+    if (Array.isArray(ids) && ids.length > 0) {
+      const result = await updateVolunteersStatusBatch(ids, status);
+      return NextResponse.json({
+        success: true,
+        message: `${result.count} data pendaftar relawan berhasil diperbarui menjadi ${status}.`,
+        data: result,
+      });
+    }
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: "ID relawan wajib dikirim." },
         { status: 400 }
       );
     }
@@ -83,6 +101,22 @@ export async function DELETE(request) {
     const id = searchParams.get("id");
 
     if (!id) {
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        body = null;
+      }
+
+      if (body?.ids && Array.isArray(body.ids) && body.ids.length > 0) {
+        const result = await deleteVolunteersBatch(body.ids);
+        return NextResponse.json({
+          success: true,
+          message: `${result.count} pendaftar relawan berhasil dihapus.`,
+          data: result,
+        });
+      }
+
       return NextResponse.json(
         { success: false, message: "ID relawan wajib disertakan." },
         { status: 400 }

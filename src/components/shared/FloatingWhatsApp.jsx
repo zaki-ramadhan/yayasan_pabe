@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { ORG_PROFILE } from "@/data/orgProfile";
 
+import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
+
 export function FloatingWhatsApp() {
   const pathname = usePathname();
 
@@ -23,8 +25,10 @@ export function FloatingWhatsApp() {
     return null;
   }
 
-  const cleanPhone = ORG_PROFILE.contacts.whatsapp.replace(/\D/g, "");
-  const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent("Assalamu'alaikum Yayasan PABE, mohon info program yayasan.")}`;
+  const waUrl = buildWhatsAppUrl(
+    ORG_PROFILE.contacts.whatsapp,
+    "Assalamu'alaikum Yayasan PABE, mohon info program yayasan."
+  );
 
   return (
     <div

@@ -3,10 +3,10 @@
 import { useEffect, useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { loginUser } from "@/services/authService";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { Loader2, ShieldCheck, AlertCircle } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 
 function AuthCallbackContent() {
   const router = useRouter();

@@ -7,7 +7,7 @@ import {
   getTopProgramsData,
   getDynamicYearOptions,
   MODE_OPTIONS,
-} from "./topProgramsData";
+} from "@/lib/topProgramsHelper";
 import { TopProgramCardItem } from "./TopProgramCardItem";
 import { cn } from "@/lib/utils";
 

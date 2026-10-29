@@ -1,27 +1,29 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { FormField } from "@/components/ui/form-field";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
+import { FormField } from "@/components/ui/FormField";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { getStoredUser } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import {
 	sanitizeName,
 	sanitizePhone,
 	sanitizeEmail,
+	sanitizeCity,
+	sanitizeStandardText,
 	stripEmojis,
 	validateName,
 	validatePhone,
@@ -200,6 +202,18 @@ export function VolunteerForm() {
 		});
 	}, []);
 
+	const isFormValid = useMemo(() => {
+		const nameOk = validateName(fullName).isValid;
+		const phoneOk = validatePhone(phone).isValid;
+		const emailOk = validateEmail(email, true).isValid;
+		const cleanCity = stripEmojis(city)
+			.replace(/[^a-zA-ZÀ-ÿ\s.,'\-]/g, "")
+			.trim();
+		const cityOk = cleanCity.length >= 2;
+		const interestOk = Boolean(interest);
+		return Boolean(nameOk && phoneOk && emailOk && cityOk && interestOk);
+	}, [fullName, phone, email, city, interest]);
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
@@ -339,6 +353,7 @@ export function VolunteerForm() {
 						setFullName(sanitizeName(e.target.value));
 						if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: undefined }));
 					}}
+					onBlur={() => setFullName((prev) => prev.trim())}
 					placeholder="Nama Anda"
 					className="h-11 font-normal"
 				/>
@@ -360,6 +375,7 @@ export function VolunteerForm() {
 							setPhone(sanitizePhone(e.target.value));
 							if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
 						}}
+						onBlur={() => setPhone((prev) => prev.trim())}
 						placeholder="0812xxxxxxxx"
 						className="h-11 font-normal"
 					/>
@@ -373,6 +389,8 @@ export function VolunteerForm() {
 				>
 					<Input
 						type="email"
+						inputMode="email"
+						spellCheck={false}
 						required
 						readOnly={isEmailLocked}
 						value={email}
@@ -383,6 +401,7 @@ export function VolunteerForm() {
 								if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
 							}
 						}}
+						onBlur={() => setEmail((prev) => prev.trim())}
 						placeholder="email@anda.com"
 						className={cn(
 							"h-11 font-normal",
@@ -405,13 +424,10 @@ export function VolunteerForm() {
 						value={city}
 						maxLength={50}
 						onChange={(e) => {
-							setCity(
-								stripEmojis(e.target.value)
-									.replace(/[^a-zA-ZÀ-ÿ\s.,'\-]/g, "")
-									.slice(0, 50)
-							);
+							setCity(sanitizeCity(e.target.value));
 							if (errors.city) setErrors((prev) => ({ ...prev, city: undefined }));
 						}}
+						onBlur={() => setCity((prev) => prev.trim())}
 						placeholder="Contoh: Jakarta Timur / Bekasi"
 						className="h-11 font-normal"
 					/>
@@ -452,9 +468,10 @@ export function VolunteerForm() {
 					value={motivation}
 					maxLength={500}
 					onChange={(e) => {
-						setMotivation(stripEmojis(e.target.value).slice(0, 500));
+						setMotivation(sanitizeStandardText(e.target.value, 500));
 						if (errors.motivation) setErrors((prev) => ({ ...prev, motivation: undefined }));
 					}}
+					onBlur={() => setMotivation((prev) => prev.trim())}
 					placeholder="Ceritakan keahlian atau alasan Anda ingin bergabung..."
 					className="resize-none"
 				/>
@@ -463,7 +480,7 @@ export function VolunteerForm() {
 			<Button
 				type="submit"
 				isLoading={loading}
-				disabled={loading}
+				disabled={loading || !isFormValid}
 				className="w-full h-11 font-medium"
 			>
 				{loading

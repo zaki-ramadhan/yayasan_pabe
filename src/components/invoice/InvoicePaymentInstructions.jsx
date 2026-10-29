@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion";
+} from "@/components/ui/Accordion";
 import { DashedDivider } from "@/components/ui/DashedDivider";
 
 /**

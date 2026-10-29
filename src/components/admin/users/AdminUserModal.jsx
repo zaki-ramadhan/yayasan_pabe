@@ -1,20 +1,27 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect } from "react";
-import { FormDialog } from "@/components/ui/form-dialog";
-import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect, useMemo } from "react";
+import { FormDialog } from "@/components/ui/FormDialog";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { MANAGEABLE_ROLES } from "@/lib/userParser";
 import { USER_ROLES } from "@/services/authService";
 import { validateEmail } from "@/lib/validator";
+import { isFormDirty } from "@/lib/formUtils";
+import {
+  sanitizeName,
+  sanitizeEmail,
+  sanitizePhone,
+  sanitizeStandardText,
+} from "@/lib/sanitizer";
 
 export function AdminUserModal({
   isOpen,
@@ -63,11 +70,17 @@ export function AdminUserModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const cleanName = formData.name.trim();
+    const cleanEmail = formData.email.trim();
+    const cleanPhone = formData.phone.trim();
+    const cleanTitle = formData.title.trim();
+    const cleanPassword = formData.password.trim();
+
     const newErrors = {};
-    if (!formData.name.trim()) {
+    if (!cleanName) {
       newErrors.name = "Nama lengkap wajib diisi.";
     }
-    const emailVal = validateEmail(formData.email.trim(), true);
+    const emailVal = validateEmail(cleanEmail, true);
     if (!emailVal.isValid) {
       newErrors.email = emailVal.message || "Format alamat email tidak valid.";
     }
@@ -80,8 +93,44 @@ export function AdminUserModal({
 
     setErrors({});
     setErrorMsg("");
-    onSubmit(formData);
+    onSubmit({
+      ...formData,
+      name: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone,
+      title: cleanTitle,
+      password: cleanPassword,
+    });
   };
+
+  const isDirty = useMemo(() => {
+    if (!isEdit || !user) {
+      return Boolean(formData.name.trim() || formData.email.trim() || formData.password.trim());
+    }
+    return isFormDirty(
+      {
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        role: user.role || USER_ROLES.ADMIN,
+        title: user.title || "",
+      },
+      {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        role: formData.role,
+        title: formData.title,
+      }
+    );
+  }, [isEdit, user, formData]);
+
+  const isFormValid = useMemo(() => {
+    const hasName = formData.name.trim().length >= 2;
+    const hasValidEmail = validateEmail(formData.email.trim(), true).isValid;
+    const hasValidPass = isEdit || formData.password.trim().length >= 6;
+    return Boolean(hasName && hasValidEmail && hasValidPass);
+  }, [formData.name, formData.email, formData.password, isEdit]);
 
   return (
     <FormDialog
@@ -90,9 +139,10 @@ export function AdminUserModal({
       onSubmit={handleSubmit}
       maxWidth="sm:max-w-lg"
       title={isEdit ? "Ubah data pengurus" : "Tambah pengurus baru"}
-      submitText={isEdit ? "Simpan perubahan" : "Tambah pengurus"}
+      submitText="Simpan"
       submittingText="Menyimpan..."
       isSubmitting={isLoading}
+      submitDisabled={!isFormValid || (isEdit && !isDirty)}
       formClassName="space-y-3.5 py-1 text-sm"
     >
       {errorMsg && (
@@ -105,11 +155,14 @@ export function AdminUserModal({
         <Input
           type="text"
           required
+          autoComplete="name"
+          maxLength={60}
           value={formData.name}
           onChange={(e) => {
-            setFormData({ ...formData, name: e.target.value });
+            setFormData((prev) => ({ ...prev, name: sanitizeName(e.target.value) }));
             if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
           }}
+          onBlur={() => setFormData((prev) => ({ ...prev, name: prev.name.trim() }))}
           placeholder="Contoh: Ust. Ahmad Fauzi, S.Pd"
         />
       </FormField>
@@ -118,21 +171,32 @@ export function AdminUserModal({
         <FormField label="Alamat email" required error={errors.email}>
           <Input
             type="email"
+            inputMode="email"
+            autoComplete="email"
+            maxLength={100}
+            spellCheck={false}
             required
             disabled={isEdit}
             value={formData.email}
             onChange={(e) => {
-              setFormData({ ...formData, email: e.target.value });
+              setFormData((prev) => ({ ...prev, email: sanitizeEmail(e.target.value) }));
               if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
             }}
+            onBlur={() => setFormData((prev) => ({ ...prev, email: prev.email.trim() }))}
             placeholder="nama@pabe.or.id"
           />
         </FormField>
         <FormField label="Nomor telepon">
           <Input
             type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            maxLength={15}
             value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            onChange={(e) => {
+              setFormData((prev) => ({ ...prev, phone: sanitizePhone(e.target.value) }));
+            }}
+            onBlur={() => setFormData((prev) => ({ ...prev, phone: prev.phone.trim() }))}
             placeholder="0812-xxxx-xxxx"
           />
         </FormField>
@@ -142,7 +206,7 @@ export function AdminUserModal({
         <FormField label="Peran sistem" required>
           <Select
             value={formData.role}
-            onValueChange={(val) => setFormData({ ...formData, role: val })}
+            onValueChange={(val) => setFormData((prev) => ({ ...prev, role: val }))}
           >
             <SelectTrigger className="w-full h-10 text-sm font-normal bg-white border border-slate-300 rounded-lg">
               <SelectValue placeholder="Pilih peran" />
@@ -163,8 +227,15 @@ export function AdminUserModal({
         <FormField label="Jabatan struktural">
           <Input
             type="text"
+            maxLength={60}
             value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            onChange={(e) => {
+              setFormData((prev) => ({
+                ...prev,
+                title: sanitizeStandardText(e.target.value, 60),
+              }));
+            }}
+            onBlur={() => setFormData((prev) => ({ ...prev, title: prev.title.trim() }))}
             placeholder="Contoh: Staf Verifikasi Kas"
           />
         </FormField>
@@ -177,8 +248,10 @@ export function AdminUserModal({
         >
           <Input
             type="text"
+            maxLength={50}
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
+            onBlur={() => setFormData((prev) => ({ ...prev, password: prev.password.trim() }))}
             placeholder="Kosongkan untuk generate acak otomatis"
           />
         </FormField>

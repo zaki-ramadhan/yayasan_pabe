@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
 import { TeamAvatarStack } from "./TeamAvatarStack";

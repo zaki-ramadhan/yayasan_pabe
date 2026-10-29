@@ -4,6 +4,8 @@ import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
 
+import { getInitials } from "@/lib/formatters";
+
 const Avatar = React.forwardRef(({ className, ...props }, ref) => (
   <AvatarPrimitive.Root
     ref={ref}
@@ -34,5 +36,46 @@ const AvatarFallback = React.forwardRef(({ className, ...props }, ref) => (
   />
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
+
+/**
+ * Standard reusable user avatar for table rows, drawers, and headers.
+ * Encapsulates Radix Avatar, image loading, and fallback initial generation.
+ *
+ * @param {object} props
+ * @param {string} [props.src] - Avatar image URL
+ * @param {string} [props.name] - Full user / donor name
+ * @param {string} [props.fallback="U"] - Fallback character or email
+ * @param {boolean} [props.isAnonymous=false] - If true, displays 'HA' (Hamba Allah)
+ * @param {string} [props.className] - Avatar container styling
+ * @param {string} [props.fallbackClassName] - Fallback text styling
+ * @param {string} [props.referrerPolicy="no-referrer"]
+ */
+export function UserAvatar({
+  src,
+  name,
+  fallback = "U",
+  isAnonymous = false,
+  className,
+  fallbackClassName,
+  referrerPolicy = "no-referrer",
+  children,
+}) {
+  const initial = isAnonymous ? "HA" : getInitials(name, fallback);
+
+  return (
+    <Avatar className={cn("w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100", className)}>
+      {src && (
+        <AvatarImage
+          src={src}
+          alt={name || "User"}
+          referrerPolicy={referrerPolicy}
+        />
+      )}
+      <AvatarFallback className={cn("bg-slate-100 text-slate-700 text-xs font-medium", fallbackClassName)}>
+        {children || initial}
+      </AvatarFallback>
+    </Avatar>
+  );
+}
 
 export { Avatar, AvatarImage, AvatarFallback };

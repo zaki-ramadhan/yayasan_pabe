@@ -4,16 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { Pause, Play, XCircle } from "lucide-react";
 import { formatRupiah } from "@/lib/formatters";
-import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/Button";
+import { StatusBadge } from "@/components/ui/Badge";
 import {
   DonorCard,
   DonorListItem,
   DonorListSkeleton,
   DonorEmptyText,
 } from "@/components/donor/DonorDashboardPrimitives";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function DonorRoutineDonationsCard({
   routineDonations: initialItems = [],
@@ -21,6 +22,7 @@ export function DonorRoutineDonationsCard({
 }) {
   const [items, setItems] = useState(initialItems);
   const [updatingId, setUpdatingId] = useState(null);
+  const [cancelCommitmentItem, setCancelCommitmentItem] = useState(null);
 
   const handleUpdateStatus = async (id, newStatus) => {
     setUpdatingId(id);
@@ -105,7 +107,7 @@ export function DonorRoutineDonationsCard({
                         onClick={() => handleUpdateStatus(item.id, "PAUSED")}
                         disabled={isProcessing}
                         isLoading={isProcessing}
-                        className="h-7 px-2.5 text-xs text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200 gap-1"
+                        className="h-7 px-2.5 text-xs text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200 gap-1 disabled:pointer-events-none disabled:cursor-not-allowed"
                       >
                         {!isProcessing && <Pause className="w-3 h-3" />}
                         <span>Jeda sementara</span>
@@ -118,7 +120,7 @@ export function DonorRoutineDonationsCard({
                         onClick={() => handleUpdateStatus(item.id, "ACTIVE")}
                         disabled={isProcessing}
                         isLoading={isProcessing}
-                        className="h-7 px-2.5 text-xs text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200 gap-1"
+                        className="h-7 px-2.5 text-xs text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200 gap-1 disabled:pointer-events-none disabled:cursor-not-allowed"
                       >
                         {!isProcessing && <Play className="w-3 h-3" />}
                         <span>Lanjutkan donasi</span>
@@ -129,14 +131,10 @@ export function DonorRoutineDonationsCard({
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => {
-                        if (confirm(`Apakah Anda yakin ingin membatalkan komitmen donasi rutin ini?`)) {
-                          handleUpdateStatus(item.id, "CANCELLED");
-                        }
-                      }}
+                      onClick={() => setCancelCommitmentItem(item)}
                       disabled={isProcessing}
                       isLoading={isProcessing}
-                      className="h-7 px-2.5 text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 border-rose-200 gap-1"
+                      className="h-7 px-2.5 text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 border-rose-200 gap-1 disabled:pointer-events-none disabled:cursor-not-allowed"
                     >
                       {!isProcessing && <XCircle className="w-3 h-3" />}
                       <span>Batalkan</span>
@@ -158,6 +156,22 @@ export function DonorRoutineDonationsCard({
           Atur donasi rutin baru
         </Button>
       </Link>
+
+      <ConfirmDialog
+        isOpen={Boolean(cancelCommitmentItem)}
+        onClose={() => setCancelCommitmentItem(null)}
+        onConfirm={async () => {
+          if (!cancelCommitmentItem) return;
+          const id = cancelCommitmentItem.id;
+          setCancelCommitmentItem(null);
+          await handleUpdateStatus(id, "CANCELLED");
+        }}
+        isLoading={updatingId === cancelCommitmentItem?.id}
+        title="Batalkan Donasi Rutin"
+        description="Apakah Anda yakin ingin membatalkan komitmen donasi rutin ini? Anda dapat mendaftar kembali kapan saja."
+        confirmLabel="Ya, batalkan"
+        confirmVariant="destructive"
+      />
     </DonorCard>
   );
 }

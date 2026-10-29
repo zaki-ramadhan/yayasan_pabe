@@ -4,6 +4,7 @@ import {
   createCategory,
   updateCategory,
   deleteCategory,
+  deleteCategoriesBatch,
 } from "@/services/categoryService";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
@@ -86,8 +87,29 @@ export async function DELETE(request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
+
+    // Jika dipanggil via JSON body { ids: [...] } (Bulk Delete)
     if (!id) {
-      return NextResponse.json({ success: false, message: "ID kategori wajib diisi." }, { status: 400 });
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        body = null;
+      }
+
+      if (body?.ids && Array.isArray(body.ids) && body.ids.length > 0) {
+        const result = await deleteCategoriesBatch({ ids: body.ids });
+        return NextResponse.json({
+          success: true,
+          message: `${result.count} kategori berhasil dihapus.`,
+          data: result,
+        });
+      }
+
+      return NextResponse.json(
+        { success: false, message: "ID kategori wajib disertakan." },
+        { status: 400 }
+      );
     }
 
     const deleted = await deleteCategory({

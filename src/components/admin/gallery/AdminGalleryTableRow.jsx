@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { Video, Play } from "lucide-react";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/formatters";
 import {
   isVideoUrl,
@@ -11,14 +12,35 @@ import {
   getYouTubeThumbnail,
 } from "@/lib/galleryGroupHelper";
 
-export function AdminGalleryTableRow({ item, onEdit, onDelete }) {
+export function AdminGalleryTableRow({
+  item,
+  isSelected = false,
+  onToggleSelect,
+  onEdit,
+  onDelete,
+}) {
   const displayTitle = item.title || "Dokumentasi kegiatan";
   const displayDate = item.activityDate || item.createdAt;
   const isYt = isYouTubeUrl(item.imageUrl);
   const isVid = isVideoUrl(item.imageUrl);
 
   return (
-    <TableRow className="hover:bg-slate-50/70 transition-colors">
+    <TableRow
+      onClick={onToggleSelect ? () => onToggleSelect(item.id) : undefined}
+      className={`transition-colors cursor-pointer ${
+        isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-slate-50/70"
+      }`}
+    >
+      {/* Checkbox Seleksi */}
+      <TableCell className="w-12 text-center py-2.5 align-middle" onClick={(e) => e.stopPropagation()}>
+        {onToggleSelect && (
+          <Checkbox
+            checked={isSelected}
+            onCheckedChange={() => onToggleSelect(item.id)}
+            aria-label={`Pilih ${displayTitle}`}
+          />
+        )}
+      </TableCell>
       {/* Thumbnail Foto / Video */}
       <TableCell className="w-20 py-2.5 align-middle">
         <div

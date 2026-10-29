@@ -80,7 +80,8 @@ export function PrayerInputBar({
             rows={1}
             disabled={isSubmitting}
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => setText(e.target.value.replace(/^\s+/, "").replace(/\s{2,}/g, " "))}
+            onBlur={() => setText((prev) => prev.trim())}
             onKeyDown={handleKeyDown}
             placeholder={isSubmitting ? "Sedang memproses doa..." : "Tulis doa kebaikan Anda..."}
             maxLength={maxLength}
@@ -135,7 +136,7 @@ export function PrayerInputBar({
         onClick={handleSend}
         disabled={!isValid || isSubmitting}
         aria-label="Kirim doa"
-        className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-sm transition-all cursor-pointer active:scale-95 disabled:cursor-not-allowed bg-primary hover:bg-primary-hover disabled:bg-slate-300 disabled:shadow-none mb-0.5"
+        className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-sm transition-all cursor-pointer active:scale-95 disabled:cursor-not-allowed disabled:pointer-events-none bg-primary hover:bg-primary-hover disabled:bg-slate-300 disabled:shadow-none mb-0.5"
       >
         {isSubmitting ? (
           <Loader2 className="w-5 h-5 animate-spin" />

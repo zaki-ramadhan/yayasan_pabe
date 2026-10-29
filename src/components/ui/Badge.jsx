@@ -94,4 +94,4 @@ function RoleBadge({ role, label, variant, className, ...props }) {
 }
 
 export { Badge, StatusBadge, RoleBadge, badgeVariants };
-export { RibbonBadge, ribbonBadgeVariants } from "./ribbon-badge";
+export { RibbonBadge, ribbonBadgeVariants } from "./RibbonBadge";

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
 import { cn } from "@/lib/utils";
 

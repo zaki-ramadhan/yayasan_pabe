@@ -8,7 +8,7 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from "@/components/ui/Chart";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import { formatRupiah, formatCompactNumber } from "@/lib/formatters";
 import { TIME_RANGE_OPTIONS, VIEW_MODE_OPTIONS } from "@/data/chartOptions";

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { AdminDonationTrendSkeleton } from "@/components/admin/analytics/AdminDonationTrendSkeleton";
 
 export function AdminDashboardSkeleton() {

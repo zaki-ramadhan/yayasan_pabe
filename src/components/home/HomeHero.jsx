@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { QuickDonateFolder } from "@/components/modules/QuickDonateFolder";
 import { cn } from "@/lib/utils";
 import { ASSET_PATHS } from "@/lib/assetConstants";

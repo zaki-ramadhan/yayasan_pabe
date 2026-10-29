@@ -6,20 +6,21 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { FormField } from "@/components/ui/form-field";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/components/ui/Select";
 import { AdminRoutineDonationStatusBadge } from "./AdminRoutineDonationStatusBadge";
 import { AdminRoutineTriggerButton } from "./AdminRoutineTriggerButton";
 import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
+import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 import { Mail, Phone, Calendar, Clock, HeartHandshake, User, ArrowUpRight, Loader2 } from "lucide-react";
 
 export function AdminRoutineDonationDetailDialog({
@@ -31,11 +32,10 @@ export function AdminRoutineDonationDetailDialog({
 }) {
   if (!donation) return null;
 
-  const cleanPhone = (donation.donorPhone || "").replace(/\D/g, "");
-  const waPhone = cleanPhone.startsWith("0") ? `62${cleanPhone.slice(1)}` : cleanPhone;
-  const waUrl = `https://wa.me/${waPhone}?text=${encodeURIComponent(
+  const waUrl = buildWhatsAppUrl(
+    donation.donorPhone,
     `Halo ${donation.donorName}, terima kasih atas komitmen donasi rutin Anda di Yayasan Payung Berkah untuk program "${donation.programTitle}".`
-  )}`;
+  );
 
   const frequencyLabel = {
     DAILY: "Harian (Setiap Hari)",

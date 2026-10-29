@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/Input";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
 import { ZakatHaulCheckbox } from "../ZakatHaulCheckbox";
 

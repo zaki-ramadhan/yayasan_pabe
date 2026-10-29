@@ -3,16 +3,16 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Camera, MapPin, Calendar, Trash2, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FormField } from "@/components/ui/form-field";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { FormField } from "@/components/ui/FormField";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from "@/components/ui/Dialog";
 import { formatDate, getInitials } from "@/lib/formatters";
 import { sanitizeImageUrl } from "@/lib/security";
 import { DonorProfileBannerCanvas } from "@/components/donor/DonorProfileBannerCanvas";
@@ -243,7 +243,7 @@ export function DonorProfileCover({
               onClick={handleSaveAvatar}
               className="h-9 px-4 min-w-[96px] text-sm font-medium rounded-md cursor-pointer"
             >
-              {isUpdating ? "Menyimpan..." : "Simpan foto"}
+              {isUpdating ? "Menyimpan..." : "Simpan"}
             </Button>
           </DialogFooter>
         </DialogContent>

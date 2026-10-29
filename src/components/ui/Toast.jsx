@@ -4,7 +4,7 @@ import * as React from "react";
 import { cva } from "class-variance-authority";
 import { X, CheckCircle2, AlertTriangle, CircleX, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/useToast";
 
 const toastVariants = cva(
   "group pointer-events-auto relative flex w-full items-center justify-between space-x-3 overflow-hidden rounded-xl border p-4 shadow-xl will-change-transform",

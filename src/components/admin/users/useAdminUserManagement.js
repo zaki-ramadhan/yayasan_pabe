@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useDebounce } from "@/hooks/useDebounce";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function useAdminUserManagement({ initialData = { items: [], pagination: {} } }) {
   const { currentUser } = useCurrentUser();

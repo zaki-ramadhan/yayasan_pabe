@@ -1,9 +1,9 @@
 "use client";
 
-import { formatRupiah, formatDate, decodeHtmlEntities, getInitials } from "@/lib/formatters";
+import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { UserAvatar } from "@/components/ui/Avatar";
 import { AdminRoutineDonationStatusBadge } from "./AdminRoutineDonationStatusBadge";
 
 export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
@@ -19,12 +19,11 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
       {/* Donatur & Kontak */}
       <TableCell className="w-60 py-3 align-middle">
         <div className="flex items-center gap-2.5">
-          <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
-            {item.donorAvatar && <AvatarImage src={item.donorAvatar} alt={item.donorName} />}
-            <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
-              {getInitials(item.donorName, "D")}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            src={item.donorAvatar}
+            name={item.donorName}
+            fallback="D"
+          />
           <div className="min-w-0 space-y-0.5">
             <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
               {item.donorName}

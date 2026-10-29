@@ -7,7 +7,7 @@ import { ArticleCard } from "@/components/shared/ArticleCard";
 import { CatalogSearchBar } from "@/components/shared/CatalogSearchBar";
 import { CategoryTabs } from "@/components/shared/CategoryTabs";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { Pagination } from "@/components/ui/pagination";
+import { Pagination } from "@/components/ui/Pagination";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -77,58 +77,60 @@ export function ArticleCatalog({ initialArticles = [], categories = ARTICLE_CATE
         onSelectCategory={handlers.onCategoryChange}
       />
 
-      <CatalogSearchBar
-        searchQuery={searchQuery}
-        sortBy={sortBy}
-        sortOptions={ARTICLE_SORT_OPTIONS}
-        onSearch={handlers.onSearchChange}
-        onClear={handlers.onClearSearch}
-        onSort={handlers.onSortChange}
-        isLoading={isPending || isDebouncing}
-        searchPlaceholder="Cari judul artikel..."
-      />
-
-      {paginatedItems.length > 0 ? (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-3">
-            {paginatedItems.map((art) => (
-              <ArticleCard
-                key={art.id}
-                article={art}
-                highlightQuery={debouncedSearchQuery}
-              />
-            ))}
-          </div>
-
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlers.onPageChange}
-            className="pt-6 sm:pt-8"
-          />
-        </div>
-      ) : (
-        <EmptyState
-          title={initialArticles.length === 0 ? "Belum Ada Artikel Dipublikasikan" : "Tidak Ada Artikel Ditemukan"}
-          description={
-            initialArticles.length === 0
-              ? "Artikel, kabar kegiatan, dan edukasi ziswaf yayasan akan segera hadir di sini."
-              : "Coba kata kunci lain atau pilih kategori lain."
-          }
-          variant="dashed"
-          action={
-            isFiltered ? (
-              <button
-                type="button"
-                onClick={handlers.onReset}
-                className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
-              >
-                Reset Semua Filter
-              </button>
-            ) : null
-          }
+      <div className="space-y-4">
+        <CatalogSearchBar
+          searchQuery={searchQuery}
+          sortBy={sortBy}
+          sortOptions={ARTICLE_SORT_OPTIONS}
+          onSearch={handlers.onSearchChange}
+          onClear={handlers.onClearSearch}
+          onSort={handlers.onSortChange}
+          isLoading={isPending || isDebouncing}
+          searchPlaceholder="Cari judul artikel..."
         />
-      )}
+
+        {paginatedItems.length > 0 ? (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-3">
+              {paginatedItems.map((art) => (
+                <ArticleCard
+                  key={art.id}
+                  article={art}
+                  highlightQuery={debouncedSearchQuery}
+                />
+              ))}
+            </div>
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlers.onPageChange}
+              className="pt-6 sm:pt-8"
+            />
+          </div>
+        ) : (
+          <EmptyState
+            title={initialArticles.length === 0 ? "Belum Ada Artikel Dipublikasikan" : "Tidak Ada Artikel Ditemukan"}
+            description={
+              initialArticles.length === 0
+                ? "Artikel, kabar kegiatan, dan edukasi ziswaf yayasan akan segera hadir di sini."
+                : "Coba kata kunci lain atau pilih kategori lain."
+            }
+            variant="dashed"
+            action={
+              isFiltered ? (
+                <button
+                  type="button"
+                  onClick={handlers.onReset}
+                  className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
+                >
+                  Reset Semua Filter
+                </button>
+              ) : null
+            }
+          />
+        )}
+      </div>
     </div>
   );
 }

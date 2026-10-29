@@ -37,15 +37,15 @@ export function GalleryCard({ item }) {
         </h3>
 
         <div className="flex items-center justify-between gap-2 text-xs">
-          {/* Kategori dengan teks tegas */}
-          <span className="font-medium text-slate-800 truncate max-w-[55%]">
+          {/* Kategori selaras dengan teks tanggal */}
+          <span className="truncate max-w-[55%] text-slate-600 font-medium text-xs" title={categoryName}>
             {categoryName}
           </span>
 
-          {/* Tanggal dengan teks jelas & kontras */}
+          {/* Tanggal kegiatan */}
           {displayDate && (
-            <div className="flex items-center gap-1.5 shrink-0 text-slate-700 font-medium">
-              <Calendar className="w-3.5 h-3.5 text-slate-600" />
+            <div className="flex items-center gap-1.5 shrink-0 text-slate-600 text-xs font-medium">
+              <Calendar className="w-3.5 h-3.5 text-slate-500" />
               <time dateTime={displayDate}>{formatDate(displayDate)}</time>
             </div>
           )}

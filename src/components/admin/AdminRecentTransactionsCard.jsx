@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Copy, Check, RefreshCw } from "lucide-react";
 import { formatRupiah, formatPaymentChannel } from "@/lib/formatters";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
 import { safeFetch } from "@/lib/safeFetch";
 import {
@@ -15,10 +15,10 @@ import {
   TableHead,
   TableCell,
   TableEmptyRow,
-} from "@/components/ui/table";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/ui/badge";
+} from "@/components/ui/Table";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { StatusBadge } from "@/components/ui/Badge";
 
 export function AdminRecentTransactionsCard({
   initialTransactions = [],
@@ -76,7 +76,7 @@ export function AdminRecentTransactionsCard({
             size="icon"
             onClick={refreshList}
             disabled={isLoading}
-            className="h-8 w-8 text-slate-600 hover:bg-slate-50"
+            className="h-8 w-8 text-slate-600 hover:bg-slate-50 disabled:pointer-events-none disabled:cursor-not-allowed"
             title="Segarkan transaksi terkini"
             aria-label="Segarkan transaksi terkini"
           >

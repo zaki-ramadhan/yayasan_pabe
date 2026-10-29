@@ -44,7 +44,7 @@ export function TableRowActions({
 					aria-label={
 						viewTooltip
 					}
-					className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+					className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
 				>
 					<Eye className="w-4 h-4" />
 				</button>
@@ -65,7 +65,7 @@ export function TableRowActions({
 					aria-label={
 						editTooltip
 					}
-					className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+					className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
 				>
 					<Edit3 className="w-4 h-4" />
 				</button>
@@ -86,7 +86,7 @@ export function TableRowActions({
 					aria-label={
 						deleteTooltip
 					}
-					className="p-1.5 rounded-md text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+					className="p-1.5 rounded-md text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
 				>
 					<Trash2 className="w-4 h-4" />
 				</button>

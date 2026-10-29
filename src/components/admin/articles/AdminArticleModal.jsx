@@ -2,15 +2,17 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect, useMemo } from "react";
-import { FormDialog } from "@/components/ui/form-dialog";
-import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { CreatableCombobox } from "@/components/ui/creatable-combobox";
+import { FormDialog } from "@/components/ui/FormDialog";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
+import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { toTitleCase } from "@/lib/formatters";
 import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
+import { isFormDirty } from "@/lib/formUtils";
+import { sanitizeStandardText } from "@/lib/sanitizer";
 
 const DEFAULT_ARTICLE_CATEGORIES = [
 	"Berita",
@@ -262,34 +264,53 @@ export function AdminArticleModal({
 		}
 	};
 
+	const isDirty = useMemo(() => {
+		if (!isEditing || !articleToEdit) {
+			return Boolean(title.trim() || content.trim() || bannerUrl.trim());
+		}
+		return isFormDirty(
+			{
+				title: articleToEdit.title || "",
+				category: articleToEdit.category || "Berita",
+				author: articleToEdit.author || "Redaksi Yayasan PABE",
+				bannerUrl: articleToEdit.bannerUrl || "",
+				excerpt: articleToEdit.excerpt || "",
+				content: articleToEdit.content || "",
+			},
+			{
+				title,
+				category,
+				author,
+				bannerUrl,
+				excerpt,
+				content,
+			}
+		);
+	}, [isEditing, articleToEdit, title, category, author, bannerUrl, excerpt, content]);
+
+	const isFormValid = useMemo(() => {
+		return Boolean(
+			title.trim().length >= 5 &&
+			category &&
+			content.trim().length >= 20
+		);
+	}, [title, category, content]);
+
 	return (
 		<FormDialog
-			isOpen={
-				isOpen
-			}
-			onClose={() =>
-				onOpenChange(
-					false,
-				)
-			}
-			onSubmit={
-				handleSubmit
-			}
+			isOpen={isOpen}
+			onClose={() => onOpenChange(false)}
+			onSubmit={handleSubmit}
 			maxWidth="max-w-2xl"
 			title={
 				isEditing
 					? "Edit artikel berita"
 					: "Tulis artikel & berita baru"
 			}
-			submitText={
-				isEditing
-					? "Simpan perubahan"
-					: "Terbitkan artikel"
-			}
+			submitText="Simpan"
 			submittingText="Menyimpan..."
-			isSubmitting={
-				isSubmitting
-			}
+			isSubmitting={isSubmitting}
+			submitDisabled={!isFormValid || (isEditing && !isDirty)}
 		>
 			{/* Judul artikel */}
 			<FormField
@@ -301,12 +322,14 @@ export function AdminArticleModal({
 					type="text"
 					placeholder="Contoh: Distribusi 500 Paket Sembako untuk Lansia Dhuafa"
 					value={title}
+					maxLength={150}
 					onChange={(e) => {
-						setTitle(e.target.value);
+						setTitle(sanitizeStandardText(e.target.value, 150));
 						if (errors.title) {
 							setErrors((prev) => ({ ...prev, title: "" }));
 						}
 					}}
+					onBlur={() => setTitle((prev) => prev.trim())}
 					required
 					className="h-10 text-sm bg-white"
 				/>
@@ -342,7 +365,9 @@ export function AdminArticleModal({
 						type="text"
 						placeholder="Contoh: Tim Humas PABE"
 						value={author}
-						onChange={(e) => setAuthor(e.target.value)}
+						maxLength={80}
+						onChange={(e) => setAuthor(sanitizeStandardText(e.target.value, 80))}
+						onBlur={() => setAuthor((prev) => prev.trim())}
 						className="h-10 text-sm bg-white"
 					/>
 				</FormField>
@@ -355,16 +380,18 @@ export function AdminArticleModal({
 				context="ARTICLE_BANNER"
 				identifier={title}
 				label="Foto sampul / banner artikel"
-				helperText="Mendukung JPG, PNG, WebP (Maks. 5MB). Disimpan rapi ke articles/banners."
+				helperText="Mendukung JPG, PNG, WebP (Maks. 10MB) • Bisa Ctrl + V. Otomatis dikonversi ke WebP."
 			/>
 
 			{/* Ringkasan Singkat (Excerpt) */}
 			<FormField label="Ringkasan singkat (lead / excerpt)">
 				<Textarea
 					rows={2}
+					maxLength={300}
 					placeholder="Ringkasan 1-2 kalimat pengantar artikel untuk kartu dan preview..."
 					value={excerpt}
 					onChange={(e) => setExcerpt(e.target.value)}
+					onBlur={() => setExcerpt((prev) => prev.trim())}
 					className="w-full text-sm leading-relaxed bg-white"
 				/>
 			</FormField>
@@ -385,6 +412,7 @@ export function AdminArticleModal({
 							setErrors((prev) => ({ ...prev, content: "" }));
 						}
 					}}
+					onBlur={() => setContent((prev) => prev.trim())}
 					required
 					className="w-full text-sm leading-relaxed bg-white"
 				/>

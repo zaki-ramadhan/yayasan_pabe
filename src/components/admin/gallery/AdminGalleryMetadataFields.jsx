@@ -1,9 +1,10 @@
 "use client";
 
-import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
-import { CreatableCombobox } from "@/components/ui/creatable-combobox";
-import { DatePicker } from "@/components/ui/date-picker";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
+import { DatePicker } from "@/components/ui/DatePicker";
+import { sanitizeStandardText } from "@/lib/sanitizer";
 
 /**
  * Sub-widget formulir metadata kegiatan galeri (Judul, Kategori, Tanggal, YouTube).
@@ -31,7 +32,8 @@ export function AdminGalleryMetadataFields({
           placeholder="Contoh: Penyerahan santunan adik asuh yatim"
           value={title}
           maxLength={120}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => setTitle(sanitizeStandardText(e.target.value, 120))}
+          onBlur={() => setTitle((prev) => (typeof prev === "string" ? prev.trim() : prev))}
           className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
         />
         <p className="text-xs text-slate-500 mt-1">
@@ -71,9 +73,13 @@ export function AdminGalleryMetadataFields({
         <FormField label="Tautan video YouTube (opsional)">
           <Input
             type="url"
+            inputMode="url"
+            maxLength={500}
+            spellCheck={false}
             placeholder="https://www.youtube.com/watch?v=... atau https://youtu.be/..."
             value={youtubeUrl}
-            onChange={(e) => setYoutubeUrl(e.target.value)}
+            onChange={(e) => setYoutubeUrl(e.target.value.replace(/\s+/g, "").slice(0, 500))}
+            onBlur={() => setYoutubeUrl((prev) => (typeof prev === "string" ? prev.trim() : prev))}
             className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
           />
           <p className="text-xs text-slate-500 mt-1">

@@ -1,16 +1,18 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect } from "react";
-import { FormDialog } from "@/components/ui/form-dialog";
-import { FormField } from "@/components/ui/form-field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { useState, useEffect, useMemo } from "react";
+import { FormDialog } from "@/components/ui/FormDialog";
+import { FormField } from "@/components/ui/FormField";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import { CreatableCombobox } from "@/components/ui/creatable-combobox";
+import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
-import { DatePicker } from "@/components/ui/date-picker";
+import { toast } from "@/hooks/useToast";
+import { DatePicker } from "@/components/ui/DatePicker";
+import { isFormDirty } from "@/lib/formUtils";
+import { sanitizeStandardText } from "@/lib/sanitizer";
 
 export function AdminDistributionModal({
 	isOpen,
@@ -186,34 +188,54 @@ export function AdminDistributionModal({
 		}
 	};
 
+	const isDirty = useMemo(() => {
+		if (!isEditing || !distributionToEdit) {
+			return Boolean(title.trim() || disbursedAmount > 0 || content.trim());
+		}
+		const initialDate = distributionToEdit.date ? distributionToEdit.date.split("T")[0] : "";
+		return isFormDirty(
+			{
+				campaignId: distributionToEdit.campaignId || campaigns[0]?.id || "",
+				title: distributionToEdit.title || "",
+				disbursedAmount: Number(distributionToEdit.disbursedAmount) || 0,
+				date: initialDate,
+				content: distributionToEdit.content || "",
+			},
+			{
+				campaignId,
+				title,
+				disbursedAmount: Number(disbursedAmount) || 0,
+				date,
+				content,
+			}
+		);
+	}, [isEditing, distributionToEdit, campaignId, campaigns, title, disbursedAmount, date, content]);
+
+	const isFormValid = useMemo(() => {
+		return Boolean(
+			campaignId &&
+			title.trim().length >= 5 &&
+			disbursedAmount > 0 &&
+			date &&
+			content.trim().length >= 10
+		);
+	}, [campaignId, title, disbursedAmount, date, content]);
+
 	return (
 		<FormDialog
-			isOpen={
-				isOpen
-			}
-			onClose={() =>
-				onOpenChange(
-					false,
-				)
-			}
-			onSubmit={
-				handleSubmit
-			}
+			isOpen={isOpen}
+			onClose={() => onOpenChange(false)}
+			onSubmit={handleSubmit}
 			maxWidth="max-w-xl"
 			title={
 				isEditing
 					? "Edit rekam penyaluran donasi"
 					: "Catat penyaluran donasi ke mustahik"
 			}
-			isSubmitting={
-				isSubmitting
-			}
-			submitText={
-				isEditing
-					? "Simpan perubahan"
-					: "Simpan penyaluran"
-			}
+			isSubmitting={isSubmitting}
+			submitText="Simpan"
 			submittingText="Menyimpan..."
+			submitDisabled={!isFormValid || (isEditing && !isDirty)}
 		>
 			<FormField
 				label="Program donasi terkait"
@@ -249,11 +271,12 @@ export function AdminDistributionModal({
 					value={title}
 					maxLength={120}
 					onChange={(e) => {
-						setTitle(e.target.value);
+						setTitle(sanitizeStandardText(e.target.value, 120));
 						if (errors.title) {
 							setErrors((prev) => ({ ...prev, title: "" }));
 						}
 					}}
+					onBlur={() => setTitle((prev) => prev.trim())}
 					className="h-10 text-sm font-normal text-slate-900 border-slate-300 rounded-lg"
 					required
 				/>
@@ -304,6 +327,7 @@ export function AdminDistributionModal({
 			>
 				<Textarea
 					rows={4}
+					maxLength={3000}
 					placeholder="Rincian jumlah penerima manfaat, lokasi penyerahan, dan ucapan doa dari mustahik..."
 					value={content}
 					onChange={(e) => {
@@ -312,6 +336,7 @@ export function AdminDistributionModal({
 							setErrors((prev) => ({ ...prev, content: "" }));
 						}
 					}}
+					onBlur={() => setContent((prev) => prev.trim())}
 					className="w-full text-sm font-normal leading-relaxed border-slate-300"
 					required
 				/>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
 
 export function ZakatPenghasilanForm({

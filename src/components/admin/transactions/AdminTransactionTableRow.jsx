@@ -1,10 +1,10 @@
 "use client";
 
 import { Copy, Check, ShieldCheck } from "lucide-react";
-import { formatRupiah, formatDate, getInitials } from "@/lib/formatters";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { StatusBadge } from "@/components/ui/badge";
+import { formatRupiah, formatDate } from "@/lib/formatters";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { UserAvatar } from "@/components/ui/Avatar";
+import { StatusBadge } from "@/components/ui/Badge";
 import { maskEmail } from "@/lib/security";
 
 export function AdminTransactionTableRow({
@@ -44,12 +44,12 @@ export function AdminTransactionTableRow({
       {/* Donatur */}
       <TableCell className="w-px py-3 whitespace-nowrap align-middle">
         <div className="flex items-center gap-2.5">
-          <Avatar className="w-8 h-8 rounded-full border border-slate-200 shrink-0 bg-slate-100">
-            {item.donorAvatar && <AvatarImage src={item.donorAvatar} alt={item.donorName} />}
-            <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-medium">
-              {item.isAnonymous ? "HA" : getInitials(item.donorName, "D")}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            src={item.donorAvatar}
+            name={item.donorName}
+            fallback="D"
+            isAnonymous={item.isAnonymous}
+          />
           <div className="min-w-0 space-y-0.5">
             <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
               {item.donorName}

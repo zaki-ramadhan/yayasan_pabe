@@ -7,7 +7,7 @@ import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
 import { AdminTopHeader } from "@/components/admin/AdminTopHeader";
 import { getStoredUser, logoutUser, USER_ROLES } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function AdminLayoutClient({ children, initialUser }) {
   const router = useRouter();
@@ -152,7 +152,6 @@ export function AdminLayoutClient({ children, initialUser }) {
         />
       </aside>
 
-      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 min-h-screen">
         <AdminTopHeader
           currentUser={currentUser}

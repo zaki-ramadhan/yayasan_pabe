@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { getStoredUser, logoutUser } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { NavDesktopMenu } from "@/components/nav/NavDesktopMenu";
 import { NavUserDropdown } from "@/components/nav/NavUserDropdown";
 import { NavMobileDrawer } from "@/components/nav/NavMobileDrawer";

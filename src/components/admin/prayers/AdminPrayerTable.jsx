@@ -1,5 +1,6 @@
 "use client";
 
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import {
   Table,
   TableContainer,
@@ -10,7 +11,10 @@ import {
   TableRow,
   TableEmptyRow,
   TablePaginationFooter,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Button } from "@/components/ui/Button";
+import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import { AdminPrayerToolbar } from "./AdminPrayerToolbar";
 import { AdminPrayerTableRow } from "./AdminPrayerTableRow";
 import { useAdminPrayerModeration } from "./useAdminPrayerModeration";
@@ -28,7 +32,9 @@ export function AdminPrayerTable({
     statusFilter,
     campaignFilter,
     togglingId,
+    isBulkProcessing,
     isPending,
+    selection,
     handleRefresh,
     handleSearchChange,
     handleClearSearch,
@@ -36,6 +42,7 @@ export function AdminPrayerTable({
     handleCampaignFilterChange,
     handlePageChange,
     handleToggleHide,
+    handleBulkToggleHide,
   } = useAdminPrayerModeration({ initialData });
 
   return (
@@ -54,12 +61,60 @@ export function AdminPrayerTable({
         onRefresh={handleRefresh}
       />
 
-      {/* Main Table Container */}
+      {/* Reusable Bulk Action Bar */}
+      <TableSelectionBar
+        selectedCount={selection.selectedCount}
+        totalCount={prayers.length}
+        label="doa"
+        onSelectAll={selection.selectAll}
+        isAllSelected={selection.allSelected}
+        onClearSelection={selection.clearSelection}
+      >
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={isBulkProcessing}
+          onClick={() => handleBulkToggleHide(true)}
+          className="bg-white border-slate-300 text-rose-700 hover:bg-rose-50 hover:border-rose-300 font-medium h-8 text-xs gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
+        >
+          {isBulkProcessing ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <EyeOff className="w-3.5 h-3.5 text-rose-600" />
+          )}
+          <span>Sembunyikan terpilih</span>
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={isBulkProcessing}
+          onClick={() => handleBulkToggleHide(false)}
+          className="bg-white border-slate-300 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 font-medium h-8 text-xs gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
+        >
+          {isBulkProcessing ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <Eye className="w-3.5 h-3.5 text-emerald-600" />
+          )}
+          <span>Tampilkan terpilih</span>
+        </Button>
+      </TableSelectionBar>
+
       <TableContainer>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-12 text-center py-2.5">
+                  <Checkbox
+                    checked={selection.allSelected}
+                    indeterminate={selection.isIndeterminate}
+                    onCheckedChange={selection.toggleSelectAll}
+                    aria-label="Pilih semua doa di halaman ini"
+                  />
+                </TableHead>
                 <TableHead className="w-[170px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   No. Invoice
                 </TableHead>
@@ -89,7 +144,7 @@ export function AdminPrayerTable({
             <TableBody className="divide-y divide-slate-100">
               {prayers.length === 0 ? (
                 <TableEmptyRow
-                  colSpan={8}
+                  colSpan={9}
                   isFiltered={Boolean(search || statusFilter !== "ALL" || campaignFilter !== "ALL")}
                 />
               ) : (
@@ -97,6 +152,8 @@ export function AdminPrayerTable({
                   <AdminPrayerTableRow
                     key={item.id}
                     item={item}
+                    isSelected={selection.isSelected(item.id)}
+                    onToggleSelect={selection.toggleSelect}
                     isToggling={togglingId === item.id}
                     onToggleHide={handleToggleHide}
                   />

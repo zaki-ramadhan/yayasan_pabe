@@ -3,30 +3,36 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Badge } from "@/components/ui/Badge";
+import { formatDate } from "@/lib/formatters";
 
 export function AdminArticleTableRow({
 	article,
+	isSelected = false,
+	onToggleSelect,
 	onEdit,
 	onDelete,
 	isDeleting,
 }) {
-	const dateDisplay = article.publishedAt
-		? new Date(
-				article.publishedAt,
-			).toLocaleDateString(
-				"id-ID",
-				{
-					day: "numeric",
-					month: "short",
-					year: "numeric",
-				},
-			)
-		: "-";
+	const dateDisplay = formatDate(article.publishedAt, { month: "short" });
 
 	return (
-		<TableRow>
+		<TableRow
+			className={`hover:bg-slate-50/70 transition-colors ${
+				isSelected ? "bg-emerald-50/60 hover:bg-emerald-50/80" : ""
+			}`}
+		>
+			{/* 0. Selection Checkbox */}
+			<TableCell className="w-12 text-center py-2.5 px-3 align-middle" onClick={(e) => e.stopPropagation()}>
+				<Checkbox
+					checked={isSelected}
+					onCheckedChange={() => onToggleSelect?.(article.id)}
+					aria-label={`Pilih artikel: ${article.title}`}
+				/>
+			</TableCell>
+
 			<TableCell className="py-2.5 align-middle">
 				<div className="w-12 h-9 rounded bg-slate-100 overflow-hidden relative border border-slate-200 shrink-0">
 					<Image
