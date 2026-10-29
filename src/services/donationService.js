@@ -10,6 +10,8 @@ import {
 } from "@/lib/security";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
+import { createSnapTransaction } from "@/services/midtransService";
+import { getMidtransServerKey } from "@/lib/midtransConfig";
 
 export async function createDonation({
   campaignId = null,
@@ -57,8 +59,9 @@ export async function createDonation({
 
   const now = new Date();
   const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
-  const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-  const invoiceId = `INV-${dateStr}-${randomSuffix}`;
+  const microTime = Date.now().toString().slice(-4);
+  const randomSuffix = Math.floor(100000 + Math.random() * 900000);
+  const invoiceId = `INV-${dateStr}-${microTime}-${randomSuffix}`;
 
   const uniqueCode = channel.type === "QRIS" || channel.type === "EWALLET" ? Math.floor(100 + Math.random() * 900) : 0;
   const totalAmount = Number(amount) + uniqueCode + (channel.fee || 0);
@@ -83,6 +86,27 @@ export async function createDonation({
     virtualAccountNumber = `${bankPrefix}${cleanDonorPhone.slice(-8)}`;
   }
 
+  let snapToken = null;
+  let snapRedirectUrl = null;
+  if (getMidtransServerKey()) {
+    try {
+      const snap = await createSnapTransaction({
+        orderId: invoiceId,
+        amount: totalAmount,
+        donorName: cleanDonorName,
+        donorEmail: cleanDonorEmail,
+        donorPhone: cleanDonorPhone,
+        campaignTitle,
+      });
+      snapToken = snap.token;
+      snapRedirectUrl = snap.redirectUrl;
+    } catch (err) {
+      console.warn("Midtrans createSnapTransaction warning (proceeding with fallback):", err.message);
+    }
+  }
+
+  const effectivePaymentRef = snapToken || virtualAccountNumber || null;
+
   const donationData = {
     invoiceId,
     accessToken,
@@ -98,6 +122,8 @@ export async function createDonation({
     paymentChannelName: channel.name,
     paymentChannelType: channel.type,
     virtualAccountNumber,
+    snapToken,
+    snapRedirectUrl,
     donorName: cleanDonorName,
     donorEmail: cleanDonorEmail,
     donorPhone: cleanDonorPhone,
@@ -119,7 +145,7 @@ export async function createDonation({
         uniqueCode,
         totalAmount,
         paymentChannel: channel.id,
-        paymentRef: virtualAccountNumber || null,
+        paymentRef: effectivePaymentRef,
         donorName: cleanDonorName,
         donorEmail: cleanDonorEmail || null,
         donorPhone: cleanDonorPhone,
@@ -187,6 +213,31 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
       const isStaff = Boolean(sessionUser?.role && sessionUser.role !== "DONOR");
       const isAuthorized = Boolean((token && token === effectiveAccessToken) || isOwner || isStaff);
 
+      let snapToken = null;
+      if (dbDonation.paymentRef && dbDonation.paymentRef.includes("-")) {
+        snapToken = dbDonation.paymentRef;
+      }
+
+      if (dbDonation.status === "PENDING" && !snapToken && getMidtransServerKey()) {
+        try {
+          const snap = await createSnapTransaction({
+            orderId: dbDonation.invoiceId,
+            amount: dbDonation.totalAmount,
+            donorName: dbDonation.donorName,
+            donorEmail: dbDonation.donorEmail || "",
+            donorPhone: dbDonation.donorPhone,
+            campaignTitle: dbDonation.campaign?.title || "Sedekah Umum PABE",
+          });
+          snapToken = snap.token;
+          await prisma.donation.update({
+            where: { id: dbDonation.id },
+            data: { paymentRef: snapToken },
+          });
+        } catch (snapErr) {
+          console.warn("On-demand Snap token generation error:", snapErr.message);
+        }
+      }
+
       return {
         id: dbDonation.id,
         invoiceId: dbDonation.invoiceId,
@@ -204,7 +255,8 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
         paymentChannelId: channel.id,
         paymentChannelName: channel.name,
         paymentChannelType: channel.type,
-        virtualAccountNumber: dbDonation.paymentRef || "",
+        virtualAccountNumber: channel.type === "VA" ? (dbDonation.paymentRef || "") : "",
+        snapToken,
         donorName: dbDonation.donorName,
         donorEmail: dbDonation.donorEmail || "",
         donorPhone: dbDonation.donorPhone,
