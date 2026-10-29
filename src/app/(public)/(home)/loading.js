@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { CampaignCardMinimalSkeleton } from "@/components/home/CampaignCardMinimalSkeleton";
 import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
 import { HomeStrategicRoadmapSkeleton } from "@/components/home/HomeStrategicRoadmapSkeleton";
+import { HomeInstagramSkeleton } from "@/components/home/HomeInstagramSkeleton";
 
 export default function HomeLoading() {
   return (
@@ -168,39 +169,7 @@ export default function HomeLoading() {
       <HomeStrategicRoadmapSkeleton />
 
       {/* 6. Dokumentasi Media Sosial (Instagram Feed Section) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <Skeleton className="h-8 sm:h-9 lg:h-10 w-72 sm:w-80 max-w-full mx-auto rounded-lg" />
-          <Skeleton className="h-4 w-96 max-w-full mx-auto rounded" />
-        </div>
-
-        {/* Profile Card Preview Skeleton */}
-        <div className="flex justify-center py-2">
-          <div className="w-full max-w-md bg-white rounded-xl border border-slate-300 p-4 sm:p-5 flex items-center gap-4">
-            <Skeleton className="w-14 h-14 rounded-full shrink-0" />
-            <div className="flex-1 space-y-1.5">
-              <Skeleton className="h-4 w-32 rounded" />
-              <Skeleton className="h-3 w-48 rounded" />
-              <div className="flex gap-3 pt-1">
-                <Skeleton className="h-3 w-16 rounded" />
-                <Skeleton className="h-3 w-16 rounded" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Filter Toggle Skeleton */}
-        <div className="flex justify-center">
-          <Skeleton className="h-9 w-48 rounded-full" />
-        </div>
-
-        {/* Photo Grid Skeleton (3x3 on desktop) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-            <Skeleton key={i} className="aspect-square w-full rounded sm:rounded-xl" />
-          ))}
-        </div>
-      </section>
+      <HomeInstagramSkeleton />
 
       {/* 6. Artikel & FAQ Grid Section (7 col Articles, 5 col FAQ) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

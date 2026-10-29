@@ -61,4 +61,5 @@ export function HomeInstagramFeed({ posts = [], account = DEFAULT_ACCOUNT }) {
   );
 }
 
+export { HomeInstagramSkeleton } from "./HomeInstagramSkeleton";
 export default HomeInstagramFeed;
