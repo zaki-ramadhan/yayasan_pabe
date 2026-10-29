@@ -8,11 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
 import { VolunteerIdCard } from "./VolunteerIdCard";
 import { copyToClipboard } from "@/lib/clipboard";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 
 export function VolunteerPrintDialog({
   isOpen,

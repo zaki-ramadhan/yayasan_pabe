@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { ShieldCheck, ShieldAlert, CheckCircle2, MapPin, Calendar, HeartHandshake, PhoneCall } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/Avatar";
+import { Button } from "@/components/ui/Button";
 import { formatDate, getInitials } from "@/lib/formatters";
 import { ORG_PROFILE } from "@/data/orgProfile";
+import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 
 export function VolunteerVerificationCard({ volunteer }) {
   const isApproved = Boolean(volunteer && volunteer.isApproved);
@@ -32,7 +33,10 @@ export function VolunteerVerificationCard({ volunteer }) {
           </p>
           <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
             <a
-              href={`https://wa.me/${ORG_PROFILE.contacts.whatsapp.replace(/[^0-9]/g, "")}?text=Halo%20Admin%20Yayasan,%20saya%20ingin%20verifikasi%20keaslian%20relawan`}
+              href={buildWhatsAppUrl(
+                ORG_PROFILE.contacts.whatsapp,
+                "Halo Admin Yayasan, saya ingin verifikasi keaslian relawan"
+              )}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex"
@@ -69,9 +73,7 @@ export function VolunteerVerificationCard({ volunteer }) {
         </p>
       </div>
 
-      {/* Main Profile Info */}
       <div className="p-5 sm:p-6 space-y-5">
-        {/* Avatar & Nama */}
         <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
           <Avatar className="w-20 h-20 rounded-full border-2 border-emerald-600/30 shadow-xs bg-slate-100 shrink-0">
             <AvatarFallback className="bg-emerald-50 text-emerald-900 font-bold text-2xl">
@@ -91,7 +93,6 @@ export function VolunteerVerificationCard({ volunteer }) {
           </div>
         </div>
 
-        {/* Tabel Rincian Legalitas */}
         <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50 text-xs sm:text-sm">
           <div className="flex justify-between items-center p-3">
             <span className="text-slate-500 font-normal">Bidang Penugasan:</span>
@@ -117,7 +118,6 @@ export function VolunteerVerificationCard({ volunteer }) {
           </div>
         </div>
 
-        {/* Pernyataan Hukum & Legalitas Yayasan */}
         <div className="p-3.5 bg-emerald-50/70 border border-emerald-200/80 rounded-xl space-y-1.5 text-xs text-emerald-950">
           <div className="flex items-center gap-1.5 font-semibold text-emerald-900">
             <HeartHandshake className="w-4 h-4 text-emerald-700 shrink-0" />
@@ -131,7 +131,6 @@ export function VolunteerVerificationCard({ volunteer }) {
           </p>
         </div>
 
-        {/* Footer Navigasi */}
         <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
           <Link href="/" className="inline-flex w-full sm:w-auto">
             <Button variant="outline" className="w-full h-9 text-xs sm:text-sm font-normal cursor-pointer">
@@ -139,7 +138,7 @@ export function VolunteerVerificationCard({ volunteer }) {
             </Button>
           </Link>
           <a
-            href={`https://wa.me/${ORG_PROFILE.contacts.whatsapp.replace(/[^0-9]/g, "")}`}
+            href={buildWhatsAppUrl(ORG_PROFILE.contacts.whatsapp)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex w-full sm:w-auto"

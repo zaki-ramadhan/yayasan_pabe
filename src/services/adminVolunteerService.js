@@ -96,3 +96,35 @@ export async function deleteVolunteer(id) {
     where: { id },
   });
 }
+
+/**
+ * Menghapus banyak data pendaftar relawan sekaligus dari database.
+ */
+export async function deleteVolunteersBatch(ids) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID relawan tidak boleh kosong.");
+  }
+  const result = await prisma.volunteer.deleteMany({
+    where: { id: { in: ids } },
+  });
+  return { count: result.count };
+}
+
+/**
+ * Memperbarui status banyak relawan sekaligus (misal APPROVED / REJECTED).
+ */
+export async function updateVolunteersStatusBatch(ids, newStatus) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID relawan tidak boleh kosong.");
+  }
+  const status = sanitizeInput(newStatus || "").toUpperCase();
+  if (!VALID_STATUSES.includes(status)) {
+    throw new Error("Status pendaftar relawan tidak valid.");
+  }
+
+  const result = await prisma.volunteer.updateMany({
+    where: { id: { in: ids } },
+    data: { status },
+  });
+  return { count: result.count, status };
+}

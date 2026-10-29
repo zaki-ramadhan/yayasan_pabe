@@ -182,3 +182,28 @@ export async function deleteAdminArticle(id) {
     where: { id },
   });
 }
+
+/**
+ * Menghapus banyak artikel sekaligus dan membersihkan banner di R2.
+ */
+export async function deleteAdminArticlesBatch(ids) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID artikel tidak boleh kosong.");
+  }
+
+  const articlesToDelete = await prisma.article.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, bannerUrl: true },
+  });
+
+  const bannerUrls = articlesToDelete.map((a) => a.bannerUrl).filter(Boolean);
+  if (bannerUrls.length > 0) {
+    await Promise.allSettled(bannerUrls.map((url) => deleteFromR2(url)));
+  }
+
+  const result = await prisma.article.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  return { count: result.count };
+}

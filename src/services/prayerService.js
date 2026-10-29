@@ -128,6 +128,33 @@ export async function toggleHidePrayer({
 }
 
 /**
+ * Menyembunyikan atau menampilkan banyak doa donatur sekaligus.
+ *
+ * @param {{
+ *   donationIds: string[],
+ *   isHidden: boolean,
+ * }} params
+ * @returns {Promise<{ count: number, isPrayerHidden: boolean }>}
+ */
+export async function toggleHidePrayerBatch({ donationIds, isHidden }) {
+  if (!Array.isArray(donationIds) || donationIds.length === 0) {
+    throw new Error("Daftar ID doa donatur tidak boleh kosong.");
+  }
+
+  try {
+    const result = await prisma.donation.updateMany({
+      where: { id: { in: donationIds } },
+      data: { isPrayerHidden: Boolean(isHidden) },
+    });
+
+    return { count: result.count, isPrayerHidden: Boolean(isHidden) };
+  } catch (error) {
+    console.error("Error toggleHidePrayerBatch:", error.message);
+    throw new Error("Gagal memperbarui status moderasi doa massal.");
+  }
+}
+
+/**
  * Menyematkan (pin) atau melepas pin doa donatur.
  */
 export async function togglePinPrayer({

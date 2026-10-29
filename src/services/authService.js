@@ -92,6 +92,7 @@ export const SESSION_DURATIONS = {
   ADMIN_REMEMBER: 24 * 60 * 60, // 24 jam
   DONOR_DEFAULT: 7 * 24 * 60 * 60, // 7 hari
   DONOR_REMEMBER: 30 * 24 * 60 * 60, // 30 hari
+  DONOR_OAUTH: 30 * 24 * 60 * 60, // 30 hari otomatis untuk login OAuth (Google & Facebook)
 };
 
 export function getSessionDuration(role, rememberMe = false) {
@@ -100,6 +101,11 @@ export function getSessionDuration(role, rememberMe = false) {
     return rememberMe ? SESSION_DURATIONS.ADMIN_REMEMBER : SESSION_DURATIONS.ADMIN_DEFAULT;
   }
   return rememberMe ? SESSION_DURATIONS.DONOR_REMEMBER : SESSION_DURATIONS.DONOR_DEFAULT;
+}
+
+export function getOAuthSessionDuration(role) {
+  const isStaff = role && role !== USER_ROLES.DONOR;
+  return isStaff ? SESSION_DURATIONS.ADMIN_DEFAULT : SESSION_DURATIONS.DONOR_OAUTH;
 }
 
 export function getInitials(name = "") {

@@ -246,3 +246,43 @@ export async function updateGalleryItem(id, { title, category, description, acti
     },
   });
 }
+
+/**
+ * Menghapus banyak dokumentasi galeri sekaligus dan membersihkan berkas R2-nya secara paralel.
+ *
+ * @param {string[]} ids - Daftar ID galeri yang akan dihapus
+ * @returns {Promise<{ count: number }>}
+ */
+export async function deleteGalleryItemsBatch(ids) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID dokumentasi tidak boleh kosong.");
+  }
+
+  if (!prisma.galleryItem) {
+    throw new Error(
+      "Model galleryItem belum dimuat ke client Prisma. Jalankan 'pnpm exec prisma generate' lalu restart server 'pnpm dev'."
+    );
+  }
+
+  const items = await prisma.galleryItem.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, imageUrl: true },
+  });
+
+  if (items.length === 0) return { count: 0 };
+
+  const validIds = items.map((i) => i.id);
+
+  await prisma.galleryItem.deleteMany({
+    where: { id: { in: validIds } },
+  });
+
+  // Hapus berkas gambar/video dari R2 secara paralel tanpa memutus proses bila ada yang gagal
+  await Promise.allSettled(
+    items
+      .filter((i) => i.imageUrl && !i.imageUrl.includes("youtube.com") && !i.imageUrl.includes("youtu.be"))
+      .map((i) => deleteFromR2(i.imageUrl).catch(() => {}))
+  );
+
+  return { count: validIds.length };
+}

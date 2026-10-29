@@ -18,6 +18,7 @@ export {
   createAdminDistribution,
   updateAdminDistribution,
   deleteAdminDistribution,
+  deleteAdminDistributionsBatch,
 } from "./adminDistributionService";
 
 /**

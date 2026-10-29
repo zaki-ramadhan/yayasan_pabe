@@ -7,12 +7,22 @@ import {
   sanitizePrayer,
   sanitizeInput,
   stripEmojis,
+  sanitizeSlug,
+  sanitizeSearchQuery,
+  sanitizeDigitsOnly,
+  sanitizeStandardText,
   DONATION_LIMITS,
 } from "@/lib/security";
 import {
   calculateZakatPenghasilan,
   calculateZakatMaal,
 } from "@/lib/zakat/calculations";
+import {
+  USER_ROLES,
+  SESSION_DURATIONS,
+  getSessionDuration,
+  getOAuthSessionDuration,
+} from "@/services/authService";
 
 describe("Security & Anomaly Defense: Validasi Nominal Donasi", () => {
   it("menolak nominal bernilai negatif (anomali balance manipulasi)", () => {
@@ -127,3 +137,59 @@ describe("Security & Anomaly Defense: Kalkulasi Zakat Terhadap Nilai Ekstrem & N
     expect(result.zakatAmount).toBe(0);
   });
 });
+
+describe("Security & Form Input Hardening: Sanitizer Standar Terpusat", () => {
+  it("sanitizeSlug membersihkan spasi, karakter non-URL, kompresi strip, dan leading dash", () => {
+    // Mempertahankan trailing dash agar pengguna tetap bisa mengetik tanda strip antar kata saat onChange
+    expect(sanitizeSlug("  Pendidikan & Dakwah 2026!  ")).toBe("pendidikan-dakwah-2026-");
+    expect(sanitizeSlug("---kategori---baru---")).toBe("kategori-baru-");
+    expect(sanitizeSlug("Berita🎉 Yayasan")).toBe("berita-yayasan");
+  });
+
+  it("sanitizeSearchQuery mencegah leading space, kompresi double space, dan filter karakter injeksi", () => {
+    expect(sanitizeSearchQuery("   kata kunci   ganda  ")).toBe("kata kunci ganda ");
+    expect(sanitizeSearchQuery("search<script>alert(1)</script>")).toBe("searchscriptalert1/script");
+    expect(sanitizeSearchQuery("cari'; DROP TABLE users;--")).toBe("cari DROP TABLE users--");
+  });
+
+  it("sanitizeDigitsOnly secara mutlak memblokir huruf dan simbol", () => {
+    expect(sanitizeDigitsOnly("2024e-5")).toBe("20245");
+    expect(sanitizeDigitsOnly("-2024+")).toBe("2024");
+    expect(sanitizeDigitsOnly("abc123xyz")).toBe("123");
+  });
+
+  it("sanitizeStandardText mencegah leading space, kompresi spasi ganda, dan menghapus tag HTML/emoji", () => {
+    expect(sanitizeStandardText("   Judul   Program   Kebaikan   ")).toBe("Judul Program Kebaikan ");
+    expect(sanitizeStandardText("<p>Teks normal 😊</p>")).toBe("Teks normal ");
+  });
+});
+
+describe("Session Security & Durations Architecture (SSOT)", () => {
+  it("durasi default manual login: 12 jam untuk Staf dan 7 hari untuk Donatur", () => {
+    expect(getSessionDuration(USER_ROLES.SUPER_ADMIN, false)).toBe(SESSION_DURATIONS.ADMIN_DEFAULT);
+    expect(getSessionDuration(USER_ROLES.ADMIN, false)).toBe(12 * 60 * 60);
+    expect(getSessionDuration(USER_ROLES.FINANCE, false)).toBe(12 * 60 * 60);
+    expect(getSessionDuration(USER_ROLES.VOLUNTEER, false)).toBe(12 * 60 * 60);
+    expect(getSessionDuration(USER_ROLES.DONOR, false)).toBe(SESSION_DURATIONS.DONOR_DEFAULT);
+    expect(getSessionDuration(USER_ROLES.DONOR, false)).toBe(7 * 24 * 60 * 60);
+  });
+
+  it("durasi 'Ingat Saya' manual login: 24 jam untuk Staf dan 30 hari untuk Donatur", () => {
+    expect(getSessionDuration(USER_ROLES.SUPER_ADMIN, true)).toBe(SESSION_DURATIONS.ADMIN_REMEMBER);
+    expect(getSessionDuration(USER_ROLES.ADMIN, true)).toBe(24 * 60 * 60);
+    expect(getSessionDuration(USER_ROLES.DONOR, true)).toBe(SESSION_DURATIONS.DONOR_REMEMBER);
+    expect(getSessionDuration(USER_ROLES.DONOR, true)).toBe(30 * 24 * 60 * 60);
+  });
+
+  it("durasi OAuth (Google / Facebook): Donatur otomatis 30 hari, Staf tetap ketat 12 jam", () => {
+    // Donatur mendapatkan 30 hari otomatis untuk kenyamanan UX di perangkat pribadi
+    expect(getOAuthSessionDuration(USER_ROLES.DONOR)).toBe(SESSION_DURATIONS.DONOR_OAUTH);
+    expect(getOAuthSessionDuration(USER_ROLES.DONOR)).toBe(30 * 24 * 60 * 60);
+
+    // Staf/Admin tetap 12 jam demi kepatuhan keamanan data & keuangan yayasan
+    expect(getOAuthSessionDuration(USER_ROLES.ADMIN)).toBe(SESSION_DURATIONS.ADMIN_DEFAULT);
+    expect(getOAuthSessionDuration(USER_ROLES.SUPER_ADMIN)).toBe(12 * 60 * 60);
+    expect(getOAuthSessionDuration(USER_ROLES.FINANCE)).toBe(12 * 60 * 60);
+  });
+});
+

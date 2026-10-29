@@ -147,6 +147,21 @@ export async function deleteAdminVacancy(id) {
 }
 
 /**
+ * Menghapus banyak lowongan pekerjaan sekaligus beserta pelamar terkait (cascade).
+ */
+export async function deleteAdminVacanciesBatch(ids) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID lowongan tidak boleh kosong.");
+  }
+
+  const result = await prisma.jobVacancy.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  return { count: result.count };
+}
+
+/**
  * Mengambil daftar pelamar pekerjaan.
  */
 export async function getAdminApplications({ vacancyId = "", status = "" } = {}) {

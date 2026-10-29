@@ -193,6 +193,19 @@ model InstagramPost {
   @@index([postedAt])
 }
 
+model InstagramProfile {
+  id             String   @id @default("ig_profile")
+  username       String   @default("yayasanpayungberkah")
+  displayName    String   @default("Yayasan Payung Berkah")
+  avatarUrl      String?
+  bio            String?
+  profileUrl     String   @default("https://www.instagram.com/yayasanpayungberkah/")
+  followersCount String   @default("186")
+  followingCount Int      @default(385)
+  isVerified     Boolean  @default(false)
+  updatedAt      DateTime @updatedAt
+}
+
 model RoutineDonation {
   id           String    @id @default(cuid())
   campaignId   String?

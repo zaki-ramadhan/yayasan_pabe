@@ -143,3 +143,18 @@ export async function deleteAuditReport({ id }) {
 
   return deleted;
 }
+
+/**
+ * Menghapus banyak laporan audit sekaligus dari database.
+ */
+export async function deleteAuditReportsBatch({ ids }) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID laporan audit tidak boleh kosong.");
+  }
+
+  const result = await prisma.auditReport.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  return { count: result.count };
+}

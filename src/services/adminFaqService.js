@@ -77,3 +77,18 @@ export async function deleteAdminFaq(id) {
   });
   return true;
 }
+
+/**
+ * Menghapus banyak butir FAQ sekaligus dari database.
+ */
+export async function deleteAdminFaqsBatch(ids) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID FAQ tidak boleh kosong.");
+  }
+  const result = await prisma.faq.deleteMany({
+    where: {
+      id: { in: ids },
+    },
+  });
+  return { count: result.count };
+}

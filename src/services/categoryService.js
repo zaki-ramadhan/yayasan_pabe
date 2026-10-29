@@ -118,6 +118,36 @@ export async function deleteCategory({ id }) {
 }
 
 /**
+ * Menghapus banyak kategori sekaligus jika tidak memiliki program terhubung.
+ */
+export async function deleteCategoriesBatch({ ids }) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID kategori tidak boleh kosong.");
+  }
+
+  const categoriesWithCampaigns = await prisma.category.findMany({
+    where: {
+      id: { in: ids },
+      campaigns: { some: {} },
+    },
+    select: { name: true },
+  });
+
+  if (categoriesWithCampaigns.length > 0) {
+    const names = categoriesWithCampaigns.map((c) => `"${c.name}"`).join(", ");
+    throw new Error(
+      `Sebagian kategori (${names}) masih terhubung dengan program aktif dan tidak dapat dihapus.`
+    );
+  }
+
+  const result = await prisma.category.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  return { count: result.count };
+}
+
+/**
  * Membersihkan kategori kosong yang tidak memiliki program kampanye terhubung.
  * Menjamin database selalu bersih dan tidak ada kategori yatim (orphan) tanpa data.
  * @param {object} [client] - Prisma client atau transaction

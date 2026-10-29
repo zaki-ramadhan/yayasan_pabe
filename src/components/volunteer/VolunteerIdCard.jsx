@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/Avatar";
 import { getInitials, formatDate } from "@/lib/formatters";
 import { formatVolunteerId } from "@/lib/volunteerUtils";
 import { ORG_PROFILE } from "@/data/orgProfile";

@@ -144,3 +144,28 @@ export async function deleteAdminDistribution(id) {
     where: { id },
   });
 }
+
+/**
+ * Menghapus banyak data rekam penyaluran sekaligus dan membersihkan gambar di R2.
+ */
+export async function deleteAdminDistributionsBatch(ids) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID penyaluran tidak boleh kosong.");
+  }
+
+  const updatesToDelete = await prisma.campaignUpdate.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, images: true },
+  });
+
+  const allImages = updatesToDelete.flatMap((u) => u.images || []).filter(Boolean);
+  if (allImages.length > 0) {
+    await Promise.allSettled(allImages.map((img) => deleteFromR2(img)));
+  }
+
+  const result = await prisma.campaignUpdate.deleteMany({
+    where: { id: { in: ids } },
+  });
+
+  return { count: result.count };
+}
