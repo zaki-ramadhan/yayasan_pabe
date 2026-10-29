@@ -90,7 +90,6 @@ export function AdminGalleryTableRow({
         <div className="space-y-0.5">
           <span
             className="text-sm font-medium text-slate-900 block line-clamp-1 leading-snug"
-            title={displayTitle}
           >
             {displayTitle}
           </span>
@@ -104,7 +103,7 @@ export function AdminGalleryTableRow({
 
       {/* Kategori */}
       <TableCell className="w-40 py-2.5 text-center align-middle whitespace-nowrap">
-        <Badge variant="secondary" className="max-w-[140px] truncate" title={item.category}>
+        <Badge variant="secondary" className="max-w-[140px] truncate">
           {item.category || "Umum"}
         </Badge>
       </TableCell>

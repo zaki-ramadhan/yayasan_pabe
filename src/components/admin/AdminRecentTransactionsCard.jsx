@@ -77,7 +77,6 @@ export function AdminRecentTransactionsCard({
             onClick={refreshList}
             disabled={isLoading}
             className="h-8 w-8 text-slate-600 hover:bg-slate-50 disabled:pointer-events-none disabled:cursor-not-allowed"
-            title="Segarkan transaksi terkini"
             aria-label="Segarkan transaksi terkini"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
@@ -115,14 +114,12 @@ export function AdminRecentTransactionsCard({
                     <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
                       <span
                         className="font-medium text-slate-900 truncate block select-all"
-                        title={item.invoiceId}
                       >
                         {item.invoiceId}
                       </span>
                       <button
                         type="button"
                         onClick={() => handleCopyInvoice(item.invoiceId)}
-                        title="Salin nomor invoice"
                         aria-label={`Salin invoice ${item.invoiceId}`}
                         className="p-1 rounded text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
                       >
@@ -138,7 +135,7 @@ export function AdminRecentTransactionsCard({
                     {item.donorName}
                   </TableCell>
                   <TableCell className="text-sm text-slate-700 py-3 align-middle min-w-[280px] sm:min-w-[340px]">
-                    <span className="line-clamp-2 leading-snug font-normal text-slate-800 block" title={item.campaignTitle}>
+                    <span className="line-clamp-2 leading-snug font-normal text-slate-800 block">
                       {item.campaignTitle}
                     </span>
                   </TableCell>
@@ -148,7 +145,6 @@ export function AdminRecentTransactionsCard({
                   <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
                     <span
                       className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap"
-                      title={formatPaymentChannel(item.paymentChannel)}
                     >
                       {formatPaymentChannel(item.paymentChannel)}
                     </span>

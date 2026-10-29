@@ -63,8 +63,7 @@ export function StorageCapacityBanner({ overview }) {
               href="/api/admin/external/cloudflare-r2"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-white bg-gradient-to-b from-[#f97d26] via-[#f46f14] to-[#ea5d05] border border-[#e05602] shadow-[0_2px_4px_rgba(242,128,32,0.25),inset_0_1px_0_rgba(255,255,255,0.45)] hover:from-[#fa8e3f] hover:to-[#f0680a] hover:shadow-[0_3px_8px_rgba(242,128,32,0.35)] active:translate-y-0.5 active:shadow-[0_1px_2px_rgba(242,128,32,0.2)] transition-all cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-              title="Buka dashboard bucket Cloudflare R2 di tab baru"
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-white bg-gradient-to-b from-[#f97d26] via-[#f46f14] to-[#ea5d05] border border-[#e05602] shadow-[0_2px_4px_rgba(242,128,32,0.25),inset_0_1px_0_rgba(255,255,255,0.45)] hover:from-[#fa8e3f] hover:to-[#f0680a] hover:shadow-[0_3px_8px_rgba(242,128,32,0.35)] active:translate-y-0.5 active:shadow-[0_1px_2px_rgba(242,128,32,0.2)] transition-all cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500/50" aria-label="Buka dashboard bucket Cloudflare R2 di tab baru"
             >
               <span>Cloudflare Storage</span>
               <ExternalLink className="w-3.5 h-3.5 text-white/95 drop-shadow-xs" />

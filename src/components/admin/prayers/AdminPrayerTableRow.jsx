@@ -58,14 +58,12 @@ export function AdminPrayerTableRow({
         <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
           <span
             className="font-medium text-slate-900 truncate block select-all"
-            title={item.invoiceId}
           >
             {item.invoiceId}
           </span>
           <button
             type="button"
             onClick={() => handleCopyInvoice(item.invoiceId)}
-            title="Salin nomor invoice"
             aria-label={`Salin invoice ${item.invoiceId}`}
             className="p-1 rounded text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
           >
@@ -96,7 +94,7 @@ export function AdminPrayerTableRow({
                 (Anonim)
               </span>
             ) : item.donorEmail ? (
-              <span className="text-sm font-normal text-slate-500 block truncate" title={item.donorEmail}>
+              <span className="text-sm font-normal text-slate-500 block truncate">
                 {maskEmail(item.donorEmail)}
               </span>
             ) : null}
@@ -109,7 +107,6 @@ export function AdminPrayerTableRow({
         <div className="space-y-1">
           <span
             className="font-medium text-sm text-slate-900 block leading-snug line-clamp-2"
-            title={item.campaignTitle}
           >
             {item.campaignTitle}
           </span>
@@ -135,7 +132,6 @@ export function AdminPrayerTableRow({
       <TableCell className="min-w-[240px] max-w-md py-3 align-top space-y-1.5">
         <p
           className="text-sm font-normal text-slate-800 leading-relaxed italic line-clamp-3"
-          title={item.prayer}
         >
           &ldquo;{item.prayer}&rdquo;
         </p>
@@ -175,8 +171,7 @@ export function AdminPrayerTableRow({
             variant="ghost"
             size="sm"
             disabled={isToggling}
-            onClick={() => onToggleHide(item)}
-            title={item.isPrayerHidden ? "Tampilkan kembali ke publik" : "Sembunyikan dari feed publik"}
+            onClick={() => onToggleHide(item)} aria-label={item.isPrayerHidden ? "Tampilkan kembali ke publik" : "Sembunyikan dari feed publik"}
             className={`h-8 w-8 p-0 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed ${
               item.isPrayerHidden
                 ? "text-rose-700 bg-rose-100/70 hover:bg-rose-200/70"

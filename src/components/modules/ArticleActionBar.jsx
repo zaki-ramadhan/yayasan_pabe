@@ -50,7 +50,6 @@ export function ArticleActionBar({
 							: "bg-white border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900",
 					)}
 					aria-label={hasLiked ? "Batalkan suka" : "Sukai artikel"}
-					title={hasLiked ? "Disukai" : "Sukai"}
 				>
 					<ThumbsUp
 						className={cn(
@@ -80,7 +79,6 @@ export function ArticleActionBar({
 							? "Batalkan tidak suka"
 							: "Tidak sukai artikel"
 					}
-					title={hasDisliked ? "Tidak disukai" : "Tidak suka"}
 				>
 					<ThumbsDown
 						className={cn(

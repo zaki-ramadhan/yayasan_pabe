@@ -39,7 +39,7 @@ export function CareerFilterSelect({
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="start"
-          className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[200px] bg-white border border-slate-200 shadow-md rounded-lg p-1 z-50 max-h-72 overflow-y-auto"
+          className="min-w-[var(--radix-dropdown-menu-trigger-width)] w-auto max-w-xs p-1 max-h-72 overflow-y-auto"
         >
           {options.map((option) => {
             const isSelected = option === value;

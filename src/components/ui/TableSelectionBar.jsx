@@ -89,7 +89,7 @@ export function TableSelectionBar({
       <div
         className={cn(
           "pointer-events-auto",
-          "w-full sm:w-auto max-w-2xl",
+          "w-full sm:w-auto max-w-[calc(100vw-2rem)] sm:max-w-4xl",
           "bg-white/95 backdrop-blur-md text-slate-800",
           "border border-slate-200/95",
           "rounded-xl shadow-xl shadow-slate-900/10 ring-1 ring-slate-950/5",
@@ -133,17 +133,19 @@ export function TableSelectionBar({
           )}
           {children}
           {onClearSelection && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={onClearSelection}
-              title={clearLabel}
-              aria-label={clearLabel}
-              className="h-8 w-8 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer shrink-0"
-            >
-              <X className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 pl-0.5">
+              <div className="hidden sm:block h-4 w-px bg-slate-200 shrink-0" />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={onClearSelection}
+                aria-label={clearLabel}
+                className="h-8 w-8 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
           )}
         </div>
       </div>

@@ -31,7 +31,7 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </Button>
 
-        <Link href="/" className="flex items-center gap-2" title="Kembali ke Beranda Utama Yayasan PABE">
+        <Link href="/" className="flex items-center gap-2" aria-label="Kembali ke Beranda Utama Yayasan PABE">
           <div className="relative w-8 h-8 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
             <Image
               src="/img/branding/logo-ypabe.webp"
@@ -55,7 +55,7 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
       <div className="flex items-center gap-2">
         <Link
           href="/"
-          title="Ke Beranda Utama"
+          aria-label="Ke Beranda Utama"
           className="p-1.5 rounded-md border border-slate-200 text-slate-600 hover:text-slate-950 hover:bg-slate-50 transition-colors"
         >
           <Home className="w-4 h-4" />
@@ -64,7 +64,6 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
         {currentUser && (
           <Link
             href="/donatur/profil"
-            title={displayName}
             className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center hover:ring-2 hover:ring-primary/20 transition-all"
           >
             {avatarUrl ? (

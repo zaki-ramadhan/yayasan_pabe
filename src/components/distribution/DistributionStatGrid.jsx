@@ -22,7 +22,6 @@ export function DistributionStatItem({
       <span className="text-slate-600 block">{label}</span>
       <span
         className="font-medium text-slate-950 block truncate"
-        title={title || (typeof value === "string" ? value : undefined)}
       >
         {value}
       </span>
@@ -61,7 +60,6 @@ export function DistributionStatGrid({
           key={item.label || index}
           label={item.label}
           value={item.value}
-          title={item.title}
           subtext={item.subtext}
         />
       ))}

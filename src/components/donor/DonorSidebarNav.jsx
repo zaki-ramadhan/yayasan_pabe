@@ -81,7 +81,7 @@ export function DonorSidebarNav({
               "flex items-center group transition-all",
               isCollapsed ? "justify-center w-full" : "gap-2.5 w-full"
             )}
-            title="Kembali ke Beranda Utama Yayasan PABE"
+            aria-label="Kembali ke Beranda Utama Yayasan PABE"
           >
             <div className="relative w-8.5 h-8.5 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
               <Image
@@ -122,7 +122,6 @@ export function DonorSidebarNav({
                   key={item.href}
                   href={item.href}
                   onClick={onCloseMobile}
-                  title={isCollapsed ? item.label : undefined}
                   className={cn(
                     "flex items-center rounded-md text-sm transition-all font-normal",
                     isCollapsed ? "justify-center p-2 text-xs" : "px-3 py-2",
@@ -159,7 +158,6 @@ export function DonorSidebarNav({
                   key={item.href}
                   href={item.href}
                   onClick={onCloseMobile}
-                  title={isCollapsed ? item.label : undefined}
                   className={cn(
                     "flex items-center rounded-md text-sm transition-all font-normal",
                     isCollapsed ? "justify-center p-2 text-xs" : "px-3 py-2",
@@ -187,7 +185,7 @@ export function DonorSidebarNav({
               <Link
                 href="/admin"
                 onClick={onCloseMobile}
-                title="Panel admin"
+                aria-label="Panel admin"
                 className="w-10 h-10 rounded-md flex items-center justify-center bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-900 transition-colors text-xs font-normal"
               >
                 ADM
@@ -217,7 +215,6 @@ export function DonorSidebarNav({
           <button
             type="button"
             onClick={handleLogout}
-            title="Keluar dari akun"
             aria-label="Keluar dari akun"
             className="w-10 h-10 rounded-md flex items-center justify-center text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-colors cursor-pointer text-xs font-normal"
           >
@@ -227,7 +224,6 @@ export function DonorSidebarNav({
           <button
             type="button"
             onClick={handleLogout}
-            title="Keluar dari akun"
             aria-label="Keluar dari akun"
             className="w-full flex items-center px-3 py-2 rounded-md text-sm font-normal text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-colors cursor-pointer"
           >

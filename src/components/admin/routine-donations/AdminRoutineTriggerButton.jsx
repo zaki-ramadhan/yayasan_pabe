@@ -80,8 +80,7 @@ export function AdminRoutineTriggerButton({
         variant="outline"
         onClick={handleTrigger}
         disabled={isTriggering}
-        className="h-10 gap-1.5 text-sm font-medium bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer shrink-0 disabled:pointer-events-none disabled:cursor-not-allowed"
-        title="Jalankan pengecekan cron jadwal donasi rutin sekarang"
+        className="h-10 gap-1.5 text-sm font-medium bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer shrink-0 disabled:pointer-events-none disabled:cursor-not-allowed" aria-label="Jalankan pengecekan cron jadwal donasi rutin sekarang"
       >
         {isTriggering ? (
           <>

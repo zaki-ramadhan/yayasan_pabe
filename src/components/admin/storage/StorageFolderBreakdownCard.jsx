@@ -140,15 +140,13 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
                                   href={file.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="font-normal text-xs text-slate-700 hover:text-primary hover:underline truncate max-w-[200px] sm:max-w-xs md:max-w-sm"
-                                  title={`Buka ${file.name || file.key}`}
+                                  className="font-normal text-xs text-slate-700 hover:text-primary hover:underline truncate max-w-[200px] sm:max-w-xs md:max-w-sm" aria-label={`Buka ${file.name || file.key}`}
                                 >
                                   {file.name || file.key}
                                 </a>
                               ) : (
                                 <span
                                   className="font-normal text-xs text-slate-700 truncate max-w-[200px] sm:max-w-xs md:max-w-sm"
-                                  title={file.name || file.key}
                                 >
                                   {file.name || file.key}
                                 </span>

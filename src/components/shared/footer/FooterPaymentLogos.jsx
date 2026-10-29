@@ -26,8 +26,7 @@ export function FooterPaymentLogos({ logos = DEFAULT_PAYMENT_LOGOS }) {
       <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
         {logos.map((m) => (
           <div
-            key={m.name}
-            title={m.name}
+            key={m.name} aria-label={m.name}
             className="w-[72px] sm:w-[80px] h-9 sm:h-10 rounded-md bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center hover:bg-slate-50 transition-colors shrink-0 p-2"
           >
             <img

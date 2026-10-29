@@ -143,7 +143,6 @@ export function DatePicker({
                 }
               }}
               className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors shrink-0 ml-1.5 cursor-pointer"
-              title="Hapus tanggal"
               aria-label="Hapus tanggal"
             >
               <X className="h-3.5 w-3.5" />

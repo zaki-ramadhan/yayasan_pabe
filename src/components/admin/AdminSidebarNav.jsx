@@ -109,7 +109,6 @@ export function AdminSidebarNav({
             "flex items-center group transition-all",
             isCollapsed ? "justify-center w-full" : "gap-2.5 w-full"
           )}
-          title="Yayasan Payung Berkah (PABE)"
         >
           <div className="relative w-8.5 h-8.5 rounded-md overflow-hidden bg-white shrink-0 p-0.5 border border-slate-200 flex items-center justify-center">
             <Image
@@ -152,7 +151,6 @@ export function AdminSidebarNav({
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={onCloseMobile}
-                      title={isCollapsed ? item.label : undefined}
                       className={cn(
                         "flex items-center rounded-md text-sm transition-all font-normal text-slate-900 hover:bg-slate-200/50",
                         isCollapsed ? "justify-center p-2 text-xs" : "px-3 py-2 justify-between"
@@ -179,7 +177,6 @@ export function AdminSidebarNav({
                     key={item.href}
                     href={item.href}
                     onClick={onCloseMobile}
-                    title={isCollapsed ? item.label : undefined}
                     className={cn(
                       "flex items-center rounded-md text-sm transition-all font-normal text-slate-900",
                       isCollapsed ? "justify-center p-2 text-xs" : "px-3 py-2",
@@ -206,7 +203,6 @@ export function AdminSidebarNav({
         <button
           type="button"
           onClick={handleLogout}
-          title={isCollapsed ? "Keluar (Logout)" : undefined}
           className={cn(
             "flex items-center rounded-md text-sm text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer w-full text-left font-normal",
             isCollapsed ? "justify-center p-2.5" : "px-3 py-2"

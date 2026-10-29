@@ -68,7 +68,7 @@ export function TransparencyLedgerStrip({
       ) : (
         <>
           {/* Home Variant */}
-          <div className="py-4 sm:py-0 sm:px-6 first:pl-0 space-y-1.5" title={compactDonations.fullFormatted}>
+          <div className="py-4 sm:py-0 sm:px-6 first:pl-0 space-y-1.5">
             <span className="text-sm sm:text-base font-medium text-slate-700 block">Total Dana Tersalurkan</span>
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-950 tracking-tight whitespace-nowrap">
               {compactDonations.prefix}

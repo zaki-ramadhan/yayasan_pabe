@@ -31,7 +31,6 @@ export function NavMobileUserSection({ currentUser, onClose, onLogout }) {
             <div className="min-w-0 flex-1">
               <span
                 className="block text-sm font-medium text-slate-900 truncate"
-                title={currentUser.name}
               >
                 {currentUser.name}
               </span>

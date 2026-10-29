@@ -163,7 +163,6 @@ export function TableToolbar({
               onClick={onRefresh}
               disabled={isLoading}
               className="h-10 w-10 rounded-md border-slate-300 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
-              title="Segarkan data tabel"
               aria-label="Segarkan data tabel"
             >
               <RefreshCw className={cn("w-4 h-4 text-slate-600", isLoading && "animate-spin text-primary")} />

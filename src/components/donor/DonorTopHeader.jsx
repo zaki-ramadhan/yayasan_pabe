@@ -47,7 +47,7 @@ export function DonorTopHeader({
           type="button"
           onClick={onToggleSidebar}
           aria-label={isSidebarExpanded ? "Kecilkan bilah menu" : "Perluas bilah menu"}
-          title={isSidebarExpanded ? "Kecilkan menu samping" : "Perluas menu samping"}
+          aria-label={isSidebarExpanded ? "Kecilkan menu samping" : "Perluas menu samping"}
           className="lg:hidden p-1.5 -ml-1.5 rounded-md text-slate-500 hover:text-slate-950 hover:bg-slate-100/80 transition-colors cursor-pointer flex items-center justify-center shrink-0"
         >
           <PanelLeft className="w-5 h-5" />
@@ -63,7 +63,6 @@ export function DonorTopHeader({
         <Link
           href="/donatur/profil"
           className="relative w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-slate-100 border border-slate-200/90 hover:border-slate-300 hover:ring-2 hover:ring-slate-400/20 transition-all shrink-0 flex items-center justify-center shadow-2xs group cursor-pointer"
-          title={`Profil Saya (${displayName})`}
           aria-label="Buka Profil Saya"
         >
           {avatarUrl ? (

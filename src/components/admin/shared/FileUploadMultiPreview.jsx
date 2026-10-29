@@ -95,7 +95,7 @@ export function FileUploadMultiPreview({
 
             {/* Informasi berkas di tengah */}
             <div className="flex-1 min-w-0 pr-1">
-              <p className="text-sm font-medium text-slate-800 truncate" title={item.name}>
+              <p className="text-sm font-medium text-slate-800 truncate">
                 {item.name}
               </p>
               <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -121,8 +121,7 @@ export function FileUploadMultiPreview({
                 variant="ghost"
                 size="sm"
                 onClick={() => onRemoveFile(item.id)}
-                className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors shrink-0 rounded-lg cursor-pointer"
-                title="Hapus berkas ini"
+                className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors shrink-0 rounded-lg cursor-pointer" aria-label="Hapus berkas ini"
                 aria-label="Hapus berkas ini"
               >
                 <Trash2 className="w-4 h-4" />

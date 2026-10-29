@@ -42,7 +42,7 @@ export function InvoiceReceiptCard({
           <button
             type="button"
             onClick={onCopyInvoiceId}
-            title="Klik untuk menyalin ID Invoice"
+            aria-label="Salin nomor invoice"
             className="inline-flex items-center gap-1.5 text-slate-900 font-medium hover:text-slate-700 transition-colors cursor-pointer group text-left"
           >
             <span className="select-all">{donation.invoiceId}</span>

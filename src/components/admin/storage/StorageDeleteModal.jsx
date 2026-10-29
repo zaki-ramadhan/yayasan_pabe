@@ -73,7 +73,7 @@ export function StorageDeleteModal({
               )}
             </div>
             <div className="min-w-0 flex-1 text-xs">
-              <p className="font-medium text-slate-900 truncate" title={singleItem.key}>
+              <p className="font-medium text-slate-900 truncate">
                 {singleItem.key.split("/").pop()}
               </p>
               <p className="text-slate-500 mt-0.5">

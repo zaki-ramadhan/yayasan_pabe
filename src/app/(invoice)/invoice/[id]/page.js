@@ -44,7 +44,7 @@ export default async function InvoicePage({ params, searchParams }) {
         <Link
           href="/"
           className="inline-flex items-center gap-2.5 select-none focus:outline-none group"
-          title="Kembali ke Beranda Yayasan Payung Berkah"
+          aria-label="Kembali ke Beranda Yayasan Payung Berkah"
         >
           <div className="relative w-8 h-8 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center">
             <Image

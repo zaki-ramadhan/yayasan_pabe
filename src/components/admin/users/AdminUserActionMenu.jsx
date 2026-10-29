@@ -28,8 +28,7 @@ export function AdminUserActionMenu({
         <Button
           type="button"
           variant="ghost"
-          size="icon"
-          title="Aksi pengurus"
+          size="icon" aria-label="Aksi pengurus"
           aria-label={`Menu aksi ${user.name}`}
           className="h-8 w-8 text-slate-500 hover:text-slate-900"
         >

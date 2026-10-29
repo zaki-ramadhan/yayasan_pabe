@@ -112,7 +112,7 @@ export default function CampaignDetailLoading() {
             {/* Widget Header: Title + Sort Control */}
             <div className="flex items-center justify-between px-1">
               <Skeleton className="h-5 w-40 rounded" />
-              <Skeleton className="h-8 w-24 rounded-lg" />
+              <Skeleton className="h-9 w-32 rounded-lg" />
             </div>
 
             {/* Chat Room Container */}

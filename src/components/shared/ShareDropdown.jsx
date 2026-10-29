@@ -73,7 +73,6 @@ export function ShareDropdown({
               className
             )}
             aria-label={`Bagikan ${title}`}
-            title="Bagikan"
           >
             <Share2 className="w-4 h-4" />
           </button>

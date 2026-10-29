@@ -15,6 +15,7 @@ export function CatalogSearchBar({
   onSort,
   isLoading = false,
   searchPlaceholder = "Cari...",
+  filterSlot = null,
 }) {
   return (
     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
@@ -33,18 +34,25 @@ export function CatalogSearchBar({
         />
       </div>
 
-      <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-        <span className="text-sm text-slate-700 flex items-center gap-1.5 shrink-0">
-          <Filter className="w-4 h-4 text-slate-500" />
-          Urutkan:
-        </span>
+      <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 self-end sm:self-auto shrink-0">
+        {filterSlot}
 
-        <SortDropdown
-          options={sortOptions}
-          value={sortBy}
-          onChange={onSort}
-          label="Pilih urutan"
-        />
+        {sortOptions && sortOptions.length > 0 && (
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-sm text-slate-700 flex items-center gap-1.5 shrink-0">
+              <Filter className="w-4 h-4 text-slate-500" />
+              Urutkan:
+            </span>
+
+            <SortDropdown
+              options={sortOptions}
+              value={sortBy}
+              onChange={onSort}
+              label="Pilih urutan"
+              className="h-10 text-sm"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

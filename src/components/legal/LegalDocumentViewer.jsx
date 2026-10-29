@@ -118,7 +118,6 @@ export function LegalDocumentViewer({ currentDoc }) {
             height: currentHeight ? `${currentHeight}px` : "100vh",
             width: "auto",
           }}
-          title={isZoomed ? "Klik untuk memperkecil" : "Klik untuk memperbesar dokumen"}
         >
           <Image
             src={currentDoc.image}

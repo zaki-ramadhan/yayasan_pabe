@@ -61,7 +61,7 @@ export function AdminVolunteerTableRow({
 
       {/* Bidang Minat */}
       <TableCell className="text-sm text-slate-800 py-3 align-middle">
-        <span className="font-medium block leading-snug line-clamp-1" title={item.interest}>
+        <span className="font-medium block leading-snug line-clamp-1">
           {item.interest}
         </span>
         {item.motivation && (
@@ -92,8 +92,7 @@ export function AdminVolunteerTableRow({
           {item.status === "APPROVED" && onPrintCard && (
             <button
               type="button"
-              onClick={() => onPrintCard(item)}
-              title="Cetak kartu tanda anggota"
+              onClick={() => onPrintCard(item)} aria-label="Cetak kartu tanda anggota"
               aria-label="Cetak kartu tanda anggota"
               className="p-1.5 rounded-md text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
             >

@@ -149,7 +149,7 @@ export function StorageOrphanTable({
 
                     {/* Nama Berkas */}
                     <TableCell className="max-w-[260px] sm:max-w-xs md:max-w-md">
-                      <p className="text-sm font-medium text-slate-900 truncate" title={item.key}>
+                      <p className="text-sm font-medium text-slate-900 truncate">
                         {filename}
                       </p>
                       <p className="text-xs text-slate-500 font-normal mt-0.5">
@@ -180,8 +180,7 @@ export function StorageOrphanTable({
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={() => onDeleteSingle(item)}
-                        title="Hapus berkas ini"
+                        onClick={() => onDeleteSingle(item)} aria-label="Hapus berkas ini"
                         className="h-8 w-8 p-0 text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" />

@@ -20,23 +20,16 @@ export { getRelatedArticles };
  */
 export function RelatedArticles({ currentArticle, allArticles = [], limit = 2 }) {
   const result = getRelatedArticles(currentArticle, allArticles, limit);
-  const { articles, label, description } = result;
+  const { articles, label } = result;
 
   if (!articles || articles.length === 0) return null;
 
   return (
-    <section className="space-y-4 pt-6 border-t border-slate-200">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
-        <div className="space-y-0.5">
-          <h2 className="text-base sm:text-lg font-semibold text-slate-950">
-            {label}
-          </h2>
-          {description && (
-            <p className="text-xs text-slate-600 font-normal">
-              {description}
-            </p>
-          )}
-        </div>
+    <section className="space-y-3 pt-6 border-t border-slate-200">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-base sm:text-lg font-semibold text-slate-950">
+          {label}
+        </h2>
 
         <Link
           href="/artikel"

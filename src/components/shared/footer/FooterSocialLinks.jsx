@@ -60,7 +60,6 @@ export function FooterSocialLinks({ whatsappUrl }) {
               target="_blank"
               rel="noopener noreferrer"
               className="w-8.5 h-8.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-white hover:bg-slate-800 flex items-center justify-center transition-colors text-slate-200 hover:text-white"
-              title={item.name}
               aria-label={item.name}
             >
               <Icon className="w-4.5 h-4.5" />

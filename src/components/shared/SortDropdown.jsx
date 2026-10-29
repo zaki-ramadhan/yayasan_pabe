@@ -35,7 +35,10 @@ export function SortDropdown({
           <ChevronDown className="w-4 h-4 text-slate-500 shrink-0 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={align} className="w-56 bg-white border border-slate-200 shadow-md rounded-lg p-1 z-50">
+      <DropdownMenuContent
+        align={align}
+        className="min-w-[var(--radix-dropdown-menu-trigger-width)] w-auto max-w-xs p-1"
+      >
         {options.map((opt) => {
           const isSelected = opt.value === value;
           return (
@@ -43,14 +46,14 @@ export function SortDropdown({
               key={opt.value}
               onClick={() => onChange(opt.value)}
               className={cn(
-                "cursor-pointer text-sm font-normal flex items-center justify-between py-2.5 px-3 rounded-md transition-colors",
+                "cursor-pointer text-sm font-normal flex items-center justify-between py-2 px-3 rounded-md transition-colors gap-3",
                 isSelected
                   ? "bg-slate-100 text-primary"
                   : "text-slate-800 hover:bg-slate-100"
               )}
             >
-              <span>{opt.label}</span>
-              {isSelected && <Check className="w-4 h-4 text-primary shrink-0 ml-2" />}
+              <span className="whitespace-nowrap">{opt.label}</span>
+              {isSelected && <Check className="w-4 h-4 text-primary shrink-0 ml-1.5" />}
             </DropdownMenuItem>
           );
         })}

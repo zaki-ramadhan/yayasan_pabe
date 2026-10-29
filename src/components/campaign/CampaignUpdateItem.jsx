@@ -55,8 +55,7 @@ export function CampaignUpdateItem({ update }) {
               key={idx}
               href={imgUrl}
               target="_blank"
-              rel="noopener noreferrer"
-              title="Lihat foto dokumentasi"
+              rel="noopener noreferrer" aria-label="Lihat foto dokumentasi"
               className={`block relative w-full aspect-video rounded-lg overflow-hidden border border-slate-200 bg-slate-100 hover:opacity-90 transition-opacity ${
                 photos.length === 1 ? "col-span-2 sm:col-span-1" : ""
               }`}

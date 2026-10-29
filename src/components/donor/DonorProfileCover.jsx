@@ -99,8 +99,7 @@ export function DonorProfileCover({
                   setNewAvatarUrl(profile?.avatar || "");
                   setIsAvatarModalOpen(true);
                 }}
-                className="absolute bottom-0 right-0 p-2 bg-slate-900 text-white rounded-full border-2 border-sidebar shadow-md hover:bg-slate-800 transition-colors cursor-pointer"
-                title="Ganti foto profil"
+                className="absolute bottom-0 right-0 p-2 bg-slate-900 text-white rounded-full border-2 border-sidebar shadow-md hover:bg-slate-800 transition-colors cursor-pointer" aria-label="Ganti foto profil"
                 aria-label="Ganti foto profil"
               >
                 <Camera className="w-3.5 h-3.5" />

@@ -31,7 +31,6 @@ export function AdminFaqTableRow({
 				<div className="space-y-0.5">
 					<span
 						className="text-sm font-medium text-slate-900 block leading-snug line-clamp-2"
-						title={faq.question}
 					>
 						{faq.question}
 					</span>

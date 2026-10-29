@@ -27,8 +27,7 @@ export function FooterContactInfo({
           href={`https://maps.google.com/?q=${encodeURIComponent(contacts.address)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-start gap-2 text-slate-200 hover:text-white transition-colors group cursor-pointer"
-          title="Buka di Google Maps"
+          className="flex items-start gap-2 text-slate-200 hover:text-white transition-colors group cursor-pointer" aria-label="Buka di Google Maps"
         >
           <MapPin className="w-4 h-4 text-slate-300 shrink-0 mt-1 group-hover:scale-110 transition-transform" />
           <span className="leading-relaxed">{contacts.address}</span>

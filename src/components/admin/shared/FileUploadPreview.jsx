@@ -51,7 +51,6 @@ export function FileUploadPreview({
       {!isPdf ? (
         <div
           className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shrink-0 flex items-center justify-center"
-          title={isError ? "Pratinjau gambar tidak dapat dimuat dari tautan" : "Pratinjau gambar"}
         >
           {isError || !resolvedSrc ? (
             <div className="flex flex-col items-center justify-center text-slate-400 p-1">
@@ -101,7 +100,7 @@ export function FileUploadPreview({
       )}
 
       <div className="flex-1 min-w-0 pr-1">
-        <p className="text-sm font-normal text-slate-800 truncate" title={fileName}>
+        <p className="text-sm font-normal text-slate-800 truncate">
           {fileName}
         </p>
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -133,8 +132,7 @@ export function FileUploadPreview({
           size="sm"
           onClick={onReplace}
           disabled={isUploading}
-          className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors disabled:pointer-events-none disabled:cursor-not-allowed"
-          title="Ganti berkas"
+          className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors disabled:pointer-events-none disabled:cursor-not-allowed" aria-label="Ganti berkas"
           aria-label="Ganti berkas"
         >
           <Edit2 className="w-4 h-4" />
@@ -145,8 +143,7 @@ export function FileUploadPreview({
           size="sm"
           onClick={onRemove}
           disabled={isUploading}
-          className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors disabled:pointer-events-none disabled:cursor-not-allowed"
-          title="Hapus berkas"
+          className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors disabled:pointer-events-none disabled:cursor-not-allowed" aria-label="Hapus berkas"
           aria-label="Hapus berkas"
         >
           <Trash2 className="w-4 h-4" />

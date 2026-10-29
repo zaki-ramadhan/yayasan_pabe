@@ -25,7 +25,7 @@ export default function ProgramLoading() {
         {/* Search Bar & Sort Dropdown Control (matching CatalogSearchBar) */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
           <div className="w-full sm:max-w-md">
-            <Skeleton className="h-11 w-full rounded-lg" />
+            <Skeleton className="h-10 w-full rounded-lg" />
           </div>
           <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
             <Skeleton className="h-4 w-16 rounded" />

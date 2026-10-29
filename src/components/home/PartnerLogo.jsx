@@ -35,7 +35,7 @@ export function PartnerLogo({ partner }) {
   return (
     <Wrapper
       {...wrapperProps}
-      title={`${partner.name} — ${partner.category}`}
+      aria-label={`${partner.name} — ${partner.category}`}
       className="relative flex items-center justify-center p-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 shrink-0"
     >
       {partner.logo ? (

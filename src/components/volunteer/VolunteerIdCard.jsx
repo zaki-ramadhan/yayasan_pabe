@@ -56,7 +56,6 @@ export function VolunteerIdCard({ volunteer, className = "" }) {
         <div className="space-y-0.5 w-full">
           <h4
             className="text-base font-bold text-slate-950 tracking-tight line-clamp-1"
-            title={volunteer.fullName}
           >
             {volunteer.fullName}
           </h4>
@@ -69,7 +68,7 @@ export function VolunteerIdCard({ volunteer, className = "" }) {
         <div className="w-full bg-slate-50 border border-slate-200/90 rounded-lg p-2.5 space-y-1 text-left text-xs">
           <div className="flex justify-between items-center text-slate-600">
             <span>Bidang Aksi:</span>
-            <span className="font-semibold text-slate-900 line-clamp-1 max-w-[170px] text-right" title={volunteer.interest}>
+            <span className="font-semibold text-slate-900 line-clamp-1 max-w-[170px] text-right">
               {volunteer.interest || "Relawan Kebaikan"}
             </span>
           </div>

@@ -30,7 +30,7 @@ export function FinancialTransactionRow({ transaction }) {
       </TableCell>
 
       {/* Description */}
-      <TableCell className="font-normal text-slate-800 max-w-xs truncate align-middle" title={transaction.description}>
+      <TableCell className="font-normal text-slate-800 max-w-xs truncate align-middle">
         {transaction.description}
       </TableCell>
 

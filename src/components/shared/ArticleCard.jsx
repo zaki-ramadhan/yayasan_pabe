@@ -111,7 +111,6 @@ export function ArticleCard({
 						<>
 							<span
 								className="truncate font-medium text-slate-700 min-w-0"
-								title={article.author}
 							>
 								{article.author}
 							</span>

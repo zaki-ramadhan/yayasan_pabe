@@ -64,7 +64,6 @@ export function TopProgramCardItem({ rank, program, maxAmount = 1 }) {
           <Link
             href={campaignHref}
             className="text-sm font-medium text-slate-950 hover:text-primary hover:underline transition-colors truncate block leading-snug"
-            title={program.title}
           >
             {program.title}
           </Link>

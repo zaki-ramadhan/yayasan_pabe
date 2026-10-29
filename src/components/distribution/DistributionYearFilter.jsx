@@ -40,7 +40,7 @@ export function DistributionYearFilter({
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="w-48 bg-white border border-slate-200 shadow-md rounded-lg p-1 z-50"
+          className="min-w-[var(--radix-dropdown-menu-trigger-width)] w-auto p-1"
         >
           {options.map((option) => {
             const isSelected = option === selectedYear;

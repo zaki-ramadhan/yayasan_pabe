@@ -19,16 +19,12 @@ export function AdminTransactionTableRow({
       {/* Invoice */}
       <TableCell className="w-[170px] text-sm py-3 align-middle">
         <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
-          <span
-            className="font-medium text-slate-900 truncate block select-all"
-            title={item.invoiceId}
-          >
+          <span className="font-medium text-slate-900 truncate block select-all">
             {item.invoiceId}
           </span>
           <button
             type="button"
             onClick={() => onCopyInvoice(item.invoiceId)}
-            title="Salin nomor invoice"
             aria-label={`Salin invoice ${item.invoiceId}`}
             className="p-1 rounded text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
           >
@@ -101,8 +97,7 @@ export function AdminTransactionTableRow({
           {item.status === "PENDING" && (
             <button
               type="button"
-              onClick={() => onOpenVerify(item)}
-              title="Verifikasi manual donasi"
+              onClick={() => onOpenVerify(item)} aria-label="Verifikasi manual donasi"
               aria-label={`Verifikasi donasi: ${item.invoiceId}`}
               className="p-1.5 rounded-md text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
             >

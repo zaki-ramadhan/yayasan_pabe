@@ -72,7 +72,7 @@ export function BeneficiaryFilterBar({
               type="button"
               onClick={onReset}
               className="h-9 px-3 text-xs sm:text-sm font-medium text-slate-700 hover:text-slate-950 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
-              title="Reset filter"
+              aria-label="Reset filter"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Reset</span>

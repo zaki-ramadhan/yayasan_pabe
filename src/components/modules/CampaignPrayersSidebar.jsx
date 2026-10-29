@@ -167,7 +167,7 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClo
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-52 bg-white border border-slate-200 shadow-md rounded-lg p-1"
+            className="min-w-[var(--radix-dropdown-menu-trigger-width)] w-auto p-1"
           >
             {PRAYER_SORT_OPTIONS.map((opt) => (
               <DropdownMenuItem

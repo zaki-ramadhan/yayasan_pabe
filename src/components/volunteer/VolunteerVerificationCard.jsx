@@ -82,7 +82,7 @@ export function VolunteerVerificationCard({ volunteer }) {
           </Avatar>
           <div className="space-y-1 min-w-0 flex-1">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
-              <h3 className="text-lg font-bold text-slate-950 tracking-tight" title={volunteer.fullName}>
+              <h3 className="text-lg font-bold text-slate-950 tracking-tight">
                 {volunteer.fullName}
               </h3>
               <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 shrink-0" />

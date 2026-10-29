@@ -58,7 +58,6 @@ export function AdminDistributionTableRow({
 			<TableCell className="space-y-1 py-3 align-middle">
 				<span
 					className="font-medium text-sm text-slate-900 block leading-snug line-clamp-2"
-					title={item.title}
 				>
 					{item.title}
 				</span>

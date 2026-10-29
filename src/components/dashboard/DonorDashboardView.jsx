@@ -179,8 +179,7 @@ export function DonorDashboardView({ currentUser: propUser }) {
             size="icon"
             onClick={handleRefresh}
             disabled={isLoading}
-            className="h-8 w-8 rounded-lg border-slate-200 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50"
-            title="Segarkan riwayat transaksi"
+            className="h-8 w-8 rounded-lg border-slate-200 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50" aria-label="Segarkan riwayat transaksi"
             aria-label="Segarkan riwayat transaksi"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />

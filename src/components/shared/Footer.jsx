@@ -30,14 +30,15 @@ export function Footer() {
                   className="w-full h-full object-contain rounded-sm"
                 />
               </div>
-              <span className="font-medium text-base sm:text-lg text-white tracking-tight leading-snug">
-                Yayasan Payung Berkah
-              </span>
+              <div className="flex flex-col justify-center">
+                <span className="font-medium text-base sm:text-lg text-white tracking-tight leading-tight">
+                  {ORG_PROFILE.name}
+                </span>
+                <p className="text-xs sm:text-sm text-slate-300 font-normal leading-normal">
+                  {ORG_PROFILE.tagline}
+                </p>
+              </div>
             </div>
-
-            <p className="text-sm text-slate-200 leading-relaxed font-normal">
-              {ORG_PROFILE.tagline}
-            </p>
 
             <div className="space-y-1 text-sm text-slate-200 pt-0.5">
               <p><span className="text-white font-medium">SK Kemenkumham:</span> {ORG_PROFILE.legal.skKemenkumham}</p>

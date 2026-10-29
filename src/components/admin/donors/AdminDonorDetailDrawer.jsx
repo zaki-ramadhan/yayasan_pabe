@@ -177,7 +177,7 @@ export function AdminDonorDetailDrawer({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 text-xs">
               <div>
                 <span className="text-slate-500 font-normal block">Email</span>
-                <span className="text-slate-800 font-medium truncate block mt-0.5" title={donor.email || "-"}>
+                <span className="text-slate-800 font-medium truncate block mt-0.5">
                   {donor.email ? maskEmail(donor.email) : "-"}
                 </span>
               </div>
@@ -242,7 +242,7 @@ export function AdminDonorDetailDrawer({
                         </span>
                         {d.status && <StatusBadge status={d.status} className="scale-90 origin-left" />}
                       </div>
-                      <p className="text-xs text-slate-600 truncate" title={d.campaignTitle}>
+                      <p className="text-xs text-slate-600 truncate">
                         {d.campaignTitle}
                       </p>
                       <span className="text-xs text-slate-400 block font-normal">
@@ -256,7 +256,6 @@ export function AdminDonorDetailDrawer({
                       </span>
                       <span
                         className="inline-flex items-center justify-center px-1.5 py-0.5 mt-0.5 rounded text-2xs font-medium bg-slate-100 border border-slate-200 text-slate-600 max-w-[130px] truncate"
-                        title={formatPaymentChannel(d.paymentChannel)}
                       >
                         {formatPaymentChannel(d.paymentChannel)}
                       </span>

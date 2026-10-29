@@ -49,7 +49,6 @@ export function AdminInlineEditButton({
         href={href}
         target={target}
         rel={target === "_blank" ? "noopener noreferrer" : undefined}
-        title="Buka form kelola konten ini di panel admin"
         aria-label={label}
       >
         <Pencil className={cn("shrink-0", size === "sm" ? "w-3.5 h-3.5" : "w-4 h-4")} />

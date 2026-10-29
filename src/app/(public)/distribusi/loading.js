@@ -85,7 +85,7 @@ export default function DistribusiLoading() {
                 </div>
                 <Skeleton className="h-4 w-72 sm:w-80 rounded ml-3.5" />
               </div>
-              <Skeleton className="h-9 w-28 rounded-lg border border-slate-200" />
+              <Skeleton className="h-8 sm:h-9 w-28 rounded-md" />
             </div>
 
             {/* Area Chart Canvas */}

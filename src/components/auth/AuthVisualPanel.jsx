@@ -51,8 +51,7 @@ export function AuthVisualPanel() {
           <Link
             href="/"
             className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-900/50 hover:bg-slate-900/80 text-white/90 hover:text-white border border-white/20 backdrop-blur-md transition-all shadow-md group cursor-pointer"
-            aria-label="Kembali ke Beranda"
-            title="Kembali ke Beranda"
+            aria-label="Kembali ke Beranda" aria-label="Kembali ke Beranda"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
           </Link>

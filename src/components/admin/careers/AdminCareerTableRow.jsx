@@ -36,7 +36,6 @@ export function AdminCareerTableRow({
 				<div className="space-y-0.5">
 					<span
 						className="text-sm font-medium text-slate-900 block leading-snug line-clamp-2"
-						title={job.title}
 					>
 						{job.title}
 					</span>
@@ -121,8 +120,7 @@ export function AdminCareerTableRow({
 							job.id,
 							job.isActive,
 						)
-					}
-					title="Klik untuk mengubah status aktif lowongan"
+					} aria-label="Ubah status aktif lowongan"
 					className="cursor-pointer"
 				>
 					<StatusBadge

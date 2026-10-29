@@ -38,9 +38,6 @@ export function TableRowActions({
 					disabled={
 						disabled
 					}
-					title={
-						viewTooltip
-					}
 					aria-label={
 						viewTooltip
 					}
@@ -59,9 +56,6 @@ export function TableRowActions({
 					disabled={
 						disabled
 					}
-					title={
-						editTooltip
-					}
 					aria-label={
 						editTooltip
 					}
@@ -79,9 +73,6 @@ export function TableRowActions({
 					}
 					disabled={
 						disabled
-					}
-					title={
-						deleteTooltip
 					}
 					aria-label={
 						deleteTooltip

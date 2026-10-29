@@ -74,7 +74,7 @@ export function Navbar() {
           <Link
             href="/"
             className="flex items-center gap-2 sm:gap-2.5 select-none focus:outline-none"
-            title="Beranda Yayasan PABE"
+            aria-label="Beranda Yayasan PABE"
           >
             {/* Logo Langsung Tanpa Pembungkus Box & Border, Skala Proporsional */}
             <div className="relative h-9 sm:h-14 w-9 sm:w-14 shrink-0 flex items-center justify-center">

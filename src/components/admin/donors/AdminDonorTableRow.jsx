@@ -18,11 +18,11 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
             isAnonymous={donor.name === "Hamba Allah"}
           />
           <div className="min-w-0 space-y-0.5">
-            <span className="font-medium text-sm text-slate-900 block leading-tight truncate" title={donor.name}>
+            <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
               {donor.name}
             </span>
             {donor.email && (
-              <span className="text-sm text-slate-500 block truncate font-normal" title={donor.email}>
+              <span className="text-sm text-slate-500 block truncate font-normal">
                 {maskEmail(donor.email)}
               </span>
             )}

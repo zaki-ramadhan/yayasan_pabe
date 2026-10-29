@@ -82,7 +82,7 @@ ToastClose.displayName = "ToastClose";
 const ToastTitle = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm font-medium text-white leading-snug", className)}
+    className={cn("text-sm font-normal text-white leading-snug", className)}
     {...props}
   />
 ));
@@ -91,7 +91,7 @@ ToastTitle.displayName = "ToastTitle";
 const ToastDescription = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm font-medium text-white/90 leading-snug mt-0.5", className)}
+    className={cn("text-sm font-normal text-white/90 leading-snug mt-0.5", className)}
     {...props}
   />
 ));

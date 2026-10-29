@@ -40,7 +40,6 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
       <TableCell className="text-sm text-slate-800 py-3 align-middle min-w-[280px] max-w-[360px]">
         <span
           className="font-medium block leading-snug line-clamp-2"
-          title={decodeHtmlEntities(item.programTitle)}
         >
           {decodeHtmlEntities(item.programTitle)}
         </span>

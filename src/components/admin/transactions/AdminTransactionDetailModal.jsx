@@ -57,8 +57,7 @@ export function AdminTransactionDetailModal({
                 <span className="font-medium text-slate-900">{transaction.invoiceId}</span>
                 <button
                   type="button"
-                  onClick={handleCopyInvoice}
-                  title="Salin invoice"
+                  onClick={handleCopyInvoice} aria-label="Salin invoice"
                   className="p-1 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-200 transition-colors cursor-pointer"
                 >
                   {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}

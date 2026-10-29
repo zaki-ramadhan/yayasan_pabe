@@ -37,7 +37,6 @@ export function ArticleCardReactions({
             ? "text-blue-700 font-medium"
             : "text-slate-600 hover:text-slate-900"
         )}
-        title={hasLiked ? "Batal menyukai" : "Sukai artikel ini"}
         aria-label={`${likes} suka`}
       >
         <ThumbsUp
@@ -59,7 +58,6 @@ export function ArticleCardReactions({
             ? "text-rose-700 font-medium"
             : "text-slate-600 hover:text-slate-900"
         )}
-        title={hasDisliked ? "Batal tidak menyukai" : "Tidak menyukai artikel ini"}
         aria-label={`${dislikes} tidak suka`}
       >
         <ThumbsDown

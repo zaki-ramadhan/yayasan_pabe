@@ -67,7 +67,7 @@ export function AdminTopHeader({
           type="button"
           onClick={onToggleSidebar}
           aria-label={isSidebarExpanded ? "Kecilkan bilah menu" : "Perluas bilah menu"}
-          title={isSidebarExpanded ? "Kecilkan menu samping" : "Perluas menu samping"}
+          aria-label={isSidebarExpanded ? "Kecilkan menu samping" : "Perluas menu samping"}
           className="lg:hidden p-1.5 -ml-1.5 rounded-md text-slate-500 hover:text-slate-950 hover:bg-slate-100/80 transition-colors cursor-pointer flex items-center justify-center shrink-0"
         >
           <PanelLeft className="w-4.5 h-4.5" />
@@ -93,7 +93,6 @@ export function AdminTopHeader({
 
         <div
           className="relative w-9 h-9 rounded-full overflow-hidden bg-slate-100 border border-slate-200 text-xs font-medium text-slate-800 flex items-center justify-center shadow-2xs shrink-0 select-none"
-          title={currentUser?.name || "Pengurus"}
         >
           {avatarUrl ? (
             <Image

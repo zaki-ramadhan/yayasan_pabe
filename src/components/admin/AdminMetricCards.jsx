@@ -41,7 +41,6 @@ export function AdminMetricCards({ stats }) {
       {cards.map((card) => (
         <div
           key={card.label}
-          title={card.fullValue}
           className="relative w-full aspect-[363/224]"
         >
           {/* Background Folder Frame */}

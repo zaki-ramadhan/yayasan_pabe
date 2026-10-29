@@ -38,8 +38,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
                 href="/legalitas/akta-notaris"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors"
-                title="Buka salinan akta notaris di tab baru"
+                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors" aria-label="Buka salinan akta notaris di tab baru"
               >
                 <span>Lihat salinan</span>
                 <ExternalLink className="w-3.5 h-3.5 shrink-0" />
@@ -68,8 +67,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
                 href="/legalitas/izin-lks"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors"
-                title="Buka salinan izin LKS Dinas Sosial di tab baru"
+                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors" aria-label="Buka salinan izin LKS Dinas Sosial di tab baru"
               >
                 <span>Lihat salinan</span>
                 <ExternalLink className="w-3.5 h-3.5 shrink-0" />
@@ -89,8 +87,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
                 href="/legalitas/surat-domisili"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors"
-                title="Buka salinan surat domisili di tab baru"
+                className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors" aria-label="Buka salinan surat domisili di tab baru"
               >
                 <span>Lihat salinan</span>
                 <ExternalLink className="w-3.5 h-3.5 shrink-0" />

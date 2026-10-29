@@ -22,7 +22,6 @@ export function TeamAvatarStack({
           <div
             key={leader.name || idx}
             className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden ring-2 ring-white bg-slate-200 shrink-0 shadow-2xs"
-            title={leader.name}
           >
             <Image
               src={leader.image}

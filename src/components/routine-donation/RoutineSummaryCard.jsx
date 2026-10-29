@@ -82,7 +82,6 @@ export function RoutineSummaryCard({
             type="button"
             onClick={onStartTour}
             aria-label="Panduan donasi rutin"
-            title="Panduan donasi rutin"
             className="inline-flex items-center justify-center h-12 w-12 shrink-0 rounded-lg border border-sky-200 bg-sky-50 hover:bg-sky-100 text-sky-700 transition-colors cursor-pointer shadow-xs"
           >
             <HelpCircle className="w-5 h-5" />

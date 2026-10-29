@@ -25,7 +25,6 @@ export function LeaderItem({ leader }) {
         <div className="flex items-center gap-1.5 min-w-0">
           <h3
             className="text-sm sm:text-base font-medium text-slate-950 leading-snug truncate"
-            title={leader.name}
           >
             {leader.name}
           </h3>
@@ -34,7 +33,6 @@ export function LeaderItem({ leader }) {
           <ChevronRight className="w-3.5 h-3.5 text-primary shrink-0" />
           <span
             className="text-xs sm:text-sm font-medium text-slate-700 truncate"
-            title={leader.role}
           >
             {leader.role}
           </span>

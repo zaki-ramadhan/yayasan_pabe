@@ -38,13 +38,11 @@ export function AdminAuditReportTableRow({
 			<TableCell className="py-3.5 align-middle space-y-1">
 				<span
 					className="font-medium text-sm text-slate-900 block leading-tight line-clamp-1"
-					title={item.auditorName}
 				>
 					{item.auditorName}
 				</span>
 				<span
 					className="text-sm font-normal text-slate-500 block leading-normal line-clamp-2"
-					title={item.title}
 				>
 					{item.title}
 				</span>

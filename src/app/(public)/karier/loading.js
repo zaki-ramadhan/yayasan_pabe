@@ -18,11 +18,11 @@ export default function KarierLoading() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-6 pb-10 sm:pb-12 space-y-5">
         {/* Filter Bar: Row 1 Search Input, Row 2 3-Select Dropdowns */}
         <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-2xs space-y-3 sm:space-y-4">
-          <Skeleton className="h-10 w-full rounded-md" />
+          <Skeleton className="h-10 w-full rounded-lg" />
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <Skeleton className="h-10 sm:flex-1 rounded-md" />
-            <Skeleton className="h-10 sm:flex-1 rounded-md" />
-            <Skeleton className="h-10 sm:flex-1 rounded-md" />
+            <Skeleton className="h-10 sm:flex-1 rounded-lg" />
+            <Skeleton className="h-10 sm:flex-1 rounded-lg" />
+            <Skeleton className="h-10 sm:flex-1 rounded-lg" />
           </div>
         </div>
 

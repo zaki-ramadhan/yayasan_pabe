@@ -102,8 +102,7 @@ export function AdminSettingsBankSection({
                 type="button"
                 variant="outline"
                 size="icon"
-                onClick={() => onRemoveBankAccount(idx)}
-                title="Hapus rekening ini"
+                onClick={() => onRemoveBankAccount(idx)} aria-label="Hapus rekening ini"
                 className="h-9 w-9 text-slate-500 hover:text-rose-600 hover:border-rose-200 cursor-pointer"
               >
                 <Trash2 className="w-4 h-4" />
