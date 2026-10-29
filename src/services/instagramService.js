@@ -1,140 +1,116 @@
 import { prisma } from "@/lib/prisma";
-import { INSTAGRAM_ACCOUNT } from "@/data/instagramPosts";
+import { INSTAGRAM_ACCOUNT, INSTAGRAM_POSTS } from "@/data/instagramPosts";
+import { formatDate } from "@/lib/formatters";
+import {
+  getLiveInstagramPosts,
+  getLiveInstagramAccount,
+} from "./instagramApiService";
 
 /**
- * Mengambil postingan murni langsung dari akun Instagram yang terhubung.
- * Mengurutkan berdasarkan tanggal postingan terbaru, dan dibatasi maksimal 9 postingan.
+ * Mengambil daftar postingan Instagram.
+ * Jika INSTAGRAM_SOURCE_MODE="api" dan token terkonfigurasi, mengambil via Meta Graph API.
+ * Secara default, mengambil langsung dari database CMS PostgreSQL secara manual.
+ *
+ * @param {number} [limit=9]
+ * @returns {Promise<Array>}
  */
 export async function getInstagramPosts(limit = 9) {
-  const token = process.env.INSTAGRAM_ACCESS_TOKEN;
-
-  if (token) {
+  if (process.env.INSTAGRAM_SOURCE_MODE === "api" && process.env.INSTAGRAM_ACCESS_TOKEN) {
     try {
-      const apiUrl = `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count&limit=50&access_token=${token}`;
-    const response = await fetch(apiUrl, {
-      next: { revalidate: 1800 }, // Cache 30 menit
-    });
+      const livePosts = await getLiveInstagramPosts(limit);
+      if (livePosts && livePosts.length > 0) return livePosts;
+    } catch (err) {
+      console.warn("Live API fallback to DB:", err.message);
+    }
+  }
 
-    if (response.ok) {
-      const json = await response.json();
-      if (json.data && Array.isArray(json.data) && json.data.length > 0) {
-        const mappedPosts = json.data.map((post, idx) => {
-          const likes = typeof post.like_count === "number" ? post.like_count : 0;
-          const comments = typeof post.comments_count === "number" ? post.comments_count : 0;
-          const rawTimestamp = post.timestamp ? new Date(post.timestamp).getTime() : 0;
+  if (prisma.instagramPost) {
+    try {
+      const dbPosts = await prisma.instagramPost.findMany({
+        orderBy: { postedAt: "desc" },
+        take: limit || 12,
+      });
 
+      if (dbPosts && dbPosts.length > 0) {
+        return dbPosts.map((post) => {
+          const rawTimestamp = post.postedAt ? new Date(post.postedAt).getTime() : 0;
           return {
-            id: post.id || `ig-live-${idx}`,
-            imageUrl: post.media_type === "VIDEO" ? (post.thumbnail_url || post.media_url) : post.media_url,
-            alt: post.caption?.slice(0, 100) || "Postingan Instagram",
+            id: post.id,
+            imageUrl: post.imageUrl,
+            alt: post.altText || post.caption?.slice(0, 100) || "Postingan Instagram",
             caption: post.caption || "",
             timestamp: rawTimestamp,
-            date: post.timestamp
-              ? new Date(post.timestamp).toLocaleDateString("id-ID", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })
+            date: post.postedAt
+              ? formatDate(post.postedAt, { month: "short" })
               : "",
-            likes,
-            comments,
-            engagementScore: likes + comments,
-            postUrl: post.permalink || (INSTAGRAM_ACCOUNT.profileUrl || "https://www.instagram.com/yayasanpayungberkah/"),
+            likes: post.likeCount || 0,
+            comments: post.commentCount || 0,
+            engagementScore: (post.likeCount || 0) + (post.commentCount || 0),
+            postUrl: post.postUrl || (INSTAGRAM_ACCOUNT.profileUrl || "https://www.instagram.com/yayasanpayungberkah/"),
           };
         });
-
-        // Urutkan berdasarkan tanggal terbaru (descending)
-        mappedPosts.sort((a, b) => b.timestamp - a.timestamp);
-
-        // Kembalikan postingan sesuai limit yang diminta
-        return mappedPosts.slice(0, Math.min(limit, 50));
       }
-    }
-    } catch (apiError) {
-      console.warn("Instagram Live API fetch error:", apiError?.message);
+    } catch (dbError) {
+      console.warn("Prisma getInstagramPosts fallback error:", dbError?.message);
     }
   }
 
-  try {
-    const dbPosts = await prisma.instagramPost.findMany({
-      orderBy: { postedAt: "desc" },
-      take: limit || 12,
-    });
-    if (dbPosts && dbPosts.length > 0) {
-      return dbPosts.map((post) => {
-        const rawTimestamp = post.postedAt ? new Date(post.postedAt).getTime() : 0;
-        return {
-          id: post.id,
-          imageUrl: post.imageUrl,
-          alt: post.altText || post.caption?.slice(0, 100) || "Postingan Instagram",
-          caption: post.caption || "",
-          timestamp: rawTimestamp,
-          date: post.postedAt
-            ? new Date(post.postedAt).toLocaleDateString("id-ID", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })
-            : "",
-          likes: post.likeCount || 0,
-          comments: post.commentCount || 0,
-          engagementScore: (post.likeCount || 0) + (post.commentCount || 0),
-          postUrl: post.postUrl || (INSTAGRAM_ACCOUNT.profileUrl || "https://www.instagram.com/yayasanpayungberkah/"),
-        };
-      });
-    }
-  } catch (dbError) {
-    console.warn("Prisma getInstagramPosts fallback error:", dbError?.message);
-  }
-
-  return [];
+  // Fallback data lokal jika database belum terisi postingan
+  return INSTAGRAM_POSTS.slice(0, limit).map((post) => ({
+    ...post,
+    engagementScore: (post.likes || 0) + (post.comments || 0),
+    timestamp: post.date ? new Date(post.date).getTime() : 0,
+  }));
 }
 
+/**
+ * Mengambil profil akun Instagram yayasan.
+ * Jika INSTAGRAM_SOURCE_MODE="api", mengambil via Graph API.
+ * Secara default, mengambil dari database PostgreSQL atau data fallback profil.
+ *
+ * @returns {Promise<object>}
+ */
 export async function getInstagramAccount() {
-  const token = process.env.INSTAGRAM_ACCESS_TOKEN;
-
-  if (token) {
+  if (process.env.INSTAGRAM_SOURCE_MODE === "api" && process.env.INSTAGRAM_ACCESS_TOKEN) {
     try {
-      const response = await fetch(
-        `https://graph.instagram.com/v21.0/me?fields=id,username,name,account_type,media_count,profile_picture_url,followers_count,follows_count&access_token=${token}`,
-        { next: { revalidate: 1800 } }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        if (data.username) {
-          const rawFollowers = typeof data.followers_count === "number" ? data.followers_count : 0;
-          const formattedFollowers =
-            rawFollowers >= 1000000
-              ? (rawFollowers / 1000000).toFixed(1).replace(/\.0$/, "") + "M"
-              : rawFollowers >= 1000
-              ? (rawFollowers / 1000).toFixed(1).replace(/\.0$/, "") + "K"
-              : rawFollowers.toString();
-
-          return {
-            username: data.username,
-            handle: data.username,
-            displayName: data.name || data.username,
-            avatarUrl: data.profile_picture_url || null,
-            profileUrl: `https://www.instagram.com/${data.username}/`,
-            messageUrl: `https://ig.me/m/${data.username}`,
-            followersCount: formattedFollowers,
-            followingCount: typeof data.follows_count === "number" ? data.follows_count : 0,
-            postsCount: typeof data.media_count === "number" ? data.media_count : 0,
-            isVerified: false,
-          };
-        }
-      }
+      const liveAccount = await getLiveInstagramAccount();
+      if (liveAccount) return liveAccount;
     } catch (err) {
-      console.warn("Instagram Profile API fetch warning:", err?.message);
+      console.warn("Live Account API fallback to DB:", err.message);
     }
   }
 
-  let dbCount = INSTAGRAM_ACCOUNT.postCount || 12;
-  try {
-    const count = await prisma.instagramPost.count();
-    if (count > 0) dbCount = count;
-  } catch {
-    // ignore
+  let dbProfile = null;
+  let dbCount = 0;
+
+  if (prisma.instagramProfile && prisma.instagramPost) {
+    try {
+      const [profile, count] = await Promise.all([
+        prisma.instagramProfile.findUnique({
+          where: { id: "ig_profile" },
+        }),
+        prisma.instagramPost.count(),
+      ]);
+      dbProfile = profile;
+      dbCount = count;
+    } catch (err) {
+      console.warn("Prisma getInstagramAccount fallback warning:", err?.message);
+    }
+  }
+
+  if (dbProfile) {
+    return {
+      username: dbProfile.username.replace("@", ""),
+      handle: dbProfile.username.replace("@", ""),
+      displayName: dbProfile.displayName,
+      avatarUrl: dbProfile.avatarUrl,
+      profileUrl: dbProfile.profileUrl,
+      messageUrl: `https://ig.me/m/${dbProfile.username.replace("@", "")}`,
+      followersCount: dbProfile.followersCount,
+      followingCount: dbProfile.followingCount,
+      postsCount: dbCount || INSTAGRAM_ACCOUNT.postCount || 12,
+      isVerified: dbProfile.isVerified,
+    };
   }
 
   return {
@@ -144,10 +120,9 @@ export async function getInstagramAccount() {
     avatarUrl: null,
     profileUrl: INSTAGRAM_ACCOUNT.profileUrl || "https://www.instagram.com/yayasanpayungberkah/",
     messageUrl: "https://www.instagram.com/direct/inbox/",
-    followersCount: INSTAGRAM_ACCOUNT.followersCount || "186",
+    followersCount: String(INSTAGRAM_ACCOUNT.followersCount || "186"),
     followingCount: INSTAGRAM_ACCOUNT.followingCount || 385,
-    postsCount: dbCount,
+    postsCount: dbCount || INSTAGRAM_ACCOUNT.postCount || 12,
     isVerified: false,
   };
 }
-

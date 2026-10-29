@@ -1,4 +1,4 @@
-import { SafeImage } from "@/components/ui/safe-image";
+import { SafeImage } from "@/components/ui/SafeImage";
 
 /**
  * 3 Postingan Mini Preview (Flush edge-to-edge / Non-hoverable)

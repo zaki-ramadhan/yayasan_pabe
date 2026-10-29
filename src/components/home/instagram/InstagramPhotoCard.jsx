@@ -1,5 +1,5 @@
 import { Heart, MessageCircle } from "lucide-react";
-import { SafeImage } from "@/components/ui/safe-image";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { formatCompactNumber } from "@/lib/formatters";
 
 /**

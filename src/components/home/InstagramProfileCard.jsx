@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { InstagramProfileHeader } from "./instagram/InstagramProfileHeader";
 import { InstagramProfileStats } from "./instagram/InstagramProfileStats";
 import { InstagramMiniGrid } from "./instagram/InstagramMiniGrid";
@@ -15,11 +15,13 @@ export {
 };
 
 /**
- * Komponen Utama: Mini Card Profil Instagram
- * @param {object} account
- * @param {Array} posts
+ * Komponen Mini Tooltip Card Profil Instagram
+ * Hanya menampilkan nama akun, username, foto profil (pfp), dan tombol aksi.
+ *
+ * @param {object} props
+ * @param {object} props.account - Data akun profil yayasan
  */
-export function InstagramProfileCard({ account, posts = [] }) {
+export function InstagramProfileCard({ account }) {
   return (
     <div className="relative max-w-sm sm:max-w-md mx-auto w-full pt-2">
       {/* Tooltip Arrow Pointer */}
@@ -29,17 +31,11 @@ export function InstagramProfileCard({ account, posts = [] }) {
       />
 
       <Card className="w-full rounded-xl bg-slate-900 text-white shadow-xl border-slate-800 overflow-hidden relative z-10">
-        <CardContent className="p-0 py-3.5 sm:py-4 space-y-3 sm:space-y-3.5">
-          {/* 1. Header Profile */}
+        <CardContent className="p-0 py-3.5 sm:py-4 space-y-3">
+          {/* Header Profile: Avatar (PFP), Username, Display Name */}
           <InstagramProfileHeader account={account} />
 
-          {/* 2. Statistik Akun */}
-          <InstagramProfileStats account={account} totalPostsCount={posts.length} />
-
-          {/* 3. 3 Postingan Mini Berjejeran */}
-          <InstagramMiniGrid posts={posts} />
-
-          {/* 4. Tombol Aksi */}
+          {/* Tombol Aksi Kunjungi/Follow */}
           <InstagramCardActions account={account} />
         </CardContent>
       </Card>
