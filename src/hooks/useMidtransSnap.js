@@ -6,17 +6,18 @@ import { toast } from "@/hooks/useToast";
 
 /**
  * Custom Hook for managing Midtrans Snap Popup Lifecycle
+ * Fully compliant with React 19 / Compiler effect rules (Zero synchronous cascading setState).
  */
 export function useMidtransSnap() {
-  const [isReady, setIsReady] = useState(false);
-  const [isLoadingScript, setIsLoadingScript] = useState(true);
+  const [isReady, setIsReady] = useState(() => {
+    return typeof window !== "undefined" && Boolean(window.snap);
+  });
+  const [isLoadingScript, setIsLoadingScript] = useState(() => {
+    return typeof window !== "undefined" ? !Boolean(window.snap) : true;
+  });
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    if (window.snap) {
-      setIsReady(true);
-      setIsLoadingScript(false);
+    if (typeof window === "undefined" || window.snap) {
       return;
     }
 
@@ -24,36 +25,35 @@ export function useMidtransSnap() {
     const scriptUrl = getMidtransSnapScriptUrl();
     const scriptId = "midtrans-snap-script";
 
+    const handleLoaded = () => {
+      setIsReady(true);
+      setIsLoadingScript(false);
+    };
+
+    const handleError = () => {
+      setIsLoadingScript(false);
+      console.error("Gagal memuat script Midtrans Snap SDK.");
+    };
+
     const existingScript = document.getElementById(scriptId);
     if (existingScript) {
-      existingScript.addEventListener("load", () => {
-        setIsReady(true);
-        setIsLoadingScript(false);
-      });
+      existingScript.addEventListener("load", handleLoaded, { once: true });
+      existingScript.addEventListener("error", handleError, { once: true });
       return;
     }
 
     const script = document.createElement("script");
     script.id = scriptId;
     script.src = scriptUrl;
-    script.setAttribute("data-client-key", clientKey);
+    if (clientKey) {
+      script.setAttribute("data-client-key", clientKey);
+    }
     script.async = true;
 
-    script.onload = () => {
-      setIsReady(true);
-      setIsLoadingScript(false);
-    };
-
-    script.onerror = () => {
-      setIsLoadingScript(false);
-      console.error("Gagal memuat script Midtrans Snap SDK.");
-    };
+    script.addEventListener("load", handleLoaded, { once: true });
+    script.addEventListener("error", handleError, { once: true });
 
     document.body.appendChild(script);
-
-    return () => {
-      // Keep script cached in document to avoid repeated network overhead
-    };
   }, []);
 
   const payWithSnap = useCallback(
@@ -63,7 +63,7 @@ export function useMidtransSnap() {
         return;
       }
 
-      if (!window.snap) {
+      if (typeof window === "undefined" || !window.snap) {
         toast.error("Sistem pembayaran sedang memuat. Silakan tunggu sejenak.");
         return;
       }
