@@ -206,4 +206,26 @@ describe("Instagram Manual CMS & Service Integration", () => {
       expect(profile.username).toBe(INSTAGRAM_ACCOUNT.username.replace("@", ""));
     });
   });
+
+  describe("deleteInstagramPostsBulk", () => {
+    it("berhasil menghapus banyak postingan berdasarkan array ID", async () => {
+      const deleteManySpy = vi
+        .spyOn(prisma.instagramPost, "deleteMany")
+        .mockResolvedValue({ count: 2 });
+      const { deleteInstagramPostsBulk } = await import("@/services/adminInstagramService");
+
+      const result = await deleteInstagramPostsBulk(["post-1", "post-2"]);
+      expect(deleteManySpy).toHaveBeenCalledWith({
+        where: { id: { in: ["post-1", "post-2"] } },
+      });
+      expect(result.count).toBe(2);
+    });
+
+    it("menolak penghapusan jika array ID kosong atau tidak valid", async () => {
+      const { deleteInstagramPostsBulk } = await import("@/services/adminInstagramService");
+      await expect(deleteInstagramPostsBulk([])).rejects.toThrow(/wajib disertakan/i);
+      await expect(deleteInstagramPostsBulk(["   "])).rejects.toThrow(/tidak ada id/i);
+    });
+  });
 });
+

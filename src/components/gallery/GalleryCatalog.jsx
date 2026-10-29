@@ -2,18 +2,28 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { Loader2 } from "lucide-react";
-import { GALLERY_SORT_OPTIONS } from "@/data/sortOptions";
+import { GALLERY_SORT_OPTIONS, GALLERY_MEDIA_TYPE_OPTIONS } from "@/data/sortOptions";
 import { useCatalogState } from "@/hooks/useCatalogState";
 import { CategoryTabs } from "@/components/shared/CategoryTabs";
 import { CatalogSearchBar } from "@/components/shared/CatalogSearchBar";
+import { SortDropdown } from "@/components/shared/SortDropdown";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { groupGalleryItems } from "@/lib/galleryGroupHelper";
+import { groupGalleryItems, isVideoUrl } from "@/lib/galleryGroupHelper";
 import { GalleryCard } from "./GalleryCard";
 import { Button } from "@/components/ui/Button";
 
 const BATCH_SIZE = 9;
 
-function filterGalleryItem(item, { category, searchQuery, categories }) {
+function getGalleryItemMediaType(item) {
+  const images = Array.isArray(item.images) ? item.images : [];
+  if (images.length === 0) return "photo";
+  const videoCount = images.filter((u) => isVideoUrl(u)).length;
+  if (videoCount === 0) return "photo";
+  if (videoCount === images.length) return "video";
+  return "mixed";
+}
+
+function filterGalleryItem(item, { category, searchQuery, categories, mediaType = "all" }) {
   if (category !== "all" && category !== "semua" && category !== "Semua Kategori") {
     const catName = categories.find((c) => c.id === category)?.name ?? category;
     const itemCat = (item.category || "").toLowerCase();
@@ -29,6 +39,11 @@ function filterGalleryItem(item, { category, searchQuery, categories }) {
     const matchDesc = item.description?.toLowerCase().includes(q);
     const matchCat = item.category?.toLowerCase().includes(q);
     if (!matchTitle && !matchDesc && !matchCat) return false;
+  }
+
+  if (mediaType && mediaType !== "all") {
+    const itemType = getGalleryItemMediaType(item);
+    if (itemType !== mediaType) return false;
   }
 
   return true;
@@ -56,6 +71,8 @@ export function GalleryCatalog({
   initialItems = [],
   initialCategories = [],
 }) {
+  const [mediaType, setMediaType] = useState("all");
+
   const formattedCategories = useMemo(() => {
     const raw = Array.from(new Set(initialCategories || []))
       .filter((c) => Boolean(c) && c !== "Semua Kategori" && c !== "all");
@@ -74,6 +91,11 @@ export function GalleryCatalog({
     [initialItems]
   );
 
+  const filterFn = useCallback(
+    (item, ctx) => filterGalleryItem(item, { ...ctx, mediaType }),
+    [mediaType]
+  );
+
   const {
     selectedCategory,
     searchQuery,
@@ -87,7 +109,7 @@ export function GalleryCatalog({
     handlers,
   } = useCatalogState({
     items: groupedItems,
-    filterFn: filterGalleryItem,
+    filterFn,
     sortFn: sortGalleryItems,
     itemsPerPage: 100,
     categories: formattedCategories,
@@ -101,14 +123,16 @@ export function GalleryCatalog({
     selectedCategory,
     debouncedSearchQuery,
     sortBy,
+    mediaType,
   });
 
   if (
     prevFilter.selectedCategory !== selectedCategory ||
     prevFilter.debouncedSearchQuery !== debouncedSearchQuery ||
-    prevFilter.sortBy !== sortBy
+    prevFilter.sortBy !== sortBy ||
+    prevFilter.mediaType !== mediaType
   ) {
-    setPrevFilter({ selectedCategory, debouncedSearchQuery, sortBy });
+    setPrevFilter({ selectedCategory, debouncedSearchQuery, sortBy, mediaType });
     setVisibleCount(BATCH_SIZE);
   }
 
@@ -129,7 +153,6 @@ export function GalleryCatalog({
 
   return (
     <div className="space-y-6">
-      {/* Category Chips matching Article Catalog */}
       <CategoryTabs
         categories={formattedCategories}
         counts={categoryCounts}
@@ -138,7 +161,6 @@ export function GalleryCatalog({
       />
 
       <div className="space-y-4">
-        {/* Toolbar with Search Input & Dropdown Sort matching Donation & Article Catalogs */}
         <CatalogSearchBar
           searchQuery={searchQuery}
           sortBy={sortBy}
@@ -148,6 +170,20 @@ export function GalleryCatalog({
           onSort={handlers.onSortChange}
           isLoading={isPending || isDebouncing}
           searchPlaceholder="Cari judul atau dokumentasi kegiatan..."
+          filterSlot={
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-sm text-slate-700 shrink-0">
+                Media:
+              </span>
+              <SortDropdown
+                options={GALLERY_MEDIA_TYPE_OPTIONS}
+                value={mediaType}
+                onChange={setMediaType}
+                label="Semua Media"
+                className="h-10 text-sm"
+              />
+            </div>
+          }
         />
 
         {/* Content State: Grid vs Empty */}
@@ -198,10 +234,13 @@ export function GalleryCatalog({
             }
             variant="card"
             action={
-              isFiltered ? (
+              isFiltered || mediaType !== "all" ? (
                 <button
                   type="button"
-                  onClick={handlers.onReset}
+                  onClick={() => {
+                    handlers.onReset();
+                    setMediaType("all");
+                  }}
                   className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
                 >
                   Reset Semua Filter

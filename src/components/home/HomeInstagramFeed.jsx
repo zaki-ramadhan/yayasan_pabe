@@ -16,7 +16,7 @@ export function HomeInstagramFeed({ posts = [], account = DEFAULT_ACCOUNT }) {
     if (!Array.isArray(posts) || posts.length === 0) return [];
     return [...posts]
       .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
-      .slice(0, 9);
+      .slice(0, 8);
   }, [posts]);
 
   const hasPosts = sortedPosts.length > 0;

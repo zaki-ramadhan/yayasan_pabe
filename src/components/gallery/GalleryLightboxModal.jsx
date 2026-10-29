@@ -94,7 +94,7 @@ export function GalleryLightboxModal({ item = null, onClose }) {
               type="button"
               onClick={onClose}
               className="absolute top-3.5 right-3.5 z-20 w-8 h-8 rounded-full bg-slate-950/60 hover:bg-slate-950 text-white flex items-center justify-center transition-colors cursor-pointer shadow-md"
-              title="Tutup pratinjau"
+              aria-label="Tutup pratinjau"
             >
               <X className="w-4 h-4" />
             </button>
@@ -106,7 +106,6 @@ export function GalleryLightboxModal({ item = null, onClose }) {
                   key={activeImageUrl}
                   src={activeImageUrl}
                   poster={images.find((u) => !isVideoUrl(u))}
-                  title={`${displayTitle} - Media ${currentIndex + 1}`}
                   isActive={true}
                   objectFit="contain"
                 />
@@ -143,7 +142,7 @@ export function GalleryLightboxModal({ item = null, onClose }) {
                       handlePrev();
                     }}
                     className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-950/60 hover:bg-slate-950 text-white flex items-center justify-center transition-all cursor-pointer shadow-lg"
-                    title="Media sebelumnya (Panah Kiri)"
+                    aria-label="Media sebelumnya (Panah Kiri)"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
@@ -155,7 +154,7 @@ export function GalleryLightboxModal({ item = null, onClose }) {
                       handleNext();
                     }}
                     className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-950/60 hover:bg-slate-950 text-white flex items-center justify-center transition-all cursor-pointer shadow-lg"
-                    title="Media berikutnya (Panah Kanan)"
+                    aria-label="Media berikutnya (Panah Kanan)"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -178,8 +177,7 @@ export function GalleryLightboxModal({ item = null, onClose }) {
                         isActive
                           ? "border-primary ring-1 ring-primary shadow-sm scale-105"
                           : "border-transparent opacity-60 hover:opacity-100"
-                      }`}
-                      title={`Pilih media ${idx + 1}`}
+                      }`} aria-label={`Pilih media ${idx + 1}`}
                     >
                       {isYouTubeUrl(imgUrl) ? (
                         <div className="relative w-full h-full bg-slate-900">

@@ -19,3 +19,10 @@ export const GALLERY_SORT_OPTIONS = [
   { value: "terlama", label: "Terlama" },
 ];
 
+export const GALLERY_MEDIA_TYPE_OPTIONS = [
+  { value: "all", label: "Semua Media" },
+  { value: "photo", label: "Foto" },
+  { value: "video", label: "Video" },
+  { value: "mixed", label: "Foto & Video" },
+];
+

@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect, useTransition } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useTableSelection } from "@/hooks/useTableSelection";
 import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
 
@@ -15,6 +16,8 @@ export function useAdminInstagram({
   const [savedProfile, setSavedProfile] = useState(null);
   const profile = savedProfile || initialProfile;
 
+  const selection = useTableSelection(posts);
+
   const [search, setSearch] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -23,6 +26,9 @@ export function useAdminInstagram({
 
   const [postToDelete, setPostToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
   const debouncedSearch = useDebounce(search.trim(), 300);
   const isInitialMount = useRef(true);
@@ -104,7 +110,35 @@ export function useAdminInstagram({
   const handlePostSaved = () => {
     setIsPostModalOpen(false);
     setPostToEdit(null);
+    selection.clearSelection();
     fetchPosts(pagination.page || 1, debouncedSearch);
+  };
+
+  const handleConfirmBulkDelete = async () => {
+    if (selection.selectedCount === 0) return;
+    setIsBulkDeleting(true);
+
+    try {
+      const res = await safeFetch("/api/admin/instagram/posts", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selection.selectedIds }),
+      });
+      const json = await res.json();
+
+      if (json.success) {
+        toast.success(json.message || `${selection.selectedCount} postingan berhasil dihapus.`);
+        selection.clearSelection();
+        setIsBulkDeleteModalOpen(false);
+        fetchPosts(pagination.page || 1, debouncedSearch);
+      } else {
+        toast.error(json.message || "Gagal menghapus postingan terpilih.");
+      }
+    } catch {
+      toast.error("Terjadi kesalahan jaringan saat menghapus postingan.");
+    } finally {
+      setIsBulkDeleting(false);
+    }
   };
 
   return {
@@ -112,7 +146,11 @@ export function useAdminInstagram({
     pagination,
     profile,
     search,
-    setSearch,
+    setSearch: (val) => {
+      selection.clearSelection();
+      setSearch(val);
+    },
+    selection,
     isPending,
     isPostModalOpen,
     setIsPostModalOpen,
@@ -120,11 +158,18 @@ export function useAdminInstagram({
     postToDelete,
     setPostToDelete,
     isDeleting,
+    isBulkDeleteModalOpen,
+    setIsBulkDeleteModalOpen,
+    isBulkDeleting,
+    handleConfirmBulkDelete,
     handleOpenCreatePost,
     handleOpenEditPost,
     handleDeletePost,
     handleSaveProfile,
     handlePostSaved,
-    fetchPosts,
+    fetchPosts: (page, s) => {
+      selection.clearSelection();
+      fetchPosts(page, s);
+    },
   };
 }

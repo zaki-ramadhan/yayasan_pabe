@@ -5,6 +5,7 @@ import { AdminInstagramAccountCard } from "./AdminInstagramAccountCard";
 import { AdminInstagramTable } from "./AdminInstagramTable";
 import { AdminInstagramPostModal } from "./AdminInstagramPostModal";
 import { AdminInstagramDeleteDialog } from "./AdminInstagramDeleteDialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 export function AdminInstagramView({
   initialPosts = [],
@@ -17,6 +18,7 @@ export function AdminInstagramView({
     profile,
     search,
     setSearch,
+    selection,
     isPending,
     isPostModalOpen,
     setIsPostModalOpen,
@@ -24,6 +26,10 @@ export function AdminInstagramView({
     postToDelete,
     setPostToDelete,
     isDeleting,
+    isBulkDeleteModalOpen,
+    setIsBulkDeleteModalOpen,
+    isBulkDeleting,
+    handleConfirmBulkDelete,
     handleOpenCreatePost,
     handleOpenEditPost,
     handleDeletePost,
@@ -51,6 +57,8 @@ export function AdminInstagramView({
         search={search}
         onSearchChange={setSearch}
         isLoading={isPending}
+        selection={selection}
+        onOpenBulkDelete={() => setIsBulkDeleteModalOpen(true)}
         onCreatePost={handleOpenCreatePost}
         onEditPost={handleOpenEditPost}
         onDeletePost={setPostToDelete}
@@ -72,6 +80,18 @@ export function AdminInstagramView({
         onConfirm={handleDeletePost}
         post={postToDelete}
         isLoading={isDeleting}
+      />
+
+      {/* 5. Dialog Konfirmasi Hapus Massal Postingan */}
+      <ConfirmDialog
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        onConfirm={handleConfirmBulkDelete}
+        isLoading={isBulkDeleting}
+        title={`Hapus ${selection.selectedCount} Postingan Instagram`}
+        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} postingan dokumentasi Instagram terpilih? Tindakan ini tidak dapat dibatalkan.`}
+        confirmLabel="Hapus sekarang"
+        confirmVariant="destructive"
       />
     </div>
   );

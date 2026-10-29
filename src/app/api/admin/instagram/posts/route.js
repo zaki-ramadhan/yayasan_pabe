@@ -4,7 +4,9 @@ import { USER_ROLES } from "@/services/authService";
 import {
   getAdminInstagramPosts,
   createInstagramPost,
+  deleteInstagramPostsBulk,
 } from "@/services/adminInstagramService";
+import { logActivity } from "@/services/activityLogService";
 
 export const dynamic = "force-dynamic";
 
@@ -64,3 +66,47 @@ export async function POST(request) {
     );
   }
 }
+
+export async function DELETE(request) {
+  const { user, errorResponse } = await requireAuth(request, [
+    USER_ROLES.SUPER_ADMIN,
+    USER_ROLES.ADMIN,
+  ]);
+  if (errorResponse) return errorResponse;
+
+  try {
+    const body = await request.json();
+    const { ids } = body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Daftar ID postingan Instagram untuk dihapus wajib disertakan." },
+        { status: 400 }
+      );
+    }
+
+    const result = await deleteInstagramPostsBulk(ids);
+
+    await logActivity({
+      userId: user?.id,
+      userName: user?.name,
+      userRole: user?.role,
+      action: "BULK_DELETE_INSTAGRAM_POSTS",
+      targetType: "InstagramPost",
+      description: `Menghapus massal ${result.count || ids.length} postingan Instagram`,
+      request,
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `${result.count || ids.length} postingan Instagram berhasil dihapus.`,
+      count: result.count,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message || "Gagal menghapus postingan Instagram terpilih." },
+      { status: 500 }
+    );
+  }
+}
+

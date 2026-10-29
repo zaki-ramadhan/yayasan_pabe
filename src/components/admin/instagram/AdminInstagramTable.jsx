@@ -1,8 +1,10 @@
 "use client";
 
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import {
   Table,
   TableHeader,
@@ -21,6 +23,8 @@ export function AdminInstagramTable({
   search = "",
   onSearchChange,
   isLoading = false,
+  selection,
+  onOpenBulkDelete,
   onCreatePost,
   onEditPost,
   onDeletePost,
@@ -51,12 +55,43 @@ export function AdminInstagramTable({
         </Button>
       </div>
 
+      {/* Reusable Floating Bulk Action Bar */}
+      {selection && (
+        <TableSelectionBar
+          selectedCount={selection.selectedCount}
+          totalCount={posts.length}
+          label="postingan"
+          onSelectAll={selection.selectAll}
+          isAllSelected={selection.allSelected}
+          onClearSelection={selection.clearSelection}
+        >
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            onClick={onOpenBulkDelete}
+            className="font-medium h-8 text-xs gap-1.5 cursor-pointer"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Hapus {selection.selectedCount} postingan terpilih</span>
+          </Button>
+        </TableSelectionBar>
+      )}
+
       {/* Table Container */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-slate-50/75 hover:bg-slate-50/75">
+                <TableHead className="w-12 text-center py-2.5 px-3">
+                  <Checkbox
+                    checked={selection?.allSelected}
+                    indeterminate={selection?.isIndeterminate}
+                    onCheckedChange={selection?.toggleSelectAll}
+                    aria-label="Pilih semua postingan di halaman ini"
+                  />
+                </TableHead>
                 <TableHead className="w-16">Media</TableHead>
                 <TableHead className="min-w-[280px]">Caption & Tautan</TableHead>
                 <TableHead className="w-40">Tanggal Kegiatan</TableHead>
@@ -65,10 +100,10 @@ export function AdminInstagramTable({
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableSkeletonRows rows={5} columns={4} />
+                <TableSkeletonRows rows={5} columns={5} />
               ) : posts.length === 0 ? (
                 <TableEmptyRow
-                  colSpan={4}
+                  colSpan={5}
                   isFiltered={Boolean(search)}
                   message={
                     search
@@ -81,6 +116,8 @@ export function AdminInstagramTable({
                   <AdminInstagramTableRow
                     key={post.id}
                     post={post}
+                    isSelected={selection?.isSelected(post.id)}
+                    onToggleSelect={selection?.toggleSelect}
                     onEdit={onEditPost}
                     onDelete={onDeletePost}
                   />

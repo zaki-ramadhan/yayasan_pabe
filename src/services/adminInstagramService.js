@@ -211,3 +211,21 @@ export async function deleteInstagramPost(id) {
     where: { id },
   });
 }
+
+export async function deleteInstagramPostsBulk(ids) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID postingan Instagram untuk dihapus wajib disertakan.");
+  }
+
+  const validIds = ids.filter((id) => typeof id === "string" && id.trim().length > 0);
+  if (validIds.length === 0) {
+    throw new Error("Tidak ada ID postingan Instagram yang valid.");
+  }
+
+  return prisma.instagramPost.deleteMany({
+    where: {
+      id: { in: validIds },
+    },
+  });
+}
+

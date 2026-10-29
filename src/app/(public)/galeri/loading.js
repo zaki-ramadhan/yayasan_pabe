@@ -23,14 +23,23 @@ export default function GalleryLoading() {
 
       {/* 3. Search Bar & Gallery Grid Container with space-y-4 */}
       <div className="space-y-4">
-        {/* Search Bar & Sort Dropdown Skeleton */}
+        {/* Search Bar & Dropdowns Skeleton */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
           <div className="w-full sm:max-w-md">
-            <Skeleton className="h-11 w-full rounded-lg" />
+            <Skeleton className="h-10 w-full rounded-lg" />
           </div>
-          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-            <Skeleton className="h-4 w-16 rounded" />
-            <Skeleton className="h-10 w-36 rounded-lg" />
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 self-end sm:self-auto shrink-0">
+            {/* Filter Slot: Media Type Dropdown */}
+            <div className="flex items-center gap-2 shrink-0">
+              <Skeleton className="h-4 w-12 rounded" />
+              <Skeleton className="h-10 w-32 rounded-lg" />
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-2 shrink-0">
+              <Skeleton className="h-4 w-16 rounded" />
+              <Skeleton className="h-10 w-36 rounded-lg" />
+            </div>
           </div>
         </div>
 

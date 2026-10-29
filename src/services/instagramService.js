@@ -11,10 +11,10 @@ import {
  * Jika INSTAGRAM_SOURCE_MODE="api" dan token terkonfigurasi, mengambil via Meta Graph API.
  * Secara default, mengambil langsung dari database CMS PostgreSQL secara manual.
  *
- * @param {number} [limit=9]
+ * @param {number} [limit=8]
  * @returns {Promise<Array>}
  */
-export async function getInstagramPosts(limit = 9) {
+export async function getInstagramPosts(limit = 8) {
   if (process.env.INSTAGRAM_SOURCE_MODE === "api" && process.env.INSTAGRAM_ACCESS_TOKEN) {
     try {
       const livePosts = await getLiveInstagramPosts(limit);

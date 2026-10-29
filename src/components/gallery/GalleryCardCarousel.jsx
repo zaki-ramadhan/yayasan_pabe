@@ -99,7 +99,6 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
       {total > 1 && (
         <div
           className="absolute top-2.5 right-2.5 z-10 px-2 py-0.5 rounded-md bg-white/95 text-slate-800 border border-slate-200/90 shadow-2xs backdrop-blur-xs text-xs font-medium select-none pointer-events-none"
-          title={`Foto ${currentIndex + 1} dari ${total}`}
         >
           {currentIndex + 1}/{total}
         </div>

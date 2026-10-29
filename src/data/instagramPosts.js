@@ -66,7 +66,7 @@ export const INSTAGRAM_POSTS = [
   },
   {
     id: "ig-6",
-    imageUrl: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb0?w=600&auto=format&fit=crop&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600&auto=format&fit=crop&q=80",
     alt: "Kajian Doa Bersama dan Istighosah Jumat Berkah Para Donatur",
     caption: "Mendoakan keberkahan rezeki dan kesehatan seluruh donatur dalam doa bersama anak-anak yatim penghafal Quran.",
     date: "8 Sep 2026",

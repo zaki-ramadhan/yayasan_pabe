@@ -165,8 +165,7 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
                 className={cn(
                   "w-18 h-18 sm:w-20 sm:h-20 rounded-full border-2 border-slate-200 bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden relative group cursor-pointer hover:border-primary/60 transition-all shadow-2xs",
                   isUploadingAvatar && "opacity-60 pointer-events-none"
-                )}
-                title="Ganti foto avatar"
+                )} aria-label="Ganti foto avatar"
               >
                 {avatarUrl ? (
                   <Image
@@ -186,8 +185,7 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingAvatar}
-                className="absolute -bottom-1 -right-1 w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-primary text-white flex items-center justify-center border-2 border-white shadow-md hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none"
-                title="Ganti foto avatar"
+                className="absolute -bottom-1 -right-1 w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-primary text-white flex items-center justify-center border-2 border-white shadow-md hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none" aria-label="Ganti foto avatar"
                 aria-label="Ganti foto avatar"
               >
                 {isUploadingAvatar ? (

@@ -3,16 +3,34 @@
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { formatDate } from "@/lib/formatters";
 
-export function AdminInstagramTableRow({ post, onEdit, onDelete }) {
+export function AdminInstagramTableRow({
+  post,
+  isSelected = false,
+  onToggleSelect,
+  onEdit,
+  onDelete,
+}) {
   const caption = post.caption || "Tanpa keterangan";
   const postedAtFormatted = post.postedAt
     ? formatDate(post.postedAt, { month: "short", year: "numeric", day: "numeric" })
     : "-";
 
   return (
-    <TableRow className="hover:bg-slate-50/70 transition-colors">
+    <TableRow
+      className="hover:bg-slate-50/70 transition-colors"
+      data-state={isSelected ? "selected" : undefined}
+    >
+      <TableCell className="w-12 text-center py-2.5 px-3 align-middle">
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={() => onToggleSelect?.(post.id)}
+          aria-label={`Pilih postingan ${caption.slice(0, 30)}`}
+        />
+      </TableCell>
+
       <TableCell className="w-16 py-2.5 align-middle">
         <div className="w-12 h-12 rounded-md bg-slate-100 overflow-hidden relative border border-slate-200 shrink-0 select-none">
           {post.imageUrl ? (

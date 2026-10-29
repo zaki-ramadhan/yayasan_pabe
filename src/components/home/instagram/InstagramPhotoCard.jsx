@@ -16,7 +16,6 @@ export function InstagramPhotoCard({ post, fallbackUrl }) {
       target="_blank"
       rel="noopener noreferrer"
       className="group relative aspect-square w-full rounded sm:rounded-xl overflow-hidden bg-slate-100 select-none block"
-      title={post.caption || "Buka postingan di Instagram"}
     >
       <SafeImage
         src={post.imageUrl}
