@@ -180,5 +180,37 @@ describe("Backend Integration & Real Persistence Audit", () => {
       expect(json.data.fullName).toBe("Ahmad Zaki Ramadhan");
     });
   });
+
+  describe("Bulk Campaign Operations (Guarded Delete)", () => {
+
+    it("menolak penghapusan massal jika salah satu program memiliki riwayat donasi", async () => {
+      const { deleteAdminCampaignsBulk } = await import("@/services/adminCampaignService");
+      vi.spyOn(prisma.campaign, "findMany").mockResolvedValueOnce([
+        { id: "camp-1", title: "Beasiswa Yatim", collectedAmount: 500000 },
+      ]);
+
+      await expect(
+        deleteAdminCampaignsBulk(["camp-1", "camp-2"])
+      ).rejects.toThrow(/telah memiliki riwayat donasi masuk/i);
+    });
+
+    it("berhasil menghapus massal program jika seluruhnya belum memiliki donasi", async () => {
+      const { deleteAdminCampaignsBulk } = await import("@/services/adminCampaignService");
+      vi.spyOn(prisma.campaign, "findMany")
+        .mockResolvedValueOnce([]) // cek donasi: kosong
+        .mockResolvedValueOnce([{ id: "camp-draft-1", bannerUrl: null, categoryId: "cat-1" }]); // cek banner: kosong
+
+      const deleteManySpy = vi
+        .spyOn(prisma.campaign, "deleteMany")
+        .mockResolvedValue({ count: 1 });
+
+      const result = await deleteAdminCampaignsBulk(["camp-draft-1"]);
+      expect(deleteManySpy).toHaveBeenCalledWith({
+        where: { id: { in: ["camp-draft-1"] } },
+      });
+      expect(result.count).toBe(1);
+    });
+  });
 });
+
 

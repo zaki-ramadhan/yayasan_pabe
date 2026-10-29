@@ -54,7 +54,6 @@ export function AdminArticleTableRow({
 				<div className="space-y-0.5">
 					<span
 						className="text-sm font-medium text-slate-900 block line-clamp-2 leading-snug"
-						title={article.title}
 					>
 						{article.title}
 					</span>
@@ -67,8 +66,7 @@ export function AdminArticleTableRow({
 						</span>
 						<Link
 							href={`/artikel/${article.slug}`}
-							target="_blank"
-							title="Buka artikel di tab baru"
+							target="_blank" aria-label="Buka artikel di tab baru"
 							className="text-slate-400 hover:text-primary transition-colors"
 						>
 							<ExternalLink className="w-3.5 h-3.5 ml-0.5" />
@@ -81,9 +79,6 @@ export function AdminArticleTableRow({
 				<Badge
 					variant="secondary"
 					className="max-w-[140px] truncate"
-					title={
-						article.category
-					}
 				>
 					{
 						article.category

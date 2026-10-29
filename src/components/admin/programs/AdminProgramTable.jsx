@@ -21,8 +21,14 @@ const AdminProgramModal = dynamic(
     ),
   { ssr: false }
 );
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { AdminProgramToolbar } from "./AdminProgramToolbar";
 import { AdminProgramTableRow } from "./AdminProgramTableRow";
+import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { useTableSelection } from "@/hooks/useTableSelection";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
@@ -84,23 +90,31 @@ export function AdminProgramTable({
     resetPage,
   } = usePagination(filteredCampaigns, { pageSize: PAGE_SIZE });
 
+  const selection = useTableSelection(paginatedCampaigns);
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+
   const handleSearchChange = (e) => {
     setSearch(sanitizeSearchQuery(e.target.value));
+    selection.clearSelection();
     resetPage();
   };
 
   const handleClearSearch = () => {
     setSearch("");
+    selection.clearSelection();
     resetPage();
   };
 
   const handleStatusChange = (val) => {
     setStatusFilter(val);
+    selection.clearSelection();
     resetPage();
   };
 
   const handleCategoryChange = (val) => {
     setCategoryFilter(val);
+    selection.clearSelection();
     resetPage();
   };
 
@@ -111,6 +125,7 @@ export function AdminProgramTable({
       const data = await res.json();
       if (data.success && data.data) {
         setCampaigns(data.data);
+        selection.clearSelection();
         toast.success("Data program donasi berhasil diperbarui.");
       } else {
         toast.error(data.message || "Gagal menyegarkan data program.");
@@ -153,6 +168,32 @@ export function AdminProgramTable({
     }
   };
 
+  const handleConfirmBulkDelete = async () => {
+    if (selection.selectedCount === 0) return;
+    setIsBulkDeleting(true);
+    try {
+      const res = await safeFetch("/api/admin/programs", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selection.selectedIds }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message || `${selection.selectedCount} program berhasil dihapus.`);
+        const selectedSet = selection.selectedKeys;
+        setCampaigns((prev) => prev.filter((c) => !selectedSet.has(c.id)));
+        selection.clearSelection();
+        setIsBulkDeleteOpen(false);
+      } else {
+        toast.error(data.message || "Gagal menghapus program terpilih.");
+      }
+    } catch {
+      toast.error("Terjadi kendala jaringan saat menghapus program.");
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Top Filter Bar & Add Action */}
@@ -170,12 +211,41 @@ export function AdminProgramTable({
         isLoading={isLoading}
       />
 
+      {/* Reusable Floating Bulk Action Bar */}
+      <TableSelectionBar
+        selectedCount={selection.selectedCount}
+        totalCount={paginatedCampaigns.length}
+        label="program"
+        onSelectAll={selection.selectAll}
+        isAllSelected={selection.allSelected}
+        onClearSelection={selection.clearSelection}
+      >
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          onClick={() => setIsBulkDeleteOpen(true)}
+          className="font-medium h-8 text-xs gap-1.5 cursor-pointer"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          <span>Hapus {selection.selectedCount} program terpilih</span>
+        </Button>
+      </TableSelectionBar>
+
       {/* Table Container */}
       <TableContainer>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-12 text-center py-2.5 px-3">
+                  <Checkbox
+                    checked={selection.allSelected}
+                    indeterminate={selection.isIndeterminate}
+                    onCheckedChange={selection.toggleSelectAll}
+                    aria-label="Pilih semua program di halaman ini"
+                  />
+                </TableHead>
                 <TableHead className="min-w-[240px] font-medium text-slate-600 text-sm py-2.5">Program Donasi</TableHead>
                 <TableHead className="w-32 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Kategori</TableHead>
                 <TableHead className="w-56 min-w-[220px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Capaian &amp; Target</TableHead>
@@ -191,13 +261,15 @@ export function AdminProgramTable({
                   <AdminProgramTableRow
                     key={item.id}
                     item={item}
+                    isSelected={selection.isSelected(item.id)}
+                    onToggleSelect={selection.toggleSelect}
                     onEdit={handleOpenEdit}
                     onToggleStatus={handleToggleStatus}
                   />
                 ))
               ) : (
                 <TableEmptyRow
-                  colSpan={7}
+                  colSpan={8}
                   isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL" || categoryFilter !== "ALL")}
                 />
               )}
@@ -211,7 +283,10 @@ export function AdminProgramTable({
             totalPages={totalPages}
             total={filteredCampaigns.length}
             limit={PAGE_SIZE}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => {
+              selection.clearSelection();
+              setCurrentPage(page);
+            }}
           />
         )}
       </TableContainer>
@@ -223,6 +298,18 @@ export function AdminProgramTable({
         campaignToEdit={editingCampaign}
         categories={categories}
         onSuccess={refreshList}
+      />
+
+      {/* Bulk Delete Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={isBulkDeleteOpen}
+        onClose={() => setIsBulkDeleteOpen(false)}
+        onConfirm={handleConfirmBulkDelete}
+        isLoading={isBulkDeleting}
+        title={`Hapus ${selection.selectedCount} Program Donasi`}
+        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} program terpilih? Program hanya dapat dihapus jika belum memiliki riwayat transaksi donasi masuk demi integritas audit keuangan.`}
+        confirmLabel="Hapus sekarang"
+        confirmVariant="destructive"
       />
     </div>
   );

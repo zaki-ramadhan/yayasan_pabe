@@ -12,6 +12,7 @@ import {
 import { formatRupiah, calculateDaysLeft } from "@/lib/formatters";
 import { Progress } from "@/components/ui/Progress";
 import { TableRow, TableCell } from "@/components/ui/Table";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { Badge, StatusBadge } from "@/components/ui/Badge";
 import {
 	DropdownMenu,
@@ -21,7 +22,13 @@ import {
 	DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
 
-export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
+export function AdminProgramTableRow({
+	item,
+	isSelected = false,
+	onToggleSelect,
+	onEdit,
+	onToggleStatus,
+}) {
 	const target = Number(item.targetAmount || 0);
 	const collected = Number(item.collectedAmount || 0);
 	const disbursed = Number(item.disbursedAmount || 0);
@@ -45,15 +52,21 @@ export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
 
 	return (
 		<TableRow
-			key={
-				item.id
-			}
+			key={item.id}
 			className="hover:bg-slate-50/70 transition-colors"
+			data-state={isSelected ? "selected" : undefined}
 		>
+			<TableCell className="w-12 text-center py-3 px-3 align-middle">
+				<Checkbox
+					checked={isSelected}
+					onCheckedChange={() => onToggleSelect?.(item.id)}
+					aria-label={`Pilih program ${item.title}`}
+				/>
+			</TableCell>
+
 			<TableCell className="space-y-1 py-3 align-middle">
 				<span
 					className="font-medium text-sm text-slate-900 block leading-snug line-clamp-2"
-					title={item.title}
 				>
 					{item.title}
 				</span>
@@ -69,9 +82,6 @@ export function AdminProgramTableRow({ item, onEdit, onToggleStatus }) {
 				<Badge
 					variant="secondary"
 					className="max-w-[130px] truncate"
-					title={
-						item.category
-					}
 				>
 					{
 						item.category

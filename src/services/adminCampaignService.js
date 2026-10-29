@@ -308,3 +308,66 @@ export async function deleteAdminCampaign(id) {
 
   return deleted;
 }
+
+
+/**
+ * Menghapus banyak program sekaligus dengan proteksi donasi (Guarded Bulk Delete).
+ * Program yang sudah memiliki donasi masuk tidak boleh dihapus demi integritas data dan audit.
+ */
+export async function deleteAdminCampaignsBulk(ids) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID program untuk dihapus wajib disertakan.");
+  }
+
+  const validIds = ids.filter((id) => typeof id === "string" && id.trim().length > 0);
+  if (validIds.length === 0) {
+    throw new Error("Tidak ada ID program yang valid.");
+  }
+
+  // 1. Cek program yang sudah memiliki donasi atau transaksi masuk
+  const campaignsWithDonations = await prisma.campaign.findMany({
+    where: {
+      id: { in: validIds },
+      OR: [
+        { collectedAmount: { gt: 0 } },
+        { donations: { some: {} } },
+      ],
+    },
+    select: { id: true, title: true, collectedAmount: true },
+  });
+
+  if (campaignsWithDonations.length > 0) {
+    const names = campaignsWithDonations.map((c) => `"${c.title}"`).join(", ");
+    throw new Error(
+      `Tidak dapat menghapus program: ${names}. Program tersebut telah memiliki riwayat donasi masuk. Silakan nonaktifkan atau ubah status menjadi Selesai (COMPLETED) untuk mengarsipkan.`
+    );
+  }
+
+  // 2. Ambil data banner dan kategori untuk pembersihan storage & orphan category
+  const campaignsToDelete = await prisma.campaign.findMany({
+    where: { id: { in: validIds } },
+    select: { id: true, bannerUrl: true, categoryId: true },
+  });
+
+  // Hapus banner dari R2 storage jika ada
+  for (const c of campaignsToDelete) {
+    if (c.bannerUrl) {
+      try {
+        await deleteFromR2(c.bannerUrl);
+      } catch (err) {
+        console.warn(`[AdminCampaign] Gagal menghapus banner R2 untuk ${c.id}:`, err?.message);
+      }
+    }
+  }
+
+  // 3. Hapus program dari database
+  const result = await prisma.campaign.deleteMany({
+    where: { id: { in: validIds } },
+  });
+
+  // 4. Bersihkan kategori yang menjadi kosong
+  await cleanupOrphanCategories(prisma);
+
+  return result;
+}
+

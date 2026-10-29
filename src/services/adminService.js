@@ -6,6 +6,7 @@ export {
   createAdminCategory,
   createAdminCampaign,
   updateAdminCampaign,
+  deleteAdminCampaignsBulk,
 } from "./adminCampaignService";
 
 export {

@@ -13,6 +13,7 @@ import { toTitleCase } from "@/lib/formatters";
 import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeStandardText } from "@/lib/sanitizer";
+import { getStoredUser } from "@/services/authService";
 
 const DEFAULT_ARTICLE_CATEGORIES = [
 	"Berita",
@@ -36,9 +37,13 @@ export function AdminArticleModal({
 	const [category, setCategory] = useState("Berita");
 	const [customCategories, setCustomCategories] =
 		useState([]);
-	const [author, setAuthor] = useState(
-		"Redaksi Yayasan PABE",
-	);
+	const [author, setAuthor] = useState(() => {
+		if (typeof window !== "undefined") {
+			const user = getStoredUser();
+			if (user?.name?.trim()) return user.name.trim();
+		}
+		return "Redaksi Yayasan PABE";
+	});
 	const [bannerUrl, setBannerUrl] = useState("");
 	const [excerpt, setExcerpt] = useState("");
 	const [content, setContent] = useState("");
@@ -127,46 +132,21 @@ export function AdminArticleModal({
 	useEffect(() => {
 		setErrors({});
 		if (articleToEdit) {
-			setTitle(
-				articleToEdit.title ||
-					"",
-			);
-			setCategory(
-				articleToEdit.category ||
-					"Berita",
-			);
-			setAuthor(
-				articleToEdit.author ||
-					"Redaksi Yayasan PABE",
-			);
-			setBannerUrl(
-				articleToEdit.bannerUrl || "",
-			);
-			setExcerpt(
-				articleToEdit.excerpt ||
-					"",
-			);
-			setContent(
-				articleToEdit.content ||
-					"",
-			);
+			setTitle(articleToEdit.title || "");
+			setCategory(articleToEdit.category || "Berita");
+			setAuthor(articleToEdit.author || "Redaksi Yayasan PABE");
+			setBannerUrl(articleToEdit.bannerUrl || "");
+			setExcerpt(articleToEdit.excerpt || "");
+			setContent(articleToEdit.content || "");
 		} else {
-			setTitle(
-				"",
-			);
-			setCategory(
-				"Berita",
-			);
-			setAuthor(
-				"Redaksi Yayasan PABE",
-			);
+			const currentUser = getStoredUser();
+			const defaultAuthor = currentUser?.name?.trim() || "Redaksi Yayasan PABE";
+			setTitle("");
+			setCategory("Berita");
+			setAuthor(defaultAuthor);
 			setBannerUrl("");
-			setExcerpt(
-				"",
-			);
-			setContent(
-				"",
-			);
+			setExcerpt("");
+			setContent("");
 		}
 	}, [articleToEdit, isOpen]);
 
@@ -384,7 +364,7 @@ export function AdminArticleModal({
 			/>
 
 			{/* Ringkasan Singkat (Excerpt) */}
-			<FormField label="Ringkasan singkat (lead / excerpt)">
+			<FormField label="Ringkasan singkat">
 				<Textarea
 					rows={2}
 					maxLength={300}
