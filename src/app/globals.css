@@ -258,6 +258,39 @@ html body[style*="overflow: hidden"] {
   animation: toast-slide-out-top 300ms ease-in-out forwards;
 }
 
+/* Floating Bulk Action Dock Animations (Bottom-Center Slide & Fade like Toast) */
+@keyframes dock-slide-in-bottom {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, calc(100% + 24px), 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes dock-slide-out-bottom {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, calc(100% + 24px), 0);
+  }
+}
+
+.dock-enter {
+  animation: dock-slide-in-bottom 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.dock-exit {
+  animation: dock-slide-out-bottom 240ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  will-change: transform, opacity;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .toast-enter {
     animation: none;
@@ -267,5 +300,24 @@ html body[style*="overflow: hidden"] {
     animation: none;
     opacity: 0;
   }
+  .dock-enter,
+  .dock-exit {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Standarisasi Universal: Reset Tombol & Elemen Interaktif Saat Kondisi Disabled */
+button:disabled,
+button[disabled],
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+input[type="reset"]:disabled,
+[role="button"][aria-disabled="true"],
+[data-disabled="true"],
+.disabled {
+  cursor: not-allowed !important;
+  pointer-events: none !important;
 }
 
