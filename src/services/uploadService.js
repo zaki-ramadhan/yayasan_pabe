@@ -2,6 +2,7 @@
  * Layanan komunikasi klien untuk pengunggahan berkas ke API /api/upload.
  * Memisahkan logika jaringan, pembuatan FormData, dan sanitasi respon dari komponen UI.
  */
+import { safeFetch } from "@/lib/safeFetch";
 
 /**
  * Mengunggah berkas ke server R2 melalui endpoint /api/upload.
@@ -37,10 +38,16 @@ export async function uploadFileToServer({ file, context, identifier = "" }) {
     formData.append("identifier", identifier.trim());
   }
 
-  const response = await fetch("/api/upload", {
+  const isLargeOrVideo = Boolean(
+    file &&
+    (file.size > 5 * 1024 * 1024 || (file.type && file.type.startsWith("video/")))
+  );
+  const timeoutMs = isLargeOrVideo ? 90000 : 30000;
+
+  const response = await safeFetch("/api/upload", {
     method: "POST",
     body: formData,
-  });
+  }, timeoutMs);
 
   const result = await response.json();
 
@@ -85,10 +92,10 @@ export async function uploadImageUrlToServer({ imageUrl, context, identifier = "
     formData.append("identifier", identifier.trim());
   }
 
-  const response = await fetch("/api/upload", {
+  const response = await safeFetch("/api/upload", {
     method: "POST",
     body: formData,
-  });
+  }, 30000);
 
   const result = await response.json();
 

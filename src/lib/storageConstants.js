@@ -1,5 +1,8 @@
 import { USER_ROLES } from "@/services/authService";
 
+// Batas kuota gratis Cloudflare R2 bulanan (10 Gigabytes)
+export const R2_FREE_TIER_BYTES = 10 * 1024 * 1024 * 1024;
+
 /**
  * Konfigurasi terpusat konteks penyimpanan Cloudflare R2.
  * Menentukan folder target, prefix nama berkas, profil optimasi gambar, batas ukuran berkas,
@@ -13,7 +16,7 @@ export const STORAGE_CONTEXTS = {
     quality: 85,
     optimize: true,
     allowedTypes: ["image/jpeg", "image/png", "image/webp"],
-    maxBytes: 5 * 1024 * 1024, // 5MB
+    maxBytes: 10 * 1024 * 1024, // 10MB
     allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN],
   },
   ARTICLE_CONTENT: {
@@ -23,7 +26,7 @@ export const STORAGE_CONTEXTS = {
     quality: 82,
     optimize: true,
     allowedTypes: ["image/jpeg", "image/png", "image/webp"],
-    maxBytes: 4 * 1024 * 1024, // 4MB
+    maxBytes: 8 * 1024 * 1024, // 8MB
     allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN],
   },
   CAMPAIGN_BANNER: {
@@ -33,7 +36,7 @@ export const STORAGE_CONTEXTS = {
     quality: 85,
     optimize: true,
     allowedTypes: ["image/jpeg", "image/png", "image/webp"],
-    maxBytes: 5 * 1024 * 1024, // 5MB
+    maxBytes: 10 * 1024 * 1024, // 10MB
     allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN],
   },
   CAMPAIGN_UPDATE: {
@@ -43,7 +46,7 @@ export const STORAGE_CONTEXTS = {
     quality: 80,
     optimize: true,
     allowedTypes: ["image/jpeg", "image/png", "image/webp"],
-    maxBytes: 4 * 1024 * 1024, // 4MB
+    maxBytes: 8 * 1024 * 1024, // 8MB
     allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.VOLUNTEER],
   },
   AUDIT_REPORT: {
@@ -79,7 +82,7 @@ export const STORAGE_CONTEXTS = {
     quality: 85,
     optimize: true,
     allowedTypes: ["image/jpeg", "image/png", "image/webp"],
-    maxBytes: 5 * 1024 * 1024, // 5MB
+    maxBytes: 10 * 1024 * 1024, // 10MB
     allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN],
   },
   GALLERY_VIDEO: {
@@ -88,6 +91,16 @@ export const STORAGE_CONTEXTS = {
     optimize: false,
     allowedTypes: ["video/mp4", "video/webm", "video/quicktime"],
     maxBytes: 25 * 1024 * 1024, // 25MB
+    allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN],
+  },
+  INSTAGRAM: {
+    folder: "instagram",
+    prefix: "ig-media",
+    maxWidth: 1400,
+    quality: 85,
+    optimize: true,
+    allowedTypes: ["image/jpeg", "image/png", "image/webp"],
+    maxBytes: 10 * 1024 * 1024, // 10MB
     allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN],
   },
 };

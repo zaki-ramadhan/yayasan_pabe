@@ -1,10 +1,9 @@
 import prisma from "@/lib/prisma";
 import { listR2Objects, deleteMultipleFromR2, isR2Configured } from "@/lib/r2Storage";
 import { extractR2Key } from "@/lib/r2KeyUtils";
-import { STORAGE_CONTEXTS } from "@/lib/storageConstants";
+import { STORAGE_CONTEXTS, R2_FREE_TIER_BYTES } from "@/lib/storageConstants";
 
-// Batas kuota gratis Cloudflare R2 bulanan (10 Gigabytes)
-export const R2_FREE_TIER_BYTES = 10 * 1024 * 1024 * 1024;
+export { R2_FREE_TIER_BYTES };
 
 // Default batas minimal umur berkas untuk proteksi grace period (0 = pindai semua berkas tak terpakai)
 export const DEFAULT_ORPHAN_GRACE_HOURS = 0;
@@ -111,6 +110,7 @@ export async function getReferencedStorageKeys() {
       jobApplications,
       users,
       instagramPosts,
+      instagramProfiles,
     ] = await Promise.all([
       prisma.galleryItem ? prisma.galleryItem.findMany({ select: { imageUrl: true } }) : [],
       prisma.article ? prisma.article.findMany({ select: { bannerUrl: true, content: true } }) : [],
@@ -120,6 +120,7 @@ export async function getReferencedStorageKeys() {
       prisma.jobApplication ? prisma.jobApplication.findMany({ select: { resumeUrl: true } }) : [],
       prisma.user ? prisma.user.findMany({ select: { avatar: true, coverImage: true } }) : [],
       prisma.instagramPost ? prisma.instagramPost.findMany({ select: { imageUrl: true } }) : [],
+      prisma.instagramProfile ? prisma.instagramProfile.findMany({ select: { avatarUrl: true } }) : [],
     ]);
 
     galleryItems.forEach((g) => addKeys(g.imageUrl));
@@ -141,6 +142,7 @@ export async function getReferencedStorageKeys() {
       addKeys(u.coverImage);
     });
     instagramPosts.forEach((ig) => addKeys(ig.imageUrl));
+    instagramProfiles.forEach((ip) => addKeys(ip.avatarUrl));
   } catch (err) {
     console.error("Gagal membaca referensi berkas dari database:", err.message);
   }

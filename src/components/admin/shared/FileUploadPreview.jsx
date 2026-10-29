@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { FileCheck, Trash2, Edit2, Image as ImageIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { FileCheck, Trash2, Edit2, Image as ImageIcon, Video } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { isVideoUrl } from "@/lib/galleryGroupHelper";
 
 /**
  * Sub-komponen representasi berkas terunggah di Cloudflare R2.
@@ -28,6 +29,7 @@ export function FileUploadPreview({
 
   // Derived state: error hanya aktif jika URL yang gagal memuat identik dengan resolvedSrc aktif
   const isError = Boolean(failedSrc && failedSrc === resolvedSrc);
+  const isVideo = Boolean(typeof resolvedSrc === "string" && isVideoUrl(resolvedSrc));
   
   let fileName = "Berkas terpilih";
   if (typeof value === "string" && value) {
@@ -55,6 +57,32 @@ export function FileUploadPreview({
             <div className="flex flex-col items-center justify-center text-slate-400 p-1">
               <ImageIcon className="w-5 h-5 text-slate-400" />
             </div>
+          ) : isVideo ? (
+            <>
+              <video
+                src={resolvedSrc}
+                className="w-full h-full object-cover"
+                muted
+                playsInline
+                autoPlay
+                preload="auto"
+                onLoadedData={(e) => {
+                  try {
+                    const p = e.target.play();
+                    if (p !== undefined) p.catch(() => {});
+                  } catch {}
+                }}
+                onTimeUpdate={(e) => {
+                  const vid = e.target;
+                  if (vid.currentTime >= 0.12 || (vid.duration > 0 && vid.currentTime >= vid.duration / 2)) {
+                    vid.pause();
+                  }
+                }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-slate-950/20">
+                <Video className="w-5 h-5 text-white drop-shadow-md" />
+              </div>
+            </>
           ) : (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
@@ -77,7 +105,11 @@ export function FileUploadPreview({
           {fileName}
         </p>
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-          {typeof value === "string" && (value.includes(".r2.dev") || value.includes("r2.cloudflarestorage.com") || value.startsWith("/api/media/")) ? (
+          {isVideo ? (
+            <span className="inline-flex items-center rounded-md border border-amber-200/80 bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+              Video dokumentasi
+            </span>
+          ) : typeof value === "string" && (value.includes(".r2.dev") || value.includes("r2.cloudflarestorage.com") || value.startsWith("/api/media/")) ? (
             <span className="inline-flex items-center rounded-md border border-emerald-200/80 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
               Tersimpan di Cloudflare R2
             </span>
@@ -101,7 +133,7 @@ export function FileUploadPreview({
           size="sm"
           onClick={onReplace}
           disabled={isUploading}
-          className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+          className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors disabled:pointer-events-none disabled:cursor-not-allowed"
           title="Ganti berkas"
           aria-label="Ganti berkas"
         >
@@ -113,7 +145,7 @@ export function FileUploadPreview({
           size="sm"
           onClick={onRemove}
           disabled={isUploading}
-          className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors"
+          className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors disabled:pointer-events-none disabled:cursor-not-allowed"
           title="Hapus berkas"
           aria-label="Hapus berkas"
         >

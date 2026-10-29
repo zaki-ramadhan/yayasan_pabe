@@ -1,7 +1,7 @@
 "use client";
 
 import { Trash2, Video } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { formatBytes } from "@/lib/formatters";
 
 /**
@@ -47,15 +47,38 @@ export function FileUploadMultiPreview({
             className="flex items-center gap-3.5 p-2.5 rounded-xl border border-slate-200 bg-white shadow-2xs hover:border-slate-300 transition-colors"
           >
             {/* Thumbnail di sisi kiri */}
-            <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-900 shrink-0 flex items-center justify-center">
+            <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-800 shrink-0 flex items-center justify-center">
               {item.isVideo ? (
                 <>
-                  <video
-                    src={item.previewUrl}
-                    className="w-full h-full object-cover opacity-80"
-                    muted
-                    playsInline
-                  />
+                  {item.thumbnailUrl ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={item.thumbnailUrl}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <video
+                      src={item.previewUrl}
+                      className="w-full h-full object-cover"
+                      muted
+                      playsInline
+                      autoPlay
+                      preload="auto"
+                      onLoadedData={(e) => {
+                        try {
+                          const p = e.target.play();
+                          if (p !== undefined) p.catch(() => {});
+                        } catch {}
+                      }}
+                      onTimeUpdate={(e) => {
+                        const vid = e.target;
+                        if (vid.currentTime >= 0.12 || (vid.duration > 0 && vid.currentTime >= vid.duration / 2)) {
+                          vid.pause();
+                        }
+                      }}
+                    />
+                  )}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-slate-950/20">
                     <Video className="w-5 h-5 text-white drop-shadow-md" />
                   </div>
@@ -81,7 +104,7 @@ export function FileUploadMultiPreview({
                 </span>
                 {item.isVideo ? (
                   <span className="inline-flex items-center rounded-md border border-amber-200/80 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
-                    Video ({item.durationFormatted || "Video"})
+                    {item.durationFormatted ? `Video (${item.durationFormatted})` : "Video sorotan"}
                   </span>
                 ) : (
                   <span className="inline-flex items-center rounded-md border border-emerald-200/80 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">

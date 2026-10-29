@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { safeFetch } from "@/lib/safeFetch";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/useToast";
 import { formatBytes } from "@/lib/formatters";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
+import { useTableSelection } from "@/hooks/useTableSelection";
 
 /**
  * Controller hook untuk state manajemen penyimpanan Cloudflare R2 dan pembersihan sampah.
@@ -55,7 +56,6 @@ export function useAdminStorage({ initialOverview = null }) {
   }, [overview]);
 
   const [orphans, setOrphans] = useState([]);
-  const [selectedKeys, setSelectedKeys] = useState(new Set());
   const [isScanning, setIsScanning] = useState(false);
   const [isScanned, setIsScanned] = useState(false);
 
@@ -69,7 +69,6 @@ export function useAdminStorage({ initialOverview = null }) {
   const [itemsToDelete, setItemsToDelete] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Handler input pencarian terstandarisasi: anti-double space, anti-leading space, sanitasi karakter berbahaya
   const handleSearchChange = useCallback((valueOrEvent) => {
     const raw = typeof valueOrEvent === "string" ? valueOrEvent : valueOrEvent?.target?.value || "";
     const sanitized = sanitizeSearchQuery(raw).replace(/^\s+/, "");
@@ -80,7 +79,6 @@ export function useAdminStorage({ initialOverview = null }) {
     setSearch("");
   }, []);
 
-  // Daftar folder unik dari data orphans dan overview
   const availableFolders = useMemo(() => {
     const set = new Set();
     (overview?.folders || []).forEach((f) => set.add(f.folder));
@@ -104,6 +102,12 @@ export function useAdminStorage({ initialOverview = null }) {
     });
   }, [orphans, debouncedSearch, folderFilter]);
 
+  // Hook seleksi tabel massal terpusat (SSOT)
+  const selection = useTableSelection(filteredOrphans, {
+    keyExtractor: (item) => item.key,
+  });
+  const { clearSelection } = selection;
+
   // Pemindaian berkas tak terpakai (Dry-Run Audit)
   const handleScan = useCallback(async (customAge) => {
     const ageParam = customAge !== undefined ? customAge : ageFilter;
@@ -115,7 +119,7 @@ export function useAdminStorage({ initialOverview = null }) {
       if (json.success) {
         const found = json.data?.orphans || [];
         setOrphans(found);
-        setSelectedKeys(new Set());
+        clearSelection();
         setIsScanned(true);
 
         if (found.length > 0) {
@@ -147,40 +151,14 @@ export function useAdminStorage({ initialOverview = null }) {
     } finally {
       setIsScanning(false);
     }
-  }, [ageFilter]);
+  }, [ageFilter, clearSelection]);
 
-  // Handler pengubahan filter umur berkas (otomatis pindai ulang jika sudah pernah dipindai)
   const handleAgeFilterChange = useCallback((newAge) => {
     setAgeFilter(newAge);
     if (isScanned) {
       handleScan(newAge);
     }
   }, [isScanned, handleScan]);
-
-  // Seleksi checkbox satuan
-  const handleToggleSelect = useCallback((key) => {
-    setSelectedKeys((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
-      return next;
-    });
-  }, []);
-
-  // Seleksi semua checkbox
-  const handleToggleSelectAll = useCallback(
-    (checked) => {
-      if (checked) {
-        setSelectedKeys(new Set(filteredOrphans.map((item) => item.key)));
-      } else {
-        setSelectedKeys(new Set());
-      }
-    },
-    [filteredOrphans]
-  );
 
   // Buka modal hapus satuan
   const handleOpenDeleteSingle = useCallback((item) => {
@@ -190,11 +168,10 @@ export function useAdminStorage({ initialOverview = null }) {
 
   // Buka modal hapus banyak berkas terpilih
   const handleOpenDeleteSelected = useCallback(() => {
-    const targets = orphans.filter((item) => selectedKeys.has(item.key));
-    if (targets.length === 0) return;
-    setItemsToDelete(targets);
+    if (selection.selectedItems.length === 0) return;
+    setItemsToDelete(selection.selectedItems);
     setDeleteModalOpen(true);
-  }, [orphans, selectedKeys]);
+  }, [selection.selectedItems]);
 
   // Eksekusi penghapusan permanen dari R2
   const handleConfirmDelete = useCallback(async () => {
@@ -213,11 +190,7 @@ export function useAdminStorage({ initialOverview = null }) {
       if (json.success) {
         const deletedSet = new Set(keys);
         setOrphans((prev) => prev.filter((item) => !deletedSet.has(item.key)));
-        setSelectedKeys((prev) => {
-          const next = new Set(prev);
-          keys.forEach((k) => next.delete(k));
-          return next;
-        });
+        clearSelection();
 
         // Perbarui total overview secara instan di UI
         const freedBytes = itemsToDelete.reduce((sum, item) => sum + (item.size || 0), 0);
@@ -261,14 +234,13 @@ export function useAdminStorage({ initialOverview = null }) {
     } finally {
       setIsDeleting(false);
     }
-  }, [itemsToDelete, refreshOverview]);
+  }, [itemsToDelete, refreshOverview, clearSelection]);
 
   return {
     overview,
     refreshOverview,
     orphans: filteredOrphans,
     totalOrphansCount: orphans.length,
-    selectedKeys,
     isScanning,
     isScanned,
     search,
@@ -286,8 +258,10 @@ export function useAdminStorage({ initialOverview = null }) {
     itemsToDelete,
     isDeleting,
     handleScan,
-    handleToggleSelect,
-    handleToggleSelectAll,
+    selection,
+    selectedKeys: selection.selectedIds,
+    handleToggleSelect: selection.toggleSelect,
+    handleToggleSelectAll: selection.toggleSelectAll,
     handleOpenDeleteSingle,
     handleOpenDeleteSelected,
     handleConfirmDelete,

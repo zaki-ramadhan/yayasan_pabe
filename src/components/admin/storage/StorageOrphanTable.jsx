@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Trash2, FileQuestion, CheckSquare, Square } from "lucide-react";
+import { Trash2, FileQuestion } from "lucide-react";
 import {
   Table,
   TableContainer,
@@ -11,14 +11,19 @@ import {
   TableHead,
   TableCell,
   TableEmptyRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+  TablePaginationFooter,
+} from "@/components/ui/Table";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
+import { usePagination } from "@/hooks/usePagination";
 import { formatBytes, formatDate } from "@/lib/formatters";
 
+const PAGE_SIZE = 10;
+
 /**
- * Tabel representasi berkas tak terpakai (Orphan Files) di Cloudflare R2.
+ * Tabel representasi berkas tak terpakai (Orphan Files) di Cloudflare R2 dengan paginasi.
  */
 export function StorageOrphanTable({
   items = [],
@@ -30,8 +35,15 @@ export function StorageOrphanTable({
   isScanned = false,
   isScanning = false,
 }) {
+  const {
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    paginatedItems,
+  } = usePagination(items, { pageSize: PAGE_SIZE });
+
   const allSelected = items.length > 0 && selectedKeys.size === items.length;
-  const someSelected = selectedKeys.size > 0;
+  const isIndeterminate = selectedKeys.size > 0 && !allSelected;
   const selectedCount = selectedKeys.size;
   const selectedBytes = items
     .filter((item) => selectedKeys.has(item.key))
@@ -39,39 +51,27 @@ export function StorageOrphanTable({
 
   return (
     <div className="space-y-3">
-      {/* Selection Action Bar (Muncul jika ada item terpilih) */}
-      {someSelected && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs animate-in fade-in duration-150">
-          <div className="flex items-center gap-2 text-slate-700 font-medium">
-            <CheckSquare className="w-4 h-4 text-primary shrink-0" />
-            <span>
-              <strong>{selectedCount}</strong> berkas dipilih ({formatBytes(selectedBytes)})
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              onClick={onDeleteSelected}
-              className="h-8 text-xs gap-1.5 cursor-pointer shadow-2xs"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Hapus {selectedCount} berkas terpilih</span>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => onToggleSelectAll(false)}
-              className="h-8 text-xs text-slate-700 hover:text-slate-950 border-slate-300 bg-white cursor-pointer"
-            >
-              Batal pilih
-            </Button>
-          </div>
-        </div>
-      )}
+      {/* Bilah Aksi Massal Terstandarisasi */}
+      <TableSelectionBar
+        selectedCount={selectedCount}
+        totalCount={items.length}
+        label="berkas"
+        extraInfo={formatBytes(selectedBytes)}
+        onSelectAll={() => onToggleSelectAll(true)}
+        isAllSelected={allSelected}
+        onClearSelection={() => onToggleSelectAll(false)}
+      >
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          onClick={onDeleteSelected}
+          className="h-8 text-xs gap-1.5 cursor-pointer shadow-2xs"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          <span>Hapus {selectedCount} berkas terpilih</span>
+        </Button>
+      </TableSelectionBar>
 
       {/* Table Container */}
       <TableContainer>
@@ -81,13 +81,14 @@ export function StorageOrphanTable({
               <TableHead className="w-12 text-center">
                 <Checkbox
                   checked={allSelected}
+                  indeterminate={isIndeterminate}
                   disabled={items.length === 0}
                   onCheckedChange={(checked) => onToggleSelectAll(checked)}
                   aria-label="Pilih semua berkas"
                 />
               </TableHead>
               <TableHead className="w-16">Pratinjau</TableHead>
-              <TableHead>Nama Berkas & Kunci R2</TableHead>
+              <TableHead>Nama Berkas</TableHead>
               <TableHead className="w-28 text-center">Folder</TableHead>
               <TableHead className="w-28 text-right">Ukuran</TableHead>
               <TableHead className="w-40">Waktu Unggah</TableHead>
@@ -104,18 +105,21 @@ export function StorageOrphanTable({
                   </div>
                 </TableCell>
               </TableRow>
-            ) : items.length > 0 ? (
-              items.map((item) => {
+            ) : paginatedItems.length > 0 ? (
+              paginatedItems.map((item) => {
                 const isChecked = selectedKeys.has(item.key);
                 const filename = item.key.split("/").pop();
 
                 return (
                   <TableRow
                     key={item.key}
-                    className={isChecked ? "bg-primary/5 hover:bg-primary/10 transition-colors" : undefined}
+                    onClick={() => onToggleSelect(item.key)}
+                    className={`cursor-pointer transition-colors ${
+                      isChecked ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-slate-50/75"
+                    }`}
                   >
                     {/* Checkbox */}
-                    <TableCell className="text-center">
+                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={isChecked}
                         onCheckedChange={() => onToggleSelect(item.key)}
@@ -143,17 +147,14 @@ export function StorageOrphanTable({
                       </div>
                     </TableCell>
 
-                    {/* Nama Berkas & Kunci */}
+                    {/* Nama Berkas */}
                     <TableCell className="max-w-[260px] sm:max-w-xs md:max-w-md">
-                      <p className="text-sm font-medium text-slate-900 truncate" title={filename}>
+                      <p className="text-sm font-medium text-slate-900 truncate" title={item.key}>
                         {filename}
                       </p>
-                      <p className="text-sm font-mono text-slate-500 truncate mt-0.5" title={item.key}>
-                        {item.key}
-                      </p>
-                      <span className="inline-block text-xs text-slate-600 bg-slate-100 border border-slate-200/80 px-2 py-0.5 rounded mt-1 font-normal">
+                      <p className="text-xs text-slate-500 font-normal mt-0.5">
                         {item.ageHours > 0 ? `Diunggah ${item.ageHours} jam lalu` : item.ageMinutes > 0 ? `Baru diunggah (${item.ageMinutes} mnt lalu)` : "Baru saja diunggah"}
-                      </span>
+                      </p>
                     </TableCell>
 
                     {/* Folder Badge */}
@@ -174,7 +175,7 @@ export function StorageOrphanTable({
                     </TableCell>
 
                     {/* Tombol Hapus Satuan */}
-                    <TableCell className="text-center">
+                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       <Button
                         type="button"
                         variant="ghost"
@@ -201,6 +202,16 @@ export function StorageOrphanTable({
             )}
           </TableBody>
         </Table>
+
+        {items.length > 0 && (
+          <TablePaginationFooter
+            currentPage={currentPage}
+            totalPages={totalPages}
+            total={items.length}
+            limit={PAGE_SIZE}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </TableContainer>
     </div>
   );

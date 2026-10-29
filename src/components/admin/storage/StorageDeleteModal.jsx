@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { AlertTriangle, Trash2 } from "lucide-react";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatBytes, formatDate } from "@/lib/formatters";
 
 /**

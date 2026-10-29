@@ -48,7 +48,7 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
       <div className="flex items-center justify-between pb-1">
         <div className="flex items-center gap-2">
           <Folder className="w-4.5 h-4.5 text-amber-500 fill-amber-400 shrink-0" />
-          <h3 className="text-sm font-semibold text-slate-900 tracking-tight">
+          <h3 className="text-sm font-medium text-slate-900 tracking-tight">
             Rincian berkas per folder
           </h3>
         </div>

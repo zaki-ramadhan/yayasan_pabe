@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
   Table,
   TableHeader,
@@ -6,7 +6,7 @@ import {
   TableRow,
   TableHead,
   TableCell,
-} from "@/components/ui/table";
+} from "@/components/ui/Table";
 
 /**
  * Skeleton loading presisi tinggi untuk halaman manajemen penyimpanan Cloudflare R2.
@@ -17,21 +17,20 @@ export function AdminStorageSkeleton() {
     <div className="space-y-5 animate-pulse">
       {/* 1. StorageCapacityBanner Skeleton */}
         <div className="bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden flex flex-col md:flex-row items-stretch">
-          <div className="w-full md:w-28 lg:w-32 bg-slate-100 flex items-center justify-center p-2.5 shrink-0 min-h-[72px] md:min-h-0">
-            <Skeleton className="w-12 h-12 rounded-lg" />
+          <div className="w-full md:w-24 lg:w-28 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200/80 flex items-center justify-center p-2 shrink-0 min-h-[56px] md:min-h-0">
+            <Skeleton className="w-10 h-10 rounded-lg" />
           </div>
-          <div className="flex-1 py-3 px-3.5 sm:py-3.5 sm:px-5 flex flex-col justify-center space-y-2.5 min-w-0">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex-1 py-2 px-3 sm:py-2.5 sm:px-4 flex flex-col justify-center space-y-1.5 min-w-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <div className="space-y-1">
-                <Skeleton className="h-5 w-48 rounded" />
-                <Skeleton className="h-3.5 w-72 max-w-full rounded" />
-                <Skeleton className="h-3.5 w-36 rounded" />
+                <Skeleton className="h-4 w-44 rounded" />
+                <Skeleton className="h-3 w-64 max-w-full rounded" />
               </div>
-              <Skeleton className="h-9 w-36 rounded-lg shrink-0 self-start sm:self-center" />
+              <Skeleton className="h-8 w-32 rounded-lg shrink-0 self-start sm:self-center" />
             </div>
             <div className="flex items-center gap-2.5 pt-0.5">
-              <Skeleton className="h-2 flex-1 bg-slate-100 rounded-full" />
-              <Skeleton className="h-4.5 w-20 rounded-md shrink-0" />
+              <Skeleton className="h-1.5 sm:h-2 flex-1 bg-slate-100 rounded-full" />
+              <Skeleton className="h-3 w-8 rounded shrink-0" />
             </div>
           </div>
         </div>
@@ -210,10 +209,9 @@ export function AdminStorageSkeleton() {
                   <TableCell className="py-3">
                     <Skeleton className="w-12 h-12 rounded-md" />
                   </TableCell>
-                  <TableCell className="space-y-1.5 py-3">
-                    <Skeleton className="h-4 w-56 max-w-full rounded" />
-                    <Skeleton className="h-3.5 w-72 max-w-full rounded" />
-                    <Skeleton className="h-4.5 w-28 rounded mt-1" />
+                  <TableCell className="space-y-1 py-3">
+                    <Skeleton className="h-4 w-52 max-w-full rounded" />
+                    <Skeleton className="h-3 w-32 rounded mt-0.5" />
                   </TableCell>
                   <TableCell className="text-center py-3">
                     <Skeleton className="h-5 w-20 rounded-md mx-auto" />
@@ -231,6 +229,16 @@ export function AdminStorageSkeleton() {
               ))}
             </TableBody>
           </Table>
+
+          {/* Table Pagination Footer Skeleton */}
+          <div className="px-4 py-3 border-t border-slate-200/90 bg-white flex flex-col sm:flex-row items-center justify-between gap-3">
+            <Skeleton className="h-4 w-44 rounded" />
+            <div className="flex items-center gap-1">
+              <Skeleton className="h-8 w-8 rounded-lg" />
+              <Skeleton className="h-8 w-8 rounded-lg" />
+              <Skeleton className="h-8 w-8 rounded-lg" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
