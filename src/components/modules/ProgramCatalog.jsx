@@ -3,16 +3,18 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { Loader2 } from "lucide-react";
 import { CATEGORIES } from "@/data/categories";
-import { PROGRAM_SORT_OPTIONS } from "@/data/sortOptions";
+import { PROGRAM_SORT_OPTIONS, PROGRAM_STATUS_FILTER_OPTIONS } from "@/data/sortOptions";
 import { useCatalogState } from "@/hooks/useCatalogState";
+import { isCampaignClosed } from "@/lib/formatters";
 import { CampaignCard } from "@/components/shared/CampaignCard";
 import { CatalogSearchBar } from "@/components/shared/CatalogSearchBar";
 import { CategoryTabs } from "@/components/shared/CategoryTabs";
+import { SortDropdown } from "@/components/shared/SortDropdown";
 import { EmptyState } from "@/components/shared/EmptyState";
 
 const BATCH_SIZE = 6;
 
-function filterCampaign(campaign, { category, searchQuery, categories }) {
+function filterCampaign(campaign, { category, searchQuery, categories, status = "all" }) {
   if (category !== "all" && category !== "semua") {
     const catName = categories.find((c) => c.id === category)?.name ?? "";
     const matchCategory =
@@ -25,6 +27,12 @@ function filterCampaign(campaign, { category, searchQuery, categories }) {
   if (searchQuery.trim().length >= 2) {
     const q = searchQuery.toLowerCase().trim();
     if (!campaign.title.toLowerCase().includes(q)) return false;
+  }
+
+  if (status && status !== "all") {
+    const isClosed = isCampaignClosed(campaign);
+    if (status === "active" && isClosed) return false;
+    if (status === "completed" && !isClosed) return false;
   }
 
   return true;
@@ -43,6 +51,13 @@ function sortCampaigns(items, sortBy) {
 }
 
 export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES }) {
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const filterFn = useCallback(
+    (item, ctx) => filterCampaign(item, { ...ctx, status: statusFilter }),
+    [statusFilter]
+  );
+
   const {
     selectedCategory,
     searchQuery,
@@ -56,7 +71,7 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
     handlers,
   } = useCatalogState({
     items: initialCampaigns,
-    filterFn: filterCampaign,
+    filterFn,
     sortFn: sortCampaigns,
     itemsPerPage: 100, // Ambil dataset terfilter utuh, slicing diatur via visibleCount infinite scroll
     categories,
@@ -71,14 +86,16 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
     selectedCategory,
     debouncedSearchQuery,
     sortBy,
+    statusFilter,
   });
 
   if (
     prevFilter.selectedCategory !== selectedCategory ||
     prevFilter.debouncedSearchQuery !== debouncedSearchQuery ||
-    prevFilter.sortBy !== sortBy
+    prevFilter.sortBy !== sortBy ||
+    prevFilter.statusFilter !== statusFilter
   ) {
-    setPrevFilter({ selectedCategory, debouncedSearchQuery, sortBy });
+    setPrevFilter({ selectedCategory, debouncedSearchQuery, sortBy, statusFilter });
     setVisibleCount(BATCH_SIZE);
   }
 
@@ -134,6 +151,23 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
           onSort={handlers.onSortChange}
           isLoading={isPending || isDebouncing}
           searchPlaceholder="Cari judul program donasi..."
+          filterSlot={
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-sm text-slate-700 shrink-0">
+                Status:
+              </span>
+              <SortDropdown
+                options={PROGRAM_STATUS_FILTER_OPTIONS}
+                value={statusFilter}
+                onChange={(val) => {
+                  setStatusFilter(val);
+                  setVisibleCount(BATCH_SIZE);
+                }}
+                label="Semua Status"
+                className="h-10 text-sm min-w-[145px]"
+              />
+            </div>
+          }
         />
 
         {visibleItems.length > 0 ? (
@@ -177,10 +211,13 @@ export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES 
             }
             variant="card"
             action={
-              isFiltered ? (
+              isFiltered || statusFilter !== "all" ? (
                 <button
                   type="button"
-                  onClick={handlers.onReset}
+                  onClick={() => {
+                    handlers.onReset();
+                    setStatusFilter("all");
+                  }}
                   className="text-sm font-semibold text-primary hover:underline pt-1 cursor-pointer"
                 >
                   Reset Semua Filter

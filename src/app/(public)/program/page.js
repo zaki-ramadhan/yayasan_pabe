@@ -5,10 +5,10 @@ import { ProgramCatalog } from "@/components/modules/ProgramCatalog";
 import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 
 export const metadata = {
-  title: "Program Donasi & Penyaluran Zakat",
+  title: "Program Kebaikan",
   description: "Temukan berbagai program kebaikan, beasiswa anak yatim, tanggap bencana, dan zakat produktif Yayasan Payung Berkah.",
   openGraph: {
-    title: "Program Donasi & Penyaluran Zakat - Yayasan Payung Berkah",
+    title: "Program Kebaikan - Yayasan Payung Berkah",
     description: "Temukan berbagai program kebaikan, beasiswa anak yatim, tanggap bencana, dan zakat produktif Yayasan Payung Berkah.",
     url: "/program",
     type: "website",
@@ -23,7 +23,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Program Donasi & Penyaluran Zakat - Yayasan Payung Berkah",
+    title: "Program Kebaikan - Yayasan Payung Berkah",
     description: "Temukan berbagai program kebaikan dan zakat produktif Yayasan Payung Berkah.",
     images: ["/img/branding/logo-ypabe.webp"],
   },
@@ -38,8 +38,8 @@ export default async function ProgramPage() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
       <PageHeader
-        title="Program Kebaikan & Penyaluran Amanah"
-        description="Pilih program yang ingin Anda bantu. Seluruh dana disalurkan secara transparan dan dilaporkan secara berkala kepada donatur."
+        title="Program Kebaikan"
+        description="Pilih program kebaikan yang ingin Anda bantu. Seluruh donasi disalurkan secara amanah, tepat sasaran, dan dilaporkan secara berkala kepada donatur."
       />
 
       {/* Catalog Component with Suspense */}

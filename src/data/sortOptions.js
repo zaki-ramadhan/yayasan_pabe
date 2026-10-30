@@ -4,6 +4,12 @@ export const PROGRAM_SORT_OPTIONS = [
   { value: "dana-terbanyak", label: "Dana Terkumpul Terbanyak" },
 ];
 
+export const PROGRAM_STATUS_FILTER_OPTIONS = [
+  { value: "all", label: "Semua Status" },
+  { value: "active", label: "Sedang Berjalan" },
+  { value: "completed", label: "Telah Selesai" },
+];
+
 export const ARTICLE_SORT_OPTIONS = [
   { value: "terbaru", label: "Terbaru" },
   { value: "terpopuler", label: "Terpopuler" },

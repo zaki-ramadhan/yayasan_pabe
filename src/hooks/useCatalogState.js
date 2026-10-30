@@ -39,7 +39,11 @@ export function useCatalogState({
   const isDebouncing = searchQuery !== debouncedSearchQuery;
 
   const categoryCounts = useMemo(() => {
-    const counts = { all: items.length };
+    const counts = {
+      all: items.filter((item) =>
+        filterFn(item, { category: "all", searchQuery: "", categories })
+      ).length,
+    };
     categories.forEach((cat) => {
       if (cat.id !== "all") {
         counts[cat.id] = items.filter((item) =>
