@@ -72,7 +72,7 @@ export function AdminTransactionDetailModal({
 
             {transaction.uniqueCode > 0 && (
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-500 font-normal">Kode unik:</span>
+                <span className="text-sm text-slate-500 font-normal">Penyesuaian sistem lama:</span>
                 <span className="font-medium text-slate-700">+{transaction.uniqueCode}</span>
               </div>
             )}

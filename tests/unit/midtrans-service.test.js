@@ -3,6 +3,7 @@ import crypto from "crypto";
 import {
   isMidtransProduction,
   getMidtransSnapApiUrl,
+  getMidtransCoreApiChargeUrl,
   getMidtransSnapScriptUrl,
   getMidtransAuthHeader,
   mapMidtransStatusToDomain,
@@ -25,6 +26,7 @@ describe("Midtrans Configuration & Status Mapping", () => {
 
   it("menghasilkan URL API dan Script sesuai mode sandbox", () => {
     expect(getMidtransSnapApiUrl()).toContain("sandbox.midtrans.com");
+    expect(getMidtransCoreApiChargeUrl()).toContain("api.sandbox.midtrans.com");
     expect(getMidtransSnapScriptUrl()).toContain("sandbox.midtrans.com");
   });
 

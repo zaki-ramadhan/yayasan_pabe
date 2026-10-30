@@ -20,6 +20,19 @@ export const getMidtransSnapApiUrl = () => {
     : "https://app.sandbox.midtrans.com/snap/v1/transactions";
 };
 
+export const getMidtransCoreApiChargeUrl = () => {
+  return isMidtransProduction()
+    ? "https://api.midtrans.com/v2/charge"
+    : "https://api.sandbox.midtrans.com/v2/charge";
+};
+
+export const getMidtransCoreApiStatusUrl = (orderId) => {
+  const baseUrl = isMidtransProduction()
+    ? "https://api.midtrans.com/v2"
+    : "https://api.sandbox.midtrans.com/v2";
+  return `${baseUrl}/${encodeURIComponent(orderId)}/status`;
+};
+
 export const getMidtransSnapScriptUrl = () => {
   return isMidtransProduction()
     ? "https://app.midtrans.com/snap/snap.js"

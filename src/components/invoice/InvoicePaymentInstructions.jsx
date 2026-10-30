@@ -18,7 +18,7 @@ export function InvoicePaymentInstructions({ channelName, instructions = [] }) {
   if (!instructions || instructions.length === 0) return null;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <DashedDivider />
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1" className="border-b-0">

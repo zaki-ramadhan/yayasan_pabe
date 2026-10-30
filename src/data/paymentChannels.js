@@ -5,11 +5,11 @@ export const PAYMENT_CHANNELS = [
     type: "QRIS",
     fee: 0,
     instructions: [
-      "Buka aplikasi mobile banking (Livin' by Mandiri, BRImo, BCA mobile) atau e-wallet berlogo QRIS.",
+      "Buka aplikasi mobile banking atau e-wallet berlogo QRIS pilihan Anda.",
       "Pilih menu 'Scan QR' atau 'Bayar QRIS'.",
       "Arahkan kamera ke kode QR di atas atau unggah lembar QR yang telah diunduh dari galeri ponsel Anda.",
       "Pastikan nama penerima yang muncul adalah YAYASAN PAYUNG BERKAH (NMID: ID1026604741144).",
-      "Masukkan nominal transfer tepat sesuai tagihan (termasuk kode unik) untuk verifikasi otomatis.",
+      "Periksa nama penerima dan nominal donasi yang tertera otomatis pada layar aplikasi Anda.",
       "Konfirmasi pembayaran dan simpan bukti transaksi.",
     ],
   },

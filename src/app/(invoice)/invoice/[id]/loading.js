@@ -186,10 +186,6 @@ export default function InvoiceLoading() {
                     <Skeleton className="h-4 w-20 rounded" />
                   </div>
                   <div className="flex justify-between items-center text-slate-600">
-                    <span className="shrink-0">Kode Unik</span>
-                    <Skeleton className="h-4 w-12 rounded" />
-                  </div>
-                  <div className="flex justify-between items-center text-slate-600">
                     <span className="shrink-0">Biaya Layanan</span>
                     <span className="font-medium text-slate-900">Gratis</span>
                   </div>

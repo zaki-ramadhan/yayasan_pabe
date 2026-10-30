@@ -18,11 +18,35 @@ export {
   InvoiceActions,
 };
 
-export function InvoiceDisplay({ donation }) {
+export function InvoiceDisplay({ donation: initialDonation }) {
+  const [currentStatus, setCurrentStatus] = useState(initialDonation?.status || "PENDING");
+  const [paidAt, setPaidAt] = useState(initialDonation?.paidAt || null);
   const [copiedVa, setCopiedVa] = useState(false);
   const [copiedInvoice, setCopiedInvoice] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
-  const [activePrayer, setActivePrayer] = useState(donation?.prayer || "");
+  const [activePrayer, setActivePrayer] = useState(initialDonation?.prayer || "");
+
+  useEffect(() => {
+    if (initialDonation?.status) {
+      setCurrentStatus(initialDonation.status);
+    }
+    if (initialDonation?.paidAt) {
+      setPaidAt(initialDonation.paidAt);
+    }
+  }, [initialDonation?.status, initialDonation?.paidAt]);
+
+  const handleStatusChange = (newStatus, newPaidAt) => {
+    setCurrentStatus(newStatus);
+    if (newPaidAt) {
+      setPaidAt(newPaidAt);
+    }
+  };
+
+  const donation = {
+    ...initialDonation,
+    status: currentStatus,
+    paidAt: paidAt || initialDonation?.paidAt,
+  };
 
   useEffect(() => {
     if (donation?.invoiceId) {
@@ -106,16 +130,19 @@ export function InvoiceDisplay({ donation }) {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       {/* SISI KIRI: Metode & Instruksi Pembayaran */}
       <div className="lg:col-span-7 space-y-6">
-        <div className="bg-white rounded-xl border border-slate-300 p-5 sm:p-6 space-y-5 shadow-xs">
+        <div className="bg-white rounded-xl border border-slate-300 p-5 sm:p-6 space-y-3.5 shadow-xs">
           <InvoicePaymentMethod
             donation={donation}
             copiedVa={copiedVa}
             onCopyVa={handleCopyVa}
+            onStatusChange={handleStatusChange}
           />
-          <InvoicePaymentInstructions
-            channelName={donation.paymentChannelName}
-            instructions={channelInfo?.instructions || []}
-          />
+          {donation.status !== "PAID" && (
+            <InvoicePaymentInstructions
+              channelName={donation.paymentChannelName}
+              instructions={channelInfo?.instructions || []}
+            />
+          )}
         </div>
       </div>
 
@@ -130,8 +157,8 @@ export function InvoiceDisplay({ donation }) {
           campaignImage={campaignImage}
         />
 
-        {/* Form Titip Doa (Hanya muncul jika belum menulis doa, dan hilang seketika setelah submit) */}
-        {!activePrayer && (
+        {/* Form Titip Doa (Hanya muncul jika donasi sudah LUNAS/PAID dan belum menulis doa) */}
+        {!activePrayer && donation.status === "PAID" && (
           <PostDonationPrayerForm
             invoiceId={donation.invoiceId}
             campaignSlug={donation.campaignSlug || ""}
