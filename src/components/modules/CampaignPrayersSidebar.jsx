@@ -33,9 +33,84 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClo
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const scrollRef = useRef(null);
   const prevScrollHeightRef = useRef(0);
-  const currentUser = getStoredUser();
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userInvoices, setUserInvoices] = useState([]);
   const initialScrollDone = useRef(false);
   const router = useRouter();
+
+  useEffect(() => {
+    setCurrentUser(getStoredUser());
+    try {
+      const raw = localStorage.getItem("pabe_donor_invoices");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setUserInvoices(parsed);
+        }
+      }
+    } catch {}
+
+    const handleAuthChange = () => {
+      setCurrentUser(getStoredUser());
+    };
+    window.addEventListener("pabe_auth_change", handleAuthChange);
+    window.addEventListener("storage", handleAuthChange);
+    return () => {
+      window.removeEventListener("pabe_auth_change", handleAuthChange);
+      window.removeEventListener("storage", handleAuthChange);
+    };
+  }, []);
+
+  const checkIsOwn = useCallback(
+    (donor) => {
+      if (!donor) return false;
+
+      // 1. Cek dari tagihan lokal browser berdasarkan invoiceId
+      if (donor.invoiceId && userInvoices.some((inv) => inv.invoiceId === donor.invoiceId)) {
+        return true;
+      }
+
+      // 2. Cek user yang sedang login
+      if (currentUser) {
+        if (donor.userId && donor.userId === currentUser.id) return true;
+        if (donor.id && donor.id === currentUser.id) return true;
+
+        if (
+          currentUser.email &&
+          donor.donorEmail &&
+          currentUser.email.trim().toLowerCase() === donor.donorEmail.trim().toLowerCase()
+        ) {
+          return true;
+        }
+
+        if (
+          !donor.isAnonymous &&
+          currentUser.name &&
+          donor.name &&
+          currentUser.name.trim().toLowerCase() === donor.name.trim().toLowerCase()
+        ) {
+          return true;
+        }
+      }
+
+      // 3. Cek nama dari riwayat tagihan lokal browser bila bukan anonim
+      if (!donor.isAnonymous && donor.name && userInvoices.length > 0) {
+        if (
+          userInvoices.some(
+            (inv) =>
+              !inv.isAnonymous &&
+              inv.donorName &&
+              inv.donorName.trim().toLowerCase() === donor.name.trim().toLowerCase()
+          )
+        ) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+    [currentUser, userInvoices]
+  );
 
   // Sort newest-first (index 0 = most recent)
   const allPrayers = useMemo(() => {
@@ -227,7 +302,8 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClo
                   donor={item.donor}
                   isAmined={aminedSet.has(item.donor.id)}
                   onToggleAmin={handleToggleAmin}
-                  isOwn={Boolean(currentUser?.id && item.donor.id === currentUser.id)}
+                  isOwn={checkIsOwn(item.donor)}
+                  currentUserAvatar={currentUser?.avatar}
                 />
               )
             )}

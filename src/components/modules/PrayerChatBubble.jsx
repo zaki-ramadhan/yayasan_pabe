@@ -8,25 +8,44 @@ import { cn } from "@/lib/utils";
 
 const BUBBLE_THEME = "bg-gradient-to-br from-slate-800 to-slate-900 text-white";
 
-export function PrayerChatBubble({ donor, isAmined, onToggleAmin, isOwn = false }) {
+export function PrayerChatBubble({
+  donor,
+  isAmined,
+  onToggleAmin,
+  isOwn = false,
+  currentUserAvatar = null,
+}) {
   const cleanPrayer = (donor.prayer || "").replace(/\s+/g, " ").trim();
   const avatarOffset = isOwn ? "pr-[36px]" : "pl-[36px]";
+  const resolvedAvatar = (isOwn ? (currentUserAvatar || donor.avatar) : donor.avatar) || null;
 
   return (
     <article className={cn("flex flex-col w-full", isOwn ? "items-end" : "items-start")}>
-      <div className={cn("text-xs font-semibold text-white mb-1 truncate max-w-full", avatarOffset)}>
-        {donor.name}
+      <div
+        className={cn(
+          "text-xs font-semibold mb-1 truncate max-w-full",
+          isOwn ? "text-slate-300" : "text-white",
+          avatarOffset
+        )}
+      >
+        {isOwn ? "Anda" : donor.name}
       </div>
 
       <div className={cn("flex items-end gap-2 w-full", isOwn ? "flex-row-reverse" : "flex-row")}>
-        <PrayerAvatar name={donor.name} size="sm" className="shrink-0" />
+        <PrayerAvatar
+          name={isOwn ? (donor.name || "Anda") : donor.name}
+          avatar={resolvedAvatar}
+          size="sm"
+          className="shrink-0"
+        />
 
         <div className={cn("flex flex-col max-w-[82%] sm:max-w-[78%]", isOwn ? "items-end" : "items-start")}>
           <div
             className={cn(
               "relative shadow-2xs px-4 pt-3 pb-2.5",
-              BUBBLE_THEME,
-              isOwn ? "rounded-2xl rounded-br-xs" : "rounded-2xl rounded-bl-xs"
+              isOwn
+                ? "bg-emerald-700 border border-emerald-600/40 text-white rounded-2xl rounded-br-xs shadow-2xs"
+                : "bg-slate-800/90 border border-slate-700/40 text-slate-100 rounded-2xl rounded-bl-xs"
             )}
           >
             <p className="text-xs sm:text-sm text-inherit leading-relaxed font-normal break-words line-clamp-4">

@@ -49,6 +49,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
   const [donorPhone, setDonorPhone] = useState("");
   const [donorEmail, setDonorEmail] = useState("");
   const [isEmailLocked, setIsEmailLocked] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [errors, setErrors] = useState({});
   const [prayer, setPrayer] = useState(() => {
     if (typeof window !== "undefined") {
@@ -76,6 +77,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
   useEffect(() => {
     const initSessionAndDraft = async () => {
       const user = getStoredUser();
+      setCurrentUser(user);
       if (!user) {
         const currentUrl =
           typeof window !== "undefined"
@@ -235,6 +237,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
           donorName: isAnonymous ? "Hamba Allah" : donorName.trim(),
           donorEmail: donorEmail.trim(),
           donorPhone: donorPhone.trim(),
+          donorAvatar: isAnonymous ? null : (currentUser?.avatar || null),
           isAnonymous,
           prayer: sanitizedPrayer,
           idempotencyKey,

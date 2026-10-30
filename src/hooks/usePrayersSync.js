@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useMemo, useCallback, useSyncExternalStore } from "react";
+import { useState, useMemo, useCallback, useSyncExternalStore, useEffect } from "react";
 import { safeFetch } from "@/lib/safeFetch";
 
 const AMINED_STORAGE_KEY = "pabe_amined_prayers";
-const AMIN_COUNTS_KEY = "pabe_prayer_amin_counts";
 const SYNC_EVENT = "pabe_prayer_amin_sync";
 
 function subscribe(callback) {
+  if (typeof window === "undefined") return () => {};
   window.addEventListener("storage", callback);
   window.addEventListener(SYNC_EVENT, callback);
   return () => {
@@ -17,74 +17,64 @@ function subscribe(callback) {
 }
 
 function getAminedSnapshot() {
+  if (typeof window === "undefined") return "[]";
   return localStorage.getItem(AMINED_STORAGE_KEY) || "[]";
-}
-
-function getCountsSnapshot() {
-  return localStorage.getItem(AMIN_COUNTS_KEY) || "{}";
 }
 
 function getServerSnapshot() {
   return "[]";
 }
 
-function getServerCountsSnapshot() {
-  return "{}";
-}
-
 export function usePrayersSync(initialDonors = []) {
   const [submittedPrayers, setSubmittedPrayers] = useState([]);
+  const [localExtraCounts, setLocalExtraCounts] = useState({});
   const aminedRaw = useSyncExternalStore(subscribe, getAminedSnapshot, getServerSnapshot);
-  const countsRaw = useSyncExternalStore(subscribe, getCountsSnapshot, getServerCountsSnapshot);
 
-  let aminedSet = new Set();
-  let extraCounts = {};
+  // Bersihkan cache lama di localStorage agar tidak menduplikasi hitungan database
+  useEffect(() => {
+    try {
+      localStorage.removeItem("pabe_prayer_amin_counts");
+    } catch {}
+  }, []);
 
-  try {
-    const parsedAmined = JSON.parse(aminedRaw || "[]");
-    if (Array.isArray(parsedAmined)) {
-      aminedSet = new Set(parsedAmined);
+  let aminedSet = useMemo(() => {
+    try {
+      const parsed = JSON.parse(aminedRaw || "[]");
+      return new Set(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      return new Set();
     }
-  } catch {
-    aminedSet = new Set();
-  }
-
-  try {
-    const parsedCounts = JSON.parse(countsRaw || "{}");
-    if (parsedCounts && typeof parsedCounts === "object") {
-      extraCounts = parsedCounts;
-    }
-  } catch {
-    extraCounts = {};
-  }
+  }, [aminedRaw]);
 
   const allDonors = useMemo(() => {
     return [...submittedPrayers, ...initialDonors];
   }, [submittedPrayers, initialDonors]);
 
-  const donors = allDonors.map((d) => {
-    const baseCount =
-      typeof d.aminCount === "number" && d.aminCount > 0
-        ? d.aminCount
-        : ((d.id ? d.id.charCodeAt(d.id.length - 1) : 0) % 7) + 3;
-    const extra = extraCounts[d.id] || 0;
-    return {
-      ...d,
-      aminCount: baseCount + extra,
-    };
-  });
+  const donors = useMemo(() => {
+    return allDonors.map((d) => {
+      const baseCount = typeof d.aminCount === "number" ? d.aminCount : 0;
+      const extra = localExtraCounts[d.id] || 0;
+      return {
+        ...d,
+        aminCount: baseCount + extra,
+      };
+    });
+  }, [allDonors, localExtraCounts]);
 
   const handleToggleAmin = useCallback((donorId) => {
+    if (!donorId) return;
     try {
       const storedAmined = JSON.parse(localStorage.getItem(AMINED_STORAGE_KEY) || "[]");
       if (Array.isArray(storedAmined) && storedAmined.includes(donorId)) return;
 
       const updatedAmined = Array.isArray(storedAmined) ? [...storedAmined, donorId] : [donorId];
-      const storedCounts = JSON.parse(localStorage.getItem(AMIN_COUNTS_KEY) || "{}");
-      storedCounts[donorId] = (storedCounts[donorId] || 0) + 1;
-
       localStorage.setItem(AMINED_STORAGE_KEY, JSON.stringify(updatedAmined));
-      localStorage.setItem(AMIN_COUNTS_KEY, JSON.stringify(storedCounts));
+
+      // Optimistic bump di memori sesi saat ini
+      setLocalExtraCounts((prev) => ({
+        ...prev,
+        [donorId]: 1,
+      }));
 
       window.dispatchEvent(
         new CustomEvent(SYNC_EVENT, {
@@ -92,7 +82,7 @@ export function usePrayersSync(initialDonors = []) {
         })
       );
 
-      // Sinkronisasi permanen ke backend & database PostgreSQL via safeFetch dengan timeout 8s
+      // Sinkronisasi permanen ke backend & database PostgreSQL
       safeFetch("/api/donations/amin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -103,7 +93,6 @@ export function usePrayersSync(initialDonors = []) {
       // Ignore storage errors
     }
   }, []);
-
 
   const addNewPrayer = useCallback((newDonor) => {
     setSubmittedPrayers((prev) => [newDonor, ...prev]);

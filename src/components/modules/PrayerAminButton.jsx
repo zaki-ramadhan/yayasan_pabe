@@ -51,7 +51,7 @@ export function PrayerAminButton({
             : "text-rose-500 fill-transparent"
         )}
       />
-      <span>{aminCount} Aamiin</span>
+      <span>{aminCount > 0 ? `${aminCount} Aamiin` : isAmined ? "1 Aamiin" : "Aamiin"}</span>
     </button>
   );
 }

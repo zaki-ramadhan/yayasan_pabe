@@ -10,7 +10,7 @@ import {
 } from "@/lib/security";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
-import { createSnapTransaction } from "@/services/midtransService";
+import { createCoreApiCharge, createSnapTransaction, checkMidtransOrderStatus } from "@/services/midtransService";
 import { getMidtransServerKey } from "@/lib/midtransConfig";
 
 export async function createDonation({
@@ -23,6 +23,7 @@ export async function createDonation({
   donorName = "Hamba Allah",
   donorEmail = "",
   donorPhone = "",
+  donorAvatar = null,
   isAnonymous = false,
   prayer = "",
   idempotencyKey = "",
@@ -63,8 +64,8 @@ export async function createDonation({
   const randomSuffix = Math.floor(100000 + Math.random() * 900000);
   const invoiceId = `INV-${dateStr}-${microTime}-${randomSuffix}`;
 
-  const uniqueCode = channel.type === "QRIS" || channel.type === "EWALLET" ? Math.floor(100 + Math.random() * 900) : 0;
-  const totalAmount = Number(amount) + uniqueCode + (channel.fee || 0);
+  const uniqueCode = 0;
+  const totalAmount = Number(amount) + (channel.fee || 0);
 
   const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "pabe_inv_secure_salt_key";
   const accessToken = crypto
@@ -76,36 +77,58 @@ export async function createDonation({
   const expiredAtDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
   let virtualAccountNumber = "";
-  if (channel.type === "VA") {
-    const bankPrefix = {
-      bca_va: "80777",
-      mandiri_va: "89508",
-      bsi_va: "90088",
-      bri_va: "12800",
-    }[channel.id] || "88000";
-    virtualAccountNumber = `${bankPrefix}${cleanDonorPhone.slice(-8)}`;
-  }
+  let billerCode = "";
+  let billKey = "";
+  let qrCodeUrl = "";
+  let qrString = "";
 
-  let snapToken = null;
-  let snapRedirectUrl = null;
-  if (getMidtransServerKey()) {
+  if (getMidtransServerKey() && process.env.NODE_ENV !== "test") {
     try {
-      const snap = await createSnapTransaction({
+      const charge = await createCoreApiCharge({
         orderId: invoiceId,
         amount: totalAmount,
+        channelId: channel.id,
         donorName: cleanDonorName,
         donorEmail: cleanDonorEmail,
         donorPhone: cleanDonorPhone,
-        campaignTitle,
       });
-      snapToken = snap.token;
-      snapRedirectUrl = snap.redirectUrl;
+
+      if (channel.id === "bri_va") {
+        virtualAccountNumber = charge.vaNumber || "";
+      } else if (channel.id === "mandiri_va") {
+        billerCode = charge.billerCode || "70012";
+        billKey = charge.billKey || "";
+        virtualAccountNumber = billKey;
+      } else if (channel.id === "qris") {
+        qrCodeUrl = charge.qrCodeUrl || "";
+        qrString = charge.qrString || "";
+      }
     } catch (err) {
-      console.warn("Midtrans createSnapTransaction warning (proceeding with fallback):", err.message);
+      console.warn("Midtrans Core API charge fallback:", err.message);
     }
   }
 
-  const effectivePaymentRef = snapToken || virtualAccountNumber || null;
+  // Fallback lokal jika sandbox offline
+  if (!virtualAccountNumber && channel.type === "VA") {
+    const bankPrefix = {
+      bri_va: "04240",
+      mandiri_va: "70012",
+    }[channel.id] || "88000";
+    virtualAccountNumber = `${bankPrefix}${cleanDonorPhone.slice(-8)}`;
+    if (channel.id === "mandiri_va") {
+      billerCode = "70012";
+      billKey = virtualAccountNumber;
+    }
+  }
+
+  let effectivePaymentRef = null;
+  if (channel.id === "mandiri_va") {
+    effectivePaymentRef = `${billerCode || "70012"}:${billKey || virtualAccountNumber}`;
+  } else if (channel.id === "bri_va") {
+    effectivePaymentRef = virtualAccountNumber;
+  } else if (channel.id === "qris") {
+    effectivePaymentRef = qrString || qrCodeUrl || null;
+  }
 
   const donationData = {
     invoiceId,
@@ -122,8 +145,10 @@ export async function createDonation({
     paymentChannelName: channel.name,
     paymentChannelType: channel.type,
     virtualAccountNumber,
-    snapToken,
-    snapRedirectUrl,
+    billerCode,
+    billKey,
+    qrCodeUrl,
+    qrString,
     donorName: cleanDonorName,
     donorEmail: cleanDonorEmail,
     donorPhone: cleanDonorPhone,
@@ -149,6 +174,7 @@ export async function createDonation({
         donorName: cleanDonorName,
         donorEmail: cleanDonorEmail || null,
         donorPhone: cleanDonorPhone,
+        donorAvatar: isAnonymous ? null : (donorAvatar || null),
         isAnonymous: Boolean(isAnonymous),
         prayer: cleanPrayer || null,
         status: "PENDING",
@@ -183,6 +209,24 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
     });
 
     if (dbDonation) {
+      if (dbDonation.status === "PENDING" && getMidtransServerKey() && process.env.NODE_ENV !== "test") {
+        try {
+          const midtransStatus = await checkMidtransOrderStatus(invoiceId);
+          if (midtransStatus.isPaid) {
+            const settled = await settleDonationStatus(
+              invoiceId,
+              midtransStatus.settlementTime ? new Date(midtransStatus.settlementTime) : new Date()
+            );
+            if (settled) {
+              dbDonation.status = "PAID";
+              dbDonation.paidAt = settled.paidAt;
+            }
+          }
+        } catch (err) {
+          console.warn("Active status reconciliation error in getDonationByInvoiceId:", err.message);
+        }
+      }
+
       const channel =
         PAYMENT_CHANNELS.find((p) => p.id === dbDonation.paymentChannel) || PAYMENT_CHANNELS[0];
 
@@ -213,28 +257,30 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
       const isStaff = Boolean(sessionUser?.role && sessionUser.role !== "DONOR");
       const isAuthorized = Boolean((token && token === effectiveAccessToken) || isOwner || isStaff);
 
-      let snapToken = null;
-      if (dbDonation.paymentRef && dbDonation.paymentRef.includes("-")) {
-        snapToken = dbDonation.paymentRef;
-      }
+      let billerCode = "";
+      let billKey = "";
+      let qrCodeUrl = "";
+      let qrString = "";
+      let virtualAccountNumber = "";
 
-      if (dbDonation.status === "PENDING" && !snapToken && getMidtransServerKey()) {
-        try {
-          const snap = await createSnapTransaction({
-            orderId: dbDonation.invoiceId,
-            amount: dbDonation.totalAmount,
-            donorName: dbDonation.donorName,
-            donorEmail: dbDonation.donorEmail || "",
-            donorPhone: dbDonation.donorPhone,
-            campaignTitle: dbDonation.campaign?.title || "Sedekah Umum PABE",
-          });
-          snapToken = snap.token;
-          await prisma.donation.update({
-            where: { id: dbDonation.id },
-            data: { paymentRef: snapToken },
-          });
-        } catch (snapErr) {
-          console.warn("On-demand Snap token generation error:", snapErr.message);
+      if (channel.id === "mandiri_va") {
+        if (dbDonation.paymentRef?.includes(":")) {
+          const parts = dbDonation.paymentRef.split(":");
+          billerCode = parts[0];
+          billKey = parts[1];
+          virtualAccountNumber = billKey;
+        } else {
+          billerCode = "70012";
+          billKey = dbDonation.paymentRef || "";
+          virtualAccountNumber = billKey;
+        }
+      } else if (channel.id === "bri_va") {
+        virtualAccountNumber = dbDonation.paymentRef || "";
+      } else if (channel.id === "qris") {
+        if (dbDonation.paymentRef?.startsWith("http")) {
+          qrCodeUrl = dbDonation.paymentRef;
+        } else if (dbDonation.paymentRef) {
+          qrString = dbDonation.paymentRef;
         }
       }
 
@@ -250,13 +296,16 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
         donationType: dbDonation.donationType,
         amount: dbDonation.amount,
         uniqueCode: dbDonation.uniqueCode,
-        adminFee: channel.fee || 0,
+        adminFee: Math.max(0, dbDonation.totalAmount - dbDonation.amount - (dbDonation.uniqueCode || 0)),
         totalAmount: dbDonation.totalAmount,
         paymentChannelId: channel.id,
         paymentChannelName: channel.name,
         paymentChannelType: channel.type,
-        virtualAccountNumber: channel.type === "VA" ? (dbDonation.paymentRef || "") : "",
-        snapToken,
+        virtualAccountNumber,
+        billerCode,
+        billKey,
+        qrCodeUrl,
+        qrString,
         donorName: dbDonation.donorName,
         donorEmail: dbDonation.donorEmail || "",
         donorPhone: dbDonation.donorPhone,
@@ -281,6 +330,45 @@ import {
 
 export async function updateDonationPrayer({ invoiceId, prayer, isAnonymous }) {
   return updateDonationPrayerImpl({ invoiceId, prayer, isAnonymous });
+}
+
+/**
+ * Atomically settles a donation as PAID and updates campaign metrics (idempotent)
+ * @param {string} invoiceId
+ * @param {Date} [paidAt]
+ * @returns {Promise<object|null>}
+ */
+export async function settleDonationStatus(invoiceId, paidAt = new Date()) {
+  if (!invoiceId) return null;
+
+  return await prisma.$transaction(async (tx) => {
+    const donation = await tx.donation.findUnique({
+      where: { invoiceId },
+    });
+
+    if (!donation) return null;
+    if (donation.status === "PAID") return donation;
+
+    const settled = await tx.donation.update({
+      where: { invoiceId },
+      data: {
+        status: "PAID",
+        paidAt: paidAt || new Date(),
+      },
+    });
+
+    if (donation.campaignId) {
+      await tx.campaign.update({
+        where: { id: donation.campaignId },
+        data: {
+          collectedAmount: { increment: donation.amount },
+          donorCount: { increment: 1 },
+        },
+      });
+    }
+
+    return settled;
+  });
 }
 
 export { getRecentDonations };

@@ -39,7 +39,7 @@ export function PrayerCard({ donor, isAmined, onToggleAmin, className }) {
       )}
     >
       {/* Avatar donatur */}
-      <PrayerAvatar name={donor.name} size="md" className="mt-0.5 shrink-0" />
+      <PrayerAvatar name={donor.name} avatar={donor.avatar} size="md" className="mt-0.5 shrink-0" />
 
       {/* Konten Doa & Aksi */}
       <div className="flex-1 min-w-0 flex flex-col justify-between h-full">

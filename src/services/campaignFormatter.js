@@ -13,6 +13,8 @@ export function formatCampaignFromDb(c) {
 
     return {
       id: d.id,
+      invoiceId: d.invoiceId || null,
+      donorEmail: isAnon ? null : (d.donorEmail || null),
       name: isAnon ? "Hamba Allah" : d.donorName,
       amount: Number(d.amount || 0),
       email: maskEmail(rawEmail),

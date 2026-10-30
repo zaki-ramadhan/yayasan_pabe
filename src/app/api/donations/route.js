@@ -2,8 +2,12 @@ import { NextResponse } from "next/server";
 import {
   createDonation,
   getRecentDonations,
+  getDonationByInvoiceId,
   updateDonationPrayer,
+  settleDonationStatus,
 } from "@/services/donationService";
+import { checkMidtransOrderStatus } from "@/services/midtransService";
+import { getMidtransServerKey } from "@/lib/midtransConfig";
 import { getCampaignDonationsPaginated } from "@/services/campaignService";
 import {
   validateDonationAmount,
@@ -15,6 +19,7 @@ import { checkRateLimit } from "@/lib/rateLimit";
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
+    const invoiceId = searchParams.get("invoiceId");
     const campaignSlug = searchParams.get("campaignSlug");
     const limit = searchParams.get("limit")
       ? Math.min(parseInt(searchParams.get("limit"), 10) || 20, 100)
@@ -22,6 +27,47 @@ export async function GET(request) {
     const skip = searchParams.get("skip")
       ? Math.max(parseInt(searchParams.get("skip"), 10) || 0, 0)
       : 0;
+
+    if (invoiceId) {
+      let donation = await getDonationByInvoiceId(invoiceId);
+      if (!donation) {
+        return NextResponse.json(
+          { success: false, message: "Data donasi tidak ditemukan." },
+          { status: 404 }
+        );
+      }
+
+      // Active status reconciliation with Midtrans Core API when PENDING
+      if (donation.status === "PENDING" && getMidtransServerKey() && process.env.NODE_ENV !== "test") {
+        try {
+          const midtransStatus = await checkMidtransOrderStatus(invoiceId);
+          if (midtransStatus.isPaid) {
+            const settled = await settleDonationStatus(
+              invoiceId,
+              midtransStatus.settlementTime ? new Date(midtransStatus.settlementTime) : new Date()
+            );
+            if (settled) {
+              donation = {
+                ...donation,
+                status: "PAID",
+                paidAt: settled.paidAt?.toISOString() || new Date().toISOString(),
+              };
+            }
+          }
+        } catch (err) {
+          console.warn("Active status check failed:", err.message);
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          invoiceId: donation.invoiceId,
+          status: donation.status,
+          paidAt: donation.paidAt,
+        },
+      });
+    }
 
     if (campaignSlug) {
       const result = await getCampaignDonationsPaginated({ campaignSlug, skip, limit });
