@@ -1,79 +1,78 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { Printer, Copy, Check, ExternalLink, Clock, UserCheck } from "lucide-react";
-import { VolunteerIdCard } from "@/components/volunteer/VolunteerIdCard";
 import { CampaignCTA } from "@/components/campaign/CampaignCTA";
-import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { copyToClipboard } from "@/lib/clipboard";
-import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import {
+  fetchVolunteerStatus,
+  cancelVolunteerRegistration,
+} from "@/services/volunteerClientService";
+
+// Sub-widgets modular & reusable (DRY)
+import { VolunteerApprovedCard } from "@/components/volunteer/VolunteerApprovedCard";
+import { VolunteerPendingCard } from "@/components/volunteer/VolunteerPendingCard";
+import { VolunteerCancellationDialog } from "@/components/volunteer/VolunteerCancellationDialog";
 
 export function DonorVolunteerCardView() {
   const { currentUser } = useCurrentUser();
+  const userEmail = currentUser?.email || "";
+
   const [volunteer, setVolunteer] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
+  const [isLoading, setIsLoading] = useState(() => Boolean(userEmail));
+
+  // Cancellation Modal State
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
-    async function loadVolunteer() {
-      if (!currentUser?.email) {
-        setIsLoading(false);
-        return;
-      }
+    let isMounted = true;
 
-      setIsLoading(true);
-      try {
-        const res = await safeFetch(`/api/donor/volunteer?email=${encodeURIComponent(currentUser.email)}`);
-        const json = await res.json();
-        if (json.success && json.data) {
-          setVolunteer(json.data);
-        } else {
-          setVolunteer(null);
-        }
-      } catch {
-        toast.error("Gagal memuat status keanggotaan relawan.");
-      } finally {
+    if (!userEmail) {
+      return;
+    }
+
+    async function load() {
+      const res = await fetchVolunteerStatus(userEmail);
+      if (isMounted) {
+        setVolunteer(res.success && res.data ? res.data : null);
         setIsLoading(false);
       }
     }
 
-    loadVolunteer();
-  }, [currentUser?.email]);
+    load();
 
-  const handlePrint = () => {
-    if (typeof window !== "undefined") {
-      window.print();
-    }
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, [userEmail]);
 
-  const handleCopyLink = async () => {
-    if (!volunteer?.id) return;
-    const url = typeof window !== "undefined"
-      ? `${window.location.origin}/relawan/validasi/${volunteer.id}`
-      : `https://payungberkah.id/relawan/validasi/${volunteer.id}`;
+  const handleConfirmCancel = async () => {
+    if (!userEmail) return;
 
-    const ok = await copyToClipboard(url);
-    if (ok) {
-      setCopied(true);
-      toast.success("Tautan validasi relawan berhasil disalin.");
-      setTimeout(() => setCopied(false), 2000);
-    } else {
-      toast.error("Gagal menyalin tautan.");
+    setCancelling(true);
+    try {
+      const res = await cancelVolunteerRegistration(userEmail);
+      if (res.success) {
+        toast.success(res.message);
+        setVolunteer(null);
+        setIsCancelModalOpen(false);
+      } else {
+        toast.error(res.message);
+      }
+    } catch {
+      toast.error("Terjadi kesalahan saat memproses pembatalan.");
+    } finally {
+      setCancelling(false);
     }
   };
 
   if (isLoading) {
     return (
       <div className="space-y-5 animate-pulse">
-        {/* Skeleton Banner Atas */}
         <Skeleton className="h-32 sm:h-28 w-full rounded-md" />
-
-        {/* Skeleton Empty State Card */}
         <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-4 shadow-2xs">
           <Skeleton className="w-56 h-56 sm:w-72 sm:h-72 mx-auto rounded-xl" />
           <div className="space-y-2">
@@ -87,7 +86,7 @@ export function DonorVolunteerCardView() {
 
   return (
     <div className="space-y-5">
-      {/* 1. Banner CTA di Atas (Hanya jika belum terdaftar relawan) */}
+      {/* 1. Banner CTA (Hanya jika belum terdaftar relawan) */}
       {!volunteer && (
         <CampaignCTA
           title="Tertarik Menjadi Relawan Kebaikan?"
@@ -118,75 +117,16 @@ export function DonorVolunteerCardView() {
 
       {/* 3. Konten Utama Sesuai Status Keanggotaan */}
       {volunteer && volunteer.isApproved ? (
-        // Kasus 1: Relawan Aktif (APPROVED)
-        <div className="space-y-6">
-          <div className="p-4 sm:p-5 bg-emerald-50 border border-emerald-200 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-center sm:text-left">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
-                <UserCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-emerald-950 text-sm sm:text-base">
-                  Kartu Tanda Anggota (KTA) Aktif
-                </h3>
-                <p className="text-xs sm:text-sm text-emerald-800">
-                  Gunakan kartu fisik atau digital ini sebagai identitas resmi saat bertugas di lapangan.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCopyLink}
-                className="h-9 px-3 text-xs sm:text-sm font-normal gap-1.5 cursor-pointer bg-white flex-1 sm:flex-initial"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-slate-600" />}
-                <span>{copied ? "Tersalin" : "Salin tautan"}</span>
-              </Button>
-              <Button
-                type="button"
-                onClick={handlePrint}
-                className="h-9 px-3.5 text-xs sm:text-sm font-medium gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white cursor-pointer flex-1 sm:flex-initial"
-              >
-                <Printer className="w-4 h-4" />
-                <span>Cetak kartu</span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Display KTA Card with QR */}
-          <div className="py-2">
-            <VolunteerIdCard volunteer={volunteer} />
-          </div>
-
-          <div className="text-center">
-            <Link
-              href={`/relawan/validasi/${volunteer.id}`}
-              target="_blank"
-              className="inline-flex items-center gap-1.5 text-xs text-emerald-700 hover:text-emerald-800 hover:underline font-medium"
-            >
-              <span>Uji coba tampilan scan QR publik</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
+        <VolunteerApprovedCard
+          volunteer={volunteer}
+          onResignClick={() => setIsCancelModalOpen(true)}
+        />
       ) : volunteer && volunteer.status === "PENDING" ? (
-        // Kasus 2: Menunggu Verifikasi Pengurus (PENDING)
-        <div className="max-w-lg mx-auto p-6 bg-white rounded-xl border border-amber-200 text-center space-y-3">
-          <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto">
-            <Clock className="w-6 h-6" />
-          </div>
-          <h3 className="font-semibold text-slate-950 text-base">
-            Pendaftaran Relawan Sedang Diverifikasi
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            Terima kasih telah mendaftar di bidang <strong>{volunteer.interest}</strong>. Tim pengurus yayasan sedang meninjau berkas pendaftaran Anda. KTA resmi akan diterbitkan setelah disetujui.
-          </p>
-        </div>
+        <VolunteerPendingCard
+          volunteer={volunteer}
+          onCancelClick={() => setIsCancelModalOpen(true)}
+        />
       ) : (
-        // Kasus 3: Belum Terdaftar sebagai Relawan (Empty State dengan Aset Gambar)
         <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-3 shadow-2xs">
           <div className="relative w-56 h-56 sm:w-72 sm:h-72 mx-auto pointer-events-none select-none">
             <Image
@@ -210,6 +150,17 @@ export function DonorVolunteerCardView() {
           </div>
         </div>
       )}
+
+      {/* Dialog Konfirmasi Pembatalan / Resign */}
+      <VolunteerCancellationDialog
+        isOpen={isCancelModalOpen}
+        onClose={() => setIsCancelModalOpen(false)}
+        onConfirm={handleConfirmCancel}
+        status={volunteer?.status || "PENDING"}
+        isLoading={cancelling}
+      />
     </div>
   );
 }
+
+export default DonorVolunteerCardView;

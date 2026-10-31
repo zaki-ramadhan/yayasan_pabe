@@ -3,9 +3,12 @@ import {
   sanitizeInput,
   validateName,
   validatePhone,
-  validateEmail,
 } from "@/lib/security";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
+
+/**
+ * Service server-side untuk operasi database relawan (Prisma SSOT).
+ */
 
 export async function registerVolunteer({
   fullName,
@@ -38,7 +41,7 @@ export async function registerVolunteer({
     email: cleanEmail,
     phone: phoneVal.sanitized,
     city: cleanCity,
-    interest: sanitizeInput(interest) || "Pengajar & Pembimbing Al-Qur'an",
+    interest: sanitizeInput(interest) || "Relawan Kebaikan",
     motivation: sanitizeInput(motivation).slice(0, 500) || "",
     status: "PENDING",
   };
@@ -82,4 +85,3 @@ export async function getVolunteerCount() {
     return 0;
   }
 }
-

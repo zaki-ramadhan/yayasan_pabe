@@ -95,8 +95,8 @@ export function VolunteerVerificationCard({ volunteer }) {
 
         <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50 text-xs sm:text-sm">
           <div className="flex justify-between items-center p-3">
-            <span className="text-slate-500 font-normal">Bidang Penugasan:</span>
-            <span className="font-semibold text-slate-900 text-right">{volunteer.interest || "Relawan Kebaikan"}</span>
+            <span className="text-slate-500 font-normal">Status Keanggotaan:</span>
+            <span className="font-semibold text-emerald-800 text-right">Relawan Resmi Aktif</span>
           </div>
           <div className="flex justify-between items-center p-3">
             <span className="text-slate-500 font-normal flex items-center gap-1">

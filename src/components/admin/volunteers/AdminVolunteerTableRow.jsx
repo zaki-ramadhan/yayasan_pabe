@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, QrCode } from "lucide-react";
+import { QrCode } from "lucide-react";
 import { formatDate } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -31,8 +31,8 @@ export function AdminVolunteerTableRow({
         />
       </TableCell>
 
-      {/* Nama & Kontak */}
-      <TableCell className="w-64 py-3 align-middle">
+      {/* 1. Relawan */}
+      <TableCell className="w-60 min-w-[200px] py-3 align-middle">
         <div className="flex items-center gap-2.5">
           <UserAvatar
             src={item.avatar}
@@ -43,45 +43,52 @@ export function AdminVolunteerTableRow({
             <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
               {item.fullName}
             </span>
-            <div className="flex flex-col text-sm text-slate-500 font-normal truncate">
-              {item.email && <span>{maskEmail(item.email)}</span>}
-              {item.phone && <span>{maskPhone(item.phone)}</span>}
-            </div>
+            {item.email && (
+              <span className="text-xs text-slate-500 font-normal block truncate">
+                {maskEmail(item.email)}
+              </span>
+            )}
           </div>
         </div>
       </TableCell>
 
-      {/* Domisili */}
-      <TableCell className="w-36 text-sm text-slate-700 py-3 align-middle whitespace-nowrap">
-        <span className="inline-flex items-center gap-1 font-normal">
-          <MapPin className="w-3.5 h-3.5 text-slate-400" />
-          <span>{item.city}</span>
+      {/* 2. No. Telepon */}
+      <TableCell className="w-40 text-center py-3 whitespace-nowrap align-middle">
+        <span className="text-sm font-normal text-slate-700 tabular-nums">
+          {item.phone ? maskPhone(item.phone) : "-"}
         </span>
       </TableCell>
 
-      {/* Bidang Minat */}
+      {/* 3. Domisili */}
+      <TableCell className="w-36 text-sm text-slate-700 py-3 align-middle whitespace-nowrap">
+        <span className="font-normal block truncate">
+          {item.city || "-"}
+        </span>
+      </TableCell>
+
+      {/* 4. Bidang Minat */}
       <TableCell className="text-sm text-slate-800 py-3 align-middle">
         <span className="font-medium block leading-snug line-clamp-1">
           {item.interest}
         </span>
         {item.motivation && (
-          <p className="text-sm text-slate-500 line-clamp-1 font-normal mt-0.5">
+          <p className="text-xs text-slate-500 line-clamp-1 font-normal mt-0.5">
             {item.motivation}
           </p>
         )}
       </TableCell>
 
-      {/* Tanggal Daftar */}
-      <TableCell className="w-36 text-sm text-slate-500 py-3 whitespace-nowrap align-middle">
+      {/* 5. Tanggal Daftar */}
+      <TableCell className="w-36 text-sm text-slate-500 py-3 whitespace-nowrap align-middle text-center tabular-nums">
         {formatDate(item.createdAt)}
       </TableCell>
 
-      {/* Status */}
+      {/* 6. Status */}
       <TableCell className="w-32 text-center py-3 whitespace-nowrap align-middle">
         <AdminVolunteerStatusBadge status={item.status} />
       </TableCell>
 
-      {/* Aksi */}
+      {/* 7. Aksi */}
       <TableCell className="w-24 text-right py-3 whitespace-nowrap align-middle pr-4">
         <TableRowActions
           onView={() => onViewDetail(item)}
@@ -92,7 +99,7 @@ export function AdminVolunteerTableRow({
           {item.status === "APPROVED" && onPrintCard && (
             <button
               type="button"
-              onClick={() => onPrintCard(item)} aria-label="Cetak kartu tanda anggota"
+              onClick={() => onPrintCard(item)}
               aria-label="Cetak kartu tanda anggota"
               className="p-1.5 rounded-md text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
             >

@@ -297,8 +297,11 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                     aria-label="Pilih semua relawan di halaman ini"
                   />
                 </TableHead>
-                <TableHead className="w-64 font-medium text-slate-600 text-sm py-2.5">
-                  Nama &amp; kontak
+                <TableHead className="w-60 min-w-[200px] font-medium text-slate-600 text-sm py-2.5">
+                  Relawan
+                </TableHead>
+                <TableHead className="w-40 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                  No. Telepon
                 </TableHead>
                 <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Domisili
@@ -306,7 +309,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                 <TableHead className="font-medium text-slate-600 text-sm py-2.5 min-w-[200px]">
                   Bidang minat
                 </TableHead>
-                <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Tanggal daftar
                 </TableHead>
                 <TableHead className="w-32 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
@@ -332,7 +335,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                 ))
               ) : (
                 <TableEmptyRow
-                  colSpan={7}
+                  colSpan={8}
                   isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL")}
                 />
               )}

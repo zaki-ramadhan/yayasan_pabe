@@ -1,492 +1,312 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
-import { FormField } from "@/components/ui/FormField";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/Select";
 import { getStoredUser } from "@/services/authService";
-import { safeFetch } from "@/lib/safeFetch";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { toast } from "@/hooks/useToast";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
-	sanitizeName,
-	sanitizePhone,
-	sanitizeEmail,
-	sanitizeCity,
-	sanitizeStandardText,
-	stripEmojis,
-	validateName,
-	validatePhone,
-	validateEmail,
+  fetchVolunteerStatus,
+  submitVolunteerRegistration,
+  cancelVolunteerRegistration,
+} from "@/services/volunteerClientService";
+import {
+  validateName,
+  validatePhone,
+  validateEmail,
+  stripEmojis,
+  sanitizePhone,
 } from "@/lib/security";
 
-const INTEREST_OPTIONS = [
-	"Tutor Bimbel PABE Smart (Akademis, Komputer & Bahasa)",
-	"Pengajar TPA & Bimbingan Al-Qur'an",
-	"Penyaluran Santunan & Operasional Doa Istighotsah",
-	"Layanan Kesehatan & Terapi Akupresur Lansia Dhu'afa",
-	"Dokumentasi, Desain & Tim Media Kreatif",
-	"Aksi Kemanusiaan & Tanggap Darurat",
-];
+// Sub-widgets modular
+import { VolunteerApprovedCard } from "@/components/volunteer/VolunteerApprovedCard";
+import { VolunteerPendingCard } from "@/components/volunteer/VolunteerPendingCard";
+import { VolunteerRegistrationFields } from "@/components/volunteer/VolunteerRegistrationFields";
+import { VolunteerCancellationDialog } from "@/components/volunteer/VolunteerCancellationDialog";
 
 const DRAFT_STORAGE_KEY = "pabe_volunteer_draft";
 
-export function VolunteerForm() {
-	const router = useRouter();
-	const [fullName, setFullName] = useState("");
-	const [phone, setPhone] = useState("");
-	const [email, setEmail] = useState("");
-	const [city, setCity] = useState("");
-	const [interest, setInterest] = useState("");
-	const [motivation, setMotivation] = useState("");
-	const [loading, setLoading] = useState(false);
-	const [isEmailLocked, setIsEmailLocked] = useState(false);
-	const [errors, setErrors] = useState({});
-
-	// Restore draft if user refreshed the page or experienced disconnect
-	useEffect(() => {
-		try {
-			const saved =
-				sessionStorage.getItem(
-					DRAFT_STORAGE_KEY,
-				);
-			if (
-				saved
-			) {
-				const parsed =
-					JSON.parse(
-						saved,
-					);
-				if (
-					parsed.fullName
-				)
-					setFullName(
-						parsed.fullName,
-					);
-				if (
-					parsed.phone
-				)
-					setPhone(
-						parsed.phone,
-					);
-				if (
-					parsed.email
-				)
-					setEmail(
-						parsed.email,
-					);
-				if (
-					parsed.city
-				)
-					setCity(
-						parsed.city,
-					);
-				if (
-					parsed.interest
-				)
-					setInterest(
-						parsed.interest,
-					);
-				if (
-					parsed.motivation
-				)
-					setMotivation(
-						parsed.motivation,
-					);
-			}
-		} catch {
-			// ignore
-		}
-	}, []);
-
-	// Auto-save draft on every change
-	useEffect(() => {
-		try {
-			if (
-				fullName ||
-				phone ||
-				email ||
-				city ||
-				motivation
-			) {
-				sessionStorage.setItem(
-					DRAFT_STORAGE_KEY,
-					JSON.stringify(
-						{
-							fullName,
-							phone,
-							email,
-							city,
-							interest,
-							motivation,
-						},
-					),
-				);
-			}
-		} catch {
-			// ignore
-		}
-	}, [
-		fullName,
-		phone,
-		email,
-		city,
-		interest,
-		motivation,
-	]);
-
-	useEffect(() => {
-		const user =
-			getStoredUser();
-		if (!user) return;
-
-		queueMicrotask(() => {
-			if (
-				user.name &&
-				user.name !==
-					"Pengguna Google" &&
-				user.name !==
-					"Pengguna Facebook"
-			) {
-				setFullName(
-					(
-						prev,
-					) =>
-						prev ||
-						user.name,
-				);
-			}
-			if (
-				user.phone &&
-				user.phone !==
-					"-"
-			) {
-				const cleanPhone =
-					sanitizePhone(
-						user.phone,
-					);
-				if (
-					cleanPhone
-				) {
-					setPhone(
-						(
-							prev,
-						) =>
-							prev ||
-							cleanPhone,
-					);
-				}
-			}
-			if (
-				user.email &&
-				!user.email.endsWith(
-					"@google.user",
-				) &&
-				!user.email.endsWith(
-					"@facebook.user",
-				)
-			) {
-				setEmail(user.email);
-				setIsEmailLocked(true);
-			}
-		});
-	}, []);
-
-	const isFormValid = useMemo(() => {
-		const nameOk = validateName(fullName).isValid;
-		const phoneOk = validatePhone(phone).isValid;
-		const emailOk = validateEmail(email, true).isValid;
-		const cleanCity = stripEmojis(city)
-			.replace(/[^a-zA-ZÀ-ÿ\s.,'\-]/g, "")
-			.trim();
-		const cityOk = cleanCity.length >= 2;
-		const interestOk = Boolean(interest);
-		return Boolean(nameOk && phoneOk && emailOk && cityOk && interestOk);
-	}, [fullName, phone, email, city, interest]);
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-
-		const newErrors = {};
-		const nameVal = validateName(fullName);
-		if (!nameVal.isValid) {
-			newErrors.fullName = nameVal.message;
-		}
-
-		const phoneVal = validatePhone(phone);
-		if (!phoneVal.isValid) {
-			newErrors.phone = phoneVal.message;
-		}
-
-		const emailVal = validateEmail(email, true);
-		if (!emailVal.isValid) {
-			newErrors.email = emailVal.message || "Email wajib diisi dengan format yang benar.";
-		}
-
-		const cleanCity = stripEmojis(city)
-			.replace(/[^a-zA-ZÀ-ÿ\s.,'\-]/g, "")
-			.trim();
-		if (!cleanCity || cleanCity.length < 2) {
-			newErrors.city = "Mohon masukkan kota / kabupaten domisili yang valid.";
-		}
-
-		if (!interest) {
-			newErrors.interest = "Mohon pilih peminatan aksi relawan.";
-		}
-
-		if (Object.keys(newErrors).length > 0) {
-			setErrors(newErrors);
-			const firstError = Object.values(newErrors)[0];
-			toast.error(firstError);
-			return;
-		}
-		setErrors({});
-
-		try {
-			setLoading(
-				true,
-			);
-			const res =
-				await safeFetch(
-					"/api/volunteers",
-					{
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify(
-							{
-								fullName: nameVal.sanitized,
-								phone: phoneVal.sanitized,
-								email: email
-									? validateEmail(
-											email,
-										)
-											.sanitized
-									: "",
-								city: cleanCity,
-								interest,
-								motivation: stripEmojis(
-									motivation,
-								).slice(
-									0,
-									500,
-								),
-							},
-						),
-					},
-				);
-
-			const json =
-				await res.json();
-			if (
-				!res.ok ||
-				!json.success
-			) {
-				throw new Error(
-					json.message ||
-						"Gagal mengirim pendaftaran.",
-				);
-			}
-
-			sessionStorage.removeItem(
-				DRAFT_STORAGE_KEY,
-			);
-			toast.success(
-				json.message ||
-					"Pendaftaran relawan berhasil dikirim!",
-			);
-
-			const user =
-				getStoredUser();
-			if (
-				user
-			) {
-				router.push(
-					"/donatur/relawan",
-				);
-			} else {
-				router.push(
-					"/login?redirect=/donatur/relawan",
-				);
-			}
-		} catch (err) {
-			toast.error(
-				err.message ||
-					"Gagal mengirim pendaftaran relawan.",
-			);
-		} finally {
-			setLoading(
-				false,
-			);
-		}
-	};
-
-	return (
-		<form
-			onSubmit={
-				handleSubmit
-			}
-			className="bg-white p-6 sm:p-8 rounded-xl border border-border-subtle space-y-4 shadow-sm"
-		>
-			<FormField
-				label="Nama lengkap"
-				required
-				error={errors.fullName}
-			>
-				<Input
-					type="text"
-					required
-					value={fullName}
-					maxLength={60}
-					onChange={(e) => {
-						setFullName(sanitizeName(e.target.value));
-						if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: undefined }));
-					}}
-					onBlur={() => setFullName((prev) => prev.trim())}
-					placeholder="Nama Anda"
-					className="h-11 font-normal"
-				/>
-			</FormField>
-
-			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-				<FormField
-					label="Nomor WhatsApp"
-					required
-					error={errors.phone}
-				>
-					<Input
-						type="tel"
-						inputMode="tel"
-						required
-						value={phone}
-						maxLength={15}
-						onChange={(e) => {
-							setPhone(sanitizePhone(e.target.value));
-							if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
-						}}
-						onBlur={() => setPhone((prev) => prev.trim())}
-						placeholder="0812xxxxxxxx"
-						className="h-11 font-normal"
-					/>
-				</FormField>
-
-				<FormField
-					label="Alamat email"
-					required
-					error={errors.email}
-					hint={isEmailLocked ? "Email terkunci sesuai akun login Anda." : undefined}
-				>
-					<Input
-						type="email"
-						inputMode="email"
-						spellCheck={false}
-						required
-						readOnly={isEmailLocked}
-						value={email}
-						maxLength={100}
-						onChange={(e) => {
-							if (!isEmailLocked) {
-								setEmail(sanitizeEmail(e.target.value));
-								if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
-							}
-						}}
-						onBlur={() => setEmail((prev) => prev.trim())}
-						placeholder="email@anda.com"
-						className={cn(
-							"h-11 font-normal",
-							isEmailLocked &&
-								"bg-slate-100 text-slate-600 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
-						)}
-					/>
-				</FormField>
-			</div>
-
-			<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-				<FormField
-					label="Kota / kabupaten domisili"
-					required
-					error={errors.city}
-				>
-					<Input
-						type="text"
-						required
-						value={city}
-						maxLength={50}
-						onChange={(e) => {
-							setCity(sanitizeCity(e.target.value));
-							if (errors.city) setErrors((prev) => ({ ...prev, city: undefined }));
-						}}
-						onBlur={() => setCity((prev) => prev.trim())}
-						placeholder="Contoh: Jakarta Timur / Bekasi"
-						className="h-11 font-normal"
-					/>
-				</FormField>
-
-				<FormField
-					label="Peminatan aksi"
-					required
-					error={errors.interest}
-				>
-					<Select
-						value={interest}
-						onValueChange={(val) => {
-							setInterest(val);
-							if (errors.interest) setErrors((prev) => ({ ...prev, interest: undefined }));
-						}}
-					>
-						<SelectTrigger className="w-full h-11 text-sm rounded-lg bg-white">
-							<SelectValue placeholder="Pilih peminatan aksi..." />
-						</SelectTrigger>
-						<SelectContent>
-							{INTEREST_OPTIONS.map((opt) => (
-								<SelectItem key={opt} value={opt}>
-									{opt}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</FormField>
-			</div>
-
-			<FormField
-				label="Motivasi & pengalaman singkat"
-				error={errors.motivation}
-			>
-				<Textarea
-					rows={3}
-					value={motivation}
-					maxLength={500}
-					onChange={(e) => {
-						setMotivation(sanitizeStandardText(e.target.value, 500));
-						if (errors.motivation) setErrors((prev) => ({ ...prev, motivation: undefined }));
-					}}
-					onBlur={() => setMotivation((prev) => prev.trim())}
-					placeholder="Ceritakan keahlian atau alasan Anda ingin bergabung..."
-					className="resize-none"
-				/>
-			</FormField>
-
-			<Button
-				type="submit"
-				isLoading={loading}
-				disabled={loading || !isFormValid}
-				className="w-full h-11 font-medium"
-			>
-				{loading
-					? "Mengirim pendaftaran..."
-					: "Daftar sebagai relawan"}
-			</Button>
-		</form>
-	);
+function getInitialDraft() {
+  if (typeof window === "undefined") return {};
+  try {
+    const saved = sessionStorage.getItem(DRAFT_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
 }
+
+/**
+ * Layout Coordinator untuk pendaftaran dan status relawan (Thin Orchestrator).
+ * Mencegah spam pendaftaran ganda dan mengunci nama akun login secara otomatis.
+ */
+export function VolunteerForm() {
+  const router = useRouter();
+  const { currentUser } = useCurrentUser();
+  const activeUser = currentUser || (typeof window !== "undefined" ? getStoredUser() : null);
+  const userEmail = activeUser?.email || "";
+
+  // 1. Initial State Derived Lazily (Zero Cascading setState in Effect)
+  const [fullName, setFullName] = useState(() => {
+    if (activeUser?.name && activeUser.name !== "Pengguna Google" && activeUser.name !== "Pengguna Facebook") {
+      return activeUser.name;
+    }
+    const draft = getInitialDraft();
+    return draft.fullName || "";
+  });
+
+  const isNameLocked = Boolean(
+    activeUser?.name &&
+    activeUser.name !== "Pengguna Google" &&
+    activeUser.name !== "Pengguna Facebook"
+  );
+
+  const [email, setEmail] = useState(() => {
+    if (activeUser?.email && !activeUser.email.endsWith("@google.user") && !activeUser.email.endsWith("@facebook.user")) {
+      return activeUser.email;
+    }
+    const draft = getInitialDraft();
+    return draft.email || "";
+  });
+
+  const isEmailLocked = Boolean(
+    activeUser?.email &&
+    !activeUser.email.endsWith("@google.user") &&
+    !activeUser.email.endsWith("@facebook.user")
+  );
+
+  const [phone, setPhone] = useState(() => {
+    if (activeUser?.phone && activeUser.phone !== "-") {
+      const clean = sanitizePhone(activeUser.phone);
+      if (clean) return clean;
+    }
+    const draft = getInitialDraft();
+    return draft.phone || "";
+  });
+
+  const [city, setCity] = useState(() => getInitialDraft().city || "");
+  const [motivation, setMotivation] = useState(() => getInitialDraft().motivation || "");
+
+  // Status Relawan Terdaftar
+  const [volunteer, setVolunteer] = useState(null);
+  const [checkingStatus, setCheckingStatus] = useState(() => Boolean(userEmail));
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  // Cancellation Modal State
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+
+  // 2. Cek status keanggotaan relawan saat userEmail tersedia
+  useEffect(() => {
+    let isMounted = true;
+
+    if (!userEmail) {
+      return;
+    }
+
+    async function checkStatus() {
+      const res = await fetchVolunteerStatus(userEmail);
+      if (isMounted) {
+        setVolunteer(res.success && res.data ? res.data : null);
+        setCheckingStatus(false);
+      }
+    }
+
+    checkStatus();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [userEmail]);
+
+  // 3. Draft Auto-save
+  useEffect(() => {
+    if (volunteer) return;
+    try {
+      if (fullName || phone || email || city || motivation) {
+        sessionStorage.setItem(
+          DRAFT_STORAGE_KEY,
+          JSON.stringify({ fullName, phone, email, city, motivation })
+        );
+      }
+    } catch {
+      // ignore
+    }
+  }, [fullName, phone, email, city, motivation, volunteer]);
+
+  // Validasi Form (Derived State)
+  const cleanCity = stripEmojis(city)
+    .replace(/[^a-zA-ZÀ-ÿ\s.,'-]/g, "")
+    .trim();
+  const isFormValid = Boolean(
+    validateName(fullName).isValid &&
+    validatePhone(phone).isValid &&
+    validateEmail(email, true).isValid &&
+    cleanCity.length >= 2
+  );
+
+  // Handle Form Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newErrors = {};
+
+    const nameCheck = validateName(fullName);
+    if (!nameCheck.isValid) newErrors.fullName = nameCheck.error;
+
+    const phoneCheck = validatePhone(phone);
+    if (!phoneCheck.isValid) newErrors.phone = phoneCheck.error;
+
+    const emailCheck = validateEmail(email, true);
+    if (!emailCheck.isValid) newErrors.email = emailCheck.error;
+
+    if (!city || city.trim().length < 2) {
+      newErrors.city = "Kota domisili minimal 2 karakter.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      toast.error("Mohon periksa kembali kolom formulir yang belum valid.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await submitVolunteerRegistration({
+        fullName: fullName.trim(),
+        phone: phone.trim(),
+        email: email.trim().toLowerCase(),
+        city: city.trim(),
+        motivation: motivation.trim().slice(0, 500),
+      });
+
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+
+      sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+      toast.success(res.message);
+
+      // Refresh status relawan
+      const statusRes = await fetchVolunteerStatus(email.trim().toLowerCase());
+      if (statusRes.success && statusRes.data) {
+        setVolunteer(statusRes.data);
+      }
+
+      const user = getStoredUser() || currentUser;
+      if (!user) {
+        router.push("/login?redirect=/donatur/relawan");
+      }
+    } catch (err) {
+      toast.error(err.message || "Gagal mengirim pendaftaran relawan.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle Cancel / Resign Volunteer Action
+  const handleConfirmCancel = async () => {
+    const targetEmail = volunteer?.email || email;
+    if (!targetEmail) return;
+
+    setCancelling(true);
+    try {
+      const res = await cancelVolunteerRegistration(targetEmail);
+      if (res.success) {
+        toast.success(res.message);
+        setVolunteer(null);
+        setIsCancelModalOpen(false);
+      } else {
+        toast.error(res.message);
+      }
+    } catch {
+      toast.error("Terjadi kesalahan saat membatalkan pendaftaran.");
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  // State A: Sedang Memeriksa Status Relawan (Skeleton Loader)
+  if (checkingStatus) {
+    return (
+      <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/90 shadow-sm space-y-4 animate-pulse">
+        <Skeleton className="h-6 w-48 rounded" />
+        <Skeleton className="h-11 w-full rounded-md" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Skeleton className="h-11 w-full rounded-md" />
+          <Skeleton className="h-11 w-full rounded-md" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Skeleton className="h-11 w-full rounded-md" />
+          <Skeleton className="h-11 w-full rounded-md" />
+        </div>
+        <Skeleton className="h-20 w-full rounded-md" />
+        <Skeleton className="h-11 w-full rounded-md" />
+      </div>
+    );
+  }
+
+  // State B: Sudah Terdaftar dan Disetujui (APPROVED)
+  if (volunteer && volunteer.isApproved) {
+    return (
+      <>
+        <VolunteerApprovedCard
+          volunteer={volunteer}
+          onResignClick={() => setIsCancelModalOpen(true)}
+        />
+        <VolunteerCancellationDialog
+          isOpen={isCancelModalOpen}
+          onClose={() => setIsCancelModalOpen(false)}
+          onConfirm={handleConfirmCancel}
+          status="APPROVED"
+          isLoading={cancelling}
+        />
+      </>
+    );
+  }
+
+  // State C: Sudah Mendaftar namun Masih Ditinjau (PENDING)
+  if (volunteer && volunteer.status === "PENDING") {
+    return (
+      <>
+        <VolunteerPendingCard
+          volunteer={volunteer}
+          onCancelClick={() => setIsCancelModalOpen(true)}
+        />
+        <VolunteerCancellationDialog
+          isOpen={isCancelModalOpen}
+          onClose={() => setIsCancelModalOpen(false)}
+          onConfirm={handleConfirmCancel}
+          status="PENDING"
+          isLoading={cancelling}
+        />
+      </>
+    );
+  }
+
+  // State D: Belum Terdaftar (Tampilkan Form Input Bersih)
+  return (
+    <VolunteerRegistrationFields
+      fullName={fullName}
+      setFullName={setFullName}
+      isNameLocked={isNameLocked}
+      phone={phone}
+      setPhone={setPhone}
+      email={email}
+      setEmail={setEmail}
+      isEmailLocked={isEmailLocked}
+      city={city}
+      setCity={setCity}
+      motivation={motivation}
+      setMotivation={setMotivation}
+      loading={loading}
+      isFormValid={isFormValid}
+      errors={errors}
+      setErrors={setErrors}
+      onSubmit={handleSubmit}
+    />
+  );
+}
+
+export default VolunteerForm;

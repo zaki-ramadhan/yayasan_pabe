@@ -20,8 +20,16 @@ export async function getVolunteerPublicProfile(id) {
       return null;
     }
 
+    let userAvatar = null;
+    if (v.email) {
+      const u = await prisma.user.findFirst({
+        where: { email: { equals: v.email.trim().toLowerCase(), mode: "insensitive" } },
+        select: { avatar: true },
+      });
+      userAvatar = u?.avatar || null;
+    }
 
-    return mapToPublicVolunteer(v);
+    return mapToPublicVolunteer(v, userAvatar);
   } catch (error) {
     console.warn("Prisma getVolunteerPublicProfile fallback:", error?.message);
     return null;
@@ -36,11 +44,17 @@ export async function getVolunteerByEmail(email) {
   const cleanEmail = email.trim().toLowerCase();
 
   try {
-    const v = await prisma.volunteer.findFirst({
-      where: { email: { equals: cleanEmail, mode: "insensitive" } },
-    });
+    const [v, u] = await Promise.all([
+      prisma.volunteer.findFirst({
+        where: { email: { equals: cleanEmail, mode: "insensitive" } },
+      }),
+      prisma.user.findFirst({
+        where: { email: { equals: cleanEmail, mode: "insensitive" } },
+        select: { avatar: true },
+      }),
+    ]);
 
-    if (v) return mapToPublicVolunteer(v);
+    if (v) return mapToPublicVolunteer(v, u?.avatar || null);
 
     return null;
   } catch (error) {
@@ -49,7 +63,7 @@ export async function getVolunteerByEmail(email) {
   }
 }
 
-function mapToPublicVolunteer(v) {
+function mapToPublicVolunteer(v, avatarUrl = null) {
   const createdDate = v.createdAt instanceof Date ? v.createdAt : new Date(v.createdAt);
   const expiryDate = new Date(createdDate);
   expiryDate.setFullYear(expiryDate.getFullYear() + 1);
@@ -62,6 +76,7 @@ function mapToPublicVolunteer(v) {
     interest: v.interest,
     status: v.status,
     isApproved: v.status === "APPROVED",
+    avatarUrl: avatarUrl || null,
     createdAt: createdDate.toISOString(),
     validUntil: expiryDate.toISOString(),
     orgName: ORG_PROFILE.name,
