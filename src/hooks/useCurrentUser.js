@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, useMemo } from "react";
 import { AUTH_STORAGE_KEY, loginUser } from "@/services/authService";
 
 function subscribeAuth(callback) {
@@ -38,14 +38,14 @@ export function useCurrentUser() {
     getAuthServerSnapshot
   );
 
-  let currentUser = null;
-  if (userJson) {
+  const currentUser = useMemo(() => {
+    if (!userJson) return null;
     try {
-      currentUser = JSON.parse(userJson);
+      return JSON.parse(userJson);
     } catch {
-      currentUser = null;
+      return null;
     }
-  }
+  }, [userJson]);
 
   const updateLocalUser = (updatedData) => {
     if (!currentUser) return;

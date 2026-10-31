@@ -211,20 +211,82 @@ export function validateUsername(username) {
 }
 
 /**
- * Validasi nomor HP/WhatsApp Indonesia (diawali 08 atau 628, panjang 10-14 digit).
+ * Validasi nomor HP/WhatsApp Indonesia sesuai standar ITU-T E.164 dan Permenkominfo No. 14/2018:
+ * - Awalan: 08 atau 628 (+62 8xx)
+ * - Digit ke-3 wajib 1-9 (menolak 080x toll-free / call center)
+ * - Panjang: 10 - 13 digit untuk format 08 (11 - 14 digit untuk format 628)
+ * - Anti-dummy: Menolak pola angka berulang identik (contoh: 081111111111, 089999999999)
+ *
+ * @param {string} phone
+ * @param {object} [options]
+ * @param {boolean} [options.isRequired=true]
+ * @param {string} [options.fieldName="Nomor WhatsApp"]
+ * @returns {{ isValid: boolean, valid: boolean, message: string, error: string, sanitized: string, e164: string }}
  */
-export function validatePhone(phone) {
-  const digits = sanitizePhone(phone);
-  if (!digits) {
-    const msg = "Nomor WhatsApp wajib diisi.";
-    return { isValid: false, valid: false, message: msg, error: msg };
+export function validatePhone(phone, { isRequired = true, fieldName = "Nomor WhatsApp" } = {}) {
+  if (!phone || typeof phone !== "string") {
+    if (!isRequired) {
+      return { isValid: true, valid: true, message: "", error: "", sanitized: "", e164: "" };
+    }
+    const msg = `${fieldName} wajib diisi.`;
+    return { isValid: false, valid: false, message: msg, error: msg, sanitized: "", e164: "" };
   }
-  const isIndonesianFormat = /^(08|628)[1-9][0-9]{7,12}$/.test(digits);
-  if (!isIndonesianFormat) {
-    const msg = "Nomor tidak valid (contoh: 08123456789).";
-    return { isValid: false, valid: false, message: msg, error: msg };
+
+  const rawDigits = sanitizePhone(phone);
+  if (!rawDigits) {
+    if (!isRequired) {
+      return { isValid: true, valid: true, message: "", error: "", sanitized: "", e164: "" };
+    }
+    const msg = `${fieldName} wajib diisi.`;
+    return { isValid: false, valid: false, message: msg, error: msg, sanitized: "", e164: "" };
   }
-  return { isValid: true, valid: true, message: "", error: "", sanitized: digits };
+
+  // Normalisasi prefix internasional (628 / 6208) ke format nasional (08)
+  let normalized = rawDigits;
+  if (normalized.startsWith("628")) {
+    normalized = "0" + normalized.slice(2);
+  } else if (normalized.startsWith("6208")) {
+    normalized = "0" + normalized.slice(3);
+  }
+
+  // 1. Cek awalan seluler 08
+  if (!normalized.startsWith("08")) {
+    const msg = `${fieldName} harus diawali dengan 08 atau 628 (contoh: 08123456789).`;
+    return { isValid: false, valid: false, message: msg, error: msg, sanitized: rawDigits, e164: "" };
+  }
+
+  // 2. Cek digit ke-3: tolak 080X (bebas pulsa / call center / intelligent network)
+  if (normalized.startsWith("080")) {
+    const msg = "Nomor 080x (bebas pulsa) tidak dapat digunakan untuk nomor seluler/WhatsApp.";
+    return { isValid: false, valid: false, message: msg, error: msg, sanitized: rawDigits, e164: "" };
+  }
+
+  // 3. Cek panjang standar seluler Indonesia (10 - 13 digit untuk format 08)
+  if (normalized.length < 10) {
+    const msg = `${fieldName} terlalu pendek (minimal 10 digit, contoh: 08123456789).`;
+    return { isValid: false, valid: false, message: msg, error: msg, sanitized: rawDigits, e164: "" };
+  }
+  if (normalized.length > 13) {
+    const msg = `${fieldName} terlalu panjang (maksimal 13 digit angka).`;
+    return { isValid: false, valid: false, message: msg, error: msg, sanitized: rawDigits, e164: "" };
+  }
+
+  // 4. Proteksi nomor fiktif / angka berulang identik setelah prefix (misal 081111111111, 089999999999)
+  if (/^08(\d)\1{7,}$/.test(normalized)) {
+    const msg = `${fieldName} tidak valid (terdeteksi pola nomor fiktif berulang).`;
+    return { isValid: false, valid: false, message: msg, error: msg, sanitized: rawDigits, e164: "" };
+  }
+
+  const e164 = "62" + normalized.slice(1);
+
+  return {
+    isValid: true,
+    valid: true,
+    message: "",
+    error: "",
+    sanitized: normalized,
+    e164,
+  };
 }
 
 // Daftar domain typo umum untuk proteksi salah ketik pengguna
@@ -424,9 +486,9 @@ export function validateOrgSettings(formData) {
 
   const whatsapp = (formData.contacts?.whatsapp || "").trim();
   if (whatsapp) {
-    const digitsOnly = whatsapp.replace(/\D/g, "");
-    if (digitsOnly.length < 8 || digitsOnly.length > 15) {
-      errors.whatsapp = "Nomor WhatsApp harus 8-15 digit angka.";
+    const waCheck = validatePhone(whatsapp, { isRequired: false, fieldName: "Nomor WhatsApp resmi" });
+    if (!waCheck.isValid) {
+      errors.whatsapp = waCheck.message;
     }
   }
 
@@ -468,5 +530,84 @@ export function validateOrgSettings(formData) {
   }
 
   return { isValid: true, error: "", errors: {} };
+}
+
+/**
+ * Memvalidasi apakah string merupakan tautan web (URL) yang valid.
+ * Mampu membedakan secara presisi antara teks polos biasa dengan tautan URL sesungguhnya
+ * (memiliki host, domain valid, dan skema protokol http/https).
+ *
+ * @param {string} urlInput - String URL yang akan divalidasi
+ * @param {object} [options]
+ * @param {boolean} [options.requireProtocol=false] - Jika false, otomatis menambahkan prefix https:// untuk domain valid
+ * @param {string[]} [options.allowedProtocols=['http:', 'https:']] - Protokol yang diperbolehkan
+ * @returns {{ isValid: boolean, normalizedUrl: string, message: string }}
+ */
+export function validateWebUrl(urlInput, options = {}) {
+  const { requireProtocol = false, allowedProtocols = ["http:", "https:"] } = options;
+
+  if (!urlInput || typeof urlInput !== "string") {
+    return { isValid: false, normalizedUrl: "", message: "Tautan tidak boleh kosong." };
+  }
+
+  const trimmed = urlInput.trim();
+  if (!trimmed) {
+    return { isValid: false, normalizedUrl: "", message: "Tautan tidak boleh kosong." };
+  }
+
+  // Teks tidak boleh mengandung spasi atau karakter newline
+  if (/\s/.test(trimmed)) {
+    return {
+      isValid: false,
+      normalizedUrl: "",
+      message: "Tautan tidak boleh mengandung spasi. Masukkan alamat URL yang valid.",
+    };
+  }
+
+  let candidate = trimmed;
+  const hasProtocol = candidate.startsWith("http://") || candidate.startsWith("https://");
+
+  if (!hasProtocol) {
+    if (requireProtocol) {
+      return {
+        isValid: false,
+        normalizedUrl: "",
+        message: "Tautan harus diawali dengan http:// atau https://",
+      };
+    }
+    candidate = "https://" + candidate;
+  }
+
+  try {
+    const parsed = new URL(candidate);
+    if (!allowedProtocols.includes(parsed.protocol)) {
+      return {
+        isValid: false,
+        normalizedUrl: "",
+        message: "Protokol tautan harus menggunakan http:// atau https://",
+      };
+    }
+
+    const hostname = parsed.hostname;
+    const parts = hostname.split(".");
+    const hasValidTld =
+      parts.length >= 2 &&
+      parts[parts.length - 1].length >= 2 &&
+      /^[a-zA-Z0-9.-]+$/.test(hostname) &&
+      !hostname.startsWith(".") &&
+      !hostname.endsWith(".");
+
+    if (!hasValidTld) {
+      return {
+        isValid: false,
+        normalizedUrl: "",
+        message: "Format domain tautan tidak valid (contoh: https://drive.google.com/...)",
+      };
+    }
+
+    return { isValid: true, normalizedUrl: candidate, message: "" };
+  } catch {
+    return { isValid: false, normalizedUrl: "", message: "Format tautan tidak valid." };
+  }
 }
 

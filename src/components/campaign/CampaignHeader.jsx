@@ -47,15 +47,6 @@ export function CampaignHeader({ campaign, progress }) {
 				)}
 			</div>
 
-			{/* Short Summary (Synchronized with Card description) */}
-			{campaign.excerpt && (
-				<p className="text-sm sm:text-base text-slate-700 leading-relaxed pt-0.5">
-					{
-						campaign.excerpt
-					}
-				</p>
-			)}
-
 			{/* Mobile-only Progress summary */}
 			<div className="lg:hidden space-y-3 pt-3 border-t border-slate-200">
 				{hasTarget ? (

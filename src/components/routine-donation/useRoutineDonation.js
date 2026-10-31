@@ -25,7 +25,7 @@ export function useRoutineDonation({ campaigns = [] }) {
   const activeCampaigns = (campaigns && campaigns.length > 0 ? campaigns : []).filter(
     (c) => !isCampaignClosed(c)
   );
-  const defaultCampaignId = activeCampaigns[0]?.id || campaigns[0]?.id || "camp-001";
+  const defaultCampaignId = activeCampaigns[0]?.id || campaigns[0]?.id || "";
 
   // Pre-fill user data from session if authenticated
   useEffect(() => {
@@ -58,14 +58,18 @@ export function useRoutineDonation({ campaigns = [] }) {
       monthlyDate: new Date().toISOString(),
       routineType: "REMINDER_ONLY",
       hasCustomPeriod: false,
-      startDate: "",
-      endDate: "",
-      reminderTime: "05:00",
-      amount: 25000,
-      customAmount: "",
       paymentChannelId: "qris",
     },
   ]);
+
+  // Sinkronkan default campaign ID jika data baru selesai dimuat secara asynchronous
+  useEffect(() => {
+    if (defaultCampaignId) {
+      setSelectedPrograms((prev) =>
+        prev.map((prog) => (!prog.campaignId ? { ...prog, campaignId: defaultCampaignId } : prog))
+      );
+    }
+  }, [defaultCampaignId]);
 
   const handleAddProgram = () => {
     if (selectedPrograms.length >= 2) {
@@ -174,6 +178,11 @@ export function useRoutineDonation({ campaigns = [] }) {
       }
     }
 
+    if (!activeCampaigns || activeCampaigns.length === 0) {
+      toast.error("Belum ada program kampanye yang aktif untuk donasi rutin saat ini.");
+      return;
+    }
+
     const hasAutoDonation = selectedPrograms.some((p) => p.routineType === "AUTO_DONATION");
     if (hasAutoDonation && totalPerCommitment <= 0) {
       toast.error("Mohon tentukan nominal donasi otomatis yang valid.");
@@ -187,7 +196,7 @@ export function useRoutineDonation({ campaigns = [] }) {
         const nominal = getRoutineProgramAmount(p);
 
         return {
-          campaignId: p.campaignId,
+          campaignId: camp?.id || p.campaignId,
           programTitle: camp?.title || "Program Kebaikan Rutin",
           amount: p.routineType === "REMINDER_ONLY" ? 0 : nominal,
           frequency: p.frequency,

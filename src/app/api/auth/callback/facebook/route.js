@@ -231,14 +231,20 @@ export async function GET(request) {
     };
 
     const sessionJson = JSON.stringify(sessionPayload).replace(/</g, "\\u003c");
-    const defaultTarget = userRole === "DONOR" ? "/donatur/dashboard" : "/admin";
-    let targetUrl =
-      redirectTarget && !["/login", "/register", "/"].includes(redirectTarget)
-        ? redirectTarget
-        : defaultTarget;
+    const isStaffRole = userRole && userRole !== USER_ROLES.DONOR;
+    const defaultTarget = isStaffRole ? "/admin" : "/donatur/dashboard";
 
-    if (targetUrl.startsWith("/dashboard")) {
-      targetUrl = targetUrl.replace(/^\/dashboard/, "/admin");
+    let targetUrl = defaultTarget;
+    if (redirectTarget && !["/login", "/register", "/"].includes(redirectTarget)) {
+      const normalizedTarget = redirectTarget.startsWith("/dashboard")
+        ? redirectTarget.replace(/^\/dashboard/, "/admin")
+        : redirectTarget;
+      const isAdminPath = normalizedTarget === "/admin" || normalizedTarget.startsWith("/admin/");
+      if (isAdminPath && !isStaffRole) {
+        targetUrl = "/donatur/dashboard";
+      } else {
+        targetUrl = normalizedTarget;
+      }
     }
 
     const responseHtml = `

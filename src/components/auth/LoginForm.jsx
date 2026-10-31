@@ -142,7 +142,15 @@ export function LoginForm() {
       });
 
       setIsLoading(false);
-      router.push(redirectUrl || getRedirectPathForRole(user.role));
+      const isStaff = user?.role && user.role !== USER_ROLES.DONOR;
+      let finalTarget = redirectUrl;
+      if (redirectUrl) {
+        const isAdminPath = redirectUrl === "/admin" || redirectUrl.startsWith("/admin/");
+        if (isAdminPath && !isStaff) {
+          finalTarget = "/donatur/dashboard";
+        }
+      }
+      router.push(finalTarget || getRedirectPathForRole(user.role));
     } catch (err) {
       setIsLoading(false);
       toast.error(err.message || "Gagal masuk ke akun. Silakan periksa kembali kredensial Anda.");

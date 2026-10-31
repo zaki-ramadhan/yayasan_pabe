@@ -69,6 +69,7 @@ export async function getAdminTransactions({
     console.warn("Prisma getAdminTransactions error:", error.message);
     return {
       items: [],
+      error: error.message || "Gagal memuat data transaksi dari database.",
       pagination: {
         page,
         limit,

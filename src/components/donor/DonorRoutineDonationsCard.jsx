@@ -85,10 +85,10 @@ export function DonorRoutineDonationsCard({
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-sm font-medium text-emerald-800">
+                    <p className="text-sm font-medium text-emerald-800 tabular-nums">
                       {formatRupiah(item.amount)}
                     </p>
-                    <span className="text-xs font-normal text-slate-400 block">
+                    <span className="text-xs font-normal text-slate-500 block">
                       {item.routineType === "AUTO_DONATION"
                         ? "Auto-invoice"
                         : "Pengingat WA"}

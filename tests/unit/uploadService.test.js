@@ -92,5 +92,12 @@ describe("uploadService & storageConstants Unit Tests", () => {
       const twentyFiveMb = 25 * 1024 * 1024;
       expect(STORAGE_CONTEXTS.GALLERY_VIDEO.maxBytes).toBe(twentyFiveMb);
     });
+
+    it("memastikan batas berkas resume pelamar disetel ke 5MB khusus PDF dan terbuka untuk umum", () => {
+      const fiveMb = 5 * 1024 * 1024;
+      expect(STORAGE_CONTEXTS.CAREER_RESUME.maxBytes).toBe(fiveMb);
+      expect(STORAGE_CONTEXTS.CAREER_RESUME.allowedTypes).toEqual(["application/pdf"]);
+      expect(STORAGE_CONTEXTS.CAREER_RESUME.allowedRoles).toBeNull();
+    });
   });
 });

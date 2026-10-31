@@ -22,6 +22,7 @@
   --font-sans: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
   --font-crustaceans: var(--font-crustaceans), cursive;
+  --font-card: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
 }
 
 :root {

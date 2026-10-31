@@ -23,7 +23,7 @@ export function DonorTransactionTableRow({ item }) {
           <span className="truncate">{item.donorName}</span>
         </div>
       </TableCell>
-      <TableCell className="text-right font-medium text-emerald-800 align-middle">
+      <TableCell className="text-right font-medium text-emerald-800 align-middle tabular-nums">
         {formatRupiah(item.amount)}
       </TableCell>
       <TableCell className="font-normal text-slate-800 max-w-xs align-middle">
@@ -43,7 +43,7 @@ export function DonorTransactionTableRow({ item }) {
           {item.paymentChannel?.replace("_", " ")}
         </span>
       </TableCell>
-      <TableCell className="font-normal text-slate-800 whitespace-nowrap align-middle">
+      <TableCell className="font-normal text-slate-800 whitespace-nowrap align-middle text-center tabular-nums">
         {formatDate(item.date)}
       </TableCell>
       <TableCell className="text-center whitespace-nowrap align-middle">

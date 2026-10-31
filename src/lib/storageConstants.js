@@ -49,6 +49,14 @@ export const STORAGE_CONTEXTS = {
     maxBytes: 8 * 1024 * 1024, // 8MB
     allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.VOLUNTEER],
   },
+  CAMPAIGN_UPDATE_VIDEO: {
+    folder: "campaigns/videos",
+    prefix: "prog-vid",
+    optimize: false,
+    allowedTypes: ["video/mp4", "video/webm", "video/quicktime"],
+    maxBytes: 25 * 1024 * 1024, // 25MB
+    allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN, USER_ROLES.VOLUNTEER],
+  },
   AUDIT_REPORT: {
     folder: "reports/audit",
     prefix: "audit-rep",

@@ -28,14 +28,14 @@ export function TransparencyLedgerStrip({
     >
       {isLaporan ? (
         <>
-          {/* 1. Hasil Audit KAP */}
+          {/* 1. Akuntabilitas Publik */}
           <div className="py-3 sm:py-0 sm:px-6 first:pl-0 space-y-1">
-            <span className="text-sm font-medium text-slate-700 block">Hasil Audit KAP</span>
+            <span className="text-sm font-medium text-slate-700 block">Akuntabilitas Publik</span>
             <div className="text-2xl sm:text-3xl font-semibold text-emerald-800 tracking-tight flex items-center gap-1.5">
               <Award className="w-6 h-6 text-emerald-700 shrink-0" />
-              Opini WTP
+              Transparan
             </div>
-            <span className="text-sm text-slate-600 block pt-0.5">Wajar Tanpa Pengecualian</span>
+            <span className="text-sm text-slate-600 block pt-0.5">Pencatatan Berkelanjutan</span>
           </div>
 
           {/* 2. Total Dana Dikelola */}
@@ -47,13 +47,13 @@ export function TransparencyLedgerStrip({
             <span className="text-sm text-slate-600 block pt-0.5">Akumulasi seluruh program</span>
           </div>
 
-          {/* 3. Penerima Manfaat */}
+          {/* 3. Mustahik Binaan Rutin */}
           <div className="py-3 sm:py-0 sm:px-6 space-y-1">
-            <span className="text-sm font-medium text-slate-700 block">Penerima Manfaat</span>
+            <span className="text-sm font-medium text-slate-700 block">Mustahik Binaan Rutin</span>
             <div className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight">
-              {formatNumber(metrics.totalBeneficiaries || 0)}+ Orang
+              {formatNumber(metrics.totalBeneficiaries || 0)}+ Jiwa
             </div>
-            <span className="text-sm text-slate-600 block pt-0.5">Anak yatim &amp; dhuafa</span>
+            <span className="text-sm text-slate-600 block pt-0.5">Anak yatim &amp; dhuafa Cakung</span>
           </div>
 
           {/* 4. Titik Binaan */}
@@ -82,11 +82,11 @@ export function TransparencyLedgerStrip({
           </div>
 
           <div className="py-4 sm:py-0 sm:px-6 space-y-1.5">
-            <span className="text-sm sm:text-base font-medium text-slate-700 block">Penerima Manfaat</span>
+            <span className="text-sm sm:text-base font-medium text-slate-700 block">Mustahik Binaan Rutin</span>
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-950 tracking-tight">
-              {(metrics.totalBeneficiaries || 0).toLocaleString("id-ID")}+ Orang
+              {(metrics.totalBeneficiaries || 0).toLocaleString("id-ID")}+ Jiwa
             </div>
-            <span className="text-sm sm:text-base text-slate-700 block">Anak yatim &amp; dhuafa</span>
+            <span className="text-sm sm:text-base text-slate-700 block">Anak yatim &amp; dhuafa Cakung</span>
           </div>
 
           <div className="py-4 sm:py-0 sm:px-6 space-y-1.5">
@@ -98,11 +98,11 @@ export function TransparencyLedgerStrip({
           </div>
 
           <div className="py-4 sm:py-0 sm:px-6 last:pr-0 space-y-1.5">
-            <span className="text-sm sm:text-base font-medium text-slate-700 block">Hasil Audit Independen</span>
+            <span className="text-sm sm:text-base font-medium text-slate-700 block">Standar Pengelolaan</span>
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-emerald-700 tracking-tight">
-              Opini WTP
+              Amanah &amp; Akuntabel
             </div>
-            <span className="text-sm sm:text-base text-slate-700 block">KAP Rama &amp; Rekan (ISAK 35)</span>
+            <span className="text-sm sm:text-base text-slate-700 block">Sesuai Syariah &amp; Regulasi</span>
           </div>
         </>
       )}

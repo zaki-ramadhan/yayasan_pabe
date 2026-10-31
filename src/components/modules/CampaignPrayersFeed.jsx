@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Heart } from "lucide-react";
 import { PRAYER_SORT_OPTIONS } from "@/data/sortOptions";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import { PrayerCard } from "@/components/modules/PrayerCard";
 import { usePrayersSync } from "@/hooks/usePrayersSync";
 import { useScrollLoadMore } from "@/hooks/useScrollLoadMore";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 const PAGE_SIZE = 6;
 
@@ -44,9 +45,12 @@ export function CampaignPrayersFeed({ initialDonors = [] }) {
 
   if (prayersOnly.length === 0) {
     return (
-      <div className="text-center py-12 text-slate-500 text-sm sm:text-base">
-        Belum ada data
-      </div>
+      <EmptyState
+        variant="dashed"
+        icon={Heart}
+        title="Belum ada doa dan dukungan"
+        description="Jadilah orang baik pertama yang mendoakan kelancaran dan keberkahan program ini."
+      />
     );
   }
 

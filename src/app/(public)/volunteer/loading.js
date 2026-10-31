@@ -23,8 +23,14 @@ export default function VolunteerLoading() {
           </div>
         </div>
 
-        {/* Right Column: Volunteer Form */}
-        <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-xl border border-slate-200 space-y-4 shadow-sm">
+        {/* Right Column: Volunteer Form Skeleton */}
+        <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/90 shadow-sm space-y-5">
+          {/* Form Header */}
+          <div className="space-y-1.5">
+            <Skeleton className="h-6 sm:h-7 w-64 rounded-md" />
+            <Skeleton className="h-4 w-96 max-w-full rounded" />
+          </div>
+
           {/* Full Name */}
           <div className="space-y-1.5">
             <Skeleton className="h-4 w-28 rounded" />
@@ -34,35 +40,36 @@ export default function VolunteerLoading() {
           {/* WhatsApp & Email (2 columns) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Skeleton className="h-4 w-32 rounded" />
+              <Skeleton className="h-4 w-36 rounded" />
               <Skeleton className="h-11 w-full rounded-lg" />
             </div>
             <div className="space-y-1.5">
-              <Skeleton className="h-4 w-20 rounded" />
+              <Skeleton className="h-4 w-24 rounded" />
               <Skeleton className="h-11 w-full rounded-lg" />
             </div>
           </div>
 
-          {/* City & Interest (2 columns) */}
+          {/* Domisili: Provinsi & Kota/Kabupaten (2 columns) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Skeleton className="h-4 w-44 rounded" />
+              <Skeleton className="h-4 w-32 rounded" />
               <Skeleton className="h-11 w-full rounded-lg" />
             </div>
             <div className="space-y-1.5">
-              <Skeleton className="h-4 w-28 rounded" />
+              <Skeleton className="h-4 w-44 rounded" />
               <Skeleton className="h-11 w-full rounded-lg" />
             </div>
           </div>
 
           {/* Motivation Textarea */}
           <div className="space-y-1.5">
-            <Skeleton className="h-4 w-36 rounded" />
-            <Skeleton className="h-24 w-full rounded-lg" />
+            <Skeleton className="h-4 w-52 rounded" />
+            <Skeleton className="h-20 w-full rounded-lg" />
           </div>
 
-          {/* Submit Button */}
+          {/* Submit Button & Disclaimer */}
           <Skeleton className="h-11 w-full rounded-lg" />
+          <Skeleton className="h-3 w-80 max-w-full mx-auto rounded" />
         </div>
       </div>
     </main>

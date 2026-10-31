@@ -162,6 +162,26 @@ export function formatDate(dateInput, options = {}) {
   return formatted;
 }
 
+/**
+ * Format tanggal batas lamaran karier.
+ * Jika berformat ISO string (YYYY-MM-DD), akan di-format ke bahasa Indonesia (contoh: 30 November 2026).
+ * Jika string teks deskripsi biasa, akan dipertahankan apa adanya.
+ */
+export function formatDeadlineDate(dateInput, options = {}) {
+  const { month = "short" } = options;
+  if (!dateInput) return "-";
+  if (typeof dateInput === "string") {
+    const trimmed = dateInput.trim();
+    if (!trimmed) return "-";
+    if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
+      const formatted = formatDate(trimmed, { month });
+      if (formatted !== "-") return formatted;
+    }
+    return trimmed;
+  }
+  return formatDate(dateInput, { month });
+}
+
 export function formatHumanRelativeDate(dateInput) {
   if (!dateInput) return "-";
   const date = new Date(dateInput);

@@ -16,8 +16,25 @@ export function proxy(request) {
   if (pathname === "/login" || pathname === "/register") {
     if (session) {
       const role = request.cookies.get("pabe_role")?.value;
-      const defaultTarget = role && role !== "DONOR" ? "/admin" : "/donatur/dashboard";
-      const redirectUrl = request.nextUrl.searchParams.get("redirect") || defaultTarget;
+      const isStaff = Boolean(role && role !== "DONOR");
+      const defaultTarget = isStaff ? "/admin" : "/donatur/dashboard";
+      const rawRedirect = request.nextUrl.searchParams.get("redirect");
+
+      let redirectUrl = defaultTarget;
+      if (rawRedirect && !["/login", "/register"].includes(rawRedirect)) {
+        const isAdminPath = rawRedirect === "/admin" || rawRedirect.startsWith("/admin/");
+        const isDonorPath = rawRedirect === "/donatur" || rawRedirect.startsWith("/donatur/");
+
+        // Prevent cross-role redirect ping-pong loops:
+        if (isAdminPath && !isStaff) {
+          redirectUrl = "/donatur/dashboard";
+        } else if (isDonorPath && isStaff) {
+          redirectUrl = "/admin";
+        } else {
+          redirectUrl = rawRedirect;
+        }
+      }
+
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
     return NextResponse.next();
@@ -28,8 +45,12 @@ export function proxy(request) {
     const role = request.cookies.get("pabe_role")?.value;
     const isStaff = Boolean(session && role && role !== "DONOR");
 
-    // Jika belum login atau bukan staf yayasan: alihkan ke halaman login
+    // Jika belum login atau bukan staf yayasan:
     if (!isStaff) {
+      // Jika sudah login tapi akun Donatur biasa: cegah redirect loop dengan mengalihkan langsung ke dasbor donatur
+      if (session && role === "DONOR") {
+        return NextResponse.redirect(new URL("/donatur/dashboard", request.url));
+      }
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);

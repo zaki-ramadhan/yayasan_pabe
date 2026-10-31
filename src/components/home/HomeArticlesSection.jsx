@@ -7,6 +7,10 @@ import { ArticleMiniCard } from "@/components/shared/ArticleMiniCard";
  * @param {Array} props.articles
  */
 export function HomeArticlesSection({ articles = [] }) {
+  if (!articles || articles.length === 0) {
+    return null;
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">

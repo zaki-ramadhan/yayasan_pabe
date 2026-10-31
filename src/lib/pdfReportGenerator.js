@@ -77,8 +77,8 @@ export function buildPdfDocument(contentStreamText) {
  */
 export function generateAuditReportPdf(data = {}) {
   const year = data.year || "2025";
-  const auditorName = data.auditorName || "Kantor Akuntan Publik (KAP) Rama & Rekan";
-  const opinion = data.opinion || "Wajar Tanpa Pengecualian (WTP)";
+  const auditorName = data.auditorName || "Internal Pembukuan Yayasan";
+  const opinion = data.opinion || "Terbuka & Akuntabel";
   const ratio = data.operationalRatio || "8.8%";
   const maxRatio = data.maxAllowedRatio || "12.5%";
   const totalFunds = data.totalFundsManagedFormatted || "Rp 12.500.000.000";
@@ -115,14 +115,14 @@ ET
 BT
 /F1 12.5 Tf
 48 724 Td
-(${escapePdfText(`Ringkasan Laporan Hasil Audit Keuangan Independen - Tahun Buku ${year}`)}) Tj
+(${escapePdfText(`Ringkasan Laporan Pertanggungjawaban Keuangan - Tahun Buku ${year}`)}) Tj
 ET
 
 0.39 0.45 0.55 rg
 BT
 /F2 8.5 Tf
 48 710 Td
-(${escapePdfText(`Standar Akuntansi Keuangan Entitas Nirlaba (ISAK 35) | Publikasi Transparansi`)}) Tj
+(${escapePdfText(`Laporan Akuntabilitas & Penyaluran Donasi | Publikasi Transparansi`)}) Tj
 ET
 
 % --- BAGIAN 1: IKHTISAR HASIL AUDIT ---
@@ -130,7 +130,7 @@ ET
 BT
 /F1 9.5 Tf
 48 686 Td
-(${escapePdfText("1. Ikhtisar Pemeriksaan Keuangan")}) Tj
+(${escapePdfText("1. Ikhtisar Akuntabilitas Keuangan")}) Tj
 ET
 
 0.98 0.98 0.99 rg
@@ -143,7 +143,7 @@ ET
 BT
 /F2 8.5 Tf
 62 657 Td
-(${escapePdfText("Kantor Akuntan Publik")}) Tj
+(${escapePdfText("Pencatatan Keuangan")}) Tj
 165 0 Td
 (${escapePdfText(":")}) Tj
 ET
@@ -158,7 +158,7 @@ ET
 BT
 /F2 8.5 Tf
 62 638 Td
-(${escapePdfText("Opini Pemeriksaan Audit")}) Tj
+(${escapePdfText("Status Laporan")}) Tj
 165 0 Td
 (${escapePdfText(":")}) Tj
 ET
@@ -350,314 +350,6 @@ BT
 /F2 7.5 Tf
 48 202 Td
 (${escapePdfText("Yayasan Payung Berkah - Portal Akuntabilitas Publik (payungberkah.id/distribusi)")}) Tj
-395 0 Td
-(${escapePdfText("Halaman 1 dari 1")}) Tj
-ET
-`;
-
-  return buildPdfDocument(stream);
-}
-
-/**
- * Generates an executive-formatted Sharia Compliance PDF
- * @param {object} data
- * @returns {Buffer}
- */
-export function generateSyariahReportPdf(data = {}) {
-  const skNumber = data.skNumber || "SK-DPS/PABE/01/2026";
-  const chairman = data.shariaBoardChairman || "Dr. KH. Abdullah Syukri, M.A.";
-  const period = data.effectiveDate || "01 Januari 2026 - 31 Desember 2026";
-  const legal = data.legalFoundation || "DSN-MUI No. 138/DSN-MUI/IX/2020 & Regulasi Kemenag RI";
-
-  const stream = `
-% --- KOP SURAT RESMI (LETTERHEAD) ---
-0.06 0.09 0.16 rg
-BT
-/F1 13 Tf
-48 786 Td
-(${escapePdfText("Dewan Pengawas Syariah - Yayasan Payung Berkah (PABE)")}) Tj
-ET
-
-0.39 0.45 0.55 rg
-BT
-/F2 8.5 Tf
-48 772 Td
-(${escapePdfText("Badan Pengawas Kepatuhan Syariah atas Pengelolaan Zakat, Infak, Sedekah & Wakaf")}) Tj
-ET
-
-0.58 0.64 0.72 rg
-BT
-/F2 7.5 Tf
-48 760 Td
-(${escapePdfText("Rujukan Resmi: Dewan Syariah Nasional Majelis Ulama Indonesia (DSN-MUI)")}) Tj
-ET
-
-0.82 0.85 0.90 RG
-0.75 w
-48 748 m 547 748 l S
-
-% --- JUDUL KETETAPAN ---
-0.06 0.09 0.16 rg
-BT
-/F1 12.5 Tf
-48 724 Td
-(${escapePdfText("Surat Keputusan Hasil Pengawasan & Kepatuhan Syariah")}) Tj
-ET
-
-0.39 0.45 0.55 rg
-BT
-/F2 8.5 Tf
-48 710 Td
-(${escapePdfText(`Nomor Penetapan: ${skNumber} | Periode Pengawasan: ${period}`)}) Tj
-ET
-
-% --- BAGIAN 1: STRUKTUR PENGAWAS & DASAR LEGALITAS ---
-0.09 0.13 0.24 rg
-BT
-/F1 9.5 Tf
-48 686 Td
-(${escapePdfText("1. Susunan Dewan Pengawas & Landasan Fatwa")}) Tj
-ET
-
-0.98 0.98 0.99 rg
-48 584 499 92 re f
-0.89 0.91 0.94 RG
-0.5 w
-48 584 499 92 re S
-
-0.39 0.45 0.55 rg
-BT
-/F2 8.5 Tf
-62 657 Td
-(${escapePdfText("Ketua Dewan Pengawas Syariah")}) Tj
-165 0 Td
-(${escapePdfText(":")}) Tj
-ET
-0.09 0.13 0.24 rg
-BT
-/F2 8.5 Tf
-235 657 Td
-(${escapePdfText(chairman)}) Tj
-ET
-
-0.39 0.45 0.55 rg
-BT
-/F2 8.5 Tf
-62 638 Td
-(${escapePdfText("Masa Berlaku Penetapan")}) Tj
-165 0 Td
-(${escapePdfText(":")}) Tj
-ET
-0.09 0.13 0.24 rg
-BT
-/F2 8.5 Tf
-235 638 Td
-(${escapePdfText(period)}) Tj
-ET
-
-0.39 0.45 0.55 rg
-BT
-/F2 8.5 Tf
-62 619 Td
-(${escapePdfText("Landasan Fiqih & Regulasi")}) Tj
-165 0 Td
-(${escapePdfText(":")}) Tj
-ET
-0.09 0.13 0.24 rg
-BT
-/F2 8.5 Tf
-235 619 Td
-(${escapePdfText(legal)}) Tj
-ET
-
-0.39 0.45 0.55 rg
-BT
-/F2 8.5 Tf
-62 600 Td
-(${escapePdfText("Status Kepatuhan Umum")}) Tj
-165 0 Td
-(${escapePdfText(":")}) Tj
-ET
-0.02 0.44 0.34 rg
-BT
-/F1 8.5 Tf
-235 600 Td
-(${escapePdfText("Terverifikasi Sesuai Kaidah Fiqih ZISWAF")}) Tj
-ET
-
-% --- BAGIAN 2: PENILAIAN 6 DIMENSI ---
-0.09 0.13 0.24 rg
-BT
-/F1 9.5 Tf
-48 560 Td
-(${escapePdfText("2. Hasil Evaluasi Dimensi Kepatuhan Syariah")}) Tj
-ET
-
-1 1 1 rg
-48 340 499 206 re f
-0.89 0.91 0.94 RG
-0.5 w
-48 340 499 206 re S
-
-% Table Header Bar
-0.96 0.97 0.98 rg
-48 522 499 24 re f
-0.89 0.91 0.94 RG
-48 522 499 24 re S
-
-0.30 0.35 0.42 rg
-BT
-/F1 8 Tf
-62 531 Td
-(${escapePdfText("Dimensi Pengawasan Syariah")}) Tj
-270 0 Td
-(${escapePdfText("Skor Capaian")}) Tj
-135 0 Td
-(${escapePdfText("Hasil Evaluasi")}) Tj
-ET
-
-% Row 1
-0.09 0.13 0.24 rg
-BT
-/F2 8.5 Tf
-62 506 Td
-(${escapePdfText("Akad & niat syariah muzakki / donatur")}) Tj
-270 0 Td
-(${escapePdfText("98 / 100")}) Tj
-135 0 Td
-(${escapePdfText("Sangat Sesuai")}) Tj
-ET
-0.94 0.95 0.97 RG
-48 497 m 547 497 l S
-
-% Row 2
-0.09 0.13 0.24 rg
-BT
-/F2 8.5 Tf
-62 481 Td
-(${escapePdfText("Ketepatan penyaluran 8 asnaf zakat")}) Tj
-270 0 Td
-(${escapePdfText("96 / 100")}) Tj
-135 0 Td
-(${escapePdfText("Sangat Sesuai")}) Tj
-ET
-0.94 0.95 0.97 RG
-48 472 m 547 472 l S
-
-% Row 3
-0.09 0.13 0.24 rg
-BT
-/F2 8.5 Tf
-62 456 Td
-(${escapePdfText("Pengelolaan rekening bebas riba & gharar")}) Tj
-270 0 Td
-(${escapePdfText("100 / 100")}) Tj
-135 0 Td
-(${escapePdfText("Sempurna")}) Tj
-ET
-0.94 0.95 0.97 RG
-48 447 m 547 447 l S
-
-% Row 4
-0.09 0.13 0.24 rg
-BT
-/F2 8.5 Tf
-62 431 Td
-(${escapePdfText("Transparansi publikasi penyaluran")}) Tj
-270 0 Td
-(${escapePdfText("95 / 100")}) Tj
-135 0 Td
-(${escapePdfText("Sangat Baik")}) Tj
-ET
-0.94 0.95 0.97 RG
-48 422 m 547 422 l S
-
-% Row 5
-0.09 0.13 0.24 rg
-BT
-/F2 8.5 Tf
-62 406 Td
-(${escapePdfText("Pengawasan rutin & evaluasi lapangan DPS")}) Tj
-270 0 Td
-(${escapePdfText("97 / 100")}) Tj
-135 0 Td
-(${escapePdfText("Sangat Aktif")}) Tj
-ET
-0.94 0.95 0.97 RG
-48 397 m 547 397 l S
-
-% Row 6
-0.09 0.13 0.24 rg
-BT
-/F2 8.5 Tf
-62 381 Td
-(${escapePdfText("Dampak keberlanjutan bagi mustahik")}) Tj
-270 0 Td
-(${escapePdfText("92 / 100")}) Tj
-135 0 Td
-(${escapePdfText("Baik")}) Tj
-ET
-
-% Total / Summary Row
-0.82 0.85 0.90 RG
-0.75 w
-48 368 m 547 368 l S
-
-0.06 0.09 0.16 rg
-BT
-/F1 8.5 Tf
-62 352 Td
-(${escapePdfText("Indeks Kepatuhan Rata-Rata")}) Tj
-270 0 Td
-(${escapePdfText("96,3 / 100")}) Tj
-135 0 Td
-(${escapePdfText("Predikat Mumtaz (Istimewa)")}) Tj
-ET
-
-% --- BAGIAN 3: KONSIDIRAN & KEPUTUSAN DEWAN ---
-0.09 0.13 0.24 rg
-BT
-/F1 9.5 Tf
-48 316 Td
-(${escapePdfText("3. Pernyataan & Keputusan Dewan Pengawas")}) Tj
-ET
-
-0.98 0.98 0.99 rg
-48 240 499 66 re f
-0.89 0.91 0.94 RG
-0.5 w
-48 240 499 66 re S
-
-0.28 0.33 0.41 rg
-BT
-/F2 8 Tf
-62 288 Td
-(${escapePdfText("Menyatakan bahwa seluruh mekanisme penghimpunan, tata kelola, dan penyaluran dana sosial")}) Tj
-ET
-
-BT
-/F2 8 Tf
-62 274 Td
-(${escapePdfText("pada Yayasan Payung Berkah telah memenuhi kaidah syariat Islam dan regulasi yang berlaku.")}) Tj
-ET
-
-0.58 0.64 0.72 rg
-BT
-/F2 7.5 Tf
-62 254 Td
-(${escapePdfText(`Ditetapkan secara resmi di Jakarta | Arsip Keputusan: ${skNumber} | Yayasan PABE`)}) Tj
-ET
-
-% --- FOOTER HALAMAN ---
-0.82 0.85 0.90 RG
-0.5 w
-48 215 m 547 215 l S
-
-0.58 0.64 0.72 rg
-BT
-/F2 7.5 Tf
-48 202 Td
-(${escapePdfText("Dewan Pengawas Syariah PABE - Dokumen Akuntabilitas Fiqih ZISWAF")}) Tj
 395 0 Td
 (${escapePdfText("Halaman 1 dari 1")}) Tj
 ET

@@ -40,30 +40,24 @@ export function CampaignCard({
         )}
       </div>
 
-      {/* Content Area (Upper Body): Preserves original spacious padding */}
-      <div className="flex flex-col flex-1 px-4 sm:px-5 pt-4 sm:pt-5 pb-3 space-y-2.5">
-        {/* Title (Uniform 2-line height) */}
-        <h3 className="text-base sm:text-lg font-semibold text-slate-950 leading-snug line-clamp-2 min-h-[2.6rem] flex items-start">
-          <HighlightText text={campaign.title} highlight={highlightQuery} />
-        </h3>
+      {/* Content Area (Upper Body) */}
+      <div className="flex flex-col flex-1 px-4 sm:px-5 pt-4 sm:pt-5 pb-3 justify-between gap-3">
+        {/* Title & Location Header Group */}
+        <div className="space-y-1.5">
+          {/* Title (Uniform 2-line height) */}
+          <h3 className="text-base sm:text-lg font-semibold text-slate-950 leading-snug line-clamp-2 min-h-[2.75rem] sm:min-h-[3.1rem] flex items-start">
+            <HighlightText text={campaign.title} highlight={highlightQuery} />
+          </h3>
 
-        {/* Location */}
-        {campaign.location && (
+          {/* Location */}
           <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-600 min-w-0 truncate">
             <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-            <span className="truncate">{campaign.location}</span>
+            <span className="truncate">{campaign.location || "Wilayah Binaan PABE"}</span>
           </div>
-        )}
-
-        {/* Excerpt (Optional) */}
-        {showDescription && campaign.excerpt && (
-          <p className="text-sm sm:text-base text-slate-700 line-clamp-2 leading-relaxed">
-            {campaign.excerpt}
-          </p>
-        )}
+        </div>
 
         {/* Progress Bar & Amounts */}
-        <div className="space-y-1.5 pt-1 mt-auto">
+        <div className="space-y-1.5 pt-1">
           {hasTarget ? (
             <>
               <Progress value={progress} className="h-2" />

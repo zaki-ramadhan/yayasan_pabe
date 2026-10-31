@@ -31,18 +31,18 @@ export function DonorRecentTransactionsCard({
                 <p className="text-sm font-medium text-slate-900 truncate">
                   {item.programTitle}
                 </p>
-                <p className="text-sm font-normal text-slate-500">
+                <p className="text-xs font-normal text-slate-500">
                   {formatDate(item.date)}
                 </p>
               </div>
               <div className="text-right shrink-0 space-y-0.5">
-                <p className="text-sm font-medium text-emerald-800">
+                <p className="text-sm font-medium text-emerald-800 tabular-nums">
                   {formatRupiah(item.amount)}
                 </p>
                 <Link
                   href={`/invoice/${item.invoiceId}`}
                   target="_blank"
-                  className="text-sm font-medium text-primary hover:underline block"
+                  className="text-xs font-medium text-primary hover:underline block"
                 >
                   Kuitansi
                 </Link>

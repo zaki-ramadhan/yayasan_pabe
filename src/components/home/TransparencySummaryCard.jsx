@@ -62,8 +62,6 @@ export function TransparencySummaryCard({
   const totalAllTime = metrics?.totalDonationsAllTime ?? total12Months;
   const totalTransactions = metrics?.totalTransactions ?? totalCount;
   const totalBeneficiaries = metrics?.totalBeneficiaries ?? 0;
-  const auditOpinion = metrics?.kapAuditOpinion || "WTP";
-
   const defaultItems = [
     {
       title: "Penyaluran (12 Bulan Terakhir)",
@@ -81,12 +79,8 @@ export function TransparencySummaryCard({
       value: formatNumber(totalAllTime),
     },
     {
-      title: "Penerima Manfaat Terverifikasi",
-      value: `${formatNumber(totalBeneficiaries)} Jiwa`,
-    },
-    {
-      title: "Opini Audit KAP",
-      value: auditOpinion,
+      title: "Mustahik Binaan Rutin",
+      value: `${formatNumber(totalBeneficiaries)} Jiwa Terdata`,
     },
   ];
 

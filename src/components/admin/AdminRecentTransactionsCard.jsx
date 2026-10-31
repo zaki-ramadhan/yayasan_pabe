@@ -99,7 +99,7 @@ export function AdminRecentTransactionsCard({
               <TableHead className="w-[170px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Invoice</TableHead>
               <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Donatur</TableHead>
               <TableHead className="w-full font-medium text-slate-600 text-sm py-2.5 min-w-[280px] sm:min-w-[340px]">Program</TableHead>
-              <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Nominal</TableHead>
+              <TableHead className="w-px text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Nominal</TableHead>
               <TableHead className="w-px text-center font-medium text-slate-600 text-sm py-1.5 leading-tight whitespace-nowrap">
                 Metode<br />Pembayaran
               </TableHead>
@@ -139,7 +139,7 @@ export function AdminRecentTransactionsCard({
                       {item.campaignTitle}
                     </span>
                   </TableCell>
-                  <TableCell className="w-px text-sm font-medium text-slate-900 py-3 whitespace-nowrap align-middle">
+                  <TableCell className="w-px text-sm font-medium text-slate-900 py-3 whitespace-nowrap align-middle text-right tabular-nums">
                     {formatRupiah(item.amount)}
                   </TableCell>
                   <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">

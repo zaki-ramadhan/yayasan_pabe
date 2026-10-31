@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect, useSyncExternalStore } from "react";
+import { useState, useEffect, useSyncExternalStore, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
 import { formatRupiah } from "@/lib/formatters";
@@ -37,6 +37,7 @@ function getPrayersServerSnapshot() {
 
 export function useDonationCheckout({ campaign, initialAmount = 50000, initialPrayer = "" }) {
   const router = useRouter();
+  const isSubmittingRef = useRef(false);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
   const isPresetInitial = NOMINAL_PRESETS.includes(initialAmount);
   const [isCustomMode, setIsCustomMode] = useState(!isPresetInitial);
@@ -188,6 +189,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting || isSubmittingRef.current) return;
 
     const newErrors = {};
     if (amount < DONATION_LIMITS.MIN_AMOUNT) {
@@ -220,6 +222,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     setErrors({});
 
     try {
+      isSubmittingRef.current = true;
       setIsSubmitting(true);
       const idempotencyKey = generateIdempotencyKey();
       const sanitizedPrayer = prayer.trim().replace(/\s+/g, " ");
@@ -268,6 +271,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       router.push(targetUrl);
     } catch (err) {
       toast.error(err.message || "Gagal memproses transaksi. Silakan coba kembali.");
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, FileText } from "lucide-react";
 import { CampaignUpdateItem } from "@/components/campaign/CampaignUpdateItem";
 import { useScrollLoadMore } from "@/hooks/useScrollLoadMore";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 const PAGE_SIZE = 3;
 
@@ -27,9 +28,12 @@ export function CampaignUpdatesFeed({ updates = [] }) {
 
   if (!updates || updates.length === 0) {
     return (
-      <div className="text-center py-12 text-slate-500 text-sm sm:text-base">
-        Belum ada data
-      </div>
+      <EmptyState
+        variant="dashed"
+        icon={FileText}
+        title="Belum ada kabar penyaluran"
+        description="Laporan implementasi dan dokumentasi penyaluran donasi untuk program ini akan diperbarui oleh tim lapangan yayasan."
+      />
     );
   }
 

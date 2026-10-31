@@ -105,7 +105,7 @@ export function NavUserDropdown({ currentUser, onLogout }) {
       <DropdownMenuContent
         align="end"
         sideOffset={8}
-        className="w-64 sm:w-72 p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg space-y-0.5 z-50"
+        className="w-64 sm:w-72 max-h-[85vh] overflow-y-auto p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg space-y-0.5 z-50"
       >
         {/* User Identity Header */}
         <div className="px-2.5 py-2 space-y-1">
@@ -167,6 +167,51 @@ export function NavUserDropdown({ currentUser, onLogout }) {
                 className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
               >
                 <span className="flex-1">Mutasi transaksi</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/admin/distribusi"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Penyaluran bantuan</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/admin/artikel"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Berita & artikel</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/admin/instagram"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Feed Instagram</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/admin/galeri"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Dokumentasi galeri</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/admin/relawan"
+                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <span className="flex-1">Pendaftar relawan</span>
               </Link>
             </DropdownMenuItem>
           </>

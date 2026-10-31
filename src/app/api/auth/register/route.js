@@ -123,11 +123,10 @@ export async function POST(request) {
       );
     }
 
-    // 6. Hash Password & Create User in DB
+    // 6. Hash Password & Create User in DB (Selalu berikan role DONOR pada registrasi publik)
     const passwordHash = hashPassword(cleanPassword);
-    const isSuperAdmin = isSuperAdminIdentifier(cleanUsername) || isSuperAdminEmail(cleanEmail);
-    const assignedRole = isSuperAdmin ? USER_ROLES.SUPER_ADMIN : USER_ROLES.DONOR;
-    const assignedTitle = isSuperAdmin ? "Super Admin" : "Donatur";
+    const assignedRole = USER_ROLES.DONOR;
+    const assignedTitle = "Donatur";
 
     const createdUser = await prisma.user.create({
       data: {

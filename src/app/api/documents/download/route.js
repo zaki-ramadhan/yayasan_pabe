@@ -1,19 +1,13 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import {
-  generateAuditReportPdf,
-  generateSyariahReportPdf,
-} from "@/lib/pdfReportGenerator";
-import {
-  AUDIT_SUMMARY_DATA,
-  SYARIAH_COMPLIANCE_DATA,
-} from "@/data/distributionData";
+import { generateAuditReportPdf } from "@/lib/pdfReportGenerator";
+import { AUDIT_SUMMARY_DATA } from "@/data/distributionData";
 import { formatRupiah } from "@/lib/formatters";
 import { checkRateLimit } from "@/lib/rateLimit";
 
 /**
  * Route handler to serve official PDF reports
- * Endpoint: GET /api/documents/download?type=audit|syariah&year=2025
+ * Endpoint: GET /api/documents/download?type=audit&year=2025
  */
 export async function GET(request) {
   try {
@@ -27,27 +21,6 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type");
     const year = searchParams.get("year") || "2025";
-
-    if (type === "syariah") {
-      const pdfBuffer = generateSyariahReportPdf({
-        skNumber: SYARIAH_COMPLIANCE_DATA.skNumber,
-        shariaBoardChairman: SYARIAH_COMPLIANCE_DATA.shariaBoardChairman,
-        effectiveDate: SYARIAH_COMPLIANCE_DATA.effectiveDate,
-        legalFoundation: SYARIAH_COMPLIANCE_DATA.legalFoundation,
-      });
-
-      const filename = "SK-Dewan-Pengawas-Syariah-PABE-2026.pdf";
-
-      return new NextResponse(pdfBuffer, {
-        status: 200,
-        headers: {
-          "Content-Type": "application/pdf",
-          "Content-Disposition": `attachment; filename="${filename}"`,
-          "Content-Length": String(pdfBuffer.length),
-          "Cache-Control": "public, max-age=86400, stale-while-revalidate=43200",
-        },
-      });
-    }
 
     if (type === "audit") {
       const dbReport = await prisma.auditReport.findFirst({
@@ -79,7 +52,7 @@ export async function GET(request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Parameter tipe dokumen tidak valid. Gunakan 'audit' atau 'syariah'.",
+        message: "Parameter tipe dokumen tidak valid. Gunakan 'audit'.",
       },
       { status: 400 }
     );

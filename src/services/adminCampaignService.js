@@ -70,6 +70,7 @@ export async function getAdminCampaigns({ search = "", status = "", page = 1, li
     console.error("Prisma getAdminCampaigns error:", error);
     return {
       items: [],
+      error: error.message || "Gagal memuat data program kampanye dari database.",
       pagination: {
         page,
         limit,

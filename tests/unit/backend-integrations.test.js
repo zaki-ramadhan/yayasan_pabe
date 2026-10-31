@@ -157,6 +157,34 @@ describe("Backend Integration & Real Persistence Audit", () => {
       ).rejects.toThrow(/telepon/i);
     });
 
+    it("menolak submit lamaran jika posisi mewajibkan berkas CV tetapi berkas kosong", async () => {
+      const { submitJobApplication } = await import("@/services/careerService");
+      await expect(
+        submitJobApplication({
+          vacancyId: "JOB-01",
+          fullName: "Fulan bin Fulan",
+          email: "fulan@example.com",
+          phone: "081234567890",
+          coverLetter: "Saya sangat tertarik bergabung bersama yayasan",
+          resumeUrl: "",
+        })
+      ).rejects.toThrow(/berkas cv/i);
+    });
+
+    it("mengizinkan submit lamaran tanpa berkas CV jika posisi tidak mewajibkan berkas", async () => {
+      const { submitJobApplication } = await import("@/services/careerService");
+      const app = await submitJobApplication({
+        vacancyId: "JOB-03",
+        fullName: "Kreator Konten Handal",
+        email: "kreator@example.com",
+        phone: "081234567890",
+        coverLetter: "Saya memiliki portofolio video dakwah dan bersedia berkhidmat.",
+        resumeUrl: "",
+      });
+      expect(app).toBeDefined();
+      expect(app.data.fullName).toBe("Kreator Konten Handal");
+    });
+
     it("berhasil memproses submit lamaran kerja valid via API /api/careers/apply", async () => {
       const { POST: careersApplyPost } = await import("@/app/api/careers/apply/route");
       const req = new Request("http://localhost:3000/api/careers/apply", {
@@ -167,7 +195,6 @@ describe("Backend Integration & Real Persistence Audit", () => {
           fullName: "Ahmad Zaki Ramadhan",
           email: "zaki.applicant@example.com",
           phone: "081234567890",
-          linkedinUrl: "https://linkedin.com/in/zakiramadhan",
           resumeUrl: "https://drive.google.com/file/d/test-cv/view",
           coverLetter: "Bismillah, saya memiliki pengalaman 2 tahun di bidang logistik kemanusiaan dan siap berkontribusi.",
         }),

@@ -36,11 +36,6 @@ export default function CampaignDetailLoading() {
                 <Skeleton className="h-5 w-32 rounded" />
               </div>
             </div>
-
-            <div className="space-y-1.5 pt-0.5">
-              <Skeleton className="h-4 w-full rounded" />
-              <Skeleton className="h-4 w-5/6 rounded" />
-            </div>
           </div>
 
           {/* Mobile-Only Donation Metrics Placeholder */}
@@ -53,7 +48,7 @@ export default function CampaignDetailLoading() {
           </div>
 
           {/* Tabs Bar Placeholder */}
-          <div className="border-b border-slate-300 pb-0 pt-2 flex items-center gap-6 overflow-x-auto">
+          <div className="border-b border-slate-300 pb-0 pt-4 sm:pt-5 flex items-center gap-6 overflow-x-auto">
             <Skeleton className="h-9 w-28 rounded-t-md" />
             <Skeleton className="h-9 w-36 rounded-t-md" />
             <Skeleton className="h-9 w-32 rounded-t-md" />
@@ -109,10 +104,9 @@ export default function CampaignDetailLoading() {
 
           {/* Doa-Doa Orang Baik Sidebar Widget (Mirrors WhatsApp-style Chat Room) */}
           <div className="space-y-3">
-            {/* Widget Header: Title + Sort Control */}
+            {/* Widget Header: Title */}
             <div className="flex items-center justify-between px-1">
               <Skeleton className="h-5 w-40 rounded" />
-              <Skeleton className="h-9 w-32 rounded-lg" />
             </div>
 
             {/* Chat Room Container */}

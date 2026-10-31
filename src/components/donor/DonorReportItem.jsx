@@ -20,7 +20,7 @@ export function DonorReportItem({ report }) {
         <p className="text-sm font-medium text-slate-900 truncate">
           {report.title}
         </p>
-        <p className="text-sm font-normal text-slate-600 line-clamp-2">
+        <p className="text-xs font-normal text-slate-500 line-clamp-2">
           {report.content}
         </p>
       </div>

@@ -7,6 +7,10 @@ import { FaqItem } from "@/components/shared/FaqItem";
  * @param {Array} [props.faqs]
  */
 export function HomeFaqSection({ faqs = [] }) {
+  if (!faqs || faqs.length === 0) {
+    return null;
+  }
+
   return (
     <div className="space-y-4">
       <div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -32,6 +32,11 @@ const BANK_OPTIONS = [
   "Bank Permata Syariah",
 ];
 
+const BANK_FIELD_SANITIZERS = {
+  bankAccount: sanitizeBankAccount,
+  bankAccountName: sanitizeBankAccountName,
+};
+
 export function DonorBankFormCard({
   profile,
   onUpdateProfile,
@@ -41,17 +46,28 @@ export function DonorBankFormCard({
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const { values, bind, getCleanValues, setValues, isDirty, isValid } = useSanitizedForm(
-    {
+  const initialValues = useMemo(
+    () => ({
       bankName: profile?.bankName || "BSI (Bank Syariah Indonesia)",
       bankAccount: profile?.bankAccount || "",
       bankAccountName: profile?.bankAccountName || "",
-    },
-    {
-      bankAccount: sanitizeBankAccount,
-      bankAccountName: sanitizeBankAccountName,
-    },
-    (vals) => validateBankAccount({ bankAccount: vals.bankAccount, bankAccountName: vals.bankAccountName }).isValid
+    }),
+    [profile?.bankName, profile?.bankAccount, profile?.bankAccountName]
+  );
+
+  const validator = useCallback(
+    (vals) =>
+      validateBankAccount({
+        bankAccount: vals.bankAccount,
+        bankAccountName: vals.bankAccountName,
+      }).isValid,
+    []
+  );
+
+  const { values, bind, getCleanValues, setValues, isDirty, isValid } = useSanitizedForm(
+    initialValues,
+    BANK_FIELD_SANITIZERS,
+    validator
   );
 
   const handleSubmit = async (e) => {

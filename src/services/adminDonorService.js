@@ -53,48 +53,52 @@ export async function getAdminDonors({
       }),
     ]);
 
-    const donorMap = new Map();
-
+    // Lookup map akun terdaftar untuk enrichment data profil donatur
+    const userLookup = new Map();
     for (const u of registeredUsers) {
       const email = normalizeEmail(u.email);
       const phone = normalizePhone(u.phone);
-      const key = email ? `email:${email}` : phone ? `phone:${phone}` : `uid:${u.id}`;
-
-      donorMap.set(key, {
-        id: key,
-        name: u.name,
-        rawName: u.name,
-        email: u.email || null,
-        phone: u.phone || "",
-        avatar: u.avatar || null,
-        totalPaidAmount: 0,
-        paidCount: 0,
-        lastDonatedAt: null,
-        firstDonatedAt: u.createdAt ? u.createdAt.toISOString() : null,
-        lastCampaignTitle: "",
-      });
+      if (email) userLookup.set(`email:${email}`, u);
+      if (phone) userLookup.set(`phone:${phone}`, u);
     }
 
+    const donorMap = new Map();
+
+    // Hanya agregasi dari transaksi donasi yang berstatus PAID
     for (const d of donations) {
       const email = normalizeEmail(d.donorEmail);
       const phone = normalizePhone(d.donorPhone);
-      const name = d.isAnonymous ? "Hamba Allah" : d.donorName;
+
+      // Pencocokan akun terdaftar jika ada
+      const userMatch =
+        (email && userLookup.get(`email:${email}`)) ||
+        (phone && userLookup.get(`phone:${phone}`)) ||
+        null;
 
       let key = null;
-      if (email && donorMap.has(`email:${email}`)) key = `email:${email}`;
-      else if (phone && donorMap.has(`phone:${phone}`)) key = `phone:${phone}`;
-      else if (email) key = `email:${email}`;
+      if (email) key = `email:${email}`;
       else if (phone) key = `phone:${phone}`;
-      else key = `name:${d.donorName.trim().toLowerCase()}`;
+      else if (d.donorName && d.donorName.trim()) {
+        key = `name:${d.donorName.trim().toLowerCase()}`;
+      }
+
+      if (!key) continue;
 
       if (!donorMap.has(key)) {
+        const displayName = userMatch
+          ? userMatch.name
+          : d.isAnonymous
+          ? "Hamba Allah"
+          : d.donorName || "Donatur";
+
         donorMap.set(key, {
           id: key,
-          name,
-          rawName: d.donorName,
-          email: d.donorEmail || null,
-          phone: d.donorPhone || "",
-          avatar: d.donorAvatar || null,
+          name: displayName,
+          rawName: userMatch ? userMatch.name : (d.donorName || "Donatur"),
+          email: d.donorEmail || (userMatch ? userMatch.email : null),
+          phone: d.donorPhone || (userMatch ? userMatch.phone : ""),
+          avatar: (userMatch && userMatch.avatar) || d.donorAvatar || null,
+          isRegisteredUser: Boolean(userMatch),
           totalPaidAmount: 0,
           paidCount: 0,
           lastDonatedAt: null,
@@ -116,15 +120,16 @@ export async function getAdminDonors({
       if (!donor.firstDonatedAt || new Date(txDate) < new Date(donor.firstDonatedAt)) {
         donor.firstDonatedAt = txDate;
       }
-      if (!donor.avatar && d.donorAvatar) {
-        donor.avatar = d.donorAvatar;
+      if (!donor.avatar && (userMatch?.avatar || d.donorAvatar)) {
+        donor.avatar = userMatch?.avatar || d.donorAvatar;
       }
-      if (!d.isAnonymous && d.donorName) {
+      if (!d.isAnonymous && d.donorName && !userMatch) {
         donor.name = d.donorName;
       }
     }
 
-    let allDonors = Array.from(donorMap.values());
+    // Pastikan 100% hanya donatur yang memiliki riwayat donasi sah (paidCount > 0)
+    let allDonors = Array.from(donorMap.values()).filter((d) => d.paidCount > 0);
 
     const cleanSearch = sanitizeSearchQuery(search || "").toLowerCase();
     if (cleanSearch) {

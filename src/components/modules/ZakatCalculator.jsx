@@ -48,7 +48,7 @@ const INITIAL_EMAS = {
   isHaulMet: true,
 };
 
-export function ZakatCalculator() {
+export function ZakatCalculator({ targetCampaignSlug = "zakat-penghasilan-pemberdayaan-mustahik" }) {
   const router = useRouter();
 
   // State mode aktif
@@ -157,7 +157,8 @@ export function ZakatCalculator() {
 
   const handlePay = () => {
     if (!currentResult || currentResult.zakatAmount <= 0) return;
-    const targetUrl = `/campaign/zakat-penghasilan-pemberdayaan-mustahik/donate?amount=${currentResult.zakatAmount}&type=${currentResult.categoryKey}`;
+    const slug = targetCampaignSlug || "zakat-penghasilan-pemberdayaan-mustahik";
+    const targetUrl = `/campaign/${slug}/donate?amount=${currentResult.zakatAmount}&type=${currentResult.categoryKey}`;
     const user = getStoredUser();
 
     if (!user) {

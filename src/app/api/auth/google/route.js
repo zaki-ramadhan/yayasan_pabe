@@ -16,7 +16,11 @@ export async function GET(request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const callbackUrl = searchParams.get("callbackUrl") || "/admin";
+  const rawCallbackUrl = searchParams.get("callbackUrl") || "/admin";
+  const safeCallbackUrl =
+    rawCallbackUrl.startsWith("/") && !rawCallbackUrl.startsWith("//")
+      ? rawCallbackUrl
+      : "/admin";
 
   // Construct origin dynamically
   const origin =
@@ -27,8 +31,13 @@ export async function GET(request) {
 
   const redirectUri = `${origin}/api/auth/callback/google`;
 
-  // Encode state with return path
-  const state = Buffer.from(JSON.stringify({ callbackUrl, timestamp: Date.now() })).toString("base64");
+  // Generate random CSRF token
+  const csrfToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+
+  // Encode state with return path and CSRF token
+  const state = Buffer.from(
+    JSON.stringify({ csrfToken, callbackUrl: safeCallbackUrl, timestamp: Date.now() })
+  ).toString("base64url");
 
   const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   googleAuthUrl.searchParams.set("client_id", clientId);
@@ -39,5 +48,14 @@ export async function GET(request) {
   googleAuthUrl.searchParams.set("prompt", "select_account");
   googleAuthUrl.searchParams.set("state", state);
 
-  return NextResponse.redirect(googleAuthUrl.toString(), 307);
+  const response = NextResponse.redirect(googleAuthUrl.toString(), 307);
+  response.cookies.set("pabe_google_oauth_state", csrfToken, {
+    path: "/",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 600, // 10 menit
+  });
+
+  return response;
 }

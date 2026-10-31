@@ -60,9 +60,17 @@ export async function sendMetaCloudWhatsApp({
       "Content-Type": "application/json",
     },
     body: JSON.stringify(bodyPayload),
+    signal: AbortSignal.timeout(10000),
   });
 
-  const data = await response.json();
+  const contentType = response.headers.get("content-type") || "";
+  let data;
+  if (contentType.includes("application/json")) {
+    data = await response.json();
+  } else {
+    const rawText = await response.text();
+    throw new Error(`Meta Cloud API merespons non-JSON (HTTP ${response.status}): ${rawText.slice(0, 100)}`);
+  }
 
   if (!response.ok || data.error) {
     const errorMsg = data.error?.message || response.statusText;

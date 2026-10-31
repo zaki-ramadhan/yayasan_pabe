@@ -15,10 +15,10 @@ describe("Article Recommendation Algorithm (Relevance Waterfall)", () => {
     current,
     {
       id: "art-2",
-      slug: "audit-independen-wtp-2026",
-      title: "Audit Independen KAP Raih WTP",
+      slug: "laporan-akuntabilitas-penyaluran-2026",
+      title: "Laporan Akuntabilitas Penyaluran Dana 2026",
       category: "Transparansi",
-      tags: ["keuangan", "audit"],
+      tags: ["keuangan", "akuntabilitas"],
       publishedAt: "2026-09-20T10:00:00.000Z",
     },
     {

@@ -31,7 +31,7 @@ export function CampaignDetailTabs({
   onTabChange,
 }) {
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
+    <Tabs value={activeTab} onValueChange={onTabChange} className="w-full pt-2 sm:pt-3">
       <TabsList className="w-full justify-start border-b border-slate-300 pb-0 rounded-none bg-transparent h-auto p-0 gap-0 overflow-x-auto flex-nowrap">
         <TabsTrigger
           id="tour-tab-detail"

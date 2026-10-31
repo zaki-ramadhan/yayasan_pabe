@@ -140,7 +140,7 @@ export function ForgotPasswordDialog({ isOpen, onOpenChange, initialIdentifier =
               <Button
                 type="submit"
                 isLoading={isSubmitting}
-                disabled={!isInputValid || isSubmitting}
+                disabled={isSubmitting}
                 className="h-9 px-4 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg cursor-pointer"
               >
                 {isSubmitting ? "Mengirim..." : "Kirim Tautan Reset"}

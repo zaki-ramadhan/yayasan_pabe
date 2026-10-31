@@ -29,7 +29,7 @@ Website ini dibangun untuk memfasilitasi penghimpunan dan pengelolaan dana Zakat
 - **Transparansi & Informasi Publik:**
   - Profil legalitas lembaga (SK Kemenkumham, Izin Dinsos, NPWP) dan susunan pengurus yayasan.
   - Dokumentasi penyaluran bantuan langsung (*Distribusi Feed*).
-  - Laporan keuangan publik dengan pencatatan audit Wajar Tanpa Pengecualian (WTP).
+  - Laporan keuangan publik dengan pencatatan transparan dan akuntabel.
   - Publikasi artikel dakwah, berita kegiatan, pendaftaran relawan, dan informasi karier.
 
 ---

@@ -57,8 +57,18 @@ export async function POST(request) {
       console.warn("DB login lookup fallback:", dbErr.message);
     }
 
-    // 2. If user exists in DB and has passwordHash, strictly verify password
-    if (user && user.passwordHash) {
+    // 2. If user exists in DB, verify password hash
+    if (user) {
+      if (!user.passwordHash) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Akun ini terdaftar melalui penyedia OAuth (Google / Facebook). Silakan masuk menggunakan tombol penyedia tersebut.",
+          },
+          { status: 400 }
+        );
+      }
+
       const isValid = verifyPassword(cleanPassword, user.passwordHash);
       if (!isValid) {
         return NextResponse.json(
@@ -71,8 +81,8 @@ export async function POST(request) {
       }
     }
 
-    // 3. Fallback to DEMO_USERS if user not found in DB
-    if (!user) {
+    // 3. Fallback to DEMO_USERS in development / demo mode only
+    if (!user && (process.env.NODE_ENV !== "production" || process.env.ALLOW_DEMO_LOGIN === "true")) {
       const demoMatch = DEMO_USERS.find(
         (u) =>
           u.email.toLowerCase() === cleanIdentifier ||
@@ -80,7 +90,6 @@ export async function POST(request) {
       );
 
       if (demoMatch) {
-        user = demoMatch;
         try {
           user = await prisma.user.upsert({
             where: { email: demoMatch.email.toLowerCase() },
@@ -102,50 +111,23 @@ export async function POST(request) {
           });
         } catch (dbUpsertErr) {
           console.warn("Demo user db sync fallback:", dbUpsertErr.message);
+          user = demoMatch;
         }
       }
     }
 
-    // 4. If still not found, persist a new real record in Database
+    // 4. Reject if account does not exist
     if (!user) {
-      const isEmail = cleanIdentifier.includes("@");
-      const baseName = isEmail ? cleanIdentifier.split("@")[0] : cleanIdentifier;
-      const newEmail = isEmail ? cleanIdentifier : `${cleanIdentifier}@pabe.user`;
-      const newUsername = baseName.toLowerCase().replace(/[^a-z0-9]/g, "_").slice(0, 15);
-      const hashedPassword = hashPassword(cleanPassword);
-      const isSuper = isSuperAdminIdentifier(cleanIdentifier) || isSuperAdminEmail(newEmail);
-      const initialRole = isSuper ? USER_ROLES.SUPER_ADMIN : USER_ROLES.DONOR;
-      const initialTitle = isSuper ? "Super Admin" : "Donatur Terdaftar";
-
-      try {
-        user = await prisma.user.create({
-          data: {
-            name: baseName,
-            username: newUsername,
-            email: newEmail,
-            passwordHash: hashedPassword,
-            role: initialRole,
-            title: initialTitle,
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-          },
-        });
-      } catch (createErr) {
-        console.warn("Prisma user auto-registration fallback:", createErr.message);
-        user = {
-          id: `USR-${Date.now()}`,
-          name: baseName,
-          username: newUsername,
-          email: newEmail,
-          role: initialRole,
-          title: initialTitle,
-          phone: "-",
-          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-          initials: baseName.slice(0, 2).toUpperCase(),
-        };
-      }
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Kredensial tidak valid. Akun dengan email atau nama pengguna tersebut tidak ditemukan.",
+        },
+        { status: 401 }
+      );
     }
 
-    // 5. If user matches Super Admin credentials, ensure their role is elevated
+    // 5. If user matches configured Super Admin email/identifier, ensure role consistency
     const isSuper =
       isSuperAdminIdentifier(cleanIdentifier) ||
       (user && isSuperAdminIdentifier(user.username)) ||
@@ -161,12 +143,7 @@ export async function POST(request) {
           },
         });
       } catch (elevateErr) {
-        console.warn("Auto-elevating user to SUPER_ADMIN error:", elevateErr.message);
-        user = {
-          ...user,
-          role: USER_ROLES.SUPER_ADMIN,
-          title: "Super Admin",
-        };
+        console.warn("Syncing SUPER_ADMIN role error:", elevateErr.message);
       }
     }
 

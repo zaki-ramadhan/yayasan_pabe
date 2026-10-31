@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -19,6 +19,14 @@ import {
   validatePhone,
 } from "@/lib/security";
 
+const PERSONAL_FIELD_SANITIZERS = {
+  name: sanitizeName,
+  bio: sanitizeBio,
+  city: sanitizeCity,
+  phone: sanitizePhone,
+  address: sanitizeAddress,
+};
+
 export function DonorPersonalFormCard({
   profile,
   onUpdateProfile,
@@ -28,26 +36,27 @@ export function DonorPersonalFormCard({
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const { bind, getCleanValues, isDirty, isValid } = useSanitizedForm(
-    {
+  const initialValues = useMemo(
+    () => ({
       name: profile?.name || "",
       bio: profile?.bio || "",
       city: profile?.city || "",
       address: profile?.address || "",
       phone: profile?.phone || "",
-    },
-    {
-      name: sanitizeName,
-      bio: sanitizeBio,
-      city: sanitizeCity,
-      phone: sanitizePhone,
-      address: sanitizeAddress,
-    },
-    (vals) => {
-      const nameValid = validateName(vals.name).isValid;
-      const phoneValid = !vals.phone || validatePhone(vals.phone).isValid;
-      return nameValid && phoneValid;
-    }
+    }),
+    [profile?.name, profile?.bio, profile?.city, profile?.address, profile?.phone]
+  );
+
+  const validator = useCallback((vals) => {
+    const nameValid = validateName(vals.name).isValid;
+    const phoneValid = !vals.phone || validatePhone(vals.phone).isValid;
+    return nameValid && phoneValid;
+  }, []);
+
+  const { bind, getCleanValues, isDirty, isValid } = useSanitizedForm(
+    initialValues,
+    PERSONAL_FIELD_SANITIZERS,
+    validator
   );
 
   const handleSubmit = async (e) => {

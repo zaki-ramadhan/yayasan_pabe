@@ -10,24 +10,37 @@ export async function GET(request) {
   const code = searchParams.get("code");
   const error = searchParams.get("error");
   const stateRaw = searchParams.get("state");
-
-  let callbackUrl = null;
-  if (stateRaw) {
-    try {
-      const parsed = JSON.parse(Buffer.from(stateRaw, "base64").toString("utf-8"));
-      if (parsed.callbackUrl) {
-        callbackUrl = parsed.callbackUrl === "/dashboard" || parsed.callbackUrl.startsWith("/dashboard/")
-          ? parsed.callbackUrl.replace(/^\/dashboard/, "/admin")
-          : parsed.callbackUrl;
-      }
-    } catch {}
-  }
+  const storedCsrfToken = request.cookies.get("pabe_google_oauth_state")?.value;
 
   const origin =
     process.env.NEXTAUTH_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
     request.nextUrl.origin ||
     "http://localhost:3000";
+
+  let callbackUrl = null;
+  if (stateRaw) {
+    try {
+      const parsed = JSON.parse(
+        Buffer.from(stateRaw, stateRaw.includes("-") || stateRaw.includes("_") ? "base64url" : "base64").toString("utf-8")
+      );
+
+      // Verifikasi CSRF token jika tersimpan di cookie
+      if (storedCsrfToken && parsed.csrfToken && storedCsrfToken !== parsed.csrfToken) {
+        return NextResponse.redirect(`${origin}/login?error=csrf_token_mismatch`);
+      }
+
+      if (parsed.callbackUrl && typeof parsed.callbackUrl === "string") {
+        // Cegah Open Redirect: Wajib relative path yang diawali satu slash '/'
+        const isSafePath = parsed.callbackUrl.startsWith("/") && !parsed.callbackUrl.startsWith("//");
+        if (isSafePath) {
+          callbackUrl = parsed.callbackUrl === "/dashboard" || parsed.callbackUrl.startsWith("/dashboard/")
+            ? parsed.callbackUrl.replace(/^\/dashboard/, "/admin")
+            : parsed.callbackUrl;
+        }
+      }
+    } catch {}
+  }
 
   if (error) {
     return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(error)}`);
@@ -151,11 +164,18 @@ export async function GET(request) {
 
     // 4. Return HTML bridge to sync localStorage session and redirect smoothly
     const sessionJson = JSON.stringify(sessionPayload).replace(/</g, "\\u003c");
-    const defaultTarget = userRole === "DONOR" ? "/" : "/admin";
-    const targetUrl =
-      callbackUrl && !["/login", "/register", "/"].includes(callbackUrl)
-        ? callbackUrl
-        : defaultTarget;
+    const isStaffRole = userRole && userRole !== USER_ROLES.DONOR;
+    const defaultTarget = isStaffRole ? "/admin" : "/donatur/dashboard";
+
+    let targetUrl = defaultTarget;
+    if (callbackUrl && !["/login", "/register", "/"].includes(callbackUrl)) {
+      const isAdminPath = callbackUrl === "/admin" || callbackUrl.startsWith("/admin/");
+      if (isAdminPath && !isStaffRole) {
+        targetUrl = "/donatur/dashboard";
+      } else {
+        targetUrl = callbackUrl;
+      }
+    }
 
     const responseHtml = `
       <!DOCTYPE html>
@@ -228,6 +248,7 @@ export async function GET(request) {
     };
     response.cookies.set("pabe_session", userId, cookieOpts);
     response.cookies.set("pabe_role", userRole, { ...cookieOpts, httpOnly: false });
+    response.cookies.delete("pabe_google_oauth_state");
 
     return response;
   } catch (err) {

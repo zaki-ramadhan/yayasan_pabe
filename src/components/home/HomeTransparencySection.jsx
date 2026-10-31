@@ -13,8 +13,8 @@ import { cn } from "@/lib/utils";
  */
 export function HomeTransparencySection({
   metrics,
-  title = "Laporan Penyaluran & Audit Keuangan",
-  subtitle = "Setiap rupiah donasi tercatat transparan dan diaudit berkala, memastikan amanah Anda tersalurkan tepat sasaran.",
+  title = "Laporan Penyaluran & Akuntabilitas Dana",
+  subtitle = "Setiap rupiah donasi tercatat transparan dan dilaporkan secara terbuka, memastikan amanah Anda tersalurkan tepat sasaran.",
   className = "",
 }) {
   return (

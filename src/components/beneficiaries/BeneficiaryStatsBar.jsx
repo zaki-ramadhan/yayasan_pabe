@@ -9,8 +9,8 @@ export function BeneficiaryStatsBar({ stats }) {
 
   const statCards = [
     {
-      label: "Total Penerima Manfaat",
-      value: `${total} Orang`,
+      label: "Mustahik Binaan Rutin",
+      value: `${total} Jiwa`,
     },
     {
       label: "Anak Yatim Piatu",

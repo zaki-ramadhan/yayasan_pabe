@@ -71,6 +71,17 @@ export async function POST(request) {
       originalName = file.name || "upload";
       declaredType = file.type;
     } else {
+      // Tolak pengunggahan via URL untuk konteks publik (misal pelamar lowongan kerja)
+      if (contextConfig.allowedRoles === null) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "Pengunggahan publik hanya mengizinkan berkas dokumen/gambar langsung, bukan tautan URL.",
+          },
+          { status: 400 }
+        );
+      }
+
       const targetUrl = rawImageUrl.trim();
       try {
         let fetchRes;
@@ -80,6 +91,45 @@ export async function POST(request) {
           arrayBuffer = await fetchRes.arrayBuffer();
           originalName = "pasted-image";
         } else {
+          // Validasi anti-SSRF: Cegah penyerangan ke private network & metadata endpoints
+          let parsedUrl;
+          try {
+            parsedUrl = new URL(targetUrl);
+          } catch {
+            return NextResponse.json(
+              { success: false, message: "Format tautan URL tidak valid." },
+              { status: 400 }
+            );
+          }
+
+          if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+            return NextResponse.json(
+              { success: false, message: "Hanya protokol HTTP atau HTTPS yang diizinkan." },
+              { status: 400 }
+            );
+          }
+
+          const hostname = parsedUrl.hostname.toLowerCase();
+          const isBlockedHost =
+            hostname === "localhost" ||
+            hostname.endsWith(".localhost") ||
+            hostname.endsWith(".local") ||
+            hostname === "0.0.0.0" ||
+            hostname === "::1" ||
+            hostname === "127.0.0.1" ||
+            hostname.startsWith("127.") ||
+            hostname.startsWith("10.") ||
+            hostname.startsWith("192.168.") ||
+            hostname.startsWith("169.254.") ||
+            /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname);
+
+          if (isBlockedHost) {
+            return NextResponse.json(
+              { success: false, message: "Akses ke alamat internal atau privat diblokir demi keamanan." },
+              { status: 403 }
+            );
+          }
+
           fetchRes = await fetch(targetUrl, {
             headers: {
               "User-Agent":

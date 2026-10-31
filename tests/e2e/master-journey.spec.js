@@ -444,7 +444,7 @@ test.describe("Master User Journey - Eksplorasi Penuh Seluruh Halaman Yayasan", 
     // 8.2 Distribusi Penyaluran (/distribusi)
     await page.goto("/distribusi");
     await expect(page.locator("h1")).toContainText(/Distribusi/i);
-    await expect(page.getByText(/Dewan Pengawas Syariah/i).first()).toBeVisible();
+    await expect(page.getByText(/Laporan Pertanggungjawaban|Laporan Keuangan/i).first()).toBeVisible();
 
     // 8.3 Kalkulator Zakat (/kalkulator-zakat) - Boundary & Formula Syariah
     await page.goto("/kalkulator-zakat");

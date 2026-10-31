@@ -4,6 +4,7 @@ import { hashPassword } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import { sanitizeEmail, sanitizePhoneInput, sanitizeText } from "@/lib/userParser";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
+import { validatePhone } from "@/lib/validator";
 
 export const STAFF_ROLES = [
   USER_ROLES.SUPER_ADMIN,
@@ -33,7 +34,14 @@ export async function createAdminUser({
     throw new Error(emailVal.message || "Format alamat email tidak valid.");
   }
   const cleanEmail = emailVal.sanitized;
-  const cleanPhone = sanitizePhoneInput(phone);
+  let cleanPhone = null;
+  if (phone) {
+    const phoneVal = validatePhone(phone, { isRequired: false, fieldName: "Nomor telepon" });
+    if (!phoneVal.isValid) {
+      throw new Error(phoneVal.message);
+    }
+    cleanPhone = phoneVal.sanitized;
+  }
   const cleanTitle = sanitizeText(title) || (role === USER_ROLES.ADMIN ? "Admin Operasional" : role);
 
   if (!STAFF_ROLES.includes(role)) {
@@ -108,7 +116,18 @@ export async function updateAdminUser(id, payload, actorUser) {
   }
 
   const cleanName = payload.name ? sanitizeText(payload.name) : target.name;
-  const cleanPhone = payload.phone !== undefined ? sanitizePhoneInput(payload.phone) : target.phone;
+  let cleanPhone = target.phone;
+  if (payload.phone !== undefined) {
+    if (payload.phone) {
+      const phoneVal = validatePhone(payload.phone, { isRequired: false, fieldName: "Nomor telepon" });
+      if (!phoneVal.isValid) {
+        throw new Error(phoneVal.message);
+      }
+      cleanPhone = phoneVal.sanitized;
+    } else {
+      cleanPhone = null;
+    }
+  }
   const cleanTitle = payload.title !== undefined ? sanitizeText(payload.title) : target.title;
   const nextRole = payload.role && STAFF_ROLES.includes(payload.role) ? payload.role : target.role;
 

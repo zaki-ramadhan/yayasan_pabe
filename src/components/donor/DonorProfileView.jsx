@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { DonorProfileCover } from "@/components/donor/DonorProfileCover";
@@ -25,6 +24,8 @@ export function DonorProfileView() {
   // Tab aktif: "personal" | "bank" | "security"
   const [activeTab, setActiveTab] = useState("personal");
 
+  const fetchedEmailRef = useRef(null);
+
   // Redirect guest to login
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -39,13 +40,14 @@ export function DonorProfileView() {
   }, [isAuthenticated, router]);
 
   // Load database profile
-  const fetchProfile = useCallback(async () => {
-    if (!currentUser?.email) return;
+  const fetchProfile = useCallback(async (targetEmail) => {
+    const emailToFetch = targetEmail || currentUser?.email;
+    if (!emailToFetch) return;
 
     setIsLoading(true);
     try {
       const res = await safeFetch(
-        `/api/user/profile?email=${encodeURIComponent(currentUser.email)}`
+        `/api/user/profile?email=${encodeURIComponent(emailToFetch)}`
       );
       const json = await res.json();
 
@@ -63,8 +65,9 @@ export function DonorProfileView() {
   }, [currentUser]);
 
   useEffect(() => {
-    if (currentUser?.email) {
-      fetchProfile();
+    if (currentUser?.email && fetchedEmailRef.current !== currentUser.email) {
+      fetchedEmailRef.current = currentUser.email;
+      fetchProfile(currentUser.email);
     }
   }, [currentUser?.email, fetchProfile]);
 

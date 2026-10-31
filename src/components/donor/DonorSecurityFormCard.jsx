@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -10,6 +10,14 @@ import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
 import { validatePasswordInput } from "@/lib/security";
 
+const SECURITY_INITIAL_VALUES = {
+  oldPassword: "",
+  newPassword: "",
+  confirmPassword: "",
+};
+
+const EMPTY_SANITIZERS = {};
+
 export function DonorSecurityFormCard({
   onUpdatePassword,
   id = "section-security",
@@ -18,20 +26,18 @@ export function DonorSecurityFormCard({
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const validator = useCallback((vals) => {
+    if (!vals.oldPassword) return false;
+    if (!validatePasswordInput(vals.newPassword).isValid) return false;
+    if (vals.newPassword === vals.oldPassword) return false;
+    if (vals.newPassword !== vals.confirmPassword) return false;
+    return true;
+  }, []);
+
   const { bind, getCleanValues, setValues, isDirty, isValid } = useSanitizedForm(
-    {
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    },
-    {},
-    (vals) => {
-      if (!vals.oldPassword) return false;
-      if (!validatePasswordInput(vals.newPassword).isValid) return false;
-      if (vals.newPassword === vals.oldPassword) return false;
-      if (vals.newPassword !== vals.confirmPassword) return false;
-      return true;
-    }
+    SECURITY_INITIAL_VALUES,
+    EMPTY_SANITIZERS,
+    validator
   );
 
   const handleSubmit = async (e) => {

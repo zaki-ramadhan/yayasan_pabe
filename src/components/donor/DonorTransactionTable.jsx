@@ -85,6 +85,7 @@ export function DonorTransactionTable({
               currentSortBy={sortBy}
               currentSortOrder={sortOrder}
               onSort={onSortChange}
+              align="center"
             />
             <TableHead className="text-center w-28">Kwitansi</TableHead>
           </TableRow>
@@ -92,7 +93,12 @@ export function DonorTransactionTable({
 
         <TableBody>
           {isLoading ? (
-            <TableSkeletonRows rows={5} colSpan={7} height="h-4" />
+            <TableSkeletonRows
+              rows={5}
+              columns={7}
+              cellAlignments={["center", "left", "right", "left", "left", "center", "center"]}
+              height="h-4"
+            />
           ) : items.length === 0 ? (
             <TableEmptyRow
               colSpan={7}
@@ -145,12 +151,17 @@ export function DonorTransactionTableSkeleton() {
             <TableHead className="text-right">Nominal Donasi</TableHead>
             <TableHead>Program Kebaikan</TableHead>
             <TableHead>Metode Bayar</TableHead>
-            <TableHead>Tanggal Transaksi</TableHead>
+            <TableHead className="text-center">Tanggal Transaksi</TableHead>
             <TableHead className="text-center w-28">Kwitansi</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableSkeletonRows rows={5} colSpan={7} height="h-4" />
+          <TableSkeletonRows
+            rows={5}
+            columns={7}
+            cellAlignments={["center", "left", "right", "left", "left", "center", "center"]}
+            height="h-4"
+          />
         </TableBody>
       </Table>
     </TableContainer>

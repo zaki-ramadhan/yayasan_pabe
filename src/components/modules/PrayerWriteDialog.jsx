@@ -151,7 +151,7 @@ export function PrayerWriteDialog({
           <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex flex-col gap-2">
             <Button
               type="submit"
-              disabled={!isFormValid || isSubmitting}
+              disabled={isSubmitting}
               className="w-full h-9 text-xs sm:text-sm font-medium bg-primary hover:bg-primary-hover text-white cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
             >
               <span>{isSubmitting ? "Mengirim doa..." : "Kirimkan doa"}</span>
