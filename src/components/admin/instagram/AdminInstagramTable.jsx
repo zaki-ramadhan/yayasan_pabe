@@ -1,8 +1,7 @@
 "use client";
 
-import { Search, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import {
@@ -14,14 +13,21 @@ import {
   TableEmptyRow,
   TablePaginationFooter,
   TableSkeletonRows,
+  TableToolbar,
 } from "@/components/ui/Table";
+import { cn } from "@/lib/utils";
 import { AdminInstagramTableRow } from "./AdminInstagramTableRow";
+
+const MAX_POSTS = 8;
 
 export function AdminInstagramTable({
   posts = [],
   pagination = {},
+  totalPosts = 0,
   search = "",
   onSearchChange,
+  onClearSearch,
+  onRefresh,
   isLoading = false,
   selection,
   onOpenBulkDelete,
@@ -30,30 +36,49 @@ export function AdminInstagramTable({
   onDeletePost,
   onPageChange,
 }) {
+  const effectiveTotal = pagination?.total !== undefined ? pagination.total : totalPosts || posts.length;
+  const isLimitReached = effectiveTotal >= MAX_POSTS;
+
   return (
     <div className="space-y-4">
-      {/* Action Bar: Search & Create */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <Input
-            type="text"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Cari narasi postingan..."
-            className="pl-9 h-9 text-sm"
-          />
-        </div>
-
-        <Button
-          onClick={onCreatePost}
-          size="sm"
-          className="gap-1.5 shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Tambah dokumentasi</span>
-        </Button>
-      </div>
+      {/* Standardized TableToolbar */}
+      <TableToolbar
+        search={search}
+        onSearchChange={onSearchChange}
+        onClearSearch={onClearSearch}
+        searchPlaceholder="Cari narasi postingan..."
+        searchWidth="flex-1 min-w-[200px] max-w-sm"
+        onRefresh={onRefresh}
+        isLoading={isLoading}
+        extraActions={
+          <span
+            className="text-sm font-medium select-none px-1"
+            title={
+              isLimitReached
+                ? "Batas maksimal postingan sudah tercapai, hapus untuk dapat memposting."
+                : `Jumlah postingan feed Instagram: ${effectiveTotal}/${MAX_POSTS}`
+            }
+          >
+            <span className="text-slate-900">Postingan : </span>
+            <span
+              className={cn(
+                isLimitReached ? "text-rose-600 font-semibold" : "text-slate-900"
+              )}
+            >
+              {effectiveTotal}/{MAX_POSTS}
+            </span>
+          </span>
+        }
+        primaryAction={{
+          label: "Tambah postingan",
+          onClick: onCreatePost,
+          disabled: isLimitReached,
+          className: isLimitReached ? "opacity-50 cursor-not-allowed" : "",
+          title: isLimitReached
+            ? "Batas maksimal postingan sudah tercapai, hapus untuk dapat memposting."
+            : undefined,
+        }}
+      />
 
       {/* Reusable Floating Bulk Action Bar */}
       {selection && (
@@ -92,23 +117,27 @@ export function AdminInstagramTable({
                     aria-label="Pilih semua postingan di halaman ini"
                   />
                 </TableHead>
-                <TableHead className="w-16">Media</TableHead>
+                <TableHead className="w-16">Foto</TableHead>
                 <TableHead className="min-w-[280px]">Caption & Tautan</TableHead>
-                <TableHead className="w-40">Tanggal Kegiatan</TableHead>
+                <TableHead className="w-40 text-center">Tanggal Posting</TableHead>
                 <TableHead className="w-20 text-right">Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableSkeletonRows rows={5} columns={5} />
+                <TableSkeletonRows
+                  rows={8}
+                  columns={5}
+                  cellAlignments={["center", "left", "left", "center", "right"]}
+                />
               ) : posts.length === 0 ? (
                 <TableEmptyRow
                   colSpan={5}
                   isFiltered={Boolean(search)}
                   message={
                     search
-                      ? `Tidak ditemukan dokumentasi dengan kata kunci "${search}".`
-                      : "Belum ada postingan dokumentasi. Klik tombol 'Tambah dokumentasi' untuk memasukkan foto kegiatan pertama."
+                      ? `Tidak ditemukan postingan dengan kata kunci "${search}".`
+                      : "Belum ada postingan feed Instagram. Klik tombol 'Tambah postingan' untuk menambahkan konten pertama."
                   }
                 />
               ) : (

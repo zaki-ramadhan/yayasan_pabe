@@ -10,7 +10,7 @@ import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
 import { isFormDirty } from "@/lib/formUtils";
-import { sanitizeStandardText } from "@/lib/sanitizer";
+import { DatePicker } from "@/components/ui/DatePicker";
 
 export function AdminInstagramPostModal({
   isOpen,
@@ -63,13 +63,29 @@ export function AdminInstagramPostModal({
       return;
     }
 
+    if (!postUrl.trim()) {
+      toast.error("Tautan postingan Instagram wajib diisi.");
+      return;
+    }
+
+    try {
+      const parsedUrl = new URL(postUrl.trim());
+      if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+        toast.error("Tautan postingan harus diawali dengan http:// atau https://.");
+        return;
+      }
+    } catch {
+      toast.error("Format tautan postingan Instagram tidak valid.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload = {
         imageUrl: imageUrl.trim(),
         caption: caption.trim(),
         altText: altText.trim() || caption.trim().slice(0, 100),
-        postUrl: postUrl.trim() || "https://www.instagram.com",
+        postUrl: postUrl.trim(),
         postedAt: postedAt ? new Date(postedAt).toISOString() : new Date().toISOString(),
         likeCount: 0,
         commentCount: 0,
@@ -130,16 +146,16 @@ export function AdminInstagramPostModal({
   }, [isEditing, postToEdit, imageUrl, caption, altText, postUrl, postedAt]);
 
   const isFormValid = useMemo(() => {
-    return Boolean(imageUrl.trim() && caption.trim());
-  }, [imageUrl, caption]);
+    return Boolean(imageUrl.trim() && caption.trim() && postUrl.trim());
+  }, [imageUrl, caption, postUrl]);
 
   return (
     <FormDialog
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
-      title={isEditing ? "Edit postingan dokumentasi" : "Tambah dokumentasi Instagram baru"}
-      maxWidth="max-w-xl"
+      title={isEditing ? "Edit postingan Instagram" : "Tambah postingan Instagram baru"}
+      maxWidth="max-w-2xl"
       submitText="Simpan"
       isSubmitting={isSubmitting}
       submitDisabled={!isFormValid || (isEditing && !isDirty)}
@@ -147,60 +163,50 @@ export function AdminInstagramPostModal({
       <div className="space-y-4 py-1">
         {/* Mendukung upload R2 langsung maupun URL eksternal CDN */}
         <FileUploadZone
-          label="Foto / media dokumentasi"
+          label="Foto postingan"
           value={imageUrl}
           onChange={setImageUrl}
           context="INSTAGRAM"
           required
-          helperText="Unggah berkas foto ke Cloudflare R2 atau tempelkan URL gambar eksternal/CDN."
+          helperText="Unggah foto postingan ke Cloudflare R2 atau tempelkan URL gambar."
         />
 
-        <FormField label="Caption / narasi kegiatan" required>
+        <FormField label="Caption postingan" required>
           <Textarea
             value={caption}
             maxLength={2000}
             onChange={(e) => setCaption(e.target.value)}
             onBlur={() => setCaption((prev) => prev.trim())}
-            placeholder="Tuliskan keterangan kegiatan, penyaluran, atau pesan amanah donatur..."
+            placeholder="Tuliskan caption postingan Instagram..."
             rows={4}
             required
           />
         </FormField>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <FormField label="Tanggal kegiatan / posting" required>
-            <Input
-              type="date"
+          <FormField label="Tanggal posting" required>
+            <DatePicker
               value={postedAt}
-              onChange={(e) => setPostedAt(e.target.value)}
-              required
+              onChange={setPostedAt}
+              placeholder="Pilih tanggal posting..."
+              clearable={false}
             />
           </FormField>
 
-          <FormField label="Teks alt (aksesibilitas foto)">
+          <FormField label="Tautan postingan" required>
             <Input
-              type="text"
-              maxLength={150}
-              value={altText}
-              onChange={(e) => setAltText(sanitizeStandardText(e.target.value, 150))}
-              onBlur={() => setAltText((prev) => prev.trim())}
-              placeholder="Deskripsi singkat foto..."
+              type="url"
+              inputMode="url"
+              maxLength={300}
+              spellCheck={false}
+              required
+              value={postUrl}
+              onChange={(e) => setPostUrl(e.target.value.replace(/\s+/g, "").slice(0, 300))}
+              onBlur={() => setPostUrl((prev) => prev.trim())}
+              placeholder="https://www.instagram.com/p/..."
             />
           </FormField>
         </div>
-
-        <FormField label="Tautan postingan di Instagram (opsional)">
-          <Input
-            type="url"
-            inputMode="url"
-            maxLength={300}
-            spellCheck={false}
-            value={postUrl}
-            onChange={(e) => setPostUrl(e.target.value.replace(/\s+/g, "").slice(0, 300))}
-            onBlur={() => setPostUrl((prev) => prev.trim())}
-            placeholder="https://www.instagram.com/p/..."
-          />
-        </FormField>
       </div>
     </FormDialog>
   );

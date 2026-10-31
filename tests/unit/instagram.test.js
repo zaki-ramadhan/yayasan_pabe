@@ -85,10 +85,20 @@ describe("Instagram Manual CMS & Service Integration", () => {
   });
 
   describe("createInstagramPost validation & formatting", () => {
+    beforeEach(() => {
+      vi.spyOn(prisma.instagramPost, "count").mockResolvedValue(0);
+    });
+
     it("menolak jika imageUrl kosong", async () => {
       await expect(
-        createInstagramPost({ imageUrl: "", caption: "Test" })
+        createInstagramPost({ imageUrl: "", caption: "Test", postUrl: "https://www.instagram.com/p/test" })
       ).rejects.toThrow(/gambar postingan instagram wajib/i);
+    });
+
+    it("menolak jika postUrl kosong", async () => {
+      await expect(
+        createInstagramPost({ imageUrl: "https://example.com/test.jpg", caption: "Test", postUrl: "" })
+      ).rejects.toThrow(/tautan postingan instagram wajib/i);
     });
 
     it("berhasil memparsing nilai string berpemisah ribuan ke integer murni", async () => {
@@ -100,6 +110,7 @@ describe("Instagram Manual CMS & Service Integration", () => {
       await createInstagramPost({
         imageUrl: "https://example.com/test.jpg",
         caption: "Caption Test",
+        postUrl: "https://www.instagram.com/p/test1",
         likeCount: "10.000",
         commentCount: "1.250",
       });
@@ -109,6 +120,7 @@ describe("Instagram Manual CMS & Service Integration", () => {
           data: expect.objectContaining({
             likeCount: 10000,
             commentCount: 1250,
+            postUrl: "https://www.instagram.com/p/test1",
           }),
         })
       );
@@ -123,6 +135,7 @@ describe("Instagram Manual CMS & Service Integration", () => {
       await createInstagramPost({
         imageUrl: "https://example.com/test.jpg",
         caption: "Dokumentasi Tanpa Angka",
+        postUrl: "https://www.instagram.com/p/test1",
       });
 
       expect(createSpy).toHaveBeenCalledWith(
@@ -130,6 +143,7 @@ describe("Instagram Manual CMS & Service Integration", () => {
           data: expect.objectContaining({
             likeCount: 0,
             commentCount: 0,
+            postUrl: "https://www.instagram.com/p/test1",
           }),
         })
       );

@@ -38,7 +38,7 @@ export function useAdminInstagram({
       try {
         const query = new URLSearchParams({
           page: String(page),
-          limit: "15",
+          limit: "8",
           search: currentSearch,
         });
 
@@ -119,10 +119,11 @@ export function useAdminInstagram({
     setIsBulkDeleting(true);
 
     try {
+      const idsToDelete = Array.from(selection.selectedIds || []);
       const res = await safeFetch("/api/admin/instagram/posts", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: selection.selectedIds }),
+        body: JSON.stringify({ ids: idsToDelete }),
       });
       const json = await res.json();
 
@@ -141,9 +142,19 @@ export function useAdminInstagram({
     }
   };
 
+  const handleRefresh = useCallback(() => {
+    startTransition(() => {
+      fetchPosts(pagination.page || 1, debouncedSearch);
+      toast.success("Daftar postingan Instagram berhasil diperbarui.");
+    });
+  }, [fetchPosts, pagination.page, debouncedSearch]);
+
+  const totalPosts = pagination?.total !== undefined ? pagination.total : posts.length;
+
   return {
     posts,
     pagination,
+    totalPosts,
     profile,
     search,
     setSearch: (val) => {
@@ -167,6 +178,7 @@ export function useAdminInstagram({
     handleDeletePost,
     handleSaveProfile,
     handlePostSaved,
+    handleRefresh,
     fetchPosts: (page, s) => {
       selection.clearSelection();
       fetchPosts(page, s);

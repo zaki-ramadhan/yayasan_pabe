@@ -13,6 +13,9 @@ import { toast } from "@/hooks/useToast";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeStandardText } from "@/lib/sanitizer";
+import { uploadFileToServer } from "@/services/uploadService";
+import { isYouTubeUrl } from "@/lib/galleryGroupHelper";
+import { AdminDistributionMediaFields } from "./AdminDistributionMediaFields";
 
 export function AdminDistributionModal({
 	isOpen,
@@ -37,11 +40,17 @@ export function AdminDistributionModal({
 			)[0],
 	);
 	const [content, setContent] = useState("");
+	const [existingMedia, setExistingMedia] = useState([]);
+	const [selectedFiles, setSelectedFiles] = useState([]);
+	const [youtubeUrl, setYoutubeUrl] = useState("");
+	const [uploadProgressText, setUploadProgressText] = useState("");
 	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	useEffect(() => {
 		setErrors({});
+		setUploadProgressText("");
+		setSelectedFiles([]);
 		if (distributionToEdit) {
 			setCampaignId(
 				distributionToEdit.campaignId ||
@@ -74,6 +83,14 @@ export function AdminDistributionModal({
 				distributionToEdit.content ||
 					"",
 			);
+
+			const rawImages = Array.isArray(distributionToEdit.images)
+				? distributionToEdit.images
+				: [];
+			const foundYt = rawImages.find((url) => isYouTubeUrl(url)) || "";
+			const nonYt = rawImages.filter((url) => !isYouTubeUrl(url));
+			setExistingMedia(nonYt);
+			setYoutubeUrl(foundYt);
 		} else {
 			setCampaignId(
 				campaigns[0]?.id ||
@@ -89,6 +106,8 @@ export function AdminDistributionModal({
 					)[0],
 			);
 			setContent("");
+			setExistingMedia([]);
+			setYoutubeUrl("");
 		}
 	}, [distributionToEdit, isOpen, campaigns]);
 
@@ -112,6 +131,11 @@ export function AdminDistributionModal({
 			newErrors.content = "Rincian penyaluran wajib diisi (minimal 10 karakter).";
 		}
 
+		const cleanYt = youtubeUrl.trim();
+		if (cleanYt && !isYouTubeUrl(cleanYt)) {
+			newErrors.youtube = "Format tautan video YouTube tidak valid.";
+		}
+
 		if (Object.keys(newErrors).length > 0) {
 			setErrors(newErrors);
 			const firstError = Object.values(newErrors)[0];
@@ -122,6 +146,34 @@ export function AdminDistributionModal({
 		setErrors({});
 		setIsSubmitting(true);
 		try {
+			// Unggah berkas baru foto & video langsung ke R2
+			const uploadedUrls = [];
+			const total = selectedFiles.length;
+
+			for (let i = 0; i < total; i++) {
+				const item = selectedFiles[i];
+				const isVid = Boolean(item.isVideo);
+				setUploadProgressText(
+					`Mengunggah ${isVid ? "video" : "foto"} ${i + 1} dari ${total}...`
+				);
+
+				const uploadResult = await uploadFileToServer({
+					file: item.file,
+					context: isVid ? "CAMPAIGN_UPDATE_VIDEO" : "CAMPAIGN_UPDATE",
+					identifier: title.trim(),
+				});
+				uploadedUrls.push(uploadResult.url);
+			}
+
+			// Gabungkan media tersimpan, media baru terunggah, dan tautan YouTube
+			const finalImages = [
+				...existingMedia,
+				...uploadedUrls,
+				...(cleanYt && isYouTubeUrl(cleanYt) ? [cleanYt] : []),
+			];
+
+			setUploadProgressText("Menyimpan ke basis data...");
+
 			const url =
 				isEditing
 					? `/api/admin/distributions/${distributionToEdit.id}`
@@ -146,9 +198,7 @@ export function AdminDistributionModal({
 								disbursedAmount,
 								date,
 								content: content.trim(),
-								images:
-									distributionToEdit?.images ||
-									[],
+								images: finalImages,
 							},
 						),
 					},
@@ -177,11 +227,12 @@ export function AdminDistributionModal({
 						"Gagal menyimpan penyaluran.",
 				);
 			}
-		} catch {
+		} catch (err) {
 			toast.error(
-				"Terjadi kendala jaringan saat menyimpan penyaluran.",
+				err?.message || "Terjadi kendala jaringan saat menyimpan penyaluran.",
 			);
 		} finally {
+			setUploadProgressText("");
 			setIsSubmitting(
 				false,
 			);
@@ -190,9 +241,29 @@ export function AdminDistributionModal({
 
 	const isDirty = useMemo(() => {
 		if (!isEditing || !distributionToEdit) {
-			return Boolean(title.trim() || disbursedAmount > 0 || content.trim());
+			return Boolean(
+				title.trim() ||
+				disbursedAmount > 0 ||
+				content.trim() ||
+				selectedFiles.length > 0 ||
+				youtubeUrl.trim()
+			);
 		}
 		const initialDate = distributionToEdit.date ? distributionToEdit.date.split("T")[0] : "";
+		const initialImages = Array.isArray(distributionToEdit.images)
+			? distributionToEdit.images
+			: [];
+		const initialYt = initialImages.find((url) => isYouTubeUrl(url)) || "";
+		const initialNonYt = initialImages.filter((url) => !isYouTubeUrl(url));
+
+		const mediaChanged =
+			selectedFiles.length > 0 ||
+			youtubeUrl.trim() !== initialYt ||
+			existingMedia.length !== initialNonYt.length ||
+			existingMedia.some((m, idx) => m !== initialNonYt[idx]);
+
+		if (mediaChanged) return true;
+
 		return isFormDirty(
 			{
 				campaignId: distributionToEdit.campaignId || campaigns[0]?.id || "",
@@ -209,7 +280,19 @@ export function AdminDistributionModal({
 				content,
 			}
 		);
-	}, [isEditing, distributionToEdit, campaignId, campaigns, title, disbursedAmount, date, content]);
+	}, [
+		isEditing,
+		distributionToEdit,
+		campaignId,
+		campaigns,
+		title,
+		disbursedAmount,
+		date,
+		content,
+		selectedFiles,
+		existingMedia,
+		youtubeUrl,
+	]);
 
 	const isFormValid = useMemo(() => {
 		return Boolean(
@@ -226,7 +309,7 @@ export function AdminDistributionModal({
 			isOpen={isOpen}
 			onClose={() => onOpenChange(false)}
 			onSubmit={handleSubmit}
-			maxWidth="max-w-xl"
+			maxWidth="max-w-2xl"
 			title={
 				isEditing
 					? "Edit rekam penyaluran donasi"
@@ -234,7 +317,7 @@ export function AdminDistributionModal({
 			}
 			isSubmitting={isSubmitting}
 			submitText="Simpan"
-			submittingText="Menyimpan..."
+			submittingText={uploadProgressText || "Menyimpan..."}
 			submitDisabled={!isFormValid || (isEditing && !isDirty)}
 		>
 			<FormField
@@ -254,9 +337,10 @@ export function AdminDistributionModal({
 							setErrors((prev) => ({ ...prev, campaignId: "" }));
 						}
 					}}
-					placeholder="Pilih program donasi terkait..."
-					searchPlaceholder="Ketik untuk mencari program donasi..."
-					emptyMessage="Program donasi tidak ditemukan."
+					placeholder="Pilih program asal dana penyaluran..."
+					searchPlaceholder="Cari nama program..."
+					allowCreate={false}
+					className="bg-white"
 				/>
 			</FormField>
 
@@ -267,29 +351,28 @@ export function AdminDistributionModal({
 			>
 				<Input
 					type="text"
-					placeholder="Contoh: Penyaluran Paket Sembako & Santunan 50 Yatim Dhuafa"
+					placeholder="Contoh: Penyerahan Santunan Sembako & Biaya Pendidikan Mustahik"
 					value={title}
-					maxLength={120}
+					maxLength={150}
 					onChange={(e) => {
-						setTitle(sanitizeStandardText(e.target.value, 120));
+						setTitle(sanitizeStandardText(e.target.value, 150));
 						if (errors.title) {
 							setErrors((prev) => ({ ...prev, title: "" }));
 						}
 					}}
-					onBlur={() => setTitle((prev) => prev.trim())}
-					className="h-10 text-sm font-normal text-slate-900 border-slate-300 rounded-lg"
+					onBlur={() => setTitle(title.trim())}
+					className="h-10 text-sm font-normal"
 					required
 				/>
 			</FormField>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
 				<FormField
-					label="Alokasi dana tersalurkan (Rp)"
+					label="Nominal dana tersalurkan"
 					required
 					error={errors.disbursedAmount}
 				>
 					<CurrencyInput
-						placeholder="0"
 						value={disbursedAmount}
 						onChange={(val) => {
 							setDisbursedAmount(val);
@@ -297,6 +380,7 @@ export function AdminDistributionModal({
 								setErrors((prev) => ({ ...prev, disbursedAmount: "" }));
 							}
 						}}
+						placeholder="0"
 						className="h-10 text-sm font-normal"
 						required
 					/>
@@ -341,6 +425,21 @@ export function AdminDistributionModal({
 					required
 				/>
 			</FormField>
+
+			{/* Sub-komponen modular upload foto, video R2, dan video YouTube */}
+			<AdminDistributionMediaFields
+				existingMedia={existingMedia}
+				onRemoveExistingMedia={(idx) =>
+					setExistingMedia((prev) => prev.filter((_, i) => i !== idx))
+				}
+				selectedFiles={selectedFiles}
+				onFilesChange={setSelectedFiles}
+				youtubeUrl={youtubeUrl}
+				onYoutubeUrlChange={setYoutubeUrl}
+				isUploading={isSubmitting}
+				uploadProgressText={uploadProgressText}
+				error={errors.youtube}
+			/>
 		</FormDialog>
 	);
 }

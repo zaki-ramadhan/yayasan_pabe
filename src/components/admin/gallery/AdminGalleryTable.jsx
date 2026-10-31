@@ -118,7 +118,7 @@ export function AdminGalleryTable({
                 <TableHead className="w-40 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Kategori
                 </TableHead>
-                <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Tanggal kegiatan
                 </TableHead>
                 <TableHead className="w-24 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap pr-4">

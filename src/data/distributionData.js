@@ -3,17 +3,17 @@
  */
 
 export const AUDIT_SUMMARY_DATA = {
-  title: "Laporan Keuangan Audit",
+  title: "Laporan Pertanggungjawaban Keuangan",
   description:
     "Kami sampaikan Laporan Tahunan sebagai bentuk komitmen kami menjadi lembaga yang profesional, amanah, dan akuntabel. Terima kasih kepada seluruh donatur atas dukungan dan kepercayaannya dalam menyalurkan zakat, infak, wakaf, serta donasi lainnya. Bersama, kita wujudkan kebermanfaatan di bidang pendidikan, dakwah, dan pemberdayaan yang berkelanjutan.",
-  auditorName: "Kantor Akuntan Publik (KAP) Rama & Rekan",
-  opinion: "Wajar Tanpa Pengecualian (WTP)",
+  auditorName: "Internal Pembukuan Yayasan",
+  opinion: "Terbuka & Akuntabel",
   auditPeriod: "Tahun Buku 2025",
   operationalRatio: "9.2%",
   maxAllowedRatio: "12.5%",
   totalFundsManaged: 732700000,
   pdfUrl: "/api/documents/download?type=audit&year=2025",
-  downloadFilename: "Laporan-Audit-Keuangan-PABE-2025.pdf",
+  downloadFilename: "Laporan-Pertanggungjawaban-PABE-2025.pdf",
   allocations: [
     {
       id: "santunan-yatim",
@@ -84,25 +84,5 @@ export const DISTRIBUTION_TREND_DATA = {
     { month: "Okt", fullMonth: "Oktober 2024", amount: 310000000, beneficiaries: 1040 },
     { month: "Nov", fullMonth: "November 2024", amount: 320000000, beneficiaries: 1070 },
     { month: "Des", fullMonth: "Desember 2024", amount: 350000000, beneficiaries: 1170 },
-  ],
-};
-
-export const SYARIAH_COMPLIANCE_DATA = {
-  title: "SK Dewan Pengawas Syariah",
-  description:
-    "Sebagai lembaga amil zakat dan sosial berbasis syariah, kami berkomitmen menjalankan program sesuai prinsip Islam. Surat Keputusan (SK) Dewan Pengawas Syariah ini menjadi dasar legalitas dan rujukan pengawasan syariah atas seluruh aktivitas kami.",
-  skNumber: "SK-DPS/PABE/01/2026",
-  shariaBoardChairman: "Dr. KH. Abdullah Syukri, M.A.",
-  effectiveDate: "01 Januari 2026 - 31 Desember 2026",
-  legalFoundation: "DSN-MUI No. 138/DSN-MUI/IX/2020 & Regulasi Kemenag RI",
-  pdfUrl: "/api/documents/download?type=syariah",
-  downloadFilename: "SK-Dewan-Pengawas-Syariah-PABE-2026.pdf",
-  radarMetrics: [
-    { dimension: "Akad Syariah", score: 98, fullMark: 100 },
-    { dimension: "Ketepatan Asnaf", score: 96, fullMark: 100 },
-    { dimension: "Bebas Riba/Gharar", score: 100, fullMark: 100 },
-    { dimension: "Transparansi Penyaluran", score: 95, fullMark: 100 },
-    { dimension: "Pengawasan Rutin DPS", score: 97, fullMark: 100 },
-    { dimension: "Dampak Berkelanjutan", score: 92, fullMark: 100 },
   ],
 };

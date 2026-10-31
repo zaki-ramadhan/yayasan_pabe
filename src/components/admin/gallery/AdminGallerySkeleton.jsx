@@ -29,6 +29,9 @@ export function AdminGallerySkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-12 text-center py-2.5">
+                  <Skeleton className="w-4 h-4 rounded mx-auto" />
+                </TableHead>
                 <TableHead className="w-20 py-2.5">
                   <Skeleton className="h-4 w-12 rounded" />
                 </TableHead>
@@ -38,8 +41,8 @@ export function AdminGallerySkeleton() {
                 <TableHead className="w-40 py-2.5 text-center whitespace-nowrap">
                   <Skeleton className="h-4 w-24 mx-auto rounded" />
                 </TableHead>
-                <TableHead className="w-36 py-2.5 whitespace-nowrap">
-                  <Skeleton className="h-4 w-28 rounded" />
+                <TableHead className="w-36 py-2.5 text-center whitespace-nowrap">
+                  <Skeleton className="h-4 w-28 mx-auto rounded" />
                 </TableHead>
                 <TableHead className="w-24 py-2.5 text-right whitespace-nowrap pr-4">
                   <Skeleton className="h-4 w-12 ml-auto rounded" />
@@ -49,6 +52,9 @@ export function AdminGallerySkeleton() {
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
+                  <TableCell className="w-12 text-center py-2.5 align-middle">
+                    <Skeleton className="w-4 h-4 rounded mx-auto" />
+                  </TableCell>
                   <TableCell className="w-20 py-3 align-middle">
                     <Skeleton className="w-14 h-10 rounded-md" />
                   </TableCell>
@@ -61,8 +67,8 @@ export function AdminGallerySkeleton() {
                   <TableCell className="w-40 text-center py-3 align-middle">
                     <Skeleton className="h-5 w-24 mx-auto rounded-full" />
                   </TableCell>
-                  <TableCell className="w-36 py-3 align-middle">
-                    <Skeleton className="h-4 w-24 rounded" />
+                  <TableCell className="w-36 py-3 align-middle text-center">
+                    <Skeleton className="h-4 w-24 mx-auto rounded" />
                   </TableCell>
                   <TableCell className="w-24 text-right py-3 align-middle pr-4">
                     <Skeleton className="h-7 w-16 ml-auto rounded" />

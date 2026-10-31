@@ -82,7 +82,12 @@ export async function DELETE(request) {
   if (errorResponse) return errorResponse;
 
   try {
-    const { ids } = await request.json();
+    const body = await request.json();
+    let ids = body?.ids;
+    if (ids && typeof ids === "object" && !Array.isArray(ids)) {
+      ids = Object.values(ids);
+    }
+
     if (!Array.isArray(ids) || ids.length === 0) {
       return NextResponse.json(
         { success: false, message: "Daftar ID penyaluran tidak boleh kosong." },

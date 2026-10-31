@@ -185,7 +185,7 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingAvatar}
-                className="absolute -bottom-1 -right-1 w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-primary text-white flex items-center justify-center border-2 border-white shadow-md hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none" aria-label="Ganti foto avatar"
+                className="absolute -bottom-1 -right-1 w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full bg-primary text-white flex items-center justify-center border-2 border-white shadow-md hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none"
                 aria-label="Ganti foto avatar"
               >
                 {isUploadingAvatar ? (

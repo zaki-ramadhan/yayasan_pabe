@@ -109,7 +109,7 @@ export function AdminGalleryTableRow({
       </TableCell>
 
       {/* Tanggal Kegiatan */}
-      <TableCell className="w-36 py-2.5 text-slate-600 text-sm align-middle whitespace-nowrap">
+      <TableCell className="w-36 py-2.5 text-slate-600 text-sm align-middle text-center whitespace-nowrap tabular-nums">
         {formatDate(displayDate)}
       </TableCell>
 

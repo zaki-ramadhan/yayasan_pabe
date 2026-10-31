@@ -55,13 +55,8 @@ export function AdminInstagramTableRow({
           <p className="text-sm font-medium text-slate-900 line-clamp-2 leading-snug">
             {caption}
           </p>
-          <div className="flex items-center gap-3 text-xs text-slate-500">
-            {post.altText && (
-              <span className="line-clamp-1 italic max-w-sm text-slate-400">
-                Alt: {post.altText}
-              </span>
-            )}
-            {post.postUrl && post.postUrl !== "https://www.instagram.com" && (
+          {post.postUrl && (
+            <div className="flex items-center text-xs text-slate-500">
               <a
                 href={post.postUrl}
                 target="_blank"
@@ -71,12 +66,12 @@ export function AdminInstagramTableRow({
                 <span>Buka postingan</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </TableCell>
 
-      <TableCell className="w-40 py-2.5 align-middle text-xs text-slate-600 whitespace-nowrap">
+      <TableCell className="w-40 py-2.5 align-middle text-center text-xs text-slate-600 whitespace-nowrap tabular-nums">
         {postedAtFormatted}
       </TableCell>
 

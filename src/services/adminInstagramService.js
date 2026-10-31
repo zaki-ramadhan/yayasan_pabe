@@ -140,16 +140,27 @@ export async function createInstagramPost(data) {
     throw new Error("Data postingan Instagram tidak valid.");
   }
 
+  const currentCount = await prisma.instagramPost.count();
+  if (currentCount >= 8) {
+    throw new Error(
+      "Batas maksimal 8 postingan feed Instagram telah tercapai. Hapus postingan lama terlebih dahulu untuk menambahkan postingan baru."
+    );
+  }
+
   const imageUrl = data.imageUrl && typeof data.imageUrl === "string" ? data.imageUrl.trim() : "";
   if (!imageUrl) {
     throw new Error("Gambar postingan Instagram wajib diunggah.");
   }
 
   const caption = sanitizeInput(data.caption || "").trim();
+  if (!caption) {
+    throw new Error("Caption postingan Instagram wajib diisi.");
+  }
   const altText = data.altText ? sanitizeInput(data.altText).trim() : caption.slice(0, 100);
-  const postUrl = data.postUrl && typeof data.postUrl === "string" && data.postUrl.trim()
-    ? data.postUrl.trim()
-    : "https://www.instagram.com";
+  const postUrl = data.postUrl && typeof data.postUrl === "string" ? data.postUrl.trim() : "";
+  if (!postUrl) {
+    throw new Error("Tautan postingan Instagram wajib diisi.");
+  }
 
   const likeCount = parseThousandsToNumber(data.likeCount);
   const commentCount = parseThousandsToNumber(data.commentCount);
@@ -187,7 +198,9 @@ export async function updateInstagramPost(id, data) {
     updateData.altText = sanitizeInput(data.altText).trim();
   }
   if (data.postUrl !== undefined) {
-    updateData.postUrl = String(data.postUrl).trim() || "https://www.instagram.com";
+    const url = String(data.postUrl).trim();
+    if (!url) throw new Error("Tautan postingan Instagram tidak boleh kosong.");
+    updateData.postUrl = url;
   }
   if (data.likeCount !== undefined) {
     updateData.likeCount = parseThousandsToNumber(data.likeCount);

@@ -5,7 +5,7 @@ import { InformationHeroHeader } from "@/components/shared/InformationHeroHeader
  */
 export function DistributionHeader({
   title = "Distribusi Program & Bantuan",
-  description = "Transparansi audit keuangan independen, dinamika rekam jejak penyaluran bantuan berkala, serta kepatuhan fatwa Dewan Pengawas Syariah demi menjaga amanah umat secara profesional dan akuntabel.",
+  description = "Transparansi audit keuangan independen serta dinamika rekam jejak penyaluran bantuan berkala demi menjaga amanah para donatur secara profesional dan akuntabel.",
   badge = null,
   className = "",
 }) {

@@ -15,6 +15,7 @@ export function AdminInstagramView({
   const {
     posts,
     pagination,
+    totalPosts,
     profile,
     search,
     setSearch,
@@ -35,6 +36,7 @@ export function AdminInstagramView({
     handleDeletePost,
     handleSaveProfile,
     handlePostSaved,
+    handleRefresh,
     fetchPosts,
   } = useAdminInstagram({
     initialPosts,
@@ -54,8 +56,11 @@ export function AdminInstagramView({
       <AdminInstagramTable
         posts={posts}
         pagination={pagination}
+        totalPosts={totalPosts}
         search={search}
         onSearchChange={setSearch}
+        onClearSearch={() => setSearch("")}
+        onRefresh={handleRefresh}
         isLoading={isPending}
         selection={selection}
         onOpenBulkDelete={() => setIsBulkDeleteModalOpen(true)}
@@ -89,7 +94,7 @@ export function AdminInstagramView({
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
         title={`Hapus ${selection.selectedCount} Postingan Instagram`}
-        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} postingan dokumentasi Instagram terpilih? Tindakan ini tidak dapat dibatalkan.`}
+        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} postingan feed Instagram terpilih? Tindakan ini tidak dapat dibatalkan.`}
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />

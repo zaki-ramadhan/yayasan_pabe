@@ -143,15 +143,17 @@ export function AdminDistributionTable({
     if (selection.selectedCount === 0) return;
     setIsBulkDeleting(true);
     try {
+      const ids = Array.from(selection.selectedIds || []);
       const res = await safeFetch("/api/admin/distributions", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids: selection.selectedIds }),
+        body: JSON.stringify({ ids }),
       });
       const data = await res.json();
       if (data.success) {
         toast.success(data.message || "Rekam penyaluran terpilih berhasil dihapus.");
-        setDistributions((prev) => prev.filter((d) => !selection.selectedIds.includes(d.id)));
+        const selectedSet = selection.selectedKeys;
+        setDistributions((prev) => prev.filter((d) => !selectedSet.has(d.id)));
         selection.clearSelection();
         setIsBulkDeleteDialogOpen(false);
       } else {
@@ -215,9 +217,9 @@ export function AdminDistributionTable({
                   Program donasi asal
                 </TableHead>
                 <TableHead className="font-medium text-slate-600 text-sm py-2.5">
-                  Judul kegiatan &amp; berita
+                  Kegiatan penyaluran
                 </TableHead>
-                <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Tanggal realisasi
                 </TableHead>
                 <TableHead className="w-40 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">

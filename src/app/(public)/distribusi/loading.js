@@ -31,7 +31,7 @@ export default function DistribusiLoading() {
                 </div>
                 <Skeleton className="h-4 w-72 sm:w-80 rounded ml-3.5" />
               </div>
-              <Skeleton className="h-4 w-20 rounded" />
+              <Skeleton className="h-8 sm:h-9 w-28 rounded-md" />
             </div>
 
             {/* Donut Chart Canvas & Legend */}
@@ -121,42 +121,6 @@ export default function DistribusiLoading() {
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="space-y-1">
                   <Skeleton className="h-3.5 w-28 rounded" />
-                  <Skeleton className="h-5 w-32 max-w-full rounded" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Row 2: Section 3 Berada di Tengah Sumbu X (SK Dewan Pengawas Syariah - Chart Terakhir) */}
-        <div className="flex justify-center pb-8 sm:pb-10 border-b border-slate-200">
-          <div className="w-full max-w-2xl space-y-4">
-            {/* Header: Title + Accent Bar + Action Link */}
-            <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-1 h-5 rounded-xs bg-primary shrink-0" />
-                  <Skeleton className="h-6 w-56 rounded" />
-                </div>
-                <Skeleton className="h-4 w-72 sm:w-96 rounded ml-3.5" />
-              </div>
-              <Skeleton className="h-4 w-24 rounded" />
-            </div>
-
-            {/* Radar Chart Container */}
-            <div className="w-full h-52 sm:h-56 flex items-center justify-center">
-              <div className="relative w-44 h-44 rounded-full border border-dashed border-slate-300 flex items-center justify-center">
-                <div className="w-28 h-28 rounded-full border border-dashed border-slate-300 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-slate-200/60" />
-                </div>
-              </div>
-            </div>
-
-            {/* 4 Flat Key Metrics (2 Cols mobile, 4 Cols desktop, Border-t) */}
-            <div className="pt-3 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 sm:gap-6 gap-3 text-sm">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="space-y-1">
-                  <Skeleton className="h-3.5 w-24 rounded" />
                   <Skeleton className="h-5 w-32 max-w-full rounded" />
                 </div>
               ))}
