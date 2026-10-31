@@ -82,18 +82,18 @@ export function LoginForm() {
       const errorMessages = {
         access_denied: "Persetujuan akun dibatalkan.",
         no_code_provided: "Kode autentikasi tidak ditemukan.",
-        oauth_credentials_missing: "Kredensial OAuth belum lengkap di .env.",
-        token_exchange_failed: "Gagal menukar token dengan Google. Pastikan Client Secret valid.",
-        userinfo_fetch_failed: "Gagal mengambil data profil dari Google.",
+        oauth_credentials_missing: "Layanan masuk akun pihak ketiga sedang tidak tersedia.",
+        token_exchange_failed: "Gagal menghubungkan akun. Silakan coba lagi.",
+        userinfo_fetch_failed: "Gagal mengambil data profil akun.",
         no_email_provided: "Akun tidak menyediakan alamat email.",
-        internal_oauth_error: "Terjadi kesalahan internal pada server autentikasi.",
-        fb_missing_app_id: "NEXT_PUBLIC_FACEBOOK_APP_ID belum diatur di file .env.",
+        internal_oauth_error: "Terjadi gangguan sistem saat menghubungkan akun.",
+        fb_missing_app_id: "Layanan masuk Facebook sedang tidak tersedia.",
         fb_cancelled: "Persetujuan akun Facebook dibatalkan.",
         fb_error: "Autentikasi Facebook mengalami kendala atau ditolak.",
-        fb_state_mismatch: "Sesi validasi keamanan Facebook kedaluwarsa. Silakan coba lagi.",
-        fb_token_failed: "Gagal memverifikasi token Facebook. Pastikan App Secret di Meta valid.",
+        fb_state_mismatch: "Sesi validasi keamanan kedaluwarsa. Silakan coba lagi.",
+        fb_token_failed: "Gagal memverifikasi akun Facebook. Silakan coba lagi.",
         fb_profile_failed: "Gagal mengambil profil akun dari Facebook.",
-        fb_internal_error: "Terjadi kesalahan sistem saat memproses login Facebook.",
+        fb_internal_error: "Terjadi gangguan sistem saat memproses login Facebook.",
       };
       toast.error(errorMessages[errorParam] || `Gagal login: ${errorParam}`);
     }

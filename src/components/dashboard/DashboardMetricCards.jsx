@@ -66,7 +66,7 @@ export function DashboardMetricCards({ userRole, stats }) {
         <DashboardMetricCard
           label="Status Keaktifan"
           value={<span className="text-emerald-600">Relawan Terdaftar</span>}
-          subtitle="Database Resmi Yayasan PABE"
+          subtitle="Resmi Yayasan PABE"
           statusColor="slate"
         />
       </div>
@@ -83,7 +83,7 @@ export function DashboardMetricCards({ userRole, stats }) {
       <DashboardMetricCard
         label="Donasi Masuk Terhimpun"
         value={formatRupiah(totalDonations)}
-        subtitle="Live dari transaksi PostgreSQL"
+        subtitle="Total riwayat transaksi"
         statusColor="emerald"
       />
       <DashboardMetricCard
@@ -95,7 +95,7 @@ export function DashboardMetricCards({ userRole, stats }) {
       <DashboardMetricCard
         label="Program Campaign Aktif"
         value={`${formatNumber(campaignsCount)} Program`}
-        subtitle="Tersinkronisasi Database"
+        subtitle="Data terverifikasi"
         statusColor="slate"
       />
       <DashboardMetricCard

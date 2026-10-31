@@ -41,11 +41,11 @@ export function AdminRoutineTriggerButton({
       if (isGlobal) {
         if (data.processed === 0) {
           toast.info(
-            "Cron aktif & terintegrasi: Tidak ada jadwal donatur yang jatuh tempo pada jam sekarang. Gunakan tombol tes di dalam dialog rincian donatur (ikon mata) untuk tes kirim langsung."
+            "Pemeriksaan aktif: Tidak ada jadwal donatur yang jatuh tempo saat ini. Gunakan tombol tes di rincian donatur untuk uji coba langsung."
           );
         } else {
           toast.success(
-            `Cron berhasil: ${data.succeeded || 0} terkirim, ${data.skipped || 0} dilewati, ${data.failed || 0} gagal.`
+            `Pemeriksaan selesai: ${data.succeeded || 0} terkirim, ${data.skipped || 0} dilewati, ${data.failed || 0} gagal.`
           );
         }
       } else {
@@ -80,17 +80,17 @@ export function AdminRoutineTriggerButton({
         variant="outline"
         onClick={handleTrigger}
         disabled={isTriggering}
-        className="h-10 gap-1.5 text-sm font-medium bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer shrink-0 disabled:pointer-events-none disabled:cursor-not-allowed" aria-label="Jalankan pengecekan cron jadwal donasi rutin sekarang"
+        className="h-10 gap-1.5 text-sm font-medium bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer shrink-0 disabled:pointer-events-none disabled:cursor-not-allowed" aria-label="Jalankan pemeriksaan jadwal donasi rutin sekarang"
       >
         {isTriggering ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
-            <span>Memproses cron...</span>
+            <span>Memeriksa...</span>
           </>
         ) : (
           <>
             <Play className="w-4 h-4 text-emerald-600 fill-emerald-600/20" />
-            <span>Tes jalankan cron</span>
+            <span>Cek jadwal donasi</span>
           </>
         )}
       </Button>

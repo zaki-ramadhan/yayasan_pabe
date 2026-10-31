@@ -12,17 +12,17 @@ const toastVariants = cva(
     variants: {
       variant: {
         default:
-          "border-slate-800 bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-slate-950/30",
+          "border-slate-700/80 bg-gradient-to-r from-slate-700 to-slate-800 text-white shadow-lg shadow-slate-950/20",
         info:
-          "border-blue-800 bg-gradient-to-r from-blue-700 to-blue-800 text-white shadow-blue-950/25",
+          "border-blue-500/80 bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-950/15",
         success:
-          "border-emerald-800 bg-gradient-to-r from-emerald-700 to-emerald-800 text-white shadow-emerald-950/25",
+          "border-emerald-500/80 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-950/15",
         destructive:
-          "border-rose-800 bg-gradient-to-r from-rose-700 to-rose-800 text-white shadow-rose-950/25",
+          "border-rose-500/80 bg-gradient-to-r from-rose-600 to-rose-500 text-white shadow-lg shadow-rose-950/15",
         error:
-          "border-rose-800 bg-gradient-to-r from-rose-700 to-rose-800 text-white shadow-rose-950/25",
+          "border-rose-500/80 bg-gradient-to-r from-rose-600 to-rose-500 text-white shadow-lg shadow-rose-950/15",
         warning:
-          "border-amber-800 bg-gradient-to-r from-amber-700 to-amber-800 text-white shadow-amber-950/25",
+          "border-amber-500/80 bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg shadow-amber-950/15",
       },
     },
     defaultVariants: {

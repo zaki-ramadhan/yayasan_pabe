@@ -22,7 +22,7 @@ describe("uploadService & storageConstants Unit Tests", () => {
       ).rejects.toThrow("Konteks pengunggahan (context) wajib disertakan.");
     });
 
-    it("menggunakan timeout 30 detik untuk gambar biasa di bawah 5MB", async () => {
+    it("menggunakan timeout 60 detik untuk gambar biasa di bawah 5MB", async () => {
       const mockSafeFetch = vi.spyOn(safeFetchModule, "safeFetch").mockResolvedValue({
         ok: true,
         json: async () => ({
@@ -38,12 +38,12 @@ describe("uploadService & storageConstants Unit Tests", () => {
       expect(mockSafeFetch).toHaveBeenCalledWith(
         "/api/upload",
         expect.anything(),
-        30000
+        60000
       );
       expect(result.url).toBe("https://r2.example.com/test.webp");
     });
 
-    it("menggunakan timeout adaptif 90 detik untuk berkas video atau berkas di atas 5MB", async () => {
+    it("menggunakan timeout adaptif 180 detik untuk berkas video atau berkas di atas 5MB", async () => {
       const mockSafeFetch = vi.spyOn(safeFetchModule, "safeFetch").mockResolvedValue({
         ok: true,
         json: async () => ({
@@ -59,7 +59,7 @@ describe("uploadService & storageConstants Unit Tests", () => {
       expect(mockSafeFetch).toHaveBeenCalledWith(
         "/api/upload",
         expect.anything(),
-        90000
+        180000
       );
       expect(result.url).toBe("https://r2.example.com/video.mp4");
     });

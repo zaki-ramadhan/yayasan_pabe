@@ -132,21 +132,21 @@ export function useAdminStorage({ initialOverview = null }) {
           toast({
             variant: "success",
             title: "Penyimpanan bersih",
-            description: "Tidak ditemukan berkas sampah. Seluruh berkas di R2 terhubung ke database.",
+            description: "Tidak ditemukan berkas sampah. Seluruh berkas terpakai dengan baik.",
           });
         }
       } else {
         toast({
           variant: "destructive",
           title: "Gagal memindai",
-          description: json.message || "Terjadi kendala saat membaca bucket Cloudflare R2.",
+          description: json.message || "Terjadi kendala saat memeriksa penyimpanan berkas.",
         });
       }
     } catch {
       toast({
         variant: "destructive",
         title: "Koneksi gagal",
-        description: "Gagal menghubungkan ke server untuk memindai R2.",
+        description: "Gagal menghubungkan ke server untuk memindai berkas.",
       });
     } finally {
       setIsScanning(false);
@@ -213,7 +213,7 @@ export function useAdminStorage({ initialOverview = null }) {
         toast({
           variant: "success",
           title: "Pembersihan berhasil",
-          description: `${json.data?.deletedCount || keys.length} berkas sampah berhasil dihapus dari Cloudflare R2.`,
+          description: `${json.data?.deletedCount || keys.length} berkas tidak terpakai berhasil dibersihkan.`,
         });
 
         setDeleteModalOpen(false);
@@ -222,7 +222,7 @@ export function useAdminStorage({ initialOverview = null }) {
         toast({
           variant: "destructive",
           title: "Penghapusan gagal",
-          description: json.message || "Gagal menghapus berkas dari Cloudflare R2.",
+          description: json.message || "Gagal membersihkan berkas dari penyimpanan.",
         });
       }
     } catch {

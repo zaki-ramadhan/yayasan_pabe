@@ -136,7 +136,7 @@ export function AdminProgramTable({
         toast.error(errMsg);
       }
     } catch {
-      setError("Gagal menghubungi server database.");
+      setError("Gagal memuat data program.");
       toast.error("Gagal menyegarkan data program.");
     } finally {
       setIsLoading(false);

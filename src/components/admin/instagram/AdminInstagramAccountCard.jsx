@@ -28,6 +28,7 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
   const [displayName, setDisplayName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [avatarUploadProgress, setAvatarUploadProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -53,10 +54,12 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
     }
 
     try {
+      setAvatarUploadProgress(0);
       setIsUploadingAvatar(true);
       const res = await uploadFileToServer({
         file,
         context: "USER_AVATAR",
+        onProgress: (pct) => setAvatarUploadProgress(pct),
       });
 
       if (res?.url) {
@@ -66,6 +69,7 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
       toast.error("Gagal mengunggah foto avatar.");
     } finally {
       setIsUploadingAvatar(false);
+      setAvatarUploadProgress(0);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
@@ -177,6 +181,16 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
                   />
                 ) : (
                   <span className="font-bold text-slate-700 text-2xl sm:text-3xl select-none">{initial}</span>
+                )}
+
+                {/* Overlay Indikator Unggah Berpersentase */}
+                {isUploadingAvatar && (
+                  <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-2xs flex flex-col items-center justify-center text-white z-10 select-none">
+                    <Loader2 className="w-5 h-5 animate-spin mb-1 text-white" />
+                    <span className="text-2xs font-semibold tabular-nums">
+                      {avatarUploadProgress}%
+                    </span>
+                  </div>
                 )}
               </div>
 

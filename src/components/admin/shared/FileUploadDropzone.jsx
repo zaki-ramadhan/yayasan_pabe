@@ -1,7 +1,8 @@
 "use client";
 
-import { UploadCloud, FileCheck, Loader2 } from "lucide-react";
+import { UploadCloud, FileCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UploadProgressBar } from "@/components/ui/UploadProgressBar";
 
 /**
  * Sub-komponen visual kotak unggah seret & lepas (Drag and Drop) terstandarisasi.
@@ -10,6 +11,7 @@ import { cn } from "@/lib/utils";
 export function FileUploadDropzone({
   isDragging = false,
   isUploading = false,
+  uploadProgress = 0,
   uploadProgressText = "",
   isPdf = false,
   multiple = false,
@@ -19,6 +21,7 @@ export function FileUploadDropzone({
   onDrop,
   onDragOver,
   onDragLeave,
+  onCancel,
   className = "",
 }) {
   return (
@@ -32,20 +35,19 @@ export function FileUploadDropzone({
         isDragging
           ? "border-emerald-500 bg-emerald-50/60 scale-[0.99]"
           : "border-slate-300 hover:border-slate-400 bg-slate-50/60 hover:bg-slate-50",
-        isUploading && "pointer-events-none opacity-80",
+        isUploading && "cursor-default opacity-95",
         className
       )}
     >
       {isUploading ? (
-        <div className="flex flex-col items-center">
-          <Loader2 className="w-8 h-8 text-emerald-600 animate-spin mb-2" />
-          <p className="text-sm font-medium text-slate-800">
-            {uploadProgressText || (isPdf ? "Mengunggah dokumen PDF..." : "Mengompresi dan mengunggah ke R2...")}
-          </p>
-          <p className="text-xs text-slate-500 mt-1">
-            Mohon jangan menutup jendela ini
-          </p>
-        </div>
+        <UploadProgressBar
+          progress={uploadProgress}
+          isUploading={isUploading}
+          uploadText={uploadProgressText}
+          isPdf={isPdf}
+          onCancel={onCancel}
+          theme="emerald"
+        />
       ) : (
         <div className="flex flex-col items-center">
           {isPdf ? (

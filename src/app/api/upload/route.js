@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { uploadToR2, isR2Configured } from "@/lib/r2Storage";
+import { uploadToR2, deleteFromR2, isR2Configured } from "@/lib/r2Storage";
 import { getStorageContext } from "@/lib/storageConstants";
 import { requireAuth } from "@/lib/serverAuth";
 import { checkRateLimit } from "@/lib/rateLimit";
@@ -206,6 +206,96 @@ export async function POST(request) {
         message: error.message || "Gagal mengunggah berkas ke Cloudflare R2.",
       },
       { status: 400 }
+    );
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    if (!isR2Configured()) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Layanan penyimpanan Cloudflare R2 belum dikonfigurasi di server.",
+        },
+        { status: 503 }
+      );
+    }
+
+    const rateLimitBlocked = checkRateLimit(request, {
+      action: "r2_delete",
+      limit: 60,
+      windowMs: 60000,
+    });
+    if (rateLimitBlocked) return rateLimitBlocked;
+
+    let targetUrls = [];
+
+    // Baca dari query param jika ada
+    const { searchParams } = new URL(request.url);
+    const queryUrl = searchParams.get("url");
+    if (queryUrl) {
+      targetUrls.push(queryUrl);
+    }
+
+    // Baca dari request body (mendukung JSON dan teks beacon)
+    if (targetUrls.length === 0) {
+      try {
+        const contentType = request.headers.get("content-type") || "";
+        if (contentType.includes("application/json")) {
+          const body = await request.json();
+          if (Array.isArray(body?.urls)) {
+            targetUrls = body.urls.filter((u) => typeof u === "string");
+          } else if (typeof body?.url === "string") {
+            targetUrls = [body.url];
+          }
+        } else {
+          const rawText = await request.text();
+          if (rawText) {
+            try {
+              const parsed = JSON.parse(rawText);
+              if (Array.isArray(parsed?.urls)) {
+                targetUrls = parsed.urls.filter((u) => typeof u === "string");
+              } else if (typeof parsed?.url === "string") {
+                targetUrls = [parsed.url];
+              }
+            } catch {
+              targetUrls = [rawText.trim()];
+            }
+          }
+        }
+      } catch {
+        // Abaikan parse body error jika kosong
+      }
+    }
+
+    const validUrls = targetUrls.map((u) => String(u).trim()).filter(Boolean);
+
+    if (validUrls.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "URL berkas yang akan dihapus wajib disertakan." },
+        { status: 400 }
+      );
+    }
+
+    await Promise.allSettled(validUrls.map((url) => deleteFromR2(url)));
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: `${validUrls.length} berkas berhasil dihapus dari Cloudflare R2.`,
+        deletedCount: validUrls.length,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Delete upload error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message || "Gagal menghapus berkas dari Cloudflare R2.",
+      },
+      { status: 500 }
     );
   }
 }

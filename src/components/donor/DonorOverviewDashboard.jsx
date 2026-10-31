@@ -128,7 +128,7 @@ export function DonorOverviewDashboard({ currentUser }) {
 			{fetchError && (
 				<DataFetchErrorState
 					title="Gangguan Koneksi Riwayat Donasi"
-					description="Tidak dapat menyinkronkan data donasi terbaru Anda ke server. Silakan periksa jaringan dan coba lagi."
+					description="Tidak dapat memuat data donasi terbaru. Silakan periksa koneksi internet Anda dan coba lagi."
 					onRetry={fetchDashboardData}
 					compact
 				/>

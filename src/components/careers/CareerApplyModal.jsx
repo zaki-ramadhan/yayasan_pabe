@@ -18,6 +18,7 @@ import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 import { getStoredUser } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useStagedUploads } from "@/hooks/useStagedUploads";
 
 export function CareerApplyModal({ isOpen, onClose, job }) {
   const { currentUser } = useCurrentUser();
@@ -48,6 +49,15 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const { trackUpload, commitUploads, discardUploads } = useStagedUploads();
+
+  const handleClose = () => {
+    if (!isSuccess) {
+      discardUploads();
+    }
+    onClose();
+  };
 
   // Restore draft and prefill logged in user when modal opens (mirip form relawan)
   useEffect(() => {
@@ -102,7 +112,10 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     if (field === "fullName") cleanValue = sanitizeName(value);
     else if (field === "email") cleanValue = sanitizeEmail(value);
     else if (field === "phone") cleanValue = sanitizePhone(value);
-    else if (field === "resumeUrl") cleanValue = value.replace(/\s+/g, "").slice(0, 300);
+    else if (field === "resumeUrl") {
+      cleanValue = (value || "").replace(/\s+/g, "").slice(0, 300);
+      if (cleanValue) trackUpload(cleanValue);
+    }
     else if (field === "coverLetter") cleanValue = value.replace(/^\s+/, "").replace(/\s{2,}/g, " ").slice(0, 500);
 
     setFormData((prev) => ({
@@ -148,7 +161,8 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     if (!phoneValidation.isValid) {
       newErrors.phone = phoneValidation.message;
     }
-    if (requiresResume && !formData.resumeUrl.trim()) {
+    const hasResume = formData.resumeUrl instanceof File || (typeof formData.resumeUrl === "string" && Boolean(formData.resumeUrl.trim()));
+    if (requiresResume && !hasResume) {
       newErrors.resumeUrl = "Berkas CV / resume (PDF) wajib diunggah untuk posisi ini.";
     }
     if (coverLetterTrimmed.length < 10) {
@@ -173,7 +187,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
           fullName: fullNameTrimmed,
           email: emailTrimmed,
           phone: phoneValidation.sanitized,
-          resumeUrl: requiresResume ? formData.resumeUrl.trim() : "",
+          resumeUrl: formData.resumeUrl.trim(),
           coverLetter: coverLetterTrimmed,
         }),
         timeoutMs: 15000,
@@ -184,29 +198,16 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
         throw new Error(result.message || "Gagal mengirimkan lamaran.");
       }
 
+      commitUploads();
       setIsSuccess(true);
       try {
         sessionStorage.removeItem(`career_draft_${job.id}`);
       } catch {}
-      toast.success("Lamaran berhasil dikirim ke database HRD!");
+      toast.success("Lamaran berhasil dikirim. Tim kami akan segera meninjaunya.");
     } catch (error) {
       toast.error(error.message || "Terjadi kendala saat mengirimkan lamaran.");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleClose = () => {
-    if (!isSubmitting) {
-      setIsSuccess(false);
-      setFormData({
-        fullName: "",
-        email: "",
-        phone: "",
-        resumeUrl: "",
-        coverLetter: "",
-      });
-      onClose();
     }
   };
 

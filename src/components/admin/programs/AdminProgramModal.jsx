@@ -15,6 +15,7 @@ import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeStandardText } from "@/lib/sanitizer";
+import { useStagedUploads } from "@/hooks/useStagedUploads";
 
 export function AdminProgramModal({
 	isOpen,
@@ -34,9 +35,15 @@ export function AdminProgramModal({
 	const [location, setLocation] = useState("");
 	const [story, setStory] = useState("");
 	const [bannerUrl, setBannerUrl] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [errors, setErrors] = useState({});
-	const [isSubmitting, setIsSubmitting] =
-		useState(false);
+
+	const { trackUpload, commitUploads, discardUploads } = useStagedUploads();
+
+	const handleClose = () => {
+		discardUploads();
+		onOpenChange(false);
+	};
 
 	const categoryList = useMemo(() => {
 		const combined = [
@@ -214,39 +221,24 @@ export function AdminProgramModal({
 
 		setErrors({});
 
-		const isNewCat =
-			categoryId.startsWith(
-				"new:",
-			);
-		const payload = {
-			title,
-			targetAmount,
-			endDate: endDate
-				? new Date(
-						endDate,
-					).toISOString()
-				: null,
-			location,
-			story,
-			bannerUrl: bannerUrl ? bannerUrl.trim() : null,
-			excerpt: story.slice(
-				0,
-				160,
-			),
-		};
-
-		if (isNewCat) {
-			payload.newCategoryName =
-				categoryId.slice(
-					4,
-				);
-		} else {
-			payload.categoryId =
-				categoryId;
-		}
-
 		setIsSubmitting(true);
 		try {
+			const isNewCat = categoryId.startsWith("new:");
+			const payload = {
+				title,
+				targetAmount,
+				endDate: endDate ? new Date(endDate).toISOString() : null,
+				location,
+				story,
+				bannerUrl: bannerUrl ? String(bannerUrl).trim() : null,
+				excerpt: story.slice(0, 160),
+			};
+
+			if (isNewCat) {
+				payload.newCategoryName = categoryId.slice(4);
+			} else {
+				payload.categoryId = categoryId;
+			}
 			const url =
 				isEditing
 					? `/api/admin/programs/${campaignToEdit.id}`
@@ -275,6 +267,7 @@ export function AdminProgramModal({
 			if (
 				data.success
 			) {
+				commitUploads();
 				toast.success(
 					isEditing
 						? "Program berhasil diperbarui."
@@ -298,19 +291,19 @@ export function AdminProgramModal({
 				"Terjadi kendala jaringan saat menyimpan program.",
 			);
 		} finally {
-			setIsSubmitting(
-				false,
-			);
+			setIsSubmitting(false);
 		}
 	};
 
 	const isDirty = useMemo(() => {
+		const hasBanner = bannerUrl instanceof File || (typeof bannerUrl === "string" && Boolean(bannerUrl.trim()));
 		if (!isEditing || !campaignToEdit) {
-			return Boolean(title.trim() || targetAmount > 0 || story.trim() || bannerUrl.trim());
+			return Boolean(title.trim() || targetAmount > 0 || story.trim() || hasBanner);
 		}
 		const initialEndDate = campaignToEdit.endDate
 			? campaignToEdit.endDate.split("T")[0]
 			: "";
+		if (bannerUrl instanceof File) return true;
 		return isFormDirty(
 			{
 				title: campaignToEdit.title || "",
@@ -328,7 +321,7 @@ export function AdminProgramModal({
 				endDate,
 				location,
 				story,
-				bannerUrl,
+				bannerUrl: typeof bannerUrl === "string" ? bannerUrl : "",
 			}
 		);
 	}, [
@@ -356,7 +349,7 @@ export function AdminProgramModal({
 	return (
 		<FormDialog
 			isOpen={isOpen}
-			onClose={() => onOpenChange(false)}
+			onClose={handleClose}
 			onSubmit={handleSubmit}
 			maxWidth="max-w-2xl"
 			title={isEditing ? "Edit Program Donasi" : "Tambah Program Donasi Baru"}
@@ -464,6 +457,7 @@ export function AdminProgramModal({
 				onChange={setBannerUrl}
 				context="CAMPAIGN_BANNER"
 				identifier={title}
+				onUploadSuccess={trackUpload}
 				label="Foto sampul / banner program"
 				helperText="Mendukung JPG, PNG, WebP (Maks. 10MB) • Bisa Ctrl + V. Otomatis dikonversi ke WebP."
 			/>

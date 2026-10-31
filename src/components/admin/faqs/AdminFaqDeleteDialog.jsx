@@ -28,7 +28,7 @@ export function AdminFaqDeleteDialog({
         </div>
       )}
       <p className="text-xs text-slate-500 leading-relaxed">
-        Tindakan ini permanen dan akan menghapus data tanya-jawab terkait dari database.
+        Tindakan ini bersifat permanen dan tidak dapat dibatalkan.
       </p>
     </ConfirmDialog>
   );

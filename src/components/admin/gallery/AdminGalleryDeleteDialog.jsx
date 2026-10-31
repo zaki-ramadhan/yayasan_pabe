@@ -50,7 +50,7 @@ export function AdminGalleryDeleteDialog({
       </div>
 
       <p className="text-xs text-slate-500 leading-relaxed">
-        Foto akan dihapus secara permanen dari basis data dan server penyimpanan Cloudflare R2.
+        Foto akan dihapus secara permanen dari sistem.
       </p>
     </ConfirmDialog>
   );

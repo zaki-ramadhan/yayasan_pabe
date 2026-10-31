@@ -29,7 +29,7 @@ export function StorageCapacityBanner({ overview }) {
 				<div className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
 					<Image
 						src="/img/branding/cloudflare-logo.webp"
-						alt="Cloudflare R2 Storage"
+						alt="Penyimpanan cloud"
 						fill
 						sizes="(max-width: 768px) 48px, 56px"
 						className="object-contain"
@@ -44,7 +44,7 @@ export function StorageCapacityBanner({ overview }) {
 				<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div className="space-y-0.5">
             <h2 className="text-sm sm:text-base font-medium text-slate-900 tracking-tight">
-              Penyimpanan Cloudflare R2
+              Kapasitas penyimpanan cloud
             </h2>
             <div className="text-xs text-slate-700 font-normal space-y-0.5 leading-tight">
               <p>
@@ -63,9 +63,9 @@ export function StorageCapacityBanner({ overview }) {
               href="/api/admin/external/cloudflare-r2"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-white bg-gradient-to-b from-[#f97d26] via-[#f46f14] to-[#ea5d05] border border-[#e05602] shadow-[0_2px_4px_rgba(242,128,32,0.25),inset_0_1px_0_rgba(255,255,255,0.45)] hover:from-[#fa8e3f] hover:to-[#f0680a] hover:shadow-[0_3px_8px_rgba(242,128,32,0.35)] active:translate-y-0.5 active:shadow-[0_1px_2px_rgba(242,128,32,0.2)] transition-all cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500/50" aria-label="Buka dashboard bucket Cloudflare R2 di tab baru"
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-white bg-gradient-to-b from-[#f97d26] via-[#f46f14] to-[#ea5d05] border border-[#e05602] shadow-[0_2px_4px_rgba(242,128,32,0.25),inset_0_1px_0_rgba(255,255,255,0.45)] hover:from-[#fa8e3f] hover:to-[#f0680a] hover:shadow-[0_3px_8px_rgba(242,128,32,0.35)] active:translate-y-0.5 active:shadow-[0_1px_2px_rgba(242,128,32,0.2)] transition-all cursor-pointer whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-500/50" aria-label="Buka dashboard penyimpanan di tab baru"
             >
-              <span>Cloudflare Storage</span>
+              <span>Kelola penyimpanan</span>
               <ExternalLink className="w-3.5 h-3.5 text-white/95 drop-shadow-xs" />
             </Link>
           </div>
@@ -86,7 +86,7 @@ export function StorageCapacityBanner({ overview }) {
 
         {!isConfigured && (
           <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200/80 rounded-md px-2 py-1 mt-0.5">
-            Kredensial Cloudflare R2 belum lengkap di .env server.
+            Layanan penyimpanan cloud belum dikonfigurasi.
           </p>
         )}
       </div>

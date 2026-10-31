@@ -104,7 +104,7 @@ export async function createRoutineDonations({
         frequency: r.frequency,
         status: r.status,
       })),
-      message: "Jadwal donasi rutin Anda berhasil diaktifkan dan tersimpan di database!",
+      message: "Jadwal donasi rutin Anda berhasil diaktifkan. Terima kasih!",
     };
   } catch (error) {
     console.error("Prisma createRoutineDonations error:", error);

@@ -32,7 +32,9 @@ export function FileUploadPreview({
   const isVideo = Boolean(typeof resolvedSrc === "string" && isVideoUrl(resolvedSrc));
   
   let fileName = "Berkas terpilih";
-  if (typeof value === "string" && value) {
+  if (value instanceof File) {
+    fileName = value.name;
+  } else if (typeof value === "string" && value) {
     if (value.startsWith("data:")) {
       fileName = "Gambar Base64";
     } else {
@@ -108,18 +110,22 @@ export function FileUploadPreview({
             <span className="inline-flex items-center rounded-md border border-amber-200/80 bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
               Video dokumentasi
             </span>
+          ) : value instanceof File ? (
+            <span className="inline-flex items-center rounded-md border border-slate-300 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
+              Siap disimpan
+            </span>
           ) : typeof value === "string" && (value.includes(".r2.dev") || value.includes("r2.cloudflarestorage.com") || value.startsWith("/api/media/")) ? (
             <span className="inline-flex items-center rounded-md border border-emerald-200/80 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-              Tersimpan di Cloudflare R2
+              Tersimpan di cloud
             </span>
           ) : (
             <span className="inline-flex items-center rounded-md border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
               Tautan gambar eksternal
             </span>
           )}
-          {uploadMeta && (
+          {(uploadMeta?.sizeKb || value instanceof File) && (
             <span className="text-xs text-slate-500 font-normal">
-              {uploadMeta.sizeKb} KB
+              {uploadMeta?.sizeKb || Math.round((value.size || 0) / 1024)} KB
             </span>
           )}
         </div>

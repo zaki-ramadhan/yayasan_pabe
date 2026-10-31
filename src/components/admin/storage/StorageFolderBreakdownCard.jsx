@@ -178,7 +178,7 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
 
       {!isConfigured && (
         <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs font-normal text-amber-800">
-          Kredensial Cloudflare R2 belum lengkap di berkas lingkungan server (.env). Pastikan variabel R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, dan R2_SECRET_ACCESS_KEY sudah terisi.
+          Layanan penyimpanan cloud belum dikonfigurasi pada server.
         </div>
       )}
     </div>

@@ -25,7 +25,7 @@ const ADMIN_PAGE_TITLES = {
   "/admin/faq": "Pusat FAQ",
   "/admin/pengguna": "Kelola Pengurus",
   "/admin/pengaturan": "Pengaturan Yayasan",
-  "/admin/penyimpanan": "Penyimpanan Media R2",
+  "/admin/penyimpanan": "Penyimpanan Berkas",
 };
 
 export function AdminTopHeader({

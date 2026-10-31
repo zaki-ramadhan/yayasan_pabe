@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { FileText, Trash2, Loader2 } from "lucide-react";
-import { uploadFileToServer } from "@/services/uploadService";
+import { useState, useRef, useEffect } from "react";
+import { FileText, Trash2 } from "lucide-react";
+import { uploadFileToServer, deleteFileFromServer } from "@/services/uploadService";
 import { formatBytes } from "@/lib/formatters";
 import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
+import { UploadProgressBar } from "@/components/ui/UploadProgressBar";
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
@@ -27,10 +28,22 @@ export function CareerResumeUpload({
   disabled = false,
 }) {
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadedFileName, setUploadedFileName] = useState("");
   const [uploadedFileSize, setUploadedFileSize] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+  const abortControllerRef = useRef(null);
+
+  const displayFileName = value instanceof File ? value.name : (value ? (uploadedFileName || "Berkas CV terlampir (PDF)") : "");
+  const displayFileSize = value instanceof File ? value.size : (value ? uploadedFileSize : 0);
+
+  const handleCancelUpload = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+  };
 
   const handleFileSelect = async (file) => {
     if (!file) return;
@@ -45,24 +58,39 @@ export function CareerResumeUpload({
       return;
     }
 
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
+      setUploadProgress(0);
       setIsUploading(true);
       const res = await uploadFileToServer({
         file,
         context: "CAREER_RESUME",
         identifier: "applicant-cv",
+        signal: controller.signal,
+        onProgress: (pct) => setUploadProgress(pct),
       });
 
       if (res?.url) {
+        if (value && typeof value === "string") {
+          deleteFileFromServer(value);
+        }
         onChange(res.url);
         setUploadedFileName(file.name);
         setUploadedFileSize(file.size);
         toast.success("Berkas CV berhasil diunggah.");
       }
     } catch (err) {
+      if (controller.signal.aborted) {
+        toast.info("Pengunggahan berkas CV dibatalkan.");
+        return;
+      }
       toast.error(err.message || "Gagal mengunggah berkas CV. Silakan coba lagi.");
     } finally {
+      abortControllerRef.current = null;
       setIsUploading(false);
+      setUploadProgress(0);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
@@ -92,6 +120,9 @@ export function CareerResumeUpload({
   };
 
   const handleRemoveFile = () => {
+    if (value && typeof value === "string") {
+      deleteFileFromServer(value);
+    }
     onChange("");
     setUploadedFileName("");
     setUploadedFileSize(0);
@@ -132,10 +163,10 @@ export function CareerResumeUpload({
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium text-slate-900 truncate">
-                  {uploadedFileName || "Berkas CV terlampir (PDF)"}
+                  {displayFileName || "Berkas CV terlampir (PDF)"}
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  {uploadedFileSize > 0 ? formatBytes(uploadedFileSize) : "Dokumen PDF"}
+                  {displayFileSize > 0 ? formatBytes(displayFileSize) : "Dokumen PDF"}
                 </p>
               </div>
             </div>
@@ -168,19 +199,21 @@ export function CareerResumeUpload({
                 : error
                 ? "border-rose-300 bg-rose-50/30"
                 : "border-slate-300 hover:border-slate-400 bg-slate-50/60 hover:bg-slate-50",
-              (disabled || isUploading) && "pointer-events-none opacity-80"
+              disabled
+                ? "pointer-events-none opacity-80"
+                : isUploading
+                ? "cursor-default opacity-95"
+                : ""
             )}
           >
             {isUploading ? (
-              <div className="flex flex-col items-center">
-                <Loader2 className="w-8 h-8 text-slate-600 animate-spin mb-2" />
-                <p className="text-sm font-medium text-slate-800">
-                  Mengunggah dokumen PDF...
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  Mohon jangan menutup jendela ini
-                </p>
-              </div>
+              <UploadProgressBar
+                progress={uploadProgress}
+                isUploading={isUploading}
+                isPdf={true}
+                onCancel={handleCancelUpload}
+                theme="slate"
+              />
             ) : (
               <div className="flex flex-col items-center">
                 <FileText className="w-8 h-8 text-slate-400 mb-2" />

@@ -168,14 +168,22 @@ export function AdminGalleryModal({
         for (let i = 0; i < total; i++) {
           const item = selectedFiles[i];
           const isVid = Boolean(item.isVideo);
+          const mediaLabel = isVid ? "video" : "foto";
           setUploadProgressText(
-            `Mengunggah ${isVid ? "video" : "foto"} ${i + 1} dari ${total} ke penyimpanan...`
+            `Mengunggah ${mediaLabel} ${i + 1} dari ${total} (0%)...`
           );
 
           const uploadResult = await uploadFileToServer({
             file: item.file,
             context: isVid ? "GALLERY_VIDEO" : "GALLERY",
             identifier: resolvedTitle,
+            onProgress: (percent) => {
+              setUploadProgressText(
+                percent < 100
+                  ? `Mengunggah ${mediaLabel} ${i + 1} dari ${total} (${percent}%)...`
+                  : `Memproses ${mediaLabel} ${i + 1} dari ${total}...`
+              );
+            },
           });
 
           uploadedUrls.push(uploadResult.url);

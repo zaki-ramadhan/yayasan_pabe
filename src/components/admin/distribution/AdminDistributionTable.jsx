@@ -282,7 +282,7 @@ export function AdminDistributionTable({
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
         title={`Hapus ${selection.selectedCount} Data Penyaluran`}
-        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} data rekam penyaluran bantuan terpilih? Berkas foto dokumentasi terkait di penyimpanan R2 juga akan dibersihkan.`}
+        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} data penyaluran bantuan terpilih? Berkas foto dokumentasi terkait juga akan dibersihkan.`}
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />

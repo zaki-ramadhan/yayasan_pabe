@@ -11,6 +11,7 @@ import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
 import { isFormDirty } from "@/lib/formUtils";
 import { DatePicker } from "@/components/ui/DatePicker";
+import { useStagedUploads } from "@/hooks/useStagedUploads";
 
 export function AdminInstagramPostModal({
   isOpen,
@@ -27,6 +28,13 @@ export function AdminInstagramPostModal({
   const [postedAt, setPostedAt] = useState(new Date().toISOString().split("T")[0]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { trackUpload, commitUploads, discardUploads } = useStagedUploads();
+
+  const handleClose = () => {
+    discardUploads();
+    onClose();
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -82,7 +90,7 @@ export function AdminInstagramPostModal({
     setIsSubmitting(true);
     try {
       const payload = {
-        imageUrl: imageUrl.trim(),
+        imageUrl: imageUrl ? String(imageUrl).trim() : "",
         caption: caption.trim(),
         altText: altText.trim() || caption.trim().slice(0, 100),
         postUrl: postUrl.trim(),
@@ -104,6 +112,7 @@ export function AdminInstagramPostModal({
 
       const json = await res.json();
       if (json.success) {
+        commitUploads();
         toast.success(
           isEditing
             ? "Postingan Instagram berhasil diperbarui."
@@ -121,9 +130,11 @@ export function AdminInstagramPostModal({
   };
 
   const isDirty = useMemo(() => {
+    const hasImage = imageUrl instanceof File || (typeof imageUrl === "string" && Boolean(imageUrl.trim()));
     if (!isEditing || !postToEdit) {
-      return Boolean(imageUrl.trim() || caption.trim() || postUrl.trim());
+      return Boolean(hasImage || caption.trim() || postUrl.trim());
     }
+    if (imageUrl instanceof File) return true;
     const initialPostedAt = postToEdit.postedAt
       ? new Date(postToEdit.postedAt).toISOString().split("T")[0]
       : "";
@@ -136,7 +147,7 @@ export function AdminInstagramPostModal({
         postedAt: initialPostedAt,
       },
       {
-        imageUrl,
+        imageUrl: typeof imageUrl === "string" ? imageUrl : "",
         caption,
         altText,
         postUrl,
@@ -146,17 +157,19 @@ export function AdminInstagramPostModal({
   }, [isEditing, postToEdit, imageUrl, caption, altText, postUrl, postedAt]);
 
   const isFormValid = useMemo(() => {
-    return Boolean(imageUrl.trim() && caption.trim() && postUrl.trim());
+    const hasImage = typeof imageUrl === "string" && Boolean(imageUrl.trim());
+    return Boolean(hasImage && caption.trim() && postUrl.trim());
   }, [imageUrl, caption, postUrl]);
 
   return (
     <FormDialog
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       onSubmit={handleSubmit}
       title={isEditing ? "Edit postingan Instagram" : "Tambah postingan Instagram baru"}
       maxWidth="max-w-2xl"
       submitText="Simpan"
+      submittingText="Menyimpan..."
       isSubmitting={isSubmitting}
       submitDisabled={!isFormValid || (isEditing && !isDirty)}
     >
@@ -167,8 +180,9 @@ export function AdminInstagramPostModal({
           value={imageUrl}
           onChange={setImageUrl}
           context="INSTAGRAM"
+          onUploadSuccess={trackUpload}
           required
-          helperText="Unggah foto postingan ke Cloudflare R2 atau tempelkan URL gambar."
+          helperText="Unggah foto postingan atau tempelkan tautan gambar."
         />
 
         <FormField label="Caption postingan" required>

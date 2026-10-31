@@ -32,12 +32,16 @@ export function FileUploadZone({
   accept,
   isPdf = false,
   isUploading: parentIsUploading,
+  uploadProgress: parentUploadProgress = 0,
   uploadProgressText = "",
   error = "",
+  onUploadSuccess,
+  onFileDelete,
 }) {
   const {
     fileInputRef,
     isUploading,
+    uploadProgress,
     progressText,
     isDragging,
     isManualUrl,
@@ -57,6 +61,7 @@ export function FileUploadZone({
     handleRemoveMultiFile,
     handleClearMultiFiles,
     handleApplyManual,
+    handleCancelUpload,
   } = useFileUploadZone({
     value,
     onChange,
@@ -70,7 +75,10 @@ export function FileUploadZone({
     accept,
     isPdf,
     isUploading: parentIsUploading,
+    uploadProgress: parentUploadProgress,
     uploadProgressText,
+    onUploadSuccess,
+    onFileDelete,
   });
 
   return (
@@ -151,6 +159,7 @@ export function FileUploadZone({
             <FileUploadDropzone
               isDragging={isDragging}
               isUploading={isUploading}
+              uploadProgress={uploadProgress}
               uploadProgressText={progressText}
               isPdf={isPdf}
               multiple={multiple}
@@ -160,6 +169,7 @@ export function FileUploadZone({
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
+              onCancel={handleCancelUpload}
             />
 
             {multiple && files.length > 0 && (

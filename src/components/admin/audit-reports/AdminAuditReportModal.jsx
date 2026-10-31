@@ -17,6 +17,7 @@ import { formatThousandsInput, parseThousandsToNumber } from "@/lib/formatters";
 import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeDigitsOnly, sanitizeStandardText } from "@/lib/sanitizer";
+import { useStagedUploads } from "@/hooks/useStagedUploads";
 
 export function AdminAuditReportModal({
 	report,
@@ -41,6 +42,13 @@ export function AdminAuditReportModal({
 	const [pdfUrl, setPdfUrl] = useState("");
 	const [summary, setSummary] = useState("");
 	const [errors, setErrors] = useState({});
+
+	const { trackUpload, commitUploads, discardUploads } = useStagedUploads();
+
+	const handleClose = () => {
+		discardUploads();
+		onClose();
+	};
 
 	useEffect(() => {
 		setErrors({});
@@ -132,7 +140,7 @@ export function AdminAuditReportModal({
 		}
 	}, [report, isOpen]);
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const newErrors = {};
 
@@ -159,6 +167,8 @@ export function AdminAuditReportModal({
 		}
 
 		setErrors({});
+
+		commitUploads();
 		onSubmit({
 			...(report
 				? {
@@ -182,8 +192,9 @@ export function AdminAuditReportModal({
 			),
 			operationalRatio: operationalRatio.trim(),
 			pdfUrl:
-				pdfUrl.trim() ||
-				null,
+				(pdfUrl && typeof pdfUrl === "string"
+					? pdfUrl.trim()
+					: null) || null,
 			summary:
 				summary.trim() ||
 				null,
@@ -191,8 +202,15 @@ export function AdminAuditReportModal({
 	};
 
 	const isDirty = useMemo(() => {
+		const hasFileOrUrl = Boolean(pdfUrl && typeof pdfUrl === "string" && pdfUrl.trim());
+
 		if (!isEdit || !report) {
-			return Boolean(year.trim() || title.trim() || auditorName.trim() || pdfUrl.trim());
+			return Boolean(
+				year.trim() ||
+					title.trim() ||
+					auditorName.trim() ||
+					hasFileOrUrl
+			);
 		}
 		return isFormDirty(
 			{
@@ -216,7 +234,7 @@ export function AdminAuditReportModal({
 				totalFundsOut: parseThousandsToNumber(totalFundsOut) ? String(parseThousandsToNumber(totalFundsOut)) : "",
 				beneficiaryCount: parseThousandsToNumber(beneficiaryCount) ? String(parseThousandsToNumber(beneficiaryCount)) : "",
 				operationalRatio,
-				pdfUrl,
+				pdfUrl: pdfUrl || "",
 				summary,
 			}
 		);
@@ -250,7 +268,7 @@ export function AdminAuditReportModal({
 	return (
 		<FormDialog
 			isOpen={isOpen}
-			onClose={onClose}
+			onClose={handleClose}
 			onSubmit={handleSubmit}
 			maxWidth="max-w-2xl"
 			title={
@@ -430,8 +448,9 @@ export function AdminAuditReportModal({
 				isPdf={true}
 				context="AUDIT_REPORT"
 				identifier={`audit-${year || "laporan"}`}
+				onUploadSuccess={trackUpload}
 				label="Berkas laporan audit resmi (PDF)"
-				helperText="Format dokumen PDF resmi (Maks. 15MB). Otomatis disimpan ke Cloudflare R2 atau gunakan tautan dokumen."
+				helperText="Format dokumen PDF resmi (Maks. 15MB) atau gunakan tautan dokumen."
 				accept="application/pdf"
 				error={errors.pdfUrl}
 			/>

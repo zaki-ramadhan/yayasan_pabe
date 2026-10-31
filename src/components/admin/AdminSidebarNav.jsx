@@ -70,8 +70,8 @@ export function AdminSidebarNav({
             items: [
               {
                 href: "/admin/penyimpanan",
-                label: "Penyimpanan Media R2",
-                short: "R2",
+                label: "Penyimpanan Berkas",
+                short: "PB",
               },
               {
                 href: "/api/admin/external/google-oauth",

@@ -14,6 +14,7 @@ import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeStandardText } from "@/lib/sanitizer";
 import { getStoredUser } from "@/services/authService";
+import { useStagedUploads } from "@/hooks/useStagedUploads";
 
 const DEFAULT_ARTICLE_CATEGORIES = [
 	"Berita",
@@ -48,8 +49,14 @@ export function AdminArticleModal({
 	const [excerpt, setExcerpt] = useState("");
 	const [content, setContent] = useState("");
 	const [errors, setErrors] = useState({});
-	const [isSubmitting, setIsSubmitting] =
-		useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const { trackUpload, commitUploads, discardUploads } = useStagedUploads();
+
+	const handleClose = () => {
+		discardUploads();
+		onOpenChange(false);
+	};
 
 	const categoryList = useMemo(() => {
 		const fromProps = (
@@ -197,7 +204,7 @@ export function AdminArticleModal({
 								title,
 								category,
 								author,
-								bannerUrl,
+								bannerUrl: bannerUrl ? String(bannerUrl).trim() : "",
 								excerpt:
 									excerpt.trim() ||
 									content.slice(
@@ -215,6 +222,7 @@ export function AdminArticleModal({
 			if (
 				data.success
 			) {
+				commitUploads();
 				toast.success(
 					isEditing
 						? "Artikel berhasil diperbarui."
@@ -238,16 +246,16 @@ export function AdminArticleModal({
 				"Terjadi kendala jaringan saat menyimpan artikel.",
 			);
 		} finally {
-			setIsSubmitting(
-				false,
-			);
+			setIsSubmitting(false);
 		}
 	};
 
 	const isDirty = useMemo(() => {
+		const hasBanner = bannerUrl instanceof File || (typeof bannerUrl === "string" && Boolean(bannerUrl.trim()));
 		if (!isEditing || !articleToEdit) {
-			return Boolean(title.trim() || content.trim() || bannerUrl.trim());
+			return Boolean(title.trim() || content.trim() || hasBanner);
 		}
+		if (bannerUrl instanceof File) return true;
 		return isFormDirty(
 			{
 				title: articleToEdit.title || "",
@@ -261,7 +269,7 @@ export function AdminArticleModal({
 				title,
 				category,
 				author,
-				bannerUrl,
+				bannerUrl: typeof bannerUrl === "string" ? bannerUrl : "",
 				excerpt,
 				content,
 			}
@@ -279,7 +287,7 @@ export function AdminArticleModal({
 	return (
 		<FormDialog
 			isOpen={isOpen}
-			onClose={() => onOpenChange(false)}
+			onClose={handleClose}
 			onSubmit={handleSubmit}
 			maxWidth="max-w-2xl"
 			title={
@@ -359,6 +367,7 @@ export function AdminArticleModal({
 				onChange={setBannerUrl}
 				context="ARTICLE_BANNER"
 				identifier={title}
+				onUploadSuccess={trackUpload}
 				label="Foto sampul / banner artikel"
 				helperText="Mendukung JPG, PNG, WebP (Maks. 10MB) • Bisa Ctrl + V. Otomatis dikonversi ke WebP."
 			/>

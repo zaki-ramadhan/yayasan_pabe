@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { toast } from "@/hooks/useToast";
-import { uploadFileToServer } from "@/services/uploadService";
+import { uploadFileToServer, deleteFileFromServer } from "@/services/uploadService";
 import { extractVideoMetadata } from "@/lib/videoHelper";
 
 export const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -30,9 +30,13 @@ export function useFileUploadZone({
   accept,
   isPdf = false,
   isUploading: parentIsUploading,
+  uploadProgress: parentUploadProgress = 0,
   uploadProgressText = "",
+  onUploadSuccess,
+  onFileDelete,
 }) {
   const [internalIsUploading, setInternalIsUploading] = useState(false);
+  const [internalUploadProgress, setInternalUploadProgress] = useState(0);
   const [internalProgressText, setInternalProgressText] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [isManualUrl, setIsManualUrl] = useState(false);
@@ -40,9 +44,46 @@ export function useFileUploadZone({
   const [localPreview, setLocalPreview] = useState("");
   const [uploadMeta, setUploadMeta] = useState(null);
   const fileInputRef = useRef(null);
+  const abortControllerRef = useRef(null);
+  const stagedUrlsRef = useRef(new Set());
+  const isCommittedRef = useRef(false);
+
+  const commitUploads = useCallback(() => {
+    isCommittedRef.current = true;
+    stagedUrlsRef.current.clear();
+  }, []);
+
+  const discardStagedUploads = useCallback(() => {
+    if (stagedUrlsRef.current.size > 0 && !isCommittedRef.current) {
+      const urls = Array.from(stagedUrlsRef.current);
+      deleteFileFromServer(urls);
+      stagedUrlsRef.current.clear();
+    }
+  }, []);
+
+  const handleCancelUpload = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+  };
 
   const isUploading = Boolean(parentIsUploading || internalIsUploading);
+  const uploadProgress = parentIsUploading
+    ? Number(parentUploadProgress) || 0
+    : internalUploadProgress;
   const progressText = uploadProgressText || internalProgressText;
+
+  // Sinkronisasi status preview saat value dibersihkan
+  useEffect(() => {
+    if (!value) {
+      if (localPreview) {
+        URL.revokeObjectURL(localPreview);
+        setLocalPreview("");
+      }
+      setUploadMeta(null);
+    }
+  }, [value, localPreview]);
 
   const defaultAccept = isPdf
     ? "application/pdf"
@@ -53,7 +94,7 @@ export function useFileUploadZone({
   const resolvedAccept = accept || defaultAccept;
 
   const defaultHelperText = isPdf
-    ? "Mendukung format PDF resmi (Maks. 15MB). Otomatis disimpan ke Cloudflare R2."
+    ? "Mendukung format PDF resmi (Maks. 15MB). Disimpan aman di cloud."
     : allowVideo
     ? "JPG, PNG, WebP (Maks. 10MB) • Video MP4/WebM (Maks. 1 video, 25MB, 60 dtk) • Bisa Ctrl + V"
     : "Mendukung format JPEG, PNG, dan WebP (Maks. 10MB). Otomatis dikonversi ke WebP • Bisa Ctrl + V";
@@ -96,7 +137,7 @@ export function useFileUploadZone({
               variant: "warning",
               title: "Batas 1 video per kegiatan",
               description:
-                "Untuk efisiensi penyimpanan Cloudflare R2, setiap kegiatan dibatasi maksimal 1 video sorotan. Untuk video tambahan atau berdurasi panjang, gunakan kolom tautan YouTube.",
+                "Setiap kegiatan dibatasi maksimal 1 video sorotan. Untuk video tambahan atau berdurasi panjang, gunakan kolom tautan YouTube.",
             });
             continue;
           }
@@ -225,15 +266,28 @@ export function useFileUploadZone({
       setLocalPreview(objectUrl);
     }
 
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
+      setInternalUploadProgress(0);
       setInternalIsUploading(true);
       const data = await uploadFileToServer({
         file,
         context,
         identifier,
+        signal: controller.signal,
+        onProgress: (pct) => setInternalUploadProgress(pct),
       });
 
       if (data?.url) {
+        // Hapus berkas sementara sebelumnya jika pengguna mengganti berkas di sesi modal yang sama
+        if (value && typeof value === "string" && stagedUrlsRef.current.has(value)) {
+          deleteFileFromServer(value);
+          stagedUrlsRef.current.delete(value);
+        }
+        stagedUrlsRef.current.add(data.url);
+
         if (onChange) onChange(data.url);
         setManualInput(data.url);
         setUploadMeta({
@@ -241,25 +295,39 @@ export function useFileUploadZone({
           sizeKb: Math.round((data.size || 0) / 1024),
           mimeType: data.mimeType,
         });
+        if (onUploadSuccess) onUploadSuccess(data.url);
 
         toast({
           variant: "success",
           title: "Berhasil diunggah",
           description: isPdf
-            ? "Dokumen PDF berhasil disimpan ke penyimpanan Cloudflare R2."
+            ? "Dokumen PDF berhasil disimpan."
             : data.savingsPercent
             ? `Berkas berhasil dioptimasi (hemat ${data.savingsPercent}%).`
-            : "Berkas berhasil disimpan ke Cloudflare R2.",
+            : "Berkas berhasil disimpan.",
         });
       }
     } catch (err) {
+      if (controller.signal.aborted) {
+        toast({
+          title: "Pengunggahan dibatalkan",
+          description: "Proses unggah berkas telah dihentikan.",
+        });
+        if (localPreview) {
+          URL.revokeObjectURL(localPreview);
+          setLocalPreview("");
+        }
+        return;
+      }
       toast({
         variant: "destructive",
         title: "Gagal mengunggah",
         description: err.message || "Terjadi kesalahan saat mengunggah berkas.",
       });
     } finally {
+      abortControllerRef.current = null;
       setInternalIsUploading(false);
+      setInternalUploadProgress(0);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -285,6 +353,7 @@ export function useFileUploadZone({
 
   const handleDragOver = (e) => {
     e.preventDefault();
+    if (isUploading) return;
     setIsDragging(true);
   };
 
@@ -294,6 +363,13 @@ export function useFileUploadZone({
   };
 
   const handleRemoveSingle = () => {
+    if (value && typeof value === "string") {
+      if (stagedUrlsRef.current.has(value)) {
+        deleteFileFromServer(value);
+        stagedUrlsRef.current.delete(value);
+      }
+      if (onFileDelete) onFileDelete(value);
+    }
     if (localPreview) {
       URL.revokeObjectURL(localPreview);
       setLocalPreview("");
@@ -436,6 +512,7 @@ export function useFileUploadZone({
   return {
     fileInputRef,
     isUploading,
+    uploadProgress,
     progressText,
     isDragging,
     isManualUrl,
@@ -455,5 +532,9 @@ export function useFileUploadZone({
     handleRemoveMultiFile,
     handleClearMultiFiles,
     handleApplyManual,
+    handleCancelUpload,
+    commitUploads,
+    discardStagedUploads,
+    stagedUrlsRef,
   };
 }

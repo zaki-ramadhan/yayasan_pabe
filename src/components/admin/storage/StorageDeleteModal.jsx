@@ -36,7 +36,7 @@ export function StorageDeleteModal({
       onClose={onClose}
       onConfirm={onConfirm}
       isLoading={isLoading}
-      title={isSingle ? "Hapus berkas sampah dari R2" : `Hapus ${count} berkas sampah dari R2`}
+      title={isSingle ? "Hapus berkas tidak terpakai" : `Hapus ${count} berkas tidak terpakai`}
       confirmLabel={isLoading ? "Menghapus..." : isSingle ? "Hapus permanen" : `Hapus ${count} berkas`}
       confirmVariant="destructive"
     >
@@ -47,7 +47,7 @@ export function StorageDeleteModal({
           <div>
             <p className="font-semibold">Tindakan ini tidak dapat dibatalkan.</p>
             <p className="text-rose-700 mt-0.5">
-              Berkas fisik akan dihapus permanen dari bucket Cloudflare R2 dan membebaskan kuota sebesar{" "}
+              Berkas akan dihapus permanen dari penyimpanan dan membebaskan ruang sebesar{" "}
               <strong className="text-rose-900 font-semibold">{formatBytes(totalBytes)}</strong>.
             </p>
           </div>

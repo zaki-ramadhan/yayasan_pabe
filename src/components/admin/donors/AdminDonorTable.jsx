@@ -74,7 +74,7 @@ export function AdminDonorTable({ initialData = {} }) {
         toast.error(data.message || "Gagal menyinkronkan data.");
       }
     } catch {
-      toast.error("Gagal menghubungi server.");
+      toast.error("Gagal memuat data donatur.");
     } finally {
       setIsLoading(false);
     }

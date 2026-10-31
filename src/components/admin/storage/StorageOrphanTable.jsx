@@ -101,7 +101,7 @@ export function StorageOrphanTable({
                 <TableCell colSpan={7} className="py-12 text-center text-sm text-slate-500">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                    <span>Sedang memindai dan membandingkan berkas R2 dengan database...</span>
+                    <span>Sedang memeriksa berkas sistem...</span>
                   </div>
                 </TableCell>
               </TableRow>
@@ -194,8 +194,8 @@ export function StorageOrphanTable({
                 colSpan={7}
                 message={
                   isScanned
-                    ? "Luar biasa! Tidak ada berkas sampah ditemukan. Seluruh berkas di R2 terhubung dengan benar ke database."
-                    : "Silakan klik tombol 'Pindai berkas tak terpakai' di atas untuk mencari berkas sampah di Cloudflare R2."
+                    ? "Tidak ada berkas sampah ditemukan. Seluruh berkas terhubung dengan benar."
+                    : "Klik 'Pindai berkas tidak terpakai' di atas untuk memeriksa berkas sampah."
                 }
               />
             )}

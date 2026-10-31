@@ -73,7 +73,7 @@ export function StorageScanToolbar({
       }
       isLoading={isScanning}
       primaryAction={{
-        label: isScanning ? "Memindai R2..." : "Pindai berkas tak terpakai",
+        label: isScanning ? "Memindai..." : "Pindai berkas tidak terpakai",
         onClick: () => onScan(),
         disabled: isScanning,
         isLoading: isScanning,
