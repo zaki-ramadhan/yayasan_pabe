@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { DEPARTMENT_OPTIONS, TYPE_OPTIONS, LOCATION_OPTIONS } from "@/data/careers";
+import { DEPARTMENT_OPTIONS, TYPE_OPTIONS, LOCATION_OPTIONS, CAREER_VACANCIES } from "@/data/careers";
 import { sanitizeInput, maskEmail } from "@/lib/security";
 
 /**
@@ -46,6 +46,11 @@ export async function getAdminVacancies({ search = "", department = "ALL" } = {}
       requirements: v.requirements || [],
       benefits: v.benefits || [],
       applyUrl: v.applyUrl,
+      requiresResume: v.applyUrl === "WITHOUT_RESUME"
+        ? false
+        : (CAREER_VACANCIES.find((c) => c.id === (v.jobCode || v.id))?.requiresResume !== undefined
+            ? CAREER_VACANCIES.find((c) => c.id === (v.jobCode || v.id)).requiresResume
+            : v.applyUrl !== "WITHOUT_RESUME"),
       isActive: v.isActive,
       applicantCount: v._count?.applications || 0,
       createdAt: v.createdAt.toISOString(),
@@ -61,12 +66,12 @@ export async function getAdminVacancies({ search = "", department = "ALL" } = {}
  */
 export async function createAdminVacancy(payload) {
   const title = sanitizeInput(payload.title || "").trim();
-  const department = sanitizeInput(payload.department || "Operasional & Penyaluran").trim();
+  const department = sanitizeInput(payload.department || "Umum").trim();
   const location = sanitizeInput(payload.location || "Jakarta Timur / Depok").trim();
   const type = sanitizeInput(payload.type || "Penuh Waktu (Full-time)").trim();
   const workplace = sanitizeInput(payload.workplace || "On-site").trim();
   const experience = sanitizeInput(payload.experience || "1 - 3 tahun").trim();
-  const deadline = sanitizeInput(payload.deadline || "30 November 2026").trim();
+  const deadline = sanitizeInput(payload.deadline || "").trim();
   const overview = sanitizeInput(payload.overview || "").trim();
   const responsibilities = Array.isArray(payload.responsibilities)
     ? payload.responsibilities.map((r) => sanitizeInput(r).trim()).filter(Boolean)
@@ -78,12 +83,19 @@ export async function createAdminVacancy(payload) {
     ? payload.benefits.map((b) => sanitizeInput(b).trim()).filter(Boolean)
     : [];
 
-  if (!title || !department || !overview) {
-    throw new Error("Judul posisi, divisi, dan deskripsi singkat wajib diisi.");
+  if (!title || !overview) {
+    throw new Error("Judul posisi dan deskripsi ringkasan wajib diisi.");
   }
 
   const jobCode = `JOB-${Date.now().toString().slice(-4)}`;
   const publishedDate = new Date().toISOString().split("T")[0];
+
+  const requiresResume = payload.requiresResume !== false;
+  const applyUrl = payload.applyUrl
+    ? sanitizeInput(payload.applyUrl).trim()
+    : requiresResume
+    ? null
+    : "WITHOUT_RESUME";
 
   return prisma.jobVacancy.create({
     data: {
@@ -100,7 +112,7 @@ export async function createAdminVacancy(payload) {
       responsibilities,
       requirements,
       benefits,
-      applyUrl: payload.applyUrl ? sanitizeInput(payload.applyUrl).trim() : null,
+      applyUrl,
       isActive: payload.isActive !== undefined ? Boolean(payload.isActive) : true,
     },
   });
@@ -118,8 +130,19 @@ export async function updateAdminVacancy(id, payload) {
   if (payload.workplace !== undefined) updateData.workplace = sanitizeInput(payload.workplace).trim();
   if (payload.experience !== undefined) updateData.experience = sanitizeInput(payload.experience).trim();
   if (payload.deadline !== undefined) updateData.deadline = sanitizeInput(payload.deadline).trim();
-  if (payload.overview !== undefined) updateData.overview = sanitizeInput(payload.overview).trim();
   if (payload.isActive !== undefined) updateData.isActive = Boolean(payload.isActive);
+
+  if (payload.requiresResume !== undefined) {
+    if (!payload.requiresResume) {
+      updateData.applyUrl = "WITHOUT_RESUME";
+    } else if (payload.applyUrl && payload.applyUrl !== "WITHOUT_RESUME") {
+      updateData.applyUrl = sanitizeInput(payload.applyUrl).trim();
+    } else {
+      updateData.applyUrl = null;
+    }
+  } else if (payload.applyUrl !== undefined) {
+    updateData.applyUrl = payload.applyUrl ? sanitizeInput(payload.applyUrl).trim() : null;
+  }
 
   if (Array.isArray(payload.responsibilities)) {
     updateData.responsibilities = payload.responsibilities.map((r) => sanitizeInput(r).trim()).filter(Boolean);

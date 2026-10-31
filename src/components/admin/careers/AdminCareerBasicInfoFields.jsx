@@ -11,33 +11,39 @@ import {
   SelectItem,
 } from "@/components/ui/Select";
 import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
+import { DatePicker } from "@/components/ui/DatePicker";
 import { sanitizeStandardText } from "@/lib/sanitizer";
+import { WORKPLACE_OPTIONS } from "@/data/careers";
 
 export function AdminCareerBasicInfoFields({
   title,
   onTitleChange,
-  department,
-  onDepartmentChange,
-  departmentList,
-  onCreateDepartment,
   type,
   onTypeChange,
   employmentTypes,
+  contractDuration = "",
+  onContractDurationChange,
+  durationList = [],
+  onCreateDuration,
+  workplace = "Kerja di lokasi",
+  onWorkplaceChange,
   location,
   onLocationChange,
   locationList,
   onCreateLocation,
-  workplace,
-  onWorkplaceChange,
   experience,
   onExperienceChange,
   deadline,
   onDeadlineChange,
   isActive,
   onIsActiveChange,
+  requiresResume = true,
+  onRequiresResumeChange,
   errors = {},
   onClearError,
 }) {
+  const isContract = type === "Kontrak / Project";
+
   return (
     <>
       {/* Judul posisi */}
@@ -57,24 +63,8 @@ export function AdminCareerBasicInfoFields({
         />
       </FormField>
 
+      {/* Baris 1: Tipe kepegawaian & Durasi kontrak (kondisional) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-        {/* Divisi */}
-        <FormField label="Divisi / departemen" required error={errors.department}>
-          <CreatableCombobox
-            options={departmentList}
-            value={department}
-            onChange={(val) => {
-              onDepartmentChange(val);
-              if (onClearError) onClearError("department");
-            }}
-            onCreate={onCreateDepartment}
-            placeholder="Pilih divisi..."
-            searchPlaceholder="Cari divisi atau buat baru..."
-            createPrefix="Buat divisi"
-            className="bg-white"
-          />
-        </FormField>
-
         {/* Tipe pekerjaan */}
         <FormField label="Tipe kepegawaian" required>
           <Select value={type} onValueChange={onTypeChange} required>
@@ -85,6 +75,49 @@ export function AdminCareerBasicInfoFields({
               {employmentTypes.map((tp) => (
                 <SelectItem key={tp} value={tp}>
                   {tp}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </FormField>
+
+        {/* Durasi kontrak / proyek saat Kontrak / Project dipilih */}
+        {isContract && (
+          <FormField
+            label="Durasi kontrak / proyek"
+            required
+            error={errors.contractDuration}
+            hint="Pilih opsi umum atau ketik untuk membuat baru."
+          >
+            <CreatableCombobox
+              options={durationList}
+              value={contractDuration}
+              onChange={(val) => {
+                if (onContractDurationChange) onContractDurationChange(val);
+                if (onClearError) onClearError("contractDuration");
+              }}
+              onCreate={onCreateDuration}
+              placeholder="Pilih durasi kontrak..."
+              searchPlaceholder="Cari durasi atau buat baru..."
+              createPrefix="Gunakan durasi"
+              className="bg-white"
+            />
+          </FormField>
+        )}
+      </div>
+
+      {/* Baris 2: Sistem kerja & Lokasi penempatan */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        {/* Sistem kerja */}
+        <FormField label="Sistem kerja">
+          <Select value={workplace} onValueChange={onWorkplaceChange}>
+            <SelectTrigger className="h-10 text-sm bg-white">
+              <SelectValue placeholder="Pilih sistem kerja" />
+            </SelectTrigger>
+            <SelectContent>
+              {WORKPLACE_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -107,21 +140,10 @@ export function AdminCareerBasicInfoFields({
             className="bg-white"
           />
         </FormField>
+      </div>
 
-        {/* Sistem kerja */}
-        <FormField label="Sistem kerja">
-          <Select value={workplace} onValueChange={onWorkplaceChange}>
-            <SelectTrigger className="h-10 text-sm bg-white">
-              <SelectValue placeholder="Pilih sistem kerja" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="On-site">On-site (Kantor/Asrama)</SelectItem>
-              <SelectItem value="Hybrid">Hybrid</SelectItem>
-              <SelectItem value="Remote">Remote</SelectItem>
-            </SelectContent>
-          </Select>
-        </FormField>
-
+      {/* Baris 3: Pengalaman kerja & Batas akhir pendaftaran */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         {/* Batas pengalaman */}
         <FormField label="Pengalaman kerja">
           <Input
@@ -136,28 +158,39 @@ export function AdminCareerBasicInfoFields({
         </FormField>
 
         {/* Batas akhir lamar */}
-        <FormField label="Batas akhir pendaftaran">
-          <Input
-            type="text"
-            placeholder="Contoh: 30 November 2026"
+        <FormField label="Batas akhir pendaftaran" error={errors.deadline}>
+          <DatePicker
             value={deadline}
-            maxLength={50}
-            onChange={(e) => onDeadlineChange(sanitizeStandardText(e.target.value, 50))}
-            onBlur={() => onDeadlineChange(deadline.trim())}
-            className="h-10 text-sm bg-white"
+            onChange={(val) => {
+              onDeadlineChange(val || "");
+              if (onClearError) onClearError("deadline");
+            }}
+            placeholder="Pilih batas akhir pendaftaran..."
           />
         </FormField>
       </div>
 
-      {/* Status aktif lowongan */}
-      <Checkbox
-        id="isActive"
-        variant="card"
-        checked={isActive}
-        onCheckedChange={onIsActiveChange}
-        label="Buka lowongan untuk publik"
-        description="Pelamar dapat melihat detail posisi dan mengirimkan formulir lamaran di halaman karier"
-      />
+      <div className="space-y-3 pt-1">
+        {/* Wajibkan lampiran berkas CV */}
+        <Checkbox
+          id="requiresResume"
+          variant="card"
+          checked={requiresResume}
+          onCheckedChange={onRequiresResumeChange}
+          label="Wajibkan lampiran berkas CV / resume (PDF)"
+          description="Jika dicentang, pelamar wajib mengunggah dokumen PDF. Jika tidak dicentang, pelamar cukup mengisi data diri dan motivasi."
+        />
+
+        {/* Status aktif lowongan */}
+        <Checkbox
+          id="isActive"
+          variant="card"
+          checked={isActive}
+          onCheckedChange={onIsActiveChange}
+          label="Buka lowongan untuk publik"
+          description="Pelamar dapat melihat detail posisi dan mengirimkan formulir lamaran di halaman karier"
+        />
+      </div>
     </>
   );
 }

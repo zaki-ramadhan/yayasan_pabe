@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { StatusBadge } from "@/components/ui/Badge";
+import { formatDeadlineDate } from "@/lib/formatters";
+import { formatWorkplace } from "@/data/careers";
 
 export function AdminCareerTableRow({
 	job,
@@ -32,14 +34,14 @@ export function AdminCareerTableRow({
 				/>
 			</TableCell>
 
-			<TableCell className="min-w-[200px] w-52 py-3 align-middle">
+			<TableCell className="min-w-[260px] w-64 py-3 align-middle">
 				<div className="space-y-0.5">
 					<span
 						className="text-sm font-medium text-slate-900 block leading-snug line-clamp-2"
 					>
 						{job.title}
 					</span>
-					<span className="text-sm text-slate-500">
+					<span className="text-xs text-slate-500 font-normal">
 						{job.jobCode ||
 							job.id}{" "}
 						&bull;{" "}
@@ -50,42 +52,37 @@ export function AdminCareerTableRow({
 				</div>
 			</TableCell>
 
-			<TableCell className="py-3 align-middle">
+			<TableCell className="min-w-[180px] w-48 py-3 align-middle">
 				<div className="space-y-0.5">
 					<span className="text-sm font-medium text-slate-800 block">
-						{
-							job.department
-						}
+						{job.type}
 					</span>
-					<span className="text-sm text-slate-500">
-						{
-							job.type
-						}{" "}
-						(
-						{
-							job.workplace
-						}
-						)
+					<span className="text-xs text-slate-500 font-normal">
+						{formatWorkplace(job.workplace)}
 					</span>
 				</div>
 			</TableCell>
 
-			<TableCell className="text-sm text-slate-600 py-3 align-middle">
+			<TableCell className="min-w-[160px] w-48 text-sm text-slate-600 py-3 align-middle">
 				{
 					job.location
 				}
 			</TableCell>
 
-			<TableCell className="text-sm text-slate-600 py-3 whitespace-nowrap align-middle">
-				{
-					job.deadline
-				}
+			<TableCell className="text-sm text-slate-600 py-3 whitespace-nowrap align-middle text-center tabular-nums">
+				{formatDeadlineDate(job.deadline)}
 			</TableCell>
 
 			<TableCell className="py-3 text-center whitespace-nowrap align-middle">
 				{(() => {
 					const count = Number(job.applicantCount) || 0;
-					const hasApplicants = count > 0;
+					if (count === 0) {
+						return (
+							<span className="text-sm font-normal text-slate-600">
+								Belum ada
+							</span>
+						);
+					}
 					return (
 						<Button
 							type="button"
@@ -96,14 +93,10 @@ export function AdminCareerTableRow({
 									job,
 								)
 							}
-							className={`h-7 px-2 rounded-md text-xs font-medium flex items-center gap-1.5 mx-auto cursor-pointer transition-colors ${
-								hasApplicants
-									? "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50"
-									: "text-slate-400 border-slate-200 bg-transparent hover:bg-slate-50 hover:text-slate-600"
-							}`}
+							className="h-7 px-2 rounded-md text-xs font-medium flex items-center gap-1.5 mx-auto cursor-pointer transition-colors text-primary border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50"
 						>
-							<Users className={`w-3 h-3 ${hasApplicants ? "text-primary" : "text-slate-400"}`} />
-							<span>
+							<Users className="w-3 h-3 text-primary" />
+							<span className="tabular-nums">
 								{count}{" "}
 								Berkas
 							</span>

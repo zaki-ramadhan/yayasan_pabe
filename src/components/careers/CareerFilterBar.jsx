@@ -6,7 +6,6 @@ import { CareerFilterSelect } from "./CareerFilterSelect";
 import {
   LOCATION_OPTIONS,
   TYPE_OPTIONS,
-  DEPARTMENT_OPTIONS,
 } from "@/data/careers";
 
 /**
@@ -19,8 +18,6 @@ import {
  * @param {Function} props.onLocationChange
  * @param {string} props.type
  * @param {Function} props.onTypeChange
- * @param {string} props.department
- * @param {Function} props.onDepartmentChange
  */
 export function CareerFilterBar({
   searchQuery,
@@ -29,8 +26,6 @@ export function CareerFilterBar({
   onLocationChange,
   type,
   onTypeChange,
-  department,
-  onDepartmentChange,
 }) {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-2xs space-y-3 sm:space-y-4">
@@ -41,7 +36,7 @@ export function CareerFilterBar({
         onChange={(e) => onSearchChange(e.target.value)}
         onClear={() => onSearchChange("")}
         leftIcon={<Search className="w-4.5 h-4.5 text-slate-400" />}
-        placeholder="Cari posisi kerja, divisi, atau kata kunci..."
+        placeholder="Cari lowongan posisi kerja, lokasi, atau kata kunci..."
         maxLength={80}
         autoComplete="off"
         spellCheck="false"
@@ -61,12 +56,6 @@ export function CareerFilterBar({
           value={type}
           options={TYPE_OPTIONS}
           onChange={onTypeChange}
-        />
-        <CareerFilterSelect
-          label="Divisi"
-          value={department}
-          options={DEPARTMENT_OPTIONS}
-          onChange={onDepartmentChange}
         />
       </div>
     </div>

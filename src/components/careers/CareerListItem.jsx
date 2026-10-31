@@ -1,11 +1,11 @@
 "use client";
 
-import { MapPin, Briefcase } from "lucide-react";
+import { MapPin, Briefcase, Laptop } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { CareerMetaItem } from "./CareerMetaItem";
 import { CareerNewBadge } from "./CareerNewBadge";
 import { CareerCardFooter } from "./CareerCardFooter";
-import { isPostedToday } from "@/data/careers";
+import { isPostedToday, formatWorkplace } from "@/data/careers";
 
 /**
  * Molecule component: Master job listing card
@@ -40,15 +40,15 @@ export function CareerListItem({
           </h3>
           {isNew && <CareerNewBadge />}
         </div>
-        <p className="text-sm font-medium text-slate-600">
-          {job.department}
-        </p>
       </div>
 
-      {/* Metadata Row: Location & Type at text-xs with text-slate-600 */}
+      {/* Metadata Row: Location, Type & Workplace at text-xs with text-slate-600 */}
       <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 mt-2">
         <CareerMetaItem icon={MapPin} text={job.location} size="xs" />
         <CareerMetaItem icon={Briefcase} text={job.type} size="xs" />
+        {job.workplace && (
+          <CareerMetaItem icon={Laptop} text={formatWorkplace(job.workplace)} size="xs" />
+        )}
       </div>
 
       {job.overview && (

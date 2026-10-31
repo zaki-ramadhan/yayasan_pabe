@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useMemo, useEffect } from "react";
 import { CareerHeader } from "@/components/careers/CareerHeader";
@@ -11,25 +12,43 @@ import { safeFetch } from "@/lib/safeFetch";
 
 export default function KarierPage() {
   const [vacancies, setVacancies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeJobId, setActiveJobId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [location, setLocation] = useState("Semua Lokasi");
   const [type, setType] = useState("Semua Tipe");
-  const [department, setDepartment] = useState("Semua Divisi");
 
-  useEffect(() => {
+  const fetchVacancies = () => {
+    setIsLoading(true);
+    setError(null);
     safeFetch("/api/careers", { timeoutMs: 8000 })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Server merespons status ${res.status}`);
+        return res.json();
+      })
       .then((res) => {
         if (res.success && Array.isArray(res.data)) {
           setVacancies(res.data);
           if (res.data.length > 0) {
             setActiveJobId((prev) => prev || res.data[0].id);
           }
+        } else {
+          throw new Error(res.message || "Gagal memuat lowongan kerja.");
         }
       })
-      .catch((err) => console.error("Failed to fetch vacancies:", err));
+      .catch((err) => {
+        console.error("Failed to fetch vacancies:", err);
+        setError("Gagal memuat lowongan. Periksa koneksi internet Anda dan coba lagi.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchVacancies();
   }, []);
 
   // Secure search change handler with validation & sanitization
@@ -46,10 +65,9 @@ export default function KarierPage() {
       if (debouncedSearchQuery.trim()) {
         const query = debouncedSearchQuery.toLowerCase();
         const matchesTitle = job.title.toLowerCase().includes(query);
-        const matchesDept = job.department.toLowerCase().includes(query);
         const matchesLoc = job.location.toLowerCase().includes(query);
         const matchesOverview = job.overview?.toLowerCase().includes(query);
-        if (!matchesTitle && !matchesDept && !matchesLoc && !matchesOverview) {
+        if (!matchesTitle && !matchesLoc && !matchesOverview) {
           return false;
         }
       }
@@ -60,18 +78,13 @@ export default function KarierPage() {
       }
 
       // Type matching
-      if (type !== "Semua Tipe" && job.type !== type) {
-        return false;
-      }
-
-      // Department matching
-      if (department !== "Semua Divisi" && job.department !== department) {
+      if (type !== "Semua Tipe" && job.type !== type && !job.type.startsWith(type)) {
         return false;
       }
 
       return true;
     });
-  }, [vacancies, debouncedSearchQuery, location, type, department]);
+  }, [vacancies, debouncedSearchQuery, location, type]);
 
   // Active job calculation
   const activeJob = useMemo(() => {
@@ -84,7 +97,6 @@ export default function KarierPage() {
     setSearchQuery("");
     setLocation("Semua Lokasi");
     setType("Semua Tipe");
-    setDepartment("Semua Divisi");
   };
 
   return (
@@ -105,8 +117,6 @@ export default function KarierPage() {
           onLocationChange={setLocation}
           type={type}
           onTypeChange={setType}
-          department={department}
-          onDepartmentChange={setDepartment}
         />
 
         {/* Master-Detail Split Grid: Compact gap between left and right columns */}
@@ -118,6 +128,9 @@ export default function KarierPage() {
               activeJobId={activeJob?.id || null}
               onSelectJob={setActiveJobId}
               onResetFilter={handleResetFilters}
+              isLoading={isLoading}
+              error={error}
+              onRetry={fetchVacancies}
             />
           </div>
 

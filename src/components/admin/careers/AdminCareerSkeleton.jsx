@@ -29,17 +29,20 @@ export function AdminCareerSkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
-                <TableHead className="min-w-[200px] w-52 py-2.5">
+                <TableHead className="w-12 text-center py-2.5 px-3">
+                  <Skeleton className="w-4 h-4 rounded mx-auto" />
+                </TableHead>
+                <TableHead className="min-w-[260px] w-64 py-2.5">
                   <Skeleton className="h-4 w-32 rounded" />
                 </TableHead>
-                <TableHead className="w-48 py-2.5">
+                <TableHead className="min-w-[200px] w-56 py-2.5">
                   <Skeleton className="h-4 w-28 rounded" />
                 </TableHead>
-                <TableHead className="w-44 py-2.5">
+                <TableHead className="min-w-[160px] w-48 py-2.5">
                   <Skeleton className="h-4 w-20 rounded" />
                 </TableHead>
-                <TableHead className="w-36 py-2.5">
-                  <Skeleton className="h-4 w-24 rounded" />
+                <TableHead className="w-36 py-2.5 text-center">
+                  <Skeleton className="h-4 w-24 rounded mx-auto" />
                 </TableHead>
                 <TableHead className="w-32 py-2.5 text-center">
                   <Skeleton className="h-4 w-20 rounded mx-auto" />
@@ -55,8 +58,13 @@ export function AdminCareerSkeleton() {
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
+                  {/* Selection Checkbox */}
+                  <TableCell className="w-12 text-center py-3 px-3 align-middle">
+                    <Skeleton className="w-4 h-4 rounded mx-auto" />
+                  </TableCell>
+
                   {/* Position & Code */}
-                  <TableCell className="min-w-[200px] w-52 space-y-1.5 py-3 align-middle">
+                  <TableCell className="min-w-[260px] w-64 space-y-1.5 py-3 align-middle">
                     <div className="space-y-1">
                       <Skeleton className="h-3.5 w-44 rounded" />
                       <Skeleton className="h-3.5 w-28 rounded" />
@@ -65,19 +73,19 @@ export function AdminCareerSkeleton() {
                   </TableCell>
 
                   {/* Department & System */}
-                  <TableCell className="w-48 space-y-1.5 py-3 align-middle">
+                  <TableCell className="min-w-[200px] w-56 space-y-1.5 py-3 align-middle">
                     <Skeleton className="h-5 w-24 rounded" />
                     <Skeleton className="h-3 w-20 rounded" />
                   </TableCell>
 
                   {/* Location */}
-                  <TableCell className="w-44 py-3 align-middle">
+                  <TableCell className="min-w-[160px] w-48 py-3 align-middle">
                     <Skeleton className="h-3.5 w-28 rounded" />
                   </TableCell>
 
                   {/* Deadline */}
-                  <TableCell className="w-36 py-3 align-middle">
-                    <Skeleton className="h-4 w-24 rounded" />
+                  <TableCell className="w-36 py-3 text-center align-middle">
+                    <Skeleton className="h-4 w-24 rounded mx-auto" />
                   </TableCell>
 
                   {/* Applicants */}

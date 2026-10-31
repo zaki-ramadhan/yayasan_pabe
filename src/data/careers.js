@@ -12,6 +12,35 @@ export const TYPE_OPTIONS = [
   "Kontrak / Project",
 ];
 
+export const CONTRACT_DURATION_OPTIONS = [
+  "1 Bulan",
+  "3 Bulan",
+  "6 Bulan",
+  "1 Tahun",
+  "Periode Ramadhan",
+  "Periode Qurban",
+  "Project Based",
+];
+
+export const WORKPLACE_OPTIONS = [
+  { value: "Kerja di lokasi", label: "Kerja di lokasi" },
+  { value: "Fleksibel", label: "Fleksibel" },
+  { value: "Jarak jauh", label: "Jarak jauh (dari rumah)" },
+];
+
+/**
+ * Normalisasi format sistem kerja agar seragam dalam bahasa Indonesia yang ramah yayasan.
+ * @param {string} val
+ * @returns {string}
+ */
+export function formatWorkplace(val) {
+  if (!val) return "Kerja di lokasi";
+  if (val === "On-site") return "Kerja di lokasi";
+  if (val === "Hybrid") return "Fleksibel";
+  if (val === "Remote") return "Jarak jauh";
+  return val;
+}
+
 export const DEPARTMENT_OPTIONS = [
   "Semua Divisi",
   "Operasional & Penyaluran",
@@ -46,12 +75,13 @@ export const CAREER_VACANCIES = [
     department: "Operasional & Penyaluran",
     location: "Jakarta Timur / Depok",
     type: "Penuh Waktu (Full-time)",
-    workplace: "Hybrid",
+    workplace: "Fleksibel",
     experience: "Minimal 1 tahun",
     publishedDate: "2026-09-22",
     postedAt: "Hari ini",
     applicantCount: 18,
     deadline: "30 Oktober 2026",
+    requiresResume: true,
     applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
       "Bertanggung jawab atas kelancaran logistik penyaluran bantuan sosial, santunan yatim, dan program ketahanan pangan masyarakat secara tepat sasaran, transparan, dan akuntabel.",
@@ -83,12 +113,13 @@ export const CAREER_VACANCIES = [
     department: "Keuangan & Akuntansi",
     location: "Jakarta Timur / Depok",
     type: "Penuh Waktu (Full-time)",
-    workplace: "On-site",
+    workplace: "Kerja di lokasi",
     experience: "1 - 3 tahun",
     publishedDate: "2026-09-18",
     postedAt: "4 hari yang lalu",
     applicantCount: 12,
     deadline: "25 Oktober 2026",
+    requiresResume: true,
     applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
       "Mengelola pencatatan keuangan ZISWAF berdasarkan PSAK 109, rekonsiliasi kas dan rekening bank harian, serta menjamin kepatuhan audit keuangan yayasan secara berkala.",
@@ -119,13 +150,14 @@ export const CAREER_VACANCIES = [
     department: "Komunikasi & Media",
     location: "Remotely / Fleksibel",
     type: "Kontrak / Project",
-    workplace: "Remote",
+    workplace: "Jarak jauh",
     experience: "Minimal 1 tahun",
     publishedDate: "2026-09-15",
     postedAt: "1 pekan yang lalu",
     applicantCount: 29,
     deadline: "15 November 2026",
-    applyUrl: "https://forms.gle/pabe-recruitment",
+    requiresResume: false,
+    applyUrl: "WITHOUT_RESUME",
     overview:
       "Merancang narasi visual dakwah, liputan dokumenter kegiatan anak asuh dan dhuafa, serta mengelola publikasi media sosial yayasan dengan estetika modern dan edukatif.",
     responsibilities: [
@@ -155,12 +187,13 @@ export const CAREER_VACANCIES = [
     department: "Kemitraan & Fundraising",
     location: "Jakarta Pusat / Selatan",
     type: "Penuh Waktu (Full-time)",
-    workplace: "Hybrid",
+    workplace: "Fleksibel",
     experience: "1 - 2 tahun",
     publishedDate: "2026-09-15",
     postedAt: "1 pekan yang lalu",
     applicantCount: 15,
     deadline: "5 November 2026",
+    requiresResume: true,
     applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
       "Membangun dan merawat kemitraan strategis dengan korporasi, komunitas muslim, dan instansi swasta dalam program CSR dan kolaborasi zakat perusahaan.",
@@ -191,12 +224,13 @@ export const CAREER_VACANCIES = [
     department: "Pendidikan & Dakwah",
     location: "Jakarta Timur / Depok",
     type: "Penuh Waktu (Full-time)",
-    workplace: "On-site",
+    workplace: "Kerja di lokasi",
     experience: "Minimal 2 tahun",
     publishedDate: "2026-09-08",
     postedAt: "2 pekan yang lalu",
     applicantCount: 8,
     deadline: "20 November 2026",
+    requiresResume: true,
     applyUrl: "https://forms.gle/pabe-recruitment",
     overview:
       "Mengawasi jalannya kurikulum tahfidz Al-Qur'an (TPA & Juz 'Amma), pembinaan karakter anak asuh, dan memfasilitasi kebutuhan pendampingan asatidz di program binaan naungan yayasan.",

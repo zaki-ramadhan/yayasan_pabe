@@ -20,7 +20,9 @@ export function CareerCardFooter({
         className
       )}
     >
-      <span>{applicantCount} pelamar</span>
+      <span>
+        {applicantCount > 0 ? `${applicantCount} pelamar` : "Belum ada pelamar"}
+      </span>
       {postedAt && <span>Diposting {postedAt}</span>}
     </div>
   );

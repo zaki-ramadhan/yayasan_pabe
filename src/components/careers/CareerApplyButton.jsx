@@ -44,7 +44,7 @@ export function CareerApplyButton({
       )}
     >
       <a
-        href={url || DEFAULT_APPLY_URL}
+        href={url && url !== "WITHOUT_RESUME" ? url : DEFAULT_APPLY_URL}
         target="_blank"
         rel="noopener noreferrer"
       >

@@ -1,34 +1,67 @@
 "use client";
 
-import { SearchX } from "lucide-react";
+import { SearchX, AlertCircle, RotateCcw } from "lucide-react";
 import { CareerListItem } from "./CareerListItem";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/Button";
 
 /**
  * Organism component: Left master list of jobs
- * Reuses existing EmptyState and Button primitives instead of custom duplicates.
- * @param {object} props
- * @param {Array} props.jobs
- * @param {string|null} props.activeJobId
- * @param {Function} props.onSelectJob
- * @param {Function} props.onResetFilter
+ * Mendukung loading skeleton, error handling, dan empty state.
  */
 export function CareerMasterList({
   jobs = [],
   activeJobId,
   onSelectJob,
   onResetFilter,
+  isLoading = false,
+  error = null,
+  onRetry,
 }) {
   return (
     <div className="space-y-3">
       <div className="pb-0.5">
         <h2 className="text-lg font-medium text-slate-900">
-          Daftar Posisi ({jobs.length})
+          Daftar Posisi {isLoading ? "" : `(${jobs.length})`}
         </h2>
       </div>
 
-      {jobs.length === 0 ? (
+      {isLoading ? (
+        <div className="space-y-2.5">
+          {[1, 2, 3].map((idx) => (
+            <div
+              key={idx}
+              className="p-4 rounded-xl border border-slate-200 bg-white animate-pulse space-y-3"
+            >
+              <div className="h-5 bg-slate-200 rounded w-2/3"></div>
+              <div className="flex gap-2">
+                <div className="h-4 bg-slate-100 rounded w-20"></div>
+                <div className="h-4 bg-slate-100 rounded w-24"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <EmptyState
+          variant="dashed"
+          icon={AlertCircle}
+          title="Gagal memuat daftar posisi"
+          description={error}
+          action={
+            onRetry && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onRetry}
+                className="inline-flex items-center gap-1.5 text-sm font-medium"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Coba lagi</span>
+              </Button>
+            )
+          }
+        />
+      ) : jobs.length === 0 ? (
         <EmptyState
           variant="dashed"
           icon={SearchX}

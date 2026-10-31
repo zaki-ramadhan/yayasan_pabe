@@ -13,26 +13,43 @@ import { Button } from "@/components/ui/Button";
 import { CareerApplySuccessState } from "./CareerApplySuccessState";
 import { CareerApplyFormFields } from "./CareerApplyFormFields";
 import { sanitizeInput, sanitizeName, sanitizePhone, sanitizeEmail } from "@/lib/security";
-import { validateEmail } from "@/lib/validator";
+import { validateEmail, validatePhone } from "@/lib/validator";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 import { getStoredUser } from "@/services/authService";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export function CareerApplyModal({ isOpen, onClose, job }) {
+  const { currentUser } = useCurrentUser();
+  const storedUser = getStoredUser();
+  const activeUser = currentUser || storedUser;
+
+  const isNameLocked = Boolean(
+    activeUser?.name &&
+    activeUser.name !== "Pengguna Google" &&
+    activeUser.name !== "Pengguna Facebook"
+  );
+
+  const isEmailLocked = Boolean(
+    activeUser?.email &&
+    !activeUser.email.endsWith("@google.user") &&
+    !activeUser.email.endsWith("@facebook.user")
+  );
+
+  const requiresResume = job.requiresResume !== false && job.applyUrl !== "WITHOUT_RESUME";
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phone: "",
-    linkedinUrl: "",
     resumeUrl: "",
     coverLetter: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [isEmailLocked, setIsEmailLocked] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Restore draft and prefill logged in user when modal opens
+  // Restore draft and prefill logged in user when modal opens (mirip form relawan)
   useEffect(() => {
     if (!isOpen || !job?.id) return;
     try {
@@ -45,17 +62,19 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
       }
     } catch {}
 
-    const user = getStoredUser();
-    if (user?.email && !user.email.endsWith("@google.user") && !user.email.endsWith("@facebook.user")) {
+    if (activeUser) {
       setFormData((prev) => ({
         ...prev,
-        email: user.email,
-        fullName: prev.fullName || (user.name && user.name !== "Pengguna Google" && user.name !== "Pengguna Facebook" ? user.name : ""),
-        phone: prev.phone || (user.phone && user.phone !== "-" ? user.phone : ""),
+        fullName: isNameLocked
+          ? activeUser.name
+          : prev.fullName || (activeUser.name && activeUser.name !== "Pengguna Google" && activeUser.name !== "Pengguna Facebook" ? activeUser.name : ""),
+        email: isEmailLocked
+          ? activeUser.email
+          : prev.email || (activeUser.email && !activeUser.email.endsWith("@google.user") && !activeUser.email.endsWith("@facebook.user") ? activeUser.email : ""),
+        phone: prev.phone || (activeUser.phone && activeUser.phone !== "-" ? sanitizePhone(activeUser.phone) : ""),
       }));
-      setIsEmailLocked(true);
     }
-  }, [isOpen, job?.id]);
+  }, [isOpen, job?.id, activeUser, isNameLocked, isEmailLocked]);
 
   // Auto-save draft on input
   useEffect(() => {
@@ -70,11 +89,11 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
   const isFormValid = useMemo(() => {
     const isNameOk = formData.fullName.trim().length >= 2;
     const isEmailOk = validateEmail(formData.email.trim(), true).isValid;
-    const isPhoneOk = formData.phone.trim().length >= 10;
-    const isResumeOk = formData.resumeUrl.trim().length > 0;
+    const isPhoneOk = validatePhone(formData.phone.trim()).isValid;
+    const isResumeOk = !requiresResume || formData.resumeUrl.trim().length > 0;
     const isCoverOk = formData.coverLetter.trim().length >= 10;
     return Boolean(isNameOk && isEmailOk && isPhoneOk && isResumeOk && isCoverOk);
-  }, [formData]);
+  }, [formData, requiresResume]);
 
   if (!job) return null;
 
@@ -83,9 +102,8 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     if (field === "fullName") cleanValue = sanitizeName(value);
     else if (field === "email") cleanValue = sanitizeEmail(value);
     else if (field === "phone") cleanValue = sanitizePhone(value);
-    else if (field === "linkedinUrl") cleanValue = value.replace(/\s+/g, "").slice(0, 200);
     else if (field === "resumeUrl") cleanValue = value.replace(/\s+/g, "").slice(0, 300);
-    else if (field === "coverLetter") cleanValue = value.replace(/^\s+/, "").replace(/\s{2,}/g, " ").slice(0, 1000);
+    else if (field === "coverLetter") cleanValue = value.replace(/^\s+/, "").replace(/\s{2,}/g, " ").slice(0, 500);
 
     setFormData((prev) => ({
       ...prev,
@@ -126,14 +144,15 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     if (!emailValidation.isValid) {
       newErrors.email = emailValidation.message || "Format alamat email tidak valid.";
     }
-    if (phoneTrimmed.length < 10) {
-      newErrors.phone = "Nomor WhatsApp/HP minimal 10 digit angka.";
+    const phoneValidation = validatePhone(phoneTrimmed, { fieldName: "Nomor WhatsApp" });
+    if (!phoneValidation.isValid) {
+      newErrors.phone = phoneValidation.message;
     }
-    if (!formData.resumeUrl.trim()) {
-      newErrors.resumeUrl = "Tautan resume / CV (Google Drive/PDF) wajib dicantumkan.";
+    if (requiresResume && !formData.resumeUrl.trim()) {
+      newErrors.resumeUrl = "Berkas CV / resume (PDF) wajib diunggah untuk posisi ini.";
     }
     if (coverLetterTrimmed.length < 10) {
-      newErrors.coverLetter = "Surat pengantar wajib diisi minimal 10 karakter.";
+      newErrors.coverLetter = "Motivasi bergabung wajib diisi minimal 10 karakter.";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -153,9 +172,8 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
           vacancyId: job.id,
           fullName: fullNameTrimmed,
           email: emailTrimmed,
-          phone: phoneTrimmed,
-          linkedinUrl: formData.linkedinUrl.trim(),
-          resumeUrl: formData.resumeUrl.trim(),
+          phone: phoneValidation.sanitized,
+          resumeUrl: requiresResume ? formData.resumeUrl.trim() : "",
           coverLetter: coverLetterTrimmed,
         }),
         timeoutMs: 15000,
@@ -185,7 +203,6 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
         fullName: "",
         email: "",
         phone: "",
-        linkedinUrl: "",
         resumeUrl: "",
         coverLetter: "",
       });
@@ -195,7 +212,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+      <DialogContent className="max-w-2xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
             {isSuccess ? "Lamaran Berhasil Terkirim" : "Formulir Lamaran Kerja"}
@@ -215,7 +232,9 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 onPhoneChange={handlePhoneChange}
+                isNameLocked={isNameLocked}
                 isEmailLocked={isEmailLocked}
+                requiresResume={requiresResume}
                 errors={errors}
               />
             </div>
@@ -224,20 +243,18 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
                 onClick={handleClose}
                 disabled={isSubmitting}
-                className="h-9 text-xs cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
+                className="h-10 text-sm font-medium cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
               >
                 Batal
               </Button>
               <Button
                 type="submit"
-                size="sm"
-                disabled={!isFormValid || isSubmitting}
-                className="h-9 text-xs bg-primary hover:bg-primary-hover text-white font-medium px-4 cursor-pointer gap-1.5 disabled:pointer-events-none disabled:cursor-not-allowed"
+                disabled={isSubmitting}
+                className="h-10 text-sm bg-primary hover:bg-primary-hover text-white font-medium px-4 cursor-pointer gap-1.5 disabled:pointer-events-none disabled:cursor-not-allowed"
               >
-                {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />}
+                {isSubmitting && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
                 <span>{isSubmitting ? "Mengirimkan..." : "Kirim Lamaran"}</span>
               </Button>
             </div>

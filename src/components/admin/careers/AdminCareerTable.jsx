@@ -21,7 +21,6 @@ import { AdminCareerModal } from "@/components/admin/careers/AdminCareerModal";
 import { AdminApplicantDrawer } from "@/components/admin/careers/AdminApplicantDrawer";
 import { AdminCareerToolbar } from "@/components/admin/careers/AdminCareerToolbar";
 import { AdminCareerTableRow } from "@/components/admin/careers/AdminCareerTableRow";
-import { DEPARTMENT_OPTIONS } from "@/data/careers";
 import { useTableSelection } from "@/hooks/useTableSelection";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
@@ -31,7 +30,6 @@ import { toast } from "@/hooks/useToast";
 export function AdminCareerTable({ initialVacancies = [] }) {
   const [vacancies, setVacancies] = useState(initialVacancies);
   const [search, setSearch] = useState("");
-  const [departmentFilter, setDepartmentFilter] = useState("ALL");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedVacancy, setSelectedVacancy] = useState(null);
   const [drawerVacancy, setDrawerVacancy] = useState(null);
@@ -45,32 +43,16 @@ export function AdminCareerTable({ initialVacancies = [] }) {
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 
-  const filterDepartmentOptions = useMemo(() => {
-    return [
-      { value: "ALL", label: "Semua Divisi" },
-      ...DEPARTMENT_OPTIONS.filter((d) => d !== "Semua Divisi").map((dept) => ({
-        value: dept,
-        label: dept,
-      })),
-    ];
-  }, []);
-
   const filteredVacancies = useMemo(() => {
     return vacancies.filter((job) => {
       const query = debouncedSearch.toLowerCase();
-      const matchesSearch =
-        !query ||
+      if (!query) return true;
+      return (
         job.title.toLowerCase().includes(query) ||
-        job.department.toLowerCase().includes(query) ||
-        job.location.toLowerCase().includes(query);
-
-      const matchesDept =
-        departmentFilter === "ALL" ||
-        job.department.toLowerCase() === departmentFilter.toLowerCase();
-
-      return matchesSearch && matchesDept;
+        job.location.toLowerCase().includes(query)
+      );
     });
-  }, [vacancies, debouncedSearch, departmentFilter]);
+  }, [vacancies, debouncedSearch]);
 
   const {
     currentPage,
@@ -90,12 +72,6 @@ export function AdminCareerTable({ initialVacancies = [] }) {
 
   const handleClearSearch = () => {
     setSearch("");
-    selection.clearSelection();
-    resetPage();
-  };
-
-  const handleDepartmentChange = (val) => {
-    setDepartmentFilter(val);
     selection.clearSelection();
     resetPage();
   };
@@ -216,9 +192,6 @@ export function AdminCareerTable({ initialVacancies = [] }) {
         search={search}
         onSearchChange={handleSearchChange}
         onClearSearch={handleClearSearch}
-        departmentFilter={departmentFilter}
-        onDepartmentChange={handleDepartmentChange}
-        filterDepartmentOptions={filterDepartmentOptions}
         onRefresh={refreshList}
         onOpenAdd={handleOpenAdd}
         isLoading={isLoading}
@@ -257,10 +230,10 @@ export function AdminCareerTable({ initialVacancies = [] }) {
                   aria-label="Pilih semua lowongan di halaman ini"
                 />
               </TableHead>
-              <TableHead className="min-w-[200px] w-52">Posisi &amp; Kode</TableHead>
-              <TableHead className="w-48">Divisi &amp; Sistem</TableHead>
-              <TableHead className="w-44">Lokasi</TableHead>
-              <TableHead className="w-36">Batas Waktu</TableHead>
+              <TableHead className="min-w-[260px] w-64">Posisi &amp; Kode</TableHead>
+              <TableHead className="min-w-[180px] w-48">Tipe &amp; Sistem</TableHead>
+              <TableHead className="min-w-[160px] w-48">Lokasi</TableHead>
+              <TableHead className="w-36 text-center">Batas Waktu</TableHead>
               <TableHead className="w-32 text-center">Pelamar</TableHead>
               <TableHead className="w-28 text-center">Status</TableHead>
               <TableHead className="text-right w-24">Aksi</TableHead>

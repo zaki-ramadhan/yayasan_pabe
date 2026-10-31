@@ -32,7 +32,7 @@ export function CareerDetailPanel({ job }) {
     <>
       <Card className="rounded-xl p-5 sm:p-6 space-y-4 sm:space-y-5 bg-white border-slate-200 shadow-2xs">
         {/* Header Section */}
-        <CareerDetailHeader job={job} />
+        <CareerDetailHeader job={job} onApply={() => setIsApplyModalOpen(true)} />
 
         {/* Deskripsi Amanah: Rapat dan terhubung langsung */}
         <CareerDetailSection title="Ringkasan Peran" className="-mt-4">

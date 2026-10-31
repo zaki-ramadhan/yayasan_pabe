@@ -6,17 +6,15 @@ import { FormDialog } from "@/components/ui/FormDialog";
 import { AdminCareerBasicInfoFields } from "./AdminCareerBasicInfoFields";
 import { AdminCareerDetailFields } from "./AdminCareerDetailFields";
 import {
-	DEPARTMENT_OPTIONS,
 	TYPE_OPTIONS,
 	LOCATION_OPTIONS,
+	CONTRACT_DURATION_OPTIONS,
+	formatWorkplace,
 } from "@/data/careers";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 import { isFormDirty } from "@/lib/formUtils";
 
-const INITIAL_DEPARTMENTS = DEPARTMENT_OPTIONS.filter(
-	(d) => d !== "Semua Divisi",
-);
 const INITIAL_LOCATIONS = LOCATION_OPTIONS.filter((l) => l !== "Semua Lokasi");
 const EMPLOYMENT_TYPES = TYPE_OPTIONS.filter((t) => t !== "Semua Tipe");
 
@@ -29,13 +27,6 @@ export function AdminCareerModal({
 	const isEditing = Boolean(vacancyToEdit);
 
 	const [title, setTitle] = useState("");
-	const [department, setDepartment] = useState(
-		"Operasional & Penyaluran",
-	);
-	const [departmentList, setDepartmentList] =
-		useState(
-			INITIAL_DEPARTMENTS,
-		);
 	const [location, setLocation] = useState(
 		"Jakarta Timur / Depok",
 	);
@@ -44,13 +35,13 @@ export function AdminCareerModal({
 	const [type, setType] = useState(
 		"Penuh Waktu (Full-time)",
 	);
-	const [workplace, setWorkplace] = useState("On-site");
+	const [contractDuration, setContractDuration] = useState("");
+	const [durationList, setDurationList] =
+		useState(CONTRACT_DURATION_OPTIONS);
+	const [workplace, setWorkplace] = useState("Kerja di lokasi");
 	const [experience, setExperience] =
 		useState("1 - 3 tahun");
-	const [deadline, setDeadline] =
-		useState(
-			"30 November 2026",
-		);
+	const [deadline, setDeadline] = useState("");
 	const [overview, setOverview] = useState("");
 	const [
 		responsibilitiesText,
@@ -60,6 +51,7 @@ export function AdminCareerModal({
 		useState("");
 	const [benefitsText, setBenefitsText] = useState("");
 	const [isActive, setIsActive] = useState(true);
+	const [requiresResume, setRequiresResume] = useState(true);
 	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] =
 		useState(false);
@@ -67,34 +59,6 @@ export function AdminCareerModal({
 	const handleClearError = (field) => {
 		if (errors[field]) {
 			setErrors((prev) => ({ ...prev, [field]: "" }));
-		}
-	};
-
-	const handleCreateDepartment = (newDept) => {
-		const trimmed =
-			newDept.trim();
-		if (trimmed) {
-			setDepartmentList(
-				(
-					prev,
-				) =>
-					Array.from(
-						new Set(
-							[
-								...prev,
-								trimmed,
-							],
-						),
-					),
-			);
-			setDepartment(
-				trimmed,
-			);
-			handleClearError("department");
-			toast.success(
-				`Divisi "${trimmed}" siap digunakan.`,
-			);
-			return trimmed;
 		}
 	};
 
@@ -126,6 +90,19 @@ export function AdminCareerModal({
 		}
 	};
 
+	const handleCreateDuration = (newDuration) => {
+		const trimmed = newDuration.trim();
+		if (trimmed) {
+			setDurationList((prev) =>
+				Array.from(new Set([...prev, trimmed]))
+			);
+			setContractDuration(trimmed);
+			handleClearError("contractDuration");
+			toast.success(`Durasi "${trimmed}" siap digunakan.`);
+			return trimmed;
+		}
+	};
+
 	useEffect(() => {
 		setErrors({});
 		if (vacancyToEdit) {
@@ -133,29 +110,32 @@ export function AdminCareerModal({
 				vacancyToEdit.title ||
 					"",
 			);
-			setDepartment(
-				vacancyToEdit.department ||
-					"Operasional & Penyaluran",
-			);
 			setLocation(
 				vacancyToEdit.location ||
 					"Jakarta Timur / Depok",
 			);
-			setType(
-				vacancyToEdit.type ||
-					"Penuh Waktu (Full-time)",
-			);
 			setWorkplace(
-				vacancyToEdit.workplace ||
-					"On-site",
+				formatWorkplace(vacancyToEdit.workplace || "Kerja di lokasi"),
 			);
+			const rawType = vacancyToEdit.type || "Penuh Waktu (Full-time)";
+			const contractMatch = rawType.match(/^Kontrak \/ Project \((.+)\)$/);
+			if (contractMatch) {
+				const dur = contractMatch[1];
+				setType("Kontrak / Project");
+				setContractDuration(dur);
+				setDurationList((prev) =>
+					Array.from(new Set([...prev, dur]))
+				);
+			} else {
+				setType(rawType);
+				setContractDuration("");
+			}
 			setExperience(
 				vacancyToEdit.experience ||
 					"1 - 3 tahun",
 			);
 			setDeadline(
-				vacancyToEdit.deadline ||
-					"30 November 2026",
+				vacancyToEdit.deadline || "",
 			);
 			setOverview(
 				vacancyToEdit.overview ||
@@ -191,12 +171,14 @@ export function AdminCareerModal({
 					? vacancyToEdit.isActive
 					: true,
 			);
+			setRequiresResume(
+				vacancyToEdit.requiresResume !== undefined
+					? Boolean(vacancyToEdit.requiresResume)
+					: vacancyToEdit.applyUrl !== "WITHOUT_RESUME"
+			);
 		} else {
 			setTitle(
 				"",
-			);
-			setDepartment(
-				"Operasional & Penyaluran",
 			);
 			setLocation(
 				"Jakarta Timur / Depok",
@@ -204,15 +186,13 @@ export function AdminCareerModal({
 			setType(
 				"Penuh Waktu (Full-time)",
 			);
-			setWorkplace(
-				"On-site",
-			);
+			setContractDuration("");
+			setDurationList(CONTRACT_DURATION_OPTIONS);
+			setWorkplace("Kerja di lokasi");
 			setExperience(
 				"1 - 3 tahun",
 			);
-			setDeadline(
-				"30 November 2026",
-			);
+			setDeadline("");
 			setOverview(
 				"",
 			);
@@ -228,6 +208,9 @@ export function AdminCareerModal({
 			setIsActive(
 				true,
 			);
+			setRequiresResume(
+				true,
+			);
 		}
 	}, [vacancyToEdit, isOpen]);
 
@@ -238,11 +221,11 @@ export function AdminCareerModal({
 		if (!title.trim() || title.trim().length < 3) {
 			newErrors.title = "Nama posisi pekerjaan wajib diisi (minimal 3 karakter).";
 		}
-		if (!department) {
-			newErrors.department = "Divisi pekerjaan wajib dipilih.";
-		}
 		if (!location) {
 			newErrors.location = "Lokasi penempatan wajib dipilih.";
+		}
+		if (type === "Kontrak / Project" && !contractDuration.trim()) {
+			newErrors.contractDuration = "Durasi kontrak / proyek wajib diisi.";
 		}
 		if (!overview.trim() || overview.trim().length < 10) {
 			newErrors.overview = "Deskripsi ringkasan posisi wajib diisi (minimal 10 karakter).";
@@ -311,6 +294,11 @@ export function AdminCareerModal({
 					? "PUT"
 					: "POST";
 
+			const effectiveType =
+				type === "Kontrak / Project" && contractDuration.trim()
+					? `Kontrak / Project (${contractDuration.trim()})`
+					: type;
+
 			const res =
 				await safeFetch(
 					url,
@@ -322,9 +310,9 @@ export function AdminCareerModal({
 						body: JSON.stringify(
 							{
 								title,
-								department,
+								department: vacancyToEdit?.department || "Umum",
 								location,
-								type,
+								type: effectiveType,
 								workplace,
 								experience,
 								deadline,
@@ -333,6 +321,7 @@ export function AdminCareerModal({
 								requirements,
 								benefits,
 								isActive,
+								requiresResume,
 							},
 						),
 					},
@@ -385,26 +374,36 @@ export function AdminCareerModal({
 		const initialBenefits = Array.isArray(vacancyToEdit.benefits)
 			? vacancyToEdit.benefits.join("\n")
 			: "";
+		const initialRequiresResume =
+			vacancyToEdit.requiresResume !== undefined
+				? Boolean(vacancyToEdit.requiresResume)
+				: vacancyToEdit.applyUrl !== "WITHOUT_RESUME";
+
+		const initialTypeRaw = vacancyToEdit.type || "Penuh Waktu (Full-time)";
+		const initialContractMatch = initialTypeRaw.match(/^Kontrak \/ Project \((.+)\)$/);
+		const initialType = initialContractMatch ? "Kontrak / Project" : initialTypeRaw;
+		const initialDuration = initialContractMatch ? initialContractMatch[1] : "";
 
 		return isFormDirty(
 			{
 				title: vacancyToEdit.title || "",
-				department: vacancyToEdit.department || "Operasional & Penyaluran",
 				location: vacancyToEdit.location || "Jakarta Timur / Depok",
-				type: vacancyToEdit.type || "Penuh Waktu (Full-time)",
-				workplace: vacancyToEdit.workplace || "On-site",
+				type: initialType,
+				contractDuration: initialDuration,
+				workplace: formatWorkplace(vacancyToEdit.workplace || "Kerja di lokasi"),
 				experience: vacancyToEdit.experience || "1 - 3 tahun",
-				deadline: vacancyToEdit.deadline || "30 November 2026",
+				deadline: vacancyToEdit.deadline || "",
 				overview: vacancyToEdit.overview || "",
 				responsibilities: initialResponsibilities,
 				requirements: initialRequirements,
 				benefits: initialBenefits,
+				requiresResume: initialRequiresResume,
 			},
 			{
 				title,
-				department,
 				location,
 				type,
+				contractDuration,
 				workplace,
 				experience,
 				deadline,
@@ -412,15 +411,16 @@ export function AdminCareerModal({
 				responsibilities: responsibilitiesText,
 				requirements: requirementsText,
 				benefits: benefitsText,
+				requiresResume,
 			}
 		);
 	}, [
 		isEditing,
 		vacancyToEdit,
 		title,
-		department,
 		location,
 		type,
+		contractDuration,
 		workplace,
 		experience,
 		deadline,
@@ -428,16 +428,18 @@ export function AdminCareerModal({
 		responsibilitiesText,
 		requirementsText,
 		benefitsText,
+		requiresResume,
 	]);
 
 	const isFormValid = useMemo(() => {
-		return Boolean(
+		const isBasicValid =
 			title.trim().length >= 3 &&
-			department &&
 			location &&
-			overview.trim().length >= 10
-		);
-	}, [title, department, location, overview]);
+			overview.trim().length >= 10;
+		const isContractValid =
+			type !== "Kontrak / Project" || contractDuration.trim().length > 0;
+		return Boolean(isBasicValid && isContractValid);
+	}, [title, location, overview, type, contractDuration]);
 
 	return (
 		<FormDialog
@@ -453,30 +455,32 @@ export function AdminCareerModal({
 			isSubmitting={isSubmitting}
 			submitText="Simpan"
 			submittingText="Menyimpan..."
-			submitDisabled={!isFormValid || (isEditing && !isDirty)}
+			submitDisabled={isEditing && !isDirty}
 		>
 			<AdminCareerBasicInfoFields
 				title={title}
 				onTitleChange={setTitle}
-				department={department}
-				onDepartmentChange={setDepartment}
-				departmentList={departmentList}
-				onCreateDepartment={handleCreateDepartment}
 				type={type}
 				onTypeChange={setType}
 				employmentTypes={EMPLOYMENT_TYPES}
+				contractDuration={contractDuration}
+				onContractDurationChange={setContractDuration}
+				durationList={durationList}
+				onCreateDuration={handleCreateDuration}
+				workplace={workplace}
+				onWorkplaceChange={setWorkplace}
 				location={location}
 				onLocationChange={setLocation}
 				locationList={locationList}
 				onCreateLocation={handleCreateLocation}
-				workplace={workplace}
-				onWorkplaceChange={setWorkplace}
 				experience={experience}
 				onExperienceChange={setExperience}
 				deadline={deadline}
 				onDeadlineChange={setDeadline}
 				isActive={isActive}
 				onIsActiveChange={setIsActive}
+				requiresResume={requiresResume}
+				onRequiresResumeChange={setRequiresResume}
 				errors={errors}
 				onClearError={handleClearError}
 			/>
