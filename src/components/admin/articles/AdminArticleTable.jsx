@@ -246,10 +246,10 @@ export function AdminArticleTable({
                 />
               </TableHead>
               <TableHead className="w-16">Banner</TableHead>
-              <TableHead>Judul Artikel</TableHead>
+              <TableHead className="min-w-[280px] sm:min-w-[340px] max-w-lg">Judul Artikel</TableHead>
               <TableHead className="w-36 text-center">Kategori</TableHead>
               <TableHead className="w-40">Penulis</TableHead>
-              <TableHead className="w-32">Tanggal Rilis</TableHead>
+              <TableHead className="w-32 text-center">Tanggal Rilis</TableHead>
               <TableHead className="w-24 text-center">Apresiasi</TableHead>
               <TableHead className="text-right w-28">Aksi</TableHead>
             </TableRow>

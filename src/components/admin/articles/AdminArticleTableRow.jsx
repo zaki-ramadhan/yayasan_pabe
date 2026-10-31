@@ -50,14 +50,14 @@ export function AdminArticleTableRow({
 				</div>
 			</TableCell>
 
-			<TableCell className="py-2.5 align-middle">
+			<TableCell className="py-2.5 align-middle min-w-[280px] sm:min-w-[340px] max-w-lg">
 				<div className="space-y-0.5">
 					<span
 						className="text-sm font-medium text-slate-900 block line-clamp-2 leading-snug"
 					>
 						{article.title}
 					</span>
-					<div className="flex items-center gap-1 text-sm text-slate-500">
+					<div className="flex items-center gap-1 text-xs text-slate-500 font-normal">
 						<span>
 							/
 							{
@@ -92,13 +92,13 @@ export function AdminArticleTableRow({
 				}
 			</TableCell>
 
-			<TableCell className="text-sm text-slate-600 py-2.5 whitespace-nowrap align-middle">
+			<TableCell className="text-sm text-slate-600 py-2.5 whitespace-nowrap align-middle text-center tabular-nums">
 				{
 					dateDisplay
 				}
 			</TableCell>
 
-			<TableCell className="text-sm text-slate-700 py-2.5 text-center whitespace-nowrap font-medium align-middle">
+			<TableCell className="text-sm text-slate-700 py-2.5 text-center whitespace-nowrap font-medium align-middle tabular-nums">
 				{
 					article.likeCount
 				}{" "}

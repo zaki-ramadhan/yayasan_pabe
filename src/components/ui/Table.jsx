@@ -235,22 +235,38 @@ export function TableSkeletonRows({
   columns = colSpan || 5,
   height = "h-4",
   cellWidths = ["w-8", "w-36", "w-24", "w-48", "w-28", "w-24", "w-16"],
+  cellAlignments = [],
 }) {
   return (
     <>
       {Array.from({ length: rows }).map((_, rIdx) => (
         <TableRow key={rIdx} className="hover:bg-transparent">
-          {Array.from({ length: columns }).map((_, cIdx) => (
-            <TableCell key={cIdx} className="py-3.5 px-3.5 sm:px-4 align-middle">
-              <div
+          {Array.from({ length: columns }).map((_, cIdx) => {
+            const align = cellAlignments[cIdx];
+            const isCenter = align === "center";
+            const isRight = align === "right";
+
+            return (
+              <TableCell
+                key={cIdx}
                 className={cn(
-                  "bg-slate-200/80 rounded animate-pulse",
-                  height,
-                  cellWidths[cIdx % cellWidths.length] || "w-full"
+                  "py-3.5 px-3.5 sm:px-4 align-middle",
+                  isCenter && "text-center",
+                  isRight && "text-right"
                 )}
-              />
-            </TableCell>
-          ))}
+              >
+                <div
+                  className={cn(
+                    "bg-slate-200/80 rounded animate-pulse",
+                    height,
+                    cellWidths[cIdx % cellWidths.length] || "w-full",
+                    isCenter && "mx-auto",
+                    isRight && "ml-auto"
+                  )}
+                />
+              </TableCell>
+            );
+          })}
         </TableRow>
       ))}
     </>

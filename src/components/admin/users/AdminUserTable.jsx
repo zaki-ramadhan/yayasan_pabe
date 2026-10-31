@@ -96,21 +96,18 @@ export function AdminUserTable({
 						<TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
 							<TableRow>
 								<TableHead className="w-56 font-medium text-slate-600 text-sm py-2.5">
-									Identitas
-									Pengurus
-								</TableHead>
-								<TableHead className="w-44 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-									Kontak
+									Identitas Pengurus
 								</TableHead>
 								<TableHead className="w-40 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-									Peran
-									&amp;
-									Jabatan
+									Kontak
+								</TableHead>
+								<TableHead className="w-44 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+									Peran &amp; Jabatan
 								</TableHead>
 								<TableHead className="w-28 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
 									Status
 								</TableHead>
-								<TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+								<TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
 									Terdaftar
 								</TableHead>
 								<TableHead className="w-32 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">

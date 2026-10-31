@@ -28,7 +28,7 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
             <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
               {item.donorName}
             </span>
-            <div className="flex flex-col text-sm text-slate-500 font-normal truncate">
+            <div className="flex flex-col text-xs text-slate-500 font-normal truncate">
               {item.donorEmail && <span>{maskEmail(item.donorEmail)}</span>}
               {item.donorPhone && <span>{maskPhone(item.donorPhone)}</span>}
             </div>
@@ -43,13 +43,13 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
         >
           {decodeHtmlEntities(item.programTitle)}
         </span>
-        <span className="text-sm text-slate-500 font-normal block mt-0.5">
+        <span className="text-xs text-slate-500 font-normal block mt-0.5">
           Didaftarkan {formatDate(item.createdAt)}
         </span>
       </TableCell>
 
       {/* Komitmen Nominal */}
-      <TableCell className="w-36 text-sm font-medium text-slate-900 py-3 align-middle whitespace-nowrap">
+      <TableCell className="w-36 text-sm font-medium text-slate-900 py-3 align-middle whitespace-nowrap text-right tabular-nums">
         {formatRupiah(item.amount)}
       </TableCell>
 

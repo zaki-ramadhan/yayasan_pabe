@@ -214,10 +214,10 @@ export function AdminFaqTable({ initialFaqs = [] }) {
                 <TableHead className="py-2.5 px-4 font-medium text-slate-600 text-sm min-w-[280px]">
                   Pertanyaan &amp; Jawaban
                 </TableHead>
-                <TableHead className="w-36 py-2.5 px-4 font-medium text-slate-600 text-sm whitespace-nowrap">
+                <TableHead className="w-36 py-2.5 px-4 text-center font-medium text-slate-600 text-sm whitespace-nowrap">
                   Topik
                 </TableHead>
-                <TableHead className="w-36 py-2.5 px-4 font-medium text-slate-600 text-sm whitespace-nowrap">
+                <TableHead className="w-36 py-2.5 px-4 text-center font-medium text-slate-600 text-sm whitespace-nowrap">
                   Pembaruan
                 </TableHead>
                 <TableHead className="w-24 text-right py-2.5 px-4 font-medium text-slate-600 text-sm whitespace-nowrap">

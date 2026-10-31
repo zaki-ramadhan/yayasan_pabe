@@ -124,13 +124,13 @@ export function AdminPrayerTable({
                 <TableHead className="min-w-[280px] max-w-[360px] font-medium text-slate-600 text-sm py-2.5">
                   Program donasi
                 </TableHead>
-                <TableHead className="w-32 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-32 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Nominal
                 </TableHead>
                 <TableHead className="min-w-[200px] font-medium text-slate-600 text-sm py-2.5">
                   Pesan doa
                 </TableHead>
-                <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Waktu kirim
                 </TableHead>
                 <TableHead className="w-28 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">

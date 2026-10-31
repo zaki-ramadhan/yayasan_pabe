@@ -14,7 +14,11 @@ export async function POST(request) {
 
   try {
     const body = await request.json();
-    const keys = Array.isArray(body.keys) ? body.keys : [];
+    let keys = body?.keys;
+    if (keys && typeof keys === "object" && !Array.isArray(keys)) {
+      keys = Object.values(keys);
+    }
+    keys = Array.isArray(keys) ? keys : [];
 
     if (keys.length === 0) {
       return NextResponse.json(

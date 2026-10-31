@@ -30,41 +30,49 @@ export function AdminUserSkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
-                <TableHead className="w-px py-2.5 px-4"><Skeleton className="h-4 w-16" /></TableHead>
-                <TableHead className="w-1/3 py-2.5 px-4"><Skeleton className="h-4 w-32" /></TableHead>
-                <TableHead className="py-2.5 px-4"><Skeleton className="h-4 w-24" /></TableHead>
-                <TableHead className="py-2.5 px-4"><Skeleton className="h-4 w-28" /></TableHead>
-                <TableHead className="py-2.5 px-4"><Skeleton className="h-4 w-20" /></TableHead>
-                <TableHead className="py-2.5 px-4"><Skeleton className="h-4 w-16" /></TableHead>
-                <TableHead className="w-px py-2.5 px-4 text-center"><Skeleton className="h-4 w-8 mx-auto" /></TableHead>
+                <TableHead className="w-56 py-2.5 px-4"><Skeleton className="h-4 w-32" /></TableHead>
+                <TableHead className="w-40 py-2.5 px-4"><Skeleton className="h-4 w-20" /></TableHead>
+                <TableHead className="w-44 py-2.5 px-4"><Skeleton className="h-4 w-28" /></TableHead>
+                <TableHead className="w-28 text-center py-2.5 px-4"><Skeleton className="h-4 w-16 mx-auto" /></TableHead>
+                <TableHead className="w-36 text-center py-2.5 px-4"><Skeleton className="h-4 w-20 mx-auto" /></TableHead>
+                <TableHead className="w-32 text-right py-2.5 px-4"><Skeleton className="h-4 w-12 ml-auto" /></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5].map((i) => (
                 <TableRow key={i}>
-                  <TableCell className="py-3 px-4">
-                    <Skeleton className="w-8 h-8 rounded-full" />
-                  </TableCell>
-                  <TableCell className="py-3 px-4">
-                    <div className="space-y-1">
-                      <Skeleton className="h-4 w-36" />
-                      <Skeleton className="h-3.5 w-44" />
+                  {/* 1. Identitas Pengurus */}
+                  <TableCell className="w-56 py-3 px-4">
+                    <div className="flex items-center gap-2.5">
+                      <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+                      <div className="space-y-1 min-w-0 flex-1">
+                        <Skeleton className="h-4 w-28" />
+                        <Skeleton className="h-3 w-36" />
+                      </div>
                     </div>
                   </TableCell>
-                  <TableCell className="py-3 px-4">
-                    <Skeleton className="h-5 w-24 rounded" />
-                  </TableCell>
-                  <TableCell className="py-3 px-4">
-                    <Skeleton className="h-4 w-28" />
-                  </TableCell>
-                  <TableCell className="py-3 px-4">
+                  {/* 2. Kontak */}
+                  <TableCell className="w-40 py-3 px-4">
                     <Skeleton className="h-4 w-24" />
                   </TableCell>
-                  <TableCell className="py-3 px-4">
-                    <Skeleton className="h-5 w-16 rounded" />
+                  {/* 3. Peran & Jabatan */}
+                  <TableCell className="w-44 py-3 px-4">
+                    <div className="space-y-1">
+                      <Skeleton className="h-5 w-20 rounded" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
                   </TableCell>
-                  <TableCell className="py-3 px-4 text-center">
-                    <Skeleton className="h-6 w-6 rounded-md mx-auto" />
+                  {/* 4. Status */}
+                  <TableCell className="w-28 text-center py-3 px-4">
+                    <Skeleton className="h-5 w-16 rounded mx-auto" />
+                  </TableCell>
+                  {/* 5. Terdaftar */}
+                  <TableCell className="w-36 text-center py-3 px-4">
+                    <Skeleton className="h-4 w-20 mx-auto" />
+                  </TableCell>
+                  {/* 6. Aksi */}
+                  <TableCell className="w-32 text-right py-3 px-4">
+                    <Skeleton className="h-8 w-8 rounded-md ml-auto" />
                   </TableCell>
                 </TableRow>
               ))}

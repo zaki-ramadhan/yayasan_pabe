@@ -50,7 +50,10 @@ export async function PATCH(request) {
 
   try {
     const body = await request.json();
-    const { id, ids, status } = body;
+    let { id, ids, status } = body;
+    if (ids && typeof ids === "object" && !Array.isArray(ids)) {
+      ids = Object.values(ids);
+    }
 
     if (!status) {
       return NextResponse.json(
@@ -108,8 +111,13 @@ export async function DELETE(request) {
         body = null;
       }
 
-      if (body?.ids && Array.isArray(body.ids) && body.ids.length > 0) {
-        const result = await deleteVolunteersBatch(body.ids);
+      let ids = body?.ids;
+      if (ids && typeof ids === "object" && !Array.isArray(ids)) {
+        ids = Object.values(ids);
+      }
+
+      if (Array.isArray(ids) && ids.length > 0) {
+        const result = await deleteVolunteersBatch(ids);
         return NextResponse.json({
           success: true,
           message: `${result.count} pendaftar relawan berhasil dihapus.`,

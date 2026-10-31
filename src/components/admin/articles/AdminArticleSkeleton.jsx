@@ -29,11 +29,14 @@ export function AdminArticleSkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-12 text-center py-2.5 px-3">
+                  <Skeleton className="w-4 h-4 rounded mx-auto" />
+                </TableHead>
                 <TableHead className="w-16 py-2.5">
                   <Skeleton className="h-4 w-12 rounded" />
                 </TableHead>
-                <TableHead className="py-2.5">
-                  <Skeleton className="h-4 w-32 rounded" />
+                <TableHead className="py-2.5 min-w-[280px] sm:min-w-[340px] max-w-lg">
+                  <Skeleton className="h-4 w-40 rounded" />
                 </TableHead>
                 <TableHead className="w-36 py-2.5 text-center">
                   <Skeleton className="h-4 w-20 rounded mx-auto" />
@@ -41,8 +44,8 @@ export function AdminArticleSkeleton() {
                 <TableHead className="w-40 py-2.5">
                   <Skeleton className="h-4 w-16 rounded" />
                 </TableHead>
-                <TableHead className="w-32 py-2.5">
-                  <Skeleton className="h-4 w-24 rounded" />
+                <TableHead className="w-32 py-2.5 text-center">
+                  <Skeleton className="h-4 w-24 rounded mx-auto" />
                 </TableHead>
                 <TableHead className="w-24 py-2.5 text-center">
                   <Skeleton className="h-4 w-16 rounded mx-auto" />
@@ -55,13 +58,18 @@ export function AdminArticleSkeleton() {
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
+                  {/* Selection Checkbox */}
+                  <TableCell className="w-12 text-center py-2.5 px-3 align-middle">
+                    <Skeleton className="w-4 h-4 rounded mx-auto" />
+                  </TableCell>
+
                   {/* Banner */}
                   <TableCell className="w-16 py-2.5 align-middle">
                     <Skeleton className="w-12 h-9 rounded" />
                   </TableCell>
 
                   {/* Title & Slug */}
-                  <TableCell className="space-y-1.5 py-2.5 align-middle">
+                  <TableCell className="space-y-1.5 py-2.5 align-middle min-w-[280px] sm:min-w-[340px] max-w-lg">
                     <Skeleton className="h-4 w-64 max-w-full rounded" />
                     <Skeleton className="h-4 w-40 rounded" />
                     <Skeleton className="h-3 w-32 rounded" />
@@ -81,8 +89,8 @@ export function AdminArticleSkeleton() {
                   </TableCell>
 
                   {/* Published Date */}
-                  <TableCell className="w-32 py-2.5 align-middle">
-                    <Skeleton className="h-3.5 w-24 rounded" />
+                  <TableCell className="w-32 py-2.5 text-center align-middle">
+                    <Skeleton className="h-3.5 w-24 rounded mx-auto" />
                   </TableCell>
 
                   {/* Likes/Appreciation */}

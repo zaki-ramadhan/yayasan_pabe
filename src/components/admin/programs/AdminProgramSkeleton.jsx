@@ -27,17 +27,20 @@ export function AdminProgramSkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-12 text-center py-2.5 px-3">
+                  <Skeleton className="w-4 h-4 rounded mx-auto" />
+                </TableHead>
                 <TableHead className="min-w-[240px] py-2.5">
                   <Skeleton className="h-4 w-32 rounded" />
                 </TableHead>
                 <TableHead className="w-32 py-2.5 text-center">
                   <Skeleton className="h-4 w-16 rounded mx-auto" />
                 </TableHead>
-                <TableHead className="w-56 min-w-[220px] py-2.5">
-                  <Skeleton className="h-4 w-28 rounded" />
+                <TableHead className="w-56 min-w-[220px] py-2.5 text-center">
+                  <Skeleton className="h-4 w-28 rounded mx-auto" />
                 </TableHead>
-                <TableHead className="w-36 py-2.5">
-                  <Skeleton className="h-4 w-24 rounded" />
+                <TableHead className="w-36 py-2.5 text-center">
+                  <Skeleton className="h-4 w-24 rounded mx-auto" />
                 </TableHead>
                 <TableHead className="w-44 py-2.5">
                   <Skeleton className="h-4 w-28 rounded" />
@@ -53,6 +56,11 @@ export function AdminProgramSkeleton() {
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
+                  {/* Selection Checkbox */}
+                  <TableCell className="w-12 text-center py-3 px-3 align-middle">
+                    <Skeleton className="w-4 h-4 rounded mx-auto" />
+                  </TableCell>
+
                   {/* Program Title & Details */}
                   <TableCell className="space-y-1 py-3 align-middle">
                     <Skeleton className="h-4 w-52 rounded" />
@@ -65,19 +73,21 @@ export function AdminProgramSkeleton() {
                   </TableCell>
 
                   {/* Target & Progress */}
-                  <TableCell className="space-y-2 py-3 align-middle w-56 min-w-[220px]">
-                    <div className="flex items-center justify-between">
-                      <Skeleton className="h-4 w-24 rounded" />
-                      <Skeleton className="h-4 w-8 rounded" />
+                  <TableCell className="space-y-2 py-3 align-middle text-center w-56 min-w-[220px]">
+                    <div className="max-w-[200px] mx-auto space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Skeleton className="h-4 w-24 rounded" />
+                        <Skeleton className="h-4 w-8 rounded" />
+                      </div>
+                      <Skeleton className="h-1.5 w-full rounded-full" />
+                      <Skeleton className="h-3 w-28 rounded mx-auto" />
                     </div>
-                    <Skeleton className="h-1.5 w-full rounded-full" />
-                    <Skeleton className="h-3 w-28 rounded" />
                   </TableCell>
 
                   {/* Donors & Time */}
-                  <TableCell className="space-y-1.5 py-3 align-middle">
-                    <Skeleton className="h-4 w-20 rounded" />
-                    <Skeleton className="h-3 w-16 rounded" />
+                  <TableCell className="space-y-1.5 py-3 align-middle text-center">
+                    <Skeleton className="h-4 w-20 rounded mx-auto" />
+                    <Skeleton className="h-3 w-16 rounded mx-auto" />
                   </TableCell>
 
                   {/* Disbursed Amount */}

@@ -2,28 +2,28 @@ export const AUDIT_REPORTS = [
   {
     id: "rep-2025",
     year: 2025,
-    title: "Laporan Keuangan & Penyaluran Tahunan 2025 (Audited)",
-    auditorName: "Kantor Akuntan Publik (KAP) Rama & Rekan",
-    opinionStatus: "Wajar Tanpa Pengecualian (WTP)",
+    title: "Laporan Keuangan & Penyaluran Tahunan 2025",
+    auditorName: "Internal Pembukuan Yayasan",
+    opinionStatus: "Terbuka & Akuntabel",
     totalFundsIn: 732700000,
     totalFundsOut: 665200000,
     beneficiaryCount: 132,
     operationalRatio: "9.2%",
     pdfUrl: "/api/documents/download?type=audit&year=2025",
-    summary: "Laporan hasil audit independen atas laporan keuangan PABE per 31 Desember 2025 dengan opini WTP. Rasio operasional terjaga sangat sehat di bawah batas maksimal regulasi BAZNAS dan Kemenag RI.",
+    summary: "Laporan pertanggungjawaban pengelolaan dana donasi dan penyaluran PABE per 31 Desember 2025. Rasio operasional terjaga sangat sehat di bawah batas maksimal regulasi BAZNAS dan Kemenag RI.",
   },
   {
     id: "rep-2024",
     year: 2024,
-    title: "Laporan Keuangan & Penyaluran Tahunan 2024 (Audited)",
-    auditorName: "Kantor Akuntan Publik (KAP) Rama & Rekan",
-    opinionStatus: "Wajar Tanpa Pengecualian (WTP)",
+    title: "Laporan Keuangan & Penyaluran Tahunan 2024",
+    auditorName: "Internal Pembukuan Yayasan",
+    opinionStatus: "Terbuka & Akuntabel",
     totalFundsIn: 540000000,
     totalFundsOut: 495000000,
     beneficiaryCount: 95,
     operationalRatio: "9.1%",
     pdfUrl: "/api/documents/download?type=audit&year=2024",
-    summary: "Hasil audit independen per 31 Desember 2024 membuktikan kepatuhan penuh tata kelola keuangan syariah dan standar akuntansi keuangan entitas nirlaba (ISAK 35).",
+    summary: "Laporan pertanggungjawaban tahun buku 2024 membuktikan kepatuhan penuh tata kelola keuangan syariah dan akuntabilitas amanah ZISWAF.",
   },
 ];
 
@@ -32,7 +32,7 @@ export const TRANSPARENCY_METRICS = {
   totalBeneficiaries: 132,
   activeCampaignsCount: 8,
   partnerPesantrenCount: 4,
-  kapAuditOpinion: "Wajar Tanpa Pengecualian (WTP)",
+  reportStatus: "Terbuka & Akuntabel",
 };
 
 export const PROGRAM_ALLOCATIONS = [

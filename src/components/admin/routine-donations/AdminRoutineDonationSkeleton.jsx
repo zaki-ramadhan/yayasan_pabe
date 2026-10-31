@@ -45,8 +45,8 @@ export function AdminRoutineDonationSkeleton() {
                 <TableHead className="font-medium text-slate-600 text-sm py-2.5 min-w-[280px] max-w-[360px]">
                   <Skeleton className="h-4 w-32 rounded" />
                 </TableHead>
-                <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  <Skeleton className="h-4 w-24 rounded" />
+                <TableHead className="w-36 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                  <Skeleton className="h-4 w-24 rounded ml-auto" />
                 </TableHead>
                 <TableHead className="w-40 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-28 rounded" />
@@ -85,8 +85,8 @@ export function AdminRoutineDonationSkeleton() {
                   </TableCell>
 
                   {/* Komitmen Nominal */}
-                  <TableCell className="w-36 py-3 align-middle whitespace-nowrap">
-                    <Skeleton className="h-4 w-20 rounded" />
+                  <TableCell className="w-36 py-3 text-right align-middle whitespace-nowrap">
+                    <Skeleton className="h-4 w-20 rounded ml-auto" />
                   </TableCell>
 
                   {/* Frekuensi & Jadwal */}

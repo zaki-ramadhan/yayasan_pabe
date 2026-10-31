@@ -9,7 +9,7 @@ export const metadata = {
 
 export default async function AdminProgramPage({ searchParams }) {
   const resolvedParams = searchParams ? await searchParams : {};
-  const { items, categories } = await getAdminCampaigns({ limit: 50 });
+  const { items, categories, error } = await getAdminCampaigns({ limit: 50 });
 
   return (
     <div className="space-y-4">
@@ -22,6 +22,7 @@ export default async function AdminProgramPage({ searchParams }) {
         initialCampaigns={items}
         categories={categories}
         initialEditId={resolvedParams?.edit}
+        initialError={error}
       />
     </div>
   );

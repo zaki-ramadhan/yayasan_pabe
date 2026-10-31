@@ -3,8 +3,8 @@ import { AdminAuditReportTable } from "@/components/admin/audit-reports/AdminAud
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export const metadata = {
-  title: "Laporan Audit Keuangan",
-  description: "Kelola laporan audit independen, opini WTP, dan transparansi keuangan yayasan.",
+  title: "Laporan Audit & Akuntabilitas Keuangan",
+  description: "Kelola dokumen laporan keuangan dan transparansi penyaluran yayasan.",
 };
 
 export default async function AdminAuditReportPage() {

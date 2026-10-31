@@ -133,8 +133,19 @@ export function useTableSelection(items = [], options = {}) {
     [selectedIds]
   );
 
+  // Buat array representasi yang dapat diserialisasi langsung oleh JSON.stringify
+  // Lengkapi dengan method .has() dan .size agar kompatibel ganda jika dipanggil sebagai Set
+  const selectedList = useMemo(() => {
+    const arr = Array.from(selectedIds);
+    arr.has = (key) => selectedIds.has(key);
+    arr.size = selectedIds.size;
+    return arr;
+  }, [selectedIds]);
+
   return {
-    selectedIds,
+    selectedIds: selectedList,
+    selectedKeys: selectedIds,
+    selectedSet: selectedIds,
     setSelectedIds,
     selectedCount: derived.selectedCount,
     totalCount: derived.totalCount,

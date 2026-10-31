@@ -193,13 +193,13 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                 <TableHead className="w-full font-medium text-slate-600 text-sm py-2.5 min-w-[200px]">
                   Program tujuan
                 </TableHead>
-                <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-px text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Nominal
                 </TableHead>
                 <TableHead className="w-px text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Metode
                 </TableHead>
-                <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-px text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Tanggal
                 </TableHead>
                 <TableHead className="w-px text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">

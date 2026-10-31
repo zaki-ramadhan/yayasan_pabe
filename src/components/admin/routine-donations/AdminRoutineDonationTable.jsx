@@ -182,7 +182,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                 <TableHead className="font-medium text-slate-600 text-sm py-2.5 min-w-[280px] max-w-[360px]">
                   Program kebaikan
                 </TableHead>
-                <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-36 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Komitmen nominal
                 </TableHead>
                 <TableHead className="w-40 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">

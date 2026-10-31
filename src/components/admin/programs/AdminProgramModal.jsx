@@ -358,7 +358,7 @@ export function AdminProgramModal({
 			isOpen={isOpen}
 			onClose={() => onOpenChange(false)}
 			onSubmit={handleSubmit}
-			maxWidth="max-w-xl"
+			maxWidth="max-w-2xl"
 			title={isEditing ? "Edit Program Donasi" : "Tambah Program Donasi Baru"}
 			submitText="Simpan"
 			submittingText="Menyimpan..."
@@ -468,12 +468,16 @@ export function AdminProgramModal({
 				helperText="Mendukung JPG, PNG, WebP (Maks. 10MB) • Bisa Ctrl + V. Otomatis dikonversi ke WebP."
 			/>
 
-			{/* Deskripsi & uraian program */}
-			<FormField label="Deskripsi program" error={errors.story}>
+			{/* Detail & uraian cerita program */}
+			<FormField
+				label="Detail & cerita program"
+				error={errors.story}
+				hint="Ditampilkan penuh pada tab 'Detail Program' di halaman publik. Rangkuman awal otomatis dijadikan pratinjau SEO."
+			>
 				<Textarea
-					rows={4}
+					rows={5}
 					maxLength={2000}
-					placeholder="Jelaskan rincian program, sasaran penerima manfaat, dan rencana penyaluran donasi..."
+					placeholder="Tuliskan latar belakang program, sasaran penerima manfaat, dan rincian rencana penyaluran donasi yayasan..."
 					value={story}
 					onChange={(e) => {
 						setStory(e.target.value);

@@ -29,14 +29,17 @@ export function AdminFaqSkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-12 text-center py-2.5 px-3">
+                  <Skeleton className="w-4 h-4 rounded mx-auto" />
+                </TableHead>
                 <TableHead className="py-2.5 px-4">
                   <Skeleton className="h-4 w-48" />
                 </TableHead>
-                <TableHead className="w-36 py-2.5 px-4">
-                  <Skeleton className="h-4 w-20" />
+                <TableHead className="w-36 py-2.5 px-4 text-center">
+                  <Skeleton className="h-4 w-20 mx-auto" />
                 </TableHead>
-                <TableHead className="w-36 py-2.5 px-4">
-                  <Skeleton className="h-4 w-24" />
+                <TableHead className="w-36 py-2.5 px-4 text-center">
+                  <Skeleton className="h-4 w-24 mx-auto" />
                 </TableHead>
                 <TableHead className="w-24 text-right py-2.5 px-4">
                   <Skeleton className="h-4 w-12 ml-auto" />
@@ -46,17 +49,20 @@ export function AdminFaqSkeleton() {
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <TableRow key={i}>
+                  <TableCell className="w-12 text-center py-3 px-3 align-middle">
+                    <Skeleton className="w-4 h-4 rounded mx-auto" />
+                  </TableCell>
                   <TableCell className="py-3 px-4">
                     <div className="space-y-1">
                       <Skeleton className="h-4 w-3/4" />
                       <Skeleton className="h-4 w-full" />
                     </div>
                   </TableCell>
-                  <TableCell className="w-36 py-3 px-4">
-                    <Skeleton className="h-5 w-20 rounded" />
+                  <TableCell className="w-36 py-3 px-4 text-center">
+                    <Skeleton className="h-5 w-20 rounded mx-auto" />
                   </TableCell>
-                  <TableCell className="w-36 py-3 px-4">
-                    <Skeleton className="h-4 w-24" />
+                  <TableCell className="w-36 py-3 px-4 text-center">
+                    <Skeleton className="h-4 w-24 mx-auto" />
                   </TableCell>
                   <TableCell className="w-24 py-3 px-4 text-right">
                     <div className="flex items-center justify-end gap-1">

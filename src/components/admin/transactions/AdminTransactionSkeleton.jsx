@@ -36,14 +36,14 @@ export function AdminTransactionSkeleton() {
                 <TableHead className="w-full min-w-[220px] py-2.5">
                   <Skeleton className="h-4 w-32 rounded" />
                 </TableHead>
-                <TableHead className="w-px py-2.5 whitespace-nowrap">
-                  <Skeleton className="h-4 w-20 rounded" />
+                <TableHead className="w-px py-2.5 text-right whitespace-nowrap">
+                  <Skeleton className="h-4 w-20 ml-auto rounded" />
                 </TableHead>
                 <TableHead className="w-px py-2.5 text-center whitespace-nowrap">
                   <Skeleton className="h-4 w-24 rounded mx-auto" />
                 </TableHead>
-                <TableHead className="w-px py-2.5 whitespace-nowrap">
-                  <Skeleton className="h-4 w-16 rounded" />
+                <TableHead className="w-px py-2.5 text-center whitespace-nowrap">
+                  <Skeleton className="h-4 w-16 rounded mx-auto" />
                 </TableHead>
                 <TableHead className="w-px py-2.5 text-center whitespace-nowrap">
                   <Skeleton className="h-4 w-14 rounded mx-auto" />
@@ -81,8 +81,8 @@ export function AdminTransactionSkeleton() {
                   </TableCell>
 
                   {/* Amount */}
-                  <TableCell className="w-px py-3 whitespace-nowrap align-middle">
-                    <Skeleton className="h-4 w-24 rounded" />
+                  <TableCell className="w-px py-3 text-right whitespace-nowrap align-middle">
+                    <Skeleton className="h-4 w-24 ml-auto rounded" />
                   </TableCell>
 
                   {/* Payment Method */}
@@ -91,8 +91,8 @@ export function AdminTransactionSkeleton() {
                   </TableCell>
 
                   {/* Date */}
-                  <TableCell className="w-px py-3 whitespace-nowrap align-middle">
-                    <Skeleton className="h-4 w-24 rounded" />
+                  <TableCell className="w-px py-3 whitespace-nowrap align-middle text-center">
+                    <Skeleton className="h-4 w-24 rounded mx-auto" />
                   </TableCell>
 
                   {/* Status */}

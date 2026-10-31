@@ -38,7 +38,9 @@ export function AdminProgramTable({
   initialCampaigns = [],
   categories = [],
   initialEditId,
+  initialError = null,
 }) {
+  const [error, setError] = useState(initialError);
   const initialEditCampaign = useMemo(() => {
     if (!initialEditId) return null;
     return (
@@ -125,12 +127,16 @@ export function AdminProgramTable({
       const data = await res.json();
       if (data.success && data.data) {
         setCampaigns(data.data);
+        setError(null);
         selection.clearSelection();
         toast.success("Data program donasi berhasil diperbarui.");
       } else {
-        toast.error(data.message || "Gagal menyegarkan data program.");
+        const errMsg = data.message || data.error || "Gagal menyegarkan data program.";
+        setError(errMsg);
+        toast.error(errMsg);
       }
     } catch {
+      setError("Gagal menghubungi server database.");
       toast.error("Gagal menyegarkan data program.");
     } finally {
       setIsLoading(false);
@@ -211,6 +217,15 @@ export function AdminProgramTable({
         isLoading={isLoading}
       />
 
+      {error && (
+        <div className="p-3.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 flex items-center justify-between gap-3 text-sm">
+          <span>{error}</span>
+          <Button size="sm" variant="outline" onClick={refreshList} disabled={isLoading}>
+            Coba muat ulang
+          </Button>
+        </div>
+      )}
+
       {/* Reusable Floating Bulk Action Bar */}
       <TableSelectionBar
         selectedCount={selection.selectedCount}
@@ -248,8 +263,8 @@ export function AdminProgramTable({
                 </TableHead>
                 <TableHead className="min-w-[240px] font-medium text-slate-600 text-sm py-2.5">Program Donasi</TableHead>
                 <TableHead className="w-32 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Kategori</TableHead>
-                <TableHead className="w-56 min-w-[220px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Capaian &amp; Target</TableHead>
-                <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Donatur &amp; Waktu</TableHead>
+                <TableHead className="w-56 min-w-[220px] text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Capaian &amp; Target</TableHead>
+                <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Donatur &amp; Waktu</TableHead>
                 <TableHead className="w-44 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Penyaluran Dana</TableHead>
                 <TableHead className="w-24 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Status</TableHead>
                 <TableHead className="w-14 text-right font-medium text-slate-600 text-sm py-2.5">Aksi</TableHead>

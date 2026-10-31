@@ -28,15 +28,23 @@ export function AdminCategorySkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                {/* 0. Checkbox */}
+                <TableHead className="w-12 text-center py-2.5 px-3">
+                  <Skeleton className="h-4 w-4 mx-auto rounded" />
+                </TableHead>
+                {/* 1. Nama Kategori */}
                 <TableHead className="min-w-[220px] py-2.5">
                   <Skeleton className="h-4 w-32 rounded" />
                 </TableHead>
+                {/* 2. Slug */}
                 <TableHead className="min-w-[180px] py-2.5">
                   <Skeleton className="h-4 w-36 rounded" />
                 </TableHead>
+                {/* 3. Jumlah Program */}
                 <TableHead className="w-36 py-2.5 text-center whitespace-nowrap">
                   <Skeleton className="h-4 w-24 mx-auto rounded" />
                 </TableHead>
+                {/* 4. Aksi */}
                 <TableHead className="w-24 py-2.5 text-right whitespace-nowrap pr-4">
                   <Skeleton className="h-4 w-10 ml-auto rounded" />
                 </TableHead>
@@ -45,22 +53,29 @@ export function AdminCategorySkeleton() {
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
+                  {/* 0. Checkbox */}
+                  <TableCell className="w-12 text-center py-3.5 px-3 align-middle">
+                    <Skeleton className="h-4 w-4 mx-auto rounded" />
+                  </TableCell>
+                  {/* 1. Nama Kategori */}
                   <TableCell className="py-3.5 align-middle min-w-[220px]">
                     <div className="flex items-center gap-2">
                       <Skeleton className="w-4 h-4 rounded" />
                       <Skeleton className="h-4 w-40 rounded" />
                     </div>
                   </TableCell>
+                  {/* 2. Slug */}
                   <TableCell className="py-3.5 align-middle min-w-[180px]">
                     <Skeleton className="h-4 w-32 rounded" />
                   </TableCell>
+                  {/* 3. Jumlah Program */}
                   <TableCell className="w-36 text-center py-3.5 align-middle">
                     <Skeleton className="h-5 w-20 mx-auto rounded-md" />
                   </TableCell>
+                  {/* 4. Aksi */}
                   <TableCell className="w-24 text-right py-3.5 align-middle pr-4">
                     <div className="flex items-center justify-end gap-1">
-                      <Skeleton className="h-7 w-7 rounded-md" />
-                      <Skeleton className="h-7 w-7 rounded-md" />
+                      <Skeleton className="h-7 w-7 rounded-md ml-auto" />
                     </div>
                   </TableCell>
                 </TableRow>

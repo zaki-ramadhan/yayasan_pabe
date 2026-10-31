@@ -259,7 +259,7 @@ export function AdminFaqModal({
 			isOpen={isOpen}
 			onClose={() => onOpenChange(false)}
 			onSubmit={handleSubmit}
-			maxWidth="max-w-xl"
+			maxWidth="max-w-2xl"
 			title={
 				isEditing
 					? "Edit tanya jawab (FAQ)"

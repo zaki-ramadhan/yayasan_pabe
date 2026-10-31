@@ -34,7 +34,7 @@ export function AdminFaqTableRow({
 					>
 						{faq.question}
 					</span>
-					<p className="text-sm text-slate-500 line-clamp-1 font-normal leading-normal mt-0.5">
+					<p className="text-xs text-slate-500 line-clamp-1 font-normal leading-normal mt-0.5">
 						{
 							faq.answer
 						}
@@ -43,7 +43,7 @@ export function AdminFaqTableRow({
 			</TableCell>
 
 			{/* Category Tag */}
-			<TableCell className="w-36 py-3 px-4 whitespace-nowrap align-middle">
+			<TableCell className="w-36 py-3 px-4 whitespace-nowrap align-middle text-center">
 				<span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200/90 whitespace-nowrap">
 					{faq.category ||
 						"Umum"}
@@ -51,7 +51,7 @@ export function AdminFaqTableRow({
 			</TableCell>
 
 			{/* Updated Date */}
-			<TableCell className="w-36 py-3 px-4 whitespace-nowrap align-middle">
+			<TableCell className="w-36 py-3 px-4 whitespace-nowrap align-middle text-center">
 				<span className="text-sm font-normal text-slate-600 tabular-nums block">
 					{formatDate(
 						faq.updatedAt ||

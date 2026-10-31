@@ -51,7 +51,7 @@ export function AdminTransactionTableRow({
               {item.donorName}
             </span>
             {item.donorEmail && (
-              <span className="text-sm text-slate-500 block truncate font-normal">
+              <span className="text-xs text-slate-500 block truncate font-normal">
                 {maskEmail(item.donorEmail)}
               </span>
             )}
@@ -67,7 +67,7 @@ export function AdminTransactionTableRow({
       </TableCell>
 
       {/* Nominal */}
-      <TableCell className="w-px font-medium text-sm text-slate-900 py-3 whitespace-nowrap align-middle">
+      <TableCell className="w-px text-right font-medium text-sm text-slate-900 py-3 whitespace-nowrap align-middle tabular-nums">
         {formatRupiah(item.amount)}
       </TableCell>
 
@@ -79,7 +79,7 @@ export function AdminTransactionTableRow({
       </TableCell>
 
       {/* Tanggal */}
-      <TableCell className="w-px text-sm text-slate-500 py-3 whitespace-nowrap align-middle">
+      <TableCell className="w-px text-sm text-slate-500 py-3 whitespace-nowrap align-middle text-center tabular-nums">
         {formatDate(item.createdAt)}
       </TableCell>
 
@@ -97,7 +97,7 @@ export function AdminTransactionTableRow({
           {item.status === "PENDING" && (
             <button
               type="button"
-              onClick={() => onOpenVerify(item)} aria-label="Verifikasi manual donasi"
+              onClick={() => onOpenVerify(item)}
               aria-label={`Verifikasi donasi: ${item.invoiceId}`}
               className="p-1.5 rounded-md text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
             >

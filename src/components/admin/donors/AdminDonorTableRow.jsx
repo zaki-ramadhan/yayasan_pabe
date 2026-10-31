@@ -18,11 +18,18 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
             isAnonymous={donor.name === "Hamba Allah"}
           />
           <div className="min-w-0 space-y-0.5">
-            <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
-              {donor.name}
-            </span>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
+                {donor.name}
+              </span>
+              {donor.isRegisteredUser && (
+                <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0 select-none">
+                  Akun
+                </span>
+              )}
+            </div>
             {donor.email && (
-              <span className="text-sm text-slate-500 block truncate font-normal">
+              <span className="text-xs text-slate-500 block truncate font-normal">
                 {maskEmail(donor.email)}
               </span>
             )}
@@ -31,7 +38,7 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
       </TableCell>
 
       {/* 2. No. Telepon (Kolom Mandiri & Disensor) */}
-      <TableCell className="w-44 py-3 text-sm text-slate-700 align-middle whitespace-nowrap">
+      <TableCell className="w-44 py-3 text-sm text-slate-700 align-middle text-center whitespace-nowrap">
         {donor.phone ? (
           <span className="font-normal tabular-nums">{maskPhone(donor.phone)}</span>
         ) : (
@@ -40,17 +47,17 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
       </TableCell>
 
       {/* 3. Total Donasi */}
-      <TableCell className="w-px font-medium text-sm text-slate-900 py-3 whitespace-nowrap align-middle">
+      <TableCell className="w-px font-medium text-sm text-slate-900 py-3 whitespace-nowrap align-middle text-right tabular-nums">
         {formatRupiah(donor.totalPaidAmount)}
       </TableCell>
 
       {/* 4. Frekuensi Donasi */}
-      <TableCell className="w-px text-center text-sm font-normal text-slate-700 py-3 whitespace-nowrap align-middle">
+      <TableCell className="w-px text-center text-sm font-normal text-slate-700 py-3 whitespace-nowrap align-middle tabular-nums">
         {donor.paidCount}x
       </TableCell>
 
       {/* 5. Donasi Terakhir */}
-      <TableCell className="w-px text-sm text-slate-500 py-3 whitespace-nowrap align-middle">
+      <TableCell className="w-px text-sm text-slate-500 py-3 whitespace-nowrap align-middle text-center tabular-nums">
         {donor.lastDonatedAt ? formatDate(donor.lastDonatedAt) : "-"}
       </TableCell>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { isFormDirty } from "@/lib/formUtils";
 
 /**
@@ -11,24 +11,27 @@ import { isFormDirty } from "@/lib/formUtils";
 export function useSanitizedForm(initialValues = {}, fieldSanitizers = {}, validator = null) {
   const [values, setValues] = useState(() => {
     const initialized = {};
-    for (const [key, val] of Object.entries(initialValues)) {
+    for (const [key, val] of Object.entries(initialValues || {})) {
       const sanitizer = fieldSanitizers[key];
       initialized[key] = sanitizer && typeof val === "string" ? sanitizer(val) : (val ?? "");
     }
     return initialized;
   });
 
-  // Sinkronisasi otomatis saat initialValues berubah dari luar (pola resmi React tanpa cascading effect)
-  const [prevInitial, setPrevInitial] = useState(initialValues);
-  if (initialValues !== prevInitial) {
-    setPrevInitial(initialValues);
-    const initialized = {};
-    for (const [key, val] of Object.entries(initialValues || {})) {
-      const sanitizer = fieldSanitizers[key];
-      initialized[key] = sanitizer && typeof val === "string" ? sanitizer(val) : (val ?? "");
+  const initialRef = useRef(initialValues);
+
+  // Sinkronisasi otomatis saat initialValues berubah dari luar tanpa memicu loop render-phase
+  useEffect(() => {
+    if (isFormDirty(initialRef.current, initialValues)) {
+      initialRef.current = initialValues;
+      const initialized = {};
+      for (const [key, val] of Object.entries(initialValues || {})) {
+        const sanitizer = fieldSanitizers[key];
+        initialized[key] = sanitizer && typeof val === "string" ? sanitizer(val) : (val ?? "");
+      }
+      setValues(initialized);
     }
-    setValues(initialized);
-  }
+  }, [initialValues, fieldSanitizers]);
 
   const handleChange = useCallback(
     (field, sanitizer) => (e) => {

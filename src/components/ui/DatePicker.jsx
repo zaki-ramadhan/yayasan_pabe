@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { format, isValid, parseISO } from "date-fns";
+import { format, isValid, parseISO, parse } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Calendar as CalendarIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -66,7 +66,20 @@ export function DatePicker({
       if (!trimmed) return undefined;
       // Tangani format YYYY-MM-DD atau ISO
       const parsed = trimmed.includes("T") ? parseISO(trimmed) : parseISO(`${trimmed}T00:00:00`);
-      return isValid(parsed) ? parsed : undefined;
+      if (isValid(parsed)) return parsed;
+
+      try {
+        const parsedId = parse(trimmed, "d MMMM yyyy", new Date(), { locale: idLocale });
+        if (isValid(parsedId)) return parsedId;
+      } catch {}
+
+      try {
+        const parsedShort = parse(trimmed, "d MMM yyyy", new Date(), { locale: idLocale });
+        if (isValid(parsedShort)) return parsedShort;
+      } catch {}
+
+      const nativeParsed = new Date(trimmed);
+      return isValid(nativeParsed) ? nativeParsed : undefined;
     }
     return undefined;
   }, [value]);

@@ -35,14 +35,14 @@ export function AdminAuditReportTableRow({
 				</span>
 			</TableCell>
 
-			<TableCell className="py-3.5 align-middle space-y-1">
+			<TableCell className="py-3.5 align-middle space-y-1 min-w-[280px] sm:min-w-[360px] max-w-lg">
 				<span
 					className="font-medium text-sm text-slate-900 block leading-tight line-clamp-1"
 				>
 					{item.auditorName}
 				</span>
 				<span
-					className="text-sm font-normal text-slate-500 block leading-normal line-clamp-2"
+					className="text-xs font-normal text-slate-500 block leading-normal line-clamp-2"
 				>
 					{item.title}
 				</span>

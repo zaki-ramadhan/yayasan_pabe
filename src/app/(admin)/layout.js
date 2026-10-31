@@ -17,7 +17,7 @@ export default async function AdminLayout({ children }) {
   }
 
   if (!role || role === "DONOR") {
-    redirect("/login?error=forbidden&redirect=/admin");
+    redirect("/donatur/dashboard");
   }
 
   return <AdminLayoutClient>{children}</AdminLayoutClient>;

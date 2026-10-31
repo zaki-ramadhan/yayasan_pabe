@@ -30,7 +30,7 @@ export function AdminAuditReportModal({
 	const [title, setTitle] = useState("");
 	const [auditorName, setAuditorName] = useState("");
 	const [opinionStatus, setOpinionStatus] =
-		useState("WTP");
+		useState("Terbuka & Akuntabel");
 	const [totalFundsIn, setTotalFundsIn] = useState("");
 	const [totalFundsOut, setTotalFundsOut] =
 		useState("");
@@ -300,6 +300,9 @@ export function AdminAuditReportModal({
 							<SelectValue placeholder="Pilih opini" />
 						</SelectTrigger>
 						<SelectContent>
+							<SelectItem value="Terbuka & Akuntabel">
+								Terbuka &amp; Akuntabel (Internal)
+							</SelectItem>
 							<SelectItem value="WTP">
 								WTP (Wajar Tanpa Pengecualian)
 							</SelectItem>

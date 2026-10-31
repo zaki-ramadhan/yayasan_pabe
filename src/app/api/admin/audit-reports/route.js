@@ -96,8 +96,13 @@ export async function DELETE(request) {
         body = null;
       }
 
-      if (body?.ids && Array.isArray(body.ids) && body.ids.length > 0) {
-        const result = await deleteAuditReportsBatch({ ids: body.ids });
+      let ids = body?.ids;
+      if (ids && typeof ids === "object" && !Array.isArray(ids)) {
+        ids = Object.values(ids);
+      }
+
+      if (Array.isArray(ids) && ids.length > 0) {
+        const result = await deleteAuditReportsBatch({ ids });
         return NextResponse.json({
           success: true,
           message: `${result.count} laporan audit berhasil dihapus.`,

@@ -90,11 +90,11 @@ export function AdminPrayerTableRow({
               {item.donorName}
             </span>
             {item.isAnonymous ? (
-              <span className="text-sm font-normal text-slate-400 block">
+              <span className="text-xs font-normal text-slate-400 block">
                 (Anonim)
               </span>
             ) : item.donorEmail ? (
-              <span className="text-sm font-normal text-slate-500 block truncate">
+              <span className="text-xs font-normal text-slate-500 block truncate">
                 {maskEmail(item.donorEmail)}
               </span>
             ) : null}
@@ -114,7 +114,7 @@ export function AdminPrayerTableRow({
             <Link
               href={`/campaign/${item.campaignSlug}`}
               target="_blank"
-              className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-normal"
+              className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-normal"
             >
               <span>Lihat program</span>
               <ExternalLink className="w-3 h-3" />
@@ -124,7 +124,7 @@ export function AdminPrayerTableRow({
       </TableCell>
 
       {/* 4. Nominal Donasi */}
-      <TableCell className="w-32 py-3 align-top whitespace-nowrap text-sm font-medium text-slate-900">
+      <TableCell className="w-32 py-3 align-top whitespace-nowrap text-sm font-medium text-slate-900 text-right tabular-nums">
         {formatRupiah(item.amount)}
       </TableCell>
 
@@ -143,8 +143,8 @@ export function AdminPrayerTableRow({
         )}
       </TableCell>
 
-      {/* 6. Waktu Kirim (Ukuran sm bukan xs) */}
-      <TableCell className="w-36 py-3 align-top whitespace-nowrap text-sm text-slate-500 font-normal">
+      {/* 6. Waktu Kirim */}
+      <TableCell className="w-36 py-3 align-top whitespace-nowrap text-sm text-slate-500 font-normal text-center tabular-nums">
         {formatDate(item.createdAt, { withTime: true })}
       </TableCell>
 

@@ -110,7 +110,7 @@ export function AdminCategoryModal({
 			isOpen={isOpen}
 			onClose={onClose}
 			onSubmit={handleSubmit}
-			maxWidth="max-w-md"
+			maxWidth="max-w-2xl"
 			title={
 				isEdit
 					? "Edit kategori program"

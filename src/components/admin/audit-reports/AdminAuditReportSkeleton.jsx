@@ -28,11 +28,14 @@ export function AdminAuditReportSkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-12 text-center py-2.5 px-3">
+                  <Skeleton className="w-4 h-4 rounded mx-auto" />
+                </TableHead>
                 <TableHead className="w-28 py-2.5 text-center">
                   <Skeleton className="h-4 w-16 mx-auto rounded" />
                 </TableHead>
-                <TableHead className="py-2.5 min-w-[220px]">
-                  <Skeleton className="h-4 w-36 rounded" />
+                <TableHead className="py-2.5 min-w-[280px] sm:min-w-[360px] max-w-lg">
+                  <Skeleton className="h-4 w-44 rounded" />
                 </TableHead>
                 <TableHead className="w-36 py-2.5 text-center whitespace-nowrap">
                   <Skeleton className="h-4 w-20 mx-auto rounded" />
@@ -51,10 +54,13 @@ export function AdminAuditReportSkeleton() {
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
+                  <TableCell className="w-12 text-center py-3.5 px-3 align-middle">
+                    <Skeleton className="w-4 h-4 rounded mx-auto" />
+                  </TableCell>
                   <TableCell className="w-28 text-center py-3.5 align-middle">
                     <Skeleton className="h-5 w-12 mx-auto rounded" />
                   </TableCell>
-                  <TableCell className="py-3.5 align-middle space-y-1.5 min-w-[220px]">
+                  <TableCell className="py-3.5 align-middle space-y-1.5 min-w-[280px] sm:min-w-[360px] max-w-lg">
                     <Skeleton className="h-4 w-48 rounded" />
                     <Skeleton className="h-3.5 w-64 rounded" />
                   </TableCell>

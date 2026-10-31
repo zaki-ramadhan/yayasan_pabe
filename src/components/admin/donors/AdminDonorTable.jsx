@@ -126,16 +126,20 @@ export function AdminDonorTable({ initialData = {} }) {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[260px]">Donatur</TableHead>
-              <TableHead className="w-44">No. Telepon</TableHead>
-              <TableHead className="w-px whitespace-nowrap">Total Donasi</TableHead>
+              <TableHead className="w-44 text-center">No. Telepon</TableHead>
+              <TableHead className="w-px whitespace-nowrap text-right">Total Donasi</TableHead>
               <TableHead className="w-px whitespace-nowrap text-center">Frekuensi</TableHead>
-              <TableHead className="w-px whitespace-nowrap">Terakhir Donasi</TableHead>
+              <TableHead className="w-px whitespace-nowrap text-center">Terakhir Donasi</TableHead>
               <TableHead className="w-20 text-right pr-4">Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableSkeletonRows rows={5} columns={6} />
+              <TableSkeletonRows
+                rows={5}
+                columns={6}
+                cellAlignments={["left", "center", "right", "center", "center", "right"]}
+              />
             ) : paginatedDonors.length === 0 ? (
               <TableEmptyRow
                 colSpan={6}

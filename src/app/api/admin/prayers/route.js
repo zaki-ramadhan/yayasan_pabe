@@ -50,7 +50,11 @@ export async function PATCH(request) {
 
     // Penanganan Moderasi Massal (Bulk Moderation)
     if (action === "BULK_HIDE" || action === "BULK_SHOW") {
-      const ids = Array.isArray(donationIds) ? donationIds : donationId ? [donationId] : [];
+      let normalizedIds = donationIds;
+      if (normalizedIds && typeof normalizedIds === "object" && !Array.isArray(normalizedIds)) {
+        normalizedIds = Object.values(normalizedIds);
+      }
+      const ids = Array.isArray(normalizedIds) ? normalizedIds : donationId ? [donationId] : [];
       if (ids.length === 0) {
         return NextResponse.json(
           { success: false, message: "Daftar ID doa donatur tidak boleh kosong." },

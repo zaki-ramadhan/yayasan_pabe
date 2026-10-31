@@ -84,7 +84,10 @@ export async function DELETE(request) {
 
   try {
     const body = await request.json();
-    const { ids } = body;
+    let ids = body?.ids;
+    if (ids && typeof ids === "object" && !Array.isArray(ids)) {
+      ids = Object.values(ids);
+    }
 
     if (!Array.isArray(ids) || ids.length === 0) {
       return NextResponse.json(

@@ -165,9 +165,16 @@ export function AdminDonorDetailDrawer({
                 fallbackClassName="text-sm"
               />
               <div className="min-w-0 flex-1">
-                <h4 className="text-sm sm:text-base font-medium text-slate-900 leading-tight truncate">
-                  {donor.name}
-                </h4>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm sm:text-base font-medium text-slate-900 leading-tight truncate">
+                    {donor.name}
+                  </h4>
+                  {donor.isRegisteredUser && (
+                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-2xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0 select-none">
+                      Akun Terdaftar
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs text-slate-500 font-normal mt-0.5">
                   Donasi pertama: {donor.firstDonatedAt ? formatDate(donor.firstDonatedAt) : "-"}
                 </p>

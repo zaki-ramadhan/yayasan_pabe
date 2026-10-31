@@ -97,8 +97,13 @@ export async function DELETE(request) {
         body = null;
       }
 
-      if (body?.ids && Array.isArray(body.ids) && body.ids.length > 0) {
-        const result = await deleteCategoriesBatch({ ids: body.ids });
+      let ids = body?.ids;
+      if (ids && typeof ids === "object" && !Array.isArray(ids)) {
+        ids = Object.values(ids);
+      }
+
+      if (Array.isArray(ids) && ids.length > 0) {
+        const result = await deleteCategoriesBatch({ ids });
         return NextResponse.json({
           success: true,
           message: `${result.count} kategori berhasil dihapus.`,

@@ -64,17 +64,15 @@ export function AdminProgramTableRow({
 				/>
 			</TableCell>
 
-			<TableCell className="space-y-1 py-3 align-middle">
-				<span
-					className="font-medium text-sm text-slate-900 block leading-snug line-clamp-2"
+			<TableCell className="space-y-1 py-3 align-middle max-w-sm">
+				<p
+					className="font-medium text-sm text-slate-900 leading-snug line-clamp-2"
+					title={item.title}
 				>
 					{item.title}
-				</span>
-				<span className="text-sm text-slate-500 block">
-					Lokasi:{" "}
-					{
-						item.location || "-"
-					}
+				</p>
+				<span className="text-xs text-slate-500 block truncate">
+					{item.location || "-"}
 				</span>
 			</TableCell>
 
@@ -89,44 +87,34 @@ export function AdminProgramTableRow({
 				</Badge>
 			</TableCell>
 
-			<TableCell className="space-y-1.5 py-3 align-middle w-56 min-w-[220px]">
-				<div className="flex items-center justify-between text-xs whitespace-nowrap">
-					<span className="font-medium text-slate-900">
-						{formatRupiah(
-							collected,
-						)}
-					</span>
-					{target >
-						0 && (
-						<span className="font-medium text-slate-600">
-							{
-								percent
-							}
-							%
-						</span>
-					)}
-				</div>
-				{target >
-					0 && (
-					<>
+			<TableCell className="space-y-1.5 py-3 align-middle text-center w-56 min-w-[220px]">
+				{target > 0 ? (
+					<div className="max-w-[200px] mx-auto space-y-1.5">
+						<div className="flex items-center justify-between text-xs whitespace-nowrap tabular-nums">
+							<span className="font-medium text-slate-900">
+								{formatRupiah(collected)}
+							</span>
+							<span className="font-medium text-slate-600">
+								{percent}%
+							</span>
+						</div>
 						<Progress
-							value={
-								percent
-							}
+							value={percent}
 							className="h-1.5"
 						/>
-						<span className="text-xs text-slate-500 block whitespace-nowrap">
-							Target:{" "}
-							{formatRupiah(
-								target,
-							)}
+						<span className="text-xs text-slate-500 block text-center whitespace-nowrap tabular-nums">
+							Target: {formatRupiah(target)}
 						</span>
-					</>
+					</div>
+				) : (
+					<div className="font-medium text-sm text-slate-900 text-center whitespace-nowrap tabular-nums">
+						{formatRupiah(collected)}
+					</div>
 				)}
 			</TableCell>
 
-			<TableCell className="text-sm text-slate-700 py-3 align-middle whitespace-nowrap">
-				<span className="font-medium text-slate-900">
+			<TableCell className="text-sm text-slate-700 py-3 align-middle text-center whitespace-nowrap">
+				<span className="font-medium text-slate-900 tabular-nums">
 					{
 						item.donorCount
 					}
@@ -134,7 +122,7 @@ export function AdminProgramTableRow({
 				donatur
 				{daysLeft !==
 					null && (
-					<span className="text-sm text-slate-500 block mt-0.5">
+					<span className="text-xs text-slate-500 block mt-0.5 tabular-nums">
 						{daysLeft >
 						0
 							? `${daysLeft} hari lagi`
@@ -143,7 +131,7 @@ export function AdminProgramTableRow({
 				)}
 			</TableCell>
 
-			<TableCell className="space-y-0.5 py-3 align-middle whitespace-nowrap">
+			<TableCell className="space-y-0.5 py-3 align-middle whitespace-nowrap tabular-nums">
 				{disbursed >
 				0 ? (
 					<>
@@ -152,7 +140,7 @@ export function AdminProgramTableRow({
 								disbursed,
 							)}
 						</div>
-						<span className="text-sm text-slate-500 block">
+						<span className="text-xs text-slate-500 block">
 							Sisa
 							kas:{" "}
 							{formatRupiah(
@@ -161,19 +149,9 @@ export function AdminProgramTableRow({
 						</span>
 					</>
 				) : (
-					<>
-						<span className="text-sm text-slate-400 block font-normal">
-							Belum
-							disalurkan
-						</span>
-						<span className="text-sm text-slate-500 block">
-							Kas
-							utuh:{" "}
-							{formatRupiah(
-								collected,
-							)}
-						</span>
-					</>
+					<span className="text-sm text-slate-600 block">
+						Belum disalurkan
+					</span>
 				)}
 			</TableCell>
 

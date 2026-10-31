@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/Select";
 import { MANAGEABLE_ROLES } from "@/lib/userParser";
 import { USER_ROLES } from "@/services/authService";
-import { validateEmail } from "@/lib/validator";
+import { validateEmail, validatePhone } from "@/lib/validator";
 import { isFormDirty } from "@/lib/formUtils";
 import {
   sanitizeName,
@@ -84,6 +84,12 @@ export function AdminUserModal({
     if (!emailVal.isValid) {
       newErrors.email = emailVal.message || "Format alamat email tidak valid.";
     }
+    if (cleanPhone) {
+      const phoneVal = validatePhone(cleanPhone, { isRequired: false, fieldName: "Nomor telepon" });
+      if (!phoneVal.isValid) {
+        newErrors.phone = phoneVal.message;
+      }
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -137,7 +143,7 @@ export function AdminUserModal({
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
-      maxWidth="sm:max-w-lg"
+      maxWidth="max-w-2xl"
       title={isEdit ? "Ubah data pengurus" : "Tambah pengurus baru"}
       submitText="Simpan"
       submittingText="Menyimpan..."
@@ -186,7 +192,7 @@ export function AdminUserModal({
             placeholder="nama@pabe.or.id"
           />
         </FormField>
-        <FormField label="Nomor telepon">
+        <FormField label="Nomor telepon" error={errors.phone}>
           <Input
             type="tel"
             inputMode="tel"

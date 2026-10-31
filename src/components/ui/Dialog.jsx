@@ -175,7 +175,7 @@ function FormDialog({
 	onClose,
 	onSubmit,
 	title,
-	maxWidth = "max-w-lg",
+	maxWidth = "max-w-2xl",
 	children,
 	submitText = "Simpan",
 	submitLabel,

@@ -418,10 +418,10 @@ Dengan bekal keterampilan digital ini, produk para mustahik binaan mampu menjang
     bannerUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
     imageSource: "Dokumentasi Forum Dialog Filantropi Islam",
     imageSourceUrl: null,
-    excerpt: "Keterbukaan laporan keuangan berstandar KAP independen dan pelaporan penyaluran real-time adalah harga mati dalam memelihara amanah muzakki.",
+    excerpt: "Keterbukaan laporan keuangan berstandar akuntansi nirlaba dan pelaporan penyaluran real-time adalah harga mati dalam memelihara amanah muzakki.",
     content: `Kepercayaan publik adalah aset paling bernilai bagi sebuah lembaga filantropi. Di era keterbukaan informasi, masyarakat menuntut kejelasan setiap rupiah yang didonasikan: siapa penerimanya, berapa biayanya, dan apa dampak nyatanya.
 
-Prinsip Good Amil Governance yang diterapkan di Yayasan PABE mewajibkan pemisahan tegas antara rekening dana donasi dan rekening operasional, serta publikasi laporan audit independen WTP setiap tahun.
+Prinsip Good Amil Governance yang diterapkan di Yayasan PABE mewajibkan pemisahan tegas antara rekening dana donasi dan rekening operasional, serta publikasi laporan keuangan secara berkala dan transparan.
 
 Dengan tata kelola yang profesional, filantropi Islam akan diakui secara luas sebagai lokomotif utama pembangunan sosial yang berkeadilan.`,
     author: "Drs. KH. Mahmud Syakir",

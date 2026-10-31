@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/Popover";
 import { Input } from "@/components/ui/Input";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useFormField } from "@/components/ui/FormField";
 
 /**
  * Reusable Creatable Combobox with Search, Lookup, and Debounce.
@@ -120,6 +121,9 @@ export function CreatableCombobox({
     }
   };
 
+  const formContext = useFormField();
+  const hasError = formContext?.isInvalid || false;
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -127,8 +131,12 @@ export function CreatableCombobox({
           type="button"
           disabled={disabled}
           aria-expanded={open}
+          data-invalid={hasError ? "true" : undefined}
           className={cn(
-            "flex h-10 w-full items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 transition-colors cursor-pointer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 text-left",
+            "flex h-10 w-full items-center justify-between rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 transition-colors cursor-pointer focus:outline-none disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 text-left",
+            hasError
+              ? "border-rose-500 bg-rose-50/15 text-rose-950 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+              : "border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary",
             className
           )}
         >
