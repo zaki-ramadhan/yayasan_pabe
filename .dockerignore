@@ -1,0 +1,43 @@
+# Dependencies and builds
+node_modules
+.next
+.pnpm-store
+
+# Git and IDE
+.git
+.gitignore
+.vscode
+
+# Environment files (never bake secrets into docker image)
+.env
+.env.local
+.env.development
+.env.test
+.env.production.local
+
+# Testing and reports
+tests
+test-results
+playwright-report
+coverage
+
+# Documentation and internal agent specs
+private-docs
+PRD.md
+README.md
+CLAUDE.md
+AGENTS.md
+
+# Config files not needed inside production container
+vitest.config.js
+playwright.config.js
+eslint.config.js
+ecosystem.config.cjs
+nginx.conf.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
