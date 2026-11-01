@@ -95,22 +95,19 @@ export function AdminUserTable({
 					<Table>
 						<TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
 							<TableRow>
-								<TableHead className="w-56 font-medium text-slate-600 text-sm py-2.5">
+								<TableHead className="w-64 max-w-xs font-medium text-slate-600 text-sm py-2.5">
 									Identitas Pengurus
 								</TableHead>
-								<TableHead className="w-40 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+								<TableHead className="w-36 max-w-[150px] text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
 									Kontak
 								</TableHead>
-								<TableHead className="w-44 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-									Peran &amp; Jabatan
+								<TableHead className="w-56 max-w-xs font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+									Jabatan &amp; Akses
 								</TableHead>
-								<TableHead className="w-28 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-									Status
-								</TableHead>
-								<TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+								<TableHead className="w-36 max-w-[150px] text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
 									Terdaftar
 								</TableHead>
-								<TableHead className="w-32 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+								<TableHead className="w-20 max-w-[100px] text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
 									Aksi
 								</TableHead>
 							</TableRow>
@@ -150,7 +147,7 @@ export function AdminUserTable({
 								)
 							) : (
 								<TableEmptyRow
-									colSpan={6}
+									colSpan={5}
 									isFiltered={Boolean(search || roleFilter !== "ALL" || statusFilter !== "ALL")}
 								/>
 							)}

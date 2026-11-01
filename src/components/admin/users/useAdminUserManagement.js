@@ -6,10 +6,11 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 
-export function useAdminUserManagement({ initialData = { items: [], pagination: {} } }) {
+export function useAdminUserManagement({ initialData = {} }) {
   const { currentUser } = useCurrentUser();
 
-  const [users, setUsers] = useState(initialData?.items || []);
+  const initialList = initialData?.items || initialData?.users || [];
+  const [users, setUsers] = useState(initialList);
   const [pagination, setPagination] = useState(initialData?.pagination || { page: 1, total: 0, totalPages: 1 });
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("ALL");
@@ -55,7 +56,8 @@ export function useAdminUserManagement({ initialData = { items: [], pagination: 
       const json = await res.json();
 
       if (json.success && json.data) {
-        setUsers(json.data.items || []);
+        const list = json.data.items || json.data.users || [];
+        setUsers(list);
         setPagination(json.data.pagination || { page: 1, total: 0, totalPages: 1 });
         if (isRefresh) {
           toast.success("Data pengurus berhasil diperbarui.");

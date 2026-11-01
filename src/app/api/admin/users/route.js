@@ -43,7 +43,9 @@ export async function POST(request) {
       phone: body.phone,
       role: body.role,
       title: body.title,
+      gender: body.gender,
       password: body.password,
+      hasLoginAccess: Boolean(body.hasLoginAccess),
     });
 
     return NextResponse.json(

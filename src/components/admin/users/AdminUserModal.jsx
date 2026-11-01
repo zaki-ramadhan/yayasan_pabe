@@ -5,14 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/Select";
-import { MANAGEABLE_ROLES } from "@/lib/userParser";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { USER_ROLES } from "@/services/authService";
 import { validateEmail, validatePhone } from "@/lib/validator";
 import { isFormDirty } from "@/lib/formUtils";
@@ -22,15 +15,26 @@ import {
   sanitizePhone,
   sanitizeStandardText,
 } from "@/lib/sanitizer";
+import { AdminUserGenderSelect } from "./AdminUserGenderSelect";
+import { AdminUserTitleCombobox } from "./AdminUserTitleCombobox";
 
+/**
+ * Modal form untuk menambah atau memperbarui data pengurus yayasan.
+ * Mendukung mode praktis tanpa akses login (hanya profil struktural publik)
+ * maupun mode staf operasional dengan kredensial login dashboard.
+ */
 export function AdminUserModal({
   isOpen,
   onClose,
   onSubmit,
   user = null,
+  userToEdit = null,
   isLoading = false,
+  isSubmitting = false,
 }) {
-  const isEdit = !!user;
+  const activeUser = user || userToEdit;
+  const isEdit = !!activeUser;
+  const isPending = isLoading || isSubmitting;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -38,21 +42,32 @@ export function AdminUserModal({
     phone: "",
     role: USER_ROLES.ADMIN,
     title: "",
+    gender: "MALE",
     password: "",
+    hasLoginAccess: false,
   });
 
   const [errorMsg, setErrorMsg] = useState("");
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (user) {
+    if (activeUser) {
+      const isInternal = Boolean(
+        activeUser.email?.endsWith("@internal.yayasanpayungberkah.org")
+      );
+      const initialHasLogin = Boolean(
+        activeUser.hasLoginAccess ?? (!isInternal && activeUser.email)
+      );
+
       setFormData({
-        name: user.name || "",
-        email: user.email || "",
-        phone: user.phone || "",
-        role: user.role || USER_ROLES.ADMIN,
-        title: user.title || "",
+        name: activeUser.name || "",
+        email: isInternal ? "" : activeUser.email || "",
+        phone: activeUser.phone || "",
+        role: activeUser.role || USER_ROLES.ADMIN,
+        title: activeUser.title || "",
+        gender: activeUser.gender || "MALE",
         password: "",
+        hasLoginAccess: initialHasLogin,
       });
     } else {
       setFormData({
@@ -61,12 +76,14 @@ export function AdminUserModal({
         phone: "",
         role: USER_ROLES.ADMIN,
         title: "",
+        gender: "MALE",
         password: "",
+        hasLoginAccess: false,
       });
     }
     setErrorMsg("");
     setErrors({});
-  }, [user, isOpen]);
+  }, [activeUser, isOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -77,15 +94,45 @@ export function AdminUserModal({
     const cleanPassword = formData.password.trim();
 
     const newErrors = {};
-    if (!cleanName) {
-      newErrors.name = "Nama lengkap wajib diisi.";
+    if (!cleanName || cleanName.length < 2) {
+      newErrors.name = "Nama lengkap wajib diisi minimal 2 karakter.";
     }
-    const emailVal = validateEmail(cleanEmail, true);
-    if (!emailVal.isValid) {
-      newErrors.email = emailVal.message || "Format alamat email tidak valid.";
+
+    if (!cleanTitle || cleanTitle.length < 2) {
+      newErrors.title = "Jabatan struktural di yayasan wajib dipilih atau diisi.";
     }
+
+    if (formData.hasLoginAccess) {
+      if (!cleanEmail) {
+        newErrors.email = "Alamat email login wajib diisi.";
+      } else {
+        const emailVal = validateEmail(cleanEmail, true);
+        if (!emailVal.isValid) {
+          newErrors.email = emailVal.message || "Format alamat email tidak valid.";
+        }
+      }
+
+      if (!isEdit) {
+        if (!cleanPassword) {
+          newErrors.password = "Kata sandi awal wajib diisi minimal 6 karakter.";
+        } else if (cleanPassword.length < 6) {
+          newErrors.password = "Kata sandi awal minimal 6 karakter.";
+        }
+      } else if (cleanPassword && cleanPassword.length < 6) {
+        newErrors.password = "Kata sandi minimal 6 karakter jika ingin diubah.";
+      }
+    } else if (cleanEmail) {
+      const emailVal = validateEmail(cleanEmail, true);
+      if (!emailVal.isValid) {
+        newErrors.email = emailVal.message || "Format alamat email tidak valid.";
+      }
+    }
+
     if (cleanPhone) {
-      const phoneVal = validatePhone(cleanPhone, { isRequired: false, fieldName: "Nomor telepon" });
+      const phoneVal = validatePhone(cleanPhone, {
+        isRequired: false,
+        fieldName: "Nomor telepon",
+      });
       if (!phoneVal.isValid) {
         newErrors.phone = phoneVal.message;
       }
@@ -105,21 +152,33 @@ export function AdminUserModal({
       email: cleanEmail,
       phone: cleanPhone,
       title: cleanTitle,
+      gender: formData.gender,
       password: cleanPassword,
+      hasLoginAccess: formData.hasLoginAccess,
     });
   };
 
   const isDirty = useMemo(() => {
-    if (!isEdit || !user) {
-      return Boolean(formData.name.trim() || formData.email.trim() || formData.password.trim());
+    if (!isEdit || !activeUser) {
+      return Boolean(
+        formData.name.trim() ||
+        formData.title.trim() ||
+        formData.phone.trim() ||
+        formData.email.trim()
+      );
     }
+    const isInternal = Boolean(
+      activeUser.email?.endsWith("@internal.yayasanpayungberkah.org")
+    );
     return isFormDirty(
       {
-        name: user.name || "",
-        email: user.email || "",
-        phone: user.phone || "",
-        role: user.role || USER_ROLES.ADMIN,
-        title: user.title || "",
+        name: activeUser.name || "",
+        email: isInternal ? "" : activeUser.email || "",
+        phone: activeUser.phone || "",
+        role: activeUser.role || USER_ROLES.ADMIN,
+        title: activeUser.title || "",
+        gender: activeUser.gender || "MALE",
+        hasLoginAccess: Boolean(activeUser.hasLoginAccess ?? !isInternal),
       },
       {
         name: formData.name,
@@ -127,16 +186,45 @@ export function AdminUserModal({
         phone: formData.phone,
         role: formData.role,
         title: formData.title,
+        gender: formData.gender,
+        hasLoginAccess: formData.hasLoginAccess,
       }
     );
-  }, [isEdit, user, formData]);
+  }, [isEdit, activeUser, formData]);
 
   const isFormValid = useMemo(() => {
     const hasName = formData.name.trim().length >= 2;
-    const hasValidEmail = validateEmail(formData.email.trim(), true).isValid;
-    const hasValidPass = isEdit || formData.password.trim().length >= 6;
-    return Boolean(hasName && hasValidEmail && hasValidPass);
-  }, [formData.name, formData.email, formData.password, isEdit]);
+    const hasTitle = formData.title.trim().length >= 2;
+    const phoneTrim = formData.phone.trim();
+    const hasValidPhone =
+      !phoneTrim || validatePhone(phoneTrim, { isRequired: false }).isValid;
+
+    if (!hasName || !hasTitle || !hasValidPhone) return false;
+
+    if (formData.hasLoginAccess) {
+      const hasValidEmail = validateEmail(formData.email.trim(), true).isValid;
+      const passTrim = formData.password.trim();
+      const hasValidPass = isEdit
+        ? !passTrim || passTrim.length >= 6
+        : passTrim.length >= 6;
+      return Boolean(hasValidEmail && hasValidPass);
+    }
+
+    const emailTrim = formData.email.trim();
+    if (emailTrim) {
+      return validateEmail(emailTrim, true).isValid;
+    }
+
+    return true;
+  }, [
+    formData.name,
+    formData.title,
+    formData.phone,
+    formData.hasLoginAccess,
+    formData.email,
+    formData.password,
+    isEdit,
+  ]);
 
   return (
     <FormDialog
@@ -147,9 +235,9 @@ export function AdminUserModal({
       title={isEdit ? "Ubah data pengurus" : "Tambah pengurus baru"}
       submitText="Simpan"
       submittingText="Menyimpan..."
-      isSubmitting={isLoading}
+      isSubmitting={isPending}
       submitDisabled={!isFormValid || (isEdit && !isDirty)}
-      formClassName="space-y-3.5 py-1 text-sm"
+      formClassName="space-y-4 py-1 text-sm"
     >
       {errorMsg && (
         <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-md text-xs font-normal text-rose-700">
@@ -157,111 +245,237 @@ export function AdminUserModal({
         </div>
       )}
 
-      <FormField label="Nama lengkap" required error={errors.name}>
-        <Input
-          type="text"
-          required
-          autoComplete="name"
-          maxLength={60}
-          value={formData.name}
-          onChange={(e) => {
-            setFormData((prev) => ({ ...prev, name: sanitizeName(e.target.value) }));
-            if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
-          }}
-          onBlur={() => setFormData((prev) => ({ ...prev, name: prev.name.trim() }))}
-          placeholder="Contoh: Ust. Ahmad Fauzi, S.Pd"
-        />
-      </FormField>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <FormField label="Alamat email" required error={errors.email}>
-          <Input
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            maxLength={100}
-            spellCheck={false}
-            required
-            disabled={isEdit}
-            value={formData.email}
-            onChange={(e) => {
-              setFormData((prev) => ({ ...prev, email: sanitizeEmail(e.target.value) }));
-              if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
-            }}
-            onBlur={() => setFormData((prev) => ({ ...prev, email: prev.email.trim() }))}
-            placeholder="nama@pabe.or.id"
-          />
-        </FormField>
-        <FormField label="Nomor telepon" error={errors.phone}>
-          <Input
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            maxLength={15}
-            value={formData.phone}
-            onChange={(e) => {
-              setFormData((prev) => ({ ...prev, phone: sanitizePhone(e.target.value) }));
-            }}
-            onBlur={() => setFormData((prev) => ({ ...prev, phone: prev.phone.trim() }))}
-            placeholder="0812-xxxx-xxxx"
-          />
-        </FormField>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <FormField label="Peran sistem" required>
-          <Select
-            value={formData.role}
-            onValueChange={(val) => setFormData((prev) => ({ ...prev, role: val }))}
-          >
-            <SelectTrigger className="w-full h-10 text-sm font-normal bg-white border border-slate-300 rounded-lg">
-              <SelectValue placeholder="Pilih peran" />
-            </SelectTrigger>
-            <SelectContent className="bg-white border border-slate-200 z-50">
-              {MANAGEABLE_ROLES.map((roleOpt) => (
-                <SelectItem
-                  key={roleOpt.value}
-                  value={roleOpt.value}
-                  className="cursor-pointer text-sm font-normal py-2"
-                >
-                  {roleOpt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </FormField>
-        <FormField label="Jabatan struktural">
+      {/* Bagian 1: Identitas & Struktur Organisasi */}
+      <div className="space-y-3.5">
+        <FormField label="Nama lengkap" required error={errors.name}>
           <Input
             type="text"
+            required
+            autoComplete="name"
             maxLength={60}
-            value={formData.title}
+            value={formData.name}
             onChange={(e) => {
               setFormData((prev) => ({
                 ...prev,
-                title: sanitizeStandardText(e.target.value, 60),
+                name: sanitizeName(e.target.value),
               }));
+              if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
             }}
-            onBlur={() => setFormData((prev) => ({ ...prev, title: prev.title.trim() }))}
-            placeholder="Contoh: Staf Verifikasi Kas"
+            onBlur={() =>
+              setFormData((prev) => ({ ...prev, name: prev.name.trim() }))
+            }
+            placeholder="Contoh: Drs. H. M. Fauzan, M.Pd"
           />
         </FormField>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
+          <AdminUserTitleCombobox
+            value={formData.title}
+            onChange={(val) => {
+              setFormData((prev) => ({
+                ...prev,
+                title: sanitizeStandardText(val, 60),
+              }));
+              if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
+            }}
+            error={errors.title}
+            hint="Contoh: Ketua Dewan Pembina, Sekretaris."
+          />
+
+          <FormField
+            label={
+              formData.hasLoginAccess
+                ? "Alamat email login"
+                : "Alamat email (opsional)"
+            }
+            required={formData.hasLoginAccess}
+            hint={
+              formData.hasLoginAccess
+                ? "Wajib untuk akun login dashboard."
+                : "Kosongkan jika tidak memakai email."
+            }
+            error={errors.email}
+          >
+            <Input
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              maxLength={100}
+              spellCheck={false}
+              required={formData.hasLoginAccess}
+              disabled={isEdit && !formData.hasLoginAccess}
+              value={formData.email}
+              onChange={(e) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  email: sanitizeEmail(e.target.value),
+                }));
+                if (errors.email)
+                  setErrors((prev) => ({ ...prev, email: undefined }));
+              }}
+              onBlur={() =>
+                setFormData((prev) => ({ ...prev, email: prev.email.trim() }))
+              }
+              placeholder={
+                formData.hasLoginAccess
+                  ? "nama@pabe.or.id"
+                  : "nama@email.com (opsional)"
+              }
+            />
+          </FormField>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
+          <AdminUserGenderSelect
+            value={formData.gender}
+            onChange={(val) =>
+              setFormData((prev) => ({ ...prev, gender: val }))
+            }
+            error={errors.gender}
+          />
+
+          <FormField label="Nomor WhatsApp" error={errors.phone}>
+            <Input
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              maxLength={15}
+              value={formData.phone}
+              onChange={(e) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  phone: sanitizePhone(e.target.value),
+                }));
+              }}
+              onBlur={() =>
+                setFormData((prev) => ({ ...prev, phone: prev.phone.trim() }))
+              }
+              placeholder="081234567890 (opsional)"
+            />
+          </FormField>
+        </div>
       </div>
 
-      {!isEdit && (
-        <FormField
-          label="Kata sandi awal (opsional)"
-          hint="Jika dikosongkan, sistem akan otomatis menghasilkan kata sandi sementara yang aman."
-        >
-          <Input
-            type="text"
-            maxLength={50}
-            value={formData.password}
-            onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
-            onBlur={() => setFormData((prev) => ({ ...prev, password: prev.password.trim() }))}
-            placeholder="Kosongkan untuk generate acak otomatis"
+      {/* Bagian 2: Pengaturan Hak Akses Login Dashboard */}
+      <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-3">
+        <div className="flex items-start gap-3">
+          <Checkbox
+            id="hasLoginAccess"
+            checked={formData.hasLoginAccess}
+            onCheckedChange={(checked) => {
+              const isChecked = Boolean(checked);
+              setFormData((prev) => ({
+                ...prev,
+                hasLoginAccess: isChecked,
+                password: isChecked
+                  ? prev.password || (!isEdit ? "Pabe2026!" : "")
+                  : "",
+              }));
+              if (!isChecked) {
+                setErrors((prev) => ({
+                  ...prev,
+                  email: undefined,
+                  password: undefined,
+                }));
+              }
+            }}
+            className="mt-0.5 cursor-pointer"
           />
-        </FormField>
-      )}
+          <div className="space-y-0.5 leading-none">
+            <label
+              htmlFor="hasLoginAccess"
+              className="text-sm font-medium text-slate-900 cursor-pointer select-none"
+            >
+              Beri hak akses login ke dashboard admin
+            </label>
+            <p className="text-xs text-slate-500 font-normal mt-0.5">
+              Aktifkan hanya jika pengurus ini bertugas mengoperasikan website atau mengelola data yayasan.
+            </p>
+          </div>
+        </div>
+
+        {formData.hasLoginAccess && (
+          <div className="pt-3 border-t border-slate-200 space-y-3.5 animate-in fade-in duration-150">
+            {!isEdit ? (
+              <FormField
+                label="Kata sandi awal"
+                required
+                hint="Kata sandi sementara untuk login pertama kali (minimal 6 karakter)."
+                error={errors.password}
+              >
+                <Input
+                  type="text"
+                  required
+                  minLength={6}
+                  maxLength={50}
+                  value={formData.password}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }));
+                    if (errors.password)
+                      setErrors((prev) => ({
+                        ...prev,
+                        password: undefined,
+                      }));
+                  }}
+                  onBlur={() => {
+                    const pass = formData.password.trim();
+                    setFormData((prev) => ({ ...prev, password: pass }));
+                    if (!pass) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        password: "Kata sandi awal wajib diisi.",
+                      }));
+                    } else if (pass.length < 6) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        password: "Kata sandi awal minimal 6 karakter.",
+                      }));
+                    }
+                  }}
+                  placeholder="Contoh: Pabe2026!"
+                />
+              </FormField>
+            ) : (
+              <FormField
+                label="Ubah kata sandi (opsional)"
+                hint="Kosongkan jika tidak ingin memperbarui kata sandi akun ini."
+                error={errors.password}
+              >
+                <Input
+                  type="text"
+                  maxLength={50}
+                  value={formData.password}
+                  onChange={(e) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }));
+                    if (errors.password)
+                      setErrors((prev) => ({
+                        ...prev,
+                        password: undefined,
+                      }));
+                  }}
+                  onBlur={() => {
+                    const pass = formData.password.trim();
+                    setFormData((prev) => ({ ...prev, password: pass }));
+                    if (pass && pass.length < 6) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        password: "Kata sandi minimal 6 karakter jika diisi.",
+                      }));
+                    }
+                  }}
+                  placeholder="Masukkan kata sandi baru jika ingin mengganti"
+                />
+              </FormField>
+            )}
+          </div>
+        )}
+      </div>
     </FormDialog>
   );
 }

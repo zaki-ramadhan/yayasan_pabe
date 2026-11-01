@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { DEMO_USERS } from "@/services/authService";
 import { sanitizeText } from "@/lib/userParser";
 import {
@@ -53,6 +54,8 @@ export async function getAdminUsers({
       ];
     }
 
+    const hasGenderField = Boolean(Prisma?.UserScalarFieldEnum?.gender);
+
     const [total, users] = await Promise.all([
       prisma.user.count({ where }),
       prisma.user.findMany({
@@ -67,8 +70,12 @@ export async function getAdminUsers({
           username: true,
           role: true,
           title: true,
+          avatar: true,
+          salutation: true,
+          ...(hasGenderField ? { gender: true } : {}),
           phone: true,
           isActive: true,
+          passwordHash: true,
           createdAt: true,
           updatedAt: true,
         },
@@ -77,8 +84,19 @@ export async function getAdminUsers({
 
     const formattedUsers = users.map((u) => {
       const isDemo = DEMO_USERS.some((d) => d.email.toLowerCase() === u.email.toLowerCase());
+      const isInternalEmail = u.email.endsWith("@internal.yayasanpayungberkah.org");
+      const hasLoginAccess = Boolean(u.passwordHash && !isInternalEmail);
+      const gender =
+        u.gender ||
+        (u.salutation === "Ibu" || u.salutation === "Hj." || u.avatar?.includes("female")
+          ? "FEMALE"
+          : "MALE");
       return {
         ...u,
+        passwordHash: undefined, // jangan ekspos hash ke client
+        hasLoginAccess,
+        isInternalEmail,
+        gender,
         isDemo,
         createdAt: u.createdAt.toISOString(),
         updatedAt: u.updatedAt.toISOString(),
@@ -86,6 +104,7 @@ export async function getAdminUsers({
     });
 
     return {
+      items: formattedUsers,
       users: formattedUsers,
       pagination: {
         page: safePage,

@@ -8,76 +8,106 @@ import {
   TableCell,
 } from "@/components/ui/Table";
 
+/**
+ * Skeleton loader akurat untuk halaman Kelola Pengurus Yayasan (/admin/pengguna).
+ * Meniru struktur header halaman, toolbar filter, tabel 5 kolom, dan pagination footer.
+ */
 export function AdminUserSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
-      {/* Filter and Action Bar Skeleton */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <div className="flex items-center gap-2 flex-1 max-w-md">
-          <Skeleton className="h-10 w-full rounded-lg" />
-          <Skeleton className="h-10 w-36 rounded-lg" />
-          <Skeleton className="h-10 w-32 rounded-lg" />
+      {/* 1. Page Header Skeleton */}
+      <div className="space-y-1">
+        <Skeleton className="h-7 w-56 rounded-md" />
+        <Skeleton className="h-4 w-96 max-w-full rounded-md" />
+      </div>
+
+      {/* 2. Filter and Toolbar Skeleton */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 flex-1">
+          <Skeleton className="h-10 flex-1 min-w-[200px] max-w-sm rounded-lg" />
+          <Skeleton className="h-10 w-36 rounded-lg shrink-0" />
+          <Skeleton className="h-10 w-36 rounded-lg shrink-0" />
         </div>
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-10 w-28 rounded-lg" />
-          <Skeleton className="h-10 w-40 rounded-lg" />
+        <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+          <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
+          <Skeleton className="h-10 w-36 rounded-lg shrink-0" />
         </div>
       </div>
 
-      {/* Table Skeleton */}
+      {/* 3. Table Skeleton (5 Kolom Bersih) */}
       <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
-                <TableHead className="w-56 py-2.5 px-4"><Skeleton className="h-4 w-32" /></TableHead>
-                <TableHead className="w-40 py-2.5 px-4"><Skeleton className="h-4 w-20" /></TableHead>
-                <TableHead className="w-44 py-2.5 px-4"><Skeleton className="h-4 w-28" /></TableHead>
-                <TableHead className="w-28 text-center py-2.5 px-4"><Skeleton className="h-4 w-16 mx-auto" /></TableHead>
-                <TableHead className="w-36 text-center py-2.5 px-4"><Skeleton className="h-4 w-20 mx-auto" /></TableHead>
-                <TableHead className="w-32 text-right py-2.5 px-4"><Skeleton className="h-4 w-12 ml-auto" /></TableHead>
+                <TableHead className="w-64 max-w-xs py-2.5 px-4">
+                  <Skeleton className="h-4 w-32 rounded" />
+                </TableHead>
+                <TableHead className="w-36 max-w-[150px] text-center py-2.5 px-4">
+                  <Skeleton className="h-4 w-16 rounded mx-auto" />
+                </TableHead>
+                <TableHead className="w-56 max-w-xs py-2.5 px-4">
+                  <Skeleton className="h-4 w-28 rounded" />
+                </TableHead>
+                <TableHead className="w-36 max-w-[150px] text-center py-2.5 px-4">
+                  <Skeleton className="h-4 w-20 rounded mx-auto" />
+                </TableHead>
+                <TableHead className="w-20 max-w-[100px] text-right py-2.5 px-4">
+                  <Skeleton className="h-4 w-10 rounded ml-auto" />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <TableRow key={i}>
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <TableRow key={i} className="hover:bg-transparent">
                   {/* 1. Identitas Pengurus */}
-                  <TableCell className="w-56 py-3 px-4">
+                  <TableCell className="w-64 max-w-xs py-3 px-4">
                     <div className="flex items-center gap-2.5">
                       <Skeleton className="w-8 h-8 rounded-full shrink-0" />
                       <div className="space-y-1 min-w-0 flex-1">
-                        <Skeleton className="h-4 w-28" />
-                        <Skeleton className="h-3 w-36" />
+                        <Skeleton className="h-4 w-32 rounded" />
+                        <Skeleton className="h-3 w-40 rounded" />
                       </div>
                     </div>
                   </TableCell>
-                  {/* 2. Kontak */}
-                  <TableCell className="w-40 py-3 px-4">
-                    <Skeleton className="h-4 w-24" />
+
+                  {/* 2. Kontak (Centered) */}
+                  <TableCell className="w-36 max-w-[150px] text-center py-3 px-4">
+                    <Skeleton className="h-4 w-28 rounded mx-auto" />
                   </TableCell>
-                  {/* 3. Peran & Jabatan */}
-                  <TableCell className="w-44 py-3 px-4">
-                    <div className="space-y-1">
-                      <Skeleton className="h-5 w-20 rounded" />
-                      <Skeleton className="h-3 w-24" />
+
+                  {/* 3. Jabatan & Akses */}
+                  <TableCell className="w-56 max-w-xs py-3 px-4">
+                    <div className="space-y-1.5">
+                      <Skeleton className="h-4 w-36 rounded" />
+                      {i % 2 === 1 && (
+                        <Skeleton className="h-4 w-20 rounded-md" />
+                      )}
                     </div>
                   </TableCell>
-                  {/* 4. Status */}
-                  <TableCell className="w-28 text-center py-3 px-4">
-                    <Skeleton className="h-5 w-16 rounded mx-auto" />
+
+                  {/* 4. Terdaftar (Centered) */}
+                  <TableCell className="w-36 max-w-[150px] text-center py-3 px-4">
+                    <Skeleton className="h-4 w-20 rounded mx-auto" />
                   </TableCell>
-                  {/* 5. Terdaftar */}
-                  <TableCell className="w-36 text-center py-3 px-4">
-                    <Skeleton className="h-4 w-20 mx-auto" />
-                  </TableCell>
-                  {/* 6. Aksi */}
-                  <TableCell className="w-32 text-right py-3 px-4">
+
+                  {/* 5. Aksi (Right) */}
+                  <TableCell className="w-20 max-w-[100px] text-right py-3 px-4">
                     <Skeleton className="h-8 w-8 rounded-md ml-auto" />
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+        </div>
+
+        {/* 4. Pagination Footer Skeleton */}
+        <div className="border-t border-slate-100 px-4 py-3 flex items-center justify-between">
+          <Skeleton className="h-4 w-36 rounded" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-20 rounded-md" />
+            <Skeleton className="h-8 w-20 rounded-md" />
+          </div>
         </div>
       </div>
     </div>

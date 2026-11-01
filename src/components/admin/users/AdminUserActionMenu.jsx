@@ -21,6 +21,7 @@ export function AdminUserActionMenu({
 }) {
   const isSelf = currentUser?.id === user.id;
   const isSuperAdmin = user.role === USER_ROLES.SUPER_ADMIN;
+  const hasLogin = Boolean(user.hasLoginAccess ?? !user.email?.endsWith("@internal.yayasanpayungberkah.org"));
 
   return (
     <DropdownMenu modal={false}>
@@ -28,7 +29,7 @@ export function AdminUserActionMenu({
         <Button
           type="button"
           variant="ghost"
-          size="icon" aria-label="Aksi pengurus"
+          size="icon"
           aria-label={`Menu aksi ${user.name}`}
           className="h-8 w-8 text-slate-500 hover:text-slate-900"
         >
@@ -44,13 +45,15 @@ export function AdminUserActionMenu({
           <span>Ubah profil & peran</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          onClick={() => onResetPassword(user)}
-          className="cursor-pointer text-sm font-normal text-slate-800 hover:bg-slate-100 py-2 px-2.5 rounded-md flex items-center gap-2"
-        >
-          <KeyRound className="w-4 h-4 text-slate-500" />
-          <span>Reset kata sandi</span>
-        </DropdownMenuItem>
+        {hasLogin && (
+          <DropdownMenuItem
+            onClick={() => onResetPassword(user)}
+            className="cursor-pointer text-sm font-normal text-slate-800 hover:bg-slate-100 py-2 px-2.5 rounded-md flex items-center gap-2"
+          >
+            <KeyRound className="w-4 h-4 text-slate-500" />
+            <span>Reset kata sandi</span>
+          </DropdownMenuItem>
+        )}
 
         {!isSelf && (
           <>

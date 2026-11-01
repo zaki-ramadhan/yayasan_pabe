@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { hashPassword } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import { sanitizeEmail, sanitizePhoneInput, sanitizeText } from "@/lib/userParser";
@@ -13,27 +14,57 @@ export const STAFF_ROLES = [
   USER_ROLES.VOLUNTEER,
 ];
 
+import { resolveStaffAvatar } from "@/constants/staffConstants";
+
 /**
  * Mendaftarkan pengurus baru yayasan oleh Super Admin.
+ * Mendukung mode tanpa akses login (hanya profil struktural publik)
+ * maupun mode akun operasional dengan kredensial login dashboard.
  */
 export async function createAdminUser({
   name,
-  email,
+  email = "",
   phone = "",
   role = USER_ROLES.ADMIN,
   title = "",
+  gender = "MALE",
   password = "",
+  hasLoginAccess = false,
 }) {
   const cleanName = sanitizeText(name);
   if (!cleanName) {
     throw new Error("Nama lengkap pengurus wajib diisi.");
   }
 
-  const emailVal = await verifyEmailDomainDns(email, { isRequired: true });
-  if (!emailVal.isValid) {
-    throw new Error(emailVal.message || "Format alamat email tidak valid.");
+  const cleanTitle = sanitizeText(title) || (role === USER_ROLES.ADMIN ? "Admin Operasional" : role);
+  if (!cleanTitle) {
+    throw new Error("Jabatan struktural pengurus wajib diisi.");
   }
-  const cleanEmail = emailVal.sanitized;
+
+  let cleanEmail = null;
+  const rawEmail = typeof email === "string" ? email.trim() : "";
+
+  if (hasLoginAccess) {
+    if (!rawEmail) {
+      throw new Error("Alamat email login wajib diisi jika memberikan akses dashboard.");
+    }
+    const emailVal = await verifyEmailDomainDns(rawEmail, { isRequired: true });
+    if (!emailVal.isValid) {
+      throw new Error(emailVal.message || "Format alamat email tidak valid.");
+    }
+    cleanEmail = emailVal.sanitized;
+  } else if (rawEmail) {
+    const emailVal = await verifyEmailDomainDns(rawEmail, { isRequired: true });
+    if (!emailVal.isValid) {
+      throw new Error(emailVal.message || "Format alamat email tidak valid.");
+    }
+    cleanEmail = emailVal.sanitized;
+  } else {
+    // Generate internal placeholder email yang unik dan valid untuk schema database
+    const nameSlug = cleanName.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15) || "pengurus";
+    cleanEmail = `${nameSlug}.${crypto.randomBytes(4).toString("hex")}@internal.yayasanpayungberkah.org`;
+  }
+
   let cleanPhone = null;
   if (phone) {
     const phoneVal = validatePhone(phone, { isRequired: false, fieldName: "Nomor telepon" });
@@ -42,11 +73,24 @@ export async function createAdminUser({
     }
     cleanPhone = phoneVal.sanitized;
   }
-  const cleanTitle = sanitizeText(title) || (role === USER_ROLES.ADMIN ? "Admin Operasional" : role);
 
-  if (!STAFF_ROLES.includes(role)) {
-    throw new Error("Role pengurus yang dipilih tidak valid.");
+  const effectiveRole = hasLoginAccess
+    ? (STAFF_ROLES.includes(role) ? role : USER_ROLES.ADMIN)
+    : (STAFF_ROLES.includes(role) ? role : USER_ROLES.ADMIN);
+
+  let passwordHash = null;
+  let cleanPassword = "";
+
+  if (hasLoginAccess) {
+    cleanPassword = typeof password === "string" ? password.trim() : "";
+    if (!cleanPassword || cleanPassword.length < 6) {
+      throw new Error("Kata sandi awal wajib diisi minimal 6 karakter untuk akses login.");
+    }
+    passwordHash = hashPassword(cleanPassword);
   }
+
+  const cleanGender = gender === "FEMALE" || gender === "P" ? "FEMALE" : "MALE";
+  const defaultAvatar = resolveStaffAvatar(null, cleanGender);
 
   const existing = await prisma.user.findUnique({
     where: { email: cleanEmail },
@@ -56,16 +100,15 @@ export async function createAdminUser({
     throw new Error("Alamat email sudah terdaftar di sistem.");
   }
 
-  const tempPassword = password || `Pabe-${crypto.randomBytes(3).toString("hex")}!`;
-  const passwordHash = hashPassword(tempPassword);
-
   const newUser = await prisma.user.create({
     data: {
       name: cleanName,
       email: cleanEmail,
       phone: cleanPhone,
-      role,
+      role: effectiveRole,
       title: cleanTitle,
+      avatar: defaultAvatar,
+      ...(Prisma?.UserScalarFieldEnum?.gender ? { gender: cleanGender } : {}),
       passwordHash,
       isActive: true,
       provider: "CREDENTIALS",
@@ -76,15 +119,18 @@ export async function createAdminUser({
       email: true,
       role: true,
       title: true,
+      avatar: true,
       phone: true,
       isActive: true,
       createdAt: true,
+      ...(Prisma?.UserScalarFieldEnum?.gender ? { gender: true } : {}),
     },
   });
 
   return {
     user: newUser,
-    generatedPassword: tempPassword,
+    generatedPassword: cleanPassword,
+    hasLoginAccess,
   };
 }
 
@@ -131,13 +177,67 @@ export async function updateAdminUser(id, payload, actorUser) {
   const cleanTitle = payload.title !== undefined ? sanitizeText(payload.title) : target.title;
   const nextRole = payload.role && STAFF_ROLES.includes(payload.role) ? payload.role : target.role;
 
+  let cleanGender = target.gender || "MALE";
+  if (payload.gender !== undefined) {
+    cleanGender = payload.gender === "FEMALE" || payload.gender === "P" ? "FEMALE" : "MALE";
+  }
+
+  let nextAvatar = target.avatar;
+  const isDefaultAvatar =
+    !target.avatar ||
+    target.avatar === "/img/avatars/avatar-male.svg" ||
+    target.avatar === "/img/avatars/avatar-female.svg";
+  if (isDefaultAvatar) {
+    nextAvatar = resolveStaffAvatar(null, cleanGender);
+  }
+
+  let cleanEmail = target.email;
+  if (payload.email && payload.email.trim()) {
+    const rawEmail = payload.email.trim();
+    if (rawEmail.toLowerCase() !== target.email.toLowerCase() && !rawEmail.endsWith("@internal.yayasanpayungberkah.org")) {
+      const emailVal = await verifyEmailDomainDns(rawEmail, { isRequired: true });
+      if (!emailVal.isValid) {
+        throw new Error(emailVal.message || "Format alamat email tidak valid.");
+      }
+      const existingEmail = await prisma.user.findFirst({
+        where: { email: emailVal.sanitized, id: { not: id } },
+      });
+      if (existingEmail) {
+        throw new Error("Alamat email sudah digunakan oleh pengguna lain.");
+      }
+      cleanEmail = emailVal.sanitized;
+    }
+  }
+
+  let nextPasswordHash = target.passwordHash;
+  if (payload.hasLoginAccess === false) {
+    nextPasswordHash = null;
+  } else if (payload.hasLoginAccess === true) {
+    if (payload.password && payload.password.trim()) {
+      const cleanPass = payload.password.trim();
+      if (cleanPass.length < 6) {
+        throw new Error("Kata sandi baru minimal 6 karakter.");
+      }
+      nextPasswordHash = hashPassword(cleanPass);
+    } else if (!target.passwordHash) {
+      throw new Error("Kata sandi awal wajib diisi saat mengaktifkan akses login.");
+    }
+    if (cleanEmail.endsWith("@internal.yayasanpayungberkah.org")) {
+      throw new Error("Alamat email nyata wajib diisi untuk mengaktifkan akses login.");
+    }
+  }
+
   const updated = await prisma.user.update({
     where: { id },
     data: {
       name: cleanName,
+      email: cleanEmail,
       phone: cleanPhone,
       title: cleanTitle,
       role: nextRole,
+      avatar: nextAvatar,
+      passwordHash: nextPasswordHash,
+      ...(Prisma?.UserScalarFieldEnum?.gender ? { gender: cleanGender } : {}),
     },
     select: {
       id: true,
@@ -145,9 +245,11 @@ export async function updateAdminUser(id, payload, actorUser) {
       email: true,
       role: true,
       title: true,
+      avatar: true,
       phone: true,
       isActive: true,
       updatedAt: true,
+      ...(Prisma?.UserScalarFieldEnum?.gender ? { gender: true } : {}),
     },
   });
 
