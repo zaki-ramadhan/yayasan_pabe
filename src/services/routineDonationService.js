@@ -113,3 +113,66 @@ export async function createRoutineDonations({
     );
   }
 }
+
+/**
+ * Service to update routine donation status by donor.
+ * Validates status, checks existence, and enforces ownership security (IDOR protection).
+ *
+ * @param {object} params
+ * @param {string} params.id - Routine donation record ID
+ * @param {string} params.status - New status: ACTIVE, PAUSED, or CANCELLED
+ * @param {string} [params.userEmail] - Authenticated user email for ownership verification
+ */
+export async function updateDonorRoutineDonationStatus({ id, status, userEmail }) {
+  if (!id) {
+    const error = new Error("ID donasi rutin wajib disertakan.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const cleanStatus = sanitizeInput(status || "").toUpperCase();
+  if (!["ACTIVE", "PAUSED", "CANCELLED"].includes(cleanStatus)) {
+    const error = new Error("Parameter status donasi rutin tidak valid.");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const existing = await prisma.routineDonation.findUnique({
+    where: { id },
+  });
+
+  if (!existing) {
+    const error = new Error("Data donasi rutin tidak ditemukan.");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (
+    userEmail &&
+    existing.donorEmail &&
+    existing.donorEmail.toLowerCase() !== userEmail.toLowerCase()
+  ) {
+    const error = new Error("Akses tidak sah untuk mengubah data ini.");
+    error.statusCode = 403;
+    throw error;
+  }
+
+  const updated = await prisma.routineDonation.update({
+    where: { id },
+    data: { status: cleanStatus },
+  });
+
+  const message =
+    cleanStatus === "PAUSED"
+      ? "Donasi rutin berhasil dijeda sementara."
+      : cleanStatus === "ACTIVE"
+      ? "Donasi rutin berhasil diaktifkan kembali."
+      : "Donasi rutin berhasil dibatalkan.";
+
+  return {
+    success: true,
+    message,
+    data: updated,
+  };
+}
+

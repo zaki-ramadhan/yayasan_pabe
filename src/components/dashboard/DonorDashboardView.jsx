@@ -6,9 +6,11 @@ import Link from "next/link";
 import { Plus, Download, CalendarClock, CheckCircle, Clock, RefreshCw } from "lucide-react";
 import { toast } from "@/hooks/useToast";
 import { Button } from "@/components/ui/Button";
+import { StatusBadge } from "@/components/ui/Badge";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { formatRoutineSchedule } from "@/data/routineDonation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { DonorRoutineManageModal } from "@/components/donor/DonorRoutineManageModal";
 import {
   Table,
   TableContainer,
@@ -32,6 +34,13 @@ export function DonorDashboardView({ currentUser: propUser }) {
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState(null);
+  const [selectedRoutineForManage, setSelectedRoutineForManage] = useState(null);
+
+  const handleRoutineStatusUpdated = (id, newStatus) => {
+    setSchedules((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, status: newStatus } : s))
+    );
+  };
 
   const loadDonorData = useCallback(async () => {
     if (!currentUser?.email && !currentUser?.name) return;
@@ -141,9 +150,7 @@ export function DonorDashboardView({ currentUser: propUser }) {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-slate-900 block">{sch.program}</span>
-                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
-                      {sch.status}
-                    </span>
+                    <StatusBadge status={sch.status} />
                   </div>
                   <div className="flex items-center gap-3 text-xs text-slate-600">
                     <span>Jadwal: <strong>{sch.freq}</strong></span>
@@ -154,7 +161,7 @@ export function DonorDashboardView({ currentUser: propUser }) {
                   <span className="text-base font-bold text-slate-950">{formatRupiah(sch.nominal)}</span>
                   <button
                     type="button"
-                    onClick={() => toast.success("Jadwal pengingat telah tersinkronisasi.")}
+                    onClick={() => setSelectedRoutineForManage(sch)}
                     className="text-xs text-slate-600 hover:text-slate-900 font-medium underline cursor-pointer"
                   >
                     Kelola
@@ -266,6 +273,14 @@ export function DonorDashboardView({ currentUser: propUser }) {
           </Table>
         </TableContainer>
       </div>
+
+      {/* Modal Dialog Aksi Kelola Donasi Rutin */}
+      <DonorRoutineManageModal
+        routine={selectedRoutineForManage}
+        isOpen={Boolean(selectedRoutineForManage)}
+        onClose={() => setSelectedRoutineForManage(null)}
+        onStatusUpdated={handleRoutineStatusUpdated}
+      />
     </div>
   );
 }
