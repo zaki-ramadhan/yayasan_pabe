@@ -159,6 +159,7 @@ model User {
   phone        String?
   role            String   @default("DONOR") // SUPER_ADMIN, ADMIN, FINANCE, VOLUNTEER, DONOR
   title           String?  @default("Donatur Terdaftar")
+  gender          String?  @default("MALE") // MALE, FEMALE
   salutation      String?  @default("Bpk.")
   bio             String?
   city            String?
@@ -395,3 +396,27 @@ model GalleryItem {
   @@index([createdAt(sort: Desc)])
   @@index([activityDate(sort: Desc)])
 }
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([tokenHash])
+}
+
+model AccountActivationToken {
+  id        String   @id @default(cuid())
+  email     String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([tokenHash])
+}
+
+

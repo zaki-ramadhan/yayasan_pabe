@@ -18,9 +18,9 @@ Dokumen ini merupakan panduan spesifikasi produk, arsitektur teknis, dan cetak b
   - Mata Uang: Rupiah (IDR), format penulisan baku: `Rp 1.000.000`.
 
 ### 1.2 Design System & Token Warna
-- **Primary Color:** Ocean Sky Blue (`#0ea5e9` s.d. `#0284c7`) — ketenangan, integritas, dan transparansi.
-- **Accent / Success:** Emerald Green (`#10b981`) — indikator dana terkumpul, transaksi terbayar, dan tombol positif.
-- **Urgent / Warning:** Warm Coral / Amber (`#f59e0b` & `#ef4444`) — badge program darurat bencana / batas waktu kritis.
+- **Primary Color:** Ocean Sky Blue (`#0ea5e9` s.d. `#0284c7`): ketenangan, integritas, dan transparansi.
+- **Accent / Success:** Emerald Green (`#10b981`): indikator dana terkumpul, transaksi terbayar, dan tombol positif.
+- **Urgent / Warning:** Warm Coral / Amber (`#f59e0b` & `#ef4444`): badge program darurat bencana / batas waktu kritis.
 - **Surface & Backgrounds:**
   - Light mode: Slate Light (`#f8fafc`), Pure Card (`#ffffff`), Muted Border (`#e2e8f0`).
   - Text & Contrast: Deep Slate (`#0f172a`), Muted Body (`#475569`), WAI-ARIA AA standard.
