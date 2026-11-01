@@ -8,7 +8,11 @@ import { ShareDropdown } from "@/components/shared/ShareDropdown";
 import { TeamAvatarStack } from "./TeamAvatarStack";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 
-export function AboutHeader({ orgSettings = null, volunteerCount = 14 }) {
+export function AboutHeader({
+	orgSettings = null,
+	volunteerCount = 0,
+	leaders = [],
+}) {
 	const orgName = orgSettings?.name || ORG_PROFILE.name;
 	const orgTagline =
 		orgSettings?.tagline !== undefined && orgSettings?.tagline !== null
@@ -101,7 +105,7 @@ export function AboutHeader({ orgSettings = null, volunteerCount = 14 }) {
 					{/* Avatar Stack Pengurus & Relawan */}
 					<TeamAvatarStack
 						volunteerCount={volunteerCount}
-						leaders={ORG_PROFILE.leadership}
+						leaders={leaders.length > 0 ? leaders : ORG_PROFILE.leadership}
 					/>
 				</div>
 			</div>

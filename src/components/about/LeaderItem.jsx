@@ -18,6 +18,11 @@ export function LeaderItem({ leader }) {
           alt={leader.name}
           fill
           sizes="48px"
+          unoptimized={
+            typeof leader.image === "string" &&
+            !leader.image.startsWith("/") &&
+            !leader.image.includes("lh3.googleusercontent.com")
+          }
           className="object-cover"
         />
       </div>

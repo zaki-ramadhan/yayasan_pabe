@@ -103,7 +103,7 @@ export function AdminGalleryTableRow({
 
       {/* Kategori */}
       <TableCell className="w-40 py-2.5 text-center align-middle whitespace-nowrap">
-        <Badge variant="secondary" className="max-w-[140px] truncate">
+        <Badge variant="secondary" className="max-w-[140px] truncate" title={item.category || "Umum"}>
           {item.category || "Umum"}
         </Badge>
       </TableCell>

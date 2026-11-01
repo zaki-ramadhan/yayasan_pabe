@@ -52,6 +52,16 @@ export class RateLimiter {
     }
   }
 
+  decrement(key) {
+    const record = this.store.get(key);
+    if (record && record.count > 0) {
+      record.count -= 1;
+      if (record.count <= 0) {
+        this.store.delete(key);
+      }
+    }
+  }
+
   reset(key) {
     if (key) {
       this.store.delete(key);
@@ -69,7 +79,9 @@ export const RATE_LIMIT_TIERS = {
   SENSITIVE_OP: { limit: 5, windowMs: 60000 },
 };
 
-export const globalRateLimiter = new RateLimiter();
+const globalForRateLimit = globalThis;
+export const globalRateLimiter =
+  globalForRateLimit.globalRateLimiter || (globalForRateLimit.globalRateLimiter = new RateLimiter());
 
 /**
  * Extracts client IP safely:
@@ -139,4 +151,19 @@ export function checkRateLimit(
   }
 
   return null;
+}
+
+/**
+ * Mengembalikan (refund) kuota rate limit jika operasi di controller gagal.
+ * Mencegah pengguna yang mengalami error teknis terblokir oleh rate limiter.
+ * @param {Request} request
+ * @param {{ action: string, identifier?: string|null }} options
+ */
+export function rollbackRateLimit(
+  request,
+  { action = "api", identifier = null } = {}
+) {
+  const clientKey = identifier ? String(identifier).trim().toLowerCase() : getClientIp(request);
+  const key = `${action}:${clientKey}`;
+  globalRateLimiter.decrement(key);
 }

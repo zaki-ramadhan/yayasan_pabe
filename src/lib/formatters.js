@@ -3,17 +3,18 @@ export function formatRupiah(amount) {
   return `Rp ${new Intl.NumberFormat("id-ID").format(amount)}`;
 }
 
-export function formatCompactRupiah(amount, maxDecimals = 1) {
+export function formatCompactRupiah(amount, maxDecimals = 1, options = {}) {
   if (typeof amount !== "number" || isNaN(amount)) return "Rp 0";
   const abs = Math.abs(amount);
   const sign = amount < 0 ? "-" : "";
+  const isShort = options?.short === true;
 
   if (abs >= 1_000_000_000_000) {
     const val = abs / 1_000_000_000_000;
     const formatted = val.toLocaleString("id-ID", {
       maximumFractionDigits: maxDecimals,
     });
-    return `${sign}Rp ${formatted} Triliun`;
+    return `${sign}Rp ${formatted} ${isShort ? "T" : "Triliun"}`;
   }
 
   if (abs >= 1_000_000_000) {
@@ -21,7 +22,7 @@ export function formatCompactRupiah(amount, maxDecimals = 1) {
     const formatted = val.toLocaleString("id-ID", {
       maximumFractionDigits: maxDecimals,
     });
-    return `${sign}Rp ${formatted} Miliar`;
+    return `${sign}Rp ${formatted} ${isShort ? "M" : "Miliar"}`;
   }
 
   if (abs >= 1_000_000) {
@@ -29,7 +30,7 @@ export function formatCompactRupiah(amount, maxDecimals = 1) {
     const formatted = val.toLocaleString("id-ID", {
       maximumFractionDigits: maxDecimals,
     });
-    return `${sign}Rp ${formatted} Juta`;
+    return `${sign}Rp ${formatted} ${isShort ? "Jt" : "Juta"}`;
   }
 
   if (abs >= 1_000) {
@@ -37,7 +38,7 @@ export function formatCompactRupiah(amount, maxDecimals = 1) {
     const formatted = val.toLocaleString("id-ID", {
       maximumFractionDigits: maxDecimals,
     });
-    return `${sign}Rp ${formatted} Ribu`;
+    return `${sign}Rp ${formatted} ${isShort ? "rb" : "Ribu"}`;
   }
 
   return formatRupiah(amount);
@@ -162,10 +163,25 @@ export function formatDate(dateInput, options = {}) {
   return formatted;
 }
 
+const ID_MONTH_ABBR_MAP = {
+  januari: "Jan",
+  februari: "Feb",
+  maret: "Mar",
+  april: "Apr",
+  mei: "Mei",
+  juni: "Jun",
+  juli: "Jul",
+  agustus: "Agu",
+  september: "Sep",
+  oktober: "Okt",
+  november: "Nov",
+  desember: "Des",
+};
+
 /**
  * Format tanggal batas lamaran karier.
- * Jika berformat ISO string (YYYY-MM-DD), akan di-format ke bahasa Indonesia (contoh: 30 November 2026).
- * Jika string teks deskripsi biasa, akan dipertahankan apa adanya.
+ * Jika berformat ISO string (YYYY-MM-DD), akan di-format ke bahasa Indonesia (contoh: 30 Nov 2026).
+ * Jika string teks deskripsi biasa (contoh: "30 Oktober 2026"), nama bulan disingkat jika opsi month="short".
  */
 export function formatDeadlineDate(dateInput, options = {}) {
   const { month = "short" } = options;
@@ -176,6 +192,16 @@ export function formatDeadlineDate(dateInput, options = {}) {
     if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
       const formatted = formatDate(trimmed, { month });
       if (formatted !== "-") return formatted;
+    }
+    if (month === "short") {
+      let abbreviated = trimmed;
+      for (const [full, short] of Object.entries(ID_MONTH_ABBR_MAP)) {
+        const regex = new RegExp(`\\b${full}\\b`, "gi");
+        if (regex.test(abbreviated)) {
+          abbreviated = abbreviated.replace(regex, short);
+        }
+      }
+      return abbreviated;
     }
     return trimmed;
   }
@@ -230,24 +256,24 @@ export function isCampaignClosed(campaign) {
   return false;
 }
 
-export function formatCompactNumber(num) {
+export function formatCompactNumber(num, maxDecimals = 1) {
   if (typeof num !== "number" || isNaN(num)) return "0";
   const abs = Math.abs(num);
   if (abs >= 1_000_000_000_000) {
     const val = num / 1_000_000_000_000;
-    return `${val % 1 === 0 ? val : Number(val.toFixed(1))} T`;
+    return `${val % 1 === 0 ? val : Number(val.toFixed(maxDecimals))} T`;
   }
   if (abs >= 1_000_000_000) {
     const val = num / 1_000_000_000;
-    return `${val % 1 === 0 ? val : Number(val.toFixed(1))} M`;
+    return `${val % 1 === 0 ? val : Number(val.toFixed(maxDecimals))} M`;
   }
   if (abs >= 1_000_000) {
     const val = num / 1_000_000;
-    return `${val % 1 === 0 ? val : Number(val.toFixed(1))} Jt`;
+    return `${val % 1 === 0 ? val : Number(val.toFixed(maxDecimals))} Jt`;
   }
   if (abs >= 1_000) {
     const val = num / 1_000;
-    return `${val % 1 === 0 ? val : Number(val.toFixed(1))} rb`;
+    return `${val % 1 === 0 ? val : Number(val.toFixed(maxDecimals))} rb`;
   }
   return String(num);
 }
@@ -280,6 +306,7 @@ export function parseThousandsToNumber(value) {
 }
 export { maskEmail } from "@/lib/security";
 export { formatRupiah as formatCurrency };
+export { formatClockTime } from "./dateUtils";
 
 /**
  * Mendekode entitas HTML umum seperti &amp; menjadi & agar tampil bersih di UI.

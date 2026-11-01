@@ -171,7 +171,7 @@ export function DonorPersonalFormCard({
             />
           </FormField>
 
-          <FormField label="Nomor telepon / WhatsApp" error={errors.phone}>
+          <FormField label="Nomor WhatsApp" error={errors.phone}>
             <Input
               id="input-phone"
               name="phone"
@@ -183,14 +183,14 @@ export function DonorPersonalFormCard({
                 bind("phone").onChange(e);
                 if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
               }}
-              placeholder="Contoh: 08123456789"
+              placeholder="Contoh: 081234567890"
               maxLength={15}
               className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
             />
           </FormField>
         </div>
 
-        <FormField label="Alamat Lengkap">
+        <FormField label="Alamat lengkap">
           <Textarea
             id="input-address"
             name="address"

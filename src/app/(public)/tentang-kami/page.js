@@ -1,5 +1,6 @@
 import { getVolunteerCount } from "@/services/volunteerService";
 import { getOrgSettings } from "@/services/adminSettingsService";
+import { getPublicLeadership } from "@/services/leadershipService";
 import { AboutHeader } from "@/components/about/AboutHeader";
 import { AboutStory } from "@/components/about/AboutStory";
 import { AboutVisionMission } from "@/components/about/AboutVisionMission";
@@ -41,15 +42,20 @@ export const metadata = {
 };
 
 export default async function TentangKamiPage() {
-  const [volunteerCount, orgSettings] = await Promise.all([
+  const [volunteerCount, orgSettings, leaders] = await Promise.all([
     getVolunteerCount(),
     getOrgSettings(),
+    getPublicLeadership(),
   ]);
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-4">
       {/* 1. Profile Header with Real Team Count & Dynamic Org Settings */}
-      <AboutHeader orgSettings={orgSettings} volunteerCount={volunteerCount} />
+      <AboutHeader
+        orgSettings={orgSettings}
+        volunteerCount={volunteerCount}
+        leaders={leaders}
+      />
 
       {/* 2. Editorial 2-Column Content */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
@@ -61,7 +67,7 @@ export default async function TentangKamiPage() {
           <DashedDivider className="px-4 sm:px-5" />
           <AboutPillars />
           <DashedDivider className="px-4 sm:px-5" />
-          <AboutLeadership />
+          <AboutLeadership leaders={leaders} />
           <DashedDivider className="px-4 sm:px-5" />
           <AboutBankAccounts orgSettings={orgSettings} />
         </div>

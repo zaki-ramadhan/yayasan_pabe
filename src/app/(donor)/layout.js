@@ -24,9 +24,15 @@ export const metadata = {
 export default async function DonorLayout({ children }) {
   const cookieStore = await cookies();
   const session = cookieStore.get("pabe_session")?.value;
+  const role = cookieStore.get("pabe_role")?.value;
 
   if (!session) {
     redirect("/login?redirect=/donatur/dashboard");
+  }
+
+  // Jika akun adalah staf/admin, arahkan langsung ke panel admin yayasan
+  if (role && role !== "DONOR") {
+    redirect("/admin");
   }
 
   return <DonorLayoutClient>{children}</DonorLayoutClient>;

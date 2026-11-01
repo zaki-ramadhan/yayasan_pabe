@@ -203,7 +203,7 @@ Hingga kuartal kedua 2026, lebih dari 65 pedagang keliling dan warung rumahan di
     excerpt: "Transformasi penyaluran zakat dari pola konsumtif sesaat menjadi produktif terukur adalah kunci utama pemerataan kesejahteraan sosial nasional.",
     content: `Filantropi Islam memiliki potensi dana triliunan rupiah yang jika dikelola secara transparan dan berbasis data akurat dapat menjadi pilar pelengkap APBN dalam mengentaskan kemiskinan ekstrem.
 
-Penyaluran zakat tidak boleh berhenti pada pemberian sembako sekali habis. Alokasi dana ZISWAF wajib diarahkan pada investasi sumber daya manusia—seperti beasiswa vokasi bagi anak dhuafa dan sanitasi pemukiman kumuh.
+Penyaluran zakat tidak boleh berhenti pada pemberian sembako sekali habis. Alokasi dana ZISWAF wajib diarahkan pada investasi sumber daya manusia, seperti beasiswa vokasi bagi anak dhuafa dan sanitasi pemukiman kumuh.
 
 Akuntabilitas digital dan audit berkala menjadi benteng utama agar kepercayaan publik terhadap lembaga amil zakat semakin kokoh.`,
     author: "Drs. KH. Mahmud Syakir",

@@ -220,9 +220,6 @@ export function AdminAuditReportTable({ initialReports = [] }) {
                 <TableHead className="min-w-[280px] sm:min-w-[360px] max-w-lg font-medium text-slate-600 text-sm py-2.5">
                   Auditor independen &amp; judul
                 </TableHead>
-                <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  Opini audit
-                </TableHead>
                 <TableHead className="w-56 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Penerimaan &amp; penyaluran
                 </TableHead>
@@ -237,7 +234,7 @@ export function AdminAuditReportTable({ initialReports = [] }) {
             <TableBody className="divide-y divide-slate-100">
               {reports.length === 0 ? (
                 <TableEmptyRow
-                  colSpan={7}
+                  colSpan={6}
                   isFiltered={Boolean(debouncedSearch)}
                 />
               ) : (

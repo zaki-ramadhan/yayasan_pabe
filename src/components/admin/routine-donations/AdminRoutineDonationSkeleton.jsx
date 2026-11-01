@@ -39,8 +39,11 @@ export function AdminRoutineDonationSkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
-                <TableHead className="w-60 font-medium text-slate-600 text-sm py-2.5">
+                <TableHead className="w-[260px] font-medium text-slate-600 text-sm py-2.5">
                   <Skeleton className="h-4 w-28 rounded" />
+                </TableHead>
+                <TableHead className="w-44 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                  <Skeleton className="h-4 w-20 mx-auto rounded" />
                 </TableHead>
                 <TableHead className="font-medium text-slate-600 text-sm py-2.5 min-w-[280px] max-w-[360px]">
                   <Skeleton className="h-4 w-32 rounded" />
@@ -65,8 +68,8 @@ export function AdminRoutineDonationSkeleton() {
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
-                  {/* Donatur & Kontak dengan Avatar */}
-                  <TableCell className="w-60 py-3 align-middle">
+                  {/* Donatur dengan Avatar & Email */}
+                  <TableCell className="w-[260px] py-3 align-middle">
                     <div className="flex items-center gap-2.5">
                       <Skeleton className="w-8 h-8 rounded-full shrink-0" />
                       <div className="min-w-0 space-y-1">
@@ -74,6 +77,11 @@ export function AdminRoutineDonationSkeleton() {
                         <Skeleton className="h-3.5 w-32 rounded" />
                       </div>
                     </div>
+                  </TableCell>
+
+                  {/* No. Telepon */}
+                  <TableCell className="w-44 py-3 text-center align-middle whitespace-nowrap">
+                    <Skeleton className="h-4 w-28 mx-auto rounded" />
                   </TableCell>
 
                   {/* Program Kebaikan */}

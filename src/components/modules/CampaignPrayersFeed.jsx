@@ -81,7 +81,7 @@ export function CampaignPrayersFeed({ initialDonors = [] }) {
         </div>
       </div>
 
-      {/* Scrollable prayer list feed — 2 column unified divided grid on md */}
+      {/* Scrollable prayer list feed (2 column unified divided grid on md) */}
       <div
         ref={scrollRef}
         className="max-h-[480px] sm:max-h-[520px] overflow-y-auto pr-1 sm:pr-1.5 pt-1 pb-2"

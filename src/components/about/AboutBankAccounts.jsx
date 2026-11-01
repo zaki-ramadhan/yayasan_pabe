@@ -11,14 +11,9 @@ export function AboutBankAccounts({ orgSettings = null }) {
 
   return (
     <section id="rekening-resmi" className="p-4 sm:p-5 space-y-4 overflow-hidden scroll-mt-20">
-      <div>
-        <h2 className="text-lg sm:text-xl font-medium text-slate-950">
-          Nomor Rekening Donasi
-        </h2>
-        <p className="text-sm text-slate-600 mt-0.5">
-          Dana Yayasan Payung Berkah bersumber dari para donatur.
-        </p>
-      </div>
+      <h2 className="text-lg sm:text-xl font-medium text-slate-950">
+        Nomor Rekening Donasi
+      </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center">
         {/* Left: Reusable Bank Card 3D Showcase */}

@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { UserAvatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { formatDate, formatRupiah } from "@/lib/formatters";
+import { formatDate, formatRupiah, formatClockTime } from "@/lib/formatters";
 import { maskEmail } from "@/lib/security";
 import { copyToClipboard } from "@/lib/clipboard";
 import { toast } from "@/hooks/useToast";
@@ -106,7 +106,14 @@ export function AdminPrayerTableRow({
       <TableCell className="min-w-[280px] max-w-[360px] py-3 align-top">
         <div className="space-y-1">
           <span
-            className="font-medium text-sm text-slate-900 block leading-snug line-clamp-2"
+            className="font-medium text-sm text-slate-900 leading-snug line-clamp-2 overflow-hidden"
+            title={item.campaignTitle}
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
           >
             {item.campaignTitle}
           </span>
@@ -128,10 +135,11 @@ export function AdminPrayerTableRow({
         {formatRupiah(item.amount)}
       </TableCell>
 
-      {/* 5. Pesan Doa (Lega dengan line-clamp-3) */}
+      {/* 5. Pesan Doa (line-clamp-2) */}
       <TableCell className="min-w-[240px] max-w-md py-3 align-top space-y-1.5">
         <p
-          className="text-sm font-normal text-slate-800 leading-relaxed italic line-clamp-3"
+          className="text-sm font-normal text-slate-800 leading-relaxed italic line-clamp-2"
+          title={item.prayer}
         >
           &ldquo;{item.prayer}&rdquo;
         </p>
@@ -143,9 +151,16 @@ export function AdminPrayerTableRow({
         )}
       </TableCell>
 
-      {/* 6. Waktu Kirim */}
-      <TableCell className="w-36 py-3 align-top whitespace-nowrap text-sm text-slate-500 font-normal text-center tabular-nums">
-        {formatDate(item.createdAt, { withTime: true })}
+      {/* 6. Waktu Kirim (Dua baris tanggal & jam, teks jelas) */}
+      <TableCell className="w-36 py-3 align-top whitespace-nowrap text-sm text-slate-700 font-normal text-center tabular-nums">
+        <div className="space-y-0.5">
+          <span className="font-medium text-slate-900 block leading-tight">
+            {formatDate(item.createdAt)}
+          </span>
+          <span className="text-xs text-slate-600 block">
+            {formatClockTime(item.createdAt)} WIB
+          </span>
+        </div>
       </TableCell>
 
       {/* 7. Status Moderasi (Badge) */}

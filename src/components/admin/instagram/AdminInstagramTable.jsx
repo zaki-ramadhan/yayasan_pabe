@@ -12,11 +12,11 @@ import {
   TableRow,
   TableEmptyRow,
   TablePaginationFooter,
-  TableSkeletonRows,
   TableToolbar,
 } from "@/components/ui/Table";
 import { cn } from "@/lib/utils";
 import { AdminInstagramTableRow } from "./AdminInstagramTableRow";
+import { AdminInstagramTableSkeletonRows } from "./AdminInstagramSkeleton";
 
 const MAX_POSTS = 8;
 
@@ -125,11 +125,7 @@ export function AdminInstagramTable({
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableSkeletonRows
-                  rows={8}
-                  columns={5}
-                  cellAlignments={["center", "left", "left", "center", "right"]}
-                />
+                <AdminInstagramTableSkeletonRows rows={8} />
               ) : posts.length === 0 ? (
                 <TableEmptyRow
                   colSpan={5}

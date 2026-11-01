@@ -41,8 +41,8 @@ export function AdminArticleSkeleton() {
                 <TableHead className="w-36 py-2.5 text-center">
                   <Skeleton className="h-4 w-20 rounded mx-auto" />
                 </TableHead>
-                <TableHead className="w-40 py-2.5">
-                  <Skeleton className="h-4 w-16 rounded" />
+                <TableHead className="w-60 py-2.5">
+                  <Skeleton className="h-4 w-20 rounded" />
                 </TableHead>
                 <TableHead className="w-32 py-2.5 text-center">
                   <Skeleton className="h-4 w-24 rounded mx-auto" />
@@ -81,10 +81,10 @@ export function AdminArticleSkeleton() {
                   </TableCell>
 
                   {/* Author */}
-                  <TableCell className="w-40 py-2.5 align-middle">
+                  <TableCell className="w-60 py-2.5 align-middle">
                     <div className="flex items-center gap-2">
                       <Skeleton className="h-6 w-6 rounded-full shrink-0" />
-                      <Skeleton className="h-3.5 w-20 rounded" />
+                      <Skeleton className="h-3.5 w-28 rounded" />
                     </div>
                   </TableCell>
 

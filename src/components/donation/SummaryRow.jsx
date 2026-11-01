@@ -1,5 +1,5 @@
 /**
- * A single label–value row for payment summary breakdowns.
+ * A single label-value row for payment summary breakdowns.
  *
  * @param {object} props
  * @param {string} props.label

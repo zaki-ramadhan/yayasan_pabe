@@ -75,10 +75,11 @@ export function AdminArticleTableRow({
 				</div>
 			</TableCell>
 
-			<TableCell className="py-2.5 text-center align-middle">
+			<TableCell className="w-36 py-2.5 text-center align-middle whitespace-nowrap">
 				<Badge
 					variant="secondary"
-					className="max-w-[140px] truncate"
+					className="max-w-[130px] truncate"
+					title={article.category}
 				>
 					{
 						article.category
@@ -86,10 +87,21 @@ export function AdminArticleTableRow({
 				</Badge>
 			</TableCell>
 
-			<TableCell className="text-sm text-slate-600 py-2.5 align-middle">
-				{
-					article.author
-				}
+			<TableCell className="w-60 text-sm text-slate-600 py-2.5 align-middle">
+				<span
+					className="line-clamp-2 leading-snug font-normal overflow-hidden"
+					title={article.author}
+					style={{
+						display: "-webkit-box",
+						WebkitLineClamp: 2,
+						WebkitBoxOrient: "vertical",
+						overflow: "hidden",
+					}}
+				>
+					{
+						article.author
+					}
+				</span>
 			</TableCell>
 
 			<TableCell className="text-sm text-slate-600 py-2.5 whitespace-nowrap align-middle text-center tabular-nums">

@@ -71,7 +71,7 @@ export function AdminInstagramTableRow({
         </div>
       </TableCell>
 
-      <TableCell className="w-40 py-2.5 align-middle text-center text-xs text-slate-600 whitespace-nowrap tabular-nums">
+      <TableCell className="w-40 py-2.5 align-middle text-center text-sm text-slate-600 whitespace-nowrap tabular-nums">
         {postedAtFormatted}
       </TableCell>
 

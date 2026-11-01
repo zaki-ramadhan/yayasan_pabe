@@ -113,7 +113,10 @@ export function AdminPrayerSkeleton() {
 
                   {/* 6. Waktu Kirim */}
                   <TableCell className="w-36 py-3 align-top whitespace-nowrap text-center">
-                    <Skeleton className="h-3.5 w-28 mx-auto rounded" />
+                    <div className="space-y-1">
+                      <Skeleton className="h-4 w-20 mx-auto rounded" />
+                      <Skeleton className="h-3 w-16 mx-auto rounded" />
+                    </div>
                   </TableCell>
 
                   {/* 7. Status Moderasi */}

@@ -33,7 +33,7 @@ export function AdminTransactionSkeleton() {
                 <TableHead className="w-px py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-20 rounded" />
                 </TableHead>
-                <TableHead className="w-full min-w-[220px] py-2.5">
+                <TableHead className="min-w-[240px] max-w-[340px] py-2.5">
                   <Skeleton className="h-4 w-32 rounded" />
                 </TableHead>
                 <TableHead className="w-px py-2.5 text-right whitespace-nowrap">
@@ -76,8 +76,11 @@ export function AdminTransactionSkeleton() {
                   </TableCell>
 
                   {/* Campaign Target */}
-                  <TableCell className="py-3 align-middle">
-                    <Skeleton className="h-4 w-full max-w-sm rounded" />
+                  <TableCell className="py-3 align-middle min-w-[240px] max-w-[340px]">
+                    <div className="space-y-1 max-w-[320px]">
+                      <Skeleton className="h-4 w-full rounded" />
+                      <Skeleton className="h-3.5 w-3/4 rounded" />
+                    </div>
                   </TableCell>
 
                   {/* Amount */}

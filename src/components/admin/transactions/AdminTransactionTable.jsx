@@ -190,7 +190,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                 <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Donatur
                 </TableHead>
-                <TableHead className="w-full font-medium text-slate-600 text-sm py-2.5 min-w-[200px]">
+                <TableHead className="min-w-[240px] max-w-[340px] font-medium text-slate-600 text-sm py-2.5">
                   Program tujuan
                 </TableHead>
                 <TableHead className="w-px text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">

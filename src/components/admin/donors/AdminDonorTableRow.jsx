@@ -18,16 +18,9 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
             isAnonymous={donor.name === "Hamba Allah"}
           />
           <div className="min-w-0 space-y-0.5">
-            <div className="flex items-center gap-1.5 min-w-0">
-              <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
-                {donor.name}
-              </span>
-              {donor.isRegisteredUser && (
-                <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0 select-none">
-                  Akun
-                </span>
-              )}
-            </div>
+            <span className="font-medium text-sm text-slate-900 block leading-tight truncate">
+              {donor.name}
+            </span>
             {donor.email && (
               <span className="text-xs text-slate-500 block truncate font-normal">
                 {maskEmail(donor.email)}

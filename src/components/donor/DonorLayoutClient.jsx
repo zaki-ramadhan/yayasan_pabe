@@ -27,16 +27,12 @@ export function DonorLayoutClient({ children }) {
     }
   }, []);
 
-  // If administrator/staff lands on donor dashboard, redirect to admin portal
+  // Jika akun adalah administrator/staf, selalu alihkan ke portal admin
   useEffect(() => {
-    if (
-      currentUser?.role &&
-      currentUser.role !== USER_ROLES.DONOR &&
-      (pathname === "/donatur" || pathname === "/donatur/dashboard")
-    ) {
+    if (currentUser?.role && currentUser.role !== USER_ROLES.DONOR) {
       router.replace("/admin");
     }
-  }, [currentUser, pathname, router]);
+  }, [currentUser, router]);
 
   // Close mobile drawer on route change
   useEffect(() => {

@@ -64,7 +64,7 @@ export function startCampaignDetailTour(hasDonations = false) {
       element: "#tour-prayer-input",
       popover: {
         title: "Titip Doa",
-        description: "Tulis doamu setelah donasi — muncul di halaman ini untuk diamini bersama.",
+        description: "Tulis doamu setelah donasi agar muncul di halaman ini untuk diamini bersama.",
         side: "left",
         align: "start",
       },

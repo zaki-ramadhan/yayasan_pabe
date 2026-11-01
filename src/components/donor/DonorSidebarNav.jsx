@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
-import { logoutUser, USER_ROLES } from "@/services/authService";
+import { logoutUser } from "@/services/authService";
 import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 
@@ -15,10 +15,6 @@ export function DonorSidebarNav({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-
-  const isStaff = Boolean(
-    currentUser?.role && currentUser.role !== USER_ROLES.DONOR
-  );
 
   const handleLogout = () => {
     logoutUser();
@@ -178,30 +174,6 @@ export function DonorSidebarNav({
             })}
           </nav>
         </div>
-
-        {isStaff && (
-          <div className={cn("pt-2 border-t border-slate-200/80", isCollapsed && "flex justify-center")}>
-            {isCollapsed ? (
-              <Link
-                href="/admin"
-                onClick={onCloseMobile}
-                aria-label="Panel admin"
-                className="w-10 h-10 rounded-md flex items-center justify-center bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-900 transition-colors text-xs font-normal"
-              >
-                ADM
-              </Link>
-            ) : (
-              <Link
-                href="/admin"
-                onClick={onCloseMobile}
-                className="flex items-center justify-between px-3 py-2 rounded-md bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-sm font-normal transition-colors"
-              >
-                <span className="truncate font-normal">Panel admin</span>
-                <span className="text-xs text-slate-400 font-normal">&rarr;</span>
-              </Link>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Bottom Section: Dedicated Logout Button */}

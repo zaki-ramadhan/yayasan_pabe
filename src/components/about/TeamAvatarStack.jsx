@@ -9,18 +9,24 @@ import { ORG_PROFILE } from "@/data/orgProfile";
  * @param {Array} [props.leaders] - List of leadership members
  */
 export function TeamAvatarStack({
-  volunteerCount = 14,
-  leaders = ORG_PROFILE.leadership || [],
+  volunteerCount = 0,
+  leaders = [],
 }) {
-  const leadershipCount = leaders.length;
-  const totalTeam = leadershipCount + volunteerCount;
+  const effectiveLeaders =
+    Array.isArray(leaders) && leaders.length > 0
+      ? leaders
+      : ORG_PROFILE.leadership || [];
+
+  const leadershipCount = effectiveLeaders.length;
+  const totalTeam = leadershipCount + Number(volunteerCount || 0);
+  const displayAvatars = effectiveLeaders.slice(0, 6);
 
   return (
     <div className="flex items-center gap-2.5 pt-1 my-2.5">
       <div className="flex -space-x-2 overflow-hidden shrink-0">
-        {leaders.map((leader, idx) => (
+        {displayAvatars.map((leader, idx) => (
           <div
-            key={leader.name || idx}
+            key={leader.id || leader.name || idx}
             className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden ring-2 ring-white bg-slate-200 shrink-0 shadow-2xs"
           >
             <Image
@@ -28,6 +34,11 @@ export function TeamAvatarStack({
               alt={leader.name}
               fill
               sizes="28px"
+              unoptimized={
+                typeof leader.image === "string" &&
+                !leader.image.startsWith("/") &&
+                !leader.image.includes("lh3.googleusercontent.com")
+              }
               className="object-cover"
             />
           </div>

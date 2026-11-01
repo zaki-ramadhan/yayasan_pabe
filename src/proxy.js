@@ -80,7 +80,7 @@ export function proxy(request) {
     }
 
     const role = request.cookies.get("pabe_role")?.value;
-    if (role && role !== "DONOR" && (pathname === "/donatur" || pathname === "/donatur/dashboard")) {
+    if (role && role !== "DONOR") {
       return NextResponse.redirect(new URL("/admin", request.url));
     }
 

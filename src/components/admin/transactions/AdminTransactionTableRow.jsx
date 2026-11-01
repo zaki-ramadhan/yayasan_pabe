@@ -1,7 +1,7 @@
 "use client";
 
 import { Copy, Check, ShieldCheck } from "lucide-react";
-import { formatRupiah, formatDate } from "@/lib/formatters";
+import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { UserAvatar } from "@/components/ui/Avatar";
 import { StatusBadge } from "@/components/ui/Badge";
@@ -60,10 +60,21 @@ export function AdminTransactionTableRow({
       </TableCell>
 
       {/* Program */}
-      <TableCell className="text-sm text-slate-700 py-3 align-middle">
-        <span className="line-clamp-2 leading-snug font-normal text-slate-800 block">
-          {item.campaignTitle}
-        </span>
+      <TableCell className="text-sm text-slate-700 py-3 align-middle min-w-[240px] max-w-[340px]">
+        <div className="max-w-[320px]">
+          <p
+            className="line-clamp-2 leading-snug font-normal text-slate-800 overflow-hidden"
+            title={item.campaignTitle}
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {decodeHtmlEntities(item.campaignTitle)}
+          </p>
+        </div>
       </TableCell>
 
       {/* Nominal */}

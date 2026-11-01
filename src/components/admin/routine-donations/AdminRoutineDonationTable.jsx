@@ -176,8 +176,11 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
-                <TableHead className="w-60 font-medium text-slate-600 text-sm py-2.5">
-                  Donatur &amp; kontak
+                <TableHead className="w-[260px] font-medium text-slate-600 text-sm py-2.5">
+                  Donatur
+                </TableHead>
+                <TableHead className="w-44 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                  No. telepon
                 </TableHead>
                 <TableHead className="font-medium text-slate-600 text-sm py-2.5 min-w-[280px] max-w-[360px]">
                   Program kebaikan
@@ -210,7 +213,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                 ))
               ) : (
                 <TableEmptyRow
-                  colSpan={7}
+                  colSpan={8}
                   isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL" || frequencyFilter !== "ALL")}
                 />
               )}

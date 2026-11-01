@@ -37,9 +37,6 @@ export function AdminAuditReportSkeleton() {
                 <TableHead className="py-2.5 min-w-[280px] sm:min-w-[360px] max-w-lg">
                   <Skeleton className="h-4 w-44 rounded" />
                 </TableHead>
-                <TableHead className="w-36 py-2.5 text-center whitespace-nowrap">
-                  <Skeleton className="h-4 w-20 mx-auto rounded" />
-                </TableHead>
                 <TableHead className="w-56 py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-36 rounded" />
                 </TableHead>
@@ -63,9 +60,6 @@ export function AdminAuditReportSkeleton() {
                   <TableCell className="py-3.5 align-middle space-y-1.5 min-w-[280px] sm:min-w-[360px] max-w-lg">
                     <Skeleton className="h-4 w-48 rounded" />
                     <Skeleton className="h-3.5 w-64 rounded" />
-                  </TableCell>
-                  <TableCell className="w-36 text-center py-3.5 align-middle">
-                    <Skeleton className="h-5 w-24 mx-auto rounded-md" />
                   </TableCell>
                   <TableCell className="w-56 py-3.5 align-middle space-y-1.5 whitespace-nowrap">
                     <Skeleton className="h-3.5 w-36 rounded" />

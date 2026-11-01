@@ -1,7 +1,7 @@
 "use client";
 
-import { ShieldCheck, Download } from "lucide-react";
-import { formatRupiah, formatNumber } from "@/lib/formatters";
+import { Download } from "lucide-react";
+import { formatRupiah, formatNumber, formatCompactRupiah } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 
@@ -64,36 +64,28 @@ export function AdminAuditReportTableRow({
 				)}
 			</TableCell>
 
-			<TableCell className="text-center py-3.5 align-middle">
-				<span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/90 whitespace-nowrap">
-					<ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-					<span>
-						{item.opinionStatus ===
-						"WTP"
-							? "Wajar (WTP)"
-							: item.opinionStatus}
-					</span>
-				</span>
-			</TableCell>
-
 			<TableCell className="py-3.5 align-middle space-y-1">
 				<div className="flex items-center justify-between text-sm font-normal">
 					<span className="text-slate-500">
 						Masuk:
 					</span>
-					<span className="font-medium text-slate-900 ml-2">
-						{formatRupiah(
+					<span className="font-medium text-slate-900 ml-2 tabular-nums" title={formatRupiah(item.totalFundsIn)}>
+						{formatCompactRupiah(
 							item.totalFundsIn,
+							2,
+							{ short: true }
 						)}
 					</span>
 				</div>
 				<div className="flex items-center justify-between text-sm font-normal">
 					<span className="text-slate-500">
-						Salur:
+						Tersalurkan:
 					</span>
-					<span className="font-medium text-emerald-700 ml-2">
-						{formatRupiah(
+					<span className="font-medium text-emerald-700 ml-2 tabular-nums" title={formatRupiah(item.totalFundsOut)}>
+						{formatCompactRupiah(
 							item.totalFundsOut,
+							2,
+							{ short: true }
 						)}
 					</span>
 				</div>

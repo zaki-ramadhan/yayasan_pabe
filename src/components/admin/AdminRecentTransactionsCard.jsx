@@ -135,7 +135,16 @@ export function AdminRecentTransactionsCard({
                     {item.donorName}
                   </TableCell>
                   <TableCell className="text-sm text-slate-700 py-3 align-middle min-w-[280px] sm:min-w-[340px]">
-                    <span className="line-clamp-2 leading-snug font-normal text-slate-800 block">
+                    <span
+                      className="line-clamp-2 leading-snug font-normal text-slate-800 overflow-hidden"
+                      title={item.campaignTitle}
+                      style={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                    >
                       {item.campaignTitle}
                     </span>
                   </TableCell>

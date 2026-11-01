@@ -80,6 +80,7 @@ export function AdminProgramTableRow({
 				<Badge
 					variant="secondary"
 					className="max-w-[130px] truncate"
+					title={item.category}
 				>
 					{
 						item.category

@@ -135,7 +135,7 @@ export function DonorBankFormCard({
           Informasi Rekening Bank
         </h2>
         <p className="text-sm font-normal text-slate-500 mt-0.5">
-          Rekening bank untuk keperluan administrasi donasi.
+          Opsional. Hanya digunakan apabila terdapat penyesuaian program atau pengembalian dana donasi (refund).
         </p>
       </div>
 

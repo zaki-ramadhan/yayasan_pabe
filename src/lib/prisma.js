@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis;
@@ -25,7 +25,9 @@ if (
     !globalForPrisma.prisma.activityLog ||
     !globalForPrisma.prisma.galleryItem ||
     !globalForPrisma.prisma.instagramProfile ||
-    !globalForPrisma.prisma.instagramPost)
+    !globalForPrisma.prisma.instagramPost ||
+    !globalForPrisma.prisma.passwordResetToken ||
+    !Prisma?.UserScalarFieldEnum?.gender)
 ) {
   globalForPrisma.prisma = undefined;
 }

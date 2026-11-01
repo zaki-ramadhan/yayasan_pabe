@@ -49,6 +49,20 @@ describe("Rate Limiter Engine (Token Bucket / Sliding Window)", () => {
     limiter.reset(key);
     expect(limiter.check(key, 1, 60000).success).toBe(true);
   });
+
+  it("mengurangi kuota (decrement/rollback) saat operasi downstream gagal", () => {
+    const key = "test:rollback-key";
+    limiter.check(key, 1, 60000);
+    // Sekarang kuota habis
+    expect(limiter.check(key, 1, 60000).success).toBe(false);
+
+    // Rollback karena error
+    limiter.decrement(key);
+    limiter.decrement(key); // decrement kelebihan request sebelumnya
+
+    // Pengguna harus bisa mencoba kembali
+    expect(limiter.check(key, 1, 60000).success).toBe(true);
+  });
 });
 
 describe("Client IP Resolution & Extraction", () => {
