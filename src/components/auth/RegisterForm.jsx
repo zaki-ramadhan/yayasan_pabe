@@ -22,13 +22,13 @@ import {
 import {
   validateEmail,
   validatePhone,
-  validateUsername,
+  validateName,
 } from "@/lib/security";
 
 export function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -41,14 +41,14 @@ export function RegisterForm() {
   const handledErrorRef = useRef(false);
 
   const isSubmitDisabled =
-    !username.trim() ||
-    username.trim().length < 3 ||
+    !name.trim() ||
+    name.trim().length < 2 ||
     !email.trim() ||
     !phone.trim() ||
     !password ||
     password.length < 6 ||
     !agreeTerms ||
-    Boolean(errors.username || errors.email || errors.phone || errors.password || errors.agreeTerms);
+    Boolean(errors.name || errors.email || errors.phone || errors.password || errors.agreeTerms);
 
   const rawRedirect = searchParams.get("redirect") || searchParams.get("callbackUrl");
   const redirectUrl = rawRedirect?.startsWith("/dashboard")
@@ -85,9 +85,9 @@ export function RegisterForm() {
   const validateForm = () => {
     const newErrors = {};
 
-    const usernameResult = validateUsername(username);
-    if (!usernameResult.isValid) {
-      newErrors.username = usernameResult.message;
+    const nameResult = validateName(name);
+    if (!nameResult.isValid) {
+      newErrors.name = nameResult.message;
     }
 
     const emailResult = validateEmail(email, true);
@@ -125,21 +125,24 @@ export function RegisterForm() {
 
     setIsLoading(true);
     try {
-      const formattedName = username
-        .replace(/[._]/g, " ")
-        .replace(/\b\w/g, (l) => l.toUpperCase());
-
-      const user = await registerWithServer({
-        username: username.trim().toLowerCase(),
-        name: formattedName,
+      const result = await registerWithServer({
+        name: name.trim(),
         email: email.trim().toLowerCase(),
         phone: phone.trim(),
         password,
       });
 
       setIsLoading(false);
+
+      if (result?.requireVerification) {
+        toast.success("Pendaftaran berhasil! Silakan periksa inbox email Anda.");
+        const cleanEmail = result.email || email.trim().toLowerCase();
+        router.push(`/verifikasi-email?email=${encodeURIComponent(cleanEmail)}`);
+        return;
+      }
+
       toast.success("Pendaftaran berhasil! Selamat bergabung.");
-      router.push(redirectUrl || getRedirectPathForRole(user.role));
+      router.push(redirectUrl || getRedirectPathForRole(result?.role));
     } catch (err) {
       setIsLoading(false);
       toast.error(err.message || "Gagal mendaftarkan akun. Silakan coba lagi.");
@@ -183,8 +186,8 @@ export function RegisterForm() {
 
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <RegisterInputFields
-          username={username}
-          setUsername={setUsername}
+          name={name}
+          setName={setName}
           email={email}
           setEmail={setEmail}
           phone={phone}

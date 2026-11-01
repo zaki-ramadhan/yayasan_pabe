@@ -57,12 +57,19 @@ function AuthCallbackContent() {
           providerParam.toLowerCase() === "facebook" ? "Facebook" : "Google";
         toast.success(`Selamat datang, ${user.name}! Masuk via ${providerLabel}.`);
 
-        let targetRedirect = searchParams.get("redirect");
-        if (targetRedirect?.startsWith("/dashboard")) {
-          targetRedirect = targetRedirect.replace(/^\/dashboard/, "/admin");
+        let rawTarget = searchParams.get("redirect");
+        if (rawTarget?.startsWith("/dashboard")) {
+          rawTarget = rawTarget.replace(/^\/dashboard/, "/admin");
         }
-        if (!targetRedirect) {
-          targetRedirect = user?.role === "DONOR" ? "/donatur/dashboard" : "/admin";
+
+        const isStaff = user?.role && user.role !== "DONOR";
+        let targetRedirect = "/donatur/dashboard";
+        if (isStaff) {
+          const isAdminPath = rawTarget && (rawTarget === "/admin" || rawTarget.startsWith("/admin/"));
+          targetRedirect = isAdminPath ? rawTarget : "/admin";
+        } else {
+          const isAdminPath = rawTarget && (rawTarget === "/admin" || rawTarget.startsWith("/admin/"));
+          targetRedirect = (isAdminPath || !rawTarget) ? "/donatur/dashboard" : rawTarget;
         }
 
         setStatus("success");

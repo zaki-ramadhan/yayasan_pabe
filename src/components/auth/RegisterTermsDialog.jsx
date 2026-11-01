@@ -13,7 +13,7 @@ import {
 export function RegisterTermsDialog({ isOpen, onOpenChange, onAccept }) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+      <DialogContent className="sm:max-w-xl md:max-w-2xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-950 leading-tight">
             Ketentuan Akad &amp; Kebijakan Privasi
@@ -48,17 +48,21 @@ export function RegisterTermsDialog({ isOpen, onOpenChange, onAccept }) {
               Pembayaran donasi diproses melalui kanal resmi berlisensi Bank Indonesia (QRIS dan Virtual Account). Laporan keuangan dan penyaluran dapat ditinjau kapan saja melalui halaman Transparansi Publik.
             </p>
           </div>
+
+          <p className="text-xs sm:text-sm text-slate-500 pt-2 border-t border-slate-100 leading-relaxed">
+            Ketentuan di atas merupakan rangkuman poin pokok. Tata kelola data selengkapnya (termasuk kebijakan cookie sesi, standar enkripsi server, dan hak penonaktifan akun) dapat Anda pelajari pada kebijakan privasi lengkap.
+          </p>
         </div>
 
-        <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+        <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex flex-col sm:flex-row items-center justify-between gap-3">
           <Link
             href="/kebijakan-privasi"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-primary hover:underline font-medium flex items-center gap-1"
+            className="inline-flex items-center justify-center sm:justify-start gap-1.5 text-xs sm:text-sm font-normal text-primary hover:text-primary-hover hover:underline transition-colors py-1"
           >
-            <span>Dokumen lengkap privasi</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <span>Baca kebijakan privasi lengkap</span>
+            <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
           </Link>
           <Button
             type="button"

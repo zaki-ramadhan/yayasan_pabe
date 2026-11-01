@@ -1,5 +1,10 @@
 import dns from "node:dns/promises";
 import { validateEmail } from "./validator";
+import {
+  TRUSTED_EMAIL_DOMAINS,
+  isDisposableEmail,
+  isRoleBasedEmail,
+} from "./emailConstants";
 
 /**
  * In-memory cache untuk domain DNS status dengan TTL (1 jam).
@@ -8,44 +13,29 @@ import { validateEmail } from "./validator";
 const DNS_CACHE = new Map();
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 Jam
 
-// Pre-seed domain email global dan lokal terpercaya yang 100% memiliki MX aktif
-const TRUSTED_DOMAINS = [
-  "gmail.com",
-  "googlemail.com",
-  "yahoo.com",
-  "yahoo.co.id",
-  "ymail.com",
-  "hotmail.com",
-  "outlook.com",
-  "live.com",
-  "icloud.com",
-  "me.com",
-  "mac.com",
-  "proton.me",
-  "protonmail.com",
-  "mail.com",
-  "zoho.com",
-  "pabe.id",
-  "pabe.or.id",
-  "payungberkah.id",
-];
-
-for (const d of TRUSTED_DOMAINS) {
+for (const d of TRUSTED_EMAIL_DOMAINS) {
   DNS_CACHE.set(d, { isValid: true, timestamp: Date.now() + CACHE_TTL_MS * 24 });
 }
 
 /**
- * Verifikasi sintaks email dan validasi keberadaan server surat (MX / A Record) di DNS internet.
+ * Verifikasi sintaks email, proteksi disposable, dan validasi keberadaan mail server di DNS.
  *
  * @param {string} email - Alamat email yang diinput pengguna.
  * @param {object} options - Opsi validasi.
  * @param {boolean} [options.isRequired=false] - Apakah email wajib diisi.
+ * @param {boolean} [options.allowDisposable=false] - Apakah mengizinkan email sekali pakai.
+ * @param {boolean} [options.allowRole=true] - Apakah mengizinkan email peran (info@, admin@).
  * @param {number} [options.timeoutMs=2500] - Batas waktu maksimal query DNS dalam milidetik.
  * @returns {Promise<{ isValid: boolean, valid: boolean, message: string, error: string, sanitized?: string, domain?: string }>}
  */
 export async function verifyEmailDomainDns(
   email,
-  { isRequired = false, timeoutMs = 2500 } = {}
+  {
+    isRequired = false,
+    allowDisposable = false,
+    allowRole = true,
+    timeoutMs = 2500,
+  } = {}
 ) {
   // 1. Validasi sintaksis dan format domain lokal terlebih dahulu
   const syntaxCheck = validateEmail(email, isRequired);
@@ -58,29 +48,44 @@ export async function verifyEmailDomainDns(
     return syntaxCheck;
   }
 
-  const domain = syntaxCheck.domain || syntaxCheck.sanitized.split("@")[1];
+  const clean = syntaxCheck.sanitized;
+  const parts = clean.split("@");
+  const domain = syntaxCheck.domain || parts[1];
+
   if (!domain) {
-    const msg = "Domain email tidak valid.";
+    const msg = "Format email tidak valid (contoh: nama@email.com).";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // 2. Cek in-memory cache
+  // 2. Deteksi email sementara (disposable) via SSOT
+  if (!allowDisposable && isDisposableEmail(clean)) {
+    const msg = "Email sementara tidak diizinkan. Gunakan email pribadi Anda.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
+  // 3. Deteksi email peran (role-based) via SSOT
+  if (!allowRole && isRoleBasedEmail(clean)) {
+    const msg = "Gunakan email pribadi, bukan email kantor/umum.";
+    return { isValid: false, valid: false, message: msg, error: msg };
+  }
+
+  // 4. Cek in-memory cache
   const cached = DNS_CACHE.get(domain);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
     if (cached.isValid) {
       return syntaxCheck;
     }
-    const msg = `Domain email (@${domain}) tidak terdaftar atau tidak memiliki server surat (mail server) aktif.`;
+    const msg = "Domain email tidak ditemukan. Periksa kembali pengetikannya.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // 3. Query DNS internet dengan timeout guard
+  // 5. Query DNS internet dengan timeout guard
   try {
     const hasMx = await queryDnsWithTimeout(domain, timeoutMs);
     DNS_CACHE.set(domain, { isValid: hasMx, timestamp: Date.now() });
 
     if (!hasMx) {
-      const msg = `Domain email (@${domain}) tidak terdaftar atau tidak memiliki server surat (mail server) aktif. Periksa kembali pengetikan domain email Anda.`;
+      const msg = "Domain email tidak ditemukan. Periksa kembali pengetikannya.";
       return { isValid: false, valid: false, message: msg, error: msg };
     }
 
@@ -91,7 +96,7 @@ export async function verifyEmailDomainDns(
     // Jika domain secara eksplisit tidak ditemukan di root DNS (domain fiktif / tidak terdaftar)
     if (errorCode === "ENOTFOUND" || errorCode === "ENODATA" || errorCode === "NXDOMAIN") {
       DNS_CACHE.set(domain, { isValid: false, timestamp: Date.now() });
-      const msg = `Domain email (@${domain}) tidak terdaftar di DNS internet. Pastikan domain email Anda aktif dan benar.`;
+      const msg = "Domain email tidak ditemukan. Periksa kembali pengetikannya.";
       return { isValid: false, valid: false, message: msg, error: msg };
     }
 

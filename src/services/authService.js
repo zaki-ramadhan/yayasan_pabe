@@ -232,7 +232,10 @@ export async function loginWithServer({ identifier, password, rememberMe = false
 
   const data = await res.json();
   if (!res.ok || !data.success) {
-    throw new Error(data.message || "Gagal masuk ke akun.");
+    const error = new Error(data.message || "Gagal masuk ke akun.");
+    if (data.code) error.code = data.code;
+    if (data.email) error.email = data.email;
+    throw error;
   }
 
   loginUser(data.data, { rememberMe });
@@ -262,6 +265,14 @@ export async function registerWithServer({ username, name, email, phone, passwor
   const data = await res.json();
   if (!res.ok || !data.success) {
     throw new Error(data.message || "Gagal mendaftarkan akun baru.");
+  }
+
+  if (data.requireVerification) {
+    return {
+      requireVerification: true,
+      email: data.email,
+      message: data.message,
+    };
   }
 
   loginUser(data.data);

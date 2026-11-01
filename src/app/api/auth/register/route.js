@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { USER_ROLES, getSessionDuration } from "@/services/authService";
-import { hashPassword, isSuperAdminEmail, isSuperAdminIdentifier } from "@/lib/serverAuth";
+import { USER_ROLES } from "@/services/authService";
+import { hashPassword } from "@/lib/serverAuth";
+import { sendActivationEmailWorkflow } from "@/services/accountActivationService";
 import {
   stripEmojis,
   validateEmail,
@@ -24,48 +25,34 @@ export async function POST(request) {
     if (rateLimitBlocked) return rateLimitBlocked;
 
     const body = await request.json();
-    const { username, name, email, phone, password } = body || {};
+    const { name, fullName, username, email, phone, password } = body || {};
 
-    // 1. Sanitize & Validate Username (dengan proteksi anti-impersonation)
-    const usernameValidation = validateUsername(username);
-    if (!usernameValidation.isValid) {
+    // 1. Sanitize & Validate Nama Lengkap (mengizinkan spasi, min 2 max 60)
+    const rawName = (name || fullName || username || "").trim();
+    const nameValidation = validateName(rawName);
+    if (!nameValidation.isValid) {
       return NextResponse.json(
         {
           success: false,
-          message: usernameValidation.message,
+          message: nameValidation.message,
         },
         { status: 400 }
       );
     }
-    const cleanUsername = usernameValidation.sanitized;
-
-    // 1b. Validate Full Name jika dikirimkan oleh klien
-    let formattedName = cleanUsername
-      .replace(/[._]/g, " ")
-      .replace(/\b\w/g, (l) => l.toUpperCase());
-
-    if (name && typeof name === "string" && name.trim()) {
-      const nameValidation = validateName(name);
-      if (!nameValidation.isValid) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: nameValidation.message,
-          },
-          { status: 400 }
-        );
-      }
-      formattedName = nameValidation.sanitized;
-    }
+    const cleanName = nameValidation.sanitized;
 
     // 2. Validate Email & DNS Domain
     const cleanEmail = String(email || "").trim().toLowerCase();
-    const emailValidation = await verifyEmailDomainDns(cleanEmail, { isRequired: true });
+    const emailValidation = await verifyEmailDomainDns(cleanEmail, {
+      isRequired: true,
+      allowDisposable: false,
+      allowRole: false,
+    });
     if (!emailValidation.isValid) {
       return NextResponse.json(
         {
           success: false,
-          message: emailValidation.message || "Alamat email tidak valid.",
+          message: emailValidation.message || "Format email tidak valid (contoh: nama@email.com).",
         },
         { status: 400 }
       );
@@ -99,12 +86,45 @@ export async function POST(request) {
       cleanPhone = phone.trim();
     }
 
-    // 5. Check if user already exists in DB
+    // 5. Generate Collision-free Username untuk database
+    let candidateUsername = "";
+    if (username && typeof username === "string" && username.trim()) {
+      const uVal = validateUsername(username);
+      if (uVal.isValid) candidateUsername = uVal.sanitized;
+    }
+
+    if (!candidateUsername) {
+      let base = cleanName
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_|_$/g, "")
+        .slice(0, 20);
+
+      if (!base || base.length < 3) {
+        base = cleanEmail.split("@")[0].toLowerCase().replace(/[^a-z0-9]/g, "_").slice(0, 18) || "donatur";
+      }
+
+      candidateUsername = base;
+      let counter = 1;
+      while (true) {
+        const clash = await prisma.user.findFirst({
+          where: { username: candidateUsername },
+          select: { id: true },
+        });
+        if (!clash) break;
+        counter++;
+        candidateUsername = `${base.slice(0, 16)}_${counter}`;
+      }
+    }
+    const cleanUsername = candidateUsername;
+
+    // 6. Check if email already exists in DB
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
           { email: cleanEmail },
-          { username: cleanUsername },
+          ...(username ? [{ username: cleanUsername }] : []),
         ],
       },
       select: { id: true, email: true, username: true },
@@ -116,21 +136,21 @@ export async function POST(request) {
         {
           success: false,
           message: isEmailMatch
-            ? "Alamat email ini sudah terdaftar. Silakan masuk ke akun Anda."
+            ? "Email sudah terdaftar. Silakan masuk ke akun Anda."
             : "Nama pengguna ini sudah digunakan. Silakan pilih nama pengguna lain.",
         },
         { status: 409 }
       );
     }
 
-    // 6. Hash Password & Create User in DB (Selalu berikan role DONOR pada registrasi publik)
+    // 7. Hash Password & Create User in DB (Status isActive: false sampai email diaktivasi)
     const passwordHash = hashPassword(cleanPassword);
     const assignedRole = USER_ROLES.DONOR;
     const assignedTitle = "Donatur";
 
     const createdUser = await prisma.user.create({
       data: {
-        name: formattedName,
+        name: cleanName,
         username: cleanUsername,
         email: cleanEmail,
         phone: cleanPhone,
@@ -138,52 +158,42 @@ export async function POST(request) {
         role: assignedRole,
         title: assignedTitle,
         avatar: null,
+        isActive: false, // Wajib aktivasi email sebelum bisa login
       },
       select: {
         id: true,
         name: true,
         username: true,
         email: true,
-        phone: true,
         role: true,
         title: true,
-        avatar: true,
         createdAt: true,
       },
     });
 
-    const durationSec = getSessionDuration(assignedRole, false);
-    const expiresAt = Date.now() + durationSec * 1000;
+    // 7. Kirim Email Aktivasi Akun Berisi Token Verifikasi (24 Jam)
+    try {
+      const originUrl = request.nextUrl.origin || process.env.NEXT_PUBLIC_APP_URL;
+      await sendActivationEmailWorkflow({
+        email: cleanEmail,
+        name: formattedName,
+        originUrl,
+      });
+    } catch (emailErr) {
+      console.error("[Register] Gagal mengirim email aktivasi:", emailErr.message);
+      // Akun tetap terdaftar belum aktif, user dapat meminta kirim ulang di layar berikutnya
+    }
 
-    const safeUser = {
-      ...createdUser,
-      initials: (createdUser.name || createdUser.email).slice(0, 2).toUpperCase(),
-      expiresAt,
-      sessionIssuedAt: Date.now(),
-    };
-
-    // 7. Establish Server HttpOnly Session Cookie
-    const cookieOpts = {
-      path: "/",
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: durationSec,
-    };
-
-    const response = NextResponse.json(
+    // 8. Kembalikan respon sukses verifikasi (TANPA cookie sesi login)
+    return NextResponse.json(
       {
         success: true,
-        data: safeUser,
-        message: "Pendaftaran akun berhasil! Selamat datang di Yayasan PABE.",
+        requireVerification: true,
+        email: cleanEmail,
+        message: "Pendaftaran berhasil! Tautan aktivasi telah dikirimkan ke email Anda. Silakan verifikasi email Anda sebelum masuk.",
       },
       { status: 201 }
     );
-
-    response.cookies.set("pabe_session", safeUser.id, cookieOpts);
-    response.cookies.set("pabe_role", safeUser.role, { ...cookieOpts, httpOnly: false });
-
-    return response;
   } catch (error) {
     console.error("API POST /api/auth/register error:", error);
     return NextResponse.json(

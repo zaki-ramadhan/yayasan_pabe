@@ -6,15 +6,16 @@ import { AuthPasswordInput } from "@/components/auth/AuthPasswordInput";
 import {
   sanitizeEmail,
   sanitizePhone,
+  sanitizeName,
   validateEmail,
   validatePhone,
-  stripEmojis,
-  validateUsername,
-  containsReservedKeyword,
+  validateName,
 } from "@/lib/security";
 import { cn } from "@/lib/utils";
 
 export function RegisterInputFields({
+  name,
+  setName,
   username,
   setUsername,
   email,
@@ -29,46 +30,38 @@ export function RegisterInputFields({
   setErrors,
   onOpenTerms,
 }) {
+  const currentName = name !== undefined ? name : (username || "");
+  const handleNameChange = setName || setUsername;
+
   return (
     <>
-      {/* 1. Nama Pengguna (Username) */}
+      {/* 1. Nama Lengkap */}
       <FormField
-        label="Nama pengguna"
+        label="Nama lengkap"
         required
-        error={errors.username}
+        error={errors.name || errors.username}
       >
         <Input
           type="text"
-          placeholder="contoh: ahmad_fauzi"
-          value={username}
-          maxLength={30}
+          placeholder="Contoh: Hendra Wijaya"
+          value={currentName}
+          maxLength={60}
           onChange={(e) => {
-            const clean = stripEmojis(e.target.value).replace(/[^a-zA-Z0-9_.]/g, "").slice(0, 30);
-            setUsername(clean);
-
-            if (clean.length >= 3) {
-              const reservedCheck = containsReservedKeyword(clean);
-              if (reservedCheck.isReserved) {
-                setErrors((prev) => ({
-                  ...prev,
-                  username: `Nama pengguna tidak boleh mengandung istilah yang dicadangkan sistem ("${reservedCheck.matchedWord}").`,
-                }));
-                return;
-              }
-            }
-            if (errors.username) {
-              setErrors((prev) => ({ ...prev, username: undefined }));
+            const clean = sanitizeName(e.target.value);
+            if (handleNameChange) handleNameChange(clean);
+            if (errors.name || errors.username) {
+              setErrors((prev) => ({ ...prev, name: undefined, username: undefined }));
             }
           }}
           onBlur={() => {
-            if (username) {
-              const res = validateUsername(username);
+            if (currentName) {
+              const res = validateName(currentName);
               if (!res.isValid) {
-                setErrors((prev) => ({ ...prev, username: res.message }));
+                setErrors((prev) => ({ ...prev, name: res.message }));
               }
             }
           }}
-          autoComplete="username"
+          autoComplete="name"
           className="h-11 text-sm font-normal"
         />
       </FormField>

@@ -79,6 +79,19 @@ export async function POST(request) {
           { status: 401 }
         );
       }
+
+      // Gatekeeper Aktivasi Akun: Tolak login jika email belum diverifikasi
+      if (user.isActive === false) {
+        return NextResponse.json(
+          {
+            success: false,
+            code: "ACCOUNT_NOT_ACTIVATED",
+            message: "Akun Anda belum aktif. Silakan periksa inbox email Anda untuk mengklik tautan aktivasi.",
+            email: user.email,
+          },
+          { status: 403 }
+        );
+      }
     }
 
     // 3. Fallback to DEMO_USERS in development / demo mode only

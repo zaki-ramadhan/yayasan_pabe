@@ -14,6 +14,7 @@ import { AuthNoticeBanner } from "@/components/auth/AuthNoticeBanner";
 import { AuthDivider } from "@/components/auth/AuthDivider";
 import { AuthPasswordInput } from "@/components/auth/AuthPasswordInput";
 import { ForgotPasswordDialog } from "@/components/auth/ForgotPasswordDialog";
+import { AccountNotActivatedAlert } from "@/components/auth/AccountNotActivatedAlert";
 import {
   USER_ROLES,
   loginUser,
@@ -40,8 +41,10 @@ export function LoginForm() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
+  const [unactivatedEmail, setUnactivatedEmail] = useState("");
   const handledErrorRef = useRef(false);
   const handledNoticeRef = useRef(false);
+  const handledVerifiedRef = useRef(false);
 
   // Safely restore remembered identifier on client mount without hydration mismatch
   useEffect(() => {
@@ -75,6 +78,20 @@ export function LoginForm() {
   }, [isDonationRedirect]);
 
   useEffect(() => {
+    if (handledVerifiedRef.current) return;
+    const verifiedParam = searchParams.get("verified");
+    const activationErr = searchParams.get("activationError");
+
+    if (verifiedParam === "true") {
+      handledVerifiedRef.current = true;
+      toast.success("Email Anda berhasil diverifikasi! Akun telah aktif, silakan masuk.");
+    } else if (activationErr) {
+      handledVerifiedRef.current = true;
+      toast.error(activationErr);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     if (handledErrorRef.current) return;
     const errorParam = searchParams.get("error");
     if (errorParam) {
@@ -103,9 +120,9 @@ export function LoginForm() {
     const newErrors = {};
     const cleanId = stripEmojis(identifier).trim();
     if (!cleanId) {
-      newErrors.identifier = "Nama pengguna atau email wajib diisi.";
+      newErrors.identifier = "Email atau nama pengguna wajib diisi.";
     } else if (cleanId.length < 3) {
-      newErrors.identifier = "Nama pengguna atau email minimal 3 karakter.";
+      newErrors.identifier = "Email atau nama pengguna minimal 3 karakter.";
     } else if (cleanId.length > 100) {
       newErrors.identifier = "Input melebihi batas 100 karakter.";
     }
@@ -142,17 +159,29 @@ export function LoginForm() {
       });
 
       setIsLoading(false);
-      const isStaff = user?.role && user.role !== USER_ROLES.DONOR;
-      let finalTarget = redirectUrl;
-      if (redirectUrl) {
-        const isAdminPath = redirectUrl === "/admin" || redirectUrl.startsWith("/admin/");
-        if (isAdminPath && !isStaff) {
-          finalTarget = "/donatur/dashboard";
-        }
+      setUnactivatedEmail("");
+      const isStaff = Boolean(user?.role && user.role !== USER_ROLES.DONOR);
+
+      let finalTarget = "/donatur/dashboard";
+      if (isStaff) {
+        // Akun staf/admin: Selalu arahkan ke admin panel.
+        // Jika ada tujuan spesifik ke sub-halaman admin (misal /admin/transaksi), hormati rute tersebut.
+        const isAdminSubpath = redirectUrl && (redirectUrl === "/admin" || redirectUrl.startsWith("/admin/"));
+        finalTarget = isAdminSubpath ? redirectUrl : "/admin";
+      } else {
+        // Akun donatur: Jika query redirect menuju rute admin, arahkan ke dasbor donatur
+        const isAdminPath = redirectUrl && (redirectUrl === "/admin" || redirectUrl.startsWith("/admin/"));
+        finalTarget = (isAdminPath || !redirectUrl) ? "/donatur/dashboard" : redirectUrl;
       }
-      router.push(finalTarget || getRedirectPathForRole(user.role));
+
+      router.push(finalTarget);
     } catch (err) {
       setIsLoading(false);
+      if (err.code === "ACCOUNT_NOT_ACTIVATED") {
+        setUnactivatedEmail(err.email || identifier.trim());
+        toast.error(err.message || "Akun Anda belum aktif. Silakan lakukan aktivasi email.");
+        return;
+      }
       toast.error(err.message || "Gagal masuk ke akun. Silakan periksa kembali kredensial Anda.");
     }
   };
@@ -174,6 +203,14 @@ export function LoginForm() {
         title="Masuk ke Akun"
         subtitle="Masukkan nama pengguna/email dan kata sandi Anda untuk melanjutkan."
       />
+
+      {/* Unactivated Account Warning Alert */}
+      {unactivatedEmail && (
+        <AccountNotActivatedAlert
+          email={unactivatedEmail}
+          onClear={() => setUnactivatedEmail("")}
+        />
+      )}
 
       {/* Donation Auth Notice Banner */}
       {isDonationRedirect && (
@@ -200,7 +237,7 @@ export function LoginForm() {
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {/* Username or Email Input */}
         <FormField
-          label="Nama pengguna atau email"
+          label="Email atau nama pengguna"
           htmlFor="identifier"
           required
           error={errors.identifier}
@@ -208,7 +245,7 @@ export function LoginForm() {
           <Input
             id="identifier"
             type="text"
-            placeholder="nama atau email Anda"
+            placeholder="nama@email.com atau nama pengguna"
             value={identifier}
             maxLength={100}
             onChange={(e) => {
