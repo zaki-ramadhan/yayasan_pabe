@@ -19,6 +19,16 @@ export function AdminMetricCards({ stats: initialStats }) {
     }));
   });
 
+  useAdminLiveEvent("DISTRIBUTION_CREATED", (event) => {
+    const dist = event?.data;
+    if (!dist || !dist.disbursedAmount) return;
+
+    setStats((prev) => ({
+      ...prev,
+      totalDisbursed: Number(prev?.totalDisbursed || 0) + Number(dist.disbursedAmount),
+    }));
+  });
+
   const totalCollected = stats?.totalCollected || 0;
   const totalDisbursed = stats?.totalDisbursed || 0;
   const activeDonors = stats?.activeDonors || 0;
