@@ -45,7 +45,16 @@ export default function InvoiceLoading() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         {/* SISI KIRI: Metode Pembayaran (QRIS) & Instruksi */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="bg-white rounded-xl border border-slate-300 p-5 sm:p-6 space-y-5 shadow-xs">
+          <div className="bg-white rounded-xl border border-slate-300 p-5 sm:p-6 space-y-4 shadow-xs">
+            {/* Polling Status Indicator Skeleton (1:1 dengan InvoiceStatusPollingIndicator) */}
+            <div className="flex items-center justify-between px-3.5 py-2 rounded-lg bg-slate-50 border border-slate-200">
+              <div className="flex items-center gap-2">
+                <Skeleton className="w-2 h-2 rounded-full" />
+                <Skeleton className="h-3.5 w-48 rounded" />
+              </div>
+              <Skeleton className="h-3.5 w-16 rounded" />
+            </div>
+
             {/* Header: Judul Metode & Badge */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div className="space-y-1.5">

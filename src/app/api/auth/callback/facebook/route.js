@@ -319,7 +319,11 @@ export async function GET(request) {
               sessionStorage.setItem('pabe_just_logged_in', session.name || 'Donatur');
               sessionStorage.setItem('pabe_last_activity', String(Date.now()));
 
-              const durSec = 30 * 24 * 60 * 60;
+              const durSec = ${durationSec};
+              const sessionToken = encodeURIComponent(session.sessionToken || session.id || '');
+              if (sessionToken) {
+                document.cookie = 'pabe_session=' + sessionToken + '; path=/; max-age=' + durSec + '; SameSite=Lax';
+              }
               document.cookie = 'pabe_role=' + encodeURIComponent(session.role || 'DONOR') + '; path=/; max-age=' + durSec + '; SameSite=Lax';
 
               window.dispatchEvent(new Event('pabe_auth_change'));
@@ -338,7 +342,7 @@ export async function GET(request) {
     });
 
     const cookieOpts = {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: durationSec,

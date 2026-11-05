@@ -16,11 +16,6 @@ export const PAYMENT_CATEGORIES = [
     name: "Gerai Retail (Tunai)",
     description: "Bayar tunai di kasir minimarket terdekat",
   },
-  {
-    id: "manual",
-    name: "Transfer Manual Rekening Yayasan",
-    description: "Transfer langsung ke rekening giro resmi yayasan",
-  },
 ];
 
 export const PAYMENT_CHANNELS = [
@@ -82,7 +77,7 @@ export const PAYMENT_CHANNELS = [
   {
     id: "bca_va",
     category: "va",
-    name: "BCA Virtual Account",
+    name: "BCA Virtual Account (BCA mobile / myBCA)",
     type: "VA",
     bankCode: "014",
     accountNumberPrefix: "70001",
@@ -101,7 +96,7 @@ export const PAYMENT_CHANNELS = [
   {
     id: "mandiri_va",
     category: "va",
-    name: "Mandiri Bill Payment",
+    name: "Mandiri Bill Payment (Livin' by Mandiri)",
     type: "VA",
     bankCode: "008",
     accountNumberPrefix: "16600",
@@ -120,7 +115,7 @@ export const PAYMENT_CHANNELS = [
   {
     id: "bri_va",
     category: "va",
-    name: "BRI Virtual Account (BRIVA)",
+    name: "BRI Virtual Account (BRImo / BRIVA)",
     type: "VA",
     bankCode: "002",
     accountNumberPrefix: "04240",
@@ -138,7 +133,7 @@ export const PAYMENT_CHANNELS = [
   {
     id: "bni_va",
     category: "va",
-    name: "BNI Virtual Account",
+    name: "BNI Virtual Account (BNI Mobile / wondr)",
     type: "VA",
     bankCode: "009",
     accountNumberPrefix: "88080",
@@ -157,7 +152,7 @@ export const PAYMENT_CHANNELS = [
   {
     id: "permata_va",
     category: "va",
-    name: "Permata Virtual Account",
+    name: "Permata Virtual Account (PermataMobile X)",
     type: "VA",
     bankCode: "013",
     accountNumberPrefix: "85280",
@@ -206,48 +201,6 @@ export const PAYMENT_CHANNELS = [
       "Beri tahu kasir untuk melakukan pembayaran layanan Midtrans / donasi yayasan.",
       "Berikan kode pembayaran yang tertera pada layar invoice Anda.",
       "Bayar secara tunai dan pastikan Anda menerima struk bukti pembayaran.",
-    ],
-  },
-
-  // 4. Transfer Manual Rekening Yayasan
-  {
-    id: "manual_mandiri",
-    category: "manual",
-    name: "Bank Mandiri (Giro Yayasan)",
-    type: "MANUAL",
-    bankCode: "008",
-    accountNumber: "166-00-0345678-9",
-    accountHolder: "YAYASAN PAYUNG BERKAH",
-    logo: ASSET_PATHS.PAYMENTS.MANDIRI,
-    fee: 0,
-    subsidyType: "none",
-    subsidyAmount: 0,
-    subsidyLabel: "Rp 0 (Gratis)",
-    instructions: [
-      "Lakukan transfer melalui ATM / m-Banking Mandiri ke nomor rekening giro di atas.",
-      "Pastikan nama pemilik rekening adalah YAYASAN PAYUNG BERKAH.",
-      "Gunakan kode referensi atau nomor invoice pada berita transfer jika memungkinkan.",
-      "Simpan bukti transfer. Tim amil yayasan akan memverifikasi mutasi bank Anda.",
-    ],
-  },
-  {
-    id: "manual_bri",
-    category: "manual",
-    name: "Bank BRI (Giro Yayasan)",
-    type: "MANUAL",
-    bankCode: "002",
-    accountNumber: "0424-01-001234-56-7",
-    accountHolder: "YAYASAN PAYUNG BERKAH",
-    logo: ASSET_PATHS.PAYMENTS.BRI,
-    fee: 0,
-    subsidyType: "none",
-    subsidyAmount: 0,
-    subsidyLabel: "Rp 0 (Gratis)",
-    instructions: [
-      "Lakukan transfer melalui ATM / BRImo ke nomor rekening giro di atas.",
-      "Pastikan nama rekening tujuan adalah YAYASAN PAYUNG BERKAH.",
-      "Gunakan nomor invoice pada catatan transfer untuk mempercepat pencocokan.",
-      "Simpan bukti transfer Anda sebagai dokumentasi resmi donasi.",
     ],
   },
 ];

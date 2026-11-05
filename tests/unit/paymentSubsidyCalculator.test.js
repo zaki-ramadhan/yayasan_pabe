@@ -34,12 +34,8 @@ describe("Payment Subsidy Calculator", () => {
       expect(calculatePaymentSubsidy("alfamart", 100000)).toBe(5000);
     });
 
-    it("menghitung beban Rp 0 untuk transfer bank manual rekening yayasan", () => {
-      expect(calculatePaymentSubsidy("manual_mandiri", 100000)).toBe(0);
-      expect(calculatePaymentSubsidy("manual_bri", 250000)).toBe(0);
-    });
-
     it("mengembalikan 0 jika nominal tidak valid atau kanal tidak terdaftar", () => {
+      expect(calculatePaymentSubsidy("manual_mandiri", 100000)).toBe(0);
       expect(calculatePaymentSubsidy("qris", 0)).toBe(0);
       expect(calculatePaymentSubsidy("qris", -50000)).toBe(0);
       expect(calculatePaymentSubsidy("non_existent_channel", 100000)).toBe(0);
@@ -57,9 +53,6 @@ describe("Payment Subsidy Calculator", () => {
 
       // Donasi Rp 50.000 via GoPay (beban Rp 1.000) -> Diterima Rp 49.000
       expect(calculateNetSettlement("gopay", 50000)).toBe(49000);
-
-      // Donasi Rp 200.000 via Transfer Mandiri Manual (beban Rp 0) -> Diterima Rp 200.000
-      expect(calculateNetSettlement("manual_mandiri", 200000)).toBe(200000);
     });
 
     it("tidak pernah mengembalikan angka negatif (clamped to 0)", () => {
@@ -87,7 +80,6 @@ describe("Payment Subsidy Calculator", () => {
       expect(CHANNEL_SUBSIDY_RATES).toHaveProperty("gopay");
       expect(CHANNEL_SUBSIDY_RATES).toHaveProperty("bca_va");
       expect(CHANNEL_SUBSIDY_RATES).toHaveProperty("mandiri_va");
-      expect(CHANNEL_SUBSIDY_RATES).toHaveProperty("manual_mandiri");
     });
   });
 });

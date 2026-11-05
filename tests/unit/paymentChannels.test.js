@@ -17,9 +17,16 @@ describe("PAYMENT_CHANNELS Configuration", () => {
     // Retail
     expect(ids).toContain("indomaret");
     expect(ids).toContain("alfamart");
-    // Manual
-    expect(ids).toContain("manual_mandiri");
-    expect(ids).toContain("manual_bri");
+    expect(ids).toHaveLength(10);
+  });
+
+  it("memiliki penamaan kanal bank yang ramah donatur sesuai aplikasi mobile banking", () => {
+    const channelMap = Object.fromEntries(PAYMENT_CHANNELS.map((c) => [c.id, c.name]));
+    expect(channelMap.bca_va).toContain("BCA mobile / myBCA");
+    expect(channelMap.mandiri_va).toContain("Livin' by Mandiri");
+    expect(channelMap.bri_va).toContain("BRImo / BRIVA");
+    expect(channelMap.bni_va).toContain("BNI Mobile / wondr");
+    expect(channelMap.permata_va).toContain("PermataMobile X");
   });
 
   it("memastikan setiap saluran terpetakan ke kategori resmi yang valid", () => {

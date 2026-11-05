@@ -27,7 +27,6 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
   const isMandiri = donation.paymentChannelId === "mandiri_va";
   const isVa = (donation.paymentChannelType === "VA" || String(donation.paymentChannelId).endsWith("_va")) && !isMandiri;
   const isRetail = donation.paymentChannelType === "RETAIL" || ["indomaret", "alfamart"].includes(donation.paymentChannelId);
-  const isManual = donation.paymentChannelType === "MANUAL" || String(donation.paymentChannelId).startsWith("manual_");
 
   const billerCode = donation.billerCode || "70012";
   const billKey = donation.billKey || donation.virtualAccountNumber || "";
@@ -518,59 +517,6 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
             </span>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
               Kunjungi gerai {donation.paymentChannelName} terdekat, beritahu kasir ingin bayar tagihan donasi yayasan / Midtrans, lalu sebutkan kode pembayaran di atas.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Kanal Transfer Manual Rekening Yayasan */}
-      {isManual && (
-        <div className="space-y-3.5 py-1">
-          <div className="rounded-xl border border-slate-300 bg-slate-50/70 divide-y divide-slate-200 overflow-hidden shadow-2xs">
-            <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 bg-white">
-              <div>
-                <span className="text-xs text-slate-500 block font-normal">
-                  Nomor Rekening Giro
-                </span>
-                <span className="text-base sm:text-lg font-mono font-semibold text-slate-900 tracking-wider">
-                  {vaNumber}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => onCopyVa(vaNumber)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-slate-300 hover:bg-slate-100 text-xs font-medium text-slate-800 transition-colors cursor-pointer shadow-2xs"
-              >
-                {copiedVa ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Tersalin</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5 text-slate-600" />
-                    <span>Salin</span>
-                  </>
-                )}
-              </button>
-            </div>
-            <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 bg-slate-50">
-              <div>
-                <span className="text-xs text-slate-500 block font-normal">
-                  Nama Penerima
-                </span>
-                <span className="text-sm sm:text-base font-semibold text-slate-900">
-                  {donation.billerCode || "YAYASAN PAYUNG BERKAH"}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="space-y-1.5 pt-1">
-            <span className="text-xs font-semibold text-slate-700 block">
-              Catatan Transfer:
-            </span>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Sertakan nomor invoice <strong>{donation.invoiceId}</strong> pada berita transfer untuk memudahkan verifikasi mutasi rekening yayasan.
             </p>
           </div>
         </div>
