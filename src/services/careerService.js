@@ -3,6 +3,7 @@ import { sanitizeInput } from "@/lib/security";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { validateWebUrl, validatePhone } from "@/lib/validator";
 import { CAREER_VACANCIES } from "@/data/careers";
+import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 
 /**
  * Retrieve active job vacancies directly from PostgreSQL
@@ -235,6 +236,18 @@ export async function submitJobApplication(payload) {
     } catch (uErr) {
       console.warn("Gagal sinkronisasi otomatis nomor WhatsApp pelamar ke profil:", uErr?.message);
     }
+  }
+
+  try {
+    broadcastAdminEvent("CAREER_APPLICATION", {
+      id: application.id,
+      position: targetVacancy.title,
+      fullName: application.fullName,
+      email: application.email,
+      submittedAt: application.createdAt.toISOString(),
+    });
+  } catch (sseErr) {
+    console.warn("Peringatan: Gagal broadcast SSE career application:", sseErr?.message);
   }
 
   return {

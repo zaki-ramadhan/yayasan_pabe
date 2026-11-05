@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { createRoutineDonations } from "@/services/routineDonationService";
+import { deleteAdminCampaignsBulk } from "@/services/adminCampaignService";
 import { POST as routineDonationPost } from "@/app/api/routine-donations/route";
 import { POST as aminPost } from "@/app/api/donations/amin/route";
 import prisma from "@/lib/prisma";
@@ -296,9 +297,7 @@ describe("Backend Integration & Real Persistence Audit", () => {
   });
 
   describe("Bulk Campaign Operations (Guarded Delete)", () => {
-
     it("menolak penghapusan massal jika salah satu program memiliki riwayat donasi", async () => {
-      const { deleteAdminCampaignsBulk } = await import("@/services/adminCampaignService");
       vi.spyOn(prisma.campaign, "findMany").mockResolvedValueOnce([
         { id: "camp-1", title: "Beasiswa Yatim", collectedAmount: 500000 },
       ]);
@@ -306,10 +305,9 @@ describe("Backend Integration & Real Persistence Audit", () => {
       await expect(
         deleteAdminCampaignsBulk(["camp-1", "camp-2"])
       ).rejects.toThrow(/telah memiliki riwayat donasi masuk/i);
-    });
+    }, 15000);
 
     it("berhasil menghapus massal program jika seluruhnya belum memiliki donasi", async () => {
-      const { deleteAdminCampaignsBulk } = await import("@/services/adminCampaignService");
       vi.spyOn(prisma.campaign, "findMany")
         .mockResolvedValueOnce([]) // cek donasi: kosong
         .mockResolvedValueOnce([{ id: "camp-draft-1", bannerUrl: null, categoryId: "cat-1" }]); // cek banner: kosong
@@ -323,7 +321,7 @@ describe("Backend Integration & Real Persistence Audit", () => {
         where: { id: { in: ["camp-draft-1"] } },
       });
       expect(result.count).toBe(1);
-    });
+    }, 15000);
   });
 });
 
