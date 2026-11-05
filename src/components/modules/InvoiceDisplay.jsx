@@ -54,6 +54,10 @@ export function InvoiceDisplay({ donation: initialDonation }) {
       handleStatusChange(newStatus, newPaidAt);
       if (newStatus === "PAID" || newStatus === "SETTLEMENT") {
         toast.success("Alhamdulillah! Pembayaran donasi Anda berhasil diverifikasi.");
+      } else if (newStatus === "EXPIRED") {
+        toast.error("Waktu pembayaran untuk invoice ini telah kedaluwarsa.");
+      } else if (newStatus === "CANCELLED") {
+        toast.info("Invoice donasi ini telah dibatalkan.");
       }
     },
   });
