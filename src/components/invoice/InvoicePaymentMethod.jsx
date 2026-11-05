@@ -3,13 +3,11 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Check, Copy, RefreshCw, ChevronRight, Download, Clock, X } from "lucide-react";
+import { Check, Copy, ChevronRight, Download, Clock, X } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 import { copyToClipboard } from "@/lib/clipboard";
 import { toast } from "@/hooks/useToast";
-import { safeFetch } from "@/lib/safeFetch";
 import { Button } from "@/components/ui/Button";
 
 /**
@@ -19,12 +17,10 @@ import { Button } from "@/components/ui/Button";
  * @param {boolean} props.copiedVa
  * @param {Function} props.onCopyVa
  */
-export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa, onStatusChange }) {
-  const router = useRouter();
+export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
   const [copiedBiller, setCopiedBiller] = useState(false);
   const [copiedKey, setCopiedKey] = useState(false);
   const [copiedSimUrl, setCopiedSimUrl] = useState(false);
-  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [liveQrUrl, setLiveQrUrl] = useState(donation.qrCodeUrl || "");
 
@@ -48,73 +44,6 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa, onStatusCha
       setLiveQrUrl(donation.qrCodeUrl);
     }
   }, [donation?.qrCodeUrl]);
-
-  // Auto-polling status check when invoice is PENDING
-  useEffect(() => {
-    if (!donation?.invoiceId || donation.status !== "PENDING") return;
-
-    const interval = setInterval(async () => {
-      try {
-        const res = await safeFetch(`/api/donations?invoiceId=${encodeURIComponent(donation.invoiceId)}`);
-        const json = await res.json();
-        if (json.success && json.data) {
-          if (json.data.qrCodeUrl && !liveQrUrl) {
-            setLiveQrUrl(json.data.qrCodeUrl);
-          }
-          if (json.data.status === "PAID") {
-            toast.success("Alhamdulillah, pembayaran donasi telah terverifikasi!");
-            onStatusChange?.("PAID", json.data.paidAt);
-            router.refresh();
-          } else if (json.data.status === "EXPIRED") {
-            toast.error("Waktu pembayaran untuk invoice ini telah kedaluwarsa.");
-            onStatusChange?.("EXPIRED");
-            router.refresh();
-          } else if (json.data.status === "CANCELLED") {
-            toast.info("Invoice donasi ini telah dibatalkan.");
-            onStatusChange?.("CANCELLED");
-            router.refresh();
-          }
-        }
-      } catch {
-        // Silent polling error
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [donation?.invoiceId, donation?.status, liveQrUrl, onStatusChange, router]);
-
-  const handleManualCheckStatus = async () => {
-    if (!donation?.invoiceId) return;
-    try {
-      setIsCheckingStatus(true);
-      const res = await safeFetch(`/api/donations?invoiceId=${encodeURIComponent(donation.invoiceId)}`);
-      const json = await res.json();
-      if (json.success && json.data) {
-        if (json.data.qrCodeUrl && !liveQrUrl) {
-          setLiveQrUrl(json.data.qrCodeUrl);
-        }
-        if (json.data.status === "PAID") {
-          toast.success("Alhamdulillah, donasi Anda telah terbayar!");
-          onStatusChange?.("PAID", json.data.paidAt);
-          router.refresh();
-        } else if (json.data.status === "EXPIRED") {
-          toast.error("Waktu pembayaran untuk invoice ini telah kedaluwarsa.");
-          onStatusChange?.("EXPIRED");
-          router.refresh();
-        } else if (json.data.status === "CANCELLED") {
-          toast.info("Invoice donasi ini telah dibatalkan.");
-          onStatusChange?.("CANCELLED");
-          router.refresh();
-        } else {
-          toast.info("Menunggu pembayaran dari sistem perbankan. Silakan periksa kembali setelah transfer.");
-        }
-      }
-    } catch {
-      toast.error("Gagal memeriksa status pembayaran. Silakan coba sesaat lagi.");
-    } finally {
-      setIsCheckingStatus(false);
-    }
-  };
 
   const handleDownloadQris = async () => {
     try {
