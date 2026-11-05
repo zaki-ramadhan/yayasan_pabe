@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { maskEmail } from "@/lib/security";
+import { settleDonationStatus } from "@/services/donationService";
 
 /**
  * Mengambil daftar mutasi transaksi donasi dengan filter kanal dan status.
@@ -82,41 +83,32 @@ export async function getAdminTransactions({
 
 
 /**
- * Verifikasi transaksi secara atomik (ACID): update status PAID dan increment dana campaign.
+ * Verifikasi transaksi manual admin secara atomik:
+ * Memanfaatkan SSOT settleDonationStatus untuk menjamin pelunasan status PAID,
+ * increment collectedAmount campaign, broadcast SSE, dan penerbitan e-Kwitansi resmi.
  */
 export async function verifyAdminTransaction(donationId) {
-  return prisma.$transaction(async (tx) => {
-    const donation = await tx.donation.findUnique({
-      where: { id: donationId },
-      include: { campaign: true },
-    });
+  if (!donationId) {
+    throw new Error("ID transaksi donasi tidak valid.");
+  }
 
-    if (!donation) {
-      throw new Error("Transaksi donasi tidak ditemukan.");
-    }
-
-    if (donation.status === "PAID") {
-      return donation;
-    }
-
-    const updatedDonation = await tx.donation.update({
-      where: { id: donationId },
-      data: {
-        status: "PAID",
-        paidAt: new Date(),
-      },
-    });
-
-    if (donation.campaignId) {
-      await tx.campaign.update({
-        where: { id: donation.campaignId },
-        data: {
-          collectedAmount: { increment: donation.amount },
-          donorCount: { increment: 1 },
-        },
-      });
-    }
-
-    return updatedDonation;
+  const donation = await prisma.donation.findFirst({
+    where: {
+      OR: [
+        { id: donationId },
+        { invoiceId: donationId },
+      ],
+    },
+    select: { id: true, invoiceId: true, status: true },
   });
+
+  if (!donation) {
+    throw new Error("Transaksi donasi tidak ditemukan.");
+  }
+
+  if (donation.status === "PAID") {
+    return donation;
+  }
+
+  return await settleDonationStatus(donation.invoiceId, new Date());
 }
