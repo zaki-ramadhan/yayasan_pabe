@@ -20,6 +20,9 @@ import {
 import { getMidtransServerKey } from "@/lib/midtransConfig";
 import { calculateDonationExpiryDate } from "@/lib/donationExpiryConstants";
 import { broadcastAdminEvent } from "@/lib/sseBroadcast";
+import { sendDonationReceiptEmail } from "@/services/emailService";
+import { enqueueNotification } from "@/services/notificationQueueService";
+import { NOTIFICATION_TYPE } from "@/lib/notificationConstants";
 
 export async function createDonation({
   campaignId = null,
@@ -535,6 +538,46 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
       } catch (sseErr) {
         console.warn("Peringatan: Gagal broadcast SSE admin:", sseErr?.message);
       }
+    }
+
+    // Kirim bukti donasi digital via Resend (dengan fallback antrean retry jika terjadi rate limit)
+    if (settled.donorEmail && settled.donorEmail.includes("@")) {
+      const appUrl = (
+        process.env.NEXT_PUBLIC_APP_URL ||
+        process.env.NEXTAUTH_URL ||
+        "http://localhost:3000"
+      ).replace(/\/+$/, "");
+      const receiptUrl = `${appUrl}/invoice/${settled.invoiceId}?token=${settled.accessToken || ""}`;
+
+      sendDonationReceiptEmail({
+        to: settled.donorEmail,
+        donorName: settled.isAnonymous ? "Hamba Allah" : settled.donorName,
+        programTitle: broadcastPayload?.campaignTitle || "Program Kebaikan",
+        amount: Number(settled.amount),
+        invoiceId: settled.invoiceId,
+        paidAt: settled.paidAt || new Date(),
+        paymentChannelName: settled.paymentChannel || "Pembayaran Digital",
+        prayer: settled.prayer || "",
+        actionUrl: receiptUrl,
+      }).catch((emailErr) => {
+        console.warn("[DonationReceipt] Pengiriman email langsung gagal, memasukkan ke antrean retry:", emailErr?.message);
+        enqueueNotification({
+          type: NOTIFICATION_TYPE.DONATION_RECEIPT,
+          recipientPhone: settled.donorEmail,
+          payload: {
+            donorEmail: settled.donorEmail,
+            donorName: settled.isAnonymous ? "Hamba Allah" : settled.donorName,
+            programTitle: broadcastPayload?.campaignTitle || "Program Kebaikan",
+            amount: Number(settled.amount),
+            invoiceId: settled.invoiceId,
+            paidAt: settled.paidAt || new Date(),
+            paymentChannelName: settled.paymentChannel || "Pembayaran Digital",
+            prayer: settled.prayer || "",
+            actionUrl: receiptUrl,
+          },
+          idempotencyKey: `receipt_${settled.invoiceId}`,
+        }).catch((qErr) => console.error("[DonationReceipt] Gagal memasukkan ke antrean notifikasi:", qErr?.message));
+      });
     }
   }
 

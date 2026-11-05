@@ -13,6 +13,7 @@ import {
   sendRoutineCompletionEmail,
   sendPasswordResetEmail,
   sendAccountActivationEmail,
+  sendDonationReceiptEmail,
 } from "@/services/emailService";
 import { formatRoutineSchedule } from "@/data/routineDonation";
 
@@ -116,6 +117,18 @@ export async function processNotificationQueue({
               to: targetEmail,
               name: payload.donorName || "Pengguna PABE",
               activationUrl: payload.activationUrl,
+            });
+          } else if (item.type === NOTIFICATION_TYPE.DONATION_RECEIPT) {
+            dispatchResult = await sendDonationReceiptEmail({
+              to: targetEmail,
+              donorName: payload.donorName || "Sahabat Kebaikan",
+              programTitle: payload.programTitle || "Program Kebaikan",
+              amount: Number(payload.amount) || 0,
+              invoiceId: payload.invoiceId,
+              paidAt: payload.paidAt,
+              paymentChannelName: payload.paymentChannelName,
+              prayer: payload.prayer || "",
+              actionUrl: payload.actionUrl,
             });
           } else if (item.type === NOTIFICATION_TYPE.ROUTINE_COMPLETION) {
             dispatchResult = await sendRoutineCompletionEmail({

@@ -13,6 +13,10 @@ import {
   getRoutineInvoiceEmailSubject,
 } from "@/templates/emails/routineDonationInvoiceEmailTemplate";
 import { buildRoutineCompletionEmailHtml } from "@/templates/emails/routineCompletionEmailTemplate";
+import {
+  buildDonationReceiptEmailHtml,
+  getDonationReceiptEmailSubject,
+} from "@/templates/emails/donationReceiptEmailTemplate";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 
@@ -244,6 +248,8 @@ export async function sendRoutineDonationEmail({
   });
 }
 
+
+
 /**
  * Mengirimkan email apresiasi & pemberitahuan penutupan program donasi rutin
  * @param {object} params
@@ -273,4 +279,51 @@ export async function sendRoutineCompletionEmail({
     html,
   });
 }
+
+/**
+ * Mengirimkan email bukti donasi digital resmi kepada donatur setelah pelunasan
+ * @param {object} params
+ * @param {string} params.to - Alamat email donatur
+ * @param {string} params.donorName - Nama donatur
+ * @param {string} params.programTitle - Judul program donasi
+ * @param {number} params.amount - Nominal donasi
+ * @param {string} params.invoiceId - Nomor invoice
+ * @param {Date|string} [params.paidAt] - Waktu pembayaran
+ * @param {string} [params.paymentChannelName] - Nama metode pembayaran
+ * @param {string} [params.prayer] - Doa donatur
+ * @param {string} params.actionUrl - Tautan melihat kuitansi digital
+ */
+export async function sendDonationReceiptEmail({
+  to,
+  donorName,
+  programTitle,
+  amount,
+  invoiceId,
+  paidAt,
+  paymentChannelName,
+  prayer,
+  actionUrl,
+}) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const subject = getDonationReceiptEmailSubject(programTitle, invoiceId);
+  const html = buildDonationReceiptEmailHtml({
+    donorName,
+    programTitle,
+    amount,
+    invoiceId,
+    paidAt,
+    paymentChannelName,
+    prayer,
+    actionUrl,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject,
+    html,
+  });
+}
+
+
 

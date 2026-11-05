@@ -69,6 +69,10 @@ vi.mock("@/services/emailService", () => {
       success: true,
       id: "resend-mock-activation",
     }),
+    sendDonationReceiptEmail: vi.fn().mockResolvedValue({
+      success: true,
+      id: "resend-mock-receipt",
+    }),
   };
 });
 
@@ -422,6 +426,51 @@ describe("Notification Queue & Worker Architecture", () => {
         expect.objectContaining({
           to: "newuser@example.com",
           activationUrl: "http://localhost:3000/api/auth/verify-email?token=xyz",
+        })
+      );
+    });
+
+    it("memproses antrean DONATION_RECEIPT via sendDonationReceiptEmail", async () => {
+      const prisma = (await import("@/lib/prisma")).default;
+      const { sendDonationReceiptEmail } = await import("@/services/emailService");
+
+      const mockQueue = [
+        {
+          id: "queue-receipt-1",
+          type: NOTIFICATION_TYPE.DONATION_RECEIPT,
+          recipientPhone: "donor@example.com",
+          payload: {
+            donorEmail: "donor@example.com",
+            donorName: "Bpk. Ahmad",
+            programTitle: "Pembangunan Masjid",
+            amount: 100000,
+            invoiceId: "INV-20261105-001",
+            paidAt: new Date().toISOString(),
+            paymentChannelName: "QRIS Dinamis",
+            prayer: "Semoga barakah",
+            actionUrl: "http://localhost:3000/invoice/INV-20261105-001",
+          },
+          attempts: 0,
+          maxAttempts: 3,
+          status: QUEUE_STATUS.PENDING,
+          scheduledFor: new Date(),
+        },
+      ];
+
+      prisma.notificationQueue.findMany.mockResolvedValueOnce(mockQueue);
+      prisma.notificationQueue.updateMany.mockResolvedValueOnce({ count: 1 });
+      prisma.notificationQueue.update.mockResolvedValueOnce({ id: "queue-receipt-1", status: QUEUE_STATUS.SENT });
+      prisma.notificationLog.create.mockResolvedValueOnce({ id: "log-receipt-1" });
+
+      const summary = await processNotificationQueue({ batchSize: 5 });
+
+      expect(summary.processed).toBe(1);
+      expect(summary.succeeded).toBe(1);
+      expect(sendDonationReceiptEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: "donor@example.com",
+          invoiceId: "INV-20261105-001",
+          amount: 100000,
         })
       );
     });
