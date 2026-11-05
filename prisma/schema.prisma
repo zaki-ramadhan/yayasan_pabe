@@ -93,6 +93,8 @@ model Donation {
   @@index([donorPhone])
   @@index([campaignId])
   @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@index([donorEmail, createdAt(sort: Desc)])
   @@index([status, paidAt(sort: Desc)])
   @@index([campaignId, status, paidAt(sort: Desc)])
 }
@@ -163,6 +165,11 @@ model User {
   salutation      String?  @default("Bpk.")
   city            String?
   address         String?
+  bio             String?
+  coverImage      String?
+  bankName        String?
+  bankAccount     String?
+  bankAccountName String?
   avatar          String?
   customAvatar    String?
   providerAvatar  String?
