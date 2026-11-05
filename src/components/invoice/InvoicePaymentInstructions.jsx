@@ -22,11 +22,11 @@ export function InvoicePaymentInstructions({ channelName, instructions = [] }) {
       <DashedDivider />
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1" className="border-b-0">
-          <AccordionTrigger className="text-sm font-medium text-slate-800 hover:no-underline py-2">
+          <AccordionTrigger className="text-xs sm:text-sm font-medium text-slate-800 hover:no-underline pt-2.5 pb-0">
             Petunjuk Transfer {channelName}
           </AccordionTrigger>
-          <AccordionContent>
-            <ol className="list-decimal list-inside space-y-1.5 text-sm text-slate-600 leading-relaxed pt-1">
+          <AccordionContent className="pb-1 pt-2">
+            <ol className="list-decimal list-inside space-y-1.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
               {instructions.map((inst, idx) => (
                 <li key={idx}>{inst}</li>
               ))}

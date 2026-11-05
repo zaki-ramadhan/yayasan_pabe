@@ -3,10 +3,11 @@ import {
   checkMidtransOrderStatus,
   expireMidtransOrder,
 } from "@/services/midtransService";
-import { settleDonationStatus } from "@/services/donationService";
+import { settleDonationStatus, buildAdminDonationEventPayload } from "@/services/donationService";
 import { getMidtransServerKey } from "@/lib/midtransConfig";
 import { DONATION_STATUS } from "@/lib/donationExpiryConstants";
 import { buildUserWhereClause } from "@/services/donorAnalyticsHelper";
+import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 
 /**
  * Service khusus pengelolaan siklus kedaluwarsa donasi (Expiry & Active Invoices).
@@ -39,14 +40,24 @@ export async function expireDonationRecord(invoiceId, reason = "EXPIRED_BY_SYSTE
         data: {
           status: DONATION_STATUS.EXPIRED,
         },
+        include: {
+          campaign: { select: { id: true, title: true, slug: true } },
+        },
       });
     });
 
-    // Panggil Midtrans Core API expire jika server key aktif
-    if (updated && getMidtransServerKey() && process.env.NODE_ENV !== "test") {
-      expireMidtransOrder(invoiceId).catch((err) => {
-        console.warn("Midtrans background expire warning for", invoiceId, err?.message);
-      });
+    if (updated) {
+      try {
+        broadcastAdminEvent("DONATION_UPDATED", buildAdminDonationEventPayload(updated));
+      } catch (sseErr) {
+        console.warn("Peringatan: Gagal broadcast SSE DONATION_UPDATED saat expireDonationRecord:", sseErr?.message);
+      }
+
+      if (getMidtransServerKey() && process.env.NODE_ENV !== "test") {
+        expireMidtransOrder(invoiceId).catch((err) => {
+          console.warn("Midtrans background expire warning for", invoiceId, err?.message);
+        });
+      }
     }
 
     return updated;
@@ -185,12 +196,8 @@ export async function cancelAndExpirePendingDonation(invoiceId, authUser) {
   try {
     const donation = await prisma.donation.findUnique({
       where: { invoiceId },
-      select: {
-        id: true,
-        invoiceId: true,
-        status: true,
-        donorEmail: true,
-        donorName: true,
+      include: {
+        campaign: { select: { id: true, title: true, slug: true } },
       },
     });
 
@@ -230,6 +237,15 @@ export async function cancelAndExpirePendingDonation(invoiceId, authUser) {
         success: false,
         message: "Tagihan tidak dapat dibatalkan (sudah terbayar atau status telah berubah).",
       };
+    }
+
+    try {
+      broadcastAdminEvent(
+        "DONATION_UPDATED",
+        buildAdminDonationEventPayload({ ...donation, status: DONATION_STATUS.CANCELLED })
+      );
+    } catch (sseErr) {
+      console.warn("Peringatan: Gagal broadcast SSE DONATION_UPDATED saat cancelAndExpirePendingDonation:", sseErr?.message);
     }
 
     if (getMidtransServerKey() && process.env.NODE_ENV !== "test") {

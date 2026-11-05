@@ -11,8 +11,6 @@ const DEFAULT_PAYMENT_LOGOS = [
   { name: "Bank Permata", src: ASSET_PATHS.PAYMENTS.PERMATA, alt: "Bank Permata" },
   { name: "GoPay", src: ASSET_PATHS.PAYMENTS.GOPAY, alt: "GoPay" },
   { name: "ShopeePay", src: ASSET_PATHS.PAYMENTS.SHOPEEPAY, alt: "ShopeePay" },
-  { name: "Indomaret", src: ASSET_PATHS.PAYMENTS.INDOMARET, alt: "Indomaret" },
-  { name: "Alfamart", src: ASSET_PATHS.PAYMENTS.ALFAMART, alt: "Alfamart" },
 ];
 
 /**

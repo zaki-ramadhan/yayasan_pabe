@@ -6,6 +6,7 @@ import {
 import {
   processNotificationQueue,
   calculateNextRetryTime,
+  cleanupStaleNotificationQueue,
 } from "@/services/notificationWorkerService";
 import {
   QUEUE_STATUS,
@@ -24,6 +25,7 @@ vi.mock("@/lib/prisma", () => {
         update: vi.fn(),
         updateMany: vi.fn(),
         count: vi.fn(),
+        deleteMany: vi.fn(),
       },
       notificationLog: {
         create: vi.fn(),
@@ -486,6 +488,33 @@ describe("Notification Queue & Worker Architecture", () => {
       expect(retry1.getTime()).toBeGreaterThanOrEqual(now + 4 * 60 * 1000);
       expect(retry2.getTime()).toBeGreaterThanOrEqual(now + 14 * 60 * 1000);
       expect(retry3.getTime()).toBeGreaterThanOrEqual(now + 59 * 60 * 1000);
+    });
+  });
+  describe("Queue Retention & Housekeeping: cleanupStaleNotificationQueue", () => {
+    it("menghapus antrean berstatus SENT atau FAILED yang melampaui batas hari retensi", async () => {
+      const { default: prisma } = await import("@/lib/prisma");
+      prisma.notificationQueue.deleteMany.mockResolvedValueOnce({ count: 14 });
+
+      const result = await cleanupStaleNotificationQueue({ retentionDays: 30 });
+
+      expect(result.deletedCount).toBe(14);
+      expect(prisma.notificationQueue.deleteMany).toHaveBeenCalledWith({
+        where: {
+          status: { in: [QUEUE_STATUS.SENT, QUEUE_STATUS.FAILED] },
+          updatedAt: { lte: expect.any(Date) },
+        },
+      });
+    });
+
+    it("menggunakan default retensi 30 hari jika argumen tidak diberikan atau bernilai non-positif", async () => {
+      const { default: prisma } = await import("@/lib/prisma");
+      prisma.notificationQueue.deleteMany.mockResolvedValueOnce({ count: 0 });
+
+      const before = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      const result = await cleanupStaleNotificationQueue({ retentionDays: -5 });
+
+      expect(result.deletedCount).toBe(0);
+      expect(result.cutoff.getTime()).toBeLessThanOrEqual(before + 1000);
     });
   });
 });

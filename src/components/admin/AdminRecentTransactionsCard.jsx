@@ -30,19 +30,30 @@ export function AdminRecentTransactionsCard({
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
 
-  useAdminLiveEvent("DONATION_PAID", (event) => {
-    const newTx = event?.data;
-    if (!newTx || !newTx.invoiceId) return;
+  const applyLiveTransactionMutation = (incomingTx) => {
+    if (!incomingTx || !incomingTx.invoiceId) return;
 
     setTransactions((prev) => {
-      const exists = prev.some((t) => t.id === newTx.id || t.invoiceId === newTx.invoiceId);
+      const exists = prev.some((t) => t.id === incomingTx.id || t.invoiceId === incomingTx.invoiceId);
       if (exists) {
         return prev.map((t) =>
-          t.invoiceId === newTx.invoiceId ? { ...t, ...newTx, status: "PAID" } : t
+          t.invoiceId === incomingTx.invoiceId ? { ...t, ...incomingTx } : t
         );
       }
-      return [newTx, ...prev].slice(0, maxRows);
+      return [incomingTx, ...prev].slice(0, maxRows);
     });
+  };
+
+  useAdminLiveEvent("DONATION_PAID", (event) => {
+    const newTx = event?.data;
+    if (!newTx) return;
+    applyLiveTransactionMutation({ ...newTx, status: "PAID" });
+  });
+
+  useAdminLiveEvent("DONATION_UPDATED", (event) => {
+    const updatedTx = event?.data;
+    if (!updatedTx) return;
+    applyLiveTransactionMutation(updatedTx);
   });
 
   const refreshList = async () => {

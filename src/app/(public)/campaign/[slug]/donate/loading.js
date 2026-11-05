@@ -30,25 +30,39 @@ export default function DonateLoading() {
             <Skeleton className="h-12 w-full rounded-lg" />
           </div>
 
-          {/* 2. Payment Channel Card */}
+          {/* 2. Payment Channel Card (2 Categories: QRIS & E-Wallet [3] + VA Bank [5]) */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
-            <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200">
+            <div className="flex items-center gap-2.5">
               <Skeleton className="w-6 h-6 rounded-full" />
-              <Skeleton className="h-5 w-52 rounded" />
+              <Skeleton className="h-5 w-44 rounded" />
             </div>
-            <div className="space-y-2.5">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="p-3.5 rounded-lg border border-slate-200 flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="w-5 h-5 rounded-full" />
-                    <div className="space-y-1">
-                      <Skeleton className="h-4 w-32 rounded" />
-                      <Skeleton className="h-3 w-44 rounded" />
+            <div className="space-y-4">
+              {/* Kategori 1: QRIS & E-Wallet (3 kanal) */}
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-28 rounded" />
+                <div className="space-y-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={`qris-${i}`} className="p-2.5 sm:p-3 rounded-lg border border-slate-200 flex items-center gap-2.5 sm:gap-3">
+                      <Skeleton className="w-4 h-4 rounded-full shrink-0" />
+                      <Skeleton className="w-11 h-6 rounded shrink-0" />
+                      <Skeleton className="h-4 w-48 rounded" />
                     </div>
-                  </div>
-                  <Skeleton className="h-4 w-16 rounded" />
+                  ))}
                 </div>
-              ))}
+              </div>
+              {/* Kategori 2: Virtual Account Bank (5 kanal) */}
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-36 rounded" />
+                <div className="space-y-2">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={`va-${i}`} className="p-2.5 sm:p-3 rounded-lg border border-slate-200 flex items-center gap-2.5 sm:gap-3">
+                      <Skeleton className="w-4 h-4 rounded-full shrink-0" />
+                      <Skeleton className="w-11 h-6 rounded shrink-0" />
+                      <Skeleton className="h-4 w-56 rounded" />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 

@@ -11,11 +11,6 @@ export const PAYMENT_CATEGORIES = [
     name: "Virtual Account Bank",
     description: "Verifikasi otomatis 24 jam bebas antre",
   },
-  {
-    id: "retail",
-    name: "Gerai Retail (Tunai)",
-    description: "Bayar tunai di kasir minimarket terdekat",
-  },
 ];
 
 export const PAYMENT_CHANNELS = [
@@ -165,42 +160,6 @@ export const PAYMENT_CHANNELS = [
       "Buka aplikasi PermataMobile X > Transfer > Virtual Account.",
       "Masukkan nomor Permata Virtual Account yang tertera pada invoice.",
       "Konfirmasi rincian pembayaran donasi dan masukkan PIN Anda.",
-    ],
-  },
-
-  // 3. Gerai Retail (Tunai)
-  {
-    id: "indomaret",
-    category: "retail",
-    name: "Indomaret",
-    type: "RETAIL",
-    logo: ASSET_PATHS.PAYMENTS.INDOMARET,
-    fee: 0,
-    subsidyType: "fixed",
-    subsidyAmount: 5000,
-    subsidyLabel: "Rp 5.000",
-    instructions: [
-      "Kunjungi gerai Indomaret atau Ceriamart terdekat.",
-      "Sampaikan kepada kasir bahwa Anda ingin melakukan pembayaran donasi / merchant Midtrans.",
-      "Tunjukkan kode pembayaran yang tertera pada invoice digital Anda.",
-      "Lakukan pembayaran tunai sesuai nominal dan simpan struk resmi dari kasir.",
-    ],
-  },
-  {
-    id: "alfamart",
-    category: "retail",
-    name: "Alfamart / Alfamidi",
-    type: "RETAIL",
-    logo: ASSET_PATHS.PAYMENTS.ALFAMART,
-    fee: 0,
-    subsidyType: "fixed",
-    subsidyAmount: 5000,
-    subsidyLabel: "Rp 5.000",
-    instructions: [
-      "Kunjungi gerai Alfamart, Alfamidi, atau Dan+Dan terdekat.",
-      "Beri tahu kasir untuk melakukan pembayaran layanan Midtrans / donasi yayasan.",
-      "Berikan kode pembayaran yang tertera pada layar invoice Anda.",
-      "Bayar secara tunai dan pastikan Anda menerima struk bukti pembayaran.",
     ],
   },
 ];

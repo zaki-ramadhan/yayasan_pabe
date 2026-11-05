@@ -11,7 +11,6 @@ import { InvoicePaymentInstructions } from "@/components/invoice/InvoicePaymentI
 import { InvoiceReceiptCard } from "@/components/invoice/InvoiceReceiptCard";
 import { InvoiceActions } from "@/components/invoice/InvoiceActions";
 import { DevInvoiceSandboxBar } from "@/components/invoice/DevInvoiceSandboxBar";
-import { InvoiceStatusPollingIndicator } from "@/components/invoice/InvoiceStatusPollingIndicator";
 import { useDonationStatusPolling } from "@/hooks/useDonationStatusPolling";
 
 export {
@@ -20,7 +19,6 @@ export {
   InvoiceReceiptCard,
   InvoiceActions,
   DevInvoiceSandboxBar,
-  InvoiceStatusPollingIndicator,
 };
 
 export function InvoiceDisplay({ donation: initialDonation }) {
@@ -51,7 +49,7 @@ export function InvoiceDisplay({ donation: initialDonation }) {
     }
   };
 
-  const { isChecking, checkNow } = useDonationStatusPolling({
+  useDonationStatusPolling({
     invoiceId: initialDonation?.invoiceId,
     currentStatus,
     onStatusChange: (newStatus, newPaidAt) => {
@@ -95,9 +93,12 @@ export function InvoiceDisplay({ donation: initialDonation }) {
 
   // Timestamp-based countdown persistence (anti reset on refresh)
   useEffect(() => {
-    if (!donation?.expiredAt) return;
+    if (!donation?.expiredAt || currentStatus !== "PENDING") {
+      return;
+    }
 
     const targetTime = new Date(donation.expiredAt).getTime();
+    let interval = null;
 
     const updateTimer = () => {
       const now = Date.now();
@@ -105,9 +106,8 @@ export function InvoiceDisplay({ donation: initialDonation }) {
 
       if (difference <= 0) {
         setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
-        if (currentStatus === "PENDING") {
-          setCurrentStatus("EXPIRED");
-        }
+        setCurrentStatus("EXPIRED");
+        if (interval) clearInterval(interval);
         return;
       }
 
@@ -119,9 +119,18 @@ export function InvoiceDisplay({ donation: initialDonation }) {
     };
 
     updateTimer();
-    const interval = setInterval(updateTimer, 1000);
-    return () => clearInterval(interval);
+    if (targetTime > Date.now()) {
+      interval = setInterval(updateTimer, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [donation?.expiredAt, currentStatus]);
+
+  const effectiveTimeLeft =
+    currentStatus === "PENDING"
+      ? timeLeft
+      : { hours: 0, minutes: 0, seconds: 0 };
 
   const handleCopyVa = async (text) => {
     const success = await copyToClipboard(text);
@@ -166,12 +175,7 @@ export function InvoiceDisplay({ donation: initialDonation }) {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
       {/* SISI KIRI: Metode & Instruksi Pembayaran */}
       <div className="lg:col-span-7 space-y-4">
-        <div className="bg-white rounded-xl border border-slate-300 p-5 sm:p-6 space-y-3.5 shadow-xs">
-          <InvoiceStatusPollingIndicator
-            isChecking={isChecking}
-            currentStatus={donation.status}
-            onCheckNow={checkNow}
-          />
+        <div className="bg-white rounded-xl border border-slate-300 px-5 pt-5 pb-3.5 sm:px-6 sm:pt-6 sm:pb-4 space-y-4 shadow-xs">
           <InvoicePaymentMethod
             donation={donation}
             copiedVa={copiedVa}
@@ -197,7 +201,7 @@ export function InvoiceDisplay({ donation: initialDonation }) {
       <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
         <InvoiceReceiptCard
           donation={donation}
-          timeLeft={timeLeft}
+          timeLeft={effectiveTimeLeft}
           copiedInvoice={copiedInvoice}
           onCopyInvoiceId={handleCopyInvoiceId}
           activePrayer={activePrayer}

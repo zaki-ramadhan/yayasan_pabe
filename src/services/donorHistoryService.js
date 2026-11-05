@@ -90,7 +90,14 @@ export async function getDonorHistory({
       orderByClause = { donorName: normalizedSortOrder };
     }
 
-    const [filteredCount, donations, pendingInvoicesData] = await Promise.all([
+    const pendingInvoicesData = await getPendingInvoicesForUser({
+      userEmail,
+      userName,
+      userPhone,
+      limit: 10,
+    }).catch(() => []);
+
+    const [filteredCount, donations] = await Promise.all([
       prisma.donation.count({ where: finalWhere }),
       prisma.donation.findMany({
         where: finalWhere,
@@ -106,7 +113,6 @@ export async function getDonorHistory({
         skip,
         take: pageLimit,
       }),
-      getPendingInvoicesForUser({ userEmail, userName, limit: 10 }).catch(() => []),
     ]);
 
     const pendingInvoices = Array.isArray(pendingInvoicesData) ? pendingInvoicesData : [];

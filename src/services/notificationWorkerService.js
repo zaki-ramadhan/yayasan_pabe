@@ -281,3 +281,24 @@ export async function processNotificationQueue({
     details: results,
   };
 }
+
+/**
+ * Membersihkan antrean notifikasi yang sudah selesai (SENT) atau gagal permanen (FAILED)
+ * yang telah melampaui batas hari retensi (default 30 hari).
+ * Menjaga ukuran tabel basis data tetap ramping dan performa indeks tetap tinggi.
+ *
+ * @param {object} [options]
+ * @param {number} [options.retentionDays=30]
+ * @returns {Promise<{ deletedCount: number, cutoff: Date }>}
+ */
+export async function cleanupStaleNotificationQueue({ retentionDays = 30 } = {}) {
+  const safeDays = Number(retentionDays) > 0 ? Number(retentionDays) : 30;
+  const cutoff = new Date(Date.now() - safeDays * 24 * 60 * 60 * 1000);
+  const result = await prisma.notificationQueue.deleteMany({
+    where: {
+      status: { in: [QUEUE_STATUS.SENT, QUEUE_STATUS.FAILED] },
+      updatedAt: { lte: cutoff },
+    },
+  });
+  return { deletedCount: result?.count || 0, cutoff };
+}

@@ -21,10 +21,22 @@ export function useDonationStatusPolling({
   const consecutiveErrorsRef = useRef(0);
   const startTimeRef = useRef(null);
   const timerRef = useRef(null);
+  const onStatusChangeRef = useRef(onStatusChange);
+  const statusRef = useRef(currentStatus);
+  const lastNotifiedStatusRef = useRef(currentStatus);
+
+  useEffect(() => {
+    onStatusChangeRef.current = onStatusChange;
+  }, [onStatusChange]);
+
+  useEffect(() => {
+    statusRef.current = currentStatus;
+    lastNotifiedStatusRef.current = currentStatus;
+  }, [currentStatus]);
 
   const checkStatus = useCallback(async (options = {}) => {
     const isManual = Boolean(options?.isManual);
-    if (!invoiceId || isCheckingRef.current || currentStatus !== "PENDING") {
+    if (!invoiceId || isCheckingRef.current || statusRef.current !== "PENDING") {
       return;
     }
 
@@ -52,9 +64,12 @@ export function useDonationStatusPolling({
           setLastCheckedAt(new Date());
 
           const newStatus = json.data.status.toUpperCase();
-          if (newStatus !== "PENDING") {
-            onStatusChange?.(newStatus, json.data.paidAt || null);
-          } else if (isManual) {
+          if (newStatus !== "PENDING" && lastNotifiedStatusRef.current !== newStatus) {
+            statusRef.current = newStatus;
+            lastNotifiedStatusRef.current = newStatus;
+            if (timerRef.current) clearTimeout(timerRef.current);
+            onStatusChangeRef.current?.(newStatus, json.data.paidAt || null);
+          } else if (newStatus === "PENDING" && isManual) {
             toast.info("Menunggu konfirmasi pembayaran dari sistem bank/e-wallet. Silakan periksa kembali setelah transfer.");
           }
         }
@@ -73,7 +88,7 @@ export function useDonationStatusPolling({
       isCheckingRef.current = false;
       setIsChecking(false);
     }
-  }, [invoiceId, currentStatus, maxDurationMs, onStatusChange]);
+  }, [invoiceId, maxDurationMs]);
 
   // Loop Polling dengan Page Visibility & Backoff Handling
   useEffect(() => {
@@ -86,7 +101,7 @@ export function useDonationStatusPolling({
     consecutiveErrorsRef.current = 0;
 
     const scheduleNextPoll = () => {
-      if (currentStatus !== "PENDING") return;
+      if (statusRef.current !== "PENDING") return;
 
       const backoffMultiplier = Math.min(consecutiveErrorsRef.current, 3);
       const delay = Math.min(
@@ -99,7 +114,9 @@ export function useDonationStatusPolling({
         if (typeof document !== "undefined" && document.visibilityState === "visible") {
           await checkStatus();
         }
-        scheduleNextPoll();
+        if (statusRef.current === "PENDING") {
+          scheduleNextPoll();
+        }
       }, delay);
     };
 
@@ -107,7 +124,7 @@ export function useDonationStatusPolling({
 
     // Trigger instant check saat pengguna kembali ke tab browser (misal setelah buka m-banking)
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible" && currentStatus === "PENDING") {
+      if (document.visibilityState === "visible" && statusRef.current === "PENDING") {
         checkStatus();
       }
     };

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { parseMidtransNotification, invalidateMidtransStatusCache } from "@/services/midtransService";
 import { isMidtransProduction } from "@/lib/midtransConfig";
-import { settleDonationStatus } from "@/services/donationService";
+import { settleDonationStatus, buildAdminDonationEventPayload } from "@/services/donationService";
 import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 
 /**
@@ -101,6 +101,7 @@ export async function POST(request) {
           return await tx.donation.update({
             where: { invoiceId },
             data: { status: "EXPIRED" },
+            include: { campaign: { select: { id: true, title: true, slug: true } } },
           });
         }
 
@@ -108,6 +109,7 @@ export async function POST(request) {
           return await tx.donation.update({
             where: { invoiceId },
             data: { status: "CANCELLED" },
+            include: { campaign: { select: { id: true, title: true, slug: true } } },
           });
         }
 
@@ -124,14 +126,10 @@ export async function POST(request) {
 
     invalidateMidtransStatusCache(invoiceId);
 
-    if (updated.status === "PAID" && !isPaid) {
-      broadcastAdminEvent("DONATION_PAID", {
-        invoiceId: updated.invoiceId,
-        amount: updated.amount,
-        donorName: updated.isAnonymous ? "Hamba Allah" : (updated.donorName || "Donatur"),
-        campaignTitle: updated.campaignTitle || "Program Kebaikan",
-        paidAt: updated.paidAt,
-      });
+    if (!isPaid && (updated.status === "EXPIRED" || updated.status === "CANCELLED")) {
+      try {
+        broadcastAdminEvent("DONATION_UPDATED", buildAdminDonationEventPayload(updated));
+      } catch {}
     }
 
     return NextResponse.json({

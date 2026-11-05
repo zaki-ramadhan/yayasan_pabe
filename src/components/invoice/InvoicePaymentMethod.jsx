@@ -26,10 +26,10 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
   const isQris = donation.paymentChannelType === "QRIS" || donation.paymentChannelId === "qris" || donation.paymentChannelType === "EWALLET";
   const isMandiri = donation.paymentChannelId === "mandiri_va";
   const isVa = (donation.paymentChannelType === "VA" || String(donation.paymentChannelId).endsWith("_va")) && !isMandiri;
-  const isRetail = donation.paymentChannelType === "RETAIL" || ["indomaret", "alfamart"].includes(donation.paymentChannelId);
 
   const billerCode = donation.billerCode || "70012";
   const billKey = donation.billKey || donation.virtualAccountNumber || "";
+  const vaNumber = donation.virtualAccountNumber || "";
   const isDevelopment = process.env.NODE_ENV === "development";
   const effectiveSimulatorUrl = donation.qrCodeUrl || "";
   const showSimulatorTools =
@@ -233,21 +233,21 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
           </h2>
           <p className="text-sm text-slate-600 mt-0.5 line-clamp-1">
             {isQris
-              ? "Scan kode QR dinamis di bawah menggunakan m-Banking atau E-Wallet."
+              ? "Scan kode QR via m-Banking atau E-Wallet."
               : isMandiri
-              ? "Selesaikan pembayaran melalui Livin' by Mandiri (Multipayment)."
-              : isRetail
-              ? "Selesaikan pembayaran tunai di kasir gerai retail terdekat."
-              : isManual
-              ? "Transfer langsung ke rekening giro resmi Yayasan Payung Berkah."
-              : "Selesaikan transfer ke nomor Virtual Account resmi di bawah."}
+              ? "Bayar via Multipayment di Livin' by Mandiri."
+              : "Transfer ke nomor Virtual Account di bawah."}
           </p>
         </div>
         <span
           className="text-xs font-medium text-slate-600 px-2 py-0.5 rounded bg-slate-100 shrink-0 whitespace-nowrap"
           title={donation.paymentChannelName}
         >
-          {isQris ? "QRIS" : isMandiri ? "Mandiri" : isRetail ? "Kasir" : isManual ? "Giro" : "VA"}
+          {donation.paymentChannelType === "EWALLET"
+            ? "E-Wallet"
+            : isQris
+            ? "QRIS"
+            : "VA"}
         </span>
       </div>
 
@@ -334,28 +334,9 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
             )}
           </div>
 
-          <p className="text-xs sm:text-sm text-slate-600 max-w-sm leading-relaxed">
-            Dapat dipindai menggunakan seluruh aplikasi mobile banking dan e-wallet berlogo QRIS.
+          <p className="text-xs text-slate-500 leading-relaxed">
+            Mendukung semua aplikasi berlogo QRIS.
           </p>
-
-          {showSimulatorTools && (
-            <div className="w-full max-w-sm rounded-lg bg-amber-50/80 border border-amber-200/90 p-2.5 text-left text-xs text-amber-900 leading-relaxed shadow-2xs">
-              <div className="flex items-center justify-between gap-2 mb-0.5">
-                <span className="font-semibold block text-amber-950">Panduan Pengujian Simulator:</span>
-                <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-medium">Dev Only</span>
-              </div>
-              Klik <strong>Salin URL Simulator</strong> di atas, lalu tempelkan (*paste*) di kolom <em>QR Code URL</em> pada{" "}
-              <a
-                href="https://simulator.sandbox.midtrans.com/qris/index"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium underline hover:text-amber-950"
-              >
-                Midtrans Payment Simulator
-              </a>{" "}
-              dan klik <strong>Scan QR</strong> &gt; <strong>Pay</strong>.
-            </div>
-          )}
         </div>
       )}
 
@@ -423,18 +404,18 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
             </div>
           </div>
 
-          <div className="space-y-1.5 pt-1">
+          <div className="space-y-1 pt-0.5">
             <span className="text-xs font-semibold text-slate-700 block">
-              Panduan Pembayaran:
+              Panduan singkat:
             </span>
-            <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <span>Buka aplikasi <strong>Livin&apos; by Mandiri</strong></span>
+            <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-slate-600 leading-relaxed">
+              <span><strong>Livin&apos; by Mandiri</strong></span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 inline" />
-              <span>pilih <strong>Bayar</strong></span>
+              <span><strong>Bayar</strong></span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 inline" />
-              <span>masukkan <strong>Kode Perusahaan</strong> di atas</span>
+              <span><strong>Kode Perusahaan</strong></span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 inline" />
-              <span>masukkan <strong>Nomor Pelanggan</strong> Anda.</span>
+              <span><strong>Nomor Pelanggan</strong></span>
             </p>
           </div>
         </div>
@@ -446,7 +427,7 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
           <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white shadow-2xs">
             <div>
               <span className="text-xs text-slate-500 block font-normal">
-                Nomor {donation.paymentChannelName}
+                Nomor Virtual Account
               </span>
               <span className="text-base sm:text-lg font-mono font-semibold text-slate-900 tracking-wider">
                 {vaNumber}
@@ -470,55 +451,9 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
               )}
             </button>
           </div>
-          <div className="space-y-1.5 pt-1">
-            <span className="text-xs font-semibold text-slate-700 block">
-              Panduan Pembayaran:
-            </span>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Transfer ke nomor Virtual Account di atas melalui m-Banking, i-Banking, atau ATM. Verifikasi transaksi otomatis tanpa perlu konfirmasi manual.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Kanal Gerai Retail (Indomaret / Alfamart) */}
-      {isRetail && (
-        <div className="space-y-3 py-1">
-          <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white shadow-2xs">
-            <div>
-              <span className="text-xs text-slate-500 block font-normal">
-                Kode Pembayaran Kasir ({donation.paymentChannelName})
-              </span>
-              <span className="text-base sm:text-lg font-mono font-semibold text-slate-900 tracking-wider">
-                {vaNumber}
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => onCopyVa(vaNumber)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-slate-300 hover:bg-slate-100 text-xs font-medium text-slate-800 transition-colors cursor-pointer shadow-2xs"
-            >
-              {copiedVa ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Tersalin</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5 text-slate-600" />
-                  <span>Salin</span>
-                </>
-              )}
-            </button>
-          </div>
-          <div className="space-y-1.5 pt-1">
-            <span className="text-xs font-semibold text-slate-700 block">
-              Panduan Kasir:
-            </span>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Kunjungi gerai {donation.paymentChannelName} terdekat, beritahu kasir ingin bayar tagihan donasi yayasan / Midtrans, lalu sebutkan kode pembayaran di atas.
-            </p>
-          </div>
+          <p className="text-xs text-slate-500 pt-0.5 leading-relaxed">
+            Transfer via m-Banking atau ATM. Terverifikasi otomatis.
+          </p>
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { settleDonationStatus } from "@/services/donationService";
+import { settleDonationStatus, buildAdminDonationEventPayload } from "@/services/donationService";
+import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 
 /**
  * Development-only API endpoint untuk simulasi mutasi status tagihan donasi.
@@ -51,13 +52,19 @@ export async function POST(request) {
 
     // 2. Simulasi Waktu Pembayaran Habis (EXPIRED)
     if (action === "EXPIRED") {
-      await prisma.donation.update({
+      const updated = await prisma.donation.update({
         where: { invoiceId },
         data: {
           status: "EXPIRED",
           expiredAt: new Date(Date.now() - 1000), // set waktu lampau
         },
+        include: {
+          campaign: { select: { id: true, title: true, slug: true } },
+        },
       });
+      try {
+        broadcastAdminEvent("DONATION_UPDATED", buildAdminDonationEventPayload(updated));
+      } catch {}
       return NextResponse.json({
         success: true,
         message: "Simulasi kedaluwarsa berhasil! Status donasi sekarang KEDALUWARSA (EXPIRED).",
@@ -67,14 +74,20 @@ export async function POST(request) {
 
     // 3. Reset Status kembali ke Menunggu (PENDING) untuk kemudahan pengujian berulang
     if (action === "RESET_PENDING") {
-      await prisma.donation.update({
+      const updated = await prisma.donation.update({
         where: { invoiceId },
         data: {
           status: "PENDING",
           paidAt: null,
           expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // perpanjang 24 jam
         },
+        include: {
+          campaign: { select: { id: true, title: true, slug: true } },
+        },
       });
+      try {
+        broadcastAdminEvent("DONATION_UPDATED", buildAdminDonationEventPayload(updated));
+      } catch {}
       return NextResponse.json({
         success: true,
         message: "Status donasi berhasil dikembalikan ke MENUNGGU PEMBAYARAN (PENDING).",

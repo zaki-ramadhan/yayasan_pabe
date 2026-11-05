@@ -29,11 +29,6 @@ describe("Payment Subsidy Calculator", () => {
       });
     });
 
-    it("menghitung biaya flat Gerai Retail Minimarket sebesar Rp 5.000", () => {
-      expect(calculatePaymentSubsidy("indomaret", 50000)).toBe(5000);
-      expect(calculatePaymentSubsidy("alfamart", 100000)).toBe(5000);
-    });
-
     it("mengembalikan 0 jika nominal tidak valid atau kanal tidak terdaftar", () => {
       expect(calculatePaymentSubsidy("manual_mandiri", 100000)).toBe(0);
       expect(calculatePaymentSubsidy("qris", 0)).toBe(0);

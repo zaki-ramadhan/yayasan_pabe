@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { expireStalePendingDonations } from "@/services/donationExpiryService";
-import { processNotificationQueue } from "@/services/notificationWorkerService";
+import { processNotificationQueue, cleanupStaleNotificationQueue } from "@/services/notificationWorkerService";
 
 /**
  * Validates request authorization for cron execution.
@@ -41,13 +41,14 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get("limit"), 10) || 50;
 
-    const [result, queueSummary] = await Promise.all([
+    const [result, queueSummary, cleanupSummary] = await Promise.all([
       expireStalePendingDonations(limit),
       processNotificationQueue().catch((qErr) => ({ error: qErr?.message })),
+      cleanupStaleNotificationQueue({ retentionDays: 30 }).catch((cErr) => ({ error: cErr?.message })),
     ]);
 
     return NextResponse.json(
-      { ...result, notificationQueue: queueSummary },
+      { ...result, notificationQueue: queueSummary, queueCleanup: cleanupSummary },
       { status: 200 }
     );
   } catch (error) {

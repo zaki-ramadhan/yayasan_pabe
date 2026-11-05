@@ -40,24 +40,41 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  useAdminLiveEvent("DONATION_PAID", (event) => {
-    const newTx = event?.data;
-    if (!newTx || !newTx.invoiceId) return;
+  const applyLiveTransactionMutation = (incomingTx) => {
+    if (!incomingTx || !incomingTx.invoiceId) return;
 
-    setTransactions((prev) => {
-      const exists = prev.some((t) => t.id === newTx.id || t.invoiceId === newTx.invoiceId);
+    const updateList = (list) => {
+      if (!Array.isArray(list)) return list;
+      const exists = list.some(
+        (t) => t.id === incomingTx.id || t.invoiceId === incomingTx.invoiceId
+      );
       if (exists) {
-        return prev.map((t) =>
-          t.invoiceId === newTx.invoiceId ? { ...t, ...newTx, status: "PAID" } : t
+        return list.map((t) =>
+          t.invoiceId === incomingTx.invoiceId ? { ...t, ...incomingTx } : t
         );
       }
-      return [newTx, ...prev];
-    });
+      return [incomingTx, ...list];
+    };
 
-    setServerResults((prev) => {
-      if (!prev) return null;
-      return [newTx, ...prev];
-    });
+    setTransactions((prev) => updateList(prev));
+    setServerResults((prev) => (prev ? updateList(prev) : null));
+    setSelectedDetail((prev) =>
+      prev && prev.invoiceId === incomingTx.invoiceId
+        ? { ...prev, ...incomingTx }
+        : prev
+    );
+  };
+
+  useAdminLiveEvent("DONATION_PAID", (event) => {
+    const newTx = event?.data;
+    if (!newTx) return;
+    applyLiveTransactionMutation({ ...newTx, status: "PAID" });
+  });
+
+  useAdminLiveEvent("DONATION_UPDATED", (event) => {
+    const updatedTx = event?.data;
+    if (!updatedTx) return;
+    applyLiveTransactionMutation(updatedTx);
   });
 
   const debouncedSearch = useDebounce(search.trim(), 300);

@@ -24,6 +24,28 @@ import { sendDonationReceiptEmail } from "@/services/emailService";
 import { enqueueNotification } from "@/services/notificationQueueService";
 import { NOTIFICATION_TYPE } from "@/lib/notificationConstants";
 
+export function buildAdminDonationEventPayload(dbDonation) {
+  if (!dbDonation) return null;
+  return {
+    id: dbDonation.id,
+    invoiceId: dbDonation.invoiceId,
+    donorName: dbDonation.isAnonymous ? "Hamba Allah" : dbDonation.donorName,
+    rawDonorName: dbDonation.donorName,
+    donorEmail: dbDonation.donorEmail ? maskEmail(dbDonation.donorEmail) : "",
+    donorPhone: dbDonation.donorPhone || "",
+    donorAvatar: dbDonation.donorAvatar || null,
+    isAnonymous: Boolean(dbDonation.isAnonymous),
+    amount: Number(dbDonation.amount),
+    totalAmount: Number(dbDonation.totalAmount),
+    paymentChannel: dbDonation.paymentChannel,
+    status: dbDonation.status,
+    campaignTitle: dbDonation.campaign?.title || "Donasi Umum",
+    campaignSlug: dbDonation.campaign?.slug || "",
+    createdAt: dbDonation.createdAt ? new Date(dbDonation.createdAt).toISOString() : new Date().toISOString(),
+    paidAt: dbDonation.paidAt ? new Date(dbDonation.paidAt).toISOString() : null,
+  };
+}
+
 export async function createDonation({
   campaignId = null,
   campaignTitle = "Sedekah Umum PABE",
@@ -113,11 +135,6 @@ export async function createDonation({
         } else {
           virtualAccountNumber = charge.vaNumber || "";
         }
-      } else if (channel.type === "RETAIL") {
-        virtualAccountNumber = charge.paymentCode || "";
-      } else if (channel.type === "MANUAL") {
-        virtualAccountNumber = channel.accountNumber || "";
-        billerCode = channel.accountHolder || "YAYASAN PAYUNG BERKAH";
       } else {
         qrCodeUrl = charge.qrCodeUrl || "";
         qrString = charge.qrString || "";
@@ -141,17 +158,12 @@ export async function createDonation({
       billerCode = "70012";
       billKey = virtualAccountNumber;
     }
-  } else if (!virtualAccountNumber && channel.type === "RETAIL") {
-    virtualAccountNumber = `PABE${cleanDonorPhone.slice(-8)}`;
-  } else if (!virtualAccountNumber && channel.type === "MANUAL") {
-    virtualAccountNumber = channel.accountNumber || "166-00-0345678-9";
-    billerCode = channel.accountHolder || "YAYASAN PAYUNG BERKAH";
   }
 
   let effectivePaymentRef = null;
   if (channel.id === "mandiri_va") {
     effectivePaymentRef = `${billerCode || "70012"}:${billKey || virtualAccountNumber}`;
-  } else if (channel.type === "VA" || channel.type === "RETAIL" || channel.type === "MANUAL") {
+  } else if (channel.type === "VA") {
     effectivePaymentRef = virtualAccountNumber;
   } else {
     if (qrString && qrCodeUrl) {
@@ -219,6 +231,11 @@ export async function createDonation({
 
     if (createdDb) {
       donationData.id = createdDb.id;
+      try {
+        broadcastAdminEvent("DONATION_UPDATED", buildAdminDonationEventPayload(createdDb));
+      } catch (sseErr) {
+        console.warn("Peringatan: Gagal broadcast SSE DONATION_UPDATED saat createDonation:", sseErr?.message);
+      }
     }
 
     if (cleanDonorEmail && cleanDonorPhone) {
@@ -259,6 +276,7 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
     if (dbDonation) {
       if (dbDonation.status === "PENDING") {
         const isPastExpiry = dbDonation.expiredAt && new Date() > new Date(dbDonation.expiredAt);
+        let didExpireOnRead = false;
 
         if (getMidtransServerKey() && process.env.NODE_ENV !== "test") {
           try {
@@ -279,6 +297,7 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
               });
               if (res.count > 0) {
                 dbDonation.status = "EXPIRED";
+                didExpireOnRead = true;
               }
             }
           } catch (err) {
@@ -290,6 +309,7 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
               });
               if (res.count > 0) {
                 dbDonation.status = "EXPIRED";
+                didExpireOnRead = true;
               }
             }
           }
@@ -300,6 +320,15 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
           });
           if (res.count > 0) {
             dbDonation.status = "EXPIRED";
+            didExpireOnRead = true;
+          }
+        }
+
+        if (didExpireOnRead) {
+          try {
+            broadcastAdminEvent("DONATION_UPDATED", buildAdminDonationEventPayload(dbDonation));
+          } catch (sseErr) {
+            console.warn("Peringatan: Gagal broadcast SSE DONATION_UPDATED saat on-read expire:", sseErr?.message);
           }
         }
       }
@@ -351,9 +380,19 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
           billKey = dbDonation.paymentRef || "";
           virtualAccountNumber = billKey;
         }
-      } else if (channel.id === "bri_va") {
+      } else if (channel.type === "VA") {
         virtualAccountNumber = dbDonation.paymentRef || "";
-      } else if (channel.id === "qris") {
+        if (!virtualAccountNumber) {
+          const bankPrefix = {
+            bri_va: "04240",
+            bca_va: "70001",
+            bni_va: "88080",
+            permata_va: "85280",
+          }[channel.id] || "88000";
+          const cleanPhone = String(dbDonation.donorPhone || "081234567890").replace(/\D/g, "");
+          virtualAccountNumber = `${bankPrefix}${cleanPhone.slice(-8)}`;
+        }
+      } else if (channel.type === "QRIS" || channel.type === "EWALLET") {
         if (dbDonation.paymentRef?.includes("__QRURL__")) {
           const parts = dbDonation.paymentRef.split("__QRURL__");
           qrString = parts[0] || "";

@@ -42,10 +42,13 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
 
     const targetTime = new Date(activeInvoice.expiredAt).getTime();
 
+    let interval = null;
+
     const updateCountdown = () => {
       const difference = targetTime - Date.now();
       if (difference <= 0) {
         setTimeLeft("");
+        if (interval) clearInterval(interval);
         onInvoiceCancelled?.(activeInvoice.invoiceId);
         return;
       }
@@ -62,8 +65,12 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
     };
 
     updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
+    if (targetTime > Date.now()) {
+      interval = setInterval(updateCountdown, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [activeInvoice?.expiredAt, activeInvoice?.invoiceId, onInvoiceCancelled]);
 
   if (!activeInvoice) {

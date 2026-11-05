@@ -45,22 +45,13 @@ export default function InvoiceLoading() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         {/* SISI KIRI: Metode Pembayaran (QRIS) & Instruksi */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="bg-white rounded-xl border border-slate-300 p-5 sm:p-6 space-y-4 shadow-xs">
-            {/* Polling Status Indicator Skeleton (1:1 dengan InvoiceStatusPollingIndicator) */}
-            <div className="flex items-center justify-between px-3.5 py-2 rounded-lg bg-slate-50 border border-slate-200">
-              <div className="flex items-center gap-2">
-                <Skeleton className="w-2 h-2 rounded-full" />
-                <Skeleton className="h-3.5 w-48 rounded" />
-              </div>
-              <Skeleton className="h-3.5 w-16 rounded" />
-            </div>
-
+          <div className="bg-white rounded-xl border border-slate-300 px-5 pt-5 pb-3.5 sm:px-6 sm:pt-6 sm:pb-4 space-y-4 shadow-xs">
             {/* Header: Judul Metode & Badge */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div className="space-y-1.5">
                 <Skeleton className="h-5 w-56 sm:w-64 rounded-md" />
                 <p className="text-sm text-slate-600">
-                  Scan kode QR untuk memproses transaksi.
+                  Scan kode QR via m-Banking atau E-Wallet.
                 </p>
               </div>
               <span className="text-xs font-medium text-slate-600 px-2 py-0.5 rounded bg-slate-100 shrink-0">
@@ -85,17 +76,16 @@ export default function InvoiceLoading() {
                 </div>
               </div>
 
-              <div className="space-y-1.5 flex flex-col items-center pt-0.5 max-w-sm w-full">
-                <Skeleton className="h-3.5 w-full rounded" />
-                <Skeleton className="h-3.5 w-4/5 rounded" />
+              <div className="flex flex-col items-center pt-0.5 w-full">
+                <Skeleton className="h-3.5 w-56 rounded" />
               </div>
             </div>
 
             {/* Petunjuk Transfer Accordion (Single Row dengan Garis Putus-putus) */}
-            <div className="space-y-2 pt-1">
+            <div className="space-y-1">
               <DashedDivider />
-              <div className="flex items-center justify-between py-2 text-slate-800">
-                <Skeleton className="h-4 w-60 rounded" />
+              <div className="flex items-center justify-between pt-2.5 pb-0 text-slate-800">
+                <Skeleton className="h-3.5 w-52 rounded" />
                 <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
               </div>
             </div>

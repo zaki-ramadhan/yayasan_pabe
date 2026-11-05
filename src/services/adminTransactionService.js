@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { maskEmail } from "@/lib/security";
 import { settleDonationStatus } from "@/services/donationService";
+import { expireStalePendingDonations } from "@/services/donationExpiryService";
 
 /**
  * Mengambil daftar mutasi transaksi donasi dengan filter kanal dan status.
@@ -15,6 +16,8 @@ export async function getAdminTransactions({
   const skip = (Math.max(1, page) - 1) * limit;
 
   try {
+    await expireStalePendingDonations(20).catch(() => {});
+
     const where = {};
     if (status && status !== "ALL") where.status = status;
     if (paymentChannel && paymentChannel !== "ALL") where.paymentChannel = paymentChannel;

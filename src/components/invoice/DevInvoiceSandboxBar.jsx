@@ -113,7 +113,7 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
             className="h-8 px-3 text-xs font-semibold text-white bg-gradient-to-b from-emerald-600 via-emerald-700 to-emerald-800 hover:from-emerald-500 hover:via-emerald-600 hover:to-emerald-700 border-t border-t-emerald-400 border-x border-x-emerald-600 border-b-2 border-b-emerald-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(5,150,105,0.25)] active:translate-y-0.5 active:shadow-none rounded-lg gap-1.5 cursor-pointer disabled:opacity-60"
           >
             {!isLoading && <Zap className="w-3.5 h-3.5 fill-current text-white" />}
-            <span>⚡ Simulasi Bayar Lunas</span>
+            <span>Simulasi Bayar Lunas</span>
           </Button>
         )}
 

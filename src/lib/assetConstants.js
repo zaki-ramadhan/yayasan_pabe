@@ -2,7 +2,7 @@
  * Konfigurasi terpusat path aset statis lokal (Anti-Magic String).
  * Mengelompokkan seluruh berkas gambar berdasarkan konteks fungsionalnya:
  * - BRANDING: Logo yayasan dan lembaga mitra resmi
- * - PAYMENTS: Saluran pembayaran (QRIS, VA, E-Wallet, Retail)
+ * - PAYMENTS: Saluran pembayaran (QRIS, VA, E-Wallet)
  * - FRAMES: Frame SVG dekoratif berbentuk folder hero dan folder admin
  * - DECORATIONS: Ornamen visual kartu bank dan aksen garis
  * - TEXTURES: Tekstur overlay latar belakang
@@ -35,11 +35,6 @@ export const ASSET_PATHS = {
     MANDIRI: "/img/branding/payments/mandiri.webp",
     GOPAY: "/img/branding/payments/gopay.webp",
     SHOPEEPAY: "/img/branding/payments/shopeepay.webp",
-    INDOMARET: "/img/branding/payments/indomaret.webp",
-    ALFAMART: "/img/branding/payments/alfamart.webp",
-    ALFAMIDI: "/img/branding/payments/alfamidi.webp",
-    AKULAKU: "/img/branding/payments/akulaku.webp",
-    KREDIVO: "/img/branding/payments/kredivo.webp",
     PERMATA: "/img/branding/payments/permata.webp",
   },
   FRAMES: {

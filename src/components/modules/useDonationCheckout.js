@@ -166,6 +166,9 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     setIsCustomMode(false);
     setAmount(val);
     setCustomAmountInput("");
+    if (errors.amount) {
+      setErrors(({ amount: _stale, ...rest }) => rest);
+    }
   };
 
   const handleCustomModeClick = () => {
@@ -181,7 +184,17 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     const finalRaw = clamped > 0 ? String(clamped) : (rawVal === "" ? "" : "0");
     setCustomAmountInput(finalRaw);
     setAmount(clamped);
+    if (errors.amount) {
+      setErrors(({ amount: _stale, ...rest }) => rest);
+    }
   };
+
+  // Real-time feedback: kosong tidak dianggap error agar tidak "berteriak" sebelum user mengetik
+  const liveAmountError =
+    isCustomMode && customAmountInput !== "" && amount < DONATION_LIMITS.MIN_AMOUNT
+      ? `Nominal donasi minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`
+      : null;
+  const amountError = liveAmountError || errors.amount || null;
 
   const handlePrayerChange = (e) => {
     const clean = sanitizePrayer(e.target.value);
@@ -379,6 +392,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     isEmailLocked,
     errors,
     setErrors,
+    amountError,
     prayer,
     setPrayer,
     selectedChannelId,

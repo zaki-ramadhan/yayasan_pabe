@@ -14,8 +14,6 @@ export const DONATION_STATUS = Object.freeze({
  * Konfigurasi batas waktu kedaluwarsa pembayaran:
  * - QRIS / E-Wallet: 15 menit (sesuai spesifikasi QRIS dinamis industri & default Midtrans)
  * - Virtual Account: 24 jam
- * - Gerai Retail: 24 jam
- * - Transfer Manual: 24 jam
  */
 export const PAYMENT_EXPIRY_CONFIG = Object.freeze({
   QRIS: {
@@ -31,18 +29,6 @@ export const PAYMENT_EXPIRY_CONFIG = Object.freeze({
     label: "15 menit",
   },
   VA: {
-    duration: 24,
-    unit: "hour",
-    milliseconds: 24 * 60 * 60 * 1000,
-    label: "24 jam",
-  },
-  RETAIL: {
-    duration: 24,
-    unit: "hour",
-    milliseconds: 24 * 60 * 60 * 1000,
-    label: "24 jam",
-  },
-  MANUAL: {
     duration: 24,
     unit: "hour",
     milliseconds: 24 * 60 * 60 * 1000,
@@ -72,14 +58,6 @@ export function getChannelExpiryConfig(channelId = "", channelType = "") {
 
   if (normId.endsWith("_va") || normType === "VA") {
     return PAYMENT_EXPIRY_CONFIG.VA;
-  }
-
-  if (["indomaret", "alfamart"].includes(normId) || normType === "RETAIL") {
-    return PAYMENT_EXPIRY_CONFIG.RETAIL;
-  }
-
-  if (normId.startsWith("manual_") || normType === "MANUAL") {
-    return PAYMENT_EXPIRY_CONFIG.MANUAL;
   }
 
   return PAYMENT_EXPIRY_CONFIG.DEFAULT;

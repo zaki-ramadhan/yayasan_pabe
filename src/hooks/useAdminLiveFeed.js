@@ -57,6 +57,21 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
         } catch {}
       });
 
+      es.addEventListener("DONATION_UPDATED", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          setLastEvent({ type: "DONATION_UPDATED", data, timestamp: new Date() });
+
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("pabe:admin-live-event", {
+                detail: { type: "DONATION_UPDATED", data, timestamp: new Date() },
+              })
+            );
+          }
+        } catch {}
+      });
+
       es.addEventListener("VOLUNTEER_CHECKIN", (event) => {
         try {
           const data = JSON.parse(event.data);

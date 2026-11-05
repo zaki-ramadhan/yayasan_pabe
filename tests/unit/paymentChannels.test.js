@@ -14,10 +14,7 @@ describe("PAYMENT_CHANNELS Configuration", () => {
     expect(ids).toContain("bri_va");
     expect(ids).toContain("bni_va");
     expect(ids).toContain("permata_va");
-    // Retail
-    expect(ids).toContain("indomaret");
-    expect(ids).toContain("alfamart");
-    expect(ids).toHaveLength(10);
+    expect(ids).toHaveLength(8);
   });
 
   it("memiliki penamaan kanal bank yang ramah donatur sesuai aplikasi mobile banking", () => {

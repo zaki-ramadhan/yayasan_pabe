@@ -78,12 +78,6 @@ export async function createCoreApiCharge({
     payload.payment_type = "gopay";
   } else if (channel === "shopeepay") {
     payload.payment_type = "shopeepay";
-  } else if (channel === "indomaret" || channel === "alfamart") {
-    payload.payment_type = "cstore";
-    payload.cstore = {
-      store: channel,
-      message: "Donasi Yayasan Payung Berkah",
-    };
   } else {
     // Default: QRIS
     payload.payment_type = "qris";
@@ -125,8 +119,6 @@ export async function createCoreApiCharge({
   } else if (channel === "mandiri_va") {
     result.billerCode = data.biller_code || "";
     result.billKey = data.bill_key || "";
-  } else if (["indomaret", "alfamart"].includes(channel)) {
-    result.paymentCode = data.payment_code || "";
   } else {
     const qrAction = data.actions?.find((a) => a.name === "generate-qr-code");
     const deeplinkAction = data.actions?.find((a) => a.name === "deeplink-redirect");

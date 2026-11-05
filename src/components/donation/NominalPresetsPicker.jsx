@@ -48,7 +48,7 @@ export function NominalPresetsPicker({
                   onCustomInputChange({ target: { value: raw } });
                 }
               }}
-              className="h-10 border-slate-300 text-sm font-normal text-slate-950 placeholder:text-slate-400 focus:ring-2 focus:ring-primary"
+              className="h-10"
             />
           </FormField>
         </div>
