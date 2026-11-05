@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { expireStalePendingDonations } from "@/services/donationExpiryService";
+import { processNotificationQueue } from "@/services/notificationWorkerService";
 
 /**
  * Validates request authorization for cron execution.
@@ -40,8 +41,15 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get("limit"), 10) || 50;
 
-    const result = await expireStalePendingDonations(limit);
-    return NextResponse.json(result, { status: 200 });
+    const [result, queueSummary] = await Promise.all([
+      expireStalePendingDonations(limit),
+      processNotificationQueue().catch((qErr) => ({ error: qErr?.message })),
+    ]);
+
+    return NextResponse.json(
+      { ...result, notificationQueue: queueSummary },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("[CRON Expire Donations Error]", error);
     return NextResponse.json(
@@ -74,8 +82,15 @@ export async function POST(request) {
     }
 
     const limit = parseInt(body.limit, 10) || 50;
-    const result = await expireStalePendingDonations(limit);
-    return NextResponse.json(result, { status: 200 });
+    const [result, queueSummary] = await Promise.all([
+      expireStalePendingDonations(limit),
+      processNotificationQueue().catch((qErr) => ({ error: qErr?.message })),
+    ]);
+
+    return NextResponse.json(
+      { ...result, notificationQueue: queueSummary },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("[Manual Trigger Expire Donations Error]", error);
     return NextResponse.json(
