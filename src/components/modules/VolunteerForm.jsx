@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getStoredUser } from "@/services/authService";
+import { getStoredUser, loginUser } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { toast } from "@/hooks/useToast";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -23,6 +23,7 @@ import {
 import { VolunteerApprovedCard } from "@/components/volunteer/VolunteerApprovedCard";
 import { VolunteerPendingCard } from "@/components/volunteer/VolunteerPendingCard";
 import { VolunteerRegistrationFields } from "@/components/volunteer/VolunteerRegistrationFields";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { VolunteerCancellationDialog } from "@/components/volunteer/VolunteerCancellationDialog";
 
 const DRAFT_STORAGE_KEY = "pabe_volunteer_draft";
@@ -178,7 +179,7 @@ export function VolunteerForm() {
         phone: phone.trim(),
         email: email.trim().toLowerCase(),
         city: city.trim(),
-        motivation: motivation.trim().slice(0, 500),
+        motivation: motivation.trim().slice(0, FIELD_LIMITS.MOTIVATION.max),
       });
 
       if (!res.success) {
@@ -187,6 +188,11 @@ export function VolunteerForm() {
 
       sessionStorage.removeItem(DRAFT_STORAGE_KEY);
       toast.success(res.message);
+
+      // Sinkronisasi sesi lokal jika sebelumnya nomor WhatsApp di profil masih kosong
+      if (activeUser && (!activeUser.phone || activeUser.phone === "-") && phone.trim()) {
+        loginUser({ ...activeUser, phone: phone.trim() });
+      }
 
       // Refresh status relawan
       const statusRes = await fetchVolunteerStatus(email.trim().toLowerCase());

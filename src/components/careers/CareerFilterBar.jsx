@@ -3,6 +3,7 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { CareerFilterSelect } from "./CareerFilterSelect";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import {
   LOCATION_OPTIONS,
   TYPE_OPTIONS,
@@ -37,7 +38,8 @@ export function CareerFilterBar({
         onClear={() => onSearchChange("")}
         leftIcon={<Search className="w-4.5 h-4.5 text-slate-400" />}
         placeholder="Cari lowongan posisi kerja, lokasi, atau kata kunci..."
-        maxLength={80}
+        minLength={FIELD_LIMITS.SEARCH_QUERY.min}
+        maxLength={FIELD_LIMITS.SEARCH_QUERY.max}
         autoComplete="off"
         spellCheck="false"
         className="h-10 text-sm bg-slate-50/70 border-slate-200"

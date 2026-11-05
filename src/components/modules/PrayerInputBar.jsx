@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { SendHorizonal, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PRAYER_LIMITS, countGraphemes, hasMeaningfulText } from "@/lib/security";
+import { useAutoResizeTextarea } from "@/hooks/useAutoResizeTextarea";
 
 export function PrayerInputBar({
   onSend,
@@ -16,40 +17,34 @@ export function PrayerInputBar({
   const [isMultiLine, setIsMultiLine] = useState(false);
   const textareaRef = useRef(null);
 
+  useAutoResizeTextarea({
+    ref: textareaRef,
+    value: text,
+    minRows: 1,
+    maxRows: 6,
+    onResize: ({ scrollHeight }) => {
+      setIsMultiLine(scrollHeight > 28 || text.includes("\n"));
+    },
+  });
+
   const trimmed = text.trim();
-  // Hitung jumlah karakter visual asli (1 emoji majemuk / bertanda = 1 karakter)
   const charCount = countGraphemes(text);
   const trimmedLength = countGraphemes(trimmed);
   const hasWords = hasMeaningfulText(trimmed);
 
   const isTooShort = trimmedLength > 0 && trimmedLength < minLength;
   const isOnlyEmojis = trimmedLength >= minLength && !hasWords;
-  const isNearMax = charCount >= maxLength - 25; // Muncul saat mendekati batas maksimal (sisa 25 karakter)
+  const isNearMax = charCount >= maxLength - 25;
   const isValid = trimmedLength >= minLength && charCount <= maxLength && hasWords;
-
-  // Auto-resize textarea mengikuti penambahan baris teks secara natural tanpa batasan tinggi kaku
-  useEffect(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    const scrollH = el.scrollHeight;
-    el.style.height = `${scrollH}px`;
-    // Mendeteksi apakah teks sudah menjadi lebih dari satu baris
-    setIsMultiLine(scrollH > 28 || text.includes("\n"));
-  }, [text]);
 
   const handleSend = async () => {
     if (!isValid || isSubmitting) return;
     setIsSubmitting(true);
     try {
-      // Jeda ~450ms untuk feedback visual spinner & mencegah spam double-submit
       await new Promise((resolve) => setTimeout(resolve, 450));
       await onSend?.(trimmed);
       setText("");
       setIsMultiLine(false);
-      if (textareaRef.current) {
-        textareaRef.current.style.height = "auto";
-      }
     } finally {
       setIsSubmitting(false);
     }
@@ -84,6 +79,7 @@ export function PrayerInputBar({
             onBlur={() => setText((prev) => prev.trim())}
             onKeyDown={handleKeyDown}
             placeholder={isSubmitting ? "Sedang memproses doa..." : "Tulis doa kebaikan Anda..."}
+            minLength={minLength}
             maxLength={maxLength}
             autoComplete="off"
             className="w-full bg-transparent text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed overflow-hidden p-0 disabled:cursor-not-allowed"

@@ -15,12 +15,12 @@ export function DonorProfileSkeleton() {
                 <Skeleton className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-sidebar shadow-md" />
               </div>
 
-              <div className="text-center sm:text-left space-y-2 pt-1 sm:pt-2">
+              <div className="text-center sm:text-left space-y-1.5 pt-1 sm:pt-2">
                 <div className="flex items-center justify-center sm:justify-start">
                   <Skeleton className="h-6 sm:h-7 w-44 rounded-sm" />
                 </div>
                 <Skeleton className="h-4 w-52 rounded-sm mx-auto sm:mx-0" />
-                <Skeleton className="h-4 w-72 max-w-xs rounded-sm mx-auto sm:mx-0" />
+                <Skeleton className="h-4 w-40 rounded-sm mx-auto sm:mx-0" />
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-1">
                   <Skeleton className="h-4 w-28 rounded-sm" />
                   <Skeleton className="h-4 w-36 rounded-sm" />
@@ -37,25 +37,28 @@ export function DonorProfileSkeleton() {
             <Skeleton className="h-9 w-full rounded-md bg-slate-100" />
           </aside>
 
-          <main className="flex-1 p-5 sm:p-7 md:p-8 bg-sidebar min-w-0 space-y-5">
-            <div className="space-y-1.5 pb-2">
+          <main className="flex-1 p-5 sm:p-7 md:p-8 bg-sidebar min-w-0 space-y-4">
+            <div className="pb-4 mb-5 border-b border-slate-200/80 space-y-1.5">
               <Skeleton className="h-5 w-40 rounded-sm" />
-              <Skeleton className="h-3.5 w-72 max-w-full rounded-sm" />
+              <Skeleton className="h-4 w-64 max-w-full rounded-sm" />
             </div>
 
+            {/* Field 1: Nama Lengkap */}
             <div className="space-y-1.5">
               <Skeleton className="h-3.5 w-24 rounded-xs" />
               <Skeleton className="h-9.5 w-full rounded-md border border-slate-200" />
             </div>
 
+            {/* Field 2: Nomor WhatsApp */}
             <div className="space-y-1.5">
-              <Skeleton className="h-3.5 w-28 rounded-xs" />
-              <Skeleton className="h-20 w-full rounded-md border border-slate-200" />
+              <Skeleton className="h-3.5 w-32 rounded-xs" />
+              <Skeleton className="h-9.5 w-full rounded-md border border-slate-200" />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Field 3 & 4: Wilayah Domisili (Provinsi & Kota / Kabupaten Combobox) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div className="space-y-1.5">
-                <Skeleton className="h-3.5 w-24 rounded-xs" />
+                <Skeleton className="h-3.5 w-28 rounded-xs" />
                 <Skeleton className="h-9.5 w-full rounded-md border border-slate-200" />
               </div>
               <div className="space-y-1.5">
@@ -64,13 +67,15 @@ export function DonorProfileSkeleton() {
               </div>
             </div>
 
+            {/* Field 5: Alamat Lengkap */}
             <div className="space-y-1.5">
               <Skeleton className="h-3.5 w-28 rounded-xs" />
               <Skeleton className="h-20 w-full rounded-md border border-slate-200" />
             </div>
 
-            <div className="pt-2">
-              <Skeleton className="h-9.5 w-32 rounded-md" />
+            {/* Tombol Simpan di kanan bawah */}
+            <div className="pt-2 flex justify-end">
+              <Skeleton className="h-9 w-24 rounded-md" />
             </div>
           </main>
         </div>

@@ -16,6 +16,21 @@ import { VolunteerApprovedCard } from "@/components/volunteer/VolunteerApprovedC
 import { VolunteerPendingCard } from "@/components/volunteer/VolunteerPendingCard";
 import { VolunteerCancellationDialog } from "@/components/volunteer/VolunteerCancellationDialog";
 
+export function DonorVolunteerCardSkeleton() {
+  return (
+    <div className="space-y-5 animate-pulse">
+      <Skeleton className="h-32 sm:h-28 w-full rounded-md" />
+      <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-4 shadow-2xs">
+        <Skeleton className="w-56 h-56 sm:w-72 sm:h-72 mx-auto rounded-xl" />
+        <div className="space-y-2">
+          <Skeleton className="h-5 w-48 mx-auto rounded" />
+          <Skeleton className="h-4 w-72 max-w-full mx-auto rounded" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function DonorVolunteerCardView() {
   const { currentUser } = useCurrentUser();
   const userEmail = currentUser?.email || "";
@@ -70,18 +85,7 @@ export function DonorVolunteerCardView() {
   };
 
   if (isLoading) {
-    return (
-      <div className="space-y-5 animate-pulse">
-        <Skeleton className="h-32 sm:h-28 w-full rounded-md" />
-        <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-4 shadow-2xs">
-          <Skeleton className="w-56 h-56 sm:w-72 sm:h-72 mx-auto rounded-xl" />
-          <div className="space-y-2">
-            <Skeleton className="h-5 w-48 mx-auto rounded" />
-            <Skeleton className="h-4 w-72 max-w-full mx-auto rounded" />
-          </div>
-        </div>
-      </div>
-    );
+    return <DonorVolunteerCardSkeleton />;
   }
 
   return (

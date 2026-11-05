@@ -8,10 +8,6 @@ export const PROFILE_TABS = [
     label: "Data Pribadi",
   },
   {
-    id: "bank",
-    label: "Rekening Bank",
-  },
-  {
     id: "security",
     label: "Keamanan Akun",
   },

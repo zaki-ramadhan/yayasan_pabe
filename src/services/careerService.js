@@ -146,7 +146,7 @@ export async function submitJobApplication(payload) {
   if (!emailVal.isValid) {
     throw new Error(emailVal.message || "Format alamat email tidak valid.");
   }
-  const phoneVal = validatePhone(phone, { fieldName: "Nomor WhatsApp/telepon" });
+  const phoneVal = validatePhone(phone, { fieldName: "Nomor WhatsApp" });
   if (!phoneVal.isValid) {
     throw new Error(phoneVal.message);
   }
@@ -219,6 +219,23 @@ export async function submitJobApplication(payload) {
       status: "PENDING",
     },
   });
+
+  if (cleanEmail && cleanPhone) {
+    try {
+      const existingUser = await prisma.user.findFirst({
+        where: { email: cleanEmail },
+        select: { id: true, phone: true },
+      });
+      if (existingUser && (!existingUser.phone || existingUser.phone === "-")) {
+        await prisma.user.update({
+          where: { id: existingUser.id },
+          data: { phone: cleanPhone },
+        });
+      }
+    } catch (uErr) {
+      console.warn("Gagal sinkronisasi otomatis nomor WhatsApp pelamar ke profil:", uErr?.message);
+    }
+  }
 
   return {
     success: true,

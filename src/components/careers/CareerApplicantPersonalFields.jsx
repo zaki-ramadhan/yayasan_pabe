@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { cn } from "@/lib/utils";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
  * Sub-komponen modular: Bidang identitas dasar pelamar (Nama, Email, WhatsApp).
@@ -37,7 +38,8 @@ export function CareerApplicantPersonalFields({
           type="text"
           placeholder="Nama lengkap sesuai KTP"
           value={formData.fullName}
-          maxLength={60}
+          minLength={FIELD_LIMITS.NAME.min}
+          maxLength={FIELD_LIMITS.NAME.max}
           readOnly={isNameLocked}
           onChange={(e) => {
             if (isNameLocked) return;
@@ -69,7 +71,8 @@ export function CareerApplicantPersonalFields({
           <Input
             type="email"
             inputMode="email"
-            maxLength={100}
+            minLength={FIELD_LIMITS.EMAIL.min}
+            maxLength={FIELD_LIMITS.EMAIL.max}
             spellCheck={false}
             placeholder="nama@email.com"
             value={formData.email}
@@ -90,15 +93,16 @@ export function CareerApplicantPersonalFields({
         </FormField>
 
         <FormField
-          label="Nomor WhatsApp aktif"
+          label="Nomor WhatsApp"
           required
           error={errors.phone}
-          hint="Digunakan untuk koordinasi wawancara & tes."
+          hint="Untuk koordinasi jadwal wawancara & tes."
         >
           <Input
             type="tel"
-            inputMode="numeric"
-            maxLength={15}
+            inputMode="tel"
+            minLength={FIELD_LIMITS.PHONE.min}
+            maxLength={FIELD_LIMITS.PHONE.max}
             placeholder="081234567890"
             value={formData.phone}
             onChange={onPhoneChange}

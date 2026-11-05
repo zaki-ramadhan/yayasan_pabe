@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { DonorSidebarNav } from "@/components/donor/DonorSidebarNav";
 import { DonorTopHeader } from "@/components/donor/DonorTopHeader";
-import { logoutUser, getStoredUser, USER_ROLES } from "@/services/authService";
+import { logoutUser, loginUser, getStoredUser, USER_ROLES } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 
@@ -52,6 +52,11 @@ export function DonorLayoutClient({ children }) {
       return;
     }
 
+    if (stored.role && stored.role !== USER_ROLES.DONOR) {
+      router.replace("/admin");
+      return;
+    }
+
     // 2. Authoritative server verification
     async function verifySessionWithServer() {
       try {
@@ -62,6 +67,25 @@ export function DonorLayoutClient({ children }) {
           logoutUser();
           toast.error("Sesi donatur telah berakhir. Silakan masuk kembali.");
           router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+          return;
+        }
+
+        const data = await res.json().catch(() => null);
+        if (data?.data?.role && data.data.role !== USER_ROLES.DONOR) {
+          router.replace("/admin");
+          return;
+        }
+
+        if (data?.data) {
+          const current = getStoredUser();
+          if (
+            current &&
+            (current.avatar !== data.data.avatar ||
+              current.name !== data.data.name ||
+              current.customAvatar !== data.data.customAvatar)
+          ) {
+            loginUser({ ...current, ...data.data });
+          }
         }
       } catch {
         // Fallback for temporary network offline state
@@ -75,10 +99,13 @@ export function DonorLayoutClient({ children }) {
 
     // Check expiration on window focus
     const handleFocus = () => {
-      if (!getStoredUser()) {
+      const u = getStoredUser();
+      if (!u) {
         logoutUser();
         toast.error("Sesi donatur telah berakhir. Silakan masuk kembali.");
         router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      } else if (u.role && u.role !== USER_ROLES.DONOR) {
+        router.replace("/admin");
       }
     };
     window.addEventListener("focus", handleFocus);

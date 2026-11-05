@@ -16,6 +16,7 @@ import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { sanitizePrayer, sanitizeName } from "@/lib/security";
 import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function PrayerWriteDialog({
   isOpen,
@@ -32,7 +33,7 @@ export function PrayerWriteDialog({
 
   const handlePrayerChange = (e) => {
     const clean = sanitizePrayer(e.target.value);
-    if (clean.length <= 150) {
+    if (clean.length <= FIELD_LIMITS.PRAYER.max) {
       setPrayer(clean);
       if (errorMessage) setErrorMessage("");
     }
@@ -114,13 +115,14 @@ export function PrayerWriteDialog({
                   disabled={isAnonymous}
                   placeholder={isAnonymous ? "Hamba Allah" : "Nama lengkap / panggilan"}
                   value={donorName}
+                  minLength={FIELD_LIMITS.NAME.min}
+                  maxLength={FIELD_LIMITS.NAME.max}
                   onChange={(e) => {
                     setDonorName(sanitizeName(e.target.value));
                     if (nameError) setNameError("");
                   }}
                   onBlur={() => setDonorName((prev) => prev.trim())}
                   className="h-9 text-xs sm:text-sm"
-                  maxLength={40}
                 />
               </FormField>
 

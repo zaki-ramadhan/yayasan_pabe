@@ -13,6 +13,7 @@ import { DonorMonthlyTargetCard } from "@/components/donor/DonorMonthlyTargetCar
 import { DonorRoutineDonationsCard } from "@/components/donor/DonorRoutineDonationsCard";
 import { DonorPrayersCard } from "@/components/donor/DonorPrayersCard";
 import { DonorDashboardSkeleton } from "@/components/donor/DonorDashboardSkeleton";
+import { DonorPendingInvoiceBanner } from "@/components/donor/DonorPendingInvoiceBanner";
 import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
 import { safeFetch } from "@/lib/safeFetch";
 
@@ -46,6 +47,7 @@ export function DonorOverviewDashboard({ currentUser }) {
 		recentReports: [],
 		recentItems: [],
 		routineDonations: [],
+		pendingInvoices: [],
 	});
 	const [isLoading, setIsLoading] = useState(true);
 	const [fetchError, setFetchError] = useState(null);
@@ -110,6 +112,28 @@ export function DonorOverviewDashboard({ currentUser }) {
 		fetchDashboardData();
 	}, [fetchDashboardData]);
 
+	// Auto-scroll dan highlight kartu donasi rutin saat URL memuat hash #donor-routine-card
+	useEffect(() => {
+		if (
+			!isLoading &&
+			typeof window !== "undefined" &&
+			window.location.hash === "#donor-routine-card"
+		) {
+			const el = document.getElementById("donor-routine-card");
+			if (el) {
+				const scrollTimer = setTimeout(() => {
+					el.scrollIntoView({ behavior: "smooth", block: "center" });
+					el.classList.add("ring-2", "ring-primary", "ring-offset-2");
+					const ringTimer = setTimeout(() => {
+						el.classList.remove("ring-2", "ring-primary", "ring-offset-2");
+					}, 2000);
+					return () => clearTimeout(ringTimer);
+				}, 150);
+				return () => clearTimeout(scrollTimer);
+			}
+		}
+	}, [isLoading]);
+
 	if (isLoading) {
 		return <DonorDashboardSkeleton />;
 	}
@@ -121,23 +145,49 @@ export function DonorOverviewDashboard({ currentUser }) {
 	};
 	const recentItems = dashboardData.recentItems || [];
 	const lastDonation = recentItems[0] || null;
+	const routineDonations = dashboardData.routineDonations || [];
+	const hasActiveRoutine = routineDonations.some(
+		(it) => it.status === "ACTIVE" || it.status === "PAUSED"
+	);
+
+	const handleInvoiceCancelled = (cancelledInvoiceId) => {
+		setDashboardData((prev) => ({
+			...prev,
+			pendingInvoices: (prev.pendingInvoices || []).filter(
+				(inv) => inv.invoiceId !== cancelledInvoiceId
+			),
+		}));
+	};
 
 	return (
 		<div className="space-y-4 sm:space-y-5">
 			{/* Banner Error Sinkronisasi: Mencegah salah sangka data kosong */}
 			{fetchError && (
 				<DataFetchErrorState
-					title="Gangguan Koneksi Riwayat Donasi"
-					description="Tidak dapat memuat data donasi terbaru. Silakan periksa koneksi internet Anda dan coba lagi."
+					title="Kendala Sinkronisasi Data Donasi"
+					description={
+						typeof fetchError === "string"
+							? fetchError
+							: "Tidak dapat memuat data donasi terbaru. Silakan coba lagi."
+					}
 					onRetry={fetchDashboardData}
 					compact
+				/>
+			)}
+
+			{/* Banner Pengingat Tagihan Aktif Menunggu Pembayaran */}
+			{!fetchError && dashboardData.pendingInvoices?.length > 0 && (
+				<DonorPendingInvoiceBanner
+					invoices={dashboardData.pendingInvoices}
+					onInvoiceCancelled={handleInvoiceCancelled}
 				/>
 			)}
 
 			{/* Banner Promosi Cepat: HANYA muncul jika belum pernah berdonasi dan tidak error */}
 			{!fetchError &&
 				metrics.totalTransactions ===
-					0 && (
+					0 &&
+				(!dashboardData.pendingInvoices || dashboardData.pendingInvoices.length === 0) && (
 					<CampaignCTA
 						ignoreAuthCheck={
 							true
@@ -172,6 +222,9 @@ export function DonorOverviewDashboard({ currentUser }) {
 						}
 						isLoading={
 							isLoading
+						}
+						hasActiveRoutine={
+							hasActiveRoutine
 						}
 					/>
 
@@ -237,14 +290,16 @@ export function DonorOverviewDashboard({ currentUser }) {
 					/>
 
 					{/* 4. Donasi Rutin Tersimpan */}
-					<DonorRoutineDonationsCard
-						routineDonations={
-							dashboardData.routineDonations
-						}
-						isLoading={
-							isLoading
-						}
-					/>
+					<div id="donor-routine-card" className="scroll-mt-20 rounded-xl transition-all duration-300">
+						<DonorRoutineDonationsCard
+							routineDonations={
+								dashboardData.routineDonations
+							}
+							isLoading={
+								isLoading
+							}
+						/>
+					</div>
 				</div>
 			</div>
 		</div>

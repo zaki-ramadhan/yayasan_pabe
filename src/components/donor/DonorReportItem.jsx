@@ -26,7 +26,7 @@ export function DonorReportItem({ report }) {
       </div>
       {report.campaignSlug && (
         <Link
-          href={`/program/${report.campaignSlug}`}
+          href={`/campaign/${report.campaignSlug}`}
           className="text-sm font-medium text-primary hover:underline whitespace-nowrap self-start sm:self-center shrink-0"
         >
           Lihat Berita

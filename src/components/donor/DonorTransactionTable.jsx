@@ -8,23 +8,26 @@ import {
   TableBody,
   TableRow,
   TableHead,
-  TableSortHeader,
   TableEmptyRow,
   TableSkeletonRows,
   TablePaginationFooter,
   TableToolbar,
 } from "@/components/ui/Table";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/Select";
 import { DonorTransactionTableRow } from "./DonorTransactionTableRow";
 
 export function DonorTransactionTable({
   items = [],
   pagination = { total: 0, totalPages: 1, currentPage: 1, limit: 10 },
-  search = "",
-  sortBy = "date",
-  sortOrder = "desc",
+  statusFilter = "ALL",
   isLoading = false,
-  onSearchChange,
-  onSortChange,
+  onStatusFilterChange,
   onPageChange,
   onLimitChange,
   onRefresh,
@@ -35,13 +38,34 @@ export function DonorTransactionTable({
       <div className="p-4 sm:p-5 border-b border-slate-200">
         <TableToolbar
           title="Daftar Riwayat Transaksi"
-          search={search}
-          onSearchChange={onSearchChange}
-          searchPlaceholder="Cari program, invoice, metode..."
           limit={pagination.limit}
           onLimitChange={onLimitChange}
           onRefresh={onRefresh}
           isLoading={isLoading}
+          extraActions={
+            <Select value={statusFilter} onValueChange={onStatusFilterChange}>
+              <SelectTrigger className="h-10 w-36 sm:w-44 text-sm font-normal bg-white border border-slate-300 shrink-0">
+                <SelectValue placeholder="Semua status" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-slate-200 z-50">
+                <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
+                  Semua status
+                </SelectItem>
+                <SelectItem value="PAID" className="cursor-pointer text-sm font-normal py-2">
+                  Berhasil
+                </SelectItem>
+                <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
+                  Menunggu
+                </SelectItem>
+                <SelectItem value="EXPIRED" className="cursor-pointer text-sm font-normal py-2">
+                  Kedaluwarsa
+                </SelectItem>
+                <SelectItem value="CANCELLED" className="cursor-pointer text-sm font-normal py-2">
+                  Dibatalkan
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          }
         />
       </div>
 
@@ -50,44 +74,13 @@ export function DonorTransactionTable({
         <TableHeader>
           <TableRow>
             <TableHead className="w-14 text-center">No.</TableHead>
-            <TableSortHeader
-              label="Atas Nama"
-              sortKey="name"
-              currentSortBy={sortBy}
-              currentSortOrder={sortOrder}
-              onSort={onSortChange}
-            />
-            <TableSortHeader
-              label="Nominal Donasi"
-              sortKey="amount"
-              currentSortBy={sortBy}
-              currentSortOrder={sortOrder}
-              onSort={onSortChange}
-              align="right"
-            />
-            <TableSortHeader
-              label="Program Kebaikan"
-              sortKey="program"
-              currentSortBy={sortBy}
-              currentSortOrder={sortOrder}
-              onSort={onSortChange}
-            />
-            <TableSortHeader
-              label="Metode Bayar"
-              sortKey="channel"
-              currentSortBy={sortBy}
-              currentSortOrder={sortOrder}
-              onSort={onSortChange}
-            />
-            <TableSortHeader
-              label="Tanggal Transaksi"
-              sortKey="date"
-              currentSortBy={sortBy}
-              currentSortOrder={sortOrder}
-              onSort={onSortChange}
-              align="center"
-            />
-            <TableHead className="text-center w-28">Kwitansi</TableHead>
+            <TableHead>Atas Nama</TableHead>
+            <TableHead className="text-right">Nominal Donasi</TableHead>
+            <TableHead>Program Kebaikan</TableHead>
+            <TableHead className="text-center">Metode Bayar</TableHead>
+            <TableHead className="text-center w-28">Status</TableHead>
+            <TableHead className="text-center">Tanggal Transaksi</TableHead>
+            <TableHead className="text-center w-32">Aksi</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -95,14 +88,14 @@ export function DonorTransactionTable({
           {isLoading ? (
             <TableSkeletonRows
               rows={5}
-              columns={7}
-              cellAlignments={["center", "left", "right", "left", "left", "center", "center"]}
+              columns={8}
+              cellAlignments={["center", "left", "right", "left", "center", "center", "center", "center"]}
               height="h-4"
             />
           ) : items.length === 0 ? (
             <TableEmptyRow
-              colSpan={7}
-              isFiltered={Boolean(search)}
+              colSpan={8}
+              isFiltered={Boolean(statusFilter && statusFilter !== "ALL")}
             />
           ) : (
             items.map((item) => (
@@ -129,17 +122,15 @@ export function DonorTransactionTableSkeleton() {
           <h2 className="text-base font-medium text-slate-900">
             Daftar Riwayat Transaksi
           </h2>
-          <p className="text-sm font-normal text-slate-500 mt-0.5">
-            Rincian seluruh donasi, sedekah, dan zakat yang tercatat
-          </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <Skeleton className="h-10 w-full sm:w-72 md:w-80 rounded-md" />
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Skeleton className="h-10 w-36 sm:w-44 rounded-md" />
           <div className="flex items-center gap-1.5 shrink-0">
             <span className="text-sm font-medium text-slate-600">Baris:</span>
             <Skeleton className="h-10 w-20 rounded-md" />
           </div>
+          <Skeleton className="h-10 w-10 rounded-md" />
         </div>
       </div>
 
@@ -150,16 +141,17 @@ export function DonorTransactionTableSkeleton() {
             <TableHead>Atas Nama</TableHead>
             <TableHead className="text-right">Nominal Donasi</TableHead>
             <TableHead>Program Kebaikan</TableHead>
-            <TableHead>Metode Bayar</TableHead>
+            <TableHead className="text-center">Metode Bayar</TableHead>
+            <TableHead className="text-center w-28">Status</TableHead>
             <TableHead className="text-center">Tanggal Transaksi</TableHead>
-            <TableHead className="text-center w-28">Kwitansi</TableHead>
+            <TableHead className="text-center w-32">Aksi</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableSkeletonRows
             rows={5}
-            columns={7}
-            cellAlignments={["center", "left", "right", "left", "left", "center", "center"]}
+            columns={8}
+            cellAlignments={["center", "left", "right", "left", "center", "center", "center", "center"]}
             height="h-4"
           />
         </TableBody>

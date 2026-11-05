@@ -33,7 +33,12 @@ export function DonorMetricCardsSkeleton() {
   );
 }
 
-export function DonorMetricCards({ metrics, lastDonation, isLoading = false }) {
+export function DonorMetricCards({
+  metrics,
+  lastDonation,
+  isLoading = false,
+  hasActiveRoutine = false,
+}) {
   const totalNominal = metrics?.totalNominal || 0;
   const totalTransactions = metrics?.totalTransactions || 0;
   const totalPrograms = metrics?.totalPrograms || 0;
@@ -43,10 +48,26 @@ export function DonorMetricCards({ metrics, lastDonation, isLoading = false }) {
     return <DonorMetricCardsSkeleton />;
   }
 
+  const handleScrollToRoutine = (e) => {
+    e.preventDefault();
+    const el = document.getElementById("donor-routine-card");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("ring-2", "ring-primary", "ring-offset-2");
+      setTimeout(() => {
+        el.classList.remove("ring-2", "ring-primary", "ring-offset-2");
+      }, 1800);
+    }
+  };
+
   const QUICK_ACTIONS = [
     { label: "Donasi Baru", href: "/program" },
     { label: "Bayar Zakat", href: "/kalkulator-zakat" },
-    { label: "Donasi Rutin", href: "/donasi-rutin" },
+    {
+      label: hasActiveRoutine ? "Kelola Jadwal" : "Donasi Rutin",
+      href: hasActiveRoutine ? "#donor-routine-card" : "/donasi-rutin",
+      onClick: hasActiveRoutine ? handleScrollToRoutine : undefined,
+    },
     { label: "Rekap Kuitansi", href: "/donatur/riwayat" },
   ];
 
@@ -68,12 +89,12 @@ export function DonorMetricCards({ metrics, lastDonation, isLoading = false }) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-      {/* Card 1: Total Donasi Tersalurkan */}
+      {/* Card 1: Total Donasi Anda */}
       <Card className="sm:col-span-3 border-slate-200/90 bg-sidebar pt-3.5 sm:pt-4 px-3 sm:px-3.5 pb-2.5 sm:pb-3 space-y-2.5 shadow-2xs">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pb-2.5 border-slate-200/80">
           <div>
             <p className="text-sm font-medium text-slate-500">
-              Total Donasi Tersalurkan
+              Total Donasi Anda
             </p>
             <DonorAmountDisplay
               amount={totalNominal}
@@ -94,16 +115,28 @@ export function DonorMetricCards({ metrics, lastDonation, isLoading = false }) {
 
         {/* 4 Quick Actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {QUICK_ACTIONS.map((action) => (
-            <Link key={action.label} href={action.href}>
+          {QUICK_ACTIONS.map((action) =>
+            action.onClick ? (
               <Button
+                key={action.label}
+                type="button"
+                onClick={action.onClick}
                 variant="outline"
                 className="w-full h-10 px-3 rounded-md border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50 text-slate-900 text-sm font-medium cursor-pointer"
               >
                 {action.label}
               </Button>
-            </Link>
-          ))}
+            ) : (
+              <Link key={action.label} href={action.href}>
+                <Button
+                  variant="outline"
+                  className="w-full h-10 px-3 rounded-md border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50 text-slate-900 text-sm font-medium cursor-pointer"
+                >
+                  {action.label}
+                </Button>
+              </Link>
+            )
+          )}
         </div>
       </Card>
 

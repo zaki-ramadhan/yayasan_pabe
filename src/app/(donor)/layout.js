@@ -1,6 +1,6 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { DonorLayoutClient } from "@/components/donor/DonorLayoutClient";
+import { getAuthenticatedUser } from "@/lib/serverAuth";
 
 export const metadata = {
   title: "Dasbor Donatur",
@@ -22,18 +22,16 @@ export const metadata = {
 };
 
 export default async function DonorLayout({ children }) {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("pabe_session")?.value;
-  const role = cookieStore.get("pabe_role")?.value;
+  const { authenticated, user } = await getAuthenticatedUser();
 
-  if (!session) {
+  if (!authenticated || !user) {
     redirect("/login?redirect=/donatur/dashboard");
   }
 
   // Jika akun adalah staf/admin, arahkan langsung ke panel admin yayasan
-  if (role && role !== "DONOR") {
+  if (user.role && user.role !== "DONOR") {
     redirect("/admin");
   }
 
-  return <DonorLayoutClient>{children}</DonorLayoutClient>;
+  return <DonorLayoutClient initialUser={user}>{children}</DonorLayoutClient>;
 }

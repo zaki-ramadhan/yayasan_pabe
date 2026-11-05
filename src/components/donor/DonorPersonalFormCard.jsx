@@ -5,15 +5,16 @@ import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { toast } from "@/hooks/useToast";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
+import { RegionSelector } from "@/components/shared/RegionSelector";
 import {
   sanitizeName,
   sanitizeCity,
   sanitizePhone,
-  sanitizeBio,
   sanitizeAddress,
   validateName,
   validatePhone,
@@ -21,7 +22,6 @@ import {
 
 const PERSONAL_FIELD_SANITIZERS = {
   name: sanitizeName,
-  bio: sanitizeBio,
   city: sanitizeCity,
   phone: sanitizePhone,
   address: sanitizeAddress,
@@ -39,12 +39,11 @@ export function DonorPersonalFormCard({
   const initialValues = useMemo(
     () => ({
       name: profile?.name || "",
-      bio: profile?.bio || "",
       city: profile?.city || "",
       address: profile?.address || "",
       phone: profile?.phone || "",
     }),
-    [profile?.name, profile?.bio, profile?.city, profile?.address, profile?.phone]
+    [profile?.name, profile?.city, profile?.address, profile?.phone]
   );
 
   const validator = useCallback((vals) => {
@@ -53,7 +52,7 @@ export function DonorPersonalFormCard({
     return nameValid && phoneValid;
   }, []);
 
-  const { bind, getCleanValues, isDirty, isValid } = useSanitizedForm(
+  const { bind, values, handleChange, getCleanValues, isDirty, isValid } = useSanitizedForm(
     initialValues,
     PERSONAL_FIELD_SANITIZERS,
     validator
@@ -141,64 +140,57 @@ export function DonorPersonalFormCard({
             placeholder="Contoh: Hendra Wijaya"
             className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
             required
-            maxLength={60}
+            minLength={FIELD_LIMITS.NAME.min}
+            maxLength={FIELD_LIMITS.NAME.max}
           />
         </FormField>
 
-        <FormField label="Bio / moto pribadi">
-          <Textarea
-            id="input-bio"
-            name="bio"
-            rows={2}
-            {...bind("bio")}
-            placeholder="Tuliskan moto atau harapan kebaikan Anda..."
-            maxLength={200}
-            className="rounded-md bg-white font-normal"
+        <FormField label="Nomor WhatsApp" error={errors.phone}>
+          <Input
+            id="input-phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            {...bind("phone")}
+            onChange={(e) => {
+              bind("phone").onChange(e);
+              if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+            }}
+            placeholder="081234567890"
+            minLength={FIELD_LIMITS.PHONE.min}
+            maxLength={FIELD_LIMITS.PHONE.max}
+            className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
           />
         </FormField>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <FormField label="Domisili / kota">
-            <Input
-              id="input-city"
-              name="city"
-              type="text"
-              autoComplete="address-level2"
-              {...bind("city")}
-              placeholder="Contoh: Kota Bandung"
-              maxLength={50}
-              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
-            />
-          </FormField>
-
-          <FormField label="Nomor WhatsApp" error={errors.phone}>
-            <Input
-              id="input-phone"
-              name="phone"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              {...bind("phone")}
-              onChange={(e) => {
-                bind("phone").onChange(e);
-                if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
-              }}
-              placeholder="Contoh: 081234567890"
-              maxLength={15}
-              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
-            />
-          </FormField>
-        </div>
+        {/* Wilayah Domisili (Provinsi & Kota / Kabupaten Combobox) */}
+        <RegionSelector
+          selectedCity={values.city || ""}
+          onCityChange={(newCity) => {
+            handleChange("city", sanitizeCity)(newCity);
+            if (errors.city) setErrors((prev) => ({ ...prev, city: undefined }));
+          }}
+          error={errors.city}
+          onClearError={() => {
+            if (errors.city) setErrors((prev) => ({ ...prev, city: undefined }));
+          }}
+          disabled={isSaving}
+          gridClassName="grid grid-cols-1 sm:grid-cols-2 gap-3.5"
+          inputClassName="h-9.5 text-sm rounded-md bg-white font-normal"
+        />
 
         <FormField label="Alamat lengkap">
-          <Textarea
+          <AutoResizeTextarea
             id="input-address"
             name="address"
-            rows={2}
+            minRows={2}
+            maxRows={6}
             autoComplete="street-address"
             {...bind("address")}
             placeholder="Alamat domisili lengkap untuk keperluan konfirmasi penyaluran..."
-            maxLength={250}
+            minLength={FIELD_LIMITS.ADDRESS.min}
+            maxLength={FIELD_LIMITS.ADDRESS.max}
             className="rounded-md border-slate-200 bg-white"
           />
         </FormField>

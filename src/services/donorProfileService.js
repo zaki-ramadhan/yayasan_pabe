@@ -1,18 +1,14 @@
 import crypto from "crypto";
 import prisma from "@/lib/prisma";
+import { deleteFromR2 } from "@/lib/r2Storage";
 import {
-  sanitizeInput,
   sanitizeName,
   sanitizeCity,
   sanitizePhone,
-  sanitizeBio,
   sanitizeAddress,
-  sanitizeBankAccount,
-  sanitizeBankAccountName,
   sanitizeImageUrl,
   validateName,
   validatePhone,
-  validateBankAccount,
   validatePasswordInput,
 } from "@/lib/security";
 import { DEMO_USERS } from "@/services/authService";
@@ -68,14 +64,8 @@ export async function getDonorProfile({ userEmail, userId }) {
             phone: demoMatch.phone,
             avatar: demoMatch.avatar,
             salutation: "",
-            bio: "Mewujudkan generasi qur'ani mandiri dan berdaya saing.",
             city: "Bandung",
             address: "Jl. Riau No. 45, Bandung, Jawa Barat",
-            coverImage:
-              "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&auto=format&fit=crop&q=80",
-            bankName: "BSI (Bank Syariah Indonesia)",
-            bankAccount: "7123456789",
-            bankAccountName: "Hendra Wijaya",
           },
         });
       }
@@ -95,13 +85,18 @@ export async function getDonorProfile({ userEmail, userId }) {
       salutation: user.salutation || "",
       phone: user.phone || "",
       avatar: user.avatar || "",
-      bio: user.bio || "",
+      customAvatar: user.customAvatar || "",
+      providerAvatar:
+        user.providerAvatar ||
+        (user.provider === "GOOGLE" ||
+        user.provider === "FACEBOOK" ||
+        user.avatar?.includes("googleusercontent.com")
+          ? user.avatar
+          : ""),
+      provider: user.provider || "CREDENTIALS",
+      hasPassword: Boolean(user.passwordHash),
       city: user.city || "",
       address: user.address || "",
-      coverImage: user.coverImage || "",
-      bankName: user.bankName || "",
-      bankAccount: user.bankAccount || "",
-      bankAccountName: user.bankAccountName || "",
       createdAt: user.createdAt.toISOString(),
       updatedAt: user.updatedAt.toISOString(),
     };
@@ -128,10 +123,6 @@ export async function updateDonorProfile({ userEmail, profileData }) {
     updatePayload.name = cleanName;
   }
 
-  if (profileData.bio !== undefined) {
-    updatePayload.bio = sanitizeBio(profileData.bio).trim();
-  }
-
   if (profileData.city !== undefined) {
     updatePayload.city = sanitizeCity(profileData.city).trim();
   }
@@ -151,34 +142,30 @@ export async function updateDonorProfile({ userEmail, profileData }) {
     updatePayload.phone = cleanPhone;
   }
 
-  if (profileData.bankName !== undefined) {
-    updatePayload.bankName = sanitizeInput(profileData.bankName).trim();
-  }
-  if (profileData.bankAccount !== undefined) {
-    updatePayload.bankAccount = sanitizeBankAccount(profileData.bankAccount).trim();
-  }
-  if (profileData.bankAccountName !== undefined) {
-    updatePayload.bankAccountName = sanitizeBankAccountName(profileData.bankAccountName).trim();
+  let existingUser = null;
+  if (
+    profileData.avatar !== undefined ||
+    profileData.customAvatar !== undefined
+  ) {
+    existingUser = await prisma.user.findUnique({
+      where: { email: cleanEmail },
+      select: { avatar: true, customAvatar: true },
+    });
   }
 
-  if (
-    updatePayload.bankAccount !== undefined ||
-    updatePayload.bankAccountName !== undefined
-  ) {
-    const bankValidation = validateBankAccount({
-      bankAccount: updatePayload.bankAccount,
-      bankAccountName: updatePayload.bankAccountName,
-    });
-    if (!bankValidation.isValid) {
-      throw new Error(bankValidation.message);
+  if (profileData.customAvatar !== undefined) {
+    const cleanCustomAvatar = sanitizeImageUrl(profileData.customAvatar);
+    updatePayload.customAvatar = cleanCustomAvatar;
+
+    // Hapus berkas R2 lama HANYA jika foto kustom diganti dengan berkas baru atau dihapus permanen
+    if (existingUser?.customAvatar && existingUser.customAvatar !== cleanCustomAvatar) {
+      await deleteFromR2(existingUser.customAvatar);
     }
   }
 
-  if (profileData.coverImage !== undefined) {
-    updatePayload.coverImage = sanitizeImageUrl(profileData.coverImage);
-  }
   if (profileData.avatar !== undefined) {
     updatePayload.avatar = sanitizeImageUrl(profileData.avatar);
+    // Catatan: Jika avatar berganti ke preset, foto kustom di R2 tetap disimpan dengan aman
   }
 
   try {
@@ -197,13 +184,13 @@ export async function updateDonorProfile({ userEmail, profileData }) {
       salutation: "",
       phone: updated.phone || "",
       avatar: updated.avatar || "",
-      bio: updated.bio || "",
+      customAvatar: updated.customAvatar || "",
+      providerAvatar: updated.providerAvatar || "",
+      provider: updated.provider || "CREDENTIALS",
+      hasPassword: Boolean(updated.passwordHash),
       city: updated.city || "",
       address: updated.address || "",
-      coverImage: updated.coverImage || "",
-      bankName: updated.bankName || "",
-      bankAccount: updated.bankAccount || "",
-      bankAccountName: updated.bankAccountName || "",
+      createdAt: updated.createdAt ? updated.createdAt.toISOString() : new Date().toISOString(),
       updatedAt: updated.updatedAt.toISOString(),
     };
   } catch (error) {
@@ -232,14 +219,19 @@ export async function updateDonorPassword({ userEmail, oldPassword, newPassword 
     throw new Error("Pengguna tidak ditemukan.");
   }
 
-  if (user.passwordHash) {
-    if (!oldPassword || !oldPassword.trim()) {
-      throw new Error("Kata sandi saat ini wajib diisi untuk verifikasi keamanan.");
-    }
-    const isValid = verifyPassword(oldPassword, user.passwordHash);
-    if (!isValid) {
-      throw new Error("Kata sandi saat ini tidak cocok.");
-    }
+  if (!user.passwordHash) {
+    throw new Error(
+      `Akun ini terdaftar murni menggunakan penyedia ${user.provider || "OAuth"} dan belum memiliki kata sandi manual.`
+    );
+  }
+
+  if (!oldPassword || !oldPassword.trim()) {
+    throw new Error("Kata sandi saat ini wajib diisi untuk verifikasi keamanan.");
+  }
+
+  const isValid = verifyPassword(oldPassword, user.passwordHash);
+  if (!isValid) {
+    throw new Error("Kata sandi saat ini tidak cocok.");
   }
 
   if (oldPassword && oldPassword === newPassword) {
@@ -253,5 +245,5 @@ export async function updateDonorPassword({ userEmail, oldPassword, newPassword 
     data: { passwordHash: newHash },
   });
 
-  return { success: true };
+  return { success: true, message: "Kata sandi akun Anda berhasil diperbarui." };
 }

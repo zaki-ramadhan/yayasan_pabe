@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, Home } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { getInitials } from "@/lib/formatters";
 
 export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
   const displayName = currentUser?.name || "Pengguna";
@@ -14,9 +15,10 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
     ? (currentUser?.avatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
     : null;
 
-  const fallbackInitial =
-    currentUser?.initials ||
-    (currentUser?.name ? currentUser.name.trim().charAt(0).toUpperCase() : "U");
+  const fallbackInitial = getInitials(
+    currentUser?.name,
+    currentUser?.initials || currentUser?.email || "U"
+  );
 
   return (
     <header className="lg:hidden sticky top-0 z-40 bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between">
@@ -78,7 +80,7 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
                 onError={() => setImgError(true)}
               />
             ) : (
-              <span className="font-medium text-sm text-slate-700">
+              <span className="font-semibold text-xs text-slate-700">
                 {fallbackInitial}
               </span>
             )}

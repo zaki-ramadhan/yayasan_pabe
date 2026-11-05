@@ -1,5 +1,6 @@
 import { Search, RotateCcw } from "lucide-react";
 import { BENEFICIARY_CATEGORIES } from "@/data/beneficiaries";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function BeneficiaryFilterBar({
   category,
@@ -47,6 +48,8 @@ export function BeneficiaryFilterBar({
           <input
             type="text"
             value={searchQuery}
+            minLength={FIELD_LIMITS.SEARCH_QUERY.min}
+            maxLength={FIELD_LIMITS.SEARCH_QUERY.max}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Cari nama penerima atau program..."
             className="w-full pl-9 pr-3.5 py-2 text-xs sm:text-sm rounded-lg border border-slate-300 bg-white placeholder:text-slate-700 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 transition-all shadow-2xs"

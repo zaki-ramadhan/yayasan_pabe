@@ -6,31 +6,15 @@ import {
   formatRecentReports,
   formatRoutineDonations,
   getDefaultMonthlyTrend,
+  buildUserWhereClause,
 } from "./donorAnalyticsHelper";
+import { getPendingInvoicesForUser } from "@/services/donationExpiryService";
 
-export function buildUserWhereClause(userEmail, userName) {
-  const orConditions = [];
+export { buildUserWhereClause };
 
-  if (userEmail && typeof userEmail === "string") {
-    orConditions.push({ donorEmail: { equals: userEmail.trim(), mode: "insensitive" } });
-  }
-
-  if (userName && typeof userName === "string") {
-    const cleanName = userName.trim();
-    orConditions.push({ donorName: { equals: cleanName, mode: "insensitive" } });
-
-    const withoutHonorific = cleanName.replace(/^(H\.|Hj\.|Drs\.|Ust\.|dr\.|Prof\.)\s*/i, "").trim();
-    if (withoutHonorific && withoutHonorific !== cleanName) {
-      orConditions.push({ donorName: { contains: withoutHonorific, mode: "insensitive" } });
-    }
-  }
-
-  return orConditions.length > 0 ? { OR: orConditions } : null;
-}
-
-export async function getDonorDashboardOverview({ userEmail, userName, year }) {
+export async function getDonorDashboardOverview({ userEmail, userName, userPhone, year }) {
   const currentYear = parseInt(year, 10) || new Date().getFullYear();
-  const userCondition = buildUserWhereClause(userEmail, userName);
+  const userCondition = buildUserWhereClause(userEmail, userName, userPhone);
   const defaultMonthly = getDefaultMonthlyTrend();
 
   if (!userCondition) {
@@ -43,6 +27,7 @@ export async function getDonorDashboardOverview({ userEmail, userName, year }) {
       recentReports: [],
       recentItems: [],
       routineDonations: [],
+      pendingInvoices: [],
     };
   }
 
@@ -68,6 +53,7 @@ export async function getDonorDashboardOverview({ userEmail, userName, year }) {
       recentReportsData,
       recentDonationsData,
       routineDonationsData,
+      pendingInvoicesData,
     ] = await Promise.all([
       prisma.donation.aggregate({
         where: {
@@ -200,6 +186,7 @@ export async function getDonorDashboardOverview({ userEmail, userName, year }) {
           },
         },
       }),
+      getPendingInvoicesForUser({ userEmail, userName, limit: 3 }),
     ]);
 
     const totalNominal = aggregates._sum.amount || 0;
@@ -211,6 +198,7 @@ export async function getDonorDashboardOverview({ userEmail, userName, year }) {
     const recentItems = formatRecentDonations(recentDonationsData);
     const recentReports = formatRecentReports(recentReportsData);
     const routineDonations = formatRoutineDonations(routineDonationsData);
+    const pendingInvoices = Array.isArray(pendingInvoicesData) ? pendingInvoicesData : [];
 
     const currentMonthAchieved = monthAggregate._sum.amount || 0;
     const currentMonthTarget = 1000000;
@@ -228,6 +216,7 @@ export async function getDonorDashboardOverview({ userEmail, userName, year }) {
       recentReports,
       recentItems,
       routineDonations,
+      pendingInvoices,
     };
   } catch (error) {
     console.error("Error getDonorDashboardOverview in donorOverviewService:", error);
@@ -235,9 +224,9 @@ export async function getDonorDashboardOverview({ userEmail, userName, year }) {
   }
 }
 
-export async function getDonorMonthlyTrend({ userEmail, userName, year }) {
+export async function getDonorMonthlyTrend({ userEmail, userName, userPhone, year }) {
   const currentYear = parseInt(year, 10) || new Date().getFullYear();
-  const userCondition = buildUserWhereClause(userEmail, userName);
+  const userCondition = buildUserWhereClause(userEmail, userName, userPhone);
 
   if (!userCondition) {
     return { monthlyTrend: getDefaultMonthlyTrend() };

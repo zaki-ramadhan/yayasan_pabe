@@ -20,7 +20,7 @@ const PAGE_SIZE = 5;
 
 
 export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClosed = false }) {
-  const { donors, aminedSet, handleToggleAmin } = usePrayersSync(initialDonors);
+  const { donors, aminedSet, handleToggleAmin } = usePrayersSync(initialDonors, campaignSlug);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const scrollRef = useRef(null);

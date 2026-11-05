@@ -1,28 +1,12 @@
 import prisma from "@/lib/prisma";
-
-function buildUserWhereClause(userEmail, userName) {
-  const orConditions = [];
-
-  if (userEmail && typeof userEmail === "string") {
-    orConditions.push({ donorEmail: { equals: userEmail.trim(), mode: "insensitive" } });
-  }
-
-  if (userName && typeof userName === "string") {
-    const cleanName = userName.trim();
-    orConditions.push({ donorName: { equals: cleanName, mode: "insensitive" } });
-
-    const withoutHonorific = cleanName.replace(/^(H\.|Hj\.|Drs\.|Ust\.|dr\.|Prof\.)\s*/i, "").trim();
-    if (withoutHonorific && withoutHonorific !== cleanName) {
-      orConditions.push({ donorName: { contains: withoutHonorific, mode: "insensitive" } });
-    }
-  }
-
-  return orConditions.length > 0 ? { OR: orConditions } : null;
-}
+import { buildUserWhereClause } from "./donorAnalyticsHelper";
+import { getPendingInvoicesForUser } from "./donationExpiryService";
 
 export async function getDonorHistory({
   userEmail,
   userName,
+  userPhone,
+  status = "ALL",
   search = "",
   sortBy = "date",
   sortOrder = "desc",
@@ -34,7 +18,7 @@ export async function getDonorHistory({
   const skip = (currentPage - 1) * pageLimit;
   const normalizedSortOrder = sortOrder === "asc" ? "asc" : "desc";
 
-  const userCondition = buildUserWhereClause(userEmail, userName);
+  const userCondition = buildUserWhereClause(userEmail, userName, userPhone);
   if (!userCondition) {
     return {
       metrics: {
@@ -43,6 +27,7 @@ export async function getDonorHistory({
         totalPrograms: 0,
       },
       items: [],
+      pendingInvoices: [],
       pagination: {
         total: 0,
         totalPages: 0,
@@ -75,7 +60,10 @@ export async function getDonorHistory({
     const totalTransactions = aggregates._count.id || 0;
     const totalPrograms = distinctCampaigns.length;
 
-    const filterConditions = [{ status: "PAID" }, userCondition];
+    const filterConditions = [userCondition];
+    if (status && status.toUpperCase() !== "ALL") {
+      filterConditions.push({ status: status.toUpperCase() });
+    }
 
     if (search && typeof search === "string" && search.trim().length > 0) {
       const q = search.trim();
@@ -91,7 +79,7 @@ export async function getDonorHistory({
 
     const finalWhere = { AND: filterConditions };
 
-    let orderByClause = { paidAt: normalizedSortOrder };
+    let orderByClause = [{ paidAt: normalizedSortOrder }, { createdAt: normalizedSortOrder }];
     if (sortBy === "nominal" || sortBy === "amount") {
       orderByClause = { amount: normalizedSortOrder };
     } else if (sortBy === "program") {
@@ -102,7 +90,7 @@ export async function getDonorHistory({
       orderByClause = { donorName: normalizedSortOrder };
     }
 
-    const [filteredCount, donations] = await Promise.all([
+    const [filteredCount, donations, pendingInvoicesData] = await Promise.all([
       prisma.donation.count({ where: finalWhere }),
       prisma.donation.findMany({
         where: finalWhere,
@@ -118,7 +106,10 @@ export async function getDonorHistory({
         skip,
         take: pageLimit,
       }),
+      getPendingInvoicesForUser({ userEmail, userName, limit: 10 }).catch(() => []),
     ]);
+
+    const pendingInvoices = Array.isArray(pendingInvoicesData) ? pendingInvoicesData : [];
 
     const items = donations.map((d, index) => {
       const effectiveProgramTitle =
@@ -154,6 +145,7 @@ export async function getDonorHistory({
         totalPrograms,
       },
       items,
+      pendingInvoices,
       pagination: {
         total: filteredCount,
         totalPages,

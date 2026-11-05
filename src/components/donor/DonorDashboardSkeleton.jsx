@@ -3,6 +3,7 @@ import { DonorMetricCardsSkeleton } from "@/components/donor/DonorMetricCards";
 import {
   DonorListSkeleton,
   DonorReportListSkeleton,
+  DonorRoutineListSkeleton,
 } from "@/components/donor/DonorDashboardPrimitives";
 
 export function DonorDashboardSkeleton() {
@@ -128,13 +129,11 @@ export function DonorDashboardSkeleton() {
           </div>
 
           {/* 4. Donasi Rutin Tersimpan */}
-          <div className="rounded-md border border-slate-200/90 bg-sidebar p-4.5 sm:p-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-5 w-40 rounded-sm" />
-              <Skeleton className="h-4 w-16 rounded-sm" />
-            </div>
-            <DonorListSkeleton count={2} />
-            <Skeleton className="h-8.5 w-full rounded-md" />
+          <div id="donor-routine-card" className="scroll-mt-20 rounded-md border border-slate-200/90 bg-sidebar p-4.5 sm:p-5 space-y-3">
+            <h2 className="text-base font-medium text-slate-950">
+              Donasi Rutin Tersimpan
+            </h2>
+            <DonorRoutineListSkeleton count={1} />
           </div>
         </div>
       </div>

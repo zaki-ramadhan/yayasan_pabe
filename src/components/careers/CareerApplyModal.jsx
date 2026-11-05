@@ -19,9 +19,10 @@ import { toast } from "@/hooks/useToast";
 import { getStoredUser } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useStagedUploads } from "@/hooks/useStagedUploads";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function CareerApplyModal({ isOpen, onClose, job }) {
-  const { currentUser } = useCurrentUser();
+  const { currentUser, updateLocalUser } = useCurrentUser();
   const storedUser = getStoredUser();
   const activeUser = currentUser || storedUser;
 
@@ -113,10 +114,10 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     else if (field === "email") cleanValue = sanitizeEmail(value);
     else if (field === "phone") cleanValue = sanitizePhone(value);
     else if (field === "resumeUrl") {
-      cleanValue = (value || "").replace(/\s+/g, "").slice(0, 300);
+      cleanValue = (value || "").replace(/\s+/g, "").slice(0, FIELD_LIMITS.MEDIA_URL.max);
       if (cleanValue) trackUpload(cleanValue);
     }
-    else if (field === "coverLetter") cleanValue = value.replace(/^\s+/, "").replace(/\s{2,}/g, " ").slice(0, 500);
+    else if (field === "coverLetter") cleanValue = value.replace(/^\s+/, "").replace(/\s{2,}/g, " ").slice(0, FIELD_LIMITS.CAREER_MOTIVATION.max);
 
     setFormData((prev) => ({
       ...prev,
@@ -200,6 +201,12 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
 
       commitUploads();
       setIsSuccess(true);
+
+      // Sinkronisasi sesi lokal jika nomor WhatsApp di profil sebelumnya masih kosong
+      if (activeUser && (!activeUser.phone || activeUser.phone === "-") && phoneValidation.sanitized) {
+        updateLocalUser({ phone: phoneValidation.sanitized });
+      }
+
       try {
         sessionStorage.removeItem(`career_draft_${job.id}`);
       } catch {}

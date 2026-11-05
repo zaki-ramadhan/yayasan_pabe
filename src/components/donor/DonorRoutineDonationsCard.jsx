@@ -9,7 +9,7 @@ import { StatusBadge } from "@/components/ui/Badge";
 import {
   DonorCard,
   DonorListItem,
-  DonorListSkeleton,
+  DonorRoutineListSkeleton,
   DonorEmptyText,
 } from "@/components/donor/DonorDashboardPrimitives";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -48,15 +48,17 @@ export function DonorRoutineDonationsCard({
     }
   };
 
+  const hasActiveRoutine = items.some(
+    (it) => it.status === "ACTIVE" || it.status === "PAUSED"
+  );
+
   return (
     <DonorCard
       title="Donasi Rutin Tersimpan"
-      actionText={items.length > 0 ? "Atur jadwal" : undefined}
-      actionHref="/donasi-rutin"
     >
       <div className="space-y-2.5">
         {isLoading ? (
-          <DonorListSkeleton count={2} height="h-14" />
+          <DonorRoutineListSkeleton count={1} />
         ) : items.length === 0 ? (
           <DonorEmptyText message="Belum ada komitmen donasi rutin tersimpan" />
         ) : (
@@ -67,76 +69,79 @@ export function DonorRoutineDonationsCard({
             const isCancelled = item.status === "CANCELLED";
 
             return (
-              <DonorListItem key={item.id} className="flex-col items-start gap-2 p-3">
-                <div className="w-full flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="text-xs font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                        {item.frequency === "DAILY"
-                          ? "Harian"
-                          : item.frequency === "WEEKLY"
-                          ? "Pekanan"
-                          : "Bulanan"}
-                      </span>
-                      <StatusBadge status={item.status} />
-                    </div>
-                    <p className="text-sm font-medium text-slate-900 truncate">
-                      {item.programTitle}
-                    </p>
+              <DonorListItem key={item.id} className="flex-col items-start gap-2.5 p-3 sm:p-3.5">
+                {/* 1. Header: Frekuensi, Status, dan Nominal */}
+                <div className="w-full flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      {item.frequency === "DAILY"
+                        ? "Harian"
+                        : item.frequency === "WEEKLY"
+                        ? "Pekanan"
+                        : "Bulanan"}
+                    </span>
+                    <StatusBadge status={item.status} />
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-sm font-medium text-emerald-800 tabular-nums">
+                    <p className="text-sm sm:text-base font-bold text-emerald-800 tabular-nums">
                       {formatRupiah(item.amount)}
                     </p>
-                    <span className="text-xs font-normal text-slate-500 block">
-                      {item.routineType === "AUTO_DONATION"
-                        ? "Auto-invoice"
-                        : "Pengingat WA"}
-                    </span>
                   </div>
                 </div>
 
-                {/* Tombol Aksi Mandiri Donatur */}
+                {/* 2. Body: Judul Program Lebar Penuh (Line Clamp 2) & Tipe Penagihan */}
+                <div className="w-full space-y-1">
+                  <p
+                    className="text-sm font-semibold text-slate-900 leading-snug line-clamp-2"
+                    title={item.programTitle}
+                  >
+                    {item.programTitle}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {item.routineType === "AUTO_DONATION"
+                      ? "Penagihan via invoice email"
+                      : "Pengingat jadwal via email"}
+                  </p>
+                </div>
+
+                {/* 3. Footer: Tombol Aksi Mandiri Donatur (Gaya 3D Embossed) */}
                 {!isCancelled && (
-                  <div className="w-full pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5">
+                  <div className="w-full pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
                     {isActive ? (
                       <Button
                         type="button"
-                        variant="outline"
                         size="sm"
                         onClick={() => handleUpdateStatus(item.id, "PAUSED")}
                         disabled={isProcessing}
                         isLoading={isProcessing}
-                        className="h-7 px-2.5 text-xs text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200 gap-1 disabled:pointer-events-none disabled:cursor-not-allowed"
+                        className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:via-amber-500 hover:to-amber-600 border-t border-t-amber-300 border-x border-x-amber-600 border-b-2 border-b-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(217,119,6,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
                       >
-                        {!isProcessing && <Pause className="w-3 h-3" />}
-                        <span>Jeda sementara</span>
+                        {!isProcessing && <Pause className="w-3 h-3 text-white fill-current" />}
+                        <span>Jeda</span>
                       </Button>
                     ) : (
                       <Button
                         type="button"
-                        variant="outline"
                         size="sm"
                         onClick={() => handleUpdateStatus(item.id, "ACTIVE")}
                         disabled={isProcessing}
                         isLoading={isProcessing}
-                        className="h-7 px-2.5 text-xs text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200 gap-1 disabled:pointer-events-none disabled:cursor-not-allowed"
+                        className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-emerald-600 via-emerald-700 to-emerald-800 hover:from-emerald-500 hover:via-emerald-600 hover:to-emerald-700 border-t border-t-emerald-400 border-x border-x-emerald-600 border-b-2 border-b-emerald-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(5,150,105,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
                       >
-                        {!isProcessing && <Play className="w-3 h-3" />}
-                        <span>Lanjutkan donasi</span>
+                        {!isProcessing && <Play className="w-3 h-3 text-white fill-current" />}
+                        <span>Lanjutkan</span>
                       </Button>
                     )}
 
                     <Button
                       type="button"
-                      variant="outline"
                       size="sm"
                       onClick={() => setCancelCommitmentItem(item)}
                       disabled={isProcessing}
                       isLoading={isProcessing}
-                      className="h-7 px-2.5 text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 border-rose-200 gap-1 disabled:pointer-events-none disabled:cursor-not-allowed"
+                      className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-rose-600 via-rose-700 to-rose-800 hover:from-rose-500 hover:via-rose-600 hover:to-rose-700 border-t border-t-rose-400 border-x border-x-rose-600 border-b-2 border-b-rose-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(225,29,72,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
                     >
-                      {!isProcessing && <XCircle className="w-3 h-3" />}
+                      {!isProcessing && <XCircle className="w-3 h-3 text-white" />}
                       <span>Batalkan</span>
                     </Button>
                   </div>
@@ -147,15 +152,17 @@ export function DonorRoutineDonationsCard({
         )}
       </div>
 
-      <Link href="/donasi-rutin" className="block pt-1">
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full h-9 text-sm font-medium rounded-md border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-50 cursor-pointer"
-        >
-          Atur donasi rutin baru
-        </Button>
-      </Link>
+      {!hasActiveRoutine && (
+        <Link href="/donasi-rutin" className="block pt-1">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full h-9 text-sm font-medium rounded-md border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-50 cursor-pointer"
+          >
+            {items.length === 0 ? "Atur donasi rutin" : "Atur donasi rutin baru"}
+          </Button>
+        </Link>
+      )}
 
       <ConfirmDialog
         isOpen={Boolean(cancelCommitmentItem)}

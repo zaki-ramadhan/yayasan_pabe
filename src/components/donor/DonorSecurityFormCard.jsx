@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldCheck, CheckCircle2, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";
@@ -9,6 +9,7 @@ import { toast } from "@/hooks/useToast";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
 import { validatePasswordInput } from "@/lib/security";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 const SECURITY_INITIAL_VALUES = {
   oldPassword: "",
@@ -19,10 +20,17 @@ const SECURITY_INITIAL_VALUES = {
 const EMPTY_SANITIZERS = {};
 
 export function DonorSecurityFormCard({
+  profile,
   onUpdatePassword,
   id = "section-security",
   borderless = false,
 }) {
+  const provider = profile?.provider || "CREDENTIALS";
+  const hasPassword = profile?.hasPassword !== false;
+  const isLinkedOAuth = provider !== "CREDENTIALS";
+  const isGoogle = provider === "GOOGLE";
+  const isPureOAuth = isLinkedOAuth && !hasPassword;
+
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -113,85 +121,180 @@ export function DonorSecurityFormCard({
       )}
     >
       <div className="pb-4 mb-5 border-b border-slate-200/80">
-        <div className="flex items-center gap-2">
-          <h2 className="text-base font-medium text-slate-950 leading-snug">
-            Keamanan Akun
-          </h2>
-        </div>
+        <h2 className="text-base font-medium text-slate-950 leading-snug">
+          Keamanan Akun
+        </h2>
         <p className="text-sm font-normal text-slate-500 mt-0.5">
-          Ganti kata sandi untuk menjaga keamanan akun.
+          {isPureOAuth
+            ? "Informasi autentikasi dan status keamanan akun Anda."
+            : "Ganti kata sandi untuk menjaga keamanan akun."}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
-        <div className="space-y-4">
-          <FormField label="Kata sandi saat ini" required error={errors.oldPassword}>
-            <Input
-              id="input-old-password"
-              name="oldPassword"
-              type="password"
-              autoComplete="current-password"
-              {...bind("oldPassword")}
-              onChange={(e) => {
-                bind("oldPassword").onChange(e);
-                if (errors.oldPassword) setErrors((prev) => ({ ...prev, oldPassword: undefined }));
-              }}
-              placeholder="Masukkan sandi saat ini"
-              maxLength={128}
-              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
-              required
-            />
-          </FormField>
+      {isPureOAuth ? (
+        <div className="max-w-xl space-y-4">
+          <div className="rounded-lg border border-slate-200/90 bg-slate-50/70 p-5 space-y-4">
+            <div className="flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 shadow-2xs">
+                {isGoogle ? (
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                    />
+                  </svg>
+                ) : (
+                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                )}
+              </div>
 
-          <FormField label="Kata sandi baru" required error={errors.newPassword}>
-            <Input
-              id="input-new-password"
-              name="newPassword"
-              type="password"
-              autoComplete="new-password"
-              {...bind("newPassword")}
-              onChange={(e) => {
-                bind("newPassword").onChange(e);
-                if (errors.newPassword) setErrors((prev) => ({ ...prev, newPassword: undefined }));
-              }}
-              placeholder="Minimal 6 karakter"
-              maxLength={128}
-              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
-              required
-            />
-          </FormField>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-medium text-slate-900">
+                    {isGoogle ? "Akun Terhubung via Google" : `Akun Terhubung via ${provider}`}
+                  </h3>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <CheckCircle2 className="w-3 h-3" />
+                    Terverifikasi
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Akun Anda diamankan menggunakan autentikasi Single Sign-On (SSO). Seluruh pengelolaan kata sandi, verifikasi 2 langkah, dan pemulihan akun dikelola langsung oleh pihak {isGoogle ? "Google" : provider} demi perlindungan data maksimal.
+                </p>
+              </div>
+            </div>
 
-          <FormField label="Ulangi sandi baru" required error={errors.confirmPassword}>
-            <Input
-              id="input-confirm-password"
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              {...bind("confirmPassword")}
-              onChange={(e) => {
-                bind("confirmPassword").onChange(e);
-                if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
-              }}
-              placeholder="Ulangi kata sandi baru"
-              maxLength={128}
-              className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
-              required
-            />
-          </FormField>
+            <div className="pt-3.5 border-t border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm">
+              <div>
+                <span className="text-slate-500 block font-normal text-xs sm:text-sm">Email Akun:</span>
+                <span className="text-slate-900 font-medium text-sm break-all">{profile?.email || "-"}</span>
+              </div>
+              <div>
+                <span className="text-slate-500 block font-normal text-xs sm:text-sm">Metode Autentikasi:</span>
+                <span className="text-slate-900 font-medium text-sm">SSO OAuth 2.0 ({isGoogle ? "Google" : provider})</span>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-sm text-slate-500 leading-relaxed">
+            Untuk memperbarui kata sandi atau setelan privasi, silakan kunjungi pengaturan akun {isGoogle ? "Google" : provider} Anda secara langsung.
+          </p>
         </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
+          {isLinkedOAuth && (
+            <div className="p-3.5 rounded-md border border-slate-200/90 bg-slate-50/80 flex items-start gap-3 mb-2">
+              <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                {isGoogle ? (
+                  <svg className="w-4 h-4" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                  </svg>
+                ) : (
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                )}
+              </div>
+              <div className="space-y-0.5 text-xs sm:text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-slate-900">Tertaut dengan {isGoogle ? "Google SSO" : provider}</span>
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <CheckCircle2 className="w-2.5 h-2.5" />
+                    Aktif
+                  </span>
+                </div>
+                <p className="text-slate-500 font-normal leading-relaxed text-xs sm:text-sm">
+                  Akun Anda dapat diakses menggunakan Google maupun kata sandi manual. Anda tetap dapat memperbarui kata sandi manual Anda di bawah ini.
+                </p>
+              </div>
+            </div>
+          )}
 
-        <div className="pt-2 flex justify-start">
-          <Button
-            type="submit"
-            disabled={!isDirty || !isValid || isSaving}
-            variant="outline"
-            className="h-9 px-4 rounded-md text-sm font-medium border-slate-300 bg-white text-slate-800 hover:bg-slate-50 gap-1.5 cursor-pointer disabled:cursor-not-allowed"
-          >
-            {isSaving && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
-            <span>{isSaving ? "Menyimpan..." : "Simpan"}</span>
-          </Button>
-        </div>
-      </form>
+          <div className="space-y-4">
+            <FormField label="Kata sandi saat ini" required error={errors.oldPassword}>
+              <Input
+                id="input-old-password"
+                name="oldPassword"
+                type="password"
+                autoComplete="current-password"
+                {...bind("oldPassword")}
+                onChange={(e) => {
+                  bind("oldPassword").onChange(e);
+                  if (errors.oldPassword) setErrors((prev) => ({ ...prev, oldPassword: undefined }));
+                }}
+                placeholder="Masukkan sandi saat ini"
+                minLength={FIELD_LIMITS.PASSWORD_SIMPLE.min}
+                maxLength={FIELD_LIMITS.PASSWORD.max}
+                className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
+                required
+              />
+            </FormField>
+
+            <FormField label="Kata sandi baru" required error={errors.newPassword}>
+              <Input
+                id="input-new-password"
+                name="newPassword"
+                type="password"
+                autoComplete="new-password"
+                {...bind("newPassword")}
+                onChange={(e) => {
+                  bind("newPassword").onChange(e);
+                  if (errors.newPassword) setErrors((prev) => ({ ...prev, newPassword: undefined }));
+                }}
+                placeholder="Minimal 6 karakter"
+                minLength={FIELD_LIMITS.PASSWORD_SIMPLE.min}
+                maxLength={FIELD_LIMITS.PASSWORD.max}
+                className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
+                required
+              />
+            </FormField>
+
+            <FormField label="Ulangi sandi baru" required error={errors.confirmPassword}>
+              <Input
+                id="input-confirm-password"
+                name="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                {...bind("confirmPassword")}
+                onChange={(e) => {
+                  bind("confirmPassword").onChange(e);
+                  if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+                }}
+                placeholder="Ulangi kata sandi baru"
+                minLength={FIELD_LIMITS.PASSWORD_SIMPLE.min}
+                maxLength={FIELD_LIMITS.PASSWORD.max}
+                className="h-9.5 text-sm sm:text-sm rounded-md bg-white font-normal"
+                required
+              />
+            </FormField>
+          </div>
+
+          <div className="pt-2 flex justify-start">
+            <Button
+              type="submit"
+              disabled={!isDirty || !isValid || isSaving}
+              variant="outline"
+              className="h-9 px-4 rounded-md text-sm font-medium border-slate-300 bg-white text-slate-800 hover:bg-slate-50 gap-1.5 cursor-pointer disabled:cursor-not-allowed"
+            >
+              {isSaving && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
+              <span>{isSaving ? "Menyimpan..." : "Simpan"}</span>
+            </Button>
+          </div>
+        </form>
+      )}
     </section>
   );
 }

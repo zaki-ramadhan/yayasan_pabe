@@ -1,18 +1,13 @@
 "use client";
 
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { FormField } from "@/components/ui/FormField";
 import { cn } from "@/lib/utils";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
-const MAX_COVER_LETTER_LENGTH = 500;
+const MAX_COVER_LETTER_LENGTH = FIELD_LIMITS.CAREER_MOTIVATION.max;
+const MIN_COVER_LETTER_LENGTH = FIELD_LIMITS.CAREER_MOTIVATION.min;
 
-/**
- * Sub-komponen modular: Surat pengantar & motivasi bergabung pelamar.
- * Dilengkapi batasan maksimal 500 karakter, indikator counter, dan area ketik proporsional.
- * Menerapkan SRP & konsistensi ukuran teks standar (text-sm, font-normal).
- *
- * @param {object} props
- */
 export function CareerApplicantProfileFields({
   formData,
   onChange,
@@ -20,14 +15,14 @@ export function CareerApplicantProfileFields({
   errors = {},
 }) {
   const currentLength = formData?.coverLetter?.length || 0;
-  const isBelowMin = currentLength > 0 && currentLength < 10;
+  const isBelowMin = currentLength > 0 && currentLength < MIN_COVER_LETTER_LENGTH;
 
   return (
     <FormField
       label="Motivasi bergabung"
       required
       error={errors.coverLetter}
-      hint="Ceritakan secara ringkas latar belakang, keahlian, atau niat berkhidmat Anda (min. 10 karakter)."
+      hint={`Ceritakan secara ringkas latar belakang, keahlian, atau niat berkhidmat Anda (min. ${MIN_COVER_LETTER_LENGTH} karakter).`}
       action={
         <span
           className={cn(
@@ -42,21 +37,23 @@ export function CareerApplicantProfileFields({
           {currentLength}/{MAX_COVER_LETTER_LENGTH}
           {isBelowMin && (
             <span className="ml-1 text-[11px] font-normal">
-              (kurang {10 - currentLength} karakter)
+              (kurang {MIN_COVER_LETTER_LENGTH - currentLength} karakter)
             </span>
           )}
         </span>
       }
     >
-      <Textarea
+      <AutoResizeTextarea
         placeholder="Ceritakan secara ringkas latar belakang, keahlian, atau motivasi Anda bergabung bersama yayasan..."
         value={formData.coverLetter}
+        minLength={MIN_COVER_LETTER_LENGTH}
         maxLength={MAX_COVER_LETTER_LENGTH}
         onChange={(e) => onChange("coverLetter", e.target.value)}
         onBlur={onBlur ? onBlur("coverLetter") : undefined}
-        rows={4}
+        minRows={4}
+        maxRows={10}
         required
-        className="text-sm font-normal resize-none min-h-[115px] leading-relaxed"
+        className="text-sm font-normal leading-relaxed"
       />
     </FormField>
   );

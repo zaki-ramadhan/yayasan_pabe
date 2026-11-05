@@ -42,7 +42,7 @@ export function TransactionLimitTable({ title, description, items = [] }) {
         <TableHeader>
           <TableRow>
             <TableHead className="w-1/2 font-medium text-slate-900">
-              Metode Pembayaran
+              Saluran Donasi
             </TableHead>
             <TableHead className="w-1/4 font-medium text-slate-900">
               Batas Min.

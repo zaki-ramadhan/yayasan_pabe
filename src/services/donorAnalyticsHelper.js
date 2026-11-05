@@ -105,3 +105,49 @@ export function formatRoutineDonations(routineDonationsData) {
     createdAt: r.createdAt.toISOString(),
   }));
 }
+
+/**
+ * Filter kepemilikan donatur terpusat (Anti-IDOR & Zero Trust).
+ * Menghubungkan donasi via email terdaftar dan/atau nomor telepon (WhatsApp),
+ * sehingga donasi tamu maupun donasi anonim tetap dapat diakses di dashboard pribadi pemiliknya.
+ */
+export function buildUserWhereClause(userEmail, userName, userPhone) {
+  const normalizedEmail = typeof userEmail === "string" ? userEmail.trim() : "";
+  const normalizedPhone = typeof userPhone === "string" ? userPhone.trim().replace(/[^0-9]/g, "") : "";
+  const normalizedName = typeof userName === "string" ? userName.trim() : "";
+
+  const identityConditions = [];
+
+  if (normalizedEmail) {
+    identityConditions.push({ donorEmail: { equals: normalizedEmail, mode: "insensitive" } });
+  }
+
+  if (normalizedPhone && normalizedPhone.length >= 9) {
+    const localPhone = normalizedPhone.startsWith("62") ? "0" + normalizedPhone.slice(2) : normalizedPhone;
+    const intlPhone = normalizedPhone.startsWith("0") ? "62" + normalizedPhone.slice(1) : normalizedPhone;
+    identityConditions.push(
+      { donorPhone: localPhone },
+      { donorPhone: intlPhone }
+    );
+  }
+
+  if (identityConditions.length > 0) {
+    return identityConditions.length === 1 ? identityConditions[0] : { OR: identityConditions };
+  }
+
+  if (normalizedName) {
+    const withoutHonorific = normalizedName.replace(/^(H\.|Hj\.|Drs\.|Ust\.|dr\.|Prof\.)\s*/i, "").trim();
+    if (withoutHonorific && withoutHonorific !== normalizedName) {
+      return {
+        OR: [
+          { donorName: { equals: normalizedName, mode: "insensitive" } },
+          { donorName: { contains: withoutHonorific, mode: "insensitive" } },
+        ],
+      };
+    }
+    return { donorName: { equals: normalizedName, mode: "insensitive" } };
+  }
+
+  return null;
+}
+

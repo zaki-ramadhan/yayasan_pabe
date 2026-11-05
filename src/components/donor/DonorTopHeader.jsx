@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PanelLeft } from "lucide-react";
+import { getInitials } from "@/lib/formatters";
 
 const DONOR_PAGE_TITLES = {
   "/donatur": "Dashboard",
@@ -35,9 +36,10 @@ export function DonorTopHeader({
     ? (currentUser?.avatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
     : null;
 
-  const fallbackInitial =
-    currentUser?.initials ||
-    (currentUser?.name ? currentUser.name.trim().charAt(0).toUpperCase() : "U");
+  const fallbackInitial = getInitials(
+    currentUser?.name,
+    currentUser?.initials || currentUser?.email || "U"
+  );
 
   return (
     <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
@@ -47,7 +49,6 @@ export function DonorTopHeader({
           type="button"
           onClick={onToggleSidebar}
           aria-label={isSidebarExpanded ? "Kecilkan bilah menu" : "Perluas bilah menu"}
-          aria-label={isSidebarExpanded ? "Kecilkan menu samping" : "Perluas menu samping"}
           className="lg:hidden p-1.5 -ml-1.5 rounded-md text-slate-500 hover:text-slate-950 hover:bg-slate-100/80 transition-colors cursor-pointer flex items-center justify-center shrink-0"
         >
           <PanelLeft className="w-5 h-5" />
@@ -77,7 +78,7 @@ export function DonorTopHeader({
               onError={() => setImgError(true)}
             />
           ) : (
-            <span className="font-medium text-xs text-slate-700">
+            <span className="font-semibold text-xs text-slate-700">
               {fallbackInitial}
             </span>
           )}

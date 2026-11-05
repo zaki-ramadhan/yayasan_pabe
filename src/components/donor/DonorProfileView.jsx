@@ -7,7 +7,6 @@ import { DonorProfileCover } from "@/components/donor/DonorProfileCover";
 import { DonorProfileNav } from "@/components/donor/DonorProfileNav";
 import { DonorProfileSkeleton } from "@/components/donor/DonorProfileSkeleton";
 import { DonorPersonalFormCard } from "@/components/donor/DonorPersonalFormCard";
-import { DonorBankFormCard } from "@/components/donor/DonorBankFormCard";
 import { DonorSecurityFormCard } from "@/components/donor/DonorSecurityFormCard";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/hooks/useToast";
@@ -21,7 +20,7 @@ export function DonorProfileView() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
 
-  // Tab aktif: "personal" | "bank" | "security"
+  // Tab aktif: "personal" | "security"
   const [activeTab, setActiveTab] = useState("personal");
 
   const fetchedEmailRef = useRef(null);
@@ -89,12 +88,13 @@ export function DonorProfileView() {
       throw new Error(json.message || "Gagal memperbarui profil.");
     }
 
-    setProfile(json.data);
+    setProfile((prev) => ({ ...prev, ...json.data }));
 
     // Sync with navbar & session
     updateLocalUser({
       name: json.data.name,
       avatar: json.data.avatar,
+      customAvatar: json.data.customAvatar,
       phone: json.data.phone,
     });
 
@@ -185,15 +185,9 @@ export function DonorProfileView() {
                 borderless
               />
             )}
-            {activeTab === "bank" && (
-              <DonorBankFormCard
-                profile={profile}
-                onUpdateProfile={handleUpdateProfile}
-                borderless
-              />
-            )}
             {activeTab === "security" && (
               <DonorSecurityFormCard
+                profile={profile}
                 onUpdatePassword={handleUpdatePassword}
                 borderless
               />

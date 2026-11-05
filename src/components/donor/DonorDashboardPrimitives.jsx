@@ -195,7 +195,7 @@ export function DonorReportListSkeleton({ count = 2 }) {
 			{Array.from({ length: count }).map((_, idx) => (
 				<div
 					key={idx}
-					className="p-4 rounded-md border border-slate-200/90 bg-sidebar flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+					className="p-4 rounded-md border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
 				>
 					<div className="space-y-2 min-w-0 flex-1">
 						<div className="flex items-center gap-2">
@@ -209,6 +209,44 @@ export function DonorReportListSkeleton({ count = 2 }) {
 						</div>
 					</div>
 					<Skeleton className="h-4 w-20 rounded shrink-0 self-start sm:self-center" />
+				</div>
+			))}
+		</div>
+	);
+}
+
+/**
+ * Skeleton loader presisi untuk daftar donasi rutin tersimpan
+ * (Struktur 3 bagian: Header Badges & Nominal, Body Judul Program, Footer Tombol Aksi 3D)
+ */
+export function DonorRoutineListSkeleton({ count = 1 }) {
+	return (
+		<div className="space-y-2.5">
+			{Array.from({ length: count }).map((_, idx) => (
+				<div
+					key={idx}
+					className="p-3 sm:p-3.5 rounded-md border border-slate-300 bg-white space-y-2.5"
+				>
+					{/* 1. Header: Frekuensi, Status, dan Nominal */}
+					<div className="w-full flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
+						<div className="flex items-center gap-1.5">
+							<Skeleton className="h-5 w-16 rounded" />
+							<Skeleton className="h-5 w-20 rounded-full" />
+						</div>
+						<Skeleton className="h-5 w-24 rounded" />
+					</div>
+
+					{/* 2. Body: Judul Program Lebar Penuh & Tipe Penagihan */}
+					<div className="w-full space-y-1.5">
+						<Skeleton className="h-4 w-4/5 rounded" />
+						<Skeleton className="h-3 w-36 rounded" />
+					</div>
+
+					{/* 3. Footer: Tombol Aksi Mandiri */}
+					<div className="w-full pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
+						<Skeleton className="h-7 w-16 rounded-md" />
+						<Skeleton className="h-7 w-20 rounded-md" />
+					</div>
 				</div>
 			))}
 		</div>

@@ -5,6 +5,7 @@ import {
   validatePhone,
 } from "@/lib/security";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
  * Service server-side untuk operasi database relawan (Prisma SSOT).
@@ -42,7 +43,7 @@ export async function registerVolunteer({
     phone: phoneVal.sanitized,
     city: cleanCity,
     interest: sanitizeInput(interest) || "Relawan Kebaikan",
-    motivation: sanitizeInput(motivation).slice(0, 500) || "",
+    motivation: sanitizeInput(motivation).slice(0, FIELD_LIMITS.MOTIVATION.max) || "",
     status: "PENDING",
   };
 
@@ -50,6 +51,23 @@ export async function registerVolunteer({
     const created = await prisma.volunteer.create({
       data: cleanData,
     });
+    if (cleanEmail && cleanData.phone) {
+      try {
+        const existingVolunteerUser = await prisma.user.findFirst({
+          where: { email: cleanEmail },
+          select: { id: true, phone: true },
+        });
+        if (existingVolunteerUser && (!existingVolunteerUser.phone || existingVolunteerUser.phone === "-")) {
+          await prisma.user.update({
+            where: { id: existingVolunteerUser.id },
+            data: { phone: cleanData.phone },
+          });
+        }
+      } catch (uErr) {
+        console.warn("Gagal sinkronisasi otomatis nomor WhatsApp relawan ke profil:", uErr?.message);
+      }
+    }
+
     return {
       success: true,
       data: {

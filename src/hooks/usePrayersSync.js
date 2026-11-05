@@ -25,10 +25,52 @@ function getServerSnapshot() {
   return "[]";
 }
 
-export function usePrayersSync(initialDonors = []) {
+export function usePrayersSync(initialDonors = [], campaignSlug = null) {
   const [submittedPrayers, setSubmittedPrayers] = useState([]);
+  const [serverLiveDonors, setServerLiveDonors] = useState([]);
   const [localExtraCounts, setLocalExtraCounts] = useState({});
   const aminedRaw = useSyncExternalStore(subscribe, getAminedSnapshot, getServerSnapshot);
+
+  // Background polling untuk doa baru (setiap 20 detik saat tab aktif)
+  useEffect(() => {
+    if (!campaignSlug) return;
+
+    let isMounted = true;
+    const fetchLatestPrayers = async () => {
+      if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
+
+      try {
+        const res = await safeFetch(
+          `/api/donations?campaignSlug=${encodeURIComponent(campaignSlug)}&limit=10&skip=0`,
+          { cache: "no-store" },
+          6000
+        );
+
+        if (res.ok && isMounted) {
+          const json = await res.json().catch(() => null);
+          const list = json?.data?.donations || json?.data || [];
+          if (Array.isArray(list) && list.length > 0) {
+            setServerLiveDonors((prev) => {
+              const existingIds = new Set([
+                ...initialDonors.map((d) => d.id),
+                ...submittedPrayers.map((d) => d.id),
+                ...prev.map((d) => d.id),
+              ]);
+              const newItems = list.filter((item) => !existingIds.has(item.id));
+              if (newItems.length === 0) return prev;
+              return [...newItems, ...prev];
+            });
+          }
+        }
+      } catch {}
+    };
+
+    const interval = setInterval(fetchLatestPrayers, 20000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [campaignSlug, initialDonors, submittedPrayers]);
 
   // Bersihkan cache lama di localStorage agar tidak menduplikasi hitungan database
   useEffect(() => {
@@ -47,8 +89,8 @@ export function usePrayersSync(initialDonors = []) {
   }, [aminedRaw]);
 
   const allDonors = useMemo(() => {
-    return [...submittedPrayers, ...initialDonors];
-  }, [submittedPrayers, initialDonors]);
+    return [...submittedPrayers, ...serverLiveDonors, ...initialDonors];
+  }, [submittedPrayers, serverLiveDonors, initialDonors]);
 
   const donors = useMemo(() => {
     return allDonors.map((d) => {

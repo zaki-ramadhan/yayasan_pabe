@@ -163,9 +163,9 @@ export function DonorRoutineManageModal({
                     onClick={() => handleUpdateStatus("PAUSED")}
                     disabled={isUpdating}
                     isLoading={isUpdating}
-                    className="text-xs text-amber-700 bg-amber-50 hover:bg-amber-100 border-amber-200 gap-1.5"
+                    className="text-xs font-medium bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-400 gap-1.5 shadow-2xs cursor-pointer"
                   >
-                    {!isUpdating && <Pause className="w-3.5 h-3.5" />}
+                    {!isUpdating && <Pause className="w-3.5 h-3.5 text-slate-500" />}
                     <span>Jeda sementara</span>
                   </Button>
                 ) : (
@@ -176,9 +176,9 @@ export function DonorRoutineManageModal({
                     onClick={() => handleUpdateStatus("ACTIVE")}
                     disabled={isUpdating}
                     isLoading={isUpdating}
-                    className="text-xs text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200 gap-1.5"
+                    className="text-xs font-medium bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-400 gap-1.5 shadow-2xs cursor-pointer"
                   >
-                    {!isUpdating && <Play className="w-3.5 h-3.5" />}
+                    {!isUpdating && <Play className="w-3.5 h-3.5 text-slate-600" />}
                     <span>Lanjutkan donasi</span>
                   </Button>
                 )}
@@ -190,9 +190,9 @@ export function DonorRoutineManageModal({
                   onClick={() => setShowCancelConfirm(true)}
                   disabled={isUpdating}
                   isLoading={isUpdating}
-                  className="text-xs text-rose-600 bg-rose-50 hover:bg-rose-100 border-rose-200 gap-1.5"
+                  className="text-xs font-medium bg-white text-slate-600 border-slate-300 hover:text-rose-600 hover:border-rose-300 hover:bg-slate-50 gap-1.5 shadow-2xs cursor-pointer"
                 >
-                  {!isUpdating && <XCircle className="w-3.5 h-3.5" />}
+                  {!isUpdating && <XCircle className="w-3.5 h-3.5 text-slate-400" />}
                   <span>Batalkan</span>
                 </Button>
               </div>

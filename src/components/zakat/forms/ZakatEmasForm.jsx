@@ -4,6 +4,7 @@ import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { Button } from "@/components/ui/Button";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
 import { ZakatHaulCheckbox } from "../ZakatHaulCheckbox";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function ZakatEmasForm({
   values,
@@ -65,6 +66,8 @@ export function ZakatEmasForm({
               type="number"
               min="0"
               step="any"
+              minLength={FIELD_LIMITS.ZAKAT_GOLD_GRAM.min}
+              maxLength={FIELD_LIMITS.ZAKAT_GOLD_GRAM.max}
               value={values.jumlahGram || ""}
               onKeyDown={(e) => {
                 if (e.key === "-" || e.key === "e" || e.key === "E") {

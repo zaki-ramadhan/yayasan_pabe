@@ -8,9 +8,8 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { DonorSummaryCards } from "@/components/donor/DonorSummaryCards";
 import { DonorTransactionTable } from "@/components/donor/DonorTransactionTable";
 import { DonorHistorySkeleton } from "@/components/donor/DonorHistorySkeleton";
+import { DonorPendingInvoiceBanner } from "@/components/donor/DonorPendingInvoiceBanner";
 import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
-import { useDebounce } from "@/hooks/useDebounce";
-import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 
@@ -24,20 +23,17 @@ export function DonorHistoryDashboard() {
     totalPrograms: 0,
   });
   const [items, setItems] = useState([]);
+  const [pendingInvoices, setPendingInvoices] = useState([]);
   const [pagination, setPagination] = useState({
     total: 0,
     totalPages: 1,
     currentPage: 1,
     limit: 10,
   });
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("date");
-  const [sortOrder, setSortOrder] = useState("desc");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isTableLoading, setIsTableLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
-
-  const debouncedSearch = useDebounce(search, 350);
 
   // Check auth and redirect if guest
   useEffect(() => {
@@ -67,9 +63,9 @@ export function DonorHistoryDashboard() {
         const params = new URLSearchParams({
           email: currentUser.email || "",
           name: currentUser.name || "",
-          search: debouncedSearch.trim(),
-          sortBy,
-          sortOrder,
+          status: statusFilter,
+          sortBy: "date",
+          sortOrder: "desc",
           page: String(pageToLoad),
           limit: String(currentLimit),
         });
@@ -81,6 +77,9 @@ export function DonorHistoryDashboard() {
           setMetrics(json.data.metrics);
           setItems(json.data.items);
           setPagination(json.data.pagination);
+          if (Array.isArray(json.data.pendingInvoices)) {
+            setPendingInvoices(json.data.pendingInvoices);
+          }
         } else {
           setFetchError(json.message || "Gagal memuat riwayat donasi.");
         }
@@ -95,9 +94,7 @@ export function DonorHistoryDashboard() {
     [
       currentUser?.email,
       currentUser?.name,
-      debouncedSearch,
-      sortBy,
-      sortOrder,
+      statusFilter,
       pagination.limit,
     ]
   );
@@ -106,7 +103,7 @@ export function DonorHistoryDashboard() {
     if (currentUser?.email || currentUser?.name) {
       fetchHistory(1, pagination.limit);
     }
-  }, [currentUser?.email, currentUser?.name, debouncedSearch, sortBy, sortOrder, fetchHistory, pagination.limit]);
+  }, [currentUser?.email, currentUser?.name, fetchHistory, pagination.limit]);
 
   const handlePageChange = (newPage) => {
     fetchHistory(newPage, pagination.limit);
@@ -117,14 +114,16 @@ export function DonorHistoryDashboard() {
     fetchHistory(1, newLimit);
   };
 
-  const handleSortChange = (newSortBy, newSortOrder) => {
-    setSortBy(newSortBy);
-    setSortOrder(newSortOrder);
-  };
-
   const handleRefresh = async () => {
     await fetchHistory(pagination.currentPage, pagination.limit);
     toast.success("Riwayat donasi berhasil diperbarui.");
+  };
+
+  const handleInvoiceCancelled = (cancelledInvoiceId) => {
+    setPendingInvoices((prev) =>
+      prev.filter((inv) => inv.invoiceId !== cancelledInvoiceId)
+    );
+    fetchHistory(pagination.currentPage, pagination.limit);
   };
 
   if (isInitialLoading) {
@@ -133,6 +132,14 @@ export function DonorHistoryDashboard() {
 
   return (
     <div className="space-y-2.5">
+      {/* Banner Pengingat Tagihan Aktif Menunggu Pembayaran */}
+      {!fetchError && pendingInvoices?.length > 0 && (
+        <DonorPendingInvoiceBanner
+          invoices={pendingInvoices}
+          onInvoiceCancelled={handleInvoiceCancelled}
+        />
+      )}
+
       {/* 3 Metric Cards Strip */}
       <DonorSummaryCards metrics={metrics} isLoading={false} />
 
@@ -140,8 +147,12 @@ export function DonorHistoryDashboard() {
       {fetchError && (
         <DataFetchErrorState
           compact
-          title="Gangguan Koneksi Riwayat Donasi"
-          description="Gagal memuat riwayat transaksi donasi. Silakan periksa jaringan dan coba lagi."
+          title="Kendala Sinkronisasi Riwayat Donasi"
+          description={
+            typeof fetchError === "string"
+              ? fetchError
+              : "Gagal memuat riwayat transaksi donasi. Silakan coba lagi."
+          }
           onRetry={() => fetchHistory(pagination.currentPage, pagination.limit)}
         />
       )}
@@ -150,12 +161,9 @@ export function DonorHistoryDashboard() {
       <DonorTransactionTable
         items={items}
         pagination={pagination}
-        search={search}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
+        statusFilter={statusFilter}
         isLoading={isTableLoading}
-        onSearchChange={(val) => setSearch(sanitizeSearchQuery(val))}
-        onSortChange={handleSortChange}
+        onStatusFilterChange={setStatusFilter}
         onPageChange={handlePageChange}
         onLimitChange={handleLimitChange}
         onRefresh={handleRefresh}

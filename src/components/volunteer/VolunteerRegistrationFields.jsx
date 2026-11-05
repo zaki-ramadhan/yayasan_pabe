@@ -2,10 +2,11 @@
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { FormField } from "@/components/ui/FormField";
 import { VolunteerRegionSelector } from "@/components/volunteer/VolunteerRegionSelector";
 import { cn } from "@/lib/utils";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import {
   sanitizeName,
   sanitizePhone,
@@ -67,7 +68,8 @@ export function VolunteerRegistrationFields({
           required
           readOnly={isNameLocked}
           value={fullName}
-          maxLength={60}
+          minLength={FIELD_LIMITS.NAME.min}
+          maxLength={FIELD_LIMITS.NAME.max}
           onChange={(e) => {
             if (isNameLocked) return;
             setFullName(sanitizeName(e.target.value));
@@ -90,17 +92,19 @@ export function VolunteerRegistrationFields({
       {/* 2. WhatsApp & Email */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
-          label="Nomor WhatsApp aktif"
+          label="Nomor WhatsApp"
           required
           error={errors.phone}
-          hint="Digunakan untuk koordinasi aksi relawan."
+          hint="Untuk koordinasi aksi relawan di lapangan."
         >
           <Input
             type="tel"
-            inputMode="numeric"
+            inputMode="tel"
+            autoComplete="tel"
             required
             value={phone}
-            maxLength={16}
+            minLength={FIELD_LIMITS.PHONE.min}
+            maxLength={FIELD_LIMITS.PHONE.max}
             onChange={(e) => {
               const val = sanitizePhone(e.target.value);
               setPhone(val);
@@ -109,7 +113,7 @@ export function VolunteerRegistrationFields({
               }
             }}
             onBlur={() => setPhone((prev) => prev.trim())}
-            placeholder="08xxxxxxxxxx"
+            placeholder="081234567890"
             className="h-11 font-normal"
           />
         </FormField>
@@ -129,7 +133,8 @@ export function VolunteerRegistrationFields({
             required
             readOnly={isEmailLocked}
             value={email}
-            maxLength={80}
+            minLength={FIELD_LIMITS.EMAIL.min}
+            maxLength={FIELD_LIMITS.EMAIL.max}
             onChange={(e) => {
               if (isEmailLocked) return;
               const val = sanitizeEmail(e.target.value);
@@ -173,22 +178,24 @@ export function VolunteerRegistrationFields({
         error={errors.motivation}
         hint="Ceritakan alasan ketertarikan Anda atau keahlian yang ingin dibagikan (opsional)."
       >
-        <Textarea
+        <AutoResizeTextarea
           value={motivation}
-          maxLength={500}
-          rows={3}
+          minLength={FIELD_LIMITS.MOTIVATION.min}
+          maxLength={FIELD_LIMITS.MOTIVATION.max}
+          minRows={3}
+          maxRows={8}
           onChange={(e) => {
-            setMotivation(sanitizeStandardText(e.target.value));
+            setMotivation(sanitizeStandardText(e.target.value, FIELD_LIMITS.MOTIVATION.max));
             if (errors.motivation) {
               setErrors((prev) => ({ ...prev, motivation: undefined }));
             }
           }}
           placeholder="Ceritakan motivasi Anda bergabung dalam aksi kebaikan..."
-          className="resize-none font-normal"
+          className="font-normal"
         />
         <div className="flex justify-end pt-1">
           <span className="text-[11px] text-slate-400">
-            {motivation.length}/500 karakter
+            {motivation.length}/{FIELD_LIMITS.MOTIVATION.max} karakter
           </span>
         </div>
       </FormField>
