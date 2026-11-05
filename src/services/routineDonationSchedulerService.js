@@ -62,7 +62,27 @@ export async function processScheduledRoutineDonations({
     const execKey = getRoutineExecutionKey(routine.id, currentTime);
 
     try {
-      // 3. Fail-safe Fiqih: Jika program terikat sudah tidak aktif (COMPLETED / PAUSED), hentikan komitmen
+      // 3a. Cek masa berlaku: Jika melewati batas tanggal berakhir, selesaikan jadwal otomatis
+      if (routine.hasCustomPeriod && routine.endDate) {
+        const end = new Date(routine.endDate);
+        end.setHours(23, 59, 59, 999);
+        if (currentTime > end) {
+          await completeSingleRoutineDonation(routine.id, {
+            notifyDonor: true,
+            reason: "Masa berlaku donasi rutin telah selesai",
+          });
+          skipped++;
+          results.push({
+            routineId: routine.id,
+            donorPhone: routine.donorPhone,
+            status: "AUTO_COMPLETED",
+            reason: `Masa berlaku donasi rutin telah berakhir. Komitmen donasi otomatis diselesaikan.`,
+          });
+          continue;
+        }
+      }
+
+      // 3b. Fail-safe Fiqih: Jika program terikat sudah tidak aktif (COMPLETED / PAUSED), hentikan komitmen
       if (routine.campaign && routine.campaign.status !== "ACTIVE") {
         await completeSingleRoutineDonation(routine.id, { notifyDonor: true });
         skipped++;
@@ -138,11 +158,15 @@ export async function processScheduledRoutineDonations({
         type: routine.routineType === "AUTO_DONATION"
           ? NOTIFICATION_TYPE.ROUTINE_INVOICE
           : NOTIFICATION_TYPE.ROUTINE_REMINDER,
-        recipientPhone: routine.donorPhone,
+        recipientPhone: routine.donorPhone || routine.donorEmail || "-",
         payload: {
           donorName: routine.donorName,
+          donorEmail: routine.donorEmail,
           programTitle: routine.programTitle,
           amount: routine.amount,
+          frequency: routine.frequency,
+          selectedDay: routine.selectedDay,
+          monthlyDate: routine.monthlyDate,
           routineType: routine.routineType,
           actionUrl,
           invoiceId,
@@ -158,7 +182,7 @@ export async function processScheduledRoutineDonations({
           targetType: "RoutineDonation",
           targetId: routine.id,
           userName: routine.donorName,
-          description: `Jadwal ${routine.routineType} donatur ${routine.donorPhone} berhasil dimasukkan ke antrean [${execKey}].`,
+          description: `Jadwal ${routine.routineType} donatur ${routine.donorEmail || routine.donorPhone} berhasil dimasukkan ke antrean [${execKey}].`,
         },
       });
 
@@ -166,6 +190,7 @@ export async function processScheduledRoutineDonations({
       results.push({
         routineId: routine.id,
         donorName: routine.donorName,
+        donorEmail: routine.donorEmail,
         donorPhone: routine.donorPhone,
         routineType: routine.routineType,
         invoiceId,

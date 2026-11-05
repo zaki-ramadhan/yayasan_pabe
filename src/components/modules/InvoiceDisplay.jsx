@@ -10,12 +10,17 @@ import { InvoicePaymentMethod } from "@/components/invoice/InvoicePaymentMethod"
 import { InvoicePaymentInstructions } from "@/components/invoice/InvoicePaymentInstructions";
 import { InvoiceReceiptCard } from "@/components/invoice/InvoiceReceiptCard";
 import { InvoiceActions } from "@/components/invoice/InvoiceActions";
+import { DevInvoiceSandboxBar } from "@/components/invoice/DevInvoiceSandboxBar";
+import { InvoiceStatusPollingIndicator } from "@/components/invoice/InvoiceStatusPollingIndicator";
+import { useDonationStatusPolling } from "@/hooks/useDonationStatusPolling";
 
 export {
   InvoicePaymentMethod,
   InvoicePaymentInstructions,
   InvoiceReceiptCard,
   InvoiceActions,
+  DevInvoiceSandboxBar,
+  InvoiceStatusPollingIndicator,
 };
 
 export function InvoiceDisplay({ donation: initialDonation }) {
@@ -41,6 +46,17 @@ export function InvoiceDisplay({ donation: initialDonation }) {
       setPaidAt(newPaidAt);
     }
   };
+
+  const { isChecking, checkNow } = useDonationStatusPolling({
+    invoiceId: initialDonation?.invoiceId,
+    currentStatus,
+    onStatusChange: (newStatus, newPaidAt) => {
+      handleStatusChange(newStatus, newPaidAt);
+      if (newStatus === "PAID" || newStatus === "SETTLEMENT") {
+        toast.success("Alhamdulillah! Pembayaran donasi Anda berhasil diverifikasi.");
+      }
+    },
+  });
 
   const donation = {
     ...initialDonation,
@@ -72,6 +88,9 @@ export function InvoiceDisplay({ donation: initialDonation }) {
 
       if (difference <= 0) {
         setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+        if (currentStatus === "PENDING") {
+          setCurrentStatus("EXPIRED");
+        }
         return;
       }
 
@@ -85,7 +104,7 @@ export function InvoiceDisplay({ donation: initialDonation }) {
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [donation?.expiredAt]);
+  }, [donation?.expiredAt, currentStatus]);
 
   const handleCopyVa = async (text) => {
     const success = await copyToClipboard(text);
@@ -127,10 +146,15 @@ export function InvoiceDisplay({ donation: initialDonation }) {
   );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
       {/* SISI KIRI: Metode & Instruksi Pembayaran */}
-      <div className="lg:col-span-7 space-y-6">
+      <div className="lg:col-span-7 space-y-4">
         <div className="bg-white rounded-xl border border-slate-300 p-5 sm:p-6 space-y-3.5 shadow-xs">
+          <InvoiceStatusPollingIndicator
+            isChecking={isChecking}
+            currentStatus={donation.status}
+            onCheckNow={checkNow}
+          />
           <InvoicePaymentMethod
             donation={donation}
             copiedVa={copiedVa}
@@ -144,10 +168,16 @@ export function InvoiceDisplay({ donation: initialDonation }) {
             />
           )}
         </div>
+        {process.env.NODE_ENV === "development" && (
+          <DevInvoiceSandboxBar
+            donation={donation}
+            onStatusChange={handleStatusChange}
+          />
+        )}
       </div>
 
       {/* SISI KANAN: Lembar Tagihan Donasi & Aksi */}
-      <div className="lg:col-span-5 space-y-5">
+      <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
         <InvoiceReceiptCard
           donation={donation}
           timeLeft={timeLeft}

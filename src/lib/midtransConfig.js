@@ -33,6 +33,13 @@ export const getMidtransCoreApiStatusUrl = (orderId) => {
   return `${baseUrl}/${encodeURIComponent(orderId)}/status`;
 };
 
+export const getMidtransCoreApiExpireUrl = (orderId) => {
+  const baseUrl = isMidtransProduction()
+    ? "https://api.midtrans.com/v2"
+    : "https://api.sandbox.midtrans.com/v2";
+  return `${baseUrl}/${encodeURIComponent(orderId)}/expire`;
+};
+
 export const getMidtransSnapScriptUrl = () => {
   return isMidtransProduction()
     ? "https://app.midtrans.com/snap/snap.js"

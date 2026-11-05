@@ -1,11 +1,10 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import {
   DONATION_LIMITS,
   validateName,
-  validatePhone,
   validateEmail,
-  sanitizePhone,
-  sanitizeEmail,
 } from "@/lib/security";
 import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
 import { getRoutineProgramAmount } from "@/lib/routineDonationConstants";
@@ -15,19 +14,19 @@ import { toast } from "@/hooks/useToast";
 
 export function useRoutineDonation({ campaigns = [] }) {
   const [fullName, setFullName] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [existingActiveRoutine, setExistingActiveRoutine] = useState(null);
+  const [isCheckingActive, setIsCheckingActive] = useState(false);
 
   const activeCampaigns = (campaigns && campaigns.length > 0 ? campaigns : []).filter(
     (c) => !isCampaignClosed(c)
   );
   const defaultCampaignId = activeCampaigns[0]?.id || campaigns[0]?.id || "";
 
-  // Pre-fill user data from session if authenticated
   useEffect(() => {
     const user = getStoredUser();
     if (!user) return;
@@ -36,103 +35,91 @@ export function useRoutineDonation({ campaigns = [] }) {
       if (user.name && user.name !== "Pengguna Google" && user.name !== "Pengguna Facebook") {
         setFullName(user.name);
       }
-      if (user.phone && user.phone !== "-") {
-        const cleanPhone = sanitizePhone(user.phone);
-        if (cleanPhone) {
-          setWhatsapp(cleanPhone);
-        }
-      }
       if (user.email) {
         setEmail(user.email);
       }
     });
   }, []);
 
-  // Multi-program state (max 2)
-  const [selectedPrograms, setSelectedPrograms] = useState([
-    {
-      id: 1,
-      campaignId: defaultCampaignId,
-      frequency: "DAILY",
-      selectedDay: "jumat",
-      monthlyDate: new Date().toISOString(),
-      routineType: "REMINDER_ONLY",
-      hasCustomPeriod: false,
-      paymentChannelId: "qris",
-    },
-  ]);
+  const [program, setProgram] = useState({
+    id: 1,
+    campaignId: defaultCampaignId,
+    frequency: "WEEKLY",
+    selectedDay: "jumat",
+    monthlyDate: new Date().toISOString(),
+    routineType: "AUTO_DONATION",
+    hasCustomPeriod: false,
+    startDate: null,
+    endDate: null,
+    reminderTime: "05:00",
+    amount: 25000,
+    customAmount: "",
+    paymentChannelId: "qris",
+  });
 
-  // Sinkronkan default campaign ID jika data baru selesai dimuat secara asynchronous
   useEffect(() => {
     if (defaultCampaignId) {
-      setSelectedPrograms((prev) =>
-        prev.map((prog) => (!prog.campaignId ? { ...prog, campaignId: defaultCampaignId } : prog))
-      );
+      setProgram((prev) => (!prev.campaignId ? { ...prev, campaignId: defaultCampaignId } : prev));
     }
   }, [defaultCampaignId]);
 
-  const handleAddProgram = () => {
-    if (selectedPrograms.length >= 2) {
-      toast.error("Maksimal 2 program dalam satu jadwal donasi rutin.");
+  useEffect(() => {
+    if (!email || !email.includes("@")) {
+      setExistingActiveRoutine(null);
       return;
     }
-    const nextCampaign =
-      activeCampaigns[selectedPrograms.length % (activeCampaigns.length || 1)] || activeCampaigns[0];
-    setSelectedPrograms((prev) => [
-      ...prev,
-      {
-        id: (prev[prev.length - 1]?.id || 0) + 1,
-        campaignId: nextCampaign ? nextCampaign.id : defaultCampaignId,
-        frequency: "DAILY",
-        selectedDay: "jumat",
-        monthlyDate: new Date().toISOString(),
-        routineType: "REMINDER_ONLY",
-        hasCustomPeriod: false,
-        startDate: "",
-        endDate: "",
-        reminderTime: "05:00",
-        amount: 25000,
-        customAmount: "",
-        paymentChannelId: "qris",
-      },
-    ]);
+
+    const checkActive = async () => {
+      try {
+        setIsCheckingActive(true);
+        const res = await safeFetch(`/api/routine-donations?email=${encodeURIComponent(email.trim())}`);
+        const json = await res.json();
+        if (json.success && json.hasActive) {
+          setExistingActiveRoutine(json.routine);
+        } else {
+          setExistingActiveRoutine(null);
+        }
+      } catch {
+        // Ignore check errors
+      } finally {
+        setIsCheckingActive(false);
+      }
+    };
+
+    const timer = setTimeout(checkActive, 500);
+    return () => clearTimeout(timer);
+  }, [email]);
+
+  const handleProgramChange = (arg1, arg2, arg3) => {
+    const field = arg3 !== undefined ? arg2 : arg1;
+    const value = arg3 !== undefined ? arg3 : arg2;
+    setProgram((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleRemoveProgram = (id) => {
-    if (selectedPrograms.length === 1) {
-      toast.error("Minimal harus memilih 1 program donasi rutin.");
-      return;
-    }
-    setSelectedPrograms((prev) => prev.filter((p) => p.id !== id));
-  };
-
-  const handleProgramChange = (id, field, value) => {
-    setSelectedPrograms((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
-    );
-  };
-
-  const totalPerCommitment = selectedPrograms.reduce((sum, item) => {
-    if (item.routineType === "REMINDER_ONLY") return sum;
-    return sum + getRoutineProgramAmount(item);
-  }, 0);
+  const totalPerCommitment =
+    program.routineType === "REMINDER_ONLY" ? 0 : getRoutineProgramAmount(program);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. Validasi Identitas
+    if (existingActiveRoutine) {
+      const msg =
+        existingActiveRoutine.status === "PAUSED"
+          ? "Anda memiliki jadwal donasi rutin yang sedang dijeda. Batalkan jadwal sebelumnya untuk membuat yang baru."
+          : "Anda sudah memiliki jadwal donasi rutin aktif. Batalkan jadwal sebelumnya untuk membuat yang baru.";
+      toast.error(msg);
+      return;
+    }
+
     const newErrors = {};
     const nameVal = validateName(fullName, isAnonymous);
     if (!nameVal.isValid) {
       newErrors.fullName = nameVal.message;
     }
 
-    const phoneVal = validatePhone(whatsapp);
-    if (!phoneVal.isValid) {
-      newErrors.whatsapp = phoneVal.message;
-    }
-
-    if (email && email.trim()) {
+    if (!email || !email.trim()) {
+      newErrors.email = "Alamat email wajib diisi untuk menerima invoice donasi.";
+    } else {
       const emailVal = validateEmail(email.trim(), false);
       if (!emailVal.isValid) {
         newErrors.email = emailVal.message;
@@ -147,34 +134,29 @@ export function useRoutineDonation({ campaigns = [] }) {
     }
     setErrors({});
 
-    // 2. Validasi Tiap Program
-    for (let i = 0; i < selectedPrograms.length; i++) {
-      const p = selectedPrograms[i];
+    if (program.hasCustomPeriod && program.startDate && program.endDate) {
+      const start = new Date(program.startDate);
+      const end = new Date(program.endDate);
+      if (start > end) {
+        handleProgramChange("startDateError", "Tanggal mulai tidak boleh lebih lambat dari tanggal berakhir");
+        toast.error("Tanggal mulai tidak boleh lebih lambat dari tanggal berakhir.");
+        return;
+      }
+    }
 
-      if (p.hasCustomPeriod && p.startDate && p.endDate && p.startDate > p.endDate) {
-        handleProgramChange(p.id, "startDateError", "Tanggal mulai tidak boleh lebih lambat dari tanggal berakhir");
-        toast.error(`Tanggal mulai tidak boleh lebih lambat dari tanggal berakhir pada Program ${i + 1}.`);
+    if (program.routineType === "AUTO_DONATION") {
+      const nominal = getRoutineProgramAmount(program);
+
+      if (!nominal || nominal < DONATION_LIMITS.MIN_AMOUNT) {
+        handleProgramChange("amountError", `Nominal minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`);
+        toast.error(`Nominal minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`);
         return;
       }
 
-      if (p.routineType === "AUTO_DONATION") {
-        const nominal = getRoutineProgramAmount(p);
-
-        if (!nominal || nominal < DONATION_LIMITS.MIN_AMOUNT) {
-          handleProgramChange(p.id, "amountError", `Nominal minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`);
-          toast.error(
-            `Nominal Program ${i + 1} minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`
-          );
-          return;
-        }
-
-        if (nominal > DONATION_LIMITS.MAX_AMOUNT) {
-          handleProgramChange(p.id, "amountError", `Nominal maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`);
-          toast.error(
-            `Nominal Program ${i + 1} maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`
-          );
-          return;
-        }
+      if (nominal > DONATION_LIMITS.MAX_AMOUNT) {
+        handleProgramChange("amountError", `Nominal maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`);
+        toast.error(`Nominal maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`);
+        return;
       }
     }
 
@@ -183,39 +165,39 @@ export function useRoutineDonation({ campaigns = [] }) {
       return;
     }
 
-    const hasAutoDonation = selectedPrograms.some((p) => p.routineType === "AUTO_DONATION");
-    if (hasAutoDonation && totalPerCommitment <= 0) {
+    if (program.routineType === "AUTO_DONATION" && totalPerCommitment <= 0) {
       toast.error("Mohon tentukan nominal donasi otomatis yang valid.");
       return;
     }
 
     try {
       setIsSubmitting(true);
-      const payloadPrograms = selectedPrograms.map((p) => {
-        const camp = activeCampaigns.find((c) => c.id === p.campaignId) || activeCampaigns[0];
-        const nominal = getRoutineProgramAmount(p);
+      const camp = activeCampaigns.find((c) => c.id === program.campaignId) || activeCampaigns[0];
+      const nominal = getRoutineProgramAmount(program);
 
-        return {
-          campaignId: camp?.id || p.campaignId,
-          programTitle: camp?.title || "Program Kebaikan Rutin",
-          amount: p.routineType === "REMINDER_ONLY" ? 0 : nominal,
-          frequency: p.frequency,
-          routineType: p.routineType,
-          selectedDay: p.selectedDay,
-          monthlyDate: p.monthlyDate,
-          reminderTime: p.reminderTime,
-        };
-      });
+      const payloadProgram = {
+        campaignId: camp?.id || program.campaignId,
+        programTitle: camp?.title || "Program Kebaikan Rutin",
+        amount: program.routineType === "REMINDER_ONLY" ? 0 : nominal,
+        frequency: program.frequency,
+        routineType: program.routineType,
+        selectedDay: program.selectedDay,
+        monthlyDate: program.monthlyDate,
+        reminderTime: program.reminderTime,
+        hasCustomPeriod: Boolean(program.hasCustomPeriod && program.startDate && program.endDate),
+        startDate: program.startDate || null,
+        endDate: program.endDate || null,
+      };
 
       const res = await safeFetch("/api/routine-donations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           donorName: isAnonymous ? "Hamba Allah" : fullName.trim(),
-          donorPhone: whatsapp,
+          donorPhone: null,
           donorEmail: email && email.trim() ? email.trim() : null,
           isAnonymous,
-          programs: payloadPrograms,
+          programs: [payloadProgram],
         }),
       });
 
@@ -236,8 +218,6 @@ export function useRoutineDonation({ campaigns = [] }) {
   return {
     fullName,
     setFullName,
-    whatsapp,
-    setWhatsapp,
     email,
     setEmail,
     isAnonymous,
@@ -248,11 +228,12 @@ export function useRoutineDonation({ campaigns = [] }) {
     isSubmitted,
     setIsSubmitted,
     activeCampaigns,
-    selectedPrograms,
+    program,
+    selectedPrograms: [program],
     totalPerCommitment,
-    handleAddProgram,
-    handleRemoveProgram,
     handleProgramChange,
     handleSubmit,
+    existingActiveRoutine,
+    isCheckingActive,
   };
 }

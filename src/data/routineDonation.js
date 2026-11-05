@@ -14,29 +14,28 @@ export const DAYS_OF_WEEK = [
 ];
 
 export const FREQUENCY_OPTIONS = [
-  { value: "DAILY", label: "Setiap Hari" },
   { value: "WEEKLY", label: "Setiap Pekan (Pilih Hari)" },
   { value: "MONTHLY", label: "Setiap Bulan (Pilih Tanggal)" },
 ];
 
 export const ROUTINE_TYPE_OPTIONS = [
   {
-    value: "REMINDER_ONLY",
-    title: "Pengingat WhatsApp Saja",
-    desc: "Sistem hanya mengirim pengingat ke WA saat jadwal tiba (tidak membuat invoice tagihan).",
+    value: "AUTO_DONATION",
+    title: "Donasi otomatis (Invoice email)",
+    desc: "Sistem otomatis membuatkan invoice & QRIS resmi yang dikirimkan langsung ke email Anda.",
   },
   {
-    value: "AUTO_DONATION",
-    title: "Donasi Otomatis (Auto-Invoice)",
-    desc: "Sistem otomatis membuatkan invoice & link QRIS siap bayar yang langsung dikirimkan ke WA.",
+    value: "REMINDER_ONLY",
+    title: "Pengingat email saja",
+    desc: "Sistem mengirimkan email pengingat saat jadwal tiba (tanpa membuat tagihan otomatis).",
   },
 ];
 
 export function normalizeFrequency(freq) {
-  if (freq === "DAILY_SUBUH" || freq === "DAILY") return "DAILY";
-  if (freq === "WEEKLY_FRIDAY" || freq === "WEEKLY") return "WEEKLY";
   if (freq === "MONTHLY_PAYDAY" || freq === "MONTHLY") return "MONTHLY";
-  return "DAILY";
+  if (freq === "WEEKLY_FRIDAY" || freq === "WEEKLY") return "WEEKLY";
+  // Fallback aman untuk data historis agar hemat kuota email
+  return "WEEKLY";
 }
 
 export function formatRoutineSchedule(item) {

@@ -12,6 +12,7 @@ import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
 import { createCoreApiCharge, createSnapTransaction, checkMidtransOrderStatus } from "@/services/midtransService";
 import { getMidtransServerKey } from "@/lib/midtransConfig";
+import { calculateDonationExpiryDate } from "@/lib/donationExpiryConstants";
 
 export async function createDonation({
   campaignId = null,
@@ -39,11 +40,12 @@ export async function createDonation({
   }
   const cleanDonorName = isAnonymous ? "Hamba Allah" : (nameVal.sanitized || donorName || "Hamba Allah");
 
-  const phoneVal = validatePhone(donorPhone);
+  const isPhoneRequired = !donorEmail || !donorEmail.trim();
+  const phoneVal = validatePhone(donorPhone, { isRequired: isPhoneRequired });
   if (!phoneVal.isValid) {
     throw new Error(phoneVal.message);
   }
-  const cleanDonorPhone = phoneVal.sanitized || donorPhone;
+  const cleanDonorPhone = phoneVal.sanitized || donorPhone || "-";
 
   let cleanDonorEmail = "";
   if (donorEmail && donorEmail.trim()) {
@@ -74,7 +76,7 @@ export async function createDonation({
     .digest("hex")
     .slice(0, 32);
 
-  const expiredAtDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  const expiredAtDate = calculateDonationExpiryDate(channel.id, channel.type, now);
 
   let virtualAccountNumber = "";
   let billerCode = "";
@@ -93,13 +95,20 @@ export async function createDonation({
         donorPhone: cleanDonorPhone,
       });
 
-      if (channel.id === "bri_va") {
-        virtualAccountNumber = charge.vaNumber || "";
-      } else if (channel.id === "mandiri_va") {
-        billerCode = charge.billerCode || "70012";
-        billKey = charge.billKey || "";
-        virtualAccountNumber = billKey;
-      } else if (channel.id === "qris") {
+      if (channel.type === "VA") {
+        if (channel.id === "mandiri_va") {
+          billerCode = charge.billerCode || "70012";
+          billKey = charge.billKey || "";
+          virtualAccountNumber = billKey;
+        } else {
+          virtualAccountNumber = charge.vaNumber || "";
+        }
+      } else if (channel.type === "RETAIL") {
+        virtualAccountNumber = charge.paymentCode || "";
+      } else if (channel.type === "MANUAL") {
+        virtualAccountNumber = channel.accountNumber || "";
+        billerCode = channel.accountHolder || "YAYASAN PAYUNG BERKAH";
+      } else {
         qrCodeUrl = charge.qrCodeUrl || "";
         qrString = charge.qrString || "";
       }
@@ -112,6 +121,9 @@ export async function createDonation({
   if (!virtualAccountNumber && channel.type === "VA") {
     const bankPrefix = {
       bri_va: "04240",
+      bca_va: "70001",
+      bni_va: "88080",
+      permata_va: "85280",
       mandiri_va: "70012",
     }[channel.id] || "88000";
     virtualAccountNumber = `${bankPrefix}${cleanDonorPhone.slice(-8)}`;
@@ -119,15 +131,24 @@ export async function createDonation({
       billerCode = "70012";
       billKey = virtualAccountNumber;
     }
+  } else if (!virtualAccountNumber && channel.type === "RETAIL") {
+    virtualAccountNumber = `PABE${cleanDonorPhone.slice(-8)}`;
+  } else if (!virtualAccountNumber && channel.type === "MANUAL") {
+    virtualAccountNumber = channel.accountNumber || "166-00-0345678-9";
+    billerCode = channel.accountHolder || "YAYASAN PAYUNG BERKAH";
   }
 
   let effectivePaymentRef = null;
   if (channel.id === "mandiri_va") {
     effectivePaymentRef = `${billerCode || "70012"}:${billKey || virtualAccountNumber}`;
-  } else if (channel.id === "bri_va") {
+  } else if (channel.type === "VA" || channel.type === "RETAIL" || channel.type === "MANUAL") {
     effectivePaymentRef = virtualAccountNumber;
-  } else if (channel.id === "qris") {
-    effectivePaymentRef = qrString || qrCodeUrl || null;
+  } else {
+    if (qrString && qrCodeUrl) {
+      effectivePaymentRef = `${qrString}__QRURL__${qrCodeUrl}`;
+    } else {
+      effectivePaymentRef = qrString || qrCodeUrl || null;
+    }
   }
 
   const donationData = {
@@ -189,6 +210,23 @@ export async function createDonation({
     if (createdDb) {
       donationData.id = createdDb.id;
     }
+
+    if (cleanDonorEmail && cleanDonorPhone) {
+      try {
+        const existingDonorUser = await prisma.user.findFirst({
+          where: { email: cleanDonorEmail },
+          select: { id: true, phone: true },
+        });
+        if (existingDonorUser && (!existingDonorUser.phone || existingDonorUser.phone === "-")) {
+          await prisma.user.update({
+            where: { id: existingDonorUser.id },
+            data: { phone: cleanDonorPhone },
+          });
+        }
+      } catch (userSyncErr) {
+        console.warn("Gagal sinkronisasi otomatis nomor WhatsApp ke profil donatur:", userSyncErr?.message);
+      }
+    }
   } catch (error) {
     console.error("Prisma createDonation error:", error);
     throw new Error("Gagal memproses pembuatan transaksi donasi ke sistem database.");
@@ -209,21 +247,50 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
     });
 
     if (dbDonation) {
-      if (dbDonation.status === "PENDING" && getMidtransServerKey() && process.env.NODE_ENV !== "test") {
-        try {
-          const midtransStatus = await checkMidtransOrderStatus(invoiceId);
-          if (midtransStatus.isPaid) {
-            const settled = await settleDonationStatus(
-              invoiceId,
-              midtransStatus.settlementTime ? new Date(midtransStatus.settlementTime) : new Date()
-            );
-            if (settled) {
-              dbDonation.status = "PAID";
-              dbDonation.paidAt = settled.paidAt;
+      if (dbDonation.status === "PENDING") {
+        const isPastExpiry = dbDonation.expiredAt && new Date() > new Date(dbDonation.expiredAt);
+
+        if (getMidtransServerKey() && process.env.NODE_ENV !== "test") {
+          try {
+            const midtransStatus = await checkMidtransOrderStatus(invoiceId);
+            if (midtransStatus.isPaid) {
+              const settled = await settleDonationStatus(
+                invoiceId,
+                midtransStatus.settlementTime ? new Date(midtransStatus.settlementTime) : new Date()
+              );
+              if (settled) {
+                dbDonation.status = "PAID";
+                dbDonation.paidAt = settled.paidAt;
+              }
+            } else if (midtransStatus.status === "EXPIRED" || isPastExpiry) {
+              const res = await prisma.donation.updateMany({
+                where: { invoiceId, status: "PENDING" },
+                data: { status: "EXPIRED" },
+              });
+              if (res.count > 0) {
+                dbDonation.status = "EXPIRED";
+              }
+            }
+          } catch (err) {
+            console.warn("Active status reconciliation error in getDonationByInvoiceId:", err.message);
+            if (isPastExpiry) {
+              const res = await prisma.donation.updateMany({
+                where: { invoiceId, status: "PENDING" },
+                data: { status: "EXPIRED" },
+              });
+              if (res.count > 0) {
+                dbDonation.status = "EXPIRED";
+              }
             }
           }
-        } catch (err) {
-          console.warn("Active status reconciliation error in getDonationByInvoiceId:", err.message);
+        } else if (isPastExpiry) {
+          const res = await prisma.donation.updateMany({
+            where: { invoiceId, status: "PENDING" },
+            data: { status: "EXPIRED" },
+          });
+          if (res.count > 0) {
+            dbDonation.status = "EXPIRED";
+          }
         }
       }
 
@@ -277,10 +344,33 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
       } else if (channel.id === "bri_va") {
         virtualAccountNumber = dbDonation.paymentRef || "";
       } else if (channel.id === "qris") {
-        if (dbDonation.paymentRef?.startsWith("http")) {
+        if (dbDonation.paymentRef?.includes("__QRURL__")) {
+          const parts = dbDonation.paymentRef.split("__QRURL__");
+          qrString = parts[0] || "";
+          qrCodeUrl = parts[1] || "";
+        } else if (dbDonation.paymentRef?.startsWith("http")) {
           qrCodeUrl = dbDonation.paymentRef;
         } else if (dbDonation.paymentRef) {
           qrString = dbDonation.paymentRef;
+        }
+
+        if (!qrCodeUrl && dbDonation.status === "PENDING" && getMidtransServerKey()) {
+          try {
+            const liveStatus = await checkMidtransOrderStatus(dbDonation.invoiceId);
+            if (liveStatus?.qrCodeUrl) {
+              qrCodeUrl = liveStatus.qrCodeUrl;
+              if (liveStatus.qrString && !qrString) {
+                qrString = liveStatus.qrString;
+              }
+              const updatedRef = qrString ? `${qrString}__QRURL__${qrCodeUrl}` : qrCodeUrl;
+              await prisma.donation.update({
+                where: { invoiceId: dbDonation.invoiceId },
+                data: { paymentRef: updatedRef },
+              }).catch(() => {});
+            }
+          } catch {
+            // fallback silent
+          }
         }
       }
 
@@ -349,6 +439,8 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date()) {
     if (!donation) return null;
     if (donation.status === "PAID") return donation;
 
+    const previousStatus = donation.status;
+
     const settled = await tx.donation.update({
       where: { invoiceId },
       data: {
@@ -363,6 +455,20 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date()) {
         data: {
           collectedAmount: { increment: donation.amount },
           donorCount: { increment: 1 },
+        },
+      });
+    }
+
+    // Rekonsiliasi transaksi terlambat (Late Webhook / Expired Invoices yang akhirnya terbayar)
+    if (previousStatus === "EXPIRED" || previousStatus === "CANCELLED") {
+      await tx.activityLog.create({
+        data: {
+          action: "PAYMENT_LATE_RECONCILIATION",
+          targetType: "DONATION",
+          targetId: donation.id,
+          description: `Rekonsiliasi pembayaran terlambat (Late Settlement) untuk invoice ${invoiceId}. Status sebelumnya ${previousStatus} diperbarui menjadi PAID (Nominal: Rp ${donation.amount.toLocaleString("id-ID")}).`,
+          userName: "SYSTEM_RECONCILER",
+          userRole: "SYSTEM",
         },
       });
     }

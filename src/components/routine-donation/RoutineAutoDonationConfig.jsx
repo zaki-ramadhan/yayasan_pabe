@@ -54,7 +54,7 @@ export function RoutineAutoDonationConfig({ item, onChange }) {
                   onChange(item.id, "customAmount", raw);
                   onChange(item.id, "amount", clamped);
                 }}
-                className="h-11 border-slate-300 text-base text-slate-950 placeholder:text-slate-400 focus:ring-2 focus:ring-primary"
+                className="h-10 border-slate-300 text-sm font-normal text-slate-950 placeholder:text-slate-400 focus:ring-2 focus:ring-primary"
               />
             </FormField>
           </div>
@@ -68,7 +68,8 @@ export function RoutineAutoDonationConfig({ item, onChange }) {
           onSelectChannel={(channelId) => onChange(item.id, "paymentChannelId", channelId)}
           containerCard={false}
           stepNumber={null}
-          title="Metode pembayaran tagihan otomatis"
+          title="Saluran donasi"
+          compact={true}
         />
       </div>
     </div>

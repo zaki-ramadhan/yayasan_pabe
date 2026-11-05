@@ -14,11 +14,12 @@ import {
   sanitizePrayer,
   sanitizePhone,
 } from "@/lib/security";
-import { getStoredUser } from "@/services/authService";
+import { getStoredUser, loginUser } from "@/services/authService";
 import { saveDonationDraft, loadDonationDraft, clearDonationDraft } from "@/lib/donationDraft";
 import { saveDonorInvoice } from "@/lib/donorStorage";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export const NOMINAL_PRESETS = [25000, 50000, 100000, 250000, 500000];
 
@@ -56,21 +57,26 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     if (typeof window !== "undefined") {
       const sp = new URLSearchParams(window.location.search);
       const urlPrayer = sp.get("prayer");
-      if (urlPrayer) return sanitizePrayer(urlPrayer.trim()).slice(0, 150);
+      if (urlPrayer) return sanitizePrayer(urlPrayer.trim()).slice(0, FIELD_LIMITS.PRAYER.max);
     }
-    return initialPrayer ? sanitizePrayer(initialPrayer.trim()).slice(0, 150) : "";
+    return initialPrayer ? sanitizePrayer(initialPrayer.trim()).slice(0, FIELD_LIMITS.PRAYER.max) : "";
   });
   const [selectedChannelId, setSelectedChannelId] = useState("qris");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pendingInvoiceModal, setPendingInvoiceModal] = useState({
+    isOpen: false,
+    invoice: null,
+  });
+  const [isCancellingOldInvoice, setIsCancellingOldInvoice] = useState(false);
 
   useEffect(() => {
     if (initialPrayer) {
-      setPrayer(sanitizePrayer(initialPrayer.trim()).slice(0, 150));
+      setPrayer(sanitizePrayer(initialPrayer.trim()).slice(0, FIELD_LIMITS.PRAYER.max));
     } else if (typeof window !== "undefined") {
       const sp = new URLSearchParams(window.location.search);
       const urlPrayer = sp.get("prayer");
       if (urlPrayer) {
-        setPrayer(sanitizePrayer(urlPrayer.trim()).slice(0, 150));
+        setPrayer(sanitizePrayer(urlPrayer.trim()).slice(0, FIELD_LIMITS.PRAYER.max));
       }
     }
   }, [initialPrayer]);
@@ -178,7 +184,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
 
   const handlePrayerChange = (e) => {
     const clean = sanitizePrayer(e.target.value);
-    if (clean.length <= 150) {
+    if (clean.length <= FIELD_LIMITS.PRAYER.max) {
       setPrayer(clean);
     }
   };
@@ -221,6 +227,36 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     }
     setErrors({});
 
+    // Cek apakah ada invoice aktif yang belum diselesaikan untuk program ini
+    if (campaign?.id && donorEmail) {
+      try {
+        isSubmittingRef.current = true;
+        setIsSubmitting(true);
+        const checkRes = await safeFetch(
+          `/api/user/donations?mode=pending&email=${encodeURIComponent(donorEmail)}&campaignId=${encodeURIComponent(campaign.id)}`
+        );
+        const checkJson = await checkRes.json();
+        if (checkRes.ok && checkJson.success && Array.isArray(checkJson.data) && checkJson.data.length > 0) {
+          setPendingInvoiceModal({
+            isOpen: true,
+            invoice: checkJson.data[0],
+          });
+          isSubmittingRef.current = false;
+          setIsSubmitting(false);
+          return;
+        }
+      } catch {
+        // Fallback lanjutkan jika pengecekan gagal
+      } finally {
+        isSubmittingRef.current = false;
+        setIsSubmitting(false);
+      }
+    }
+
+    await executeDonationCreation();
+  };
+
+  const executeDonationCreation = async () => {
     try {
       isSubmittingRef.current = true;
       setIsSubmitting(true);
@@ -264,6 +300,12 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       });
 
       clearDonationDraft();
+
+      // Sinkronisasi sesi lokal donatur jika sebelumnya belum memiliki nomor WhatsApp di profil
+      if (currentUser && (!currentUser.phone || currentUser.phone === "-") && donorPhone.trim()) {
+        loginUser({ ...currentUser, phone: donorPhone.trim() });
+      }
+
       toast.success("Tagihan donasi berhasil dibuat!");
       const targetUrl = donation.accessToken
         ? `/invoice/${donation.invoiceId}?token=${donation.accessToken}`
@@ -271,8 +313,40 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       router.push(targetUrl);
     } catch (err) {
       toast.error(err.message || "Gagal memproses transaksi. Silakan coba kembali.");
+    } finally {
       isSubmittingRef.current = false;
       setIsSubmitting(false);
+    }
+  };
+
+  const handleContinueExistingInvoice = () => {
+    if (!pendingInvoiceModal.invoice) return;
+    const inv = pendingInvoiceModal.invoice;
+    setPendingInvoiceModal({ isOpen: false, invoice: null });
+    const targetUrl = inv.accessToken
+      ? `/invoice/${inv.invoiceId}?token=${inv.accessToken}`
+      : `/invoice/${inv.invoiceId}`;
+    router.push(targetUrl);
+  };
+
+  const handleCreateNewAfterCancel = async () => {
+    if (!pendingInvoiceModal.invoice) return;
+    try {
+      setIsCancellingOldInvoice(true);
+      await safeFetch("/api/user/donations", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          invoiceId: pendingInvoiceModal.invoice.invoiceId,
+          action: "cancel",
+        }),
+      });
+      setPendingInvoiceModal({ isOpen: false, invoice: null });
+      await executeDonationCreation();
+    } catch {
+      toast.error("Gagal membatalkan tagihan lama. Silakan coba lagi.");
+    } finally {
+      setIsCancellingOldInvoice(false);
     }
   };
 
@@ -306,5 +380,10 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     handleCustomInputChange,
     handlePrayerChange,
     handleSubmit,
+    pendingInvoiceModal,
+    setPendingInvoiceModal,
+    isCancellingOldInvoice,
+    handleContinueExistingInvoice,
+    handleCreateNewAfterCancel,
   };
 }

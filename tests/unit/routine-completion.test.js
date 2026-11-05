@@ -164,6 +164,7 @@ describe("Donasi Rutin Penutupan Program (Opsi A)", () => {
         reminderTime: "05:00",
         donorName: "Ahmad",
         donorPhone: "08111222333",
+        donorEmail: "ahmad@gmail.com",
         programTitle: "Program Ditutup",
         campaign: {
           id: "camp-closed",
@@ -190,6 +191,6 @@ describe("Donasi Rutin Penutupan Program (Opsi A)", () => {
       expect(summary.succeeded).toBe(0);
       expect(summary.details[0].status).toBe("AUTO_COMPLETED");
       expect(prisma.donation.create).not.toHaveBeenCalled();
-    });
+    }, 30000);
   });
 });

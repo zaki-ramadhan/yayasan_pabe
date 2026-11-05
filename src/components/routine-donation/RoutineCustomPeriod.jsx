@@ -3,15 +3,17 @@
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FormField } from "@/components/ui/FormField";
-import { Input } from "@/components/ui/Input";
+import { DateRangePicker } from "@/components/ui/DateRangePicker";
 
 /**
- * Optional date validity range for routine donation
+ * Optional date validity range for routine donation using Shadcn DateRangePicker
  * @param {object} props
  * @param {object} props.item
  * @param {Function} props.onChange
  */
 export function RoutineCustomPeriod({ item, onChange }) {
+  const periodError = item.startDateError || item.endDateError;
+
   return (
     <div className="space-y-2 pt-2 border-t border-slate-100">
       <button
@@ -30,33 +32,20 @@ export function RoutineCustomPeriod({ item, onChange }) {
 
       {item.hasCustomPeriod && (
         <div className="space-y-2 pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <FormField label="Tanggal mulai" error={item.startDateError}>
-              <Input
-                type="date"
-                value={item.startDate || ""}
-                onChange={(e) => {
-                  onChange(item.id, "startDate", e.target.value);
-                  if (item.startDateError) onChange(item.id, "startDateError", null);
-                }}
-                className="h-11 bg-white cursor-pointer"
-              />
-            </FormField>
-
-            <FormField label="Tanggal berakhir" error={item.endDateError}>
-              <Input
-                type="date"
-                value={item.endDate || ""}
-                min={item.startDate || ""}
-                onChange={(e) => {
-                  onChange(item.id, "endDate", e.target.value);
-                  if (item.endDateError) onChange(item.id, "endDateError", null);
-                }}
-                className="h-11 bg-white cursor-pointer"
-              />
-            </FormField>
-          </div>
-          <p className="mt-1 text-sm text-slate-600 italic font-normal">
+          <FormField label="Rentang tanggal aktif" error={periodError}>
+            <DateRangePicker
+              value={{ from: item.startDate, to: item.endDate }}
+              onChange={({ from, to }) => {
+                onChange(item.id, "startDate", from);
+                onChange(item.id, "endDate", to);
+                if (item.startDateError) onChange(item.id, "startDateError", null);
+                if (item.endDateError) onChange(item.id, "endDateError", null);
+              }}
+              placeholder="Pilih rentang tanggal mulai & berakhir..."
+              className="h-11"
+            />
+          </FormField>
+          <p className="mt-1 text-xs text-slate-600 italic font-normal">
             *Jadwal donasi rutin akan otomatis berakhir setelah tanggal batas selesai terlewati.
           </p>
         </div>

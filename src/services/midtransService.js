@@ -3,10 +3,16 @@ import {
   getMidtransSnapApiUrl,
   getMidtransCoreApiChargeUrl,
   getMidtransCoreApiStatusUrl,
+  getMidtransCoreApiExpireUrl,
   getMidtransAuthHeader,
   getMidtransServerKey,
   mapMidtransStatusToDomain,
 } from "@/lib/midtransConfig";
+import {
+  buildMidtransCustomExpiry,
+  getChannelExpiryConfig,
+  formatMidtransOrderTime,
+} from "@/lib/donationExpiryConstants";
 
 /**
  * Service Adapter for Midtrans Payment Gateway
@@ -56,16 +62,27 @@ export async function createCoreApiCharge({
     },
   };
 
-  if (channel === "bri_va") {
+  if (["bri_va", "bca_va", "bni_va", "permata_va"].includes(channel)) {
+    const bankName = channel.replace("_va", "");
     payload.payment_type = "bank_transfer";
     payload.bank_transfer = {
-      bank: "bri",
+      bank: bankName,
     };
   } else if (channel === "mandiri_va") {
     payload.payment_type = "echannel";
     payload.echannel = {
       bill_info1: "Donasi Yayasan",
       bill_info2: "Payung Berkah",
+    };
+  } else if (channel === "gopay") {
+    payload.payment_type = "gopay";
+  } else if (channel === "shopeepay") {
+    payload.payment_type = "shopeepay";
+  } else if (channel === "indomaret" || channel === "alfamart") {
+    payload.payment_type = "cstore";
+    payload.cstore = {
+      store: channel,
+      message: "Donasi Yayasan Payung Berkah",
     };
   } else {
     // Default: QRIS
@@ -74,6 +91,9 @@ export async function createCoreApiCharge({
       acquirer: "gopay",
     };
   }
+
+  // Sinkronisasi batas waktu tagihan dengan Midtrans
+  payload.custom_expiry = buildMidtransCustomExpiry(channel);
 
   const response = await fetch(getMidtransCoreApiChargeUrl(), {
     method: "POST",
@@ -100,15 +120,25 @@ export async function createCoreApiCharge({
     transactionStatus: data.transaction_status || "pending",
   };
 
-  if (channel === "bri_va") {
-    result.vaNumber = data.va_numbers?.[0]?.va_number || "";
+  if (["bri_va", "bca_va", "bni_va", "permata_va"].includes(channel)) {
+    result.vaNumber = data.va_numbers?.[0]?.va_number || data.permata_va_number || "";
   } else if (channel === "mandiri_va") {
     result.billerCode = data.biller_code || "";
     result.billKey = data.bill_key || "";
+  } else if (["indomaret", "alfamart"].includes(channel)) {
+    result.paymentCode = data.payment_code || "";
   } else {
     const qrAction = data.actions?.find((a) => a.name === "generate-qr-code");
-    result.qrCodeUrl = qrAction?.url || "";
+    const deeplinkAction = data.actions?.find((a) => a.name === "deeplink-redirect");
+    let qrCodeUrl = qrAction?.url || "";
+    if (!qrCodeUrl && data.transaction_id) {
+      const isProduction = process.env.MIDTRANS_IS_PRODUCTION === "true";
+      const baseUrl = isProduction ? "https://api.midtrans.com" : "https://api.sandbox.midtrans.com";
+      qrCodeUrl = `${baseUrl}/v2/qris/${data.transaction_id}/qr-code`;
+    }
+    result.qrCodeUrl = qrCodeUrl;
     result.qrString = data.qr_string || "";
+    result.deeplinkUrl = deeplinkAction?.url || "";
   }
 
   return result;
@@ -163,6 +193,11 @@ export async function createSnapTransaction({
         name: sanitizedTitle,
       },
     ],
+    expiry: {
+      start_time: formatMidtransOrderTime(new Date()),
+      duration: 24,
+      unit: "hours",
+    },
   };
 
   const response = await fetch(getMidtransSnapApiUrl(), {
@@ -281,6 +316,13 @@ export async function checkMidtransOrderStatus(orderId) {
 
     const data = await res.json();
     const domainStatus = mapMidtransStatusToDomain(data.transaction_status, data.fraud_status);
+    const qrAction = data.actions?.find((a) => a.name === "generate-qr-code");
+    let qrCodeUrl = qrAction?.url || "";
+    if (!qrCodeUrl && data.transaction_id) {
+      const isProduction = process.env.MIDTRANS_IS_PRODUCTION === "true";
+      const baseUrl = isProduction ? "https://api.midtrans.com" : "https://api.sandbox.midtrans.com";
+      qrCodeUrl = `${baseUrl}/v2/qris/${data.transaction_id}/qr-code`;
+    }
 
     return {
       isFound: true,
@@ -290,9 +332,57 @@ export async function checkMidtransOrderStatus(orderId) {
       isPaid: domainStatus === "PAID",
       grossAmount: Number(data.gross_amount) || 0,
       settlementTime: data.settlement_time || data.transaction_time || null,
+      qrCodeUrl,
+      qrString: data.qr_string || "",
     };
   } catch (err) {
     console.warn("Midtrans checkOrderStatus error:", err.message);
     return { isFound: false, isPaid: false, status: "PENDING", rawStatus: "" };
   }
 }
+
+/**
+ * Membatalkan/meng-expire order aktif di Midtrans Core API.
+ * Berguna saat cron mendapati transaksi kadaluarsa atau saat donatur membuat invoice baru.
+ * @param {string} orderId
+ * @returns {Promise<{ success: boolean, status: string, rawStatus: string, message: string }>}
+ */
+export async function expireMidtransOrder(orderId) {
+  if (!orderId) {
+    return { success: false, status: "PENDING", rawStatus: "", message: "Parameter orderId kosong." };
+  }
+
+  const authHeader = getMidtransAuthHeader();
+  if (!authHeader) {
+    return { success: false, status: "PENDING", rawStatus: "", message: "Server key Midtrans belum dikonfigurasi." };
+  }
+
+  try {
+    const res = await fetch(getMidtransCoreApiExpireUrl(orderId), {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: authHeader,
+      },
+    });
+
+    const data = await res.json().catch(() => ({}));
+    const rawStatus = (data.transaction_status || "").toLowerCase();
+    const isSuccess =
+      rawStatus === "expire" ||
+      data.status_code === "200" ||
+      data.status_code === "407";
+
+    return {
+      success: isSuccess,
+      status: isSuccess ? "EXPIRED" : mapMidtransStatusToDomain(rawStatus, data.fraud_status),
+      rawStatus,
+      message: data.status_message || "",
+    };
+  } catch (err) {
+    console.warn("Midtrans expireMidtransOrder warning:", err.message);
+    return { success: false, status: "PENDING", rawStatus: "", message: err.message };
+  }
+}
+

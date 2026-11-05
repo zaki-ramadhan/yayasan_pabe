@@ -38,9 +38,14 @@ export function InvoiceReceiptCard({
               Lunas Terverifikasi
             </span>
           ) : donation.status === "EXPIRED" ? (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
+              <Clock className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+              Kedaluwarsa
+            </span>
+          ) : donation.status === "CANCELLED" ? (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium">
               <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-              Kadaluarsa
+              Dibatalkan
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium">
@@ -67,6 +72,14 @@ export function InvoiceReceiptCard({
           {donation.status === "PAID" ? (
             <div className="text-emerald-700 font-medium text-xs sm:text-sm">
               {donation.paidAt ? formatDate(donation.paidAt, { withTime: true }) : "Pembayaran Berhasil"}
+            </div>
+          ) : donation.status === "EXPIRED" ? (
+            <div className="text-rose-600 font-medium text-xs sm:text-sm">
+              Waktu Habis
+            </div>
+          ) : donation.status === "CANCELLED" ? (
+            <div className="text-slate-500 font-medium text-xs sm:text-sm">
+              Dibatalkan
             </div>
           ) : (
             <div className="text-slate-600">
@@ -169,7 +182,7 @@ export function InvoiceReceiptCard({
               </span>
             </div>
             <div className="flex justify-between gap-3 text-slate-600">
-              <span className="shrink-0">Metode Bayar</span>
+              <span className="shrink-0">Saluran Donasi</span>
               <span className="font-medium text-slate-900 text-right">
                 {donation.paymentChannelName}
               </span>

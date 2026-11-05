@@ -5,6 +5,7 @@ import { NominalPresetsPicker } from "@/components/donation/NominalPresetsPicker
 import { PaymentChannelPicker } from "@/components/donation/PaymentChannelPicker";
 import { DonorIdentitySection } from "@/components/donation/DonorIdentitySection";
 import { DonationCheckoutSummary } from "@/components/donation/DonationCheckoutSummary";
+import { PendingInvoiceDialog } from "@/components/donation/PendingInvoiceDialog";
 import { useDonationCheckout, NOMINAL_PRESETS } from "./useDonationCheckout";
 
 export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialPrayer = "" }) {
@@ -38,6 +39,11 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
     handleCustomInputChange,
     handlePrayerChange,
     handleSubmit,
+    pendingInvoiceModal,
+    setPendingInvoiceModal,
+    isCancellingOldInvoice,
+    handleContinueExistingInvoice,
+    handleCreateNewAfterCancel,
   } = useDonationCheckout({ campaign, initialAmount, initialPrayer });
 
   if (isAuthChecking) {
@@ -50,9 +56,9 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
       {/* LEFT COLUMN: Steps */}
-      <div className="lg:col-span-7 space-y-6">
+      <div className="lg:col-span-7 space-y-4">
         <NominalPresetsPicker
           presets={NOMINAL_PRESETS}
           amount={amount}
@@ -97,6 +103,16 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
         adminFee={adminFee}
         totalPayment={totalPayment}
         isSubmitting={isSubmitting}
+      />
+
+      {/* Dialog Penanganan Tagihan Donasi Aktif Duplikat */}
+      <PendingInvoiceDialog
+        isOpen={pendingInvoiceModal.isOpen}
+        onClose={() => setPendingInvoiceModal({ isOpen: false, invoice: null })}
+        existingInvoice={pendingInvoiceModal.invoice}
+        onContinueExisting={handleContinueExistingInvoice}
+        onCreateNew={handleCreateNewAfterCancel}
+        isCancelling={isCancellingOldInvoice}
       />
     </form>
   );

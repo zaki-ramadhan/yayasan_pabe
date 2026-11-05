@@ -1,6 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 
 export function PrayerTextarea({
   id = "prayer-input",
@@ -8,7 +10,8 @@ export function PrayerTextarea({
   onChange,
   onBlur,
   error,
-  maxLength = 150,
+  minLength = FIELD_LIMITS.PRAYER.min,
+  maxLength = FIELD_LIMITS.PRAYER.max,
   rows = 3,
   placeholder = "Tuliskan doa atau permohonan kebaikan Anda...",
   showInfo = false,
@@ -30,19 +33,19 @@ export function PrayerTextarea({
         </span>
       </div>
 
-      <textarea
+      <AutoResizeTextarea
         id={id}
-        rows={rows}
+        minRows={rows}
+        maxRows={8}
+        minLength={minLength}
         maxLength={maxLength}
         value={value}
         onChange={onChange}
         onBlur={onBlur}
         placeholder={placeholder}
+        error={error}
         className={cn(
-          "w-full rounded-lg border bg-white p-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors font-normal resize-none",
-          error
-            ? "border-rose-500 bg-rose-50/15 text-rose-950 placeholder:text-rose-300 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
-            : "border-slate-300 focus:ring-primary/20 focus:border-primary",
+          "w-full rounded-lg border bg-white p-3 text-sm text-slate-900 placeholder:text-slate-400 font-normal",
           className
         )}
       />

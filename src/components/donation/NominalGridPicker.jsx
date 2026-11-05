@@ -35,7 +35,7 @@ export function NominalGridPicker({
   const heightClasses = {
     default: "min-h-[46px] py-3 px-3.5 text-sm sm:text-base",
     lg: "min-h-[56px] py-2.5 px-3 text-sm",
-    sm: "min-h-[44px] sm:min-h-[46px] py-2.5 sm:py-3 px-2 sm:px-3 text-sm sm:text-base",
+    sm: "min-h-[38px] sm:min-h-[40px] py-2 px-2 sm:px-2.5 text-sm font-medium",
   }[buttonHeight] || "min-h-[46px] py-3 px-3.5 text-sm sm:text-base";
 
   return (

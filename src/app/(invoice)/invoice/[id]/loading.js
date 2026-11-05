@@ -11,9 +11,9 @@ import { ASSET_PATHS } from "@/lib/assetConstants";
  */
 export default function InvoiceLoading() {
   return (
-    <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-5">
+    <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-4">
       {/* Brand Header Sederhana */}
-      <div className="pb-1">
+      <div className="flex items-center justify-between pb-1">
         <div className="inline-flex items-center gap-2.5 select-none">
           <div className="relative w-8 h-8 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center">
             <Image
@@ -29,6 +29,7 @@ export default function InvoiceLoading() {
             Yayasan Payung Berkah
           </span>
         </div>
+        <Skeleton className="w-8.5 h-8.5 rounded-full" />
       </div>
 
       {/* 1. Breadcrumb (Identical to actual page, prevents layout shift) */}
@@ -41,9 +42,9 @@ export default function InvoiceLoading() {
       />
 
       {/* 2. Two-Column Checkout Layout (7 Cols Left, 5 Cols Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         {/* SISI KIRI: Metode Pembayaran (QRIS) & Instruksi */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-7 space-y-4">
           <div className="bg-white rounded-xl border border-slate-300 p-5 sm:p-6 space-y-5 shadow-xs">
             {/* Header: Judul Metode & Badge */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
@@ -93,7 +94,7 @@ export default function InvoiceLoading() {
         </div>
 
         {/* SISI KANAN: Lembar Tagihan Donasi (Ticket Receipt) */}
-        <div className="lg:col-span-5 space-y-5">
+        <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
           <div className="relative">
             {/* Section Atas Tiket: Header Tagihan & Batas Waktu */}
             <div className="bg-white rounded-t-xl border-t border-x border-slate-300 p-5 sm:p-6 sm:py-4 pb-4 space-y-2.5">

@@ -27,7 +27,7 @@ export function NominalPresetsPicker({
         onSelectPreset={onPresetClick}
         onSelectCustom={onCustomModeClick}
         columns="2-to-3"
-        buttonHeight="default"
+        buttonHeight="sm"
         customLabel="Nominal lainnya"
       />
 
@@ -40,6 +40,7 @@ export function NominalPresetsPicker({
           >
             <CurrencyInput
               autoFocus
+              placeholder="0"
               value={customAmountInput}
               max={DONATION_LIMITS.MAX_AMOUNT}
               onChange={(clamped, raw) => {
@@ -47,6 +48,7 @@ export function NominalPresetsPicker({
                   onCustomInputChange({ target: { value: raw } });
                 }
               }}
+              className="h-10 border-slate-300 text-sm font-normal text-slate-950 placeholder:text-slate-400 focus:ring-2 focus:ring-primary"
             />
           </FormField>
         </div>

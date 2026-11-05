@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { ROUTINE_STATUS } from "@/lib/routineDonationConstants";
 import { sendWhatsAppCompletionNotification } from "@/services/whatsapp";
+import { sendRoutineCompletionEmail } from "@/services/emailService";
 
 /**
  * Service khusus untuk mengelola siklus akhir (penutupan/completion) komitmen donasi rutin
@@ -13,7 +14,7 @@ import { sendWhatsAppCompletionNotification } from "@/services/whatsapp";
  * @param {string} campaignId - ID program kampanye yang ditutup
  * @param {object} [options]
  * @param {string} [options.reason="PROGRAM_COMPLETED"] - Alasan penutupan
- * @param {boolean} [options.notifyDonors=true] - Kirim WA notifikasi ke donatur
+ * @param {boolean} [options.notifyDonors=true] - Kirim notifikasi ke donatur
  * @returns {Promise<{ updatedCount: number, notifiedCount: number, errors: Array }>}
  */
 export async function completeRoutineDonationsForCampaign(
@@ -67,25 +68,35 @@ export async function completeRoutineDonationsForCampaign(
     console.error("[RoutineCompletion] Gagal mencatat ActivityLog:", logErr);
   }
 
-  // 4. Kirim notifikasi WhatsApp ke masing-masing donatur jika diaktifkan
+  // 4. Kirim notifikasi Email (prioritas) atau WhatsApp ke masing-masing donatur jika diaktifkan
   let notifiedCount = 0;
   const errors = [];
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yayasanpabe.org";
 
   if (notifyDonors) {
     for (const routine of activeRoutines) {
+      const progTitle = routine.programTitle || routine.campaign?.title || "Program Kebaikan";
       try {
-        await sendWhatsAppCompletionNotification({
-          to: routine.donorPhone,
-          donorName: routine.donorName,
-          programTitle: routine.programTitle || routine.campaign?.title || "Program Kebaikan",
-          catalogUrl: `${baseUrl}/program`,
-        });
+        if (routine.donorEmail) {
+          await sendRoutineCompletionEmail({
+            to: routine.donorEmail,
+            donorName: routine.donorName,
+            programTitle: progTitle,
+            catalogUrl: `${baseUrl}/program`,
+          });
+        } else if (routine.donorPhone) {
+          await sendWhatsAppCompletionNotification({
+            to: routine.donorPhone,
+            donorName: routine.donorName,
+            programTitle: progTitle,
+            catalogUrl: `${baseUrl}/program`,
+          });
+        }
         notifiedCount++;
       } catch (err) {
         errors.push({
           routineId: routine.id,
-          donorPhone: routine.donorPhone,
+          recipient: routine.donorEmail || routine.donorPhone,
           error: err.message,
         });
       }
@@ -131,17 +142,27 @@ export async function completeSingleRoutineDonation(
     data: { status: ROUTINE_STATUS.COMPLETED },
   });
 
-  if (notifyDonor && routine.donorPhone) {
+  if (notifyDonor) {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yayasanpabe.org";
-      await sendWhatsAppCompletionNotification({
-        to: routine.donorPhone,
-        donorName: routine.donorName,
-        programTitle: routine.programTitle || routine.campaign?.title || "Program Kebaikan",
-        catalogUrl: `${baseUrl}/program`,
-      });
+      const progTitle = routine.programTitle || routine.campaign?.title || "Program Kebaikan";
+      if (routine.donorEmail) {
+        await sendRoutineCompletionEmail({
+          to: routine.donorEmail,
+          donorName: routine.donorName,
+          programTitle: progTitle,
+          catalogUrl: `${baseUrl}/program`,
+        });
+      } else if (routine.donorPhone) {
+        await sendWhatsAppCompletionNotification({
+          to: routine.donorPhone,
+          donorName: routine.donorName,
+          programTitle: progTitle,
+          catalogUrl: `${baseUrl}/program`,
+        });
+      }
     } catch (err) {
-      console.error(`[RoutineCompletion] Gagal kirim WA ke ${routine.donorPhone}:`, err);
+      console.error(`[RoutineCompletion] Gagal kirim notifikasi penutupan:`, err);
     }
   }
 

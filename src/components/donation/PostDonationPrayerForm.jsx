@@ -9,6 +9,7 @@ import { sanitizePrayer } from "@/lib/security";
 import { markPrayerSubmitted } from "@/lib/donorStorage";
 import { safeFetch } from "@/lib/safeFetch";
 import { cn } from "@/lib/utils";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function PostDonationPrayerForm({
   invoiceId,
@@ -25,7 +26,7 @@ export function PostDonationPrayerForm({
 
   const handlePrayerChange = (e) => {
     const clean = sanitizePrayer(e.target.value);
-    if (clean.length <= 150) {
+    if (clean.length <= FIELD_LIMITS.PRAYER.max) {
       setPrayer(clean);
       if (errorMessage) setErrorMessage("");
     }
@@ -78,7 +79,7 @@ export function PostDonationPrayerForm({
     <div className={cn("p-5 sm:p-6 bg-slate-50 border border-slate-300 rounded-xl space-y-4", className)}>
       <div className="space-y-0.5">
         <h3 className="font-semibold text-slate-900 text-sm">
-          Titipkan Doa Kebaikan
+          Titipkan doa kebaikan
         </h3>
         <p className="text-xs text-slate-500">
           Untaian doa Anda akan dicantumkan di halaman program untuk diaminkan bersama donatur lainnya.
@@ -108,7 +109,7 @@ export function PostDonationPrayerForm({
             disabled={isSubmitting}
             className="text-xs px-3.5 py-1.5 h-auto rounded-lg font-medium cursor-pointer"
           >
-            {isSubmitting ? "Mengirim..." : "Kirim Doa"}
+            {isSubmitting ? "Mengirim..." : "Kirim doa"}
           </Button>
         </div>
       </form>

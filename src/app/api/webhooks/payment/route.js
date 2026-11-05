@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { parseMidtransNotification } from "@/services/midtransService";
 import { isMidtransProduction } from "@/lib/midtransConfig";
+import { settleDonationStatus } from "@/services/donationService";
+import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 
 /**
  * Webhook Handler untuk Otomasi Payment Gateway (Midtrans resmi, serta fallback multi-gateway).
@@ -69,64 +71,58 @@ export async function POST(request) {
     }
 
     // Eksekusi mutasi atomik
-    const updated = await prisma.$transaction(async (tx) => {
-      const donation = await tx.donation.findUnique({
-        where: { invoiceId },
-      });
+    let updated = null;
 
-      if (!donation) {
-        return null;
-      }
-
-      // Idempotensi: jika sudah PAID, jangan lakukan mutasi penambahan lagi
-      if (donation.status === "PAID") {
-        return donation;
-      }
-
-      if (isPaid) {
-        const settled = await tx.donation.update({
+    if (isPaid) {
+      updated = await settleDonationStatus(invoiceId, new Date());
+    } else {
+      updated = await prisma.$transaction(async (tx) => {
+        const donation = await tx.donation.findUnique({
           where: { invoiceId },
-          data: {
-            status: "PAID",
-            paidAt: new Date(),
-          },
         });
 
-        if (donation.campaignId) {
-          await tx.campaign.update({
-            where: { id: donation.campaignId },
-            data: {
-              collectedAmount: { increment: donation.amount },
-              donorCount: { increment: 1 },
-            },
+        if (!donation) {
+          return null;
+        }
+
+        // Idempotensi: jika sudah PAID, jangan ubah ke EXPIRED atau CANCELLED
+        if (donation.status === "PAID") {
+          return donation;
+        }
+
+        if (domainStatus === "EXPIRED" || rawStatus === "EXPIRE") {
+          return await tx.donation.update({
+            where: { invoiceId },
+            data: { status: "EXPIRED" },
           });
         }
 
-        return settled;
-      }
+        if (domainStatus === "CANCELLED" || rawStatus === "CANCEL" || rawStatus === "DENY") {
+          return await tx.donation.update({
+            where: { invoiceId },
+            data: { status: "CANCELLED" },
+          });
+        }
 
-      if (domainStatus === "EXPIRED" || rawStatus === "EXPIRE") {
-        return await tx.donation.update({
-          where: { invoiceId },
-          data: { status: "EXPIRED" },
-        });
-      }
-
-      if (domainStatus === "CANCELLED" || rawStatus === "CANCEL" || rawStatus === "DENY") {
-        return await tx.donation.update({
-          where: { invoiceId },
-          data: { status: "CANCELLED" },
-        });
-      }
-
-      return donation;
-    });
+        return donation;
+      });
+    }
 
     if (!updated) {
       return NextResponse.json(
         { success: false, message: "Data donasi dengan nomor invoice tersebut tidak ditemukan." },
         { status: 404 }
       );
+    }
+
+    if (updated.status === "PAID") {
+      broadcastAdminEvent("DONATION_PAID", {
+        invoiceId: updated.invoiceId,
+        amount: updated.amount,
+        donorName: updated.isAnonymous ? "Hamba Allah" : (updated.donorName || "Donatur"),
+        campaignTitle: updated.campaignTitle || "Program Kebaikan",
+        paidAt: updated.paidAt,
+      });
     }
 
     return NextResponse.json({

@@ -14,7 +14,7 @@ export function DonationCheckoutSummary({
   isSubmitting,
 }) {
   return (
-    <div className="lg:col-span-5 lg:sticky lg:top-24">
+    <div className="lg:col-span-5 lg:sticky lg:top-20">
       {/* Unified Summary & Program Card */}
       <div className="bg-white p-5 sm:p-6 rounded-xl space-y-4 shadow-xs border border-slate-300">
         {/* Campaign Info Section */}
@@ -51,20 +51,21 @@ export function DonationCheckoutSummary({
         {/* Payment Breakdown Section */}
         <div className="space-y-3">
           <div className="space-y-0.5">
-            <h3 className="text-base sm:text-lg font-semibold text-slate-950">Ringkasan Pembayaran</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-slate-950">Ringkasan donasi</h3>
             <p className="text-sm text-slate-600">Pastikan rincian donasi Anda telah sesuai</p>
           </div>
 
           <div className="space-y-2.5 text-sm">
-            <SummaryRow label="Nominal Donasi" value={formatRupiah(amount)} />
-            <SummaryRow label="Metode Pembayaran" value={selectedChannel.name} />
+            <SummaryRow label="Nominal donasi" value={formatRupiah(amount)} />
+            <SummaryRow label="Saluran donasi" value={selectedChannel.name} />
             <SummaryRow
-              label="Biaya Layanan"
-              value={adminFee === 0 ? "Gratis" : formatRupiah(adminFee)}
+              label="Biaya layanan"
+              value={adminFee === 0 ? "Gratis (ditanggung yayasan)" : formatRupiah(adminFee)}
+              valueClass={adminFee === 0 ? "text-emerald-700 font-medium" : ""}
             />
-            <div className="flex justify-between items-baseline text-sm font-medium text-slate-600 pt-2.5 border-t border-slate-200">
-              <span>Total Pembayaran</span>
-              <span className="text-primary text-base sm:text-lg font-semibold tracking-tight">
+            <div className="flex justify-between items-baseline text-sm font-medium text-slate-950 pt-2.5 border-t border-slate-200">
+              <span>Total donasi</span>
+              <span className="text-primary text-base sm:text-lg font-semibold">
                 {formatRupiah(totalPayment)}
               </span>
             </div>
@@ -81,10 +82,8 @@ export function DonationCheckoutSummary({
             className="w-full h-12 rounded-lg text-base disabled:opacity-50 disabled:pointer-events-none"
           >
             {isSubmitting
-              ? "Memproses Transaksi..."
-              : amount >= DONATION_LIMITS.MIN_AMOUNT
-              ? `Lanjut Pembayaran (${formatRupiah(totalPayment)})`
-              : "Lanjut Pembayaran"}
+              ? "Memproses donasi..."
+              : "Lanjut donasi"}
           </Button>
         </div>
       </div>

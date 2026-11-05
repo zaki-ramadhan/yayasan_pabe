@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Copy, RefreshCw, CheckCircle2, ChevronRight } from "lucide-react";
+import { Check, Copy, RefreshCw, ChevronRight, Download, Clock, X } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 import { copyToClipboard } from "@/lib/clipboard";
 import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
+import { Button } from "@/components/ui/Button";
 
 /**
  * Payment method presentation (Direct Headless Midtrans QRIS, BRI VA, or Mandiri Bill)
@@ -21,28 +23,57 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa, onStatusCha
   const router = useRouter();
   const [copiedBiller, setCopiedBiller] = useState(false);
   const [copiedKey, setCopiedKey] = useState(false);
+  const [copiedSimUrl, setCopiedSimUrl] = useState(false);
   const [isCheckingStatus, setIsCheckingStatus] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [liveQrUrl, setLiveQrUrl] = useState(donation.qrCodeUrl || "");
 
-  const isQris = donation.paymentChannelType === "QRIS" || donation.paymentChannelId === "qris";
+  const isQris = donation.paymentChannelType === "QRIS" || donation.paymentChannelId === "qris" || donation.paymentChannelType === "EWALLET";
   const isMandiri = donation.paymentChannelId === "mandiri_va";
-  const isBri = donation.paymentChannelId === "bri_va";
+  const isVa = (donation.paymentChannelType === "VA" || String(donation.paymentChannelId).endsWith("_va")) && !isMandiri;
+  const isRetail = donation.paymentChannelType === "RETAIL" || ["indomaret", "alfamart"].includes(donation.paymentChannelId);
+  const isManual = donation.paymentChannelType === "MANUAL" || String(donation.paymentChannelId).startsWith("manual_");
 
   const billerCode = donation.billerCode || "70012";
   const billKey = donation.billKey || donation.virtualAccountNumber || "";
-  const briVaNumber = donation.virtualAccountNumber || "";
+  const isDevelopment = process.env.NODE_ENV === "development";
+  const effectiveSimulatorUrl = liveQrUrl || donation.qrCodeUrl || "";
+  const showSimulatorTools =
+    isDevelopment &&
+    Boolean(effectiveSimulatorUrl) &&
+    effectiveSimulatorUrl.includes("sandbox");
+
+  useEffect(() => {
+    if (donation?.qrCodeUrl && donation.qrCodeUrl !== liveQrUrl) {
+      setLiveQrUrl(donation.qrCodeUrl);
+    }
+  }, [donation?.qrCodeUrl]);
 
   // Auto-polling status check when invoice is PENDING
   useEffect(() => {
-    if (!donation?.invoiceId || donation.status === "PAID") return;
+    if (!donation?.invoiceId || donation.status !== "PENDING") return;
 
     const interval = setInterval(async () => {
       try {
         const res = await safeFetch(`/api/donations?invoiceId=${encodeURIComponent(donation.invoiceId)}`);
         const json = await res.json();
-        if (json.success && json.data?.status === "PAID") {
-          toast.success("Alhamdulillah, pembayaran donasi telah terverifikasi!");
-          onStatusChange?.("PAID", json.data.paidAt);
-          router.refresh();
+        if (json.success && json.data) {
+          if (json.data.qrCodeUrl && !liveQrUrl) {
+            setLiveQrUrl(json.data.qrCodeUrl);
+          }
+          if (json.data.status === "PAID") {
+            toast.success("Alhamdulillah, pembayaran donasi telah terverifikasi!");
+            onStatusChange?.("PAID", json.data.paidAt);
+            router.refresh();
+          } else if (json.data.status === "EXPIRED") {
+            toast.error("Waktu pembayaran untuk invoice ini telah kedaluwarsa.");
+            onStatusChange?.("EXPIRED");
+            router.refresh();
+          } else if (json.data.status === "CANCELLED") {
+            toast.info("Invoice donasi ini telah dibatalkan.");
+            onStatusChange?.("CANCELLED");
+            router.refresh();
+          }
         }
       } catch {
         // Silent polling error
@@ -50,7 +81,7 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa, onStatusCha
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [donation?.invoiceId, donation?.status, onStatusChange, router]);
+  }, [donation?.invoiceId, donation?.status, liveQrUrl, onStatusChange, router]);
 
   const handleManualCheckStatus = async () => {
     if (!donation?.invoiceId) return;
@@ -58,17 +89,103 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa, onStatusCha
       setIsCheckingStatus(true);
       const res = await safeFetch(`/api/donations?invoiceId=${encodeURIComponent(donation.invoiceId)}`);
       const json = await res.json();
-      if (json.success && json.data?.status === "PAID") {
-        toast.success("Alhamdulillah, donasi Anda telah terbayar!");
-        onStatusChange?.("PAID", json.data.paidAt);
-        router.refresh();
-      } else {
-        toast.info("Menunggu pembayaran dari sistem perbankan. Silakan periksa kembali setelah transfer.");
+      if (json.success && json.data) {
+        if (json.data.qrCodeUrl && !liveQrUrl) {
+          setLiveQrUrl(json.data.qrCodeUrl);
+        }
+        if (json.data.status === "PAID") {
+          toast.success("Alhamdulillah, donasi Anda telah terbayar!");
+          onStatusChange?.("PAID", json.data.paidAt);
+          router.refresh();
+        } else if (json.data.status === "EXPIRED") {
+          toast.error("Waktu pembayaran untuk invoice ini telah kedaluwarsa.");
+          onStatusChange?.("EXPIRED");
+          router.refresh();
+        } else if (json.data.status === "CANCELLED") {
+          toast.info("Invoice donasi ini telah dibatalkan.");
+          onStatusChange?.("CANCELLED");
+          router.refresh();
+        } else {
+          toast.info("Menunggu pembayaran dari sistem perbankan. Silakan periksa kembali setelah transfer.");
+        }
       }
     } catch {
       toast.error("Gagal memeriksa status pembayaran. Silakan coba sesaat lagi.");
     } finally {
       setIsCheckingStatus(false);
+    }
+  };
+
+  const handleDownloadQris = async () => {
+    try {
+      setIsDownloading(true);
+      const svg = document.getElementById("qris-svg-code");
+      if (svg) {
+        const svgData = new XMLSerializer().serializeToString(svg);
+        const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+        const URLObj = window.URL || window.webkitURL || window;
+        const blobUrl = URLObj.createObjectURL(svgBlob);
+        const img = new window.Image();
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const padding = 36;
+          const qrSize = 480;
+          canvas.width = qrSize + padding * 2;
+          canvas.height = qrSize + padding * 2;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, padding, padding, qrSize, qrSize);
+            const pngUrl = canvas.toDataURL("image/png");
+            const a = document.createElement("a");
+            a.href = pngUrl;
+            a.download = `QRIS-${donation.invoiceId || "donasi"}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URLObj.revokeObjectURL(blobUrl);
+            toast.success("Gambar QRIS berhasil diunduh.");
+          }
+          setIsDownloading(false);
+        };
+
+        img.onerror = () => {
+          setIsDownloading(false);
+          toast.error("Gagal memproses gambar QRIS.");
+        };
+
+        img.src = blobUrl;
+        return;
+      }
+
+      const imageUrl = effectiveSimulatorUrl;
+      if (imageUrl) {
+        const res = await fetch(imageUrl);
+        const blob = await res.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = `QRIS-${donation.invoiceId || "donasi"}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+        toast.success("Gambar QRIS berhasil diunduh.");
+      } else {
+        toast.error("Kode QRIS tidak tersedia untuk diunduh.");
+      }
+    } catch {
+      const fallbackUrl = effectiveSimulatorUrl;
+      if (fallbackUrl) {
+        window.open(fallbackUrl, "_blank");
+        toast.info("Gambar QRIS dibuka di tab baru untuk disimpan.");
+      } else {
+        toast.error("Gagal mengunduh gambar QRIS.");
+      }
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -85,20 +202,101 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa, onStatusCha
 
   if (donation.status === "PAID") {
     return (
-      <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-6 sm:p-7 text-center space-y-3.5 shadow-2xs">
-        <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto text-emerald-600 shadow-2xs">
-          <CheckCircle2 className="w-7 h-7" />
+      <div className="text-center py-4 sm:py-6 space-y-4">
+        {/* 3D Success Checkmark Token */}
+        <div className="relative inline-flex items-center justify-center mx-auto">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-50/80 border border-emerald-100/90 flex items-center justify-center shadow-xs">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-emerald-500 via-emerald-600 to-emerald-700 border-t border-t-emerald-300/80 border-x border-x-emerald-600 border-b-4 border-b-emerald-800 text-white flex items-center justify-center shadow-[inset_0_2px_2px_rgba(255,255,255,0.45),0_6px_12px_rgba(5,150,105,0.3)]">
+              <Check className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3.5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]" />
+            </div>
+          </div>
         </div>
-        <div className="space-y-1">
-          <h3 className="text-base sm:text-lg font-semibold text-emerald-950">
+
+        <div className="space-y-1.5">
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
             Pembayaran Berhasil Terverifikasi
           </h3>
-          <p className="text-xs sm:text-sm text-emerald-800 leading-relaxed max-w-md mx-auto">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-md mx-auto">
             Alhamdulillah, amanah donasi Anda telah kami terima secara resmi melalui sistem perbankan.
           </p>
         </div>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-medium">
-          <span>Metode: {donation.paymentChannelName}</span>
+
+        <p className="text-xs sm:text-sm text-slate-500">
+          Saluran: <span className="font-medium text-slate-700">{donation.paymentChannelName}</span>
+        </p>
+      </div>
+    );
+  }
+
+  if (donation.status === "EXPIRED") {
+    const renewHref = donation.campaignSlug
+      ? `/campaign/${donation.campaignSlug}/donate?amount=${donation.amount}`
+      : "/program";
+
+    return (
+      <div className="text-center py-4 sm:py-6 space-y-4">
+        {/* 3D Expired Cross Token */}
+        <div className="relative inline-flex items-center justify-center mx-auto">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-rose-50/80 border border-rose-100/90 flex items-center justify-center shadow-xs">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-rose-500 via-rose-600 to-rose-700 border-t border-t-rose-300/80 border-x border-x-rose-600 border-b-4 border-b-rose-900 text-white flex items-center justify-center shadow-[inset_0_2px_2px_rgba(255,255,255,0.45),0_6px_12px_rgba(225,29,72,0.3)]">
+              <X className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3.5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]" />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+            Batas Waktu Pembayaran Telah Habis
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-md mx-auto">
+            Tagihan donasi ini telah kedaluwarsa demi keamanan transaksi. Saluran pembayaran otomatis dinonaktifkan. Anda dapat membuat tagihan baru kapan pun Anda siap.
+          </p>
+        </div>
+
+        <div className="pt-2">
+          <Link
+            href={renewHref}
+            className="inline-flex items-center justify-center text-sm font-medium text-primary hover:underline cursor-pointer"
+          >
+            Donasi lagi
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (donation.status === "CANCELLED") {
+    const renewHref = donation.campaignSlug
+      ? `/campaign/${donation.campaignSlug}/donate?amount=${donation.amount}`
+      : "/program";
+
+    return (
+      <div className="text-center py-4 sm:py-6 space-y-4">
+        {/* 3D Cancelled Token */}
+        <div className="relative inline-flex items-center justify-center mx-auto">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center shadow-xs">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-slate-500 via-slate-600 to-slate-700 border-t border-t-slate-400 border-x border-x-slate-600 border-b-4 border-b-slate-900 text-white flex items-center justify-center shadow-[inset_0_2px_2px_rgba(255,255,255,0.45),0_6px_12px_rgba(71,85,105,0.3)]">
+              <X className="w-7 h-7 sm:w-8 sm:h-8 stroke-[3.5] drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]" />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+            Tagihan Donasi Dibatalkan
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-md mx-auto">
+            Tagihan donasi ini telah dibatalkan. Anda dapat membuat donasi baru kapan saja.
+          </p>
+        </div>
+
+        <div className="pt-2">
+          <Link
+            href={renewHref}
+            className="inline-flex items-center justify-center text-sm font-medium text-primary hover:underline cursor-pointer"
+          >
+            Donasi lagi
+          </Link>
         </div>
       </div>
     );
@@ -117,33 +315,38 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa, onStatusCha
               ? "Scan kode QR dinamis di bawah menggunakan m-Banking atau E-Wallet."
               : isMandiri
               ? "Selesaikan pembayaran melalui Livin' by Mandiri (Multipayment)."
+              : isRetail
+              ? "Selesaikan pembayaran tunai di kasir gerai retail terdekat."
+              : isManual
+              ? "Transfer langsung ke rekening giro resmi Yayasan Payung Berkah."
               : "Selesaikan transfer ke nomor Virtual Account resmi di bawah."}
           </p>
         </div>
         <span
           className="text-xs font-medium text-slate-600 px-2 py-0.5 rounded bg-slate-100 shrink-0 whitespace-nowrap"
-          title={isQris ? "QRIS" : "Virtual Account"}
+          title={donation.paymentChannelName}
         >
-          {isQris ? "QRIS" : "VA"}
+          {isQris ? "QRIS" : isMandiri ? "Mandiri" : isRetail ? "Kasir" : isManual ? "Giro" : "VA"}
         </span>
       </div>
 
       {/* Konten Spesifik Kanal */}
       {isQris && (
-        <div className="flex flex-col items-center justify-center py-2 space-y-4 text-center">
+        <div className="flex flex-col items-center justify-center py-2 space-y-3.5 text-center">
           {/* Kotak Barcode QRIS Resmi */}
           <div className="p-4 bg-white rounded-xl border border-slate-300 shadow-2xs flex flex-col items-center">
             <div className="relative w-[210px] h-[210px] sm:w-[230px] sm:h-[230px] overflow-hidden rounded-lg bg-white flex items-center justify-center">
               {donation.qrString ? (
                 <QRCodeSVG
+                  id="qris-svg-code"
                   value={donation.qrString}
                   size={230}
                   level="M"
                   className="w-full h-full object-contain"
                 />
-              ) : donation.qrCodeUrl ? (
+              ) : liveQrUrl || donation.qrCodeUrl ? (
                 <img
-                  src={donation.qrCodeUrl}
+                  src={liveQrUrl || donation.qrCodeUrl}
                   alt="QRIS Resmi Yayasan Payung Berkah"
                   width={230}
                   height={230}
@@ -162,22 +365,75 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa, onStatusCha
             </div>
           </div>
 
-          <div className="space-y-1 text-center">
+          <div className="space-y-0.5 text-center">
             <span className="text-base sm:text-lg font-bold text-slate-900 tracking-tight block">
               YAYASAN PAYUNG BERKAH
             </span>
-            <div className="flex items-center justify-center gap-2 text-xs text-slate-600 font-medium">
-              <span>NMID : <strong className="text-slate-900 font-semibold">ID1026604741144</strong></span>
-              <span className="text-slate-300">•</span>
-              <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">
-                Verifikasi Otomatis
-              </span>
-            </div>
+            <p className="text-xs text-slate-500 font-medium">
+              NMID : <strong className="text-slate-800 font-semibold font-mono">ID1026604741144</strong>
+            </p>
+          </div>
+
+          {/* Tombol Unduh QRIS & Tombol Simulator */}
+          <div
+            className={`flex flex-col sm:flex-row items-center justify-center gap-2 w-full ${
+              showSimulatorTools ? "max-w-sm" : "max-w-xs"
+            } pt-1`}
+          >
+            <button
+              type="button"
+              onClick={handleDownloadQris}
+              disabled={isDownloading}
+              className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-medium transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
+            >
+              <Download className="w-4 h-4 text-slate-300" />
+              <span>{isDownloading ? "Mengunduh..." : "Unduh QRIS"}</span>
+            </button>
+
+            {showSimulatorTools && (
+              <button
+                type="button"
+                onClick={() => handleCopyText(effectiveSimulatorUrl, setCopiedSimUrl, "URL QR Simulator")}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-medium transition-colors shadow-2xs cursor-pointer shrink-0"
+                title="Salin URL gambar QR untuk ditempel di Midtrans Payment Simulator (Hanya aktif di Development)"
+              >
+                {copiedSimUrl ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>URL Tersalin</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Salin URL Simulator</span>
+                  </>
+                )}
+              </button>
+            )}
           </div>
 
           <p className="text-xs sm:text-sm text-slate-600 max-w-sm leading-relaxed">
             Dapat dipindai menggunakan seluruh aplikasi mobile banking dan e-wallet berlogo QRIS.
           </p>
+
+          {showSimulatorTools && (
+            <div className="w-full max-w-sm rounded-lg bg-amber-50/80 border border-amber-200/90 p-2.5 text-left text-xs text-amber-900 leading-relaxed shadow-2xs">
+              <div className="flex items-center justify-between gap-2 mb-0.5">
+                <span className="font-semibold block text-amber-950">Panduan Pengujian Simulator:</span>
+                <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-medium">Dev Only</span>
+              </div>
+              Klik <strong>Salin URL Simulator</strong> di atas, lalu tempelkan (*paste*) di kolom <em>QR Code URL</em> pada{" "}
+              <a
+                href="https://simulator.sandbox.midtrans.com/qris/index"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium underline hover:text-amber-950"
+              >
+                Midtrans Payment Simulator
+              </a>{" "}
+              dan klik <strong>Scan QR</strong> &gt; <strong>Pay</strong>.
+            </div>
+          )}
         </div>
       )}
 
@@ -262,21 +518,21 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa, onStatusCha
         </div>
       )}
 
-      {/* Kanal Bank BRI (BRIVA) */}
-      {isBri && (
+      {/* Kanal Bank Virtual Account (BCA, BRI, BNI, Permata) */}
+      {isVa && (
         <div className="space-y-3 py-1">
           <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white shadow-2xs">
             <div>
               <span className="text-xs text-slate-500 block font-normal">
-                Nomor BRIVA (BRI Virtual Account)
+                Nomor {donation.paymentChannelName}
               </span>
               <span className="text-base sm:text-lg font-mono font-semibold text-slate-900 tracking-wider">
-                {briVaNumber}
+                {vaNumber}
               </span>
             </div>
             <button
               type="button"
-              onClick={() => onCopyVa(briVaNumber)}
+              onClick={() => onCopyVa(vaNumber)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-slate-300 hover:bg-slate-100 text-xs font-medium text-slate-800 transition-colors cursor-pointer shadow-2xs"
             >
               {copiedVa ? (
@@ -296,14 +552,102 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa, onStatusCha
             <span className="text-xs font-semibold text-slate-700 block">
               Panduan Pembayaran:
             </span>
-            <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs sm:text-sm text-slate-600 leading-relaxed">
-              <span>Buka aplikasi <strong>BRImo</strong></span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 inline" />
-              <span>pilih <strong>Pembayaran</strong></span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 inline" />
-              <span><strong>BRIVA</strong></span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 inline" />
-              <span>masukkan nomor virtual account di atas.</span>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Transfer ke nomor Virtual Account di atas melalui m-Banking, i-Banking, atau ATM. Verifikasi transaksi otomatis tanpa perlu konfirmasi manual.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Kanal Gerai Retail (Indomaret / Alfamart) */}
+      {isRetail && (
+        <div className="space-y-3 py-1">
+          <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white shadow-2xs">
+            <div>
+              <span className="text-xs text-slate-500 block font-normal">
+                Kode Pembayaran Kasir ({donation.paymentChannelName})
+              </span>
+              <span className="text-base sm:text-lg font-mono font-semibold text-slate-900 tracking-wider">
+                {vaNumber}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => onCopyVa(vaNumber)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-slate-300 hover:bg-slate-100 text-xs font-medium text-slate-800 transition-colors cursor-pointer shadow-2xs"
+            >
+              {copiedVa ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Tersalin</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5 text-slate-600" />
+                  <span>Salin</span>
+                </>
+              )}
+            </button>
+          </div>
+          <div className="space-y-1.5 pt-1">
+            <span className="text-xs font-semibold text-slate-700 block">
+              Panduan Kasir:
+            </span>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Kunjungi gerai {donation.paymentChannelName} terdekat, beritahu kasir ingin bayar tagihan donasi yayasan / Midtrans, lalu sebutkan kode pembayaran di atas.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Kanal Transfer Manual Rekening Yayasan */}
+      {isManual && (
+        <div className="space-y-3.5 py-1">
+          <div className="rounded-xl border border-slate-300 bg-slate-50/70 divide-y divide-slate-200 overflow-hidden shadow-2xs">
+            <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 bg-white">
+              <div>
+                <span className="text-xs text-slate-500 block font-normal">
+                  Nomor Rekening Giro
+                </span>
+                <span className="text-base sm:text-lg font-mono font-semibold text-slate-900 tracking-wider">
+                  {vaNumber}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => onCopyVa(vaNumber)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-slate-300 hover:bg-slate-100 text-xs font-medium text-slate-800 transition-colors cursor-pointer shadow-2xs"
+              >
+                {copiedVa ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Tersalin</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-slate-600" />
+                    <span>Salin</span>
+                  </>
+                )}
+              </button>
+            </div>
+            <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 bg-slate-50">
+              <div>
+                <span className="text-xs text-slate-500 block font-normal">
+                  Nama Penerima
+                </span>
+                <span className="text-sm sm:text-base font-semibold text-slate-900">
+                  {donation.billerCode || "YAYASAN PAYUNG BERKAH"}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-1.5 pt-1">
+            <span className="text-xs font-semibold text-slate-700 block">
+              Catatan Transfer:
+            </span>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Sertakan nomor invoice <strong>{donation.invoiceId}</strong> pada berita transfer untuk memudahkan verifikasi mutasi rekening yayasan.
             </p>
           </div>
         </div>

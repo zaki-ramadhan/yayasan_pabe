@@ -1,14 +1,12 @@
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
-import { cn } from "@/lib/utils";
-import { sanitizeName, sanitizePhone, sanitizeEmail } from "@/lib/security";
+import { sanitizeName, sanitizeEmail } from "@/lib/security";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function RoutineDonorIdentity({
   fullName,
   setFullName,
-  whatsapp,
-  setWhatsapp,
   email = "",
   setEmail,
   isAnonymous,
@@ -24,12 +22,12 @@ export function RoutineDonorIdentity({
 
   return (
     <div id="tour-donor-identity" className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
-      {/* Header Step 1 (Unified with Checkout) */}
+      {/* Header Step 1 */}
       <h2 className="text-base sm:text-lg font-semibold text-slate-950">
-        Data Donatur
+        Data donatur
       </h2>
 
-      {/* Anonymous Checkbox (Unified with Checkout) */}
+      {/* Anonymous Checkbox */}
       <AnonymousCheckbox
         checked={isAnonymous}
         onChange={(val) => {
@@ -49,64 +47,46 @@ export function RoutineDonorIdentity({
             type="text"
             required={!isAnonymous}
             value={fullName}
-            maxLength={60}
+            minLength={FIELD_LIMITS.NAME.min}
+            maxLength={FIELD_LIMITS.NAME.max}
             onChange={(e) => {
               setFullName(sanitizeName(e.target.value));
               clearError("fullName");
             }}
             onBlur={() => setFullName((prev) => prev.trim())}
             placeholder="Contoh: Ahmad Fauzi"
-            className="h-11 text-sm sm:text-base font-normal"
+            className="h-11 text-sm font-normal"
           />
         </FormField>
       )}
 
-      {/* WhatsApp and Optional Email */}
-      <div className={cn("grid grid-cols-1 gap-4", setEmail ? "sm:grid-cols-2" : "")}>
+      {/* Email Utama */}
+      {setEmail && (
         <FormField
-          label="Nomor WhatsApp"
+          label="Alamat email aktif"
           required
-          error={errors.whatsapp}
-          hint="Pengingat berkala & invoice resmi akan dikirimkan ke nomor ini"
+          error={errors.email}
+          hint="Tautan invoice QRIS & kuitansi resmi dikirim ke email ini"
         >
           <Input
-            type="tel"
-            inputMode="tel"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
             required
-            value={whatsapp}
-            maxLength={15}
+            spellCheck={false}
+            value={email}
+            minLength={FIELD_LIMITS.EMAIL.min}
+            maxLength={FIELD_LIMITS.EMAIL.max}
             onChange={(e) => {
-              setWhatsapp(sanitizePhone(e.target.value));
-              clearError("whatsapp");
+              setEmail(sanitizeEmail(e.target.value));
+              clearError("email");
             }}
-            onBlur={() => setWhatsapp((prev) => prev.trim())}
-            placeholder="0812xxxxxxxx"
-            className="h-11 text-sm sm:text-base font-normal"
+            onBlur={() => setEmail((prev) => prev.trim())}
+            placeholder="nama@email.com"
+            className="h-11 text-sm font-normal"
           />
         </FormField>
-
-        {setEmail && (
-          <FormField
-            label="Email (opsional)"
-            error={errors.email}
-          >
-            <Input
-              type="email"
-              inputMode="email"
-              spellCheck={false}
-              value={email}
-              maxLength={100}
-              onChange={(e) => {
-                setEmail(sanitizeEmail(e.target.value));
-                clearError("email");
-              }}
-              onBlur={() => setEmail((prev) => prev.trim())}
-              placeholder="email@anda.com"
-              className="h-11 text-sm sm:text-base font-normal"
-            />
-          </FormField>
-        )}
-      </div>
+      )}
     </div>
   );
 }

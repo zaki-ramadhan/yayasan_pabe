@@ -10,9 +10,11 @@
 export function CheckoutStepHeader({ step, title, titleSize = "text-base sm:text-lg" }) {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-semibold shrink-0">
-        {step}
-      </span>
+      {step != null && step !== "" && (
+        <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-semibold shrink-0">
+          {step}
+        </span>
+      )}
       <h2 className={`${titleSize} font-semibold text-slate-950`}>
         {title}
       </h2>

@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { cn } from "@/lib/utils";
 import { sanitizeName, sanitizePhone, sanitizeEmail } from "@/lib/security";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { CheckoutStepHeader } from "@/components/donation/CheckoutStepHeader";
@@ -31,7 +32,7 @@ export function DonorIdentitySection({
 
   return (
     <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
-      <CheckoutStepHeader step={3} title="Data Donatur & Doa Kebaikan" />
+      <CheckoutStepHeader step={3} title="Data donatur & doa kebaikan" />
 
       {/* Anonim checkbox */}
       <AnonymousCheckbox
@@ -52,14 +53,15 @@ export function DonorIdentitySection({
             type="text"
             required={!isAnonymous}
             value={donorName}
-            maxLength={60}
+            minLength={FIELD_LIMITS.NAME.min}
+            maxLength={FIELD_LIMITS.NAME.max}
             onChange={(e) => {
               setDonorName(sanitizeName(e.target.value));
               clearError("donorName");
             }}
             onBlur={() => setDonorName((prev) => prev.trim())}
             placeholder="Nama lengkap Anda"
-            className="h-11 text-sm sm:text-base font-normal"
+            className="h-11 text-sm font-normal"
           />
         </FormField>
       )}
@@ -74,16 +76,18 @@ export function DonorIdentitySection({
           <Input
             type="tel"
             inputMode="tel"
+            autoComplete="tel"
             required
             value={donorPhone}
-            maxLength={15}
+            minLength={FIELD_LIMITS.PHONE.min}
+            maxLength={FIELD_LIMITS.PHONE.max}
             onChange={(e) => {
               setDonorPhone(sanitizePhone(e.target.value));
               clearError("donorPhone");
             }}
             onBlur={() => setDonorPhone((prev) => prev.trim())}
-            placeholder="08xxxxxxxxxx"
-            className="h-11 text-sm sm:text-base font-normal"
+            placeholder="081234567890"
+            className="h-11 text-sm font-normal"
           />
         </FormField>
 
@@ -104,7 +108,8 @@ export function DonorIdentitySection({
             required
             readOnly={isEmailLocked}
             value={donorEmail}
-            maxLength={100}
+            minLength={FIELD_LIMITS.EMAIL.min}
+            maxLength={FIELD_LIMITS.EMAIL.max}
             onChange={(e) => {
               if (!isEmailLocked) {
                 setDonorEmail(sanitizeEmail(e.target.value));
@@ -114,7 +119,7 @@ export function DonorIdentitySection({
             onBlur={() => setDonorEmail((prev) => prev.trim())}
             placeholder="email@domain.com"
             className={cn(
-              "h-11 text-sm sm:text-base font-normal",
+              "h-11 text-sm font-normal",
               isEmailLocked && "bg-slate-100 text-slate-600 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
             )}
           />

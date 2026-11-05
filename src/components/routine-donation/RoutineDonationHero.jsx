@@ -10,11 +10,11 @@ export function RoutineDonationHero() {
         className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 hover:text-primary hover:underline transition-colors py-0.5 group"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Kembali ke Program Kebaikan</span>
+        <span>Kembali ke program kebaikan</span>
       </Link>
       <PageHeader
-        title="Atur Jadwal Donasi Rutin"
-        description="Atur pengingat WhatsApp atau jadwal sedekah berkala untuk program donasi pilihan Anda."
+        title="Atur jadwal donasi rutin"
+        description="Atur kuitansi resmi email dan jadwal donasi berkala untuk program kebaikan pilihan Anda."
       />
     </div>
   );

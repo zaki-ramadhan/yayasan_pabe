@@ -9,6 +9,7 @@ export function RoutineSummaryCard({
   isSubmitting = false,
   campaigns = [],
   onStartTour,
+  existingActiveRoutine = null,
 }) {
   const campaignList = Array.isArray(campaigns) ? campaigns : [];
 
@@ -20,10 +21,10 @@ export function RoutineSummaryCard({
     <div id="tour-summary-card" className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-5 shadow-xs">
       <div>
         <h3 className="text-base sm:text-lg font-semibold text-slate-950">
-          Ringkasan Jadwal Donasi
+          Ringkasan jadwal donasi
         </h3>
         <p className="text-sm text-slate-600 mt-0.5">
-          {selectedPrograms.length} program terdaftar
+          Program kebaikan pilihan Anda
         </p>
       </div>
 
@@ -46,13 +47,13 @@ export function RoutineSummaryCard({
       {/* Total Commitment Calculation (Hanya tampil jika ada program donasi otomatis) */}
       {hasAnyAutoDonation && (
         <div className="pt-3 border-t border-slate-200 space-y-1">
-          <div className="flex justify-between items-baseline text-base font-medium text-slate-950">
-            <span>Total per Jadwal</span>
-            <span className="text-primary text-xl sm:text-2xl font-bold tracking-tight">
+          <div className="flex justify-between items-baseline text-sm font-medium text-slate-950">
+            <span>Total per jadwal</span>
+            <span className="text-primary text-base sm:text-lg font-semibold">
               {formatRupiah(totalPerCommitment)}
             </span>
           </div>
-          <p className="mt-2 text-sm text-slate-600 italic font-normal">
+          <p className="mt-2 text-xs text-slate-600 italic font-normal">
             *Nominal disesuaikan otomatis dengan jadwal donasi pilihan
           </p>
         </div>
@@ -65,6 +66,7 @@ export function RoutineSummaryCard({
           isLoading={isSubmitting}
           disabled={
             isSubmitting ||
+            Boolean(existingActiveRoutine) ||
             selectedPrograms.length === 0 ||
             (hasAnyAutoDonation && totalPerCommitment <= 0)
           }
@@ -72,10 +74,12 @@ export function RoutineSummaryCard({
           className="flex-1 h-12 rounded-lg text-base disabled:opacity-50 disabled:pointer-events-none"
         >
           {isSubmitting
-            ? "Menyimpan Jadwal..."
-            : totalPerCommitment > 0
-            ? `Aktifkan Jadwal (${formatRupiah(totalPerCommitment)})`
-            : "Aktifkan Pengingat Donasi Rutin"}
+            ? "Menyimpan jadwal..."
+            : existingActiveRoutine?.status === "PAUSED"
+            ? "Jadwal sedang dijeda"
+            : existingActiveRoutine
+            ? "Jadwal aktif sudah ada"
+            : "Aktifkan jadwal donasi rutin"}
         </Button>
         {onStartTour && (
           <button

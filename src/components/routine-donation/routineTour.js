@@ -18,8 +18,8 @@ export function startRoutineTour() {
       {
         element: "#tour-donor-identity",
         popover: {
-          title: "Data Diri & WhatsApp",
-          description: "Masukkan nama dan nomor WhatsApp aktif Anda untuk menerima pesan pengingat jadwal donasi.",
+          title: "Data donatur",
+          description: "Masukkan nama dan alamat email aktif Anda untuk menerima invoice QRIS dan laporan resmi donasi.",
           side: "bottom",
           align: "start",
         },
@@ -27,7 +27,7 @@ export function startRoutineTour() {
       {
         element: "#tour-program-picker",
         popover: {
-          title: "Pilih Program Donasi",
+          title: "Pilih program donasi",
           description: "Pilih nama program donasi yang ingin Anda dukung secara berkala.",
           side: "bottom",
           align: "start",
@@ -36,8 +36,8 @@ export function startRoutineTour() {
       {
         element: "#tour-schedule-frequency",
         popover: {
-          title: "Pilihan Jadwal Donasi",
-          description: "Tentukan pengulangan waktu: setiap hari, mingguan (pilih hari tertentu), atau bulanan (pilih tanggal).",
+          title: "Pilihan jadwal donasi",
+          description: "Tentukan pengulangan waktu: mingguan (pilih hari tertentu) atau bulanan (pilih tanggal).",
           side: "top",
           align: "start",
         },
@@ -45,8 +45,8 @@ export function startRoutineTour() {
       {
         element: "#tour-routine-type",
         popover: {
-          title: "Model Pelaksanaan",
-          description: "Pilih cara kerja donasi: pesan pengingat biasa atau donasi otomatis dengan tautan pembayaran siap bayar.",
+          title: "Model pelaksanaan",
+          description: "Pilih cara kerja donasi: email pengingat biasa atau donasi otomatis dengan tautan invoice QRIS siap bayar.",
           side: "top",
           align: "start",
         },
@@ -54,17 +54,8 @@ export function startRoutineTour() {
       {
         element: "#tour-schedule-time",
         popover: {
-          title: "Jam Pengingat",
-          description: "Atur jam dan menit pengiriman pesan ke nomor WhatsApp Anda (format 24 jam).",
-          side: "top",
-          align: "start",
-        },
-      },
-      {
-        element: "#tour-add-program",
-        popover: {
-          title: "Tambah Program Lain",
-          description: "Gunakan tombol ini jika Anda ingin mendaftarkan hingga 2 pilihan program donasi sekaligus.",
+          title: "Jam pengingat",
+          description: "Atur jam dan menit pengiriman invoice resmi ke email Anda (format 24 jam).",
           side: "top",
           align: "start",
         },
@@ -72,8 +63,8 @@ export function startRoutineTour() {
       {
         element: "#tour-summary-card",
         popover: {
-          title: "Simpan Jadwal",
-          description: "Periksa rincian jadwal Anda, lalu tekan tombol simpan untuk mengaktifkan pengingat.",
+          title: "Simpan jadwal",
+          description: "Periksa rincian jadwal Anda, lalu tekan tombol simpan untuk mengaktifkan komitmen donasi rutin.",
           side: "left",
           align: "start",
         },

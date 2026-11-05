@@ -18,7 +18,7 @@ export function AnonymousCheckbox({
           className="w-3.5 h-3.5 text-primary rounded border-slate-300 focus:ring-primary cursor-pointer"
         />
         <span className="text-xs sm:text-sm text-slate-700 font-normal">
-          Sembunyikan nama saya (Tampilkan sebagai Hamba Allah)
+          Sembunyikan nama saya (tampilkan sebagai Hamba Allah)
         </span>
       </label>
     );
@@ -40,7 +40,7 @@ export function AnonymousCheckbox({
         className="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary cursor-pointer"
       />
       <span className="text-sm font-normal text-slate-800">
-        Sembunyikan nama saya (Tampilkan sebagai Hamba Allah)
+        Sembunyikan nama saya (tampilkan sebagai Hamba Allah)
       </span>
     </label>
   );

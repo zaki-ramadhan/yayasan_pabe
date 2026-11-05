@@ -1,5 +1,5 @@
-import { PaymentChannelItem } from "@/components/donation/PaymentChannelItem";
 import { CheckoutStepHeader } from "@/components/donation/CheckoutStepHeader";
+import { PaymentCategoryGroupList } from "@/components/donation/PaymentCategoryGroupList";
 import { cn } from "@/lib/utils";
 
 export function PaymentChannelPicker({
@@ -8,32 +8,34 @@ export function PaymentChannelPicker({
   onSelectChannel,
   showHeader = true,
   stepNumber = 2,
-  title = "Pilih Metode Pembayaran",
+  title = "Pilih saluran donasi",
   containerCard = true,
   className = "",
+  compact = false,
 }) {
   return (
     <div
       className={cn(
         containerCard && "bg-white p-5 sm:p-6 rounded-xl border border-slate-300 shadow-xs",
-        "space-y-3 sm:space-y-4",
+        compact ? "space-y-2" : "space-y-3 sm:space-y-4",
         className
       )}
     >
       {showHeader && (
-        <CheckoutStepHeader step={stepNumber} title={title} titleSize="text-sm sm:text-base" />
+        <CheckoutStepHeader
+          step={stepNumber}
+          title={title}
+          titleSize={compact ? "text-sm font-semibold" : "text-base sm:text-lg"}
+        />
       )}
 
-      <div className="space-y-2.5">
-        {channels.map((channel) => (
-          <PaymentChannelItem
-            key={channel.id}
-            channel={channel}
-            isSelected={selectedChannelId === channel.id}
-            onSelect={() => onSelectChannel(channel.id)}
-          />
-        ))}
-      </div>
+      <PaymentCategoryGroupList
+        channels={channels}
+        selectedChannelId={selectedChannelId}
+        onSelectChannel={onSelectChannel}
+        compact={compact}
+      />
     </div>
   );
 }
+

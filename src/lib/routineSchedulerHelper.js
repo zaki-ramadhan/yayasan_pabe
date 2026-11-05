@@ -11,6 +11,20 @@ export { normalizeWhatsAppNumber } from "@/lib/whatsappUtils";
 export function isRoutineScheduledForNow(routine, currentTime = new Date()) {
   if (!routine || routine.status !== "ACTIVE") return false;
 
+  // Evaluasi masa berlaku jika opsi rentang tanggal aktif
+  if (routine.hasCustomPeriod) {
+    if (routine.startDate) {
+      const start = new Date(routine.startDate);
+      start.setHours(0, 0, 0, 0);
+      if (currentTime < start) return false;
+    }
+    if (routine.endDate) {
+      const end = new Date(routine.endDate);
+      end.setHours(23, 59, 59, 999);
+      if (currentTime > end) return false;
+    }
+  }
+
   const wibTime = new Date(currentTime.getTime() + (7 * 60 + currentTime.getTimezoneOffset()) * 60000);
   const currentHour = wibTime.getHours();
   const currentMinute = wibTime.getMinutes();
