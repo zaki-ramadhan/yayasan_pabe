@@ -79,7 +79,7 @@ export async function getDonorHistory({
 
     const finalWhere = { AND: filterConditions };
 
-    let orderByClause = [{ paidAt: normalizedSortOrder }, { createdAt: normalizedSortOrder }];
+    let orderByClause = { createdAt: normalizedSortOrder };
     if (sortBy === "nominal" || sortBy === "amount") {
       orderByClause = { amount: normalizedSortOrder };
     } else if (sortBy === "program") {
@@ -131,7 +131,7 @@ export async function getDonorHistory({
         programTitle: effectiveProgramTitle,
         campaignSlug: d.campaign?.slug || "",
         paymentChannel: d.paymentChannel || "QRIS",
-        date: (d.paidAt || d.createdAt).toISOString(),
+        date: (d.createdAt || d.paidAt).toISOString(),
         status: d.status,
       };
     });
