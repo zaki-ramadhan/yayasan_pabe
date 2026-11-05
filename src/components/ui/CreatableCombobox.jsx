@@ -82,9 +82,11 @@ export function CreatableCombobox({
   const canCreate = Boolean(onCreate) && trimmedSearch.length > 0 && !hasExactMatch;
   const totalItems = filteredOptions.length + (canCreate ? 1 : 0);
 
-  React.useEffect(() => {
+  const [prevFilterState, setPrevFilterState] = React.useState({ filteredOptions, canCreate });
+  if (filteredOptions !== prevFilterState.filteredOptions || canCreate !== prevFilterState.canCreate) {
+    setPrevFilterState({ filteredOptions, canCreate });
     setHighlightedIndex(0);
-  }, [filteredOptions, canCreate]);
+  }
 
   const handleSelect = (item) => {
     if (onChange) {

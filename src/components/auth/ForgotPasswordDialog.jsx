@@ -36,8 +36,10 @@ export function ForgotPasswordDialog({
     60
   );
 
-  // Inisialisasi input saat modal dibuka
-  useEffect(() => {
+  // Inisialisasi input saat modal dibuka (React derived state pattern)
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
     if (isOpen) {
       if (initialIdentifier && initialIdentifier.includes("@")) {
         setForgotInput(
@@ -46,7 +48,7 @@ export function ForgotPasswordDialog({
       }
       setForgotError("");
     }
-  }, [isOpen, initialIdentifier]);
+  }
 
   const isInputValid = useMemo(() => {
     const clean = stripEmojis(forgotInput).trim();

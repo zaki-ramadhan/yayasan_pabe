@@ -7,7 +7,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/Chart";
-import { formatRupiah, formatCompactRupiah, formatNumber } from "@/lib/formatters";
+import { formatRupiah, formatCompactRupiah, formatNumber, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
 const chartConfig = {
@@ -100,7 +100,7 @@ export function AdminDonationTrendCanvas({
                   if (isMonthly) {
                     return item?.fullMonth || "Periode";
                   }
-                  return item?.date ? `Tanggal ${item.date}` : "Tanggal";
+                  return item?.date ? formatDate(item.date) : "Tanggal";
                 }}
                 formatter={(value, name, item) => {
                   const numVal = Number(value || 0);

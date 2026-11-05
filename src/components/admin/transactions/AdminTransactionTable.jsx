@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { formatDate } from "@/lib/formatters";
 import {
   Table,
@@ -30,6 +30,7 @@ const PAGE_SIZE = 10;
 
 export function AdminTransactionTable({ initialTransactions = [] }) {
   const [transactions, setTransactions] = useState(initialTransactions);
+  const [serverResults, setServerResults] = useState(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [channelFilter, setChannelFilter] = useState("ALL");
@@ -52,10 +53,50 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       }
       return [newTx, ...prev];
     });
+
+    setServerResults((prev) => {
+      if (!prev) return null;
+      return [newTx, ...prev];
+    });
   });
 
   const debouncedSearch = useDebounce(search.trim(), 300);
   const isSearching = Boolean(search.trim().length > 0 && search.trim() !== debouncedSearch);
+
+  const hasFilter = Boolean(debouncedSearch || statusFilter !== "ALL" || channelFilter !== "ALL");
+
+  useEffect(() => {
+    if (!hasFilter) return;
+
+    let cancelled = false;
+    const fetchFiltered = async () => {
+      setIsLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (debouncedSearch) params.set("search", debouncedSearch);
+        if (statusFilter !== "ALL") params.set("status", statusFilter);
+        if (channelFilter !== "ALL") params.set("paymentChannel", channelFilter);
+        params.set("limit", "100");
+
+        const res = await safeFetch(`/api/admin/transactions?${params.toString()}`);
+        const json = await res.json();
+        if (!cancelled && json.success && Array.isArray(json.data)) {
+          setServerResults(json.data);
+        }
+      } catch {
+        // ignore error
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    fetchFiltered();
+    return () => {
+      cancelled = true;
+    };
+  }, [hasFilter, debouncedSearch, statusFilter, channelFilter]);
+
+  const activeTransactions = hasFilter && serverResults !== null ? serverResults : transactions;
 
   const handleCopyInvoice = async (invoiceId) => {
     if (!invoiceId) return;
@@ -72,7 +113,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   };
 
   const filtered = useMemo(() => {
-    return transactions.filter((t) => {
+    return activeTransactions.filter((t) => {
       if (statusFilter !== "ALL" && t.status !== statusFilter) return false;
       if (channelFilter !== "ALL" && t.paymentChannel !== channelFilter) return false;
       if (debouncedSearch) {
@@ -84,7 +125,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       }
       return true;
     });
-  }, [transactions, statusFilter, channelFilter, debouncedSearch]);
+  }, [activeTransactions, statusFilter, channelFilter, debouncedSearch]);
 
   const {
     currentPage,

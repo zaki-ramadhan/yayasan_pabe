@@ -10,7 +10,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/Chart";
 import { SortDropdown } from "@/components/shared/SortDropdown";
-import { formatRupiah, formatCompactNumber } from "@/lib/formatters";
+import { formatRupiah, formatCompactNumber, formatDate } from "@/lib/formatters";
 import { TIME_RANGE_OPTIONS, VIEW_MODE_OPTIONS } from "@/data/chartOptions";
 import { useCampaignChartData } from "./useCampaignChartData";
 import { CampaignChartSummaryCards } from "./CampaignChartSummaryCards";
@@ -145,13 +145,7 @@ export function CampaignDonationGrowthChart({
                 <ChartTooltipContent
                   labelFormatter={(value) => {
                     if (!value) return "";
-                    const date = new Date(value);
-                    return date.toLocaleDateString("id-ID", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    });
+                    return formatDate(value, { withDay: true });
                   }}
                   formatter={(value, name) => {
                     const isCum = name === "cumulativeAmount";

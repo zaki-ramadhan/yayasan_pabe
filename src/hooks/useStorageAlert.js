@@ -20,10 +20,24 @@ export function useStorageAlert() {
     totalCount: 0,
     health: calculateStorageHealth(0, R2_FREE_TIER_BYTES),
   });
-  const [isDismissed, setIsDismissed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [dismissedStatus, setDismissedStatus] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        return sessionStorage.getItem("pabe_storage_alert_dismissed") || "";
+      } catch {
+        return "";
+      }
+    }
+    return "";
+  });
+
+  const healthStatus = data.health?.status;
+  const isDismissed = Boolean(healthStatus && dismissedStatus === healthStatus);
+
   const fetchAlerts = useCallback(async () => {
+    setIsLoading(true);
     // 1. Cek parameter pengujian instan di URL atau sessionStorage (?mockStorage=85 atau ?mockStorage=96)
     if (typeof window !== "undefined") {
       try {
@@ -68,28 +82,65 @@ export function useStorageAlert() {
   }, []);
 
   useEffect(() => {
-    fetchAlerts();
-  }, [fetchAlerts]);
+    let ignore = false;
+    async function load() {
+      // 1. Cek parameter pengujian instan di URL atau sessionStorage
+      if (typeof window !== "undefined") {
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const queryMock = urlParams.get("mockStorage");
+          const sessionMock = sessionStorage.getItem("pabe_mock_storage");
+          const activeMock = queryMock || sessionMock;
 
-  // Cek apakah admin telah menutup notifikasi pada sesi saat ini
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const dismissedStatus = sessionStorage.getItem("pabe_storage_alert_dismissed");
-      if (dismissedStatus === data.health?.status) {
-        setIsDismissed(true);
-      } else {
-        // Jika status meningkat (misal dari WARNING ke CRITICAL), buka kembali peringatan
-        setIsDismissed(false);
+          if (activeMock !== null && !isNaN(Number(activeMock))) {
+            const mockPercent = Number(activeMock);
+            const simulatedBytes = Math.round((mockPercent / 100) * R2_FREE_TIER_BYTES);
+            const simulatedHealth = calculateStorageHealth(simulatedBytes, R2_FREE_TIER_BYTES);
+
+            if (!ignore) {
+              setData({
+                isConfigured: true,
+                totalBytes: simulatedBytes,
+                limitBytes: R2_FREE_TIER_BYTES,
+                totalCount: 120,
+                health: simulatedHealth,
+              });
+              setIsLoading(false);
+            }
+            return;
+          }
+        } catch {}
+      }
+
+      try {
+        const res = await safeFetch("/api/admin/storage/alerts", {}, 5000);
+        if (res.ok) {
+          const json = await res.json();
+          if (!ignore && json.success && json.data) {
+            setData(json.data);
+          }
+        }
+      } catch (err) {
+        if (!ignore) console.warn("Gagal mengambil status peringatan penyimpanan:", err.message);
+      } finally {
+        if (!ignore) setIsLoading(false);
       }
     }
-  }, [data.health?.status]);
+
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const dismissAlert = useCallback(() => {
-    setIsDismissed(true);
-    if (typeof window !== "undefined" && data.health?.status) {
-      sessionStorage.setItem("pabe_storage_alert_dismissed", data.health.status);
+    if (typeof window !== "undefined" && healthStatus) {
+      try {
+        sessionStorage.setItem("pabe_storage_alert_dismissed", healthStatus);
+      } catch {}
+      setDismissedStatus(healthStatus);
     }
-  }, [data.health?.status]);
+  }, [healthStatus]);
 
   return {
     ...data,
@@ -97,6 +148,6 @@ export function useStorageAlert() {
     isDismissed,
     dismissAlert,
     refreshAlerts: fetchAlerts,
-    isStorageFull: data.health?.status === STORAGE_STATUS.CRITICAL,
+    isStorageFull: healthStatus === STORAGE_STATUS.CRITICAL,
   };
 }

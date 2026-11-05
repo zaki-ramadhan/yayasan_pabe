@@ -15,6 +15,7 @@ export function useAutoResizeTextarea({
   const internalRef = useRef(null);
   const targetRef = ref || internalRef;
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const adjustHeight = useCallback(() => {
     const el = targetRef.current;
     if (!el) return;

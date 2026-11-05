@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { formatRupiah } from "@/lib/formatters";
 import { TableRow, TableCell } from "@/components/ui/Table";
 
@@ -19,11 +20,11 @@ export function TransactionLimitTableRow({ item }) {
         <div className="flex items-center gap-3">
           {item.logo && (
             <div className="w-14 sm:w-16 h-8 sm:h-9 flex items-center justify-center shrink-0">
-              <img
+              <Image
                 src={item.logo}
                 alt={item.name}
-                loading="lazy"
-                decoding="async"
+                width={64}
+                height={24}
                 className="max-h-6 w-auto max-w-full object-contain select-none pointer-events-none"
               />
             </div>

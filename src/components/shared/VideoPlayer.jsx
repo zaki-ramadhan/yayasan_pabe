@@ -53,15 +53,20 @@ export function VideoPlayer({
   const resolvedPoster = poster || (isYt ? getYouTubeThumbnail(src) : null);
   const resolvedSrc = isYt ? src : getStreamingUrl(src);
 
-  // Auto-pause & reset saat berpindah slide carousel atau tidak aktif
-  useEffect(() => {
+  // Auto-pause saat berpindah slide carousel atau tidak aktif (React derived state pattern)
+  const [prevIsActive, setPrevIsActive] = useState(isActive);
+  if (isActive !== prevIsActive) {
+    setPrevIsActive(isActive);
     if (!isActive && isPlaying) {
-      if (videoRef.current) {
-        videoRef.current.pause();
-      }
       setIsPlaying(false);
     }
-  }, [isActive, isPlaying]);
+  }
+
+  useEffect(() => {
+    if (!isActive && videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, [isActive]);
 
   const handleStartPlay = (e) => {
     e.stopPropagation();

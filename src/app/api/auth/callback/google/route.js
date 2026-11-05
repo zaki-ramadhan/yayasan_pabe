@@ -259,9 +259,7 @@ export async function GET(request) {
               sessionStorage.setItem('pabe_just_logged_in', session.name || 'Donatur');
               sessionStorage.setItem('pabe_last_activity', String(Date.now()));
 
-              const validId = session.sessionToken || session.id || session.email;
               const durSec = 30 * 24 * 60 * 60;
-              document.cookie = 'pabe_session=' + encodeURIComponent(validId) + '; path=/; max-age=' + durSec + '; SameSite=Lax';
               document.cookie = 'pabe_role=' + encodeURIComponent(session.role || 'DONOR') + '; path=/; max-age=' + durSec + '; SameSite=Lax';
 
               window.dispatchEvent(new Event('pabe_auth_change'));

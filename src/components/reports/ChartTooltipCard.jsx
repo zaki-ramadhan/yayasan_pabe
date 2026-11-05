@@ -1,4 +1,4 @@
-import { formatRupiah } from "@/lib/formatters";
+import { formatRupiah, formatDate } from "@/lib/formatters";
 
 /**
  * Reusable Custom Tooltip Card for Recharts.
@@ -9,11 +9,15 @@ export function ChartTooltipCard({ active, payload, label, formatter = formatRup
     return null;
   }
 
+  const formattedLabel = typeof label === "string" && /^\d{4}-\d{2}-\d{2}/.test(label)
+    ? formatDate(label)
+    : label;
+
   return (
     <div className="bg-white border border-slate-200 rounded-md shadow-md p-3 text-sm space-y-2 min-w-[200px]">
-      {label && (
+      {formattedLabel && (
         <div className="font-semibold text-slate-900 border-b border-slate-100 pb-1.5">
-          {label}
+          {formattedLabel}
         </div>
       )}
       <div className="space-y-1.5">

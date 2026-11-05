@@ -70,8 +70,22 @@ export async function getAdminOverviewStats() {
 /**
  * Mengambil ringkasan data tren donasi dan penyaluran untuk grafik analitik admin.
  */
+function toWibDateKey(dateInput) {
+  if (!dateInput) return "";
+  const d = new Date(dateInput);
+  if (isNaN(d.getTime())) return "";
+  const wibTime = new Date(d.getTime() + (7 * 60 + d.getTimezoneOffset()) * 60000);
+  const year = wibTime.getFullYear();
+  const month = String(wibTime.getMonth() + 1).padStart(2, "0");
+  const day = String(wibTime.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export async function getAdminDonationTrends() {
   try {
+    const today = new Date();
+    const todayKey = toWibDateKey(today);
+
     const ninetyDaysAgo = new Date();
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
     ninetyDaysAgo.setHours(0, 0, 0, 0);
@@ -120,29 +134,21 @@ export async function getAdminDonationTrends() {
     paidDonations.forEach((d) => {
       const rawDate = d.paidAt || d.createdAt;
       if (!rawDate) return;
-      const dObj = rawDate instanceof Date ? rawDate : new Date(rawDate);
-      if (dObj >= ninetyDaysAgo) {
-        const dateKey = dObj.toISOString().split("T")[0];
-        const existing = dailyMap.get(dateKey) || { dailyAmount: 0, donationsCount: 0, disbursedAmount: 0 };
-        existing.dailyAmount += Number(d.amount || 0);
-        existing.donationsCount += 1;
-        dailyMap.set(dateKey, existing);
-      }
+      const dateKey = toWibDateKey(rawDate);
+      const existing = dailyMap.get(dateKey) || { dailyAmount: 0, donationsCount: 0, disbursedAmount: 0 };
+      existing.dailyAmount += Number(d.amount || 0);
+      existing.donationsCount += 1;
+      dailyMap.set(dateKey, existing);
     });
 
     disbursements.forEach((u) => {
       if (!u.date) return;
-      const dObj = u.date instanceof Date ? u.date : new Date(u.date);
-      if (dObj >= ninetyDaysAgo) {
-        const dateKey = dObj.toISOString().split("T")[0];
-        const existing = dailyMap.get(dateKey) || { dailyAmount: 0, donationsCount: 0, disbursedAmount: 0 };
-        existing.disbursedAmount += Number(u.disbursedAmount || 0);
-        dailyMap.set(dateKey, existing);
-      }
+      const dateKey = toWibDateKey(u.date);
+      const existing = dailyMap.get(dateKey) || { dailyAmount: 0, donationsCount: 0, disbursedAmount: 0 };
+      existing.disbursedAmount += Number(u.disbursedAmount || 0);
+      dailyMap.set(dateKey, existing);
     });
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
     const dailyTrend = [];
     let runningCumulative = priorTotal;
     const cursor = new Date(ninetyDaysAgo);
@@ -153,20 +159,24 @@ export async function getAdminDonationTrends() {
       "Juli", "Agustus", "September", "Oktober", "November", "Desember",
     ];
 
-    while (cursor <= today) {
-      const dateKey = cursor.toISOString().split("T")[0];
+    let safetyCount = 0;
+    while (safetyCount < 180) {
+      safetyCount++;
+      const dateKey = toWibDateKey(cursor);
       const dayData = dailyMap.get(dateKey) || { dailyAmount: 0, donationsCount: 0, disbursedAmount: 0 };
       runningCumulative += dayData.dailyAmount;
 
+      const cursorWib = new Date(cursor.getTime() + (7 * 60 + cursor.getTimezoneOffset()) * 60000);
       dailyTrend.push({
         date: dateKey,
-        label: `${cursor.getDate()} ${monthNames[cursor.getMonth()]}`,
+        label: `${cursorWib.getDate()} ${monthNames[cursorWib.getMonth()]}`,
         dailyAmount: dayData.dailyAmount,
         cumulativeAmount: runningCumulative,
         donationsCount: dayData.donationsCount,
         disbursedAmount: dayData.disbursedAmount,
       });
 
+      if (dateKey === todayKey) break;
       cursor.setDate(cursor.getDate() + 1);
     }
 
@@ -187,8 +197,7 @@ export async function getAdminDonationTrends() {
     paidDonations.forEach((d) => {
       const rawDate = d.paidAt || d.createdAt;
       if (!rawDate) return;
-      const dObj = rawDate instanceof Date ? rawDate : new Date(rawDate);
-      const mKey = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, "0")}`;
+      const mKey = toWibDateKey(rawDate).substring(0, 7);
       if (monthlyMap.has(mKey)) {
         const item = monthlyMap.get(mKey);
         item.inflow += Number(d.amount || 0);
@@ -198,8 +207,7 @@ export async function getAdminDonationTrends() {
 
     disbursements.forEach((u) => {
       if (!u.date) return;
-      const dObj = u.date instanceof Date ? u.date : new Date(u.date);
-      const mKey = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, "0")}`;
+      const mKey = toWibDateKey(u.date).substring(0, 7);
       if (monthlyMap.has(mKey)) {
         const item = monthlyMap.get(mKey);
         item.outflow += Number(u.disbursedAmount || 0);

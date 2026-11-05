@@ -11,6 +11,17 @@ import { formatRupiah, formatNumber } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
+function toWibDateKey(dateInput) {
+  if (!dateInput) return "";
+  const d = new Date(dateInput);
+  if (isNaN(d.getTime())) return "";
+  const wibTime = new Date(d.getTime() + (7 * 60 + d.getTimezoneOffset()) * 60000);
+  const year = wibTime.getFullYear();
+  const month = String(wibTime.getMonth() + 1).padStart(2, "0");
+  const day = String(wibTime.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 const TIME_RANGE_OPTIONS = [
   { value: "7d", label: "7 hari terakhir" },
   { value: "30d", label: "30 hari terakhir" },
@@ -34,14 +45,14 @@ export function AdminDonationTrendCard({
     if (!newTx || !newTx.amount) return;
 
     const amount = Number(newTx.amount);
-    const dateObj = newTx.paidAt ? new Date(newTx.paidAt) : new Date();
-    const dateKey = dateObj.toISOString().split("T")[0];
-    const mKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, "0")}`;
+    const dateKey = toWibDateKey(newTx.paidAt || new Date());
+    const mKey = dateKey.substring(0, 7);
 
     setTrends((prev) => {
       const daily = Array.isArray(prev?.dailyTrend) ? [...prev.dailyTrend] : [];
       const monthly = Array.isArray(prev?.monthlyTrend) ? [...prev.monthlyTrend] : [];
 
+      const existsDaily = daily.some((d) => d.date === dateKey);
       let runningCumulative = 0;
       const updatedDaily = daily.map((d) => {
         if (d.date === dateKey) {
@@ -61,6 +72,21 @@ export function AdminDonationTrendCard({
           cumulativeAmount: runningCumulative,
         };
       });
+
+      if (!existsDaily) {
+        const dObj = newTx.paidAt ? new Date(newTx.paidAt) : new Date();
+        const cursorWib = new Date(dObj.getTime() + (7 * 60 + dObj.getTimezoneOffset()) * 60000);
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+        const prevCumulative = daily.length > 0 ? Number(daily[daily.length - 1].cumulativeAmount || 0) : 0;
+        updatedDaily.push({
+          date: dateKey,
+          label: `${cursorWib.getDate()} ${monthNames[cursorWib.getMonth()]}`,
+          dailyAmount: amount,
+          cumulativeAmount: prevCumulative + amount,
+          donationsCount: 1,
+          disbursedAmount: 0,
+        });
+      }
 
       const updatedMonthly = monthly.map((m) => {
         if (m.key === mKey) {

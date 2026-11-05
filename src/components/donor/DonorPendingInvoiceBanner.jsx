@@ -29,11 +29,16 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
   const activeInvoice = sortedInvoices[0] || null;
   const additionalCount = Math.max(0, sortedInvoices.length - 1);
 
-  useEffect(() => {
+  const [prevExpiredAt, setPrevExpiredAt] = useState(activeInvoice?.expiredAt);
+  if (activeInvoice?.expiredAt !== prevExpiredAt) {
+    setPrevExpiredAt(activeInvoice?.expiredAt);
     if (!activeInvoice?.expiredAt) {
       setTimeLeft("");
-      return;
     }
+  }
+
+  useEffect(() => {
+    if (!activeInvoice?.expiredAt) return;
 
     const targetTime = new Date(activeInvoice.expiredAt).getTime();
 

@@ -12,7 +12,7 @@ export function DonorMobileHeader({ currentUser, isOpen, onToggle }) {
   const [imgError, setImgError] = useState(false);
 
   const avatarUrl = !imgError
-    ? (currentUser?.avatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
+    ? (currentUser?.customAvatar || currentUser?.avatar || currentUser?.providerAvatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
     : null;
 
   const fallbackInitial = getInitials(

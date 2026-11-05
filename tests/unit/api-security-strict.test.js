@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterAll } from "vitest";
+import prisma from "@/lib/prisma";
 import { globalRateLimiter } from "@/lib/rateLimit";
 import { POST as loginHandler } from "@/app/api/auth/login/route";
 import { POST as donationHandler, GET as donationGetHandler } from "@/app/api/donations/route";
@@ -34,6 +35,16 @@ function createMockRequest({
 describe("Strict Security Audit: Rate Limiting & Abuse Prevention", () => {
   beforeEach(() => {
     globalRateLimiter.reset();
+  });
+
+  afterAll(async () => {
+    await prisma.donation.deleteMany({
+      where: {
+        donorName: "Budi Santoso",
+        donorPhone: "081234567890",
+        status: "PENDING",
+      },
+    });
   });
 
   it("memblokir serangan brute force login setelah 10 percobaan per menit (HTTP 429)", async () => {

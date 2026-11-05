@@ -96,10 +96,12 @@ export function Combobox({
     });
   }, [normalizedOptions, searchTerm]);
 
-  // Reset indeks highlighted saat hasil filter berubah
-  React.useEffect(() => {
+  // Reset indeks highlighted saat hasil filter berubah (React derived state pattern)
+  const [prevFilteredOptions, setPrevFilteredOptions] = React.useState(filteredOptions);
+  if (filteredOptions !== prevFilteredOptions) {
+    setPrevFilteredOptions(filteredOptions);
     setHighlightedIndex(0);
-  }, [filteredOptions]);
+  }
 
   // Apakah input pencarian perlu ditampilkan
   const showSearch =

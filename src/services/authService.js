@@ -166,23 +166,6 @@ export function getStoredUser() {
       return null;
     }
 
-    // Auto-heal session cookies client-side jika hilang atau tercemar nilai dummy "USR-DONOR"
-    if (typeof document !== "undefined") {
-      const match = document.cookie.match(/pabe_session=([^;]+)/);
-      const curSession = match ? decodeURIComponent(match[1].trim()) : null;
-      if (!curSession || curSession === "USR-DONOR") {
-        const validId = parsed?.sessionToken || parsed?.id || parsed?.email || "";
-        if (validId) {
-          const durationSec = Math.max(
-            60,
-            Math.floor(((parsed.expiresAt || Date.now() + 7 * 86400000) - Date.now()) / 1000)
-          );
-          document.cookie = `pabe_session=${encodeURIComponent(validId)}; path=/; max-age=${durationSec}; SameSite=Lax`;
-          document.cookie = `pabe_role=${encodeURIComponent(parsed?.role || "DONOR")}; path=/; max-age=${durationSec}; SameSite=Lax`;
-        }
-      }
-    }
-
     return parsed;
   } catch {
     return null;

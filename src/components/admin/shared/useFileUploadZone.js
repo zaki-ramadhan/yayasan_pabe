@@ -74,16 +74,18 @@ export function useFileUploadZone({
     : internalUploadProgress;
   const progressText = uploadProgressText || internalProgressText;
 
-  // Sinkronisasi status preview saat value dibersihkan
-  useEffect(() => {
-    if (!value) {
-      if (localPreview) {
-        URL.revokeObjectURL(localPreview);
-        setLocalPreview("");
-      }
-      setUploadMeta(null);
+  // Sinkronisasi status preview saat value dibersihkan (React derived state pattern)
+  const [prevVal, setPrevVal] = useState(value);
+  if (!value && prevVal) {
+    setPrevVal(value);
+    if (localPreview) {
+      URL.revokeObjectURL(localPreview);
+      setLocalPreview("");
     }
-  }, [value, localPreview]);
+    setUploadMeta(null);
+  } else if (value !== prevVal) {
+    setPrevVal(value);
+  }
 
   const defaultAccept = isPdf
     ? "application/pdf"

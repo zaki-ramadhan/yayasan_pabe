@@ -10,10 +10,11 @@ import { logoutUser, loginUser, getStoredUser, USER_ROLES } from "@/services/aut
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 
-export function DonorLayoutClient({ children }) {
+export function DonorLayoutClient({ children, initialUser }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { currentUser, isAuthenticated } = useCurrentUser();
+  const { currentUser: storeUser } = useCurrentUser();
+  const currentUser = initialUser || storeUser;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Tampilkan toast sambutan setelah login donatur berhasil
@@ -43,8 +44,13 @@ export function DonorLayoutClient({ children }) {
   useEffect(() => {
     let isMounted = true;
 
+    // Sinkronkan initialUser dari server ke client storage jika storage masih kosong
+    if (initialUser && !getStoredUser()) {
+      loginUser(initialUser);
+    }
+
     // 1. Fast preliminary check on client storage via getStoredUser (with expiration verification)
-    const stored = getStoredUser();
+    const stored = getStoredUser() || initialUser;
     if (!stored) {
       logoutUser();
       toast.error("Sesi donatur telah berakhir. Silakan masuk kembali.");
@@ -114,7 +120,7 @@ export function DonorLayoutClient({ children }) {
       isMounted = false;
       window.removeEventListener("focus", handleFocus);
     };
-  }, [pathname, router, isAuthenticated]);
+  }, [pathname, router, initialUser]);
 
   const handleToggleSidebar = () => {
     setIsMobileMenuOpen((prev) => !prev);
