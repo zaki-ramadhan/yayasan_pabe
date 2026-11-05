@@ -581,23 +581,6 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
           </div>
         </div>
       )}
-
-      {/* Tombol Cek Status Pembayaran Real-time */}
-      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-sm text-slate-600">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-          <span>Sistem mengecek status otomatis</span>
-        </div>
-        <button
-          type="button"
-          onClick={handleManualCheckStatus}
-          disabled={isCheckingStatus}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-slate-300 hover:bg-slate-100 text-xs font-medium text-slate-800 transition-colors cursor-pointer disabled:opacity-60 shadow-2xs"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 text-slate-600 ${isCheckingStatus ? "animate-spin" : ""}`} />
-          <span>{isCheckingStatus ? "Memeriksa..." : "Cek Status"}</span>
-        </button>
-      </div>
     </div>
   );
 }
