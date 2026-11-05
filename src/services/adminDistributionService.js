@@ -5,6 +5,7 @@ import {
   calculateCampaignDisbursementBudget,
   validateDisbursementAmount,
 } from "@/lib/distributionConstants";
+import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 
 /**
  * Mengambil rekam penyaluran distribusi donasi ke mustahik dan rincian anggaran program.
@@ -126,7 +127,7 @@ export async function createAdminDistribution(payload, adminMeta = {}) {
     throw new Error("Judul, program tujuan, dan nominal penyaluran wajib diisi valid.");
   }
 
-  return prisma.$transaction(async (tx) => {
+  const created = await prisma.$transaction(async (tx) => {
     const campaign = await tx.campaign.findUnique({
       where: { id: campaignId },
       select: {
@@ -188,6 +189,21 @@ export async function createAdminDistribution(payload, adminMeta = {}) {
 
     return created;
   });
+
+  try {
+    broadcastAdminEvent("DISTRIBUTION_CREATED", {
+      id: created.id,
+      campaignId: created.campaignId,
+      campaignTitle: created.campaign?.title || "Program Amanah",
+      title: created.title,
+      disbursedAmount: Number(created.disbursedAmount || 0),
+      date: created.date instanceof Date ? created.date.toISOString().split("T")[0] : created.date,
+    });
+  } catch (sseErr) {
+    console.warn("Peringatan: Gagal broadcast SSE distribution:", sseErr?.message);
+  }
+
+  return created;
 }
 
 /**

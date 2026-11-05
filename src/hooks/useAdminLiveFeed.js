@@ -63,9 +63,9 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
           setLastEvent({ type: "VOLUNTEER_CHECKIN", data, timestamp: new Date() });
 
           toast.info(
-            `Telah hadir pada kegiatan "${data.activity || "Kegiatan"}"`,
+            `Telah mendaftar dari "${data.city || "Kota Domisili"}"`,
             {
-              title: `Presensi: ${data.name || "Relawan"}`,
+              title: `Relawan Baru: ${data.name || "Relawan"}`,
               duration: 5000,
             }
           );
@@ -74,6 +74,53 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
             window.dispatchEvent(
               new CustomEvent("pabe:admin-live-event", {
                 detail: { type: "VOLUNTEER_CHECKIN", data, timestamp: new Date() },
+              })
+            );
+          }
+        } catch {}
+      });
+
+      es.addEventListener("DISTRIBUTION_CREATED", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          setLastEvent({ type: "DISTRIBUTION_CREATED", data, timestamp: new Date() });
+
+          const formattedAmount = data.disbursedAmount ? `Rp${formatRupiah(data.disbursedAmount)}` : "";
+          toast.success(
+            `${formattedAmount ? `${formattedAmount} - ` : ""}${data.title || "Penyaluran"} (${data.campaignTitle || "Program"})`,
+            {
+              title: "Penyaluran Baru Tercatat",
+              duration: 5000,
+            }
+          );
+
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("pabe:admin-live-event", {
+                detail: { type: "DISTRIBUTION_CREATED", data, timestamp: new Date() },
+              })
+            );
+          }
+        } catch {}
+      });
+
+      es.addEventListener("CAREER_APPLICATION", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          setLastEvent({ type: "CAREER_APPLICATION", data, timestamp: new Date() });
+
+          toast.info(
+            `${data.fullName || "Pelamar"} melamar posisi "${data.position || "Lowongan"}"`,
+            {
+              title: "Lamaran Kerja Baru",
+              duration: 5000,
+            }
+          );
+
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("pabe:admin-live-event", {
+                detail: { type: "CAREER_APPLICATION", data, timestamp: new Date() },
               })
             );
           }
