@@ -14,15 +14,17 @@ import { formatRupiah } from "@/lib/formatters";
  * @param {Record<string, object>|object} props.auditData
  */
 export function DistributionAuditSection({ auditData = {} }) {
-  if (!auditData || Object.keys(auditData).length === 0) return null;
+  const isMultiYear = auditData && typeof auditData === "object"
+    ? Object.keys(auditData).some((k) => k.startsWith("Tahun "))
+    : false;
 
-  // Cek apakah auditData berbentuk multi-tahun (dictionary bertipe { "Tahun 2025": {...} })
-  const isMultiYear = Object.keys(auditData).some((k) => k.startsWith("Tahun "));
   const availableYears = isMultiYear
     ? Object.keys(auditData).sort().reverse()
-    : [`Tahun ${auditData.year || 2025}`];
+    : [`Tahun ${auditData?.year || 2025}`];
 
   const [selectedYear, setSelectedYear] = useState(availableYears[0]);
+
+  if (!auditData || Object.keys(auditData).length === 0) return null;
 
   const currentAudit = isMultiYear
     ? auditData[selectedYear] || auditData[availableYears[0]] || {}

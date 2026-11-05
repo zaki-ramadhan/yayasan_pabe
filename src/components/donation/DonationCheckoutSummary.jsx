@@ -12,6 +12,7 @@ export function DonationCheckoutSummary({
   adminFee,
   totalPayment,
   isSubmitting,
+  isRedirecting = false,
 }) {
   return (
     <div className="lg:col-span-5 lg:sticky lg:top-20">
@@ -76,12 +77,14 @@ export function DonationCheckoutSummary({
         <div className="space-y-2.5 pt-0.5">
           <Button
             type="submit"
-            isLoading={isSubmitting}
-            disabled={isSubmitting || !amount || amount <= 0 || amount < DONATION_LIMITS.MIN_AMOUNT}
+            isLoading={isSubmitting || isRedirecting}
+            disabled={isSubmitting || isRedirecting || !amount || amount <= 0 || amount < DONATION_LIMITS.MIN_AMOUNT}
             variant="primary3d"
             className="w-full h-12 rounded-lg text-base disabled:opacity-50 disabled:pointer-events-none"
           >
-            {isSubmitting
+            {isRedirecting
+              ? "Mengalihkan ke pembayaran..."
+              : isSubmitting
               ? "Memproses donasi..."
               : "Lanjut donasi"}
           </Button>

@@ -52,20 +52,29 @@ export async function registerVolunteer({
     const created = await prisma.volunteer.create({
       data: cleanData,
     });
-    if (cleanEmail && cleanData.phone) {
+    if (cleanEmail) {
       try {
         const existingVolunteerUser = await prisma.user.findFirst({
           where: { email: cleanEmail },
-          select: { id: true, phone: true },
+          select: { id: true, phone: true, city: true },
         });
-        if (existingVolunteerUser && (!existingVolunteerUser.phone || existingVolunteerUser.phone === "-")) {
-          await prisma.user.update({
-            where: { id: existingVolunteerUser.id },
-            data: { phone: cleanData.phone },
-          });
+        if (existingVolunteerUser) {
+          const updateData = {};
+          if ((!existingVolunteerUser.phone || existingVolunteerUser.phone === "-") && cleanData.phone) {
+            updateData.phone = cleanData.phone;
+          }
+          if (!existingVolunteerUser.city && cleanData.city) {
+            updateData.city = cleanData.city;
+          }
+          if (Object.keys(updateData).length > 0) {
+            await prisma.user.update({
+              where: { id: existingVolunteerUser.id },
+              data: updateData,
+            });
+          }
         }
       } catch (uErr) {
-        console.warn("Gagal sinkronisasi otomatis nomor WhatsApp relawan ke profil:", uErr?.message);
+        console.warn("Gagal sinkronisasi otomatis nomor WhatsApp/domisili relawan ke profil:", uErr?.message);
       }
     }
 

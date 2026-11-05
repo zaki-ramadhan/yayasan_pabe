@@ -85,7 +85,7 @@ export function ActivationNoticeCard() {
       </div>
 
       <p className="text-xs sm:text-sm text-slate-500 leading-relaxed text-left bg-blue-50/60 border border-blue-100 p-3.5 rounded-lg">
-        Silakan periksa kotak masuk (atau folder spam) email Anda dan klik tombol <strong>"Aktifkan Akun Saya"</strong> untuk menyelesaikan pendaftaran sebelum masuk.
+        Silakan periksa kotak masuk (atau folder spam) email Anda dan klik tombol <strong>&ldquo;Aktifkan Akun Saya&rdquo;</strong> untuk menyelesaikan pendaftaran sebelum masuk.
       </p>
 
       <div className="space-y-3 pt-2">

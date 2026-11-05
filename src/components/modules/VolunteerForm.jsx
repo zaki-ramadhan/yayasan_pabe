@@ -86,7 +86,13 @@ export function VolunteerForm() {
     return draft.phone || "";
   });
 
-  const [city, setCity] = useState(() => getInitialDraft().city || "");
+  const [city, setCity] = useState(() => {
+    if (activeUser?.city && activeUser.city.trim()) {
+      return activeUser.city.trim();
+    }
+    const draft = getInitialDraft();
+    return draft.city || "";
+  });
   const [motivation, setMotivation] = useState(() => getInitialDraft().motivation || "");
 
   // Status Relawan Terdaftar

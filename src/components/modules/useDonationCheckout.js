@@ -63,6 +63,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
   });
   const [selectedChannelId, setSelectedChannelId] = useState("qris");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [pendingInvoiceModal, setPendingInvoiceModal] = useState({
     isOpen: false,
     invoice: null,
@@ -306,16 +307,22 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
         loginUser({ ...currentUser, phone: donorPhone.trim() });
       }
 
-      toast.success("Tagihan donasi berhasil dibuat!");
+      toast.info("Mengalihkan ke instruksi pembayaran, mohon tunggu sebentar...", {
+        title: "Tagihan Berhasil Dibuat",
+        duration: 8000,
+      });
+
       const targetUrl = donation.accessToken
         ? `/invoice/${donation.invoiceId}?token=${donation.accessToken}`
         : `/invoice/${donation.invoiceId}`;
+
+      setIsRedirecting(true);
       router.push(targetUrl);
     } catch (err) {
       toast.error(err.message || "Gagal memproses transaksi. Silakan coba kembali.");
-    } finally {
       isSubmittingRef.current = false;
       setIsSubmitting(false);
+      setIsRedirecting(false);
     }
   };
 
@@ -323,6 +330,12 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     if (!pendingInvoiceModal.invoice) return;
     const inv = pendingInvoiceModal.invoice;
     setPendingInvoiceModal({ isOpen: false, invoice: null });
+    toast.info("Memuat instruksi pembayaran tagihan aktif...", {
+      title: "Mengalihkan Tagihan",
+      duration: 6000,
+    });
+    setIsRedirecting(true);
+    setIsSubmitting(true);
     const targetUrl = inv.accessToken
       ? `/invoice/${inv.invoiceId}?token=${inv.accessToken}`
       : `/invoice/${inv.invoiceId}`;
@@ -371,6 +384,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     selectedChannelId,
     setSelectedChannelId,
     isSubmitting,
+    isRedirecting,
     hasExistingPrayer,
     selectedChannel,
     adminFee,

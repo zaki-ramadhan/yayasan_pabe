@@ -1,7 +1,24 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { formatCompactRupiah, formatRupiah, formatNumber } from "@/lib/formatters";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
-export function AdminMetricCards({ stats }) {
+export function AdminMetricCards({ stats: initialStats }) {
+  const [stats, setStats] = useState(initialStats || {});
+
+  useAdminLiveEvent("DONATION_PAID", (event) => {
+    const newTx = event?.data;
+    if (!newTx || !newTx.amount) return;
+
+    setStats((prev) => ({
+      ...prev,
+      totalCollected: Number(prev?.totalCollected || 0) + Number(newTx.amount),
+      totalTransactions: Number(prev?.totalTransactions || 0) + 1,
+    }));
+  });
+
   const totalCollected = stats?.totalCollected || 0;
   const totalDisbursed = stats?.totalDisbursed || 0;
   const activeDonors = stats?.activeDonors || 0;

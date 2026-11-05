@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
@@ -8,6 +9,7 @@ import { Progress } from "@/components/ui/Progress";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { formatRupiah } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 /**
  * Compact Admin Campaign Overview Card displaying priority active programs
@@ -20,7 +22,30 @@ export function AdminCampaignOverviewCard({
   maxItems = 4,
   stretch = true,
 }) {
-  const displayCampaigns = campaigns ? campaigns.slice(0, maxItems) : [];
+  const [campaignList, setCampaignList] = useState(campaigns);
+
+  useAdminLiveEvent("DONATION_PAID", (event) => {
+    const newTx = event?.data;
+    if (!newTx || !newTx.amount) return;
+
+    setCampaignList((prev) =>
+      prev.map((c) => {
+        if (
+          (newTx.campaignSlug && c.slug === newTx.campaignSlug) ||
+          (newTx.campaignTitle && c.title === newTx.campaignTitle)
+        ) {
+          return {
+            ...c,
+            collectedAmount: Number(c.collectedAmount || 0) + Number(newTx.amount),
+            donorCount: Number(c.donorCount || 0) + 1,
+          };
+        }
+        return c;
+      })
+    );
+  });
+
+  const displayCampaigns = campaignList ? campaignList.slice(0, maxItems) : [];
 
   return (
     <Card className={cn("shadow-2xs overflow-hidden flex flex-col", stretch ? "h-full" : "h-auto")}>

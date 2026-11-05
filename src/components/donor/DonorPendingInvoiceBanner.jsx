@@ -19,46 +19,28 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled }) {
   const [cancellingInvoiceId, setCancellingInvoiceId] = useState(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [timeLeft, setTimeLeft] = useState("");
 
-  // Saring hanya tagihan yang aktif dan BELUM kedaluwarsa
-  const activeValidInvoices = (invoices || []).filter(
-    (inv) => inv?.expiredAt && new Date(inv.expiredAt).getTime() > Date.now()
-  );
+  // Saring hanya tagihan yang aktif dan memiliki tanggal kedaluwarsa
+  const sortedInvoices = [...(invoices || [])]
+    .filter((inv) => Boolean(inv?.expiredAt))
+    .sort((a, b) => new Date(a.expiredAt).getTime() - new Date(b.expiredAt).getTime());
 
-  // Jika tidak ada tagihan aktif (sudah kedaluwarsa semua), sembunyikan banner
-  if (activeValidInvoices.length === 0) {
-    return null;
-  }
-
-  // Ambil invoice paling mendesak (yang sisa waktunya paling sedikit)
-  const sortedInvoices = [...activeValidInvoices].sort(
-    (a, b) => new Date(a.expiredAt).getTime() - new Date(b.expiredAt).getTime()
-  );
-  const activeInvoice = sortedInvoices[0];
-  const additionalCount = activeValidInvoices.length - 1;
-
-  // Real-time countdown timer aktif (berjalan mundur setiap detik)
-  const [timeLeft, setTimeLeft] = useState(() => {
-    const diff = new Date(activeInvoice.expiredAt).getTime() - Date.now();
-    if (diff <= 0) return "";
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
-    if (hours > 0) return `${hours}j ${minutes}m ${seconds}s`;
-    return `${minutes}m ${seconds < 10 ? `0${seconds}` : seconds}s`;
-  });
+  const activeInvoice = sortedInvoices[0] || null;
+  const additionalCount = Math.max(0, sortedInvoices.length - 1);
 
   useEffect(() => {
-    if (!activeInvoice?.expiredAt) return;
+    if (!activeInvoice?.expiredAt) {
+      setTimeLeft("");
+      return;
+    }
 
     const targetTime = new Date(activeInvoice.expiredAt).getTime();
 
     const updateCountdown = () => {
-      const now = Date.now();
-      const difference = targetTime - now;
-
+      const difference = targetTime - Date.now();
       if (difference <= 0) {
-        // Tagihan sudah kedaluwarsa: segera singkirkan dari tampilan banner
+        setTimeLeft("");
         onInvoiceCancelled?.(activeInvoice.invoiceId);
         return;
       }
@@ -77,7 +59,11 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, [activeInvoice?.invoiceId, activeInvoice?.expiredAt, onInvoiceCancelled]);
+  }, [activeInvoice?.expiredAt, activeInvoice?.invoiceId, onInvoiceCancelled]);
+
+  if (!activeInvoice) {
+    return null;
+  }
 
   const handleExecuteCancel = async () => {
     const invoiceId = activeInvoice?.invoiceId;

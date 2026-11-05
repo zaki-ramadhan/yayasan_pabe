@@ -30,6 +30,7 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
     selectedChannelId,
     setSelectedChannelId,
     isSubmitting,
+    isRedirecting,
     hasExistingPrayer,
     selectedChannel,
     adminFee,
@@ -103,6 +104,7 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
         adminFee={adminFee}
         totalPayment={totalPayment}
         isSubmitting={isSubmitting}
+        isRedirecting={isRedirecting}
       />
 
       {/* Dialog Penanganan Tagihan Donasi Aktif Duplikat */}

@@ -9,6 +9,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { USER_ROLES } from "@/services/authService";
 import { formatRupiah, formatNumber } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 const TIME_RANGE_OPTIONS = [
   { value: "7d", label: "7 hari terakhir" },
@@ -24,8 +25,60 @@ export function AdminDonationTrendCard({
   const { currentUser } = useCurrentUser();
   const isSuperAdmin = currentUser?.role === USER_ROLES.SUPER_ADMIN;
 
+  const [trends, setTrends] = React.useState(initialTrends);
   const [timeRange, setTimeRange] = React.useState("30d");
   const [viewMode, setViewMode] = React.useState("all");
+
+  useAdminLiveEvent("DONATION_PAID", (event) => {
+    const newTx = event?.data;
+    if (!newTx || !newTx.amount) return;
+
+    const amount = Number(newTx.amount);
+    const dateObj = newTx.paidAt ? new Date(newTx.paidAt) : new Date();
+    const dateKey = dateObj.toISOString().split("T")[0];
+    const mKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, "0")}`;
+
+    setTrends((prev) => {
+      const daily = Array.isArray(prev?.dailyTrend) ? [...prev.dailyTrend] : [];
+      const monthly = Array.isArray(prev?.monthlyTrend) ? [...prev.monthlyTrend] : [];
+
+      let runningCumulative = 0;
+      const updatedDaily = daily.map((d) => {
+        if (d.date === dateKey) {
+          const newDaily = (Number(d.dailyAmount) || 0) + amount;
+          const newCount = (Number(d.donationsCount) || 0) + 1;
+          runningCumulative += newDaily;
+          return {
+            ...d,
+            dailyAmount: newDaily,
+            cumulativeAmount: runningCumulative,
+            donationsCount: newCount,
+          };
+        }
+        runningCumulative = (Number(d.cumulativeAmount) || runningCumulative) + (d.date > dateKey ? amount : 0);
+        return {
+          ...d,
+          cumulativeAmount: runningCumulative,
+        };
+      });
+
+      const updatedMonthly = monthly.map((m) => {
+        if (m.key === mKey) {
+          return {
+            ...m,
+            inflow: (Number(m.inflow) || 0) + amount,
+            count: (Number(m.count) || 0) + 1,
+          };
+        }
+        return m;
+      });
+
+      return {
+        dailyTrend: updatedDaily,
+        monthlyTrend: updatedMonthly,
+      };
+    });
+  });
 
   const viewModeOptions = React.useMemo(() => {
     const base = [
@@ -47,8 +100,8 @@ export function AdminDonationTrendCard({
   }, [viewModeOptions, viewMode]);
 
   const { activeData, totalInRange, avgDaily, totalTransactions, isMonthly } = React.useMemo(() => {
-    const dailyList = initialTrends?.dailyTrend || [];
-    const monthlyList = initialTrends?.monthlyTrend || [];
+    const dailyList = trends?.dailyTrend || [];
+    const monthlyList = trends?.monthlyTrend || [];
 
     if (timeRange === "12m") {
       const data = monthlyList.map((item, idx) => {
@@ -86,7 +139,7 @@ export function AdminDonationTrendCard({
       totalTransactions: txCount,
       isMonthly: false,
     };
-  }, [timeRange, initialTrends]);
+  }, [timeRange, trends]);
 
   return (
     <Card className={cn("shadow-2xs overflow-hidden", className)}>
