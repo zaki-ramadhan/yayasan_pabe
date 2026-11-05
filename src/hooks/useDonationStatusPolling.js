@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { safeFetch } from "@/lib/safeFetch";
+import { toast } from "@/hooks/useToast";
 
 const DEFAULT_POLL_INTERVAL_MS = 3000;
 const MAX_POLL_DURATION_MS = 300000; // 5 menit
@@ -21,7 +22,8 @@ export function useDonationStatusPolling({
   const startTimeRef = useRef(null);
   const timerRef = useRef(null);
 
-  const checkStatus = useCallback(async () => {
+  const checkStatus = useCallback(async (options = {}) => {
+    const isManual = Boolean(options?.isManual);
     if (!invoiceId || isCheckingRef.current || currentStatus !== "PENDING") {
       return;
     }
@@ -30,8 +32,8 @@ export function useDonationStatusPolling({
       startTimeRef.current = Date.now();
     }
 
-    // Safety timeout: hentikan polling jika sudah melebihi batas waktu maksimal
-    if (Date.now() - startTimeRef.current > maxDurationMs) {
+    // Safety timeout: hentikan polling otomatis jika sudah melebihi batas waktu maksimal (namun izinkan pengecekan manual)
+    if (!isManual && Date.now() - startTimeRef.current > maxDurationMs) {
       return;
     }
 
@@ -52,13 +54,21 @@ export function useDonationStatusPolling({
           const newStatus = json.data.status.toUpperCase();
           if (newStatus !== "PENDING") {
             onStatusChange?.(newStatus, json.data.paidAt || null);
+          } else if (isManual) {
+            toast.info("Menunggu konfirmasi pembayaran dari sistem bank/e-wallet. Silakan periksa kembali setelah transfer.");
           }
         }
       } else {
         consecutiveErrorsRef.current += 1;
+        if (isManual) {
+          toast.error("Gagal memeriksa status pembayaran. Silakan coba sesaat lagi.");
+        }
       }
     } catch {
       consecutiveErrorsRef.current += 1;
+      if (isManual) {
+        toast.error("Gagal memeriksa status pembayaran. Silakan coba sesaat lagi.");
+      }
     } finally {
       isCheckingRef.current = false;
       setIsChecking(false);
@@ -112,9 +122,13 @@ export function useDonationStatusPolling({
     };
   }, [invoiceId, currentStatus, intervalMs, checkStatus]);
 
+  const handleManualCheck = useCallback(() => {
+    return checkStatus({ isManual: true });
+  }, [checkStatus]);
+
   return {
     isChecking,
     lastCheckedAt,
-    checkNow: checkStatus,
+    checkNow: handleManualCheck,
   };
 }
