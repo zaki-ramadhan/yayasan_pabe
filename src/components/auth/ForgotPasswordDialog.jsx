@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/Dialog";
 import { stripEmojis, validateEmail } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 import { usePersistentCooldown } from "@/hooks/usePersistentCooldown";
 
@@ -145,14 +146,15 @@ export function ForgotPasswordDialog({
                 autoComplete="email"
                 placeholder="nama@email.com"
                 value={forgotInput}
-                maxLength={100}
+                minLength={FIELD_LIMITS.EMAIL.min}
+                maxLength={FIELD_LIMITS.EMAIL.max}
                 spellCheck={false}
                 autoCapitalize="none"
                 disabled={isSubmitting || cooldown > 0}
                 onChange={(e) => {
                   const clean = stripEmojis(e.target.value)
                     .replace(/\s/g, "")
-                    .slice(0, 100);
+                    .slice(0, FIELD_LIMITS.EMAIL.max);
                   setForgotInput(clean);
                   if (forgotError) {
                     const res = validateEmail(clean.trim().toLowerCase(), true);

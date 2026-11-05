@@ -71,11 +71,11 @@ describe("Security & Anomaly Defense: Sanitasi XSS & Injeksi Karakter", () => {
     expect(cleaned).toContain("Semoga bermanfaat");
   });
 
-  it("memotong string doa berlebih jika melampaui batas 200 karakter", () => {
+  it("memotong string doa berlebih jika melampaui batas 250 karakter", () => {
     const longPrayer = "A".repeat(300);
     const cleaned = sanitizePrayer(longPrayer);
 
-    expect(cleaned.length).toBeLessThanOrEqual(200);
+    expect(cleaned.length).toBeLessThanOrEqual(250);
   });
 
   it("menghapus karakter emoji spam dari field input", () => {

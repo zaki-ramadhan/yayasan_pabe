@@ -50,6 +50,20 @@ vi.mock("@/services/whatsapp", () => {
   };
 });
 
+// Mock Email Service
+vi.mock("@/services/emailService", () => {
+  return {
+    sendRoutineDonationEmail: vi.fn().mockResolvedValue({
+      success: true,
+      id: "resend-mock-123",
+    }),
+    sendRoutineCompletionEmail: vi.fn().mockResolvedValue({
+      success: true,
+      id: "resend-mock-456",
+    }),
+  };
+});
+
 describe("Notification Queue & Worker Architecture", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -279,6 +293,51 @@ describe("Notification Queue & Worker Architecture", () => {
             status: QUEUE_STATUS.FAILED,
             attempts: 3,
           }),
+        })
+      );
+    });
+
+    it("melakukan fallback otomatis ke WhatsApp jika pengiriman email gagal atau melempar error", async () => {
+      const prisma = (await import("@/lib/prisma")).default;
+      const { sendRoutineDonationEmail } = await import("@/services/emailService");
+      const { sendWhatsAppNotification } = await import("@/services/whatsapp");
+
+      sendRoutineDonationEmail.mockRejectedValueOnce(new Error("Resend rate limit exceeded"));
+
+      const mockQueue = [
+        {
+          id: "queue-fallback-1",
+          recipientPhone: "081234567890",
+          type: NOTIFICATION_TYPE.ROUTINE_INVOICE,
+          payload: {
+            donorName: "Budi",
+            donorEmail: "budi@example.com",
+            amount: 75000,
+            invoiceId: "INV-ROUTINE-01",
+          },
+          attempts: 0,
+          maxAttempts: 3,
+          status: QUEUE_STATUS.PENDING,
+          scheduledFor: new Date(),
+        },
+      ];
+
+      prisma.notificationQueue.findMany.mockResolvedValueOnce(mockQueue);
+      prisma.notificationQueue.updateMany.mockResolvedValueOnce({ count: 1 });
+      prisma.notificationQueue.update.mockResolvedValueOnce({ id: "queue-fallback-1", status: QUEUE_STATUS.SENT });
+      prisma.notificationLog.create.mockResolvedValueOnce({ id: "log-fallback-1" });
+
+      const summary = await processNotificationQueue({ batchSize: 10 });
+
+      expect(summary.processed).toBe(1);
+      expect(summary.succeeded).toBe(1);
+      expect(summary.failed).toBe(0);
+
+      expect(sendRoutineDonationEmail).toHaveBeenCalled();
+      expect(sendWhatsAppNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: "081234567890",
+          donorName: "Budi",
         })
       );
     });

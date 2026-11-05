@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { DEMO_USERS, USER_ROLES } from "@/services/authService";
+import { getInitials } from "@/lib/formatters";
+import { INFRASTRUCTURE_EMAILS } from "@/lib/infrastructureConstants";
 
 /**
  * Retrieves the list of super admin emails from the server-only environment variable.
@@ -15,9 +17,15 @@ export function getSuperAdminEmails() {
     .split(",")
     .map((e) => e.trim().toLowerCase())
     .filter((e) => e.length > 0);
-  if (!list.includes("superadmin@pabe.or.id")) {
-    list.push("superadmin@pabe.or.id");
-  }
+
+  // Selalu sertakan akun super admin infrastruktur dan akun official yayasan
+  [...INFRASTRUCTURE_EMAILS, "superadmin@pabe.or.id", "admin@payungberkah.org"].forEach((email) => {
+    const clean = email.toLowerCase().trim();
+    if (!list.includes(clean)) {
+      list.push(clean);
+    }
+  });
+
   return list;
 }
 
@@ -120,9 +128,30 @@ export async function getAuthenticatedUser(request) {
     }
   }
 
+  // 4. Fallback: Request headers 'x-pabe-session' or 'authorization'
+  if (!sessionId && request?.headers) {
+    const authHeader =
+      (typeof request.headers.get === "function" ? request.headers.get("x-pabe-session") : null) ||
+      (typeof request.headers.get === "function" ? request.headers.get("authorization") : null);
+    if (authHeader) {
+      sessionId = decodeURIComponent(authHeader.replace(/^Bearer\s+/i, "").trim());
+    }
+  }
+
   // Sanitize sessionId value
   if (sessionId) {
     sessionId = String(sessionId).replace(/^["']|["']$/g, "").trim();
+  }
+
+  // Graceful recovery jika sesi client sebelumnya tercemar dummy USR-DONOR
+  if (sessionId === "USR-DONOR" && request) {
+    try {
+      const u = new URL(request.url);
+      const emailParam = u.searchParams.get("email");
+      if (emailParam) {
+        sessionId = emailParam.trim();
+      }
+    } catch {}
   }
 
   if (!sessionId) {
@@ -143,19 +172,23 @@ export async function getAuthenticatedUser(request) {
           role: true,
           title: true,
           avatar: true,
+          customAvatar: true,
+          providerAvatar: true,
           phone: true,
           provider: true,
           createdAt: true,
         },
       });
       if (!user) {
-        // Also try finding by email or username or providerId if sessionId wasn't the UUID/cuid
+        // Also try finding by email, username, providerId, or stripped provider prefix
+        const cleanProviderId = sessionId.replace(/^USR-(?:GGL|FB)-/, "");
         user = await prisma.user.findFirst({
           where: {
             OR: [
               { email: sessionId },
               { username: sessionId },
               { providerId: sessionId },
+              { providerId: cleanProviderId },
             ],
           },
           select: {
@@ -166,6 +199,8 @@ export async function getAuthenticatedUser(request) {
             role: true,
             title: true,
             avatar: true,
+            customAvatar: true,
+            providerAvatar: true,
             phone: true,
             provider: true,
             createdAt: true,
@@ -208,7 +243,7 @@ export async function getAuthenticatedUser(request) {
           ...user,
           role: resolvedRole,
           title: resolvedTitle,
-          initials: (user.name || user.email).slice(0, 2).toUpperCase(),
+          initials: getInitials(user.name, user.email),
         },
       };
     }

@@ -179,11 +179,17 @@ export async function GET(request) {
 
     let dbUser = null;
     try {
+      const existingUser = await prisma.user.findUnique({
+        where: { email: userEmail },
+        select: { avatar: true },
+      });
+
       dbUser = await prisma.user.upsert({
         where: { email: userEmail },
         update: {
           name: cleanName || undefined,
-          ...(fbAvatar ? { avatar: fbAvatar } : {}),
+          providerAvatar: fbAvatar || undefined,
+          ...(existingUser?.avatar ? {} : (fbAvatar ? { avatar: fbAvatar } : {})),
           provider: "FACEBOOK",
           providerId: profileData.id,
           ...(isSuperAdmin ? { role: "SUPER_ADMIN", title: "Super Admin" } : {}),
@@ -193,6 +199,7 @@ export async function GET(request) {
           email: userEmail,
           username: `${sanitizedUsername}_${String(profileData.id).slice(-4)}`,
           avatar: fbAvatar || null,
+          providerAvatar: fbAvatar || null,
           role: resolvedRole,
           title: resolvedTitle,
           provider: "FACEBOOK",
@@ -208,7 +215,9 @@ export async function GET(request) {
     const finalEmail = dbUser?.email || userEmail;
     const userRole = isSuperAdmin ? "SUPER_ADMIN" : (dbUser?.role || "DONOR");
     const userTitle = isSuperAdmin ? "Super Admin" : (dbUser?.title || "Donatur");
-    const userAvatar = fbAvatar || dbUser?.avatar || null;
+    const userAvatar = dbUser?.avatar || fbAvatar || null;
+    const customAvatar = dbUser?.customAvatar || null;
+    const providerAvatar = fbAvatar || dbUser?.providerAvatar || null;
 
     const isStaff = userRole && userRole !== USER_ROLES.DONOR;
     const durationSec = getOAuthSessionDuration(userRole);
@@ -222,6 +231,8 @@ export async function GET(request) {
       role: userRole,
       title: userTitle,
       avatar: userAvatar,
+      customAvatar,
+      providerAvatar,
       initials: initials || "FB",
       badgeColor: "bg-blue-100 text-blue-900 border-blue-300",
       provider: "facebook",
@@ -232,18 +243,27 @@ export async function GET(request) {
 
     const sessionJson = JSON.stringify(sessionPayload).replace(/</g, "\\u003c");
     const isStaffRole = userRole && userRole !== USER_ROLES.DONOR;
-    const defaultTarget = isStaffRole ? "/admin" : "/donatur/dashboard";
+    let targetUrl;
 
-    let targetUrl = defaultTarget;
-    if (redirectTarget && !["/login", "/register", "/"].includes(redirectTarget)) {
-      const normalizedTarget = redirectTarget.startsWith("/dashboard")
+    if (isStaffRole) {
+      const normalizedTarget = redirectTarget?.startsWith("/dashboard")
         ? redirectTarget.replace(/^\/dashboard/, "/admin")
         : redirectTarget;
-      const isAdminPath = normalizedTarget === "/admin" || normalizedTarget.startsWith("/admin/");
-      if (isAdminPath && !isStaffRole) {
-        targetUrl = "/donatur/dashboard";
-      } else {
+      if (normalizedTarget && (normalizedTarget === "/admin" || normalizedTarget.startsWith("/admin/"))) {
         targetUrl = normalizedTarget;
+      } else {
+        targetUrl = "/admin";
+      }
+    } else {
+      if (
+        redirectTarget &&
+        !["/login", "/register", "/", "/admin"].includes(redirectTarget) &&
+        !redirectTarget.startsWith("/admin/") &&
+        !redirectTarget.startsWith("/dashboard")
+      ) {
+        targetUrl = redirectTarget;
+      } else {
+        targetUrl = "/donatur/dashboard";
       }
     }
 
@@ -293,6 +313,12 @@ export async function GET(request) {
               localStorage.setItem('pabe_auth_session', jsonStr);
               sessionStorage.setItem('pabe_just_logged_in', session.name || 'Donatur');
               sessionStorage.setItem('pabe_last_activity', String(Date.now()));
+
+              const validId = session.id || session.email;
+              const durSec = 30 * 24 * 60 * 60;
+              document.cookie = 'pabe_session=' + encodeURIComponent(validId) + '; path=/; max-age=' + durSec + '; SameSite=Lax';
+              document.cookie = 'pabe_role=' + encodeURIComponent(session.role || 'DONOR') + '; path=/; max-age=' + durSec + '; SameSite=Lax';
+
               window.dispatchEvent(new Event('pabe_auth_change'));
               window.dispatchEvent(new Event('storage'));
               window.location.replace('${targetUrl}');

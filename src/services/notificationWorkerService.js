@@ -8,10 +8,16 @@ import {
   sendWhatsAppNotification,
   sendWhatsAppCompletionNotification,
 } from "@/services/whatsapp";
+import {
+  sendRoutineDonationEmail,
+  sendRoutineCompletionEmail,
+} from "@/services/emailService";
+import { formatRoutineSchedule } from "@/data/routineDonation";
 
 /**
  * Service Consumer / Worker: Bertanggung jawab mengambil tugas antrean (NotificationQueue),
- * memproses pengiriman melalui WhatsApp API, menangani retry backoff, dan mencatat log pengiriman (NotificationLog).
+ * memproses pengiriman melalui Email (Resend) sebagai kanal utama atau WhatsApp fallback,
+ * menangani retry backoff, dan mencatat log pengiriman (NotificationLog).
  */
 
 /**
@@ -44,6 +50,11 @@ export async function processNotificationQueue({
     where: {
       status: QUEUE_STATUS.PENDING,
       scheduledFor: { lte: now },
+    },
+    include: {
+      routineDonation: {
+        select: { donorEmail: true },
+      },
     },
     take: batchSize,
     orderBy: { scheduledFor: "asc" },
@@ -84,26 +95,70 @@ export async function processNotificationQueue({
     const payload = typeof item.payload === "string" ? JSON.parse(item.payload) : item.payload || {};
 
     try {
-      // 3. Eksekusi pengiriman pesan sesuai tipe notifikasi
-      let dispatchResult;
+      // 3. Eksekusi pengiriman multi-kanal: utamakan Email, fallback otomatis ke WhatsApp jika gagal (atau sebaliknya)
+      let dispatchResult = null;
+      let usedChannel = null;
+      const targetEmail = payload.donorEmail || item.routineDonation?.donorEmail || null;
+      const targetPhone = item.recipientPhone;
 
-      if (item.type === NOTIFICATION_TYPE.ROUTINE_COMPLETION) {
-        dispatchResult = await sendWhatsAppCompletionNotification({
-          to: item.recipientPhone,
-          donorName: payload.donorName,
-          programTitle: payload.programTitle,
-          catalogUrl: payload.catalogUrl,
-        });
-      } else {
-        dispatchResult = await sendWhatsAppNotification({
-          to: item.recipientPhone,
-          donorName: payload.donorName,
-          programTitle: payload.programTitle,
-          amount: payload.amount,
-          routineType: payload.routineType || "AUTO_DONATION",
-          actionUrl: payload.actionUrl,
-          invoiceId: payload.invoiceId || null,
-        });
+      if (targetEmail) {
+        try {
+          if (item.type === NOTIFICATION_TYPE.ROUTINE_COMPLETION) {
+            dispatchResult = await sendRoutineCompletionEmail({
+              to: targetEmail,
+              donorName: payload.donorName,
+              programTitle: payload.programTitle,
+              catalogUrl: payload.catalogUrl,
+            });
+          } else {
+            dispatchResult = await sendRoutineDonationEmail({
+              to: targetEmail,
+              donorName: payload.donorName,
+              programTitle: payload.programTitle,
+              amount: Number(payload.amount) || 0,
+              frequencyText: formatRoutineSchedule(payload),
+              invoiceId: payload.invoiceId || null,
+              actionUrl: payload.actionUrl,
+              routineType: payload.routineType || "AUTO_DONATION",
+            });
+          }
+
+          if (dispatchResult && dispatchResult.success !== false) {
+            usedChannel = "EMAIL";
+          }
+        } catch (emailErr) {
+          console.warn(`[NotificationWorker] Pengiriman email ke ${targetEmail} gagal, mengalihkan ke WhatsApp:`, emailErr?.message);
+        }
+      }
+
+      // Fallback ke WhatsApp jika pengiriman email gagal atau target email tidak tersedia
+      if (!usedChannel && targetPhone) {
+        if (item.type === NOTIFICATION_TYPE.ROUTINE_COMPLETION) {
+          dispatchResult = await sendWhatsAppCompletionNotification({
+            to: targetPhone,
+            donorName: payload.donorName,
+            programTitle: payload.programTitle,
+            catalogUrl: payload.catalogUrl,
+          });
+        } else {
+          dispatchResult = await sendWhatsAppNotification({
+            to: targetPhone,
+            donorName: payload.donorName,
+            programTitle: payload.programTitle,
+            amount: payload.amount,
+            routineType: payload.routineType || "AUTO_DONATION",
+            actionUrl: payload.actionUrl,
+            invoiceId: payload.invoiceId || null,
+          });
+        }
+
+        if (dispatchResult && dispatchResult.success !== false) {
+          usedChannel = "WHATSAPP";
+        }
+      }
+
+      if (!usedChannel) {
+        throw new Error(dispatchResult?.error || "Gagal memproses pengiriman notifikasi pada seluruh kanal (Email & WhatsApp).");
       }
 
       // 4. Sukses: update antrean menjadi SENT
@@ -122,8 +177,8 @@ export async function processNotificationQueue({
         data: {
           queueId: item.id,
           recipientPhone: item.recipientPhone,
-          provider: dispatchResult?.provider || "mock",
-          providerMessageId: dispatchResult?.messageId || dispatchResult?.id || null,
+          provider: usedChannel === "EMAIL" ? "resend_email" : (dispatchResult?.provider || "mock"),
+          providerMessageId: dispatchResult?.id || dispatchResult?.messageId || null,
           status: "DELIVERED",
           attemptNumber: currentAttempt,
         },
@@ -132,12 +187,13 @@ export async function processNotificationQueue({
       succeeded++;
       results.push({
         id: item.id,
-        phone: item.recipientPhone,
+        recipient: usedChannel === "EMAIL" ? targetEmail : item.recipientPhone,
+        channel: usedChannel,
         status: "SENT",
         attempt: currentAttempt,
       });
     } catch (err) {
-      const errorMessage = err?.message || "Gagal memproses pengiriman WhatsApp.";
+      const errorMessage = err?.message || "Gagal memproses pengiriman notifikasi.";
       console.error(`[NotificationWorker] Gagal kirim pesan ke ${item.recipientPhone} (Percobaan #${currentAttempt}):`, errorMessage);
 
       // 6. Evaluasi apakah masih bisa di-retry atau sudah FAILED permanen

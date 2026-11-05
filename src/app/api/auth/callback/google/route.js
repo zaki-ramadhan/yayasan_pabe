@@ -109,11 +109,17 @@ export async function GET(request) {
 
     let dbUser = null;
     try {
+      const existingUser = await prisma.user.findUnique({
+        where: { email: profile.email.toLowerCase() },
+        select: { avatar: true },
+      });
+
       dbUser = await prisma.user.upsert({
         where: { email: profile.email.toLowerCase() },
         update: {
           name: profile.name || undefined,
-          avatar: profile.picture || undefined,
+          providerAvatar: profile.picture || undefined,
+          ...(existingUser?.avatar ? {} : { avatar: profile.picture || undefined }),
           provider: "GOOGLE",
           providerId: profile.id,
           ...(isSuperAdmin ? { role: "SUPER_ADMIN", title: "Super Admin" } : {}),
@@ -123,6 +129,7 @@ export async function GET(request) {
           email: profile.email.toLowerCase(),
           username: sanitizedUsername,
           avatar: profile.picture || null,
+          providerAvatar: profile.picture || null,
           role: resolvedRole,
           title: resolvedTitle,
           provider: "GOOGLE",
@@ -140,7 +147,9 @@ export async function GET(request) {
     const userRole = isSuperAdmin ? "SUPER_ADMIN" : (dbUser?.role || "DONOR");
     const rawUserTitle = isSuperAdmin ? "Super Admin" : (dbUser?.title || "Donatur");
     const userTitle = rawUserTitle.includes("Ketua Yayasan") ? "Super Admin" : rawUserTitle;
-    const userAvatar = profile.picture || dbUser?.avatar || null;
+    const userAvatar = dbUser?.avatar || profile.picture || null;
+    const customAvatar = dbUser?.customAvatar || null;
+    const providerAvatar = profile.picture || dbUser?.providerAvatar || null;
 
     const isStaff = userRole && userRole !== USER_ROLES.DONOR;
     const durationSec = getOAuthSessionDuration(userRole);
@@ -154,6 +163,8 @@ export async function GET(request) {
       role: userRole,
       title: userTitle,
       avatar: userAvatar,
+      customAvatar,
+      providerAvatar,
       initials: (userName || userEmail).slice(0, 2).toUpperCase(),
       badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
       provider: "google",
@@ -165,15 +176,23 @@ export async function GET(request) {
     // 4. Return HTML bridge to sync localStorage session and redirect smoothly
     const sessionJson = JSON.stringify(sessionPayload).replace(/</g, "\\u003c");
     const isStaffRole = userRole && userRole !== USER_ROLES.DONOR;
-    const defaultTarget = isStaffRole ? "/admin" : "/donatur/dashboard";
+    let targetUrl;
 
-    let targetUrl = defaultTarget;
-    if (callbackUrl && !["/login", "/register", "/"].includes(callbackUrl)) {
-      const isAdminPath = callbackUrl === "/admin" || callbackUrl.startsWith("/admin/");
-      if (isAdminPath && !isStaffRole) {
-        targetUrl = "/donatur/dashboard";
-      } else {
+    if (isStaffRole) {
+      if (callbackUrl && (callbackUrl === "/admin" || callbackUrl.startsWith("/admin/"))) {
         targetUrl = callbackUrl;
+      } else {
+        targetUrl = "/admin";
+      }
+    } else {
+      if (
+        callbackUrl &&
+        !["/login", "/register", "/", "/admin"].includes(callbackUrl) &&
+        !callbackUrl.startsWith("/admin/")
+      ) {
+        targetUrl = callbackUrl;
+      } else {
+        targetUrl = "/donatur/dashboard";
       }
     }
 
@@ -223,6 +242,12 @@ export async function GET(request) {
               localStorage.setItem('pabe_auth_session', jsonStr);
               sessionStorage.setItem('pabe_just_logged_in', session.name || 'Donatur');
               sessionStorage.setItem('pabe_last_activity', String(Date.now()));
+
+              const validId = session.id || session.email;
+              const durSec = 30 * 24 * 60 * 60;
+              document.cookie = 'pabe_session=' + encodeURIComponent(validId) + '; path=/; max-age=' + durSec + '; SameSite=Lax';
+              document.cookie = 'pabe_role=' + encodeURIComponent(session.role || 'DONOR') + '; path=/; max-age=' + durSec + '; SameSite=Lax';
+
               window.dispatchEvent(new Event('pabe_auth_change'));
               window.dispatchEvent(new Event('storage'));
               window.location.replace('${targetUrl}');

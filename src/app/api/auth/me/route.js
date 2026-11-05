@@ -1,133 +1,48 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { isSuperAdminEmail, isSuperAdminIdentifier } from "@/lib/serverAuth";
-import { DEMO_USERS, USER_ROLES } from "@/services/authService";
+import { getAuthenticatedUser } from "@/lib/serverAuth";
+import { getInitials } from "@/lib/formatters";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request) {
-  const sessionId = request.cookies.get("pabe_session")?.value;
-
-  if (!sessionId) {
-    return NextResponse.json(
-      { success: false, authenticated: false, message: "Tidak ada sesi aktif." },
-      { status: 401 }
-    );
-  }
-
   try {
-    let user = await prisma.user.findUnique({
-      where: { id: sessionId },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        username: true,
-        role: true,
-        title: true,
-        avatar: true,
-        phone: true,
-        provider: true,
-        createdAt: true,
-      },
-    });
+    const { authenticated, user, reason } = await getAuthenticatedUser(request);
 
-    // Check demo users fallback if not in DB
-    if (!user) {
-      const demoMatch = DEMO_USERS.find(
-        (u) =>
-          u.id === sessionId ||
-          u.email.toLowerCase() === sessionId.toLowerCase() ||
-          (u.username && u.username.toLowerCase() === sessionId.toLowerCase())
-      );
-      if (demoMatch) {
-        user = {
-          id: demoMatch.id,
-          name: demoMatch.name,
-          email: demoMatch.email,
-          username: demoMatch.username,
-          role: demoMatch.role,
-          title: demoMatch.title,
-          avatar: demoMatch.avatar,
-          phone: demoMatch.phone,
-          provider: "demo",
-          createdAt: new Date(),
-        };
-
-        try {
-          await prisma.user.upsert({
-            where: { email: demoMatch.email.toLowerCase() },
-            update: {
-              role: demoMatch.role,
-              title: demoMatch.title,
-            },
-            create: {
-              id: demoMatch.id,
-              name: demoMatch.name,
-              email: demoMatch.email.toLowerCase(),
-              username: demoMatch.username.toLowerCase(),
-              role: demoMatch.role,
-              title: demoMatch.title,
-              phone: demoMatch.phone,
-              avatar: demoMatch.avatar,
-            },
-          });
-        } catch (syncErr) {
-          console.warn("Prisma demo sync in /me error:", syncErr?.message);
-        }
-      }
-    }
-
-    if (!user) {
-      const response = NextResponse.json(
-        { success: false, authenticated: false, message: "Pengguna tidak ditemukan." },
+    if (!authenticated || !user) {
+      return NextResponse.json(
+        {
+          success: false,
+          authenticated: false,
+          reason: reason || "UNKNOWN",
+          message:
+            reason === "ACCOUNT_SUSPENDED"
+              ? "Akun Anda dinonaktifkan. Silakan hubungi admin yayasan."
+              : "Sesi tidak ditemukan atau telah berakhir.",
+        },
         { status: 401 }
       );
-      response.cookies.delete("pabe_session");
-      response.cookies.delete("ygsm_session");
-      response.cookies.delete("pabe_role");
-      response.cookies.delete("ygsm_role");
-      return response;
     }
 
-    // Auto-elevate in session check if designated as super admin
-    const isSuper =
-      isSuperAdminIdentifier(user.username) ||
-      isSuperAdminEmail(user.email);
-
-    if (isSuper && user.role !== USER_ROLES.SUPER_ADMIN) {
-      try {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
-            role: USER_ROLES.SUPER_ADMIN,
-            title: "Super Admin",
-          },
-        });
-        user.role = USER_ROLES.SUPER_ADMIN;
-        user.title = "Super Admin";
-      } catch (elevateErr) {
-        console.warn("Auto-elevating user to SUPER_ADMIN in /me error:", elevateErr.message);
-        user.role = USER_ROLES.SUPER_ADMIN;
-        user.title = "Super Admin";
-      }
-    }
-
-    if (user.title && user.title.includes("Ketua Yayasan")) {
-      user.title = "Super Admin";
-    }
+    const title =
+      user.title && user.title.includes("Ketua Yayasan") ? "Super Admin" : user.title;
 
     const response = NextResponse.json({
       success: true,
       authenticated: true,
       data: {
         ...user,
-        initials: (user.name || user.email).slice(0, 2).toUpperCase(),
+        title,
+        initials: user.initials || getInitials(user.name, user.email),
       },
     });
 
-    const cookieOpts = { path: "/", httpOnly: false, sameSite: "lax" };
-    response.cookies.set("pabe_role", user.role, cookieOpts);
+    // Sinkronkan cookie role agar konsisten dengan autoritas server
+    response.cookies.set("pabe_role", user.role, {
+      path: "/",
+      httpOnly: false,
+      sameSite: "lax",
+    });
+
     return response;
   } catch (err) {
     console.error("Fetch current user session error:", err);

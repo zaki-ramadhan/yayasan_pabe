@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function AuthPasswordInput({
   id = "password",
@@ -18,6 +19,8 @@ export function AuthPasswordInput({
   autoComplete = "current-password",
   extraAction,
   className = "",
+  minLength = FIELD_LIMITS.PASSWORD_SIMPLE.min,
+  maxLength = FIELD_LIMITS.PASSWORD.max,
   ...props
 }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,6 +40,8 @@ export function AuthPasswordInput({
           type={showPassword ? "text" : "password"}
           placeholder={placeholder}
           value={value}
+          minLength={minLength}
+          maxLength={maxLength}
           onChange={onChange}
           onBlur={onBlur}
           error={Boolean(error)}

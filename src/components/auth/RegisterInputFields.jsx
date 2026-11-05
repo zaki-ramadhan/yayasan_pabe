@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { AuthPasswordInput } from "@/components/auth/AuthPasswordInput";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import {
   sanitizeEmail,
   sanitizePhone,
@@ -45,7 +46,8 @@ export function RegisterInputFields({
           type="text"
           placeholder="Contoh: Hendra Wijaya"
           value={currentName}
-          maxLength={60}
+          minLength={FIELD_LIMITS.NAME.min}
+          maxLength={FIELD_LIMITS.NAME.max}
           onChange={(e) => {
             const clean = sanitizeName(e.target.value);
             if (handleNameChange) handleNameChange(clean);
@@ -76,9 +78,10 @@ export function RegisterInputFields({
           type="email"
           placeholder="nama@email.com"
           value={email}
-          maxLength={100}
+          minLength={FIELD_LIMITS.EMAIL.min}
+          maxLength={FIELD_LIMITS.EMAIL.max}
           onChange={(e) => {
-            const clean = sanitizeEmail(e.target.value).slice(0, 100);
+            const clean = sanitizeEmail(e.target.value).slice(0, FIELD_LIMITS.EMAIL.max);
             setEmail(clean);
             if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
           }}
@@ -95,20 +98,22 @@ export function RegisterInputFields({
         />
       </FormField>
 
-      {/* 3. Nomor WhatsApp Aktif */}
+      {/* 3. Nomor WhatsApp */}
       <FormField
-        label="Nomor WhatsApp aktif"
+        label="Nomor WhatsApp"
         required
         error={errors.phone}
+        hint="Untuk notifikasi akun & bukti donasi."
       >
         <Input
           type="tel"
           inputMode="tel"
           placeholder="081234567890"
           value={phone}
-          maxLength={15}
+          minLength={FIELD_LIMITS.PHONE.min}
+          maxLength={FIELD_LIMITS.PHONE.max}
           onChange={(e) => {
-            const clean = sanitizePhone(e.target.value).slice(0, 15);
+            const clean = sanitizePhone(e.target.value).slice(0, FIELD_LIMITS.PHONE.max);
             setPhone(clean);
             if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
           }}

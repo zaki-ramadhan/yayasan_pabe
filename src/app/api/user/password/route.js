@@ -64,7 +64,7 @@ export async function PUT(request) {
 
     return NextResponse.json({
       success: true,
-      message: result.message,
+      message: result.message || "Kata sandi akun Anda berhasil diperbarui.",
     });
   } catch (error) {
     console.error("API PUT /api/user/password error:", error);

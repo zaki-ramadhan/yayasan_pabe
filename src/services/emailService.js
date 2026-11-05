@@ -8,6 +8,11 @@ import {
   buildAccountActivationEmailHtml,
   ACCOUNT_ACTIVATION_EMAIL_SUBJECT,
 } from "@/templates/emails/accountActivationEmailTemplate";
+import {
+  buildRoutineDonationInvoiceEmailHtml,
+  getRoutineInvoiceEmailSubject,
+} from "@/templates/emails/routineDonationInvoiceEmailTemplate";
+import { buildRoutineCompletionEmailHtml } from "@/templates/emails/routineCompletionEmailTemplate";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 
@@ -34,6 +39,10 @@ let hasEnsuredR2Logo = false;
  * @returns {Promise<string>}
  */
 export async function getPublicEmailLogoUrl() {
+  if (process.env.NODE_ENV === "test" || process.env.VITEST) {
+    return "https://pub-d695853be49c485484cd7799dc192352.r2.dev/branding/logo-ypabe.png";
+  }
+
   if (process.env.EMAIL_LOGO_URL) {
     return process.env.EMAIL_LOGO_URL;
   }
@@ -93,6 +102,10 @@ export async function getPublicEmailLogoUrl() {
  * @returns {Promise<{ success: boolean, id?: string, simulated?: boolean }>}
  */
 export async function sendEmail({ to, subject, html, attachments }) {
+  if (process.env.NODE_ENV === "test" || process.env.VITEST) {
+    return { success: true, id: `test_email_${Date.now()}` };
+  }
+
   const { apiKey, fromEmail } = getResendConfig();
 
   // Mode Fallback/Simulasi jika API key belum dikonfigurasi di .env
@@ -188,3 +201,76 @@ export async function sendAccountActivationEmail({ to, name, activationUrl }) {
     html,
   });
 }
+
+/**
+ * Mengirimkan email invoice atau pengingat donasi rutin resmi ke donatur
+ * @param {object} params
+ * @param {string} params.to - Alamat email donatur
+ * @param {string} params.donorName - Nama donatur
+ * @param {string} params.programTitle - Judul program donasi
+ * @param {number} params.amount - Nominal donasi
+ * @param {string} params.frequencyText - Keterangan jadwal
+ * @param {string|null} [params.invoiceId] - ID tagihan jika auto-invoice
+ * @param {string} params.actionUrl - Tautan bayar QRIS / program
+ * @param {"AUTO_DONATION" | "REMINDER_ONLY"} [params.routineType="AUTO_DONATION"]
+ */
+export async function sendRoutineDonationEmail({
+  to,
+  donorName,
+  programTitle,
+  amount,
+  frequencyText = "Setiap Pekan",
+  invoiceId = null,
+  actionUrl,
+  routineType = "AUTO_DONATION",
+}) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const subject = getRoutineInvoiceEmailSubject(programTitle, invoiceId);
+  const html = buildRoutineDonationInvoiceEmailHtml({
+    donorName,
+    programTitle,
+    amount,
+    frequencyText,
+    invoiceId,
+    actionUrl,
+    routineType,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject,
+    html,
+  });
+}
+
+/**
+ * Mengirimkan email apresiasi & pemberitahuan penutupan program donasi rutin
+ * @param {object} params
+ * @param {string} params.to - Alamat email donatur
+ * @param {string} params.donorName - Nama donatur
+ * @param {string} params.programTitle - Judul program yang ditutup
+ * @param {string} params.catalogUrl - Tautan ke katalog program aktif
+ */
+export async function sendRoutineCompletionEmail({
+  to,
+  donorName,
+  programTitle,
+  catalogUrl,
+}) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const subject = `Pemberitahuan Penutupan Program: ${programTitle} - Yayasan PABE`;
+  const html = buildRoutineCompletionEmailHtml({
+    donorName,
+    programTitle,
+    catalogUrl,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject,
+    html,
+  });
+}
+

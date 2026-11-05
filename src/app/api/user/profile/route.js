@@ -66,15 +66,11 @@ export async function PUT(request) {
     // 3. Whitelist Kolom Profil (Perlindungan Anti-Mass Assignment / Anti-IDOR / Anti-Privilege Escalation)
     const ALLOWED_FIELDS = [
       "name",
-      "bio",
       "city",
       "address",
       "phone",
-      "bankName",
-      "bankAccount",
-      "bankAccountName",
       "avatar",
-      "coverImage",
+      "customAvatar",
     ];
 
     const safeProfileData = {};

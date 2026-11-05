@@ -21,6 +21,21 @@ function getAuthSnapshot() {
     if (parsed?.expiresAt && Date.now() > parsed.expiresAt) {
       return null;
     }
+
+    // Auto-heal session cookie if missing or corrupt
+    if (typeof document !== "undefined") {
+      const match = document.cookie.match(/pabe_session=([^;]+)/);
+      const curCookie = match ? decodeURIComponent(match[1].trim()) : null;
+      if (!curCookie || curCookie === "USR-DONOR") {
+        const validId = parsed?.id || parsed?.email || "";
+        if (validId) {
+          const durationSec = 30 * 24 * 60 * 60;
+          document.cookie = `pabe_session=${encodeURIComponent(validId)}; path=/; max-age=${durationSec}; SameSite=Lax`;
+          document.cookie = `pabe_role=${encodeURIComponent(parsed?.role || "DONOR")}; path=/; max-age=${durationSec}; SameSite=Lax`;
+        }
+      }
+    }
+
     return raw;
   } catch {
     return null;

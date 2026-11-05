@@ -166,6 +166,23 @@ export function getStoredUser() {
       return null;
     }
 
+    // Auto-heal session cookies client-side jika hilang atau tercemar nilai dummy "USR-DONOR"
+    if (typeof document !== "undefined") {
+      const match = document.cookie.match(/pabe_session=([^;]+)/);
+      const curSession = match ? decodeURIComponent(match[1].trim()) : null;
+      if (!curSession || curSession === "USR-DONOR") {
+        const validId = parsed?.id || parsed?.email || "";
+        if (validId) {
+          const durationSec = Math.max(
+            60,
+            Math.floor(((parsed.expiresAt || Date.now() + 7 * 86400000) - Date.now()) / 1000)
+          );
+          document.cookie = `pabe_session=${encodeURIComponent(validId)}; path=/; max-age=${durationSec}; SameSite=Lax`;
+          document.cookie = `pabe_role=${encodeURIComponent(parsed?.role || "DONOR")}; path=/; max-age=${durationSec}; SameSite=Lax`;
+        }
+      }
+    }
+
     return parsed;
   } catch {
     return null;
@@ -202,10 +219,13 @@ export function loginUser(user, options = {}) {
     sessionStorage.removeItem("ygsm_just_logged_in");
   } catch {}
 
-  // Sync session cookie client-side sesuai durasi terhitung
-  const userId = encodeURIComponent(user?.id || "USR-DONOR");
+  // Sync session cookie client-side sesuai identifier otentik (prioritas id -> email -> username)
+  const validId = user?.id || user?.email || user?.username || "";
+  const userId = encodeURIComponent(validId);
   const role = encodeURIComponent(user?.role || "DONOR");
-  document.cookie = `pabe_session=${userId}; path=/; max-age=${durationSec}; SameSite=Lax`;
+  if (userId) {
+    document.cookie = `pabe_session=${userId}; path=/; max-age=${durationSec}; SameSite=Lax`;
+  }
   document.cookie = `pabe_role=${role}; path=/; max-age=${durationSec}; SameSite=Lax`;
 
   window.dispatchEvent(new Event("pabe_auth_change"));

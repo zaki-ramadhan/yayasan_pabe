@@ -8,6 +8,7 @@ import { toast } from "@/hooks/useToast";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { SocialAuthGroup } from "@/components/auth/SocialAuthGroup";
 import { AuthFormHeader } from "@/components/auth/AuthFormHeader";
 import { AuthNoticeBanner } from "@/components/auth/AuthNoticeBanner";
@@ -247,9 +248,10 @@ export function LoginForm() {
             type="text"
             placeholder="nama@email.com atau nama pengguna"
             value={identifier}
-            maxLength={100}
+            minLength={FIELD_LIMITS.NAME.min}
+            maxLength={FIELD_LIMITS.EMAIL.max}
             onChange={(e) => {
-              const clean = stripEmojis(e.target.value).slice(0, 100);
+              const clean = stripEmojis(e.target.value).slice(0, FIELD_LIMITS.EMAIL.max);
               setIdentifier(clean);
               if (errors.identifier) setErrors((prev) => ({ ...prev, identifier: undefined }));
             }}

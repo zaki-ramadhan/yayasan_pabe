@@ -29,9 +29,16 @@ export async function enqueueNotification({
   idempotencyKey,
   maxAttempts = QUEUE_CONFIG.DEFAULT_MAX_ATTEMPTS,
 }) {
-  const normalizedPhone = normalizeWhatsAppNumber(recipientPhone);
-  if (!normalizedPhone) {
-    throw new Error(`Nomor telepon penerima tidak valid: ${recipientPhone}`);
+  const targetEmail = payload.donorEmail || "";
+  let normalizedPhone = null;
+
+  if (recipientPhone && recipientPhone !== "-" && !recipientPhone.includes("@")) {
+    normalizedPhone = normalizeWhatsAppNumber(recipientPhone);
+    if (!normalizedPhone) {
+      throw new Error(`Nomor telepon penerima tidak valid: ${recipientPhone}`);
+    }
+  } else if (!targetEmail) {
+    throw new Error("Kontak penerima (email atau nomor telepon) wajib disertakan.");
   }
 
   if (!idempotencyKey) {
@@ -52,7 +59,7 @@ export async function enqueueNotification({
     data: {
       routineDonationId,
       type,
-      recipientPhone: normalizedPhone,
+      recipientPhone: normalizedPhone || targetEmail || "-",
       payload,
       status: QUEUE_STATUS.PENDING,
       attempts: 0,
