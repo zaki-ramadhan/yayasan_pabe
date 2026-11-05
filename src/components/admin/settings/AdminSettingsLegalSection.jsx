@@ -3,6 +3,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { sanitizeStandardText, sanitizeNPWP } from "@/lib/security";
 
 export function AdminSettingsLegalSection({ formData, errors = {}, onFieldChange }) {
@@ -19,8 +20,10 @@ export function AdminSettingsLegalSection({ formData, errors = {}, onFieldChange
           <FormField label="SK Kemenkumham RI" error={errors.skKemenkumham}>
             <Input
               value={formData.legal?.skKemenkumham || ""}
+              minLength={FIELD_LIMITS.LEGAL_NUMBER.min}
+              maxLength={FIELD_LIMITS.LEGAL_NUMBER.max}
               onChange={(e) =>
-                onFieldChange("legal", "skKemenkumham", sanitizeStandardText(e.target.value, 60))
+                onFieldChange("legal", "skKemenkumham", sanitizeStandardText(e.target.value, FIELD_LIMITS.LEGAL_NUMBER.max))
               }
               onBlur={(e) => onFieldChange("legal", "skKemenkumham", e.target.value.trim())}
               placeholder="AHU-xxxx.AH.01.xx"
@@ -31,6 +34,8 @@ export function AdminSettingsLegalSection({ formData, errors = {}, onFieldChange
           <FormField label="Nomor pokok wajib pajak (NPWP)" error={errors.npwp}>
             <Input
               value={formData.legal?.npwp || ""}
+              minLength={FIELD_LIMITS.LEGAL_NPWP.min}
+              maxLength={FIELD_LIMITS.LEGAL_NPWP.max}
               onChange={(e) =>
                 onFieldChange("legal", "npwp", sanitizeNPWP(e.target.value))
               }
@@ -44,8 +49,10 @@ export function AdminSettingsLegalSection({ formData, errors = {}, onFieldChange
           <FormField label="Izin operasional dinsos" error={errors.izinIzinSosial}>
             <Input
               value={formData.legal?.izinIzinSosial || ""}
+              minLength={FIELD_LIMITS.LEGAL_NUMBER.min}
+              maxLength={FIELD_LIMITS.LEGAL_NUMBER.max}
               onChange={(e) =>
-                onFieldChange("legal", "izinIzinSosial", sanitizeStandardText(e.target.value, 60))
+                onFieldChange("legal", "izinIzinSosial", sanitizeStandardText(e.target.value, FIELD_LIMITS.LEGAL_NUMBER.max))
               }
               onBlur={(e) => onFieldChange("legal", "izinIzinSosial", e.target.value.trim())}
               placeholder="Nomor izin dinas sosial"

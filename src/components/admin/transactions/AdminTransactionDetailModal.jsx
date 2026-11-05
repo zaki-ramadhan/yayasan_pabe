@@ -95,7 +95,7 @@ export function AdminTransactionDetailModal({
             </div>
 
             <div className="p-3 border border-slate-200 rounded-lg space-y-1">
-              <span className="text-sm text-slate-500 block font-normal">Metode pembayaran:</span>
+              <span className="text-sm text-slate-500 block font-normal">Saluran donasi:</span>
               <span className="font-medium text-slate-900 block uppercase">
                 {transaction.paymentChannel}
               </span>

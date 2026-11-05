@@ -4,6 +4,57 @@ import { USER_ROLES } from "@/services/authService";
 export const R2_FREE_TIER_BYTES = 10 * 1024 * 1024 * 1024;
 
 /**
+ * Status kesehatan kapasitas penyimpanan Cloudflare R2.
+ */
+export const STORAGE_STATUS = Object.freeze({
+  NORMAL: "NORMAL",
+  WARNING: "WARNING",
+  CRITICAL: "CRITICAL",
+});
+
+/**
+ * Ambang batas persentase kuota Cloudflare R2 (Free Tier 10 GB).
+ */
+export const STORAGE_THRESHOLDS = Object.freeze({
+  WARNING_PERCENT: 80,
+  CRITICAL_PERCENT: 95,
+});
+
+/**
+ * Menghitung status kesehatan kapasitas penyimpanan Cloudflare R2 secara deterministik.
+ * @param {number} totalBytes - Total ukuran berkas tersimpan
+ * @param {number} [limitBytes=R2_FREE_TIER_BYTES] - Batas kapasitas penyimpanan
+ * @returns {{
+ *   status: keyof typeof STORAGE_STATUS,
+ *   usagePercent: number,
+ *   isWarning: boolean,
+ *   isCritical: boolean,
+ *   remainingBytes: number
+ * }}
+ */
+export function calculateStorageHealth(totalBytes = 0, limitBytes = R2_FREE_TIER_BYTES) {
+  const safeTotal = Math.max(0, Number(totalBytes) || 0);
+  const safeLimit = Math.max(1, Number(limitBytes) || R2_FREE_TIER_BYTES);
+  const usagePercent = Math.min(100, Number(((safeTotal / safeLimit) * 100).toFixed(2)));
+  const remainingBytes = Math.max(0, safeLimit - safeTotal);
+
+  let status = STORAGE_STATUS.NORMAL;
+  if (usagePercent >= STORAGE_THRESHOLDS.CRITICAL_PERCENT) {
+    status = STORAGE_STATUS.CRITICAL;
+  } else if (usagePercent >= STORAGE_THRESHOLDS.WARNING_PERCENT) {
+    status = STORAGE_STATUS.WARNING;
+  }
+
+  return {
+    status,
+    usagePercent,
+    isWarning: status === STORAGE_STATUS.WARNING,
+    isCritical: status === STORAGE_STATUS.CRITICAL,
+    remainingBytes,
+  };
+}
+
+/**
  * Konfigurasi terpusat konteks penyimpanan Cloudflare R2.
  * Menentukan folder target, prefix nama berkas, profil optimasi gambar, batas ukuran berkas,
  * format yang diizinkan, serta otorisasi peran (RBAC).

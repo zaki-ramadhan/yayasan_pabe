@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import {
   sanitizeStandardText,
   sanitizeDigitsOnly,
@@ -50,8 +51,10 @@ export function AdminSettingsBankSection({
             >
               <Input
                 value={account.bank || ""}
+                minLength={FIELD_LIMITS.BANK_NAME.min}
+                maxLength={FIELD_LIMITS.BANK_NAME.max}
                 onChange={(e) =>
-                  onBankAccountChange(idx, "bank", sanitizeStandardText(e.target.value, 60))
+                  onBankAccountChange(idx, "bank", sanitizeStandardText(e.target.value, FIELD_LIMITS.BANK_NAME.max))
                 }
                 onBlur={(e) => onBankAccountChange(idx, "bank", e.target.value.trim())}
                 placeholder="Contoh: Bank Syariah Indonesia"
@@ -68,8 +71,10 @@ export function AdminSettingsBankSection({
             >
               <Input
                 value={account.accountNumber || ""}
+                minLength={FIELD_LIMITS.BANK_ACCOUNT_NUMBER.min}
+                maxLength={FIELD_LIMITS.BANK_ACCOUNT_NUMBER.max}
                 onChange={(e) =>
-                  onBankAccountChange(idx, "accountNumber", sanitizeDigitsOnly(e.target.value, 25))
+                  onBankAccountChange(idx, "accountNumber", sanitizeDigitsOnly(e.target.value, FIELD_LIMITS.BANK_ACCOUNT_NUMBER.max))
                 }
                 onBlur={(e) => onBankAccountChange(idx, "accountNumber", e.target.value.trim())}
                 placeholder="Hanya angka (contoh: 7123456789)"
@@ -87,6 +92,8 @@ export function AdminSettingsBankSection({
             >
               <Input
                 value={account.accountName || ""}
+                minLength={FIELD_LIMITS.BANK_ACCOUNT_NAME.min}
+                maxLength={FIELD_LIMITS.BANK_ACCOUNT_NAME.max}
                 onChange={(e) =>
                   onBankAccountChange(idx, "accountName", sanitizeBankAccountName(e.target.value))
                 }

@@ -3,6 +3,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import {
   sanitizeStandardText,
   sanitizeWhatsAppNumber,
@@ -24,8 +25,10 @@ export function AdminSettingsContactSection({ formData, errors = {}, onFieldChan
           <FormField label="Alamat lengkap kantor" className="sm:col-span-2">
             <Input
               value={formData.contacts?.address || ""}
+              minLength={FIELD_LIMITS.CONTACT_ADDRESS.min}
+              maxLength={FIELD_LIMITS.CONTACT_ADDRESS.max}
               onChange={(e) =>
-                onFieldChange("contacts", "address", sanitizeStandardText(e.target.value, 200))
+                onFieldChange("contacts", "address", sanitizeStandardText(e.target.value, FIELD_LIMITS.CONTACT_ADDRESS.max))
               }
               onBlur={(e) => onFieldChange("contacts", "address", e.target.value.trim())}
               placeholder="Alamat kantor yayasan"
@@ -36,6 +39,8 @@ export function AdminSettingsContactSection({ formData, errors = {}, onFieldChan
           <FormField label="WhatsApp resmi layanan" error={errors.whatsapp}>
             <Input
               value={formData.contacts?.whatsapp || ""}
+              minLength={FIELD_LIMITS.CONTACT_WHATSAPP.min}
+              maxLength={FIELD_LIMITS.CONTACT_WHATSAPP.max}
               onChange={(e) =>
                 onFieldChange("contacts", "whatsapp", sanitizeWhatsAppNumber(e.target.value))
               }
@@ -49,6 +54,8 @@ export function AdminSettingsContactSection({ formData, errors = {}, onFieldChan
           <FormField label="Email resmi layanan" error={errors.email}>
             <Input
               value={formData.contacts?.email || ""}
+              minLength={FIELD_LIMITS.CONTACT_EMAIL.min}
+              maxLength={FIELD_LIMITS.CONTACT_EMAIL.max}
               onChange={(e) =>
                 onFieldChange("contacts", "email", sanitizeEmail(e.target.value))
               }
@@ -63,6 +70,8 @@ export function AdminSettingsContactSection({ formData, errors = {}, onFieldChan
           <FormField label="Telepon kantor" error={errors.phone}>
             <Input
               value={formData.contacts?.phone || ""}
+              minLength={FIELD_LIMITS.CONTACT_PHONE.min}
+              maxLength={FIELD_LIMITS.CONTACT_PHONE.max}
               onChange={(e) =>
                 onFieldChange("contacts", "phone", sanitizeLandlinePhone(e.target.value))
               }
@@ -76,8 +85,10 @@ export function AdminSettingsContactSection({ formData, errors = {}, onFieldChan
           <FormField label="Jam pelayanan kantor">
             <Input
               value={formData.contacts?.officeHours || ""}
+              minLength={FIELD_LIMITS.CONTACT_OFFICE_HOURS.min}
+              maxLength={FIELD_LIMITS.CONTACT_OFFICE_HOURS.max}
               onChange={(e) =>
-                onFieldChange("contacts", "officeHours", sanitizeStandardText(e.target.value, 80))
+                onFieldChange("contacts", "officeHours", sanitizeStandardText(e.target.value, FIELD_LIMITS.CONTACT_OFFICE_HOURS.max))
               }
               onBlur={(e) => onFieldChange("contacts", "officeHours", e.target.value.trim())}
               placeholder="Senin - Jumat, 08.00 - 17.00 WIB"

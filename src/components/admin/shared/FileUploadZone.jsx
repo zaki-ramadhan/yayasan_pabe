@@ -7,6 +7,9 @@ import { FileUploadPreview } from "./FileUploadPreview";
 import { FileUploadDropzone } from "./FileUploadDropzone";
 import { FileUploadMultiPreview } from "./FileUploadMultiPreview";
 import { useFileUploadZone } from "./useFileUploadZone";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
+import { useStorageAlert } from "@/hooks/useStorageAlert";
+import { toast } from "@/hooks/useToast";
 
 /**
  * Komponen koordinator terpusat unggah berkas ke Cloudflare R2.
@@ -31,13 +34,19 @@ export function FileUploadZone({
   helperText,
   accept,
   isPdf = false,
+  shape,
+  showManualUrl = true,
   isUploading: parentIsUploading,
   uploadProgress: parentUploadProgress = 0,
   uploadProgressText = "",
   error = "",
   onUploadSuccess,
   onFileDelete,
+  isStorageFull: propIsStorageFull,
 }) {
+  const { isStorageFull: systemStorageFull } = useStorageAlert();
+  const isStorageFull = propIsStorageFull ?? systemStorageFull;
+
   const {
     fileInputRef,
     isUploading,
@@ -88,7 +97,7 @@ export function FileUploadZone({
           {label}
           {required && <span className="text-rose-500 ml-1">*</span>}
         </label>
-        {!multiple && (
+        {!multiple && showManualUrl && (
           <button
             type="button"
             onClick={() => setIsManualUrl(!isManualUrl)}
@@ -109,6 +118,8 @@ export function FileUploadZone({
           <div className="flex gap-2">
             <Input
               type="text"
+              minLength={FIELD_LIMITS.AVATAR_URL.min}
+              maxLength={FIELD_LIMITS.AVATAR_URL.max}
               placeholder={
                 isPdf
                   ? "https://... atau /documents/laporan-audit.pdf"
@@ -138,10 +149,16 @@ export function FileUploadZone({
             value={value}
             previewSrc={localPreview || value}
             isPdf={isPdf}
+            shape={shape || (context === "USER_AVATAR" ? "circle" : "rectangle")}
             uploadMeta={uploadMeta}
             isUploading={isUploading}
             onReplace={() => {
+              if (isStorageFull) {
+                toast.error("Ruang penyimpanan hampir penuh (≥ 95%). Penggantian berkas ditangguhkan sementara.");
+                return;
+              }
               if (
+                showManualUrl &&
                 typeof value === "string" &&
                 !value.includes(".r2.dev") &&
                 !value.startsWith("/api/media/") &&
@@ -159,17 +176,32 @@ export function FileUploadZone({
             <FileUploadDropzone
               isDragging={isDragging}
               isUploading={isUploading}
+              isStorageFull={isStorageFull}
               uploadProgress={uploadProgress}
               uploadProgressText={progressText}
               isPdf={isPdf}
               multiple={multiple}
               hasFiles={multiple && files.length > 0}
               helperText={resolvedHelperText}
-              onClick={() => fileInputRef.current?.click()}
-              onDrop={handleDrop}
+              onClick={() => {
+                if (isStorageFull) {
+                  toast.error("Ruang penyimpanan hampir penuh (≥ 95%). Unggah berkas ditangguhkan sementara.");
+                  return;
+                }
+                fileInputRef.current?.click();
+              }}
+              onDrop={(e) => {
+                if (isStorageFull) {
+                  e.preventDefault();
+                  toast.error("Ruang penyimpanan hampir penuh (≥ 95%). Unggah berkas ditangguhkan sementara.");
+                  return;
+                }
+                handleDrop(e);
+              }}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onCancel={handleCancelUpload}
+              className={context === "USER_AVATAR" ? "py-2.5 px-3 min-h-[76px] [&_svg]:w-5 [&_svg]:h-5 [&_svg]:mb-1 [&_p.text-sm]:text-xs [&_p.text-xs]:text-[11px]" : ""}
             />
 
             {multiple && files.length > 0 && (

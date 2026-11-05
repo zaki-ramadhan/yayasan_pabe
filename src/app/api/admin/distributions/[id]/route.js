@@ -7,7 +7,7 @@ import {
 } from "@/services/adminService";
 
 export async function PUT(request, { params }) {
-  const { errorResponse } = await requireAuth(request, [
+  const { user, errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
     USER_ROLES.ADMIN,
     USER_ROLES.FINANCE,
@@ -18,7 +18,11 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const body = await request.json();
 
-    const updated = await updateAdminDistribution(id, body);
+    const updated = await updateAdminDistribution(id, body, {
+      userId: user?.id,
+      userName: user?.name,
+      userRole: user?.role,
+    });
     return NextResponse.json({
       success: true,
       message: "Data rekam penyaluran berhasil diperbarui.",
@@ -33,7 +37,7 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-  const { errorResponse } = await requireAuth(request, [
+  const { user, errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
     USER_ROLES.ADMIN,
     USER_ROLES.FINANCE,
@@ -42,7 +46,11 @@ export async function DELETE(request, { params }) {
 
   try {
     const { id } = await params;
-    await deleteAdminDistribution(id);
+    await deleteAdminDistribution(id, {
+      userId: user?.id,
+      userName: user?.name,
+      userRole: user?.role,
+    });
 
     return NextResponse.json({
       success: true,

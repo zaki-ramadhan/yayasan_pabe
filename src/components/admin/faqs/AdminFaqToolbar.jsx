@@ -1,13 +1,8 @@
 "use client";
 
+import { useMemo } from "react";
 import { TableToolbar } from "@/components/ui/Table";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/Select";
+import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 
 export function AdminFaqToolbar({
   search,
@@ -19,6 +14,15 @@ export function AdminFaqToolbar({
   onRefresh,
   onOpenAdd,
 }) {
+  const filterCategoryOptions = useMemo(() => {
+    return [
+      { value: "ALL", label: "Semua topik" },
+      ...categories
+        .filter((cat) => cat !== "ALL")
+        .map((cat) => ({ value: cat, label: cat })),
+    ];
+  }, [categories]);
+
   return (
     <TableToolbar
       search={search}
@@ -26,21 +30,16 @@ export function AdminFaqToolbar({
       searchPlaceholder="Cari pertanyaan atau jawaban FAQ..."
       searchWidth="flex-1 min-w-[200px] max-w-sm"
       filters={
-        <Select value={categoryFilter} onValueChange={onCategoryChange}>
-          <SelectTrigger className="h-10 w-40 text-sm font-normal bg-white border border-slate-300 rounded-lg shrink-0">
-            <SelectValue placeholder="Semua topik" />
-          </SelectTrigger>
-          <SelectContent className="bg-white border border-slate-200 z-50">
-            <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
-              Semua topik
-            </SelectItem>
-            {categories.map((cat) => (
-              <SelectItem key={cat} value={cat} className="cursor-pointer text-sm font-normal py-2">
-                {cat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <CreatableCombobox
+          options={filterCategoryOptions}
+          value={categoryFilter}
+          onChange={onCategoryChange}
+          placeholder="Semua topik"
+          searchPlaceholder="Cari topik FAQ..."
+          emptyMessage="Topik tidak ditemukan."
+          className="h-10 w-44 text-sm bg-white shrink-0 border-slate-300"
+          popoverClassName="w-64 max-w-[min(calc(100vw-2rem),24rem)]"
+        />
       }
       onRefresh={onRefresh}
       isLoading={isLoading}

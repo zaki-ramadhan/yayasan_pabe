@@ -15,7 +15,7 @@ export function AdminFaqSkeleton() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div className="flex items-center gap-2 flex-1 max-w-md">
           <Skeleton className="h-10 w-full rounded-lg" />
-          <Skeleton className="h-10 w-40 rounded-lg shrink-0" />
+          <Skeleton className="h-10 w-44 rounded-lg shrink-0" />
         </div>
         <div className="flex items-center gap-2">
           <Skeleton className="h-10 w-28 rounded-lg" />

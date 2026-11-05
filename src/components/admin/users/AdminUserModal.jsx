@@ -17,6 +17,7 @@ import {
 } from "@/lib/sanitizer";
 import { AdminUserGenderSelect } from "./AdminUserGenderSelect";
 import { AdminUserTitleCombobox } from "./AdminUserTitleCombobox";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
  * Modal form untuk menambah atau memperbarui data pengurus yayasan.
@@ -252,7 +253,8 @@ export function AdminUserModal({
             type="text"
             required
             autoComplete="name"
-            maxLength={60}
+            minLength={FIELD_LIMITS.NAME.min}
+            maxLength={FIELD_LIMITS.NAME.max}
             value={formData.name}
             onChange={(e) => {
               setFormData((prev) => ({
@@ -300,7 +302,8 @@ export function AdminUserModal({
               type="email"
               inputMode="email"
               autoComplete="email"
-              maxLength={100}
+              minLength={FIELD_LIMITS.EMAIL.min}
+              maxLength={FIELD_LIMITS.EMAIL.max}
               spellCheck={false}
               required={formData.hasLoginAccess}
               disabled={isEdit && !formData.hasLoginAccess}
@@ -339,7 +342,8 @@ export function AdminUserModal({
               type="tel"
               inputMode="tel"
               autoComplete="tel"
-              maxLength={15}
+              minLength={FIELD_LIMITS.PHONE.min}
+              maxLength={FIELD_LIMITS.PHONE.max}
               value={formData.phone}
               onChange={(e) => {
                 setFormData((prev) => ({
@@ -406,8 +410,8 @@ export function AdminUserModal({
                 <Input
                   type="text"
                   required
-                  minLength={6}
-                  maxLength={50}
+                  minLength={FIELD_LIMITS.PASSWORD_SIMPLE.min}
+                  maxLength={FIELD_LIMITS.PASSWORD_SIMPLE.max}
                   value={formData.password}
                   onChange={(e) => {
                     setFormData((prev) => ({
@@ -428,10 +432,10 @@ export function AdminUserModal({
                         ...prev,
                         password: "Kata sandi awal wajib diisi.",
                       }));
-                    } else if (pass.length < 6) {
+                    } else if (pass.length < FIELD_LIMITS.PASSWORD_SIMPLE.min) {
                       setErrors((prev) => ({
                         ...prev,
-                        password: "Kata sandi awal minimal 6 karakter.",
+                        password: `Kata sandi awal minimal ${FIELD_LIMITS.PASSWORD_SIMPLE.min} karakter.`,
                       }));
                     }
                   }}
@@ -446,7 +450,8 @@ export function AdminUserModal({
               >
                 <Input
                   type="text"
-                  maxLength={50}
+                  minLength={FIELD_LIMITS.PASSWORD_SIMPLE.min}
+                  maxLength={FIELD_LIMITS.PASSWORD_SIMPLE.max}
                   value={formData.password}
                   onChange={(e) => {
                     setFormData((prev) => ({
@@ -462,10 +467,10 @@ export function AdminUserModal({
                   onBlur={() => {
                     const pass = formData.password.trim();
                     setFormData((prev) => ({ ...prev, password: pass }));
-                    if (pass && pass.length < 6) {
+                    if (pass && pass.length < FIELD_LIMITS.PASSWORD_SIMPLE.min) {
                       setErrors((prev) => ({
                         ...prev,
-                        password: "Kata sandi minimal 6 karakter jika diisi.",
+                        password: `Kata sandi minimal ${FIELD_LIMITS.PASSWORD_SIMPLE.min} karakter jika diisi.`,
                       }));
                     }
                   }}

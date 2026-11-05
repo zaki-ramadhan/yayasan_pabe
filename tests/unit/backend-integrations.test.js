@@ -6,10 +6,26 @@ import prisma from "@/lib/prisma";
 
 describe("Backend Integration & Real Persistence Audit", () => {
   describe("Donasi Rutin (PostgreSQL & Service Integration)", () => {
-    it("berhasil memvalidasi dan memproses komitmen donasi rutin multi-program", async () => {
+    beforeEach(async () => {
+      await prisma.routineDonation.deleteMany({
+        where: {
+          donorEmail: {
+            in: [
+              "ahmad.subari@gmail.com",
+              "nurul.hidayah@gmail.com",
+              "donatur.api@gmail.com",
+              "fajar@gmail.com",
+            ],
+          },
+        },
+      });
+    });
+
+    it("berhasil memvalidasi dan memproses komitmen donasi rutin", async () => {
       const payload = {
         donorName: "Haji Ahmad Subari",
         donorPhone: "081234567890",
+        donorEmail: "ahmad.subari@gmail.com",
         isAnonymous: false,
         programs: [
           {
@@ -31,10 +47,56 @@ describe("Backend Integration & Real Persistence Audit", () => {
       expect(result.data[0].frequency).toBe("WEEKLY");
     });
 
+    it("menolak pendaftaran jika donatur sudah memiliki jadwal donasi rutin aktif", async () => {
+      const payload = {
+        donorName: "Haji Ahmad Subari",
+        donorPhone: "081234567890",
+        donorEmail: "ahmad.subari@gmail.com",
+        isAnonymous: false,
+        programs: [
+          {
+            campaignId: "camp-001",
+            programTitle: "Beasiswa Anak Yatim Tahfidz",
+            amount: 50000,
+            frequency: "WEEKLY",
+            routineType: "AUTO_DONATION",
+          },
+        ],
+      };
+
+      await createRoutineDonations(payload);
+      await expect(createRoutineDonations(payload)).rejects.toThrow(/sudah memiliki jadwal/i);
+    });
+
+    it("berhasil menyimpan masa berlaku rentang tanggal kustom", async () => {
+      const payload = {
+        donorName: "Haji Ahmad Subari",
+        donorEmail: "ahmad.subari@gmail.com",
+        programs: [
+          {
+            campaignId: "camp-001",
+            programTitle: "Program Terjadwal",
+            amount: 50000,
+            frequency: "WEEKLY",
+            routineType: "AUTO_DONATION",
+            hasCustomPeriod: true,
+            startDate: new Date("2026-11-01").toISOString(),
+            endDate: new Date("2026-12-01").toISOString(),
+          },
+        ],
+      };
+
+      const result = await createRoutineDonations(payload);
+      expect(result.data[0].hasCustomPeriod).toBe(true);
+      expect(result.data[0].startDate).toBeDefined();
+      expect(result.data[0].endDate).toBeDefined();
+    });
+
     it("menolak komitmen jika nominal di bawah batas minimum Rp 10.000", async () => {
       const payload = {
         donorName: "Fajar",
         donorPhone: "081234567890",
+        donorEmail: "fajar@gmail.com",
         programs: [
           {
             programTitle: "Program Uji",
@@ -51,11 +113,35 @@ describe("Backend Integration & Real Persistence Audit", () => {
       const payload = {
         donorName: "",
         donorPhone: "081234567890",
+        donorEmail: "fajar@gmail.com",
         isAnonymous: false,
         programs: [{ programTitle: "Uji", amount: 25000 }],
       };
 
       await expect(createRoutineDonations(payload)).rejects.toThrow(/nama/i);
+    });
+
+    it("berhasil mendaftarkan komitmen donasi rutin tanpa nomor telepon (berpusat email)", async () => {
+      const payload = {
+        donorName: "Ibu Nurul Hidayah",
+        donorEmail: "nurul.hidayah@gmail.com",
+        isAnonymous: false,
+        programs: [
+          {
+            campaignId: "camp-001",
+            programTitle: "Program Kebaikan Subuh",
+            amount: 25000,
+            frequency: "WEEKLY",
+            routineType: "AUTO_DONATION",
+            selectedDay: "jumat",
+          },
+        ],
+      };
+
+      const result = await createRoutineDonations(payload);
+      expect(result.success).toBe(true);
+      expect(result.data.length).toBe(1);
+      expect(result.data[0].amount).toBe(25000);
     });
 
     it("endpoint /api/routine-donations mengembalikan status 201 dengan envelope terstandar", async () => {
@@ -65,6 +151,7 @@ describe("Backend Integration & Real Persistence Audit", () => {
         body: JSON.stringify({
           donorName: "Donatur API Test",
           donorPhone: "081987654321",
+          donorEmail: "donatur.api@gmail.com",
           isAnonymous: true,
           programs: [
             {
@@ -154,7 +241,7 @@ describe("Backend Integration & Real Persistence Audit", () => {
           phone: "08123",
           coverLetter: "Saya sangat tertarik bergabung bersama yayasan",
         })
-      ).rejects.toThrow(/telepon/i);
+      ).rejects.toThrow(/(?:whatsapp|telepon)/i);
     });
 
     it("menolak submit lamaran jika posisi mewajibkan berkas CV tetapi berkas kosong", async () => {

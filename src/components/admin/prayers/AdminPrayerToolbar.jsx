@@ -1,6 +1,8 @@
 "use client";
 
+import { useMemo } from "react";
 import { TableToolbar } from "@/components/ui/Table";
+import { Combobox } from "@/components/ui/Combobox";
 import {
   Select,
   SelectContent,
@@ -21,6 +23,16 @@ export function AdminPrayerToolbar({
   onRefresh,
   isPending,
 }) {
+  const campaignOptions = useMemo(() => {
+    return [
+      { value: "ALL", label: "Semua program" },
+      ...campaigns.map((c) => ({
+        value: c.id,
+        label: c.title,
+      })),
+    ];
+  }, [campaigns]);
+
   return (
     <TableToolbar
       search={search}
@@ -42,19 +54,17 @@ export function AdminPrayerToolbar({
           </Select>
 
           {campaigns.length > 0 && (
-            <Select value={campaignFilter} onValueChange={onCampaignFilterChange}>
-              <SelectTrigger className="h-10 w-48 text-sm font-normal bg-white shrink-0">
-                <SelectValue placeholder="Semua program" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Semua program</SelectItem>
-                {campaigns.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Combobox
+              options={campaignOptions}
+              value={campaignFilter}
+              onChange={onCampaignFilterChange}
+              placeholder="Semua program"
+              searchPlaceholder="Cari program donasi..."
+              emptyMessage="Program tidak ditemukan."
+              className="h-10 w-48 sm:w-56 text-sm font-normal bg-white shrink-0"
+              popoverClassName="w-72 max-w-[min(calc(100vw-2rem),24rem)]"
+              searchThreshold={5}
+            />
           )}
         </>
       }

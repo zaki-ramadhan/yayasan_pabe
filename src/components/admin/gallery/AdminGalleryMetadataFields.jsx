@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/Input";
 import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { sanitizeStandardText } from "@/lib/sanitizer";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
  * Sub-widget formulir metadata kegiatan galeri (Judul, Kategori, Tanggal, YouTube).
@@ -31,8 +32,9 @@ export function AdminGalleryMetadataFields({
           type="text"
           placeholder="Contoh: Penyerahan santunan adik asuh yatim"
           value={title}
-          maxLength={120}
-          onChange={(e) => setTitle(sanitizeStandardText(e.target.value, 120))}
+          minLength={FIELD_LIMITS.GALLERY_TITLE.min}
+          maxLength={FIELD_LIMITS.GALLERY_TITLE.max}
+          onChange={(e) => setTitle(sanitizeStandardText(e.target.value, FIELD_LIMITS.GALLERY_TITLE.max))}
           onBlur={() => setTitle((prev) => (typeof prev === "string" ? prev.trim() : prev))}
           className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
         />
@@ -74,11 +76,12 @@ export function AdminGalleryMetadataFields({
           <Input
             type="url"
             inputMode="url"
-            maxLength={500}
+            minLength={FIELD_LIMITS.MEDIA_URL.min}
+            maxLength={FIELD_LIMITS.MEDIA_URL.max}
             spellCheck={false}
             placeholder="https://www.youtube.com/watch?v=... atau https://youtu.be/..."
             value={youtubeUrl}
-            onChange={(e) => setYoutubeUrl(e.target.value.replace(/\s+/g, "").slice(0, 500))}
+            onChange={(e) => setYoutubeUrl(e.target.value.replace(/\s+/g, "").slice(0, FIELD_LIMITS.MEDIA_URL.max))}
             onBlur={() => setYoutubeUrl((prev) => (typeof prev === "string" ? prev.trim() : prev))}
             className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
           />

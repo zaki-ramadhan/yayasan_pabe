@@ -14,6 +14,7 @@ import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { sanitizeStandardText } from "@/lib/sanitizer";
 import { WORKPLACE_OPTIONS } from "@/data/careers";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function AdminCareerBasicInfoFields({
   title,
@@ -52,9 +53,10 @@ export function AdminCareerBasicInfoFields({
           type="text"
           placeholder="Contoh: Staff Monitoring & Evaluasi Mustahik"
           value={title}
-          maxLength={100}
+          minLength={FIELD_LIMITS.CAREER_POSITION.min}
+          maxLength={FIELD_LIMITS.CAREER_POSITION.max}
           onChange={(e) => {
-            onTitleChange(sanitizeStandardText(e.target.value, 100));
+            onTitleChange(sanitizeStandardText(e.target.value, FIELD_LIMITS.CAREER_POSITION.max));
             if (onClearError) onClearError("title");
           }}
           onBlur={() => onTitleChange(title.trim())}
@@ -150,8 +152,9 @@ export function AdminCareerBasicInfoFields({
             type="text"
             placeholder="Contoh: 1 - 2 tahun / Fresh graduate"
             value={experience}
-            maxLength={50}
-            onChange={(e) => onExperienceChange(sanitizeStandardText(e.target.value, 50))}
+            minLength={FIELD_LIMITS.CAREER_EXPERIENCE.min}
+            maxLength={FIELD_LIMITS.CAREER_EXPERIENCE.max}
+            onChange={(e) => onExperienceChange(sanitizeStandardText(e.target.value, FIELD_LIMITS.CAREER_EXPERIENCE.max))}
             onBlur={() => onExperienceChange(experience.trim())}
             className="h-10 text-sm bg-white"
           />

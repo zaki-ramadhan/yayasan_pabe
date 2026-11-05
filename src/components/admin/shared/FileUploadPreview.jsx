@@ -15,6 +15,7 @@ export function FileUploadPreview({
   isPdf = false,
   uploadMeta = null,
   isUploading = false,
+  shape = "rectangle",
   onReplace,
   onRemove,
 }) {
@@ -52,7 +53,11 @@ export function FileUploadPreview({
     <div className="flex items-center gap-3.5 p-3 rounded-xl border border-slate-200 bg-white shadow-2xs">
       {!isPdf ? (
         <div
-          className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shrink-0 flex items-center justify-center"
+          className={
+            shape === "circle"
+              ? "relative w-16 h-16 rounded-full overflow-hidden border-2 border-slate-200 bg-slate-100 shrink-0 flex items-center justify-center shadow-xs"
+              : "relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shrink-0 flex items-center justify-center"
+          }
         >
           {isError || !resolvedSrc ? (
             <div className="flex flex-col items-center justify-center text-slate-400 p-1">
@@ -138,7 +143,7 @@ export function FileUploadPreview({
           size="sm"
           onClick={onReplace}
           disabled={isUploading}
-          className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors disabled:pointer-events-none disabled:cursor-not-allowed" aria-label="Ganti berkas"
+          className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors disabled:pointer-events-none disabled:cursor-not-allowed"
           aria-label="Ganti berkas"
         >
           <Edit2 className="w-4 h-4" />
@@ -149,7 +154,7 @@ export function FileUploadPreview({
           size="sm"
           onClick={onRemove}
           disabled={isUploading}
-          className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors disabled:pointer-events-none disabled:cursor-not-allowed" aria-label="Hapus berkas"
+          className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors disabled:pointer-events-none disabled:cursor-not-allowed"
           aria-label="Hapus berkas"
         >
           <Trash2 className="w-4 h-4" />

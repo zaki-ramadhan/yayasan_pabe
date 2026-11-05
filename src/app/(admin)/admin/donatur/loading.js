@@ -27,7 +27,8 @@ export default function AdminDonorsLoading() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[260px]">Donatur</TableHead>
-              <TableHead className="w-44 text-center">No. Telepon</TableHead>
+              <TableHead className="w-44 text-center">Nomor WhatsApp</TableHead>
+              <TableHead className="w-36 text-center">Domisili</TableHead>
               <TableHead className="w-px whitespace-nowrap text-right">Total Donasi</TableHead>
               <TableHead className="w-px whitespace-nowrap text-center">Frekuensi</TableHead>
               <TableHead className="w-px whitespace-nowrap text-center">Terakhir Donasi</TableHead>
@@ -37,8 +38,8 @@ export default function AdminDonorsLoading() {
           <TableBody>
             <TableSkeletonRows
               rows={8}
-              columns={6}
-              cellAlignments={["left", "center", "right", "center", "center", "right"]}
+              columns={7}
+              cellAlignments={["left", "center", "center", "right", "center", "center", "right"]}
             />
           </TableBody>
         </Table>

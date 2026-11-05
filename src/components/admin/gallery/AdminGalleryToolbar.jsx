@@ -1,13 +1,8 @@
 "use client";
 
+import { useMemo } from "react";
 import { TableToolbar } from "@/components/ui/Table";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/Select";
+import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 
 export function AdminGalleryToolbar({
   search,
@@ -19,6 +14,15 @@ export function AdminGalleryToolbar({
   onRefresh,
   onOpenUpload,
 }) {
+  const filterCategoryOptions = useMemo(() => {
+    return [
+      { value: "Semua Kategori", label: "Semua Kategori" },
+      ...categories
+        .filter((cat) => cat !== "Semua Kategori")
+        .map((cat) => ({ value: cat, label: cat })),
+    ];
+  }, [categories]);
+
   return (
     <TableToolbar
       search={search}
@@ -26,18 +30,16 @@ export function AdminGalleryToolbar({
       searchPlaceholder="Cari judul atau keterangan dokumentasi..."
       searchWidth="flex-1 min-w-[200px] max-w-sm"
       filters={
-        <Select value={category} onValueChange={onCategoryChange}>
-          <SelectTrigger className="h-10 w-44 text-sm bg-white shrink-0 border-slate-300">
-            <SelectValue placeholder="Semua kategori" />
-          </SelectTrigger>
-          <SelectContent align="start">
-            {categories.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <CreatableCombobox
+          options={filterCategoryOptions}
+          value={category}
+          onChange={onCategoryChange}
+          placeholder="Semua Kategori"
+          searchPlaceholder="Cari kategori dokumentasi..."
+          emptyMessage="Kategori tidak ditemukan."
+          className="h-10 w-44 text-sm bg-white shrink-0 border-slate-300"
+          popoverClassName="w-64 max-w-[min(calc(100vw-2rem),24rem)]"
+        />
       }
       onRefresh={onRefresh}
       isLoading={isPending}

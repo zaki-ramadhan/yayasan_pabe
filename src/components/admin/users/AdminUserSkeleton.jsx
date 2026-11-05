@@ -58,45 +58,7 @@ export function AdminUserSkeleton() {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <TableRow key={i} className="hover:bg-transparent">
-                  {/* 1. Identitas Pengurus */}
-                  <TableCell className="w-64 max-w-xs py-3 px-4">
-                    <div className="flex items-center gap-2.5">
-                      <Skeleton className="w-8 h-8 rounded-full shrink-0" />
-                      <div className="space-y-1 min-w-0 flex-1">
-                        <Skeleton className="h-4 w-32 rounded" />
-                        <Skeleton className="h-3 w-40 rounded" />
-                      </div>
-                    </div>
-                  </TableCell>
-
-                  {/* 2. Kontak (Centered) */}
-                  <TableCell className="w-36 max-w-[150px] text-center py-3 px-4">
-                    <Skeleton className="h-4 w-28 rounded mx-auto" />
-                  </TableCell>
-
-                  {/* 3. Jabatan & Akses */}
-                  <TableCell className="w-56 max-w-xs py-3 px-4">
-                    <div className="space-y-1.5">
-                      <Skeleton className="h-4 w-36 rounded" />
-                      {i % 2 === 1 && (
-                        <Skeleton className="h-4 w-20 rounded-md" />
-                      )}
-                    </div>
-                  </TableCell>
-
-                  {/* 4. Terdaftar (Centered) */}
-                  <TableCell className="w-36 max-w-[150px] text-center py-3 px-4">
-                    <Skeleton className="h-4 w-20 rounded mx-auto" />
-                  </TableCell>
-
-                  {/* 5. Aksi (Right) */}
-                  <TableCell className="w-20 max-w-[100px] text-right py-3 px-4">
-                    <Skeleton className="h-8 w-8 rounded-md ml-auto" />
-                  </TableCell>
-                </TableRow>
-              ))}
+              <AdminUserTableSkeletonRows rows={6} />
             </TableBody>
           </Table>
         </div>
@@ -111,5 +73,51 @@ export function AdminUserSkeleton() {
         </div>
       </div>
     </div>
+  );
+}
+
+export function AdminUserTableSkeletonRows({ rows = 5 }) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, i) => (
+        <TableRow key={i} className="hover:bg-transparent">
+          {/* 1. Identitas Pengurus */}
+          <TableCell className="w-64 max-w-xs py-3 px-4">
+            <div className="flex items-center gap-2.5">
+              <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+              <div className="space-y-1 min-w-0 flex-1">
+                <Skeleton className="h-4 w-32 rounded" />
+                <Skeleton className="h-3 w-40 rounded" />
+              </div>
+            </div>
+          </TableCell>
+
+          {/* 2. Kontak (Centered) */}
+          <TableCell className="w-36 max-w-[150px] text-center py-3 px-4">
+            <Skeleton className="h-4 w-28 rounded mx-auto" />
+          </TableCell>
+
+          {/* 3. Jabatan & Akses */}
+          <TableCell className="w-56 max-w-xs py-3 px-4">
+            <div className="space-y-1.5">
+              <Skeleton className="h-4 w-36 rounded" />
+              {i % 2 === 1 && (
+                <Skeleton className="h-4 w-20 rounded-md" />
+              )}
+            </div>
+          </TableCell>
+
+          {/* 4. Terdaftar (Centered) */}
+          <TableCell className="w-36 max-w-[150px] text-center py-3 px-4">
+            <Skeleton className="h-4 w-20 rounded mx-auto" />
+          </TableCell>
+
+          {/* 5. Aksi (Right) */}
+          <TableCell className="w-20 max-w-[100px] text-right py-3 px-4">
+            <Skeleton className="h-8 w-8 rounded-md ml-auto" />
+          </TableCell>
+        </TableRow>
+      ))}
+    </>
   );
 }

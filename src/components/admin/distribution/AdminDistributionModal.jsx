@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { safeFetch } from "@/lib/safeFetch";
@@ -15,7 +15,13 @@ import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeStandardText } from "@/lib/sanitizer";
 import { uploadFileToServer } from "@/services/uploadService";
 import { isYouTubeUrl } from "@/lib/galleryGroupHelper";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
+import {
+	calculateCampaignDisbursementBudget,
+	validateDisbursementAmount,
+} from "@/lib/distributionConstants";
 import { AdminDistributionMediaFields } from "./AdminDistributionMediaFields";
+import { AdminDistributionBudgetInfo } from "./AdminDistributionBudgetInfo";
 
 export function AdminDistributionModal({
 	isOpen,
@@ -111,6 +117,21 @@ export function AdminDistributionModal({
 		}
 	}, [distributionToEdit, isOpen, campaigns]);
 
+	const selectedCampaign = useMemo(() => {
+		return campaigns.find((c) => c.id === campaignId) || null;
+	}, [campaigns, campaignId]);
+
+	const currentCampaignBudget = useMemo(() => {
+		if (!selectedCampaign) return null;
+		return calculateCampaignDisbursementBudget({
+			collectedAmount: selectedCampaign.collectedAmount || 0,
+			totalDisbursed: selectedCampaign.totalDisbursed || 0,
+			currentDisbursementAmount: isEditing
+				? Number(distributionToEdit?.disbursedAmount) || 0
+				: 0,
+		});
+	}, [selectedCampaign, isEditing, distributionToEdit]);
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const newErrors = {};
@@ -123,6 +144,14 @@ export function AdminDistributionModal({
 		}
 		if (!disbursedAmount || disbursedAmount <= 0) {
 			newErrors.disbursedAmount = "Nominal dana penyaluran wajib lebih dari Rp 0.";
+		} else if (currentCampaignBudget) {
+			const budgetValidation = validateDisbursementAmount(
+				disbursedAmount,
+				currentCampaignBudget.remainingBudget
+			);
+			if (!budgetValidation.isValid) {
+				newErrors.disbursedAmount = budgetValidation.error;
+			}
 		}
 		if (!date) {
 			newErrors.date = "Tanggal penyaluran wajib dipilih.";
@@ -303,14 +332,23 @@ export function AdminDistributionModal({
 	]);
 
 	const isFormValid = useMemo(() => {
-		return Boolean(
+		const isBasicValid = Boolean(
 			campaignId &&
 			title.trim().length >= 5 &&
 			disbursedAmount > 0 &&
 			date &&
 			content.trim().length >= 10
 		);
-	}, [campaignId, title, disbursedAmount, date, content]);
+		if (!isBasicValid) return false;
+		if (currentCampaignBudget) {
+			const budgetCheck = validateDisbursementAmount(
+				disbursedAmount,
+				currentCampaignBudget.remainingBudget
+			);
+			if (!budgetCheck.isValid) return false;
+		}
+		return true;
+	}, [campaignId, title, disbursedAmount, date, content, currentCampaignBudget]);
 
 	return (
 		<FormDialog
@@ -352,6 +390,15 @@ export function AdminDistributionModal({
 				/>
 			</FormField>
 
+			{selectedCampaign && (
+				<AdminDistributionBudgetInfo
+					campaign={selectedCampaign}
+					inputAmount={disbursedAmount}
+					isEditing={isEditing}
+					initialDisbursedAmount={distributionToEdit?.disbursedAmount}
+				/>
+			)}
+
 			<FormField
 				label="Judul kegiatan penyaluran"
 				required
@@ -361,9 +408,10 @@ export function AdminDistributionModal({
 					type="text"
 					placeholder="Contoh: Penyerahan Santunan Sembako & Biaya Pendidikan Mustahik"
 					value={title}
-					maxLength={150}
+					minLength={FIELD_LIMITS.DISTRIBUTION_TITLE.min}
+					maxLength={FIELD_LIMITS.DISTRIBUTION_TITLE.max}
 					onChange={(e) => {
-						setTitle(sanitizeStandardText(e.target.value, 150));
+						setTitle(sanitizeStandardText(e.target.value, FIELD_LIMITS.DISTRIBUTION_TITLE.max));
 						if (errors.title) {
 							setErrors((prev) => ({ ...prev, title: "" }));
 						}
@@ -417,9 +465,11 @@ export function AdminDistributionModal({
 				required
 				error={errors.content}
 			>
-				<Textarea
-					rows={4}
-					maxLength={3000}
+				<AutoResizeTextarea
+					minRows={4}
+					maxRows={15}
+					minLength={FIELD_LIMITS.DISTRIBUTION_DESCRIPTION.min}
+					maxLength={FIELD_LIMITS.DISTRIBUTION_DESCRIPTION.max}
 					placeholder="Rincian jumlah penerima manfaat, lokasi penyerahan, dan ucapan doa dari mustahik..."
 					value={content}
 					onChange={(e) => {

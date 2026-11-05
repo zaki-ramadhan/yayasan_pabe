@@ -5,13 +5,14 @@ import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
 import { isFormDirty } from "@/lib/formUtils";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { useStagedUploads } from "@/hooks/useStagedUploads";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function AdminInstagramPostModal({
   isOpen,
@@ -186,13 +187,15 @@ export function AdminInstagramPostModal({
         />
 
         <FormField label="Caption postingan" required>
-          <Textarea
+          <AutoResizeTextarea
             value={caption}
-            maxLength={2000}
+            minLength={FIELD_LIMITS.INSTAGRAM_CAPTION.min}
+            maxLength={FIELD_LIMITS.INSTAGRAM_CAPTION.max}
             onChange={(e) => setCaption(e.target.value)}
             onBlur={() => setCaption((prev) => prev.trim())}
             placeholder="Tuliskan caption postingan Instagram..."
-            rows={4}
+            minRows={3}
+            maxRows={10}
             required
           />
         </FormField>
@@ -211,11 +214,12 @@ export function AdminInstagramPostModal({
             <Input
               type="url"
               inputMode="url"
-              maxLength={300}
+              minLength={FIELD_LIMITS.INSTAGRAM_URL.min}
+              maxLength={FIELD_LIMITS.INSTAGRAM_URL.max}
               spellCheck={false}
               required
               value={postUrl}
-              onChange={(e) => setPostUrl(e.target.value.replace(/\s+/g, "").slice(0, 300))}
+              onChange={(e) => setPostUrl(e.target.value.replace(/\s+/g, "").slice(0, FIELD_LIMITS.INSTAGRAM_URL.max))}
               onBlur={() => setPostUrl((prev) => prev.trim())}
               placeholder="https://www.instagram.com/p/..."
             />

@@ -66,61 +66,7 @@ export function AdminRoutineDonationSkeleton() {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <TableRow key={i} className="hover:bg-transparent">
-                  {/* Donatur dengan Avatar & Email */}
-                  <TableCell className="w-[260px] py-3 align-middle">
-                    <div className="flex items-center gap-2.5">
-                      <Skeleton className="w-8 h-8 rounded-full shrink-0" />
-                      <div className="min-w-0 space-y-1">
-                        <Skeleton className="h-4 w-24 rounded" />
-                        <Skeleton className="h-3.5 w-32 rounded" />
-                      </div>
-                    </div>
-                  </TableCell>
-
-                  {/* No. Telepon */}
-                  <TableCell className="w-44 py-3 text-center align-middle whitespace-nowrap">
-                    <Skeleton className="h-4 w-28 mx-auto rounded" />
-                  </TableCell>
-
-                  {/* Program Kebaikan */}
-                  <TableCell className="py-3 align-middle min-w-[280px] max-w-[360px]">
-                    <div className="space-y-1">
-                      <Skeleton className="h-4 w-48 max-w-full rounded" />
-                      <Skeleton className="h-3 w-28 rounded" />
-                    </div>
-                  </TableCell>
-
-                  {/* Komitmen Nominal */}
-                  <TableCell className="w-36 py-3 text-right align-middle whitespace-nowrap">
-                    <Skeleton className="h-4 w-20 rounded ml-auto" />
-                  </TableCell>
-
-                  {/* Frekuensi & Jadwal */}
-                  <TableCell className="w-40 py-3 align-middle whitespace-nowrap">
-                    <div className="space-y-1">
-                      <Skeleton className="h-4 w-24 rounded" />
-                      <Skeleton className="h-3 w-28 rounded" />
-                    </div>
-                  </TableCell>
-
-                  {/* Tipe Komitmen Badge */}
-                  <TableCell className="w-36 py-3 align-middle whitespace-nowrap">
-                    <Skeleton className="h-5 w-20 rounded" />
-                  </TableCell>
-
-                  {/* Status Badge */}
-                  <TableCell className="w-28 text-center py-3 align-middle whitespace-nowrap">
-                    <Skeleton className="h-5 w-14 rounded-full mx-auto" />
-                  </TableCell>
-
-                  {/* Aksi Button */}
-                  <TableCell className="w-24 text-right py-3 align-middle whitespace-nowrap pr-4">
-                    <Skeleton className="h-7 w-7 rounded-md ml-auto" />
-                  </TableCell>
-                </TableRow>
-              ))}
+              <AdminRoutineDonationTableSkeletonRows rows={5} />
             </TableBody>
           </Table>
         </div>
@@ -136,5 +82,67 @@ export function AdminRoutineDonationSkeleton() {
         </div>
       </TableContainer>
     </div>
+  );
+}
+
+export function AdminRoutineDonationTableSkeletonRows({ rows = 5 }) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, i) => (
+        <TableRow key={i} className="hover:bg-transparent">
+          {/* Donatur dengan Avatar & Email */}
+          <TableCell className="w-[260px] py-3 align-middle">
+            <div className="flex items-center gap-2.5">
+              <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+              <div className="min-w-0 space-y-1">
+                <Skeleton className="h-4 w-24 rounded" />
+                <Skeleton className="h-3.5 w-32 rounded" />
+              </div>
+            </div>
+          </TableCell>
+
+          {/* Nomor WhatsApp */}
+          <TableCell className="w-44 py-3 text-center align-middle whitespace-nowrap">
+            <Skeleton className="h-4 w-28 mx-auto rounded" />
+          </TableCell>
+
+          {/* Program Kebaikan */}
+          <TableCell className="py-3 align-middle min-w-[280px] max-w-[360px]">
+            <div className="space-y-1">
+              <Skeleton className="h-4 w-48 max-w-full rounded" />
+              <Skeleton className="h-3 w-28 rounded" />
+            </div>
+          </TableCell>
+
+          {/* Komitmen Nominal */}
+          <TableCell className="w-36 py-3 text-right align-middle whitespace-nowrap">
+            <Skeleton className="h-4 w-20 rounded ml-auto" />
+          </TableCell>
+
+          {/* Frekuensi & Jadwal */}
+          <TableCell className="w-40 py-3 align-middle whitespace-nowrap">
+            <div className="space-y-1">
+              <Skeleton className="h-4 w-24 rounded" />
+              <Skeleton className="h-3 w-28 rounded" />
+            </div>
+          </TableCell>
+
+          {/* Tipe Komitmen Badge */}
+          <TableCell className="w-36 py-3 align-middle whitespace-nowrap">
+            <Skeleton className="h-5 w-20 rounded" />
+          </TableCell>
+
+          {/* Status Badge */}
+          <TableCell className="w-28 text-center py-3 align-middle whitespace-nowrap">
+            <Skeleton className="h-5 w-14 rounded-full mx-auto" />
+          </TableCell>
+
+          {/* Aksi Button */}
+          <TableCell className="w-24 text-right py-3 align-middle whitespace-nowrap pr-4">
+            <Skeleton className="h-7 w-7 rounded-md ml-auto" />
+          </TableCell>
+        </TableRow>
+      ))}
+    </>
   );
 }

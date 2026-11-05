@@ -4,19 +4,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
 import { FormField } from "@/components/ui/FormField";
-import {
-	Select,
-	SelectTrigger,
-	SelectValue,
-	SelectContent,
-	SelectItem,
-} from "@/components/ui/Select";
+import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeStandardText } from "@/lib/sanitizer";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 const DEFAULT_FAQ_CATEGORIES = [
 	"Umum",
@@ -38,87 +33,41 @@ export function AdminFaqModal({
 	const [question, setQuestion] = useState("");
 	const [answer, setAnswer] = useState("");
 	const [category, setCategory] = useState("Umum");
-	const [isCustomMode, setIsCustomMode] =
-		useState(false);
-	const [customCategories, setCustomCategories] =
-		useState([]);
+	const [customCategories, setCustomCategories] = useState([]);
 	const [errors, setErrors] = useState({});
-	const [isSubmitting, setIsSubmitting] =
-		useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const categoryList = useMemo(() => {
 		return Array.from(
-			new Set(
-				[
-					...DEFAULT_FAQ_CATEGORIES,
-					...(categories ||
-						[]),
-					...customCategories,
-				],
-			),
+			new Set([
+				...DEFAULT_FAQ_CATEGORIES,
+				...(categories || []),
+				...customCategories,
+			]),
 		);
 	}, [categories, customCategories]);
 
 	useEffect(() => {
 		setErrors({});
 		if (faqToEdit) {
-			setQuestion(
-				faqToEdit.question ||
-					"",
-			);
-			setAnswer(
-				faqToEdit.answer ||
-					"",
-			);
-			const cat =
-				faqToEdit.category ||
-				"Umum";
-			setCategory(
-				cat,
-			);
-			setIsCustomMode(
-				!DEFAULT_FAQ_CATEGORIES.includes(
-					cat,
-				) &&
-					!categories.includes(
-						cat,
-					),
-			);
+			setQuestion(faqToEdit.question || "");
+			setAnswer(faqToEdit.answer || "");
+			setCategory(faqToEdit.category || "Umum");
 		} else {
-			setQuestion(
-				"",
-			);
-			setAnswer(
-				"",
-			);
-			setCategory(
-				"Umum",
-			);
-			setIsCustomMode(
-				false,
-			);
+			setQuestion("");
+			setAnswer("");
+			setCategory("Umum");
 		}
-	}, [faqToEdit, isOpen, categories]);
+	}, [faqToEdit, isOpen]);
 
-	const handleToggleCustomMode = () => {
-		if (isCustomMode) {
-			setIsCustomMode(
-				false,
-			);
-			setCategory(
-				categoryList[0] ||
-					"Umum",
-			);
-		} else {
-			setIsCustomMode(
-				true,
-			);
-			setCategory(
-				"",
-			);
-		}
-		if (errors.category) {
-			setErrors((prev) => ({ ...prev, category: "" }));
+	const handleCreateCategory = (newCat) => {
+		const trimmed = newCat.trim();
+		if (trimmed) {
+			setCustomCategories((prev) => [...prev, trimmed]);
+			setCategory(trimmed);
+			if (errors.category) {
+				setErrors((prev) => ({ ...prev, category: "" }));
+			}
 		}
 	};
 
@@ -129,8 +78,8 @@ export function AdminFaqModal({
 		if (!question.trim() || question.trim().length < 5) {
 			newErrors.question = "Pertanyaan wajib diisi (minimal 5 karakter).";
 		}
-		if (isCustomMode && !category.trim()) {
-			newErrors.category = "Nama topik baru wajib diisi.";
+		if (!category.trim()) {
+			newErrors.category = "Kategori / topik wajib diisi.";
 		}
 		if (!answer.trim() || answer.trim().length < 10) {
 			newErrors.answer = "Jawaban wajib diisi (minimal 10 karakter).";
@@ -249,10 +198,10 @@ export function AdminFaqModal({
 
 	const isFormValid = useMemo(() => {
 		const isQuestionValid = question.trim().length >= 5;
-		const isCategoryValid = !isCustomMode || category.trim().length > 0;
+		const isCategoryValid = category.trim().length > 0;
 		const isAnswerValid = answer.trim().length >= 10;
 		return Boolean(isQuestionValid && isCategoryValid && isAnswerValid);
-	}, [question, isCustomMode, category, answer]);
+	}, [question, category, answer]);
 
 	return (
 		<FormDialog
@@ -279,9 +228,10 @@ export function AdminFaqModal({
 					type="text"
 					placeholder="Contoh: Bagaimana cara donatur mendapatkan kuitansi resmi?"
 					value={question}
-					maxLength={150}
+					minLength={FIELD_LIMITS.FAQ_QUESTION.min}
+					maxLength={FIELD_LIMITS.FAQ_QUESTION.max}
 					onChange={(e) => {
-						setQuestion(sanitizeStandardText(e.target.value, 150));
+						setQuestion(sanitizeStandardText(e.target.value, FIELD_LIMITS.FAQ_QUESTION.max));
 						if (errors.question) {
 							setErrors((prev) => ({ ...prev, question: "" }));
 						}
@@ -294,61 +244,24 @@ export function AdminFaqModal({
 
 			<FormField
 				label="Kategori / topik"
+				required
 				error={errors.category}
-				action={
-					<button
-						type="button"
-						onClick={handleToggleCustomMode}
-						className="text-sm font-medium text-primary hover:underline cursor-pointer"
-					>
-						{isCustomMode
-							? "Pilih dari daftar topik"
-							: "+ Tambah topik baru"}
-					</button>
-				}
 			>
-				{isCustomMode ? (
-					<Input
-						type="text"
-						placeholder="Tulis nama topik baru (misal: Relawan, Beasiswa)..."
-						value={category}
-						maxLength={50}
-						onChange={(e) => {
-							setCategory(sanitizeStandardText(e.target.value, 50));
-							if (errors.category) {
-								setErrors((prev) => ({ ...prev, category: "" }));
-							}
-						}}
-						onBlur={() => setCategory((prev) => prev.trim())}
-						className="h-10 text-sm font-normal bg-white border-slate-300"
-						autoFocus
-					/>
-				) : (
-					<Select
-						value={category}
-						onValueChange={(val) => {
-							setCategory(val);
-							if (errors.category) {
-								setErrors((prev) => ({ ...prev, category: "" }));
-							}
-						}}
-					>
-						<SelectTrigger className="h-10 text-sm font-normal bg-white border border-slate-300 rounded-lg w-full">
-							<SelectValue placeholder="Pilih topik FAQ" />
-						</SelectTrigger>
-						<SelectContent className="bg-white border border-slate-200 z-50">
-							{categoryList.map((cat) => (
-								<SelectItem
-									key={cat}
-									value={cat}
-									className="cursor-pointer text-sm font-normal py-2"
-								>
-									{cat}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				)}
+				<CreatableCombobox
+					options={categoryList}
+					value={category}
+					onChange={(val) => {
+						setCategory(val);
+						if (errors.category) {
+							setErrors((prev) => ({ ...prev, category: "" }));
+						}
+					}}
+					onCreate={handleCreateCategory}
+					placeholder="Pilih atau cari topik FAQ..."
+					searchPlaceholder="Cari atau buat topik baru..."
+					createPrefix="Gunakan topik"
+					className="bg-white"
+				/>
 			</FormField>
 
 			<FormField
@@ -356,9 +269,11 @@ export function AdminFaqModal({
 				required
 				error={errors.answer}
 			>
-				<Textarea
-					rows={4}
-					maxLength={3000}
+				<AutoResizeTextarea
+					minRows={4}
+					maxRows={12}
+					minLength={FIELD_LIMITS.FAQ_ANSWER.min}
+					maxLength={FIELD_LIMITS.FAQ_ANSWER.max}
 					placeholder="Tuliskan jawaban yang ramah, informatif, dan jelas bagi calon donatur..."
 					value={answer}
 					onChange={(e) => {

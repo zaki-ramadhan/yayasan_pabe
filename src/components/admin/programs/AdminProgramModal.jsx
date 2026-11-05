@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { safeFetch } from "@/lib/safeFetch";
@@ -16,6 +16,7 @@ import { DatePicker } from "@/components/ui/DatePicker";
 import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeStandardText } from "@/lib/sanitizer";
 import { useStagedUploads } from "@/hooks/useStagedUploads";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function AdminProgramModal({
 	isOpen,
@@ -368,9 +369,10 @@ export function AdminProgramModal({
 					type="text"
 					placeholder="Contoh: Beasiswa Pendidikan Anak Yatim Piatu"
 					value={title}
-					maxLength={120}
+					minLength={FIELD_LIMITS.PROGRAM_TITLE.min}
+					maxLength={FIELD_LIMITS.PROGRAM_TITLE.max}
 					onChange={(e) => {
-						setTitle(sanitizeStandardText(e.target.value, 120));
+						setTitle(sanitizeStandardText(e.target.value, FIELD_LIMITS.PROGRAM_TITLE.max));
 						if (errors.title) {
 							setErrors((prev) => ({ ...prev, title: "" }));
 						}
@@ -443,8 +445,9 @@ export function AdminProgramModal({
 						type="text"
 						placeholder="Contoh: Jawa Barat & Banten"
 						value={location}
-						maxLength={100}
-						onChange={(e) => setLocation(sanitizeStandardText(e.target.value, 100))}
+						minLength={FIELD_LIMITS.PROGRAM_LOCATION.min}
+						maxLength={FIELD_LIMITS.PROGRAM_LOCATION.max}
+						onChange={(e) => setLocation(sanitizeStandardText(e.target.value, FIELD_LIMITS.PROGRAM_LOCATION.max))}
 						onBlur={() => setLocation((prev) => prev.trim())}
 						className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
 					/>
@@ -468,9 +471,11 @@ export function AdminProgramModal({
 				error={errors.story}
 				hint="Ditampilkan penuh pada tab 'Detail Program' di halaman publik. Rangkuman awal otomatis dijadikan pratinjau SEO."
 			>
-				<Textarea
-					rows={5}
-					maxLength={2000}
+				<AutoResizeTextarea
+					minRows={5}
+					maxRows={15}
+					minLength={FIELD_LIMITS.PROGRAM_DESCRIPTION.min}
+					maxLength={FIELD_LIMITS.PROGRAM_DESCRIPTION.max}
 					placeholder="Tuliskan latar belakang program, sasaran penerima manfaat, dan rincian rencana penyaluran donasi yayasan..."
 					value={story}
 					onChange={(e) => {

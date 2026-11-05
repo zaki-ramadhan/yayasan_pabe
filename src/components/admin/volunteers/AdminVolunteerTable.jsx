@@ -18,6 +18,7 @@ import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import { AdminVolunteerDetailDialog } from "./AdminVolunteerDetailDialog";
 import { AdminVolunteerToolbar } from "./AdminVolunteerToolbar";
 import { AdminVolunteerTableRow } from "./AdminVolunteerTableRow";
+import { AdminVolunteerTableSkeletonRows } from "./AdminVolunteerSkeleton";
 import { VolunteerPrintDialog } from "@/components/volunteer/VolunteerPrintDialog";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useTableSelection } from "@/hooks/useTableSelection";
@@ -301,7 +302,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                   Relawan
                 </TableHead>
                 <TableHead className="w-40 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  No. Telepon
+                  Nomor WhatsApp
                 </TableHead>
                 <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Domisili
@@ -321,7 +322,9 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {paginatedVolunteers && paginatedVolunteers.length > 0 ? (
+              {isLoading ? (
+                <AdminVolunteerTableSkeletonRows rows={5} />
+              ) : paginatedVolunteers && paginatedVolunteers.length > 0 ? (
                 paginatedVolunteers.map((item) => (
                   <AdminVolunteerTableRow
                     key={item.id}

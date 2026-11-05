@@ -16,6 +16,7 @@ import { AdminTransactionDetailModal } from "@/components/admin/transactions/Adm
 import { AdminTransactionVerifyDialog } from "@/components/admin/transactions/AdminTransactionVerifyDialog";
 import { AdminTransactionToolbar } from "@/components/admin/transactions/AdminTransactionToolbar";
 import { AdminTransactionTableRow } from "@/components/admin/transactions/AdminTransactionTableRow";
+import { AdminTransactionTableSkeletonRows } from "@/components/admin/transactions/AdminTransactionSkeleton";
 import { usePagination } from "@/hooks/usePagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery, maskEmail } from "@/lib/security";
@@ -211,7 +212,9 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {paginatedTransactions && paginatedTransactions.length > 0 ? (
+              {isLoading ? (
+                <AdminTransactionTableSkeletonRows rows={5} />
+              ) : paginatedTransactions && paginatedTransactions.length > 0 ? (
                 paginatedTransactions.map((item) => (
                   <AdminTransactionTableRow
                     key={item.id}

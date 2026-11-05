@@ -1,6 +1,6 @@
 "use client";
 
-import { UploadCloud, FileCheck } from "lucide-react";
+import { UploadCloud, FileCheck, AlertOctagon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UploadProgressBar } from "@/components/ui/UploadProgressBar";
 
@@ -23,7 +23,27 @@ export function FileUploadDropzone({
   onDragLeave,
   onCancel,
   className = "",
+  isStorageFull = false,
 }) {
+  if (isStorageFull) {
+    return (
+      <div
+        className={cn(
+          "relative flex flex-col items-center justify-center py-7 px-5 min-h-[175px] sm:min-h-[185px] border-2 border-dashed border-rose-300 bg-rose-50/50 rounded-xl select-none text-center",
+          className
+        )}
+      >
+        <AlertOctagon className="w-8 h-8 text-rose-500 mb-2" aria-hidden="true" />
+        <p className="text-sm font-medium text-rose-900">
+          Ruang penyimpanan hampir penuh (≥ 95%)
+        </p>
+        <p className="text-xs text-rose-600 mt-1 max-w-sm">
+          Unggah berkas baru ditangguhkan sementara demi keamanan sistem. Silakan hubungi pengelola penyimpanan untuk membersihkan berkas sampah.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div
       onDrop={onDrop}

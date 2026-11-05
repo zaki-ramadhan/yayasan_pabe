@@ -30,7 +30,7 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
         </div>
       </TableCell>
 
-      {/* 2. No. Telepon (Kolom Mandiri & Disensor) */}
+      {/* 2. Nomor WhatsApp (Kolom Mandiri & Disensor) */}
       <TableCell className="w-44 py-3 text-sm text-slate-700 align-middle text-center whitespace-nowrap">
         {donor.phone ? (
           <span className="font-normal tabular-nums">{maskPhone(donor.phone)}</span>
@@ -39,7 +39,16 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
         )}
       </TableCell>
 
-      {/* 3. Total Donasi */}
+      {/* 3. Domisili */}
+      <TableCell className="w-36 py-3 text-sm text-slate-700 align-middle text-center whitespace-nowrap">
+        {donor.city ? (
+          <span className="font-normal">{donor.city}</span>
+        ) : (
+          <span className="text-sm text-slate-400 italic font-normal">-</span>
+        )}
+      </TableCell>
+
+      {/* 4. Total Donasi */}
       <TableCell className="w-px font-medium text-sm text-slate-900 py-3 whitespace-nowrap align-middle text-right tabular-nums">
         {formatRupiah(donor.totalPaidAmount)}
       </TableCell>

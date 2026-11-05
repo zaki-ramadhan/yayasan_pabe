@@ -280,6 +280,16 @@ export async function updateAdminCampaign(id, payload) {
  * Menghapus program kampanye dari database dan membersihkan banner terkait di R2.
  */
 export async function deleteAdminCampaign(id) {
+  // 1. Cek proteksi donasi: program yang memiliki transaksi tidak boleh dihapus demi integritas invoice dan audit
+  const donationsCount = await prisma.donation.count({
+    where: { campaignId: id },
+  });
+  if (donationsCount > 0) {
+    throw new Error(
+      "Program tidak dapat dihapus karena telah memiliki riwayat donasi masuk. Demi keabsahan kuitansi donatur dan integritas audit, silakan ubah status program menjadi Selesai (COMPLETED) untuk mengarsipkan."
+    );
+  }
+
   // Selesaikan dan lepas komitmen donasi rutin sebelum program dihapus
   try {
     await completeRoutineDonationsForCampaign(id, {

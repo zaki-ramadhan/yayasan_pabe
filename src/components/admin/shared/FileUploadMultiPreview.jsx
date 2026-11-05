@@ -25,8 +25,7 @@ export function FileUploadMultiPreview({
       <div className="flex items-center justify-between text-xs text-slate-600 px-0.5">
         <span>
           <strong className="text-slate-900 font-medium">{files.length}</strong> berkas terpilih (
-          {imageCount} foto{videoCount > 0 ? `, ${videoCount} video sorotan` : ""})
-          {" • "}Total: {formatBytes(totalBytes)}
+          {imageCount} foto{videoCount > 0 ? `, ${videoCount} video sorotan` : ""}), total: {formatBytes(totalBytes)}
         </span>
         {!isUploading && onClearFiles && (
           <button
@@ -121,7 +120,7 @@ export function FileUploadMultiPreview({
                 variant="ghost"
                 size="sm"
                 onClick={() => onRemoveFile(item.id)}
-                className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors shrink-0 rounded-lg cursor-pointer" aria-label="Hapus berkas ini"
+                className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors shrink-0 rounded-lg cursor-pointer"
                 aria-label="Hapus berkas ini"
               >
                 <Trash2 className="w-4 h-4" />

@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, AlertTriangle, AlertOctagon } from "lucide-react";
 import { Progress } from "@/components/ui/Progress";
 import { formatBytes } from "@/lib/formatters";
-import { R2_FREE_TIER_BYTES } from "@/lib/storageConstants";
+import { R2_FREE_TIER_BYTES, calculateStorageHealth } from "@/lib/storageConstants";
+import { cn } from "@/lib/utils";
 
 /**
  * Banner status kuota dan kapasitas Cloudflare R2 dengan tata letak ramping dan efisien.
@@ -20,7 +21,11 @@ export function StorageCapacityBanner({ overview }) {
 		totalCount = 0,
 		limitBytes = R2_FREE_TIER_BYTES,
 		usagePercent = 0,
+		health = calculateStorageHealth(totalBytes, limitBytes),
 	} = overview || {};
+
+	const isCritical = health?.isCritical;
+	const isWarning = health?.isWarning;
 
 	return (
 		<div className="bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden flex flex-col md:flex-row items-stretch transition-shadow hover:shadow-xs">
@@ -43,9 +48,23 @@ export function StorageCapacityBanner({ overview }) {
 				{/* Baris Atas: Informasi Teks & Tombol Aksi */}
 				<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div className="space-y-0.5">
-            <h2 className="text-sm sm:text-base font-medium text-slate-900 tracking-tight">
-              Kapasitas penyimpanan cloud
-            </h2>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-sm sm:text-base font-medium text-slate-900 tracking-tight">
+                Kapasitas penyimpanan cloud
+              </h2>
+              {isCritical && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-rose-100 text-rose-800 border border-rose-200">
+                  <AlertOctagon className="w-3 h-3 text-rose-600" />
+                  Kritis
+                </span>
+              )}
+              {!isCritical && isWarning && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                  <AlertTriangle className="w-3 h-3 text-amber-600" />
+                  Mendekati batas
+                </span>
+              )}
+            </div>
             <div className="text-xs text-slate-700 font-normal space-y-0.5 leading-tight">
               <p>
                 {formatBytes(totalBytes)} dari {formatBytes(limitBytes)}{" "}
@@ -76,10 +95,26 @@ export function StorageCapacityBanner({ overview }) {
           <div className="flex-1">
             <Progress
               value={usagePercent}
-              className="h-1.5 sm:h-2 w-full bg-slate-100 rounded-full [&>div]:bg-gradient-to-r [&>div]:from-[#f6821f] [&>div]:to-[#ea580c]"
+              className={cn(
+                "h-1.5 sm:h-2 w-full bg-slate-100 rounded-full",
+                isCritical
+                  ? "[&>div]:bg-rose-600"
+                  : isWarning
+                  ? "[&>div]:bg-amber-500"
+                  : "[&>div]:bg-gradient-to-r [&>div]:from-[#f6821f] [&>div]:to-[#ea580c]"
+              )}
             />
           </div>
-          <span className="text-xs font-medium text-slate-600 shrink-0 whitespace-nowrap">
+          <span
+            className={cn(
+              "text-xs font-medium shrink-0 whitespace-nowrap",
+              isCritical
+                ? "text-rose-600"
+                : isWarning
+                ? "text-amber-700"
+                : "text-slate-600"
+            )}
+          >
             {usagePercent}%
           </span>
         </div>

@@ -14,6 +14,7 @@ import {
 import { AdminRoutineDonationDetailDialog } from "./AdminRoutineDonationDetailDialog";
 import { AdminRoutineDonationToolbar } from "./AdminRoutineDonationToolbar";
 import { AdminRoutineDonationTableRow } from "./AdminRoutineDonationTableRow";
+import { AdminRoutineDonationTableSkeletonRows } from "./AdminRoutineDonationSkeleton";
 import { usePagination } from "@/hooks/usePagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
@@ -180,7 +181,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                   Donatur
                 </TableHead>
                 <TableHead className="w-44 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  No. telepon
+                  Nomor WhatsApp
                 </TableHead>
                 <TableHead className="font-medium text-slate-600 text-sm py-2.5 min-w-[280px] max-w-[360px]">
                   Program kebaikan
@@ -203,7 +204,9 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {paginatedItems && paginatedItems.length > 0 ? (
+              {isLoading ? (
+                <AdminRoutineDonationTableSkeletonRows rows={5} />
+              ) : paginatedItems && paginatedItems.length > 0 ? (
                 paginatedItems.map((item) => (
                   <AdminRoutineDonationTableRow
                     key={item.id}

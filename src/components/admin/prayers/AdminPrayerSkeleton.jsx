@@ -17,8 +17,8 @@ export function AdminPrayerSkeleton() {
           <div className="flex-1 min-w-[220px] max-w-sm">
             <Skeleton className="h-10 w-full rounded-lg" />
           </div>
-          <Skeleton className="h-10 w-36 rounded-lg shrink-0" />
-          <Skeleton className="h-10 w-44 rounded-lg shrink-0" />
+          <Skeleton className="h-10 w-38 rounded-lg shrink-0" />
+          <Skeleton className="h-10 w-48 sm:w-56 rounded-lg shrink-0" />
         </div>
         <div className="flex items-center gap-2 justify-end shrink-0">
           <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
@@ -70,72 +70,80 @@ export function AdminPrayerSkeleton() {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <TableRow key={i} className="hover:bg-transparent">
-                  {/* 0. Checkbox */}
-                  <TableCell className="w-12 text-center py-3 px-3 align-top">
-                    <Skeleton className="h-4 w-4 mx-auto rounded" />
-                  </TableCell>
-
-                  {/* 1. No. Invoice */}
-                  <TableCell className="w-[170px] py-3 align-top whitespace-nowrap">
-                    <Skeleton className="h-4 w-28 rounded" />
-                  </TableCell>
-
-                  {/* 2. Donatur */}
-                  <TableCell className="w-52 py-3 align-top">
-                    <div className="flex items-center gap-2.5">
-                      <Skeleton className="h-8 w-8 rounded-full shrink-0" />
-                      <div className="space-y-1">
-                        <Skeleton className="h-4 w-28 rounded" />
-                        <Skeleton className="h-3 w-32 rounded" />
-                      </div>
-                    </div>
-                  </TableCell>
-
-                  {/* 3. Program Donasi */}
-                  <TableCell className="min-w-[280px] max-w-[360px] py-3 align-top space-y-1">
-                    <Skeleton className="h-4 w-36 rounded" />
-                    <Skeleton className="h-3 w-20 rounded" />
-                  </TableCell>
-
-                  {/* 4. Nominal */}
-                  <TableCell className="w-32 py-3 align-top whitespace-nowrap text-right">
-                    <Skeleton className="h-4 w-20 ml-auto rounded" />
-                  </TableCell>
-
-                  {/* 5. Pesan Doa */}
-                  <TableCell className="min-w-[240px] max-w-md py-3 align-top space-y-1.5">
-                    <Skeleton className="h-4 w-full rounded" />
-                    <Skeleton className="h-4 w-3/4 rounded" />
-                    <Skeleton className="h-3 w-28 rounded" />
-                  </TableCell>
-
-                  {/* 6. Waktu Kirim */}
-                  <TableCell className="w-36 py-3 align-top whitespace-nowrap text-center">
-                    <div className="space-y-1">
-                      <Skeleton className="h-4 w-20 mx-auto rounded" />
-                      <Skeleton className="h-3 w-16 mx-auto rounded" />
-                    </div>
-                  </TableCell>
-
-                  {/* 7. Status Moderasi */}
-                  <TableCell className="w-28 text-center py-3 align-top">
-                    <Skeleton className="h-5 w-16 mx-auto rounded-md" />
-                  </TableCell>
-
-                  {/* 8. Aksi */}
-                  <TableCell className="w-24 text-right py-3 align-top pr-4">
-                    <div className="flex items-center justify-end gap-1">
-                      <Skeleton className="h-7 w-7 rounded-md ml-auto" />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              <AdminPrayerTableSkeletonRows rows={5} />
             </TableBody>
           </Table>
         </div>
       </div>
     </div>
+  );
+}
+
+export function AdminPrayerTableSkeletonRows({ rows = 5 }) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, i) => (
+        <TableRow key={i} className="hover:bg-transparent">
+          {/* 0. Checkbox */}
+          <TableCell className="w-12 text-center py-3 px-3 align-top">
+            <Skeleton className="h-4 w-4 mx-auto rounded" />
+          </TableCell>
+
+          {/* 1. Nomor invoice */}
+          <TableCell className="w-[170px] py-3 align-top whitespace-nowrap">
+            <Skeleton className="h-4 w-28 rounded" />
+          </TableCell>
+
+          {/* 2. Donatur */}
+          <TableCell className="w-52 py-3 align-top">
+            <div className="flex items-center gap-2.5">
+              <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+              <div className="space-y-1">
+                <Skeleton className="h-4 w-28 rounded" />
+                <Skeleton className="h-3 w-32 rounded" />
+              </div>
+            </div>
+          </TableCell>
+
+          {/* 3. Program Donasi */}
+          <TableCell className="min-w-[280px] max-w-[360px] py-3 align-top space-y-1">
+            <Skeleton className="h-4 w-36 rounded" />
+            <Skeleton className="h-3 w-20 rounded" />
+          </TableCell>
+
+          {/* 4. Nominal */}
+          <TableCell className="w-32 py-3 align-top whitespace-nowrap text-right">
+            <Skeleton className="h-4 w-20 ml-auto rounded" />
+          </TableCell>
+
+          {/* 5. Pesan Doa */}
+          <TableCell className="min-w-[240px] max-w-md py-3 align-top space-y-1.5">
+            <Skeleton className="h-4 w-full rounded" />
+            <Skeleton className="h-4 w-3/4 rounded" />
+            <Skeleton className="h-3 w-28 rounded" />
+          </TableCell>
+
+          {/* 6. Waktu Kirim */}
+          <TableCell className="w-36 py-3 align-top whitespace-nowrap text-center">
+            <div className="space-y-1">
+              <Skeleton className="h-4 w-20 mx-auto rounded" />
+              <Skeleton className="h-3 w-16 mx-auto rounded" />
+            </div>
+          </TableCell>
+
+          {/* 7. Status Moderasi */}
+          <TableCell className="w-28 text-center py-3 align-top">
+            <Skeleton className="h-5 w-16 mx-auto rounded-md" />
+          </TableCell>
+
+          {/* 8. Aksi */}
+          <TableCell className="w-24 text-right py-3 align-top pr-4">
+            <div className="flex items-center justify-end gap-1">
+              <Skeleton className="h-7 w-7 rounded-md ml-auto" />
+            </div>
+          </TableCell>
+        </TableRow>
+      ))}
+    </>
   );
 }

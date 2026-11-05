@@ -163,7 +163,7 @@ Alur transaksi 4 langkah pada satu layar tanpa redirect berulang:
    - **Transfer Bank Manual:** Rekening resmi Yayasan PABE dengan kode unik 3 digit verifikasi otomatis.
 4. **Langkah 4 - Keamanan & Submit:**
    - Cloudflare Turnstile bot verification (ringan, tanpa captcha membingungkan).
-   - Tombol submit: `Lanjut Pembayaran` dengan animasi state loading & pencegahan double-click.
+   - Tombol submit: `Lanjut donasi` dengan animasi state loading & pencegahan double-click.
 
 ---
 

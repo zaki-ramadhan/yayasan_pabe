@@ -54,64 +54,7 @@ export function AdminTransactionSkeleton() {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <TableRow key={i} className="hover:bg-transparent">
-                  {/* Invoice */}
-                  <TableCell className="w-px py-3 whitespace-nowrap align-middle">
-                    <div className="flex items-center gap-1.5">
-                      <Skeleton className="h-4 w-28 rounded" />
-                      <Skeleton className="h-4 w-4 rounded" />
-                    </div>
-                  </TableCell>
-
-                  {/* Donor */}
-                  <TableCell className="w-px py-3 whitespace-nowrap align-middle">
-                    <div className="flex items-center gap-2.5">
-                      <Skeleton className="h-8 w-8 rounded-full shrink-0" />
-                      <div className="space-y-1">
-                        <Skeleton className="h-4 w-28 rounded" />
-                        <Skeleton className="h-3 w-36 rounded" />
-                      </div>
-                    </div>
-                  </TableCell>
-
-                  {/* Campaign Target */}
-                  <TableCell className="py-3 align-middle min-w-[240px] max-w-[340px]">
-                    <div className="space-y-1 max-w-[320px]">
-                      <Skeleton className="h-4 w-full rounded" />
-                      <Skeleton className="h-3.5 w-3/4 rounded" />
-                    </div>
-                  </TableCell>
-
-                  {/* Amount */}
-                  <TableCell className="w-px py-3 text-right whitespace-nowrap align-middle">
-                    <Skeleton className="h-4 w-24 ml-auto rounded" />
-                  </TableCell>
-
-                  {/* Payment Method */}
-                  <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
-                    <Skeleton className="h-5 w-20 rounded mx-auto" />
-                  </TableCell>
-
-                  {/* Date */}
-                  <TableCell className="w-px py-3 whitespace-nowrap align-middle text-center">
-                    <Skeleton className="h-4 w-24 rounded mx-auto" />
-                  </TableCell>
-
-                  {/* Status */}
-                  <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
-                    <Skeleton className="h-5 w-16 rounded mx-auto" />
-                  </TableCell>
-
-                  {/* Actions */}
-                  <TableCell className="w-24 py-3 text-right whitespace-nowrap align-middle">
-                    <div className="flex items-center justify-end gap-1">
-                      <Skeleton className="h-7 w-7 rounded" />
-                      <Skeleton className="h-7 w-7 rounded" />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              <AdminTransactionTableSkeletonRows rows={8} />
             </TableBody>
           </Table>
         </div>
@@ -127,5 +70,70 @@ export function AdminTransactionSkeleton() {
         </div>
       </div>
     </div>
+  );
+}
+
+export function AdminTransactionTableSkeletonRows({ rows = 5 }) {
+  return (
+    <>
+      {Array.from({ length: rows }).map((_, i) => (
+        <TableRow key={i} className="hover:bg-transparent">
+          {/* Invoice */}
+          <TableCell className="w-px py-3 whitespace-nowrap align-middle">
+            <div className="flex items-center gap-1.5">
+              <Skeleton className="h-4 w-28 rounded" />
+              <Skeleton className="h-4 w-4 rounded" />
+            </div>
+          </TableCell>
+
+          {/* Donor */}
+          <TableCell className="w-px py-3 whitespace-nowrap align-middle">
+            <div className="flex items-center gap-2.5">
+              <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+              <div className="space-y-1">
+                <Skeleton className="h-4 w-28 rounded" />
+                <Skeleton className="h-3 w-36 rounded" />
+              </div>
+            </div>
+          </TableCell>
+
+          {/* Campaign Target */}
+          <TableCell className="py-3 align-middle min-w-[240px] max-w-[340px]">
+            <div className="space-y-1 max-w-[320px]">
+              <Skeleton className="h-4 w-full rounded" />
+              <Skeleton className="h-3.5 w-3/4 rounded" />
+            </div>
+          </TableCell>
+
+          {/* Amount */}
+          <TableCell className="w-px py-3 text-right whitespace-nowrap align-middle">
+            <Skeleton className="h-4 w-24 ml-auto rounded" />
+          </TableCell>
+
+          {/* Payment Method */}
+          <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
+            <Skeleton className="h-5 w-20 rounded mx-auto" />
+          </TableCell>
+
+          {/* Date */}
+          <TableCell className="w-px py-3 whitespace-nowrap align-middle text-center">
+            <Skeleton className="h-4 w-24 rounded mx-auto" />
+          </TableCell>
+
+          {/* Status */}
+          <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
+            <Skeleton className="h-5 w-16 rounded mx-auto" />
+          </TableCell>
+
+          {/* Actions */}
+          <TableCell className="w-24 py-3 text-right whitespace-nowrap align-middle">
+            <div className="flex items-center justify-end gap-1">
+              <Skeleton className="h-7 w-7 rounded" />
+              <Skeleton className="h-7 w-7 rounded" />
+            </div>
+          </TableCell>
+        </TableRow>
+      ))}
+    </>
   );
 }

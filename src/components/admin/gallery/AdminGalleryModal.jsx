@@ -4,7 +4,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
 import { FormField } from "@/components/ui/FormField";
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 import { AdminGalleryMetadataFields } from "./AdminGalleryMetadataFields";
 import { uploadFileToServer } from "@/services/uploadService";
@@ -14,6 +14,7 @@ import { toTitleCase } from "@/lib/formatters";
 import { DEFAULT_GALLERY_CATEGORY } from "@/lib/galleryConstants";
 import { isYouTubeUrl } from "@/lib/galleryGroupHelper";
 import { isFormDirty } from "@/lib/formUtils";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
  * Modal coordinator untuk tambah banyak foto/video (Batch) dan edit tunggal dokumentasi galeri.
@@ -336,10 +337,12 @@ export function AdminGalleryModal({
         error={errors.images}
       />
 
-      {/* Keterangan / Deskripsi Kegiatan - Selalu Paling Bawah */}
       <FormField label="Keterangan kegiatan (opsional)">
-        <Textarea
-          rows={2}
+        <AutoResizeTextarea
+          minRows={2}
+          maxRows={6}
+          minLength={FIELD_LIMITS.GALLERY_DESCRIPTION.min}
+          maxLength={FIELD_LIMITS.GALLERY_DESCRIPTION.max}
           placeholder="Catatan tambahan lokasi, jumlah penerima manfaat, atau cerita singkat..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}

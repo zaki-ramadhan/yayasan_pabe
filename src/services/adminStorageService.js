@@ -1,24 +1,56 @@
 import prisma from "@/lib/prisma";
 import { listR2Objects, deleteMultipleFromR2, isR2Configured } from "@/lib/r2Storage";
 import { extractR2Key } from "@/lib/r2KeyUtils";
-import { STORAGE_CONTEXTS, R2_FREE_TIER_BYTES } from "@/lib/storageConstants";
+import {
+  STORAGE_CONTEXTS,
+  R2_FREE_TIER_BYTES,
+  calculateStorageHealth,
+} from "@/lib/storageConstants";
 
 export { R2_FREE_TIER_BYTES };
 
 // Default batas minimal umur berkas untuk proteksi grace period (0 = pindai semua berkas tak terpakai)
 export const DEFAULT_ORPHAN_GRACE_HOURS = 0;
 
+// Cache in-memory untuk efisiensi request S3 & anti-rate limit Class A
+let cachedStorageOverview = null;
+let lastCacheTimestamp = 0;
+const CACHE_TTL_MS = 3 * 60 * 1000; // 3 menit
+
+/**
+ * Membatalkan cache ringkasan penyimpanan R2 agar kalkulasi berikutnya segar.
+ */
+export function invalidateStorageCache() {
+  cachedStorageOverview = null;
+  lastCacheTimestamp = 0;
+}
+
 /**
  * Mengambil ringkasan penggunaan penyimpanan Cloudflare R2 dan rincian per folder.
+ * Mendukung in-memory cache TTL 3 menit untuk meminimalkan beban request Class A S3 API.
+ * @param {object} [options]
+ * @param {boolean} [options.forceRefresh=false]
  */
-export async function getStorageOverview() {
-  if (!isR2Configured()) {
+export async function getStorageOverview({ forceRefresh = false } = {}) {
+  const now = Date.now();
+  if (!forceRefresh && cachedStorageOverview && now - lastCacheTimestamp < CACHE_TTL_MS) {
+    return cachedStorageOverview;
+  }
+
+  const mockPercent =
+    process.env.MOCK_STORAGE_PERCENT !== undefined && process.env.MOCK_STORAGE_PERCENT !== ""
+      ? Number(process.env.MOCK_STORAGE_PERCENT)
+      : null;
+
+  if (!isR2Configured() && mockPercent === null) {
+    const health = calculateStorageHealth(0, R2_FREE_TIER_BYTES);
     return {
       isConfigured: false,
       totalBytes: 0,
       totalCount: 0,
       limitBytes: R2_FREE_TIER_BYTES,
       usagePercent: 0,
+      health,
       folders: [],
     };
   }
@@ -70,16 +102,27 @@ export async function getStorageOverview() {
     f.files.sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime());
   });
 
-  const usagePercent = Math.min(100, Number(((totalBytes / R2_FREE_TIER_BYTES) * 100).toFixed(2)));
+  // Jika mockPercent aktif dari environment, timpa totalBytes untuk simulasi QA
+  if (mockPercent !== null && !isNaN(mockPercent)) {
+    totalBytes = Math.round((mockPercent / 100) * R2_FREE_TIER_BYTES);
+  }
 
-  return {
+  const health = calculateStorageHealth(totalBytes, R2_FREE_TIER_BYTES);
+
+  const overview = {
     isConfigured: true,
     totalBytes,
     totalCount: objects.length,
     limitBytes: R2_FREE_TIER_BYTES,
-    usagePercent,
+    usagePercent: health.usagePercent,
+    health,
     folders: Object.values(folderStats).sort((a, b) => b.bytes - a.bytes),
   };
+
+  cachedStorageOverview = overview;
+  lastCacheTimestamp = now;
+
+  return overview;
 }
 
 /**
@@ -118,7 +161,7 @@ export async function getReferencedStorageKeys() {
       prisma.campaignUpdate ? prisma.campaignUpdate.findMany({ select: { images: true } }) : [],
       prisma.auditReport ? prisma.auditReport.findMany({ select: { pdfUrl: true } }) : [],
       prisma.jobApplication ? prisma.jobApplication.findMany({ select: { resumeUrl: true } }) : [],
-      prisma.user ? prisma.user.findMany({ select: { avatar: true, coverImage: true } }) : [],
+      prisma.user ? prisma.user.findMany({ select: { avatar: true, customAvatar: true } }) : [],
       prisma.instagramPost ? prisma.instagramPost.findMany({ select: { imageUrl: true } }) : [],
       prisma.instagramProfile ? prisma.instagramProfile.findMany({ select: { avatarUrl: true } }) : [],
     ]);
@@ -139,7 +182,7 @@ export async function getReferencedStorageKeys() {
     jobApplications.forEach((j) => addKeys(j.resumeUrl));
     users.forEach((u) => {
       addKeys(u.avatar);
-      addKeys(u.coverImage);
+      addKeys(u.customAvatar);
     });
     instagramPosts.forEach((ig) => addKeys(ig.imageUrl));
     instagramProfiles.forEach((ip) => addKeys(ip.avatarUrl));
@@ -249,9 +292,86 @@ export async function cleanupOrphanFiles(targetKeys = [], adminMeta = {}) {
     }
   }
 
+  if (deleteResult.deletedCount > 0) {
+    invalidateStorageCache();
+  }
+
   return {
     success: deleteResult.success,
     deletedCount: deleteResult.deletedCount,
     errors: deleteResult.errors,
+  };
+}
+
+/**
+ * Membersihkan berkas CV/resume pelamar pekerjaan yang berstatus REJECTED
+ * dan telah melewati masa retensi (default 90 hari) dari Cloudflare R2,
+ * serta memperbarui referensi database menjadi null.
+ *
+ * @param {object} [options]
+ * @param {number} [options.retentionDays=90] - Batas usia berkas pelamar ditolak dalam hari
+ * @param {{ userId?: string, userName?: string }} [adminMeta]
+ * @returns {Promise<{ success: boolean, cleanedCount: number, deletedKeys: string[] }>}
+ */
+export async function cleanupStaleRejectedResumes({ retentionDays = 90 } = {}, adminMeta = {}) {
+  const cutoffDate = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
+
+  const staleApps = await prisma.jobApplication.findMany({
+    where: {
+      status: "REJECTED",
+      createdAt: { lte: cutoffDate },
+      resumeUrl: { not: null },
+    },
+    select: { id: true, resumeUrl: true },
+  });
+
+  if (!staleApps.length) {
+    return {
+      success: true,
+      cleanedCount: 0,
+      deletedKeys: [],
+      message: "Tidak ada berkas pelamar ditolak yang melampaui masa retensi.",
+    };
+  }
+
+  const keysToDelete = staleApps
+    .map((app) => extractR2Key(app.resumeUrl))
+    .filter(Boolean);
+
+  let deletedCount = 0;
+  if (keysToDelete.length > 0 && isR2Configured()) {
+    const delRes = await deleteMultipleFromR2(keysToDelete);
+    deletedCount = delRes.deletedCount;
+  }
+
+  const appIds = staleApps.map((a) => a.id);
+  await prisma.jobApplication.updateMany({
+    where: { id: { in: appIds } },
+    data: { resumeUrl: null },
+  });
+
+  if (prisma.activityLog) {
+    try {
+      await prisma.activityLog.create({
+        data: {
+          userId: adminMeta.userId || null,
+          userName: adminMeta.userName || "System Retention",
+          userRole: "ADMIN",
+          action: "CLEANUP_STALE_RESUMES",
+          targetType: "JOB_APPLICATION",
+          description: `Membersihkan ${staleApps.length} berkas CV pelamar ditolak yang berusia lebih dari ${retentionDays} hari.`,
+        },
+      });
+    } catch (logErr) {
+      console.warn("Gagal mencatat ActivityLog cleanup resumes:", logErr.message);
+    }
+  }
+
+  invalidateStorageCache();
+
+  return {
+    success: true,
+    cleanedCount: staleApps.length,
+    deletedKeys: keysToDelete,
   };
 }

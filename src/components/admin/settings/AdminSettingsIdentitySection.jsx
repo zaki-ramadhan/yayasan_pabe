@@ -3,7 +3,8 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { sanitizeStandardText } from "@/lib/security";
 
 export function AdminSettingsIdentitySection({ formData, errors = {}, onFieldChange }) {
@@ -20,7 +21,9 @@ export function AdminSettingsIdentitySection({ formData, errors = {}, onFieldCha
           <FormField label="Nama resmi yayasan" required error={errors.name} className="sm:col-span-2">
             <Input
               value={formData.name || ""}
-              onChange={(e) => onFieldChange(null, "name", sanitizeStandardText(e.target.value, 80))}
+              minLength={FIELD_LIMITS.FOUNDATION_NAME.min}
+              maxLength={FIELD_LIMITS.FOUNDATION_NAME.max}
+              onChange={(e) => onFieldChange(null, "name", sanitizeStandardText(e.target.value, FIELD_LIMITS.FOUNDATION_NAME.max))}
               onBlur={(e) => onFieldChange(null, "name", e.target.value.trim())}
               placeholder="Contoh: Yayasan Payung Berkah"
               className="h-10 text-sm font-normal"
@@ -31,7 +34,9 @@ export function AdminSettingsIdentitySection({ formData, errors = {}, onFieldCha
           <FormField label="Singkatan / sebutan brand" required error={errors.shortName}>
             <Input
               value={formData.shortName || ""}
-              onChange={(e) => onFieldChange(null, "shortName", sanitizeStandardText(e.target.value, 20))}
+              minLength={FIELD_LIMITS.FOUNDATION_SHORT_NAME.min}
+              maxLength={FIELD_LIMITS.FOUNDATION_SHORT_NAME.max}
+              onChange={(e) => onFieldChange(null, "shortName", sanitizeStandardText(e.target.value, FIELD_LIMITS.FOUNDATION_SHORT_NAME.max))}
               onBlur={(e) => onFieldChange(null, "shortName", e.target.value.trim())}
               placeholder="Contoh: PABE"
               className="h-10 text-sm font-normal"
@@ -42,7 +47,9 @@ export function AdminSettingsIdentitySection({ formData, errors = {}, onFieldCha
           <FormField label="Tagline yayasan">
             <Input
               value={formData.tagline || ""}
-              onChange={(e) => onFieldChange(null, "tagline", sanitizeStandardText(e.target.value, 120))}
+              minLength={FIELD_LIMITS.FOUNDATION_TAGLINE.min}
+              maxLength={FIELD_LIMITS.FOUNDATION_TAGLINE.max}
+              onChange={(e) => onFieldChange(null, "tagline", sanitizeStandardText(e.target.value, FIELD_LIMITS.FOUNDATION_TAGLINE.max))}
               onBlur={(e) => onFieldChange(null, "tagline", e.target.value.trim())}
               placeholder="Tagline atau moto lembaga"
               className="h-10 text-sm font-normal"
@@ -50,10 +57,13 @@ export function AdminSettingsIdentitySection({ formData, errors = {}, onFieldCha
           </FormField>
 
           <FormField label="Visi lembaga" className="sm:col-span-2">
-            <Textarea
-              rows={2}
+            <AutoResizeTextarea
+              minRows={2}
+              maxRows={8}
               value={formData.vision || ""}
-              onChange={(e) => onFieldChange(null, "vision", sanitizeStandardText(e.target.value, 300))}
+              minLength={FIELD_LIMITS.FOUNDATION_VISION.min}
+              maxLength={FIELD_LIMITS.FOUNDATION_VISION.max}
+              onChange={(e) => onFieldChange(null, "vision", sanitizeStandardText(e.target.value, FIELD_LIMITS.FOUNDATION_VISION.max))}
               onBlur={(e) => onFieldChange(null, "vision", e.target.value.trim())}
               placeholder="Visi jangka panjang yayasan"
               className="w-full text-sm font-normal border-slate-300"

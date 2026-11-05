@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Camera, Video } from "lucide-react";
+import { Camera, Video, MapPin } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -48,11 +48,17 @@ export function AdminDistributionTableRow({
 							unoptimized
 						/>
 					</div>
-					<span className="font-medium text-sm text-slate-900 block line-clamp-2 leading-snug">
-						{
-							item.campaignTitle
-						}
-					</span>
+					<div className="min-w-0 space-y-0.5">
+						<span className="font-medium text-sm text-slate-900 block line-clamp-2 leading-snug">
+							{item.campaignTitle}
+						</span>
+						{item.location && (
+							<span className="inline-flex items-center gap-1 text-xs text-slate-500 font-normal">
+								<MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+								<span className="truncate max-w-[160px]">{item.location}</span>
+							</span>
+						)}
+					</div>
 				</div>
 			</TableCell>
 

@@ -10,6 +10,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import { isInfrastructureEmail } from "@/lib/infrastructureConstants";
+import { useStorageAlert } from "@/hooks/useStorageAlert";
 
 const ADMIN_NAV_GROUPS = [
   {
@@ -45,6 +46,7 @@ export function AdminSidebarNav({
   const pathname = usePathname();
   const router = useRouter();
   const { currentUser } = useCurrentUser();
+  const { health } = useStorageAlert();
   const isSuperAdmin = currentUser?.role === USER_ROLES.SUPER_ADMIN;
   const userEmail = (currentUser?.email || "").toLowerCase().trim();
   const isInfrastructureAdmin =
@@ -188,7 +190,22 @@ export function AdminSidebarNav({
                     {isCollapsed ? (
                       <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
                     ) : (
-                      <span className="truncate font-normal">{item.label}</span>
+                      <>
+                        <span className="truncate font-normal">{item.label}</span>
+                        {item.href === "/admin/penyimpanan" && (health?.isCritical || health?.isWarning) && (
+                          <span
+                            className={cn(
+                              "ml-auto w-2 h-2 rounded-full shrink-0",
+                              health.isCritical ? "bg-rose-500 animate-pulse" : "bg-amber-500"
+                            )}
+                            title={
+                              health.isCritical
+                                ? "Kapasitas R2 kritis (≥95%)"
+                                : "Kapasitas R2 mendekati batas (≥80%)"
+                            }
+                          />
+                        )}
+                      </>
                     )}
                   </Link>
                 );

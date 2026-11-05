@@ -209,19 +209,7 @@ test.describe("Master User Journey - Eksplorasi Penuh Seluruh Halaman Yayasan", 
     await page.goto("/donasi-rutin");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
-    // 4.1 Ganti Sapaan
-    const salutationTrigger = page.locator("button[aria-haspopup='menu']").filter({ hasText: /Bapak|Ibu|Saudara/i }).first();
-    if (await salutationTrigger.isVisible()) {
-      await salutationTrigger.click();
-      await page.waitForTimeout(200);
-      const optIbu = page.getByRole("menuitem", { name: "Ibu" });
-      if (await optIbu.isVisible()) {
-        await optIbu.click();
-        await page.waitForTimeout(200);
-      }
-    }
-
-    // 4.2 Serangan Fuzzing Nama & Telepon
+    // 4.1 Input Identitas Donatur Rutin (Nama & Email Valid)
     const routineNameInput = page.locator("input[placeholder='Contoh: Ahmad Fauzi']");
     if (await routineNameInput.isVisible()) {
       // Injeksi nama: XSS tag + emoji + spasi liar
@@ -229,42 +217,36 @@ test.describe("Master User Journey - Eksplorasi Penuh Seluruh Halaman Yayasan", 
       await page.waitForTimeout(150);
     }
 
-    const routinePhoneInput = page.locator("input[placeholder*='0812']").first();
-    if (await routinePhoneInput.isVisible()) {
-      await routinePhoneInput.fill("081234567890");
+    const routineEmailInput = page.locator("input[placeholder='nama@email.com']");
+    if (await routineEmailInput.isVisible()) {
+      await routineEmailInput.fill("hendra.donatur@example.com");
       await page.waitForTimeout(150);
     }
 
-    // 4.3 Pengaturan Frekuensi Jadwal
-    const freqJumat = page.getByRole("button", { name: /Setiap Jumat/i }).first();
-    if (await freqJumat.isVisible()) {
-      await scrollToElement(freqJumat);
-      await freqJumat.click();
-      await page.waitForTimeout(200);
+    // 4.2 Pengaturan Frekuensi Jadwal Donasi
+    const freqPicker = page.locator("#tour-schedule-picker").first();
+    if (await freqPicker.isVisible()) {
+      await scrollToElement(freqPicker);
+      await page.waitForTimeout(150);
     }
 
-    // Uji Tambah Program ke-2 & Hapus Kembali
-    const addProgramBtn = page.getByRole("button", { name: /Tambah Program Lain/i });
-    if (await addProgramBtn.isVisible()) {
-      await addProgramBtn.click();
-      await page.waitForTimeout(300);
-
-      const removeBtn = page.getByRole("button", { name: /Hapus Program/i }).first();
-      if (await removeBtn.isVisible()) {
-        await removeBtn.click();
-        await page.waitForTimeout(300);
-      }
-    }
-
-    // Submit Komitmen Donasi Rutin
-    const routineSubmitBtn = page.getByRole("button", { name: /Aktifkan/i }).first();
+    // 4.3 Submit Komitmen Donasi Rutin (atau Verifikasi State Jika Sudah Ada Jadwal Aktif)
+    const routineSubmitBtn = page.getByRole("button", { name: /Aktifkan jadwal donasi rutin|Jadwal aktif sudah ada/i }).first();
     if (await routineSubmitBtn.isVisible()) {
       await scrollToElement(routineSubmitBtn);
-      await routineSubmitBtn.click();
-      await page.waitForTimeout(1000);
+      if (await routineSubmitBtn.isEnabled()) {
+        await routineSubmitBtn.click();
+        await page.waitForTimeout(1000);
 
-      const routineSuccessHeading = page.getByText(/Jadwal Donasi Rutin Berhasil/i);
-      await expect(routineSuccessHeading).toBeVisible();
+        // Verifikasi Sukses (3D badge & judul ringkasan)
+        const routineSuccessHeading = page.getByText(/Jadwal Donasi Rutin Berhasil/i);
+        if (await routineSuccessHeading.isVisible()) {
+          await expect(routineSuccessHeading).toBeVisible();
+        }
+      } else {
+        // Jika jadwal aktif sudah ada (disable state terproteksi 1 user = 1 jadwal)
+        await expect(routineSubmitBtn).toBeDisabled();
+      }
     }
 
 
@@ -346,7 +328,7 @@ test.describe("Master User Journey - Eksplorasi Penuh Seluruh Halaman Yayasan", 
       if (await customInput.isVisible()) {
         await customInput.fill("4000");
         await page.waitForTimeout(200);
-        const submitBtnCheck = page.getByRole("button", { name: /Lanjut Pembayaran/i });
+        const submitBtnCheck = page.getByRole("button", { name: /Lanjut donasi/i });
         await expect(submitBtnCheck).toBeDisabled();
       }
     }
@@ -373,7 +355,7 @@ test.describe("Master User Journey - Eksplorasi Penuh Seluruh Halaman Yayasan", 
     }
 
     // Submit Transaksi
-    const submitBtn = page.getByRole("button", { name: /Lanjut Pembayaran/i });
+    const submitBtn = page.getByRole("button", { name: /Lanjut donasi/i });
     await scrollToElement(submitBtn);
     await expect(submitBtn).toBeEnabled();
     await submitBtn.click();

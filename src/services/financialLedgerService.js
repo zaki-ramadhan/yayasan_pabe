@@ -3,6 +3,10 @@ import {
   aggregateFinancialAnalytics,
   getFallbackAnalytics,
 } from "./financialAnalyticsHelper";
+import {
+  calculatePaymentSubsidy,
+  calculateNetSettlement,
+} from "@/lib/paymentSubsidyCalculator";
 
 export { aggregateFinancialAnalytics, getFallbackAnalytics };
 
@@ -79,20 +83,28 @@ export async function getFinancialLedgerData() {
     const totalExpenses = Number(updatesAgg?._sum?.disbursedAmount || 0);
     const netBalance = totalIncome - totalExpenses;
 
-    const incomingTx = donations.map((d) => ({
-      id: d.id,
-      campaignId: d.campaignId || null,
-      campaignTitle: d.campaign?.title || null,
-      date: d.paidAt ? d.paidAt.toISOString() : d.createdAt.toISOString(),
-      source: d.paymentChannel ? d.paymentChannel.replace(/_/g, " ") : "QRIS",
-      type: "INCOME",
-      typeLabel: "Donasi Masuk",
-      description: d.campaign?.title || (d.donationType === "ZAKAT" ? "Zakat Penghasilan" : "Sedekah Umum"),
-      category: d.campaign?.category?.name || "ZISWAF",
-      amount: d.amount,
-      status: "PAID",
-      statusLabel: "Diterima",
-    }));
+    const incomingTx = donations.map((d) => {
+      const subsidyFee = calculatePaymentSubsidy(d.paymentChannel, d.amount);
+      const netReceived = calculateNetSettlement(d.paymentChannel, d.amount);
+
+      return {
+        id: d.id,
+        campaignId: d.campaignId || null,
+        campaignTitle: d.campaign?.title || null,
+        date: d.paidAt ? d.paidAt.toISOString() : d.createdAt.toISOString(),
+        source: d.paymentChannel ? d.paymentChannel.replace(/_/g, " ") : "QRIS",
+        paymentChannel: d.paymentChannel,
+        type: "INCOME",
+        typeLabel: "Donasi Masuk",
+        description: d.campaign?.title || (d.donationType === "ZAKAT" ? "Zakat Penghasilan" : "Sedekah Umum"),
+        category: d.campaign?.category?.name || "ZISWAF",
+        amount: d.amount,
+        subsidyFee,
+        netReceived,
+        status: "PAID",
+        statusLabel: "Diterima",
+      };
+    });
 
     const outgoingTx = updates.map((u) => ({
       id: u.id,
@@ -112,6 +124,9 @@ export async function getFinancialLedgerData() {
     const allTransactions = [...incomingTx, ...outgoingTx].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
+
+    const totalSubsidies = incomingTx.reduce((acc, tx) => acc + (tx.subsidyFee || 0), 0);
+    const netTotalIncome = Math.max(0, totalIncome - totalSubsidies);
 
     const now = new Date();
     const daysUntilNextFriday = ((5 - now.getDay() + 7) % 7) || 7;
@@ -136,6 +151,8 @@ export async function getFinancialLedgerData() {
       grandTotals: {
         totalIncome,
         totalExpenses,
+        totalSubsidies,
+        netTotalIncome,
         netBalance,
       },
       nextDistributionDate: nextDistributionFormatted,
@@ -151,6 +168,8 @@ export async function getFinancialLedgerData() {
       grandTotals: {
         totalIncome: 0,
         totalExpenses: 0,
+        totalSubsidies: 0,
+        netTotalIncome: 0,
         netBalance: 0,
       },
       nextDistributionDate: "Jumat Ini",

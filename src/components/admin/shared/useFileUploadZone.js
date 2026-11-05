@@ -96,8 +96,8 @@ export function useFileUploadZone({
   const defaultHelperText = isPdf
     ? "Mendukung format PDF resmi (Maks. 15MB). Disimpan aman di cloud."
     : allowVideo
-    ? "JPG, PNG, WebP (Maks. 10MB) • Video MP4/WebM (Maks. 1 video, 25MB, 60 dtk) • Bisa Ctrl + V"
-    : "Mendukung format JPEG, PNG, dan WebP (Maks. 10MB). Otomatis dikonversi ke WebP • Bisa Ctrl + V";
+    ? "JPG, PNG, WebP (Maks. 10MB), Video MP4/WebM (Maks. 1 video, 25MB, 60 dtk), Bisa tempel via Ctrl + V"
+    : "Mendukung format JPEG, PNG, dan WebP (Maks. 10MB) terkonversi otomatis ke WebP, bisa tempel via Ctrl + V";
 
   const resolvedHelperText = helperText || defaultHelperText;
 

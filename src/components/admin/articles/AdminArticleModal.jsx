@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
@@ -15,6 +15,7 @@ import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeStandardText } from "@/lib/sanitizer";
 import { getStoredUser } from "@/services/authService";
 import { useStagedUploads } from "@/hooks/useStagedUploads";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 const DEFAULT_ARTICLE_CATEGORIES = [
 	"Berita",
@@ -310,9 +311,10 @@ export function AdminArticleModal({
 					type="text"
 					placeholder="Contoh: Distribusi 500 Paket Sembako untuk Lansia Dhuafa"
 					value={title}
-					maxLength={150}
+					minLength={FIELD_LIMITS.ARTICLE_TITLE.min}
+					maxLength={FIELD_LIMITS.ARTICLE_TITLE.max}
 					onChange={(e) => {
-						setTitle(sanitizeStandardText(e.target.value, 150));
+						setTitle(sanitizeStandardText(e.target.value, FIELD_LIMITS.ARTICLE_TITLE.max));
 						if (errors.title) {
 							setErrors((prev) => ({ ...prev, title: "" }));
 						}
@@ -353,8 +355,9 @@ export function AdminArticleModal({
 						type="text"
 						placeholder="Contoh: Tim Humas PABE"
 						value={author}
-						maxLength={80}
-						onChange={(e) => setAuthor(sanitizeStandardText(e.target.value, 80))}
+						minLength={FIELD_LIMITS.ARTICLE_AUTHOR.min}
+						maxLength={FIELD_LIMITS.ARTICLE_AUTHOR.max}
+						onChange={(e) => setAuthor(sanitizeStandardText(e.target.value, FIELD_LIMITS.ARTICLE_AUTHOR.max))}
 						onBlur={() => setAuthor((prev) => prev.trim())}
 						className="h-10 text-sm bg-white"
 					/>
@@ -372,11 +375,12 @@ export function AdminArticleModal({
 				helperText="Mendukung JPG, PNG, WebP (Maks. 10MB) • Bisa Ctrl + V. Otomatis dikonversi ke WebP."
 			/>
 
-			{/* Ringkasan Singkat (Excerpt) */}
 			<FormField label="Ringkasan singkat">
-				<Textarea
-					rows={2}
-					maxLength={300}
+				<AutoResizeTextarea
+					minRows={2}
+					maxRows={6}
+					minLength={FIELD_LIMITS.ARTICLE_EXCERPT.min}
+					maxLength={FIELD_LIMITS.ARTICLE_EXCERPT.max}
 					placeholder="Ringkasan 1-2 kalimat pengantar artikel untuk kartu dan preview..."
 					value={excerpt}
 					onChange={(e) => setExcerpt(e.target.value)}
@@ -385,14 +389,16 @@ export function AdminArticleModal({
 				/>
 			</FormField>
 
-			{/* Isi Konten Lengkap */}
 			<FormField
 				label="Isi konten berita lengkap"
 				required
 				error={errors.content}
 			>
-				<Textarea
-					rows={6}
+				<AutoResizeTextarea
+					minRows={6}
+					maxRows={16}
+					minLength={FIELD_LIMITS.ARTICLE_CONTENT.min}
+					maxLength={FIELD_LIMITS.ARTICLE_CONTENT.max}
 					placeholder="Tuliskan berita lengkap mengenai kegiatan, narasumber, kronologi, serta ucapan terima kasih kepada donatur..."
 					value={content}
 					onChange={(e) => {

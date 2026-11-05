@@ -15,6 +15,7 @@ import { AdminUserResetDialog } from "./AdminUserResetDialog";
 import { AdminUserConfirmDialog } from "./AdminUserConfirmDialog";
 import { AdminUserToolbar } from "./AdminUserToolbar";
 import { AdminUserTableRow } from "./AdminUserTableRow";
+import { AdminUserTableSkeletonRows } from "./AdminUserSkeleton";
 import { useAdminUserManagement } from "./useAdminUserManagement";
 
 export function AdminUserTable({
@@ -113,38 +114,20 @@ export function AdminUserTable({
 							</TableRow>
 						</TableHeader>
 						<TableBody className="divide-y divide-slate-100">
-							{users &&
-							users.length >
-								0 ? (
-								users.map(
-									(
-										user,
-									) => (
-										<AdminUserTableRow
-											key={
-												user.id
-											}
-											user={
-												user
-											}
-											currentUser={
-												currentUser
-											}
-											onEdit={
-												handleOpenEdit
-											}
-											onResetPassword={
-												handleResetPassword
-											}
-											onToggleStatus={
-												handleOpenToggleStatus
-											}
-											onDelete={
-												handleOpenDelete
-											}
-										/>
-									),
-								)
+							{isLoading ? (
+								<AdminUserTableSkeletonRows rows={5} />
+							) : users && users.length > 0 ? (
+								users.map((user) => (
+									<AdminUserTableRow
+										key={user.id}
+										user={user}
+										currentUser={currentUser}
+										onEdit={handleOpenEdit}
+										onResetPassword={handleResetPassword}
+										onToggleStatus={handleOpenToggleStatus}
+										onDelete={handleOpenDelete}
+									/>
+								))
 							) : (
 								<TableEmptyRow
 									colSpan={5}

@@ -7,6 +7,7 @@ import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeStandardText, sanitizeSlug } from "@/lib/sanitizer";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function AdminCategoryModal({
 	category,
@@ -42,13 +43,13 @@ export function AdminCategoryModal({
 	}, [category, isOpen]);
 
 	const handleNameChange = (e) => {
-		const val = sanitizeStandardText(e.target.value, 60);
+		const val = sanitizeStandardText(e.target.value, FIELD_LIMITS.CATEGORY_NAME.max);
 		setName(val);
 		if (errors.name) {
 			setErrors((prev) => ({ ...prev, name: "" }));
 		}
 		if (!isEdit) {
-			setSlug(sanitizeSlug(val, 60));
+			setSlug(sanitizeSlug(val, FIELD_LIMITS.CATEGORY_SLUG.max));
 			if (errors.slug) {
 				setErrors((prev) => ({ ...prev, slug: "" }));
 			}
@@ -128,7 +129,8 @@ export function AdminCategoryModal({
 			>
 				<Input
 					value={name}
-					maxLength={60}
+					minLength={FIELD_LIMITS.CATEGORY_NAME.min}
+					maxLength={FIELD_LIMITS.CATEGORY_NAME.max}
 					onChange={handleNameChange}
 					onBlur={() => setName((prev) => prev.trim())}
 					placeholder="Contoh: Pendidikan & Dakwah"
@@ -144,10 +146,11 @@ export function AdminCategoryModal({
 			>
 				<Input
 					value={slug}
-					maxLength={60}
+					minLength={FIELD_LIMITS.CATEGORY_SLUG.min}
+					maxLength={FIELD_LIMITS.CATEGORY_SLUG.max}
 					spellCheck={false}
 					onChange={(e) => {
-						const clean = sanitizeSlug(e.target.value, 60);
+						const clean = sanitizeSlug(e.target.value, FIELD_LIMITS.CATEGORY_SLUG.max);
 						setSlug(clean);
 						if (errors.slug) {
 							setErrors((prev) => ({ ...prev, slug: "" }));

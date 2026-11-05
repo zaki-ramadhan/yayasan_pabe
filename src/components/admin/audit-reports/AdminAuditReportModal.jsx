@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import {
 	Select,
 	SelectContent,
@@ -18,6 +18,7 @@ import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
 import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeDigitsOnly, sanitizeStandardText } from "@/lib/sanitizer";
 import { useStagedUploads } from "@/hooks/useStagedUploads";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function AdminAuditReportModal({
 	report,
@@ -290,10 +291,11 @@ export function AdminAuditReportModal({
 					<Input
 						type="text"
 						inputMode="numeric"
-						maxLength={4}
+						minLength={FIELD_LIMITS.AUDIT_YEAR.min}
+						maxLength={FIELD_LIMITS.AUDIT_YEAR.max}
 						value={year}
 						onChange={(e) => {
-							const clean = sanitizeDigitsOnly(e.target.value, 4);
+							const clean = sanitizeDigitsOnly(e.target.value, FIELD_LIMITS.AUDIT_YEAR.max);
 							setYear(clean);
 							if (errors.year) {
 								setErrors((prev) => ({ ...prev, year: "" }));
@@ -342,9 +344,10 @@ export function AdminAuditReportModal({
 			>
 				<Input
 					value={auditorName}
-					maxLength={100}
+					minLength={FIELD_LIMITS.AUDITOR_NAME.min}
+					maxLength={FIELD_LIMITS.AUDITOR_NAME.max}
 					onChange={(e) => {
-						const clean = sanitizeStandardText(e.target.value, 100);
+						const clean = sanitizeStandardText(e.target.value, FIELD_LIMITS.AUDITOR_NAME.max);
 						setAuditorName(clean);
 						if (errors.auditorName) {
 							setErrors((prev) => ({ ...prev, auditorName: "" }));
@@ -360,8 +363,9 @@ export function AdminAuditReportModal({
 			<FormField label="Judul resmi laporan">
 				<Input
 					value={title}
-					maxLength={150}
-					onChange={(e) => setTitle(sanitizeStandardText(e.target.value, 150))}
+					minLength={FIELD_LIMITS.AUDIT_TITLE.min}
+					maxLength={FIELD_LIMITS.AUDIT_TITLE.max}
+					onChange={(e) => setTitle(sanitizeStandardText(e.target.value, FIELD_LIMITS.AUDIT_TITLE.max))}
 					onBlur={() => setTitle((prev) => prev.trim())}
 					placeholder="Contoh: Laporan Audit Keuangan & Transparansi 2024"
 					className="text-sm font-normal"
@@ -377,6 +381,8 @@ export function AdminAuditReportModal({
 				>
 					<Input
 						value={totalFundsIn}
+						minLength={FIELD_LIMITS.AUDIT_AMOUNT.min}
+						maxLength={FIELD_LIMITS.AUDIT_AMOUNT.max}
 						onChange={(e) => {
 							setTotalFundsIn(formatThousandsInput(e.target.value));
 							if (errors.totalFundsIn) {
@@ -396,6 +402,8 @@ export function AdminAuditReportModal({
 				>
 					<Input
 						value={totalFundsOut}
+						minLength={FIELD_LIMITS.AUDIT_AMOUNT.min}
+						maxLength={FIELD_LIMITS.AUDIT_AMOUNT.max}
 						onChange={(e) => {
 							setTotalFundsOut(formatThousandsInput(e.target.value));
 							if (errors.totalFundsOut) {
@@ -417,6 +425,8 @@ export function AdminAuditReportModal({
 				>
 					<Input
 						value={beneficiaryCount}
+						minLength={1}
+						maxLength={15}
 						onChange={(e) => {
 							setBeneficiaryCount(formatThousandsInput(e.target.value));
 							if (errors.beneficiaryCount) {
@@ -432,8 +442,9 @@ export function AdminAuditReportModal({
 				<FormField label="Rasio operasional yayasan">
 					<Input
 						value={operationalRatio}
-						maxLength={20}
-						onChange={(e) => setOperationalRatio(sanitizeStandardText(e.target.value, 20))}
+						minLength={FIELD_LIMITS.AUDIT_OPERATIONAL_RATIO.min}
+						maxLength={FIELD_LIMITS.AUDIT_OPERATIONAL_RATIO.max}
+						onChange={(e) => setOperationalRatio(sanitizeStandardText(e.target.value, FIELD_LIMITS.AUDIT_OPERATIONAL_RATIO.max))}
 						onBlur={() => setOperationalRatio((prev) => prev.trim())}
 						placeholder="Contoh: 12.4%"
 						className="text-sm font-normal"
@@ -456,13 +467,15 @@ export function AdminAuditReportModal({
 			/>
 
 			<FormField label="Ringkasan catatan auditor">
-				<Textarea
+				<AutoResizeTextarea
 					value={summary}
-					maxLength={500}
+					minLength={FIELD_LIMITS.AUDIT_SUMMARY.min}
+					maxLength={FIELD_LIMITS.AUDIT_SUMMARY.max}
 					onChange={(e) => setSummary(e.target.value)}
 					onBlur={() => setSummary((prev) => prev.trim())}
 					placeholder="Catatan ringkas opini dan transparansi..."
-					rows={3}
+					minRows={3}
+					maxRows={10}
 					className="text-sm font-normal"
 				/>
 			</FormField>

@@ -39,7 +39,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const { errorResponse } = await requireAuth(request, [
+  const { user, errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
     USER_ROLES.ADMIN,
     USER_ROLES.FINANCE,
@@ -56,7 +56,11 @@ export async function POST(request) {
       );
     }
 
-    const created = await createAdminDistribution(body);
+    const created = await createAdminDistribution(body, {
+      userId: user?.id,
+      userName: user?.name,
+      userRole: user?.role,
+    });
     return NextResponse.json(
       {
         success: true,

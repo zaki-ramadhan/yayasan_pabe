@@ -25,6 +25,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { AdminProgramToolbar } from "./AdminProgramToolbar";
 import { AdminProgramTableRow } from "./AdminProgramTableRow";
+import { AdminProgramTableSkeletonRows } from "./AdminProgramSkeleton";
 import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -271,7 +272,9 @@ export function AdminProgramTable({
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {paginatedCampaigns && paginatedCampaigns.length > 0 ? (
+              {isLoading ? (
+                <AdminProgramTableSkeletonRows rows={5} />
+              ) : paginatedCampaigns && paginatedCampaigns.length > 0 ? (
                 paginatedCampaigns.map((item) => (
                   <AdminProgramTableRow
                     key={item.id}

@@ -14,6 +14,7 @@ import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
 import { uploadFileToServer } from "@/services/uploadService";
 import { isFormDirty } from "@/lib/formUtils";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
  * Form pengaturan profil akun resmi Instagram yayasan (inline langsung di halaman).
@@ -79,35 +80,35 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
       .replace(/[@\s]/g, "")
       .replace(/[^a-zA-Z0-9._]/g, "")
       .toLowerCase()
-      .slice(0, 30);
+      .slice(0, FIELD_LIMITS.INSTAGRAM_USERNAME.max);
     setUsername(val);
   };
 
   const handleUsernameBlur = () => {
-    setUsername((prev) => prev.trim().slice(0, 30));
+    setUsername((prev) => prev.trim().slice(0, FIELD_LIMITS.INSTAGRAM_USERNAME.max));
   };
 
   const handleDisplayNameChange = (e) => {
     const val = e.target.value
       .replace(/^\s+/, "")
       .replace(/\s{2,}/g, " ")
-      .slice(0, 50);
+      .slice(0, FIELD_LIMITS.INSTAGRAM_DISPLAY_NAME.max);
     setDisplayName(val);
   };
 
   const handleDisplayNameBlur = () => {
-    setDisplayName((prev) => prev.trim().slice(0, 50));
+    setDisplayName((prev) => prev.trim().slice(0, FIELD_LIMITS.INSTAGRAM_DISPLAY_NAME.max));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const cleanUsername = username.replace(/[@\s]/g, "").trim().slice(0, 30);
+    const cleanUsername = username.replace(/[@\s]/g, "").trim().slice(0, FIELD_LIMITS.INSTAGRAM_USERNAME.max);
     if (!cleanUsername) {
       toast.error("Username Instagram wajib diisi.");
       return;
     }
 
-    const cleanDisplayName = displayName.trim().replace(/\s{2,}/g, " ").slice(0, 50) || cleanUsername;
+    const cleanDisplayName = displayName.trim().replace(/\s{2,}/g, " ").slice(0, FIELD_LIMITS.INSTAGRAM_DISPLAY_NAME.max) || cleanUsername;
 
     setIsSubmitting(true);
     try {
@@ -229,7 +230,8 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
                     onChange={handleUsernameChange}
                     onBlur={handleUsernameBlur}
                     placeholder="yayasanpayungberkah"
-                    maxLength={30}
+                    minLength={FIELD_LIMITS.INSTAGRAM_USERNAME.min}
+                    maxLength={FIELD_LIMITS.INSTAGRAM_USERNAME.max}
                     required
                     autoComplete="off"
                   />
@@ -242,7 +244,8 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
                     onChange={handleDisplayNameChange}
                     onBlur={handleDisplayNameBlur}
                     placeholder="Yayasan Payung Berkah"
-                    maxLength={50}
+                    minLength={FIELD_LIMITS.INSTAGRAM_DISPLAY_NAME.min}
+                    maxLength={FIELD_LIMITS.INSTAGRAM_DISPLAY_NAME.max}
                     required
                     autoComplete="off"
                   />

@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/Button";
 import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import { AdminPrayerToolbar } from "./AdminPrayerToolbar";
 import { AdminPrayerTableRow } from "./AdminPrayerTableRow";
+import { AdminPrayerTableSkeletonRows } from "./AdminPrayerSkeleton";
 import { useAdminPrayerModeration } from "./useAdminPrayerModeration";
 
 export function AdminPrayerTable({
@@ -116,7 +117,7 @@ export function AdminPrayerTable({
                   />
                 </TableHead>
                 <TableHead className="w-[170px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  No. Invoice
+                  Nomor invoice
                 </TableHead>
                 <TableHead className="w-52 font-medium text-slate-600 text-sm py-2.5">
                   Donatur
@@ -142,7 +143,9 @@ export function AdminPrayerTable({
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {prayers.length === 0 ? (
+              {isPending ? (
+                <AdminPrayerTableSkeletonRows rows={5} />
+              ) : prayers.length === 0 ? (
                 <TableEmptyRow
                   colSpan={9}
                   isFiltered={Boolean(search || statusFilter !== "ALL" || campaignFilter !== "ALL")}

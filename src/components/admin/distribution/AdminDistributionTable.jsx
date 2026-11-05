@@ -29,6 +29,7 @@ const AdminDistributionModal = dynamic(
 import { AdminDistributionDeleteDialog } from "./AdminDistributionDeleteDialog";
 import { AdminDistributionToolbar } from "./AdminDistributionToolbar";
 import { AdminDistributionTableRow } from "./AdminDistributionTableRow";
+import { AdminDistributionTableSkeletonRows } from "./AdminDistributionSkeleton";
 import { useTableSelection } from "@/hooks/useTableSelection";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
@@ -231,7 +232,9 @@ export function AdminDistributionTable({
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-slate-100">
-              {paginatedDistributions && paginatedDistributions.length > 0 ? (
+              {isLoading ? (
+                <AdminDistributionTableSkeletonRows rows={5} />
+              ) : paginatedDistributions && paginatedDistributions.length > 0 ? (
                 paginatedDistributions.map((item) => (
                   <AdminDistributionTableRow
                     key={item.id}

@@ -1,6 +1,6 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { AdminLayoutClient } from "@/components/admin/AdminLayoutClient";
+import { getAuthenticatedUser } from "@/lib/serverAuth";
 
 export const metadata = {
   title: "Panel Admin Yayasan",
@@ -8,17 +8,15 @@ export const metadata = {
 };
 
 export default async function AdminLayout({ children }) {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("pabe_session")?.value;
-  const role = cookieStore.get("pabe_role")?.value;
+  const { authenticated, user } = await getAuthenticatedUser();
 
-  if (!session) {
+  if (!authenticated || !user) {
     redirect("/login?redirect=/admin");
   }
 
-  if (!role || role === "DONOR") {
+  if (user.role === "DONOR") {
     redirect("/donatur/dashboard");
   }
 
-  return <AdminLayoutClient>{children}</AdminLayoutClient>;
+  return <AdminLayoutClient initialUser={user}>{children}</AdminLayoutClient>;
 }

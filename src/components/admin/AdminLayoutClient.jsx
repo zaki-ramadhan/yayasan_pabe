@@ -5,15 +5,19 @@ import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { AdminSidebarNav } from "@/components/admin/AdminSidebarNav";
 import { AdminTopHeader } from "@/components/admin/AdminTopHeader";
-import { getStoredUser, logoutUser, USER_ROLES } from "@/services/authService";
+import { getStoredUser, loginUser, logoutUser, USER_ROLES } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
+import { useAdminLiveFeed } from "@/hooks/useAdminLiveFeed";
 
 export function AdminLayoutClient({ children, initialUser }) {
   const router = useRouter();
   const pathname = usePathname();
   const [currentUser, setCurrentUser] = useState(initialUser || null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Background SSE listener (headless, tanpa elemen visual pill di UI)
+  useAdminLiveFeed({ enabled: Boolean(currentUser) });
 
   // Tampilkan toast notifikasi sambutan setelah login berhasil
   useEffect(() => {
@@ -38,10 +42,14 @@ export function AdminLayoutClient({ children, initialUser }) {
 
     const checkSession = () => {
       const user = getStoredUser();
-      if (!user || user.role === USER_ROLES.DONOR) {
+      if (!user) {
         logoutUser();
         toast.error("Sesi pengurus telah berakhir. Silakan masuk kembali.");
         router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+        return false;
+      }
+      if (user.role === USER_ROLES.DONOR) {
+        router.replace("/donatur/dashboard");
         return false;
       }
       setCurrentUser(user);
@@ -98,6 +106,12 @@ export function AdminLayoutClient({ children, initialUser }) {
           logoutUser();
           toast.error("Sesi pengurus telah berakhir. Silakan masuk kembali.");
           router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+          return;
+        }
+        const data = await res.json().catch(() => null);
+        if (data?.data?.role === USER_ROLES.DONOR && isMounted) {
+          router.replace("/donatur/dashboard");
+          return;
         }
       } catch {
         // Abaikan gangguan jaringan sementara
@@ -106,11 +120,30 @@ export function AdminLayoutClient({ children, initialUser }) {
 
     // Verifikasi server saat pertama kali mount
     safeFetch("/api/auth/me", {}, 5000)
-      .then((res) => {
-        if (res.status === 401 && isMounted) {
+      .then(async (res) => {
+        if (!isMounted) return;
+        if (res.status === 401) {
           logoutUser();
           toast.error("Sesi pengurus telah berakhir. Silakan masuk kembali.");
           router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+          return;
+        }
+        const data = await res.json().catch(() => null);
+        if (data?.data?.role === USER_ROLES.DONOR) {
+          router.replace("/donatur/dashboard");
+          return;
+        }
+        if (data?.data) {
+          const current = getStoredUser();
+          if (
+            current &&
+            (current.avatar !== data.data.avatar ||
+              current.name !== data.data.name ||
+              current.customAvatar !== data.data.customAvatar)
+          ) {
+            loginUser({ ...current, ...data.data });
+            setCurrentUser((prev) => ({ ...prev, ...data.data }));
+          }
         }
       })
       .catch(() => {});
