@@ -10,6 +10,9 @@ import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { cn } from "@/lib/utils";
 import { validatePasswordInput } from "@/lib/security";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { logoutUser } from "@/services/authService";
+import { safeFetch } from "@/lib/safeFetch";
 
 const SECURITY_INITIAL_VALUES = {
   oldPassword: "",
@@ -295,6 +298,39 @@ export function DonorSecurityFormCard({
           </div>
         </form>
       )}
+
+
+      {/* 2. Zona Penghapusan Akun & Privasi (UU PDP No. 27/2022) */}
+      <div className="pt-6 border-t border-slate-200 mt-8 space-y-3">
+        <div className="space-y-1">
+          <h3 className="text-sm font-medium text-red-600">
+            Hak Privasi & Penghapusan Akun
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-xl">
+            Sesuai ketentuan UU Perlindungan Data Pribadi (UU PDP No. 27/2022), Anda berhak mengajukan penghapusan akun. Seluruh komitmen donasi rutin akan dibatalkan, foto profil di R2 dihapus, dan data transaksi disamarkan menjadi Hamba Allah demi integritas laporan audit keuangan yayasan.
+          </p>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setIsDeleteDialogOpen(true)}
+          className="h-9 px-3.5 text-xs sm:text-sm font-medium text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 cursor-pointer"
+        >
+          Hapus dan anonimkan akun saya
+        </Button>
+      </div>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDeleteAccount}
+        title="Hapus dan anonimkan akun Anda?"
+        description="Tindakan ini permanen sesuai UU PDP No. 27/2022. Komitmen donasi rutin Anda akan dibatalkan, data pribadi Anda akan dihapus, dan seluruh riwayat donasi akan dianonimkan menjadi Hamba Allah. Apakah Anda yakin?"
+        confirmLabel="Ya, hapus akun"
+        confirmVariant="destructive"
+        isLoading={isDeletingAccount}
+      />
     </section>
   );
 }
