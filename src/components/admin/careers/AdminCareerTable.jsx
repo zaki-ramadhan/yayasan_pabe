@@ -26,6 +26,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 export function AdminCareerTable({ initialVacancies = [] }) {
   const [vacancies, setVacancies] = useState(initialVacancies);
@@ -40,6 +41,23 @@ export function AdminCareerTable({ initialVacancies = [] }) {
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const PAGE_SIZE = 10;
+
+  // 1. Live SSE: Menambahkan jumlah pelamar (applicantCount) secara real-time tanpa refresh
+  useAdminLiveEvent("CAREER_APPLICATION", (payload) => {
+    if (!payload?.position) return;
+    setVacancies((prev) =>
+      prev.map((v) => {
+        const isMatch =
+          (payload.vacancyId && (v.dbId === payload.vacancyId || v.id === payload.vacancyId)) ||
+          v.title.toLowerCase() === payload.position.toLowerCase();
+        if (isMatch) {
+          return { ...v, applicantCount: (v.applicantCount || 0) + 1 };
+        }
+        return v;
+      })
+    );
+    toast.info(`Berkas lamaran baru untuk ${payload.position}: ${payload.fullName}`);
+  });
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 

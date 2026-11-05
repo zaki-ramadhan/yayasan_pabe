@@ -195,9 +195,14 @@ export async function createAdminDistribution(payload, adminMeta = {}) {
       id: created.id,
       campaignId: created.campaignId,
       campaignTitle: created.campaign?.title || "Program Amanah",
+      campaignBannerUrl: created.campaign?.bannerUrl || null,
+      location: created.campaign?.location || null,
       title: created.title,
+      content: created.content || "",
       disbursedAmount: Number(created.disbursedAmount || 0),
       date: created.date instanceof Date ? created.date.toISOString().split("T")[0] : created.date,
+      images: Array.isArray(created.images) ? created.images : [],
+      createdAt: created.createdAt instanceof Date ? created.createdAt.toISOString() : new Date().toISOString(),
     });
   } catch (sseErr) {
     console.warn("Peringatan: Gagal broadcast SSE distribution:", sseErr?.message);

@@ -27,6 +27,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 const PAGE_SIZE = 10;
 
@@ -43,6 +44,27 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   const [isBulkStatusUpdating, setIsBulkStatusUpdating] = useState(false);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // 1. Live SSE: Menyisipkan pendaftar relawan baru secara instan tanpa reload browser
+  useAdminLiveEvent("VOLUNTEER_CHECKIN", (payload) => {
+    if (!payload?.id) return;
+    setVolunteers((prev) => {
+      if (prev.some((v) => v.id === payload.id)) return prev;
+      const newVolunteer = {
+        id: payload.id,
+        fullName: payload.fullName || payload.name || "Relawan Baru",
+        email: payload.email || "",
+        phone: payload.phone || "",
+        city: payload.city || "-",
+        interest: payload.interest || "Relawan Kebaikan",
+        motivation: payload.motivation || "",
+        status: payload.status || "PENDING",
+        createdAt: payload.timestamp || new Date().toISOString(),
+      };
+      return [newVolunteer, ...prev];
+    });
+    toast.info(`Pendaftar relawan baru dari ${payload.city || "Kota"} masuk: ${payload.fullName || payload.name}`);
+  });
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 

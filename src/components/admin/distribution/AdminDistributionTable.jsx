@@ -35,6 +35,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 export function AdminDistributionTable({
   initialDistributions = [],
@@ -50,6 +51,29 @@ export function AdminDistributionTable({
   const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const PAGE_SIZE = 10;
+
+  // 1. Live SSE: Menambahkan data rekam penyaluran (LPJ) baru secara real-time tanpa refresh
+  useAdminLiveEvent("DISTRIBUTION_CREATED", (payload) => {
+    if (!payload?.id) return;
+    setDistributions((prev) => {
+      if (prev.some((d) => d.id === payload.id)) return prev;
+      const newDistribution = {
+        id: payload.id,
+        campaignId: payload.campaignId,
+        campaignTitle: payload.campaignTitle || "Program Amanah",
+        campaignBannerUrl: payload.campaignBannerUrl || null,
+        location: payload.location || null,
+        title: payload.title,
+        content: payload.content || "",
+        disbursedAmount: Number(payload.disbursedAmount || 0),
+        date: payload.date || new Date().toISOString().split("T")[0],
+        images: Array.isArray(payload.images) ? payload.images : [],
+        createdAt: payload.createdAt || new Date().toISOString(),
+      };
+      return [newDistribution, ...prev];
+    });
+    toast.info(`Penyaluran dana baru dicatat: ${payload.title}`);
+  });
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 

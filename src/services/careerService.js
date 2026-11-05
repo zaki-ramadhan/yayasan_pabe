@@ -255,6 +255,7 @@ export async function submitJobApplication(payload) {
   try {
     broadcastAdminEvent("CAREER_APPLICATION", {
       id: application.id,
+      vacancyId: targetVacancy.id,
       position: targetVacancy.title,
       fullName: application.fullName,
       email: application.email,

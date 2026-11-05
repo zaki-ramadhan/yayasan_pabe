@@ -96,8 +96,14 @@ export async function registerVolunteer({
       broadcastAdminEvent("VOLUNTEER_CHECKIN", {
         id: created.id,
         name: created.fullName,
-        activity: `Pendaftaran Relawan Baru (${created.city})`,
+        fullName: created.fullName,
+        email: created.email || "",
+        phone: created.phone || "",
         city: created.city,
+        interest: created.interest || "Relawan Kebaikan",
+        motivation: created.motivation || "",
+        status: created.status || "PENDING",
+        activity: `Pendaftaran Relawan Baru (${created.city})`,
         timestamp: new Date().toISOString(),
       });
     } catch (sseErr) {
