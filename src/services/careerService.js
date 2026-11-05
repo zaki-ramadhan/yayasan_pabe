@@ -4,6 +4,7 @@ import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { validateWebUrl, validatePhone } from "@/lib/validator";
 import { CAREER_VACANCIES } from "@/data/careers";
 import { broadcastAdminEvent } from "@/lib/sseBroadcast";
+import { sendCareerApplicationEmail } from "@/services/emailService";
 
 /**
  * Retrieve active job vacancies directly from PostgreSQL
@@ -235,6 +236,19 @@ export async function submitJobApplication(payload) {
       }
     } catch (uErr) {
       console.warn("Gagal sinkronisasi otomatis nomor WhatsApp pelamar ke profil:", uErr?.message);
+    }
+  }
+
+    if (cleanEmail) {
+    try {
+      await sendCareerApplicationEmail({
+        to: cleanEmail,
+        name: application.fullName,
+        position: targetVacancy.title,
+        department: targetVacancy.department,
+      });
+    } catch (emailErr) {
+      console.warn("Gagal mengirim email konfirmasi lamaran kerja:", emailErr?.message);
     }
   }
 

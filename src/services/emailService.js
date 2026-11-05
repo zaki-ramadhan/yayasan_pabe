@@ -25,6 +25,10 @@ import {
   buildVolunteerApprovalEmailHtml,
   VOLUNTEER_APPROVAL_EMAIL_SUBJECT,
 } from "@/templates/emails/volunteerApprovalEmailTemplate";
+import {
+  buildCareerApplicationEmailHtml,
+  getCareerApplicationEmailSubject,
+} from "@/templates/emails/careerApplicationEmailTemplate";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 
@@ -382,6 +386,31 @@ export async function sendVolunteerApprovedEmail({
   return sendEmail({
     to,
     subject: VOLUNTEER_APPROVAL_EMAIL_SUBJECT,
+    html,
+  });
+}
+
+/**
+ * Mengirim email tanda terima berkas lamaran kerja pelamar
+ */
+export async function sendCareerApplicationEmail({
+  to,
+  name,
+  position,
+  department,
+}) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const subject = getCareerApplicationEmailSubject(position);
+  const html = buildCareerApplicationEmailHtml({
+    name,
+    position,
+    department,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject,
     html,
   });
 }
