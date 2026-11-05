@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { DEPARTMENT_OPTIONS, TYPE_OPTIONS, LOCATION_OPTIONS, CAREER_VACANCIES } from "@/data/careers";
 import { sanitizeInput, maskEmail } from "@/lib/security";
+import { deleteMultipleFromR2 } from "@/lib/r2Storage";
 
 /**
  * Mengambil daftar seluruh lowongan pekerjaan (termasuk yang nonaktif) beserta jumlah pelamar.
@@ -161,24 +162,59 @@ export async function updateAdminVacancy(id, payload) {
 }
 
 /**
- * Menghapus lowongan pekerjaan beserta pelamar terkait (cascade).
+ * Menghapus lowongan pekerjaan beserta pelamar terkait (cascade) dan membersihkan berkas CV di R2.
  */
 export async function deleteAdminVacancy(id) {
+  // 1. Ambil seluruh URL berkas resume pelamar untuk dibersihkan dari Cloudflare R2
+  const applications = await prisma.jobApplication.findMany({
+    where: { vacancyId: id, resumeUrl: { not: null } },
+    select: { resumeUrl: true },
+  });
+
+  const resumeUrls = applications.map((a) => a.resumeUrl).filter(Boolean);
+  if (resumeUrls.length > 0) {
+    try {
+      await deleteMultipleFromR2(resumeUrls);
+    } catch (err) {
+      console.warn(`[AdminCareer] Gagal membersihkan berkas resume R2 untuk lowongan ${id}:`, err?.message);
+    }
+  }
+
   return prisma.jobVacancy.delete({
     where: { id },
   });
 }
 
 /**
- * Menghapus banyak lowongan pekerjaan sekaligus beserta pelamar terkait (cascade).
+ * Menghapus banyak lowongan pekerjaan sekaligus beserta berkas pelamar terkait di R2.
  */
 export async function deleteAdminVacanciesBatch(ids) {
   if (!Array.isArray(ids) || ids.length === 0) {
     throw new Error("Daftar ID lowongan tidak boleh kosong.");
   }
 
+  const validIds = ids.filter((i) => typeof i === "string" && i.trim().length > 0);
+  if (validIds.length === 0) {
+    throw new Error("Tidak ada ID lowongan yang valid.");
+  }
+
+  // Ambil berkas resume pelamar dari seluruh lowongan yang akan dihapus
+  const applications = await prisma.jobApplication.findMany({
+    where: { vacancyId: { in: validIds }, resumeUrl: { not: null } },
+    select: { resumeUrl: true },
+  });
+
+  const resumeUrls = applications.map((a) => a.resumeUrl).filter(Boolean);
+  if (resumeUrls.length > 0) {
+    try {
+      await deleteMultipleFromR2(resumeUrls);
+    } catch (err) {
+      console.warn("[AdminCareer] Gagal membersihkan berkas resume R2 pada batch delete:", err?.message);
+    }
+  }
+
   const result = await prisma.jobVacancy.deleteMany({
-    where: { id: { in: ids } },
+    where: { id: { in: validIds } },
   });
 
   return { count: result.count };

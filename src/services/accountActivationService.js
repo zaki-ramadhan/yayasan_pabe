@@ -1,6 +1,8 @@
 import crypto from "crypto";
 import prisma from "@/lib/prisma";
 import { sendAccountActivationEmail } from "@/services/emailService";
+import { enqueueNotification } from "@/services/notificationQueueService";
+import { NOTIFICATION_TYPE } from "@/lib/notificationConstants";
 import { globalRateLimiter } from "@/lib/rateLimit";
 
 /**
@@ -149,11 +151,28 @@ export async function sendActivationEmailWorkflow({ email, name, originUrl }) {
 
   const activationUrl = `${baseUrl}/api/auth/verify-email?token=${rawToken}`;
 
-  return sendAccountActivationEmail({
-    to: cleanEmail,
-    name,
-    activationUrl,
-  });
+  // Kirim email via Resend dengan fallback antrean retry jika terjadi gangguan jaringan/rate limit
+  try {
+    return await sendAccountActivationEmail({
+      to: cleanEmail,
+      name,
+      activationUrl,
+    });
+  } catch (emailErr) {
+    console.warn("[AccountActivation] Gagal kirim email langsung, memasukkan ke antrean retry:", emailErr?.message);
+    await enqueueNotification({
+      type: NOTIFICATION_TYPE.ACCOUNT_ACTIVATION,
+      recipientPhone: cleanEmail,
+      payload: {
+        donorEmail: cleanEmail,
+        donorName: name,
+        activationUrl,
+      },
+      idempotencyKey: `activation_${cleanEmail}_${Date.now()}`,
+    }).catch((qErr) => console.error("[AccountActivation] Gagal memasukkan ke antrean notifikasi:", qErr?.message));
+
+    return { success: true, queued: true };
+  }
 }
 
 /**

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { uploadToR2, deleteFromR2, isR2Configured } from "@/lib/r2Storage";
 import { getStorageContext } from "@/lib/storageConstants";
 import { requireAuth } from "@/lib/serverAuth";
+import { USER_ROLES } from "@/services/authService";
 import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function POST(request) {
@@ -212,6 +213,12 @@ export async function POST(request) {
 
 export async function DELETE(request) {
   try {
+    const { user, errorResponse } = await requireAuth(request, [
+      USER_ROLES.SUPER_ADMIN,
+      USER_ROLES.ADMIN,
+    ]);
+    if (errorResponse) return errorResponse;
+
     if (!isR2Configured()) {
       return NextResponse.json(
         {

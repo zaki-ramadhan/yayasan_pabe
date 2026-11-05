@@ -24,6 +24,7 @@ import { downloadCsv } from "@/lib/exportCsv";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 const PAGE_SIZE = 10;
 
@@ -37,6 +38,21 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   const [verifyingTx, setVerifyingTx] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useAdminLiveEvent("DONATION_PAID", (event) => {
+    const newTx = event?.data;
+    if (!newTx || !newTx.invoiceId) return;
+
+    setTransactions((prev) => {
+      const exists = prev.some((t) => t.id === newTx.id || t.invoiceId === newTx.invoiceId);
+      if (exists) {
+        return prev.map((t) =>
+          t.invoiceId === newTx.invoiceId ? { ...t, ...newTx, status: "PAID" } : t
+        );
+      }
+      return [newTx, ...prev];
+    });
+  });
 
   const debouncedSearch = useDebounce(search.trim(), 300);
   const isSearching = Boolean(search.trim().length > 0 && search.trim() !== debouncedSearch);

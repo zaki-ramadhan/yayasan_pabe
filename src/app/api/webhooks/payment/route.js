@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { parseMidtransNotification } from "@/services/midtransService";
+import { parseMidtransNotification, invalidateMidtransStatusCache } from "@/services/midtransService";
 import { isMidtransProduction } from "@/lib/midtransConfig";
 import { settleDonationStatus } from "@/services/donationService";
 import { broadcastAdminEvent } from "@/lib/sseBroadcast";
@@ -47,10 +47,11 @@ export async function POST(request) {
       domainStatus = parsed.status;
       rawStatus = parsed.rawStatus.toUpperCase();
     } else {
-      // Fallback untuk testing internal atau gateway alternatif
-      if (isMidtransProduction()) {
+      // Fallback hanya diizinkan untuk unit test otomatis internal
+      const isTestEnv = process.env.NODE_ENV === "test" || process.env.VITEST;
+      if (!isTestEnv) {
         return NextResponse.json(
-          { success: false, message: "Webhook tanpa signature ditolak pada mode production." },
+          { success: false, message: "Webhook tanpa signature Midtrans resmi ditolak." },
           { status: 403 }
         );
       }
@@ -74,7 +75,13 @@ export async function POST(request) {
     let updated = null;
 
     if (isPaid) {
-      updated = await settleDonationStatus(invoiceId, new Date());
+      const grossAmount = isMidtransPayload
+        ? parsed.grossAmount
+        : Number(payload.gross_amount || payload.amount || 0);
+
+      updated = await settleDonationStatus(invoiceId, new Date(), {
+        expectedAmount: grossAmount > 0 ? grossAmount : null,
+      });
     } else {
       updated = await prisma.$transaction(async (tx) => {
         const donation = await tx.donation.findUnique({
@@ -115,7 +122,9 @@ export async function POST(request) {
       );
     }
 
-    if (updated.status === "PAID") {
+    invalidateMidtransStatusCache(invoiceId);
+
+    if (updated.status === "PAID" && !isPaid) {
       broadcastAdminEvent("DONATION_PAID", {
         invoiceId: updated.invoiceId,
         amount: updated.amount,

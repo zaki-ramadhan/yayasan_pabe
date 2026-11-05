@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { hashPassword } from "@/lib/serverAuth";
 import { validatePasswordInput } from "@/lib/validator";
 import { sendPasswordResetEmail } from "@/services/emailService";
+import { enqueueNotification } from "@/services/notificationQueueService";
+import { NOTIFICATION_TYPE } from "@/lib/notificationConstants";
 import { globalRateLimiter } from "@/lib/rateLimit";
 
 /**
@@ -179,12 +181,26 @@ export async function requestPasswordReset(email, baseUrl = "http://localhost:30
   const sanitizedBaseUrl = baseUrl.replace(/\/+$/, "");
   const resetUrl = `${sanitizedBaseUrl}/reset-password?token=${rawToken}`;
 
-  // 5. Kirim email via Resend
-  await sendPasswordResetEmail({
-    to: cleanEmail,
-    name: user.name,
-    resetUrl,
-  });
+  // 5. Kirim email via Resend dengan fallback antrean retry
+  try {
+    await sendPasswordResetEmail({
+      to: cleanEmail,
+      name: user.name,
+      resetUrl,
+    });
+  } catch (emailErr) {
+    console.warn("[PasswordReset] Gagal kirim email langsung, memasukkan ke antrean retry:", emailErr?.message);
+    await enqueueNotification({
+      type: NOTIFICATION_TYPE.PASSWORD_RESET,
+      recipientPhone: cleanEmail,
+      payload: {
+        donorEmail: cleanEmail,
+        donorName: user.name,
+        resetUrl,
+      },
+      idempotencyKey: `pwd_reset_${cleanEmail}_${Date.now()}`,
+    }).catch((qErr) => console.error("[PasswordReset] Gagal memasukkan ke antrean notifikasi:", qErr?.message));
+  }
 
   return {
     success: true,

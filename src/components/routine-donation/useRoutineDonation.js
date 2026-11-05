@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -27,20 +28,6 @@ export function useRoutineDonation({ campaigns = [] }) {
   );
   const defaultCampaignId = activeCampaigns[0]?.id || campaigns[0]?.id || "";
 
-  useEffect(() => {
-    const user = getStoredUser();
-    if (!user) return;
-
-    queueMicrotask(() => {
-      if (user.name && user.name !== "Pengguna Google" && user.name !== "Pengguna Facebook") {
-        setFullName(user.name);
-      }
-      if (user.email) {
-        setEmail(user.email);
-      }
-    });
-  }, []);
-
   const [program, setProgram] = useState({
     id: 1,
     campaignId: defaultCampaignId,
@@ -56,6 +43,45 @@ export function useRoutineDonation({ campaigns = [] }) {
     customAmount: "",
     paymentChannelId: "qris",
   });
+
+  useEffect(() => {
+    try {
+      const saved = typeof window !== "undefined" ? sessionStorage.getItem("pabe_routine_draft") : null;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.fullName) setFullName(parsed.fullName);
+        if (parsed.email) setEmail(parsed.email);
+        if (parsed.isAnonymous !== undefined) setIsAnonymous(parsed.isAnonymous);
+        if (parsed.program) setProgram((prev) => ({ ...prev, ...parsed.program }));
+      }
+    } catch {}
+
+    const user = getStoredUser();
+    if (!user) return;
+
+    queueMicrotask(() => {
+      if (user.name && user.name !== "Pengguna Google" && user.name !== "Pengguna Facebook") {
+        setFullName((prev) => prev || user.name);
+      }
+      if (user.email) {
+        setEmail((prev) => prev || user.email);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (isSubmitted) {
+      sessionStorage.removeItem("pabe_routine_draft");
+      return;
+    }
+    try {
+      sessionStorage.setItem(
+        "pabe_routine_draft",
+        JSON.stringify({ fullName, email, isAnonymous, program })
+      );
+    } catch {}
+  }, [fullName, email, isAnonymous, program, isSubmitted]);
 
   useEffect(() => {
     if (defaultCampaignId) {
@@ -207,6 +233,9 @@ export function useRoutineDonation({ campaigns = [] }) {
       }
 
       setIsSubmitted(true);
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("pabe_routine_draft");
+      }
       toast.success(result.message || "Jadwal donasi rutin Anda berhasil diaktifkan!");
     } catch (err) {
       toast.error(err.message || "Terjadi kendala saat menyimpan jadwal donasi rutin.");

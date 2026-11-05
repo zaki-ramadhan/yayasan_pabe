@@ -3,6 +3,7 @@ import { globalRateLimiter } from "@/lib/rateLimit";
 import { POST as loginHandler } from "@/app/api/auth/login/route";
 import { POST as donationHandler, GET as donationGetHandler } from "@/app/api/donations/route";
 import { GET as statsHandler } from "@/app/api/dashboard/stats/route";
+import { DELETE as uploadDeleteHandler } from "@/app/api/upload/route";
 
 function createMockRequest({
   url = "http://localhost:3000/api/test",
@@ -124,6 +125,19 @@ describe("Strict Security Audit: Autentikasi, Hak Akses & Anti-Kebocoran Data", 
 
     const res = await statsHandler(req);
     expect([401, 403]).toContain(res.status);
+  });
+
+  it("menolak penghapusan berkas /api/upload tanpa autentikasi (Anti Arbitrary File Deletion)", async () => {
+    const req = createMockRequest({
+      url: "http://localhost:3000/api/upload",
+      method: "DELETE",
+      body: { urls: ["https://pub-d695853be49c485484cd7799dc192352.r2.dev/branding/logo.png"] },
+    });
+
+    const res = await uploadDeleteHandler(req);
+    expect([401, 403]).toContain(res.status);
+    const json = await res.json();
+    expect(json.success).toBe(false);
   });
 });
 

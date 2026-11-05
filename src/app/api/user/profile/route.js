@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDonorProfile, updateDonorProfile } from "@/services/donorService";
+import { getDonorProfile, updateDonorProfile, anonymizeDonorAccount } from "@/services/donorService";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import { checkRateLimit } from "@/lib/rateLimit";
@@ -97,6 +97,46 @@ export async function PUT(request) {
       {
         success: false,
         message: error.message || "Gagal memperbarui profil pengguna.",
+      },
+      { status: 400 }
+    );
+  }
+}
+
+export async function DELETE(request) {
+  // 1. Rate Limiting (Maks 5 per menit untuk aksi destruktif)
+  const rateLimitResponse = checkRateLimit(request, {
+    action: "anonymize_profile",
+    limit: 5,
+    windowMs: 60000,
+  });
+  if (rateLimitResponse) return rateLimitResponse;
+
+  // 2. Autentikasi Pengguna
+  const { user: authUser, errorResponse } = await requireAuth(request);
+  if (errorResponse) return errorResponse;
+
+  try {
+    const result = await anonymizeDonorAccount({
+      userId: authUser.id,
+      userEmail: authUser.email,
+    });
+
+    const response = NextResponse.json({
+      success: true,
+      message: result.message || "Akun berhasil dianonimkan sesuai UU PDP.",
+    });
+
+    // Hapus cookie sesi agar klien langsung logout secara bersih
+    response.cookies.delete("pabe_session");
+    response.cookies.delete("pabe_role");
+
+    return response;
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message || "Gagal memproses permohonan anonimisasi akun.",
       },
       { status: 400 }
     );

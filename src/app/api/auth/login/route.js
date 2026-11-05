@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { DEMO_USERS, USER_ROLES, getSessionDuration } from "@/services/authService";
-import { verifyPassword, hashPassword, isSuperAdminEmail, isSuperAdminIdentifier } from "@/lib/serverAuth";
+import { verifyPassword, hashPassword, isSuperAdminEmail, isSuperAdminIdentifier, createSignedSessionToken } from "@/lib/serverAuth";
 import { stripEmojis } from "@/lib/security";
 import { checkRateLimit } from "@/lib/rateLimit";
 
@@ -189,13 +189,20 @@ export async function POST(request) {
       maxAge: durationSec,
     };
 
+    const signedToken = createSignedSessionToken(
+      { id: safeUser.id, email: safeUser.email, role: safeUser.role },
+      durationSec
+    );
+
+    safeUser.sessionToken = signedToken;
+
     const response = NextResponse.json({
       success: true,
       data: safeUser,
       message: `Selamat datang, ${safeUser.name}!`,
     });
 
-    response.cookies.set("pabe_session", safeUser.id, cookieOpts);
+    response.cookies.set("pabe_session", signedToken, cookieOpts);
     response.cookies.set("pabe_role", safeUser.role, { ...cookieOpts, httpOnly: false });
 
     return response;

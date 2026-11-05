@@ -43,7 +43,28 @@ export function buildWhatsAppUrl(phone, message = "") {
  */
 export function getFoundationWhatsAppUrl(customMessage) {
   const fallbackMessage =
-    "Assalamu'alaikum Admin Yayasan Payung Berkah, saya ingin bertanya seputar donasi & ZISWAF.";
+    "Assalamu'alaikum Bapak/Ibu pengurus Yayasan Payung Berkah, saya ingin bertanya seputar yayasan dan donasi.";
   const message = customMessage !== undefined ? customMessage : fallbackMessage;
   return buildWhatsAppUrl(ORG_PROFILE.contacts.whatsapp || "6281284079912", message);
+}
+
+/**
+ * Returns the list of official customer service lines.
+ *
+ * @returns {Array<{id: string, name: string, role: string, phone: string, rawNumber: string, defaultMessage: string, isPrimary: boolean}>}
+ */
+export function getCustomerServices() {
+  return ORG_PROFILE.customerServices || [];
+}
+
+/**
+ * Builds a direct telephone call URL (tel:+6221...).
+ *
+ * @param {string} phone
+ * @returns {string}
+ */
+export function buildTelUrl(phone) {
+  if (!phone) return "";
+  const cleaned = String(phone).replace(/[^\d+]/g, "");
+  return `tel:${cleaned}`;
 }

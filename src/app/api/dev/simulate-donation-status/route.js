@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { settleDonationStatus } from "@/services/donationService";
-import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 
 /**
  * Development-only API endpoint untuk simulasi mutasi status tagihan donasi.
@@ -41,16 +40,6 @@ export async function POST(request) {
     // 1. Simulasi Pembayaran Berhasil (PAID)
     if (action === "PAID") {
       const settled = await settleDonationStatus(invoiceId, new Date());
-
-      if (settled) {
-        broadcastAdminEvent("DONATION_PAID", {
-          invoiceId: settled.invoiceId,
-          amount: settled.amount,
-          donorName: settled.isAnonymous ? "Hamba Allah" : (settled.donorName || "Donatur"),
-          campaignTitle: settled.campaignTitle || "Program Kebaikan",
-          paidAt: settled.paidAt,
-        });
-      }
 
       return NextResponse.json({
         success: true,

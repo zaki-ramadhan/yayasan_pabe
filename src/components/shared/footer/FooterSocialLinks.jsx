@@ -3,20 +3,13 @@ import {
   InstagramIcon,
   YouTubeIcon,
   TikTokIcon,
-  WhatsAppIcon,
 } from "@/components/icons/SocialIcons";
 import { ORG_PROFILE } from "@/data/orgProfile";
-import { getFoundationWhatsAppUrl } from "@/lib/whatsappUtils";
 
 /**
  * Social media links list for footer
- *
- * @param {object} props
- * @param {string} [props.whatsappUrl] - Custom WhatsApp consultation URL
  */
-export function FooterSocialLinks({ whatsappUrl }) {
-  const wa = whatsappUrl || getFoundationWhatsAppUrl();
-
+export function FooterSocialLinks() {
   const socialLinks = [
     {
       name: "Facebook",
@@ -37,11 +30,6 @@ export function FooterSocialLinks({ whatsappUrl }) {
       name: "YouTube",
       href: ORG_PROFILE.socialMedia?.youtube || "https://youtube.com/@yayasanpayungberkah9678?si=h15x9m5GMFpkwMVk",
       icon: YouTubeIcon,
-    },
-    {
-      name: "WhatsApp",
-      href: wa,
-      icon: WhatsAppIcon,
     },
   ];
 

@@ -11,6 +11,8 @@ import {
 import {
   verifyMidtransSignature,
   parseMidtransNotification,
+  checkMidtransOrderStatus,
+  invalidateMidtransStatusCache,
 } from "@/services/midtransService";
 
 describe("Midtrans Configuration & Status Mapping", () => {
@@ -85,5 +87,46 @@ describe("Midtrans SHA-512 Signature & Notification Verification", () => {
     expect(parsed.status).toBe("PAID");
     expect(parsed.paymentType).toBe("qris");
     expect(parsed.grossAmount).toBe(100000);
+  });
+
+  describe("checkMidtransOrderStatus Cooldown Cache", () => {
+    beforeEach(() => {
+      invalidateMidtransStatusCache();
+      vi.restoreAllMocks();
+    });
+
+    it("memanfaatkan cache cooldown 15 detik dan tidak memanggil fetch berulang", async () => {
+      const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          order_id: "INV-CACHE-001",
+          transaction_status: "pending",
+          gross_amount: "50000",
+        }),
+      });
+
+      // Panggilan pertama: harus fetch ke Midtrans API
+      const first = await checkMidtransOrderStatus("INV-CACHE-001");
+      expect(first.isFound).toBe(true);
+      expect(first.status).toBe("PENDING");
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+      // Panggilan kedua dalam selang waktu < 15 detik: harus dari cache (tidak ada fetch baru)
+      const second = await checkMidtransOrderStatus("INV-CACHE-001");
+      expect(second.isFound).toBe(true);
+      expect(second.status).toBe("PENDING");
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+      // Panggilan ketiga dengan forceRefresh: true harus bypass cache
+      const third = await checkMidtransOrderStatus("INV-CACHE-001", { forceRefresh: true });
+      expect(third.isFound).toBe(true);
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+
+      // Invalidate cache kemudian panggil lagi: harus fetch ulang
+      invalidateMidtransStatusCache("INV-CACHE-001");
+      const fourth = await checkMidtransOrderStatus("INV-CACHE-001");
+      expect(fourth.isFound).toBe(true);
+      expect(fetchSpy).toHaveBeenCalledTimes(3);
+    });
   });
 });

@@ -6,6 +6,7 @@ import {
 } from "@/lib/security";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
+import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 
 /**
  * Service server-side untuk operasi database relawan (Prisma SSOT).
@@ -66,6 +67,18 @@ export async function registerVolunteer({
       } catch (uErr) {
         console.warn("Gagal sinkronisasi otomatis nomor WhatsApp relawan ke profil:", uErr?.message);
       }
+    }
+
+    try {
+      broadcastAdminEvent("VOLUNTEER_CHECKIN", {
+        id: created.id,
+        name: created.fullName,
+        activity: `Pendaftaran Relawan Baru (${created.city})`,
+        city: created.city,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (sseErr) {
+      console.warn("Peringatan: Gagal broadcast SSE volunteer:", sseErr?.message);
     }
 
     return {

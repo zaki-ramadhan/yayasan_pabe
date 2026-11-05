@@ -50,10 +50,14 @@ export function Navbar() {
     // Validasi keselarasan sesi lokal dengan sesi server aktif
     if (currentUser) {
       safeFetch("/api/auth/me")
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data?.authenticated) {
-            logoutUser();
+        .then(async (res) => {
+          // Hanya logout jika server secara eksplisit menolak sesi (401 Unauthorized)
+          // Jangan logout jika server error sementara (500) atau kendala jaringan
+          if (res.status === 401) {
+            const data = await res.json().catch(() => null);
+            if (data && data.authenticated === false) {
+              logoutUser();
+            }
           }
         })
         .catch(() => {});

@@ -17,7 +17,7 @@ export async function safeFetch(url, options = {}, timeoutMs = 12000) {
       const raw = localStorage.getItem("pabe_auth_user");
       if (raw) {
         const u = JSON.parse(raw);
-        const token = u?.id || u?.email || "";
+        const token = u?.sessionToken || u?.id || u?.email || "";
         if (token && !headers["x-pabe-session"] && !headers["authorization"]) {
           headers["x-pabe-session"] = encodeURIComponent(token);
           headers["authorization"] = `Bearer ${encodeURIComponent(token)}`;

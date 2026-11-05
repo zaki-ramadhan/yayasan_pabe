@@ -19,6 +19,7 @@ import {
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/ui/Badge";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 export function AdminRecentTransactionsCard({
   initialTransactions = [],
@@ -28,6 +29,21 @@ export function AdminRecentTransactionsCard({
   const [transactions, setTransactions] = useState(initialTransactions);
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
+
+  useAdminLiveEvent("DONATION_PAID", (event) => {
+    const newTx = event?.data;
+    if (!newTx || !newTx.invoiceId) return;
+
+    setTransactions((prev) => {
+      const exists = prev.some((t) => t.id === newTx.id || t.invoiceId === newTx.invoiceId);
+      if (exists) {
+        return prev.map((t) =>
+          t.invoiceId === newTx.invoiceId ? { ...t, ...newTx, status: "PAID" } : t
+        );
+      }
+      return [newTx, ...prev].slice(0, maxRows);
+    });
+  });
 
   const refreshList = async () => {
     setIsLoading(true);

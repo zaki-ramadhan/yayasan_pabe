@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { isSuperAdminEmail } from "@/lib/serverAuth";
+import { isSuperAdminEmail, createSignedSessionToken } from "@/lib/serverAuth";
 import { getOAuthSessionDuration, USER_ROLES } from "@/services/authService";
 
 export const dynamic = "force-dynamic";
@@ -114,6 +114,17 @@ export async function GET(request) {
         select: { avatar: true },
       });
 
+      let uniqueUsername = sanitizedUsername;
+      if (!existingUser) {
+        const usernameTaken = await prisma.user.findUnique({
+          where: { username: sanitizedUsername },
+          select: { id: true },
+        });
+        if (usernameTaken) {
+          uniqueUsername = `${sanitizedUsername}_${String(profile.id || Date.now()).slice(-4)}`;
+        }
+      }
+
       dbUser = await prisma.user.upsert({
         where: { email: profile.email.toLowerCase() },
         update: {
@@ -127,7 +138,7 @@ export async function GET(request) {
         create: {
           name: profile.name || profile.email.split("@")[0],
           email: profile.email.toLowerCase(),
-          username: sanitizedUsername,
+          username: uniqueUsername,
           avatar: profile.picture || null,
           providerAvatar: profile.picture || null,
           role: resolvedRole,
@@ -154,9 +165,14 @@ export async function GET(request) {
     const isStaff = userRole && userRole !== USER_ROLES.DONOR;
     const durationSec = getOAuthSessionDuration(userRole);
     const expiresAt = Date.now() + durationSec * 1000;
+    const signedSessionToken = createSignedSessionToken(
+      { id: userId, email: userEmail, role: userRole },
+      durationSec
+    );
 
     const sessionPayload = {
       id: userId,
+      sessionToken: signedSessionToken,
       name: userName,
       email: userEmail,
       username: userUsername,
@@ -243,7 +259,7 @@ export async function GET(request) {
               sessionStorage.setItem('pabe_just_logged_in', session.name || 'Donatur');
               sessionStorage.setItem('pabe_last_activity', String(Date.now()));
 
-              const validId = session.id || session.email;
+              const validId = session.sessionToken || session.id || session.email;
               const durSec = 30 * 24 * 60 * 60;
               document.cookie = 'pabe_session=' + encodeURIComponent(validId) + '; path=/; max-age=' + durSec + '; SameSite=Lax';
               document.cookie = 'pabe_role=' + encodeURIComponent(session.role || 'DONOR') + '; path=/; max-age=' + durSec + '; SameSite=Lax';
@@ -271,7 +287,7 @@ export async function GET(request) {
       maxAge: durationSec,
       path: "/",
     };
-    response.cookies.set("pabe_session", userId, cookieOpts);
+    response.cookies.set("pabe_session", signedSessionToken, cookieOpts);
     response.cookies.set("pabe_role", userRole, { ...cookieOpts, httpOnly: false });
     response.cookies.delete("pabe_google_oauth_state");
 

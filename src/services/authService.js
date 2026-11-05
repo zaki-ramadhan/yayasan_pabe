@@ -171,7 +171,7 @@ export function getStoredUser() {
       const match = document.cookie.match(/pabe_session=([^;]+)/);
       const curSession = match ? decodeURIComponent(match[1].trim()) : null;
       if (!curSession || curSession === "USR-DONOR") {
-        const validId = parsed?.id || parsed?.email || "";
+        const validId = parsed?.sessionToken || parsed?.id || parsed?.email || "";
         if (validId) {
           const durationSec = Math.max(
             60,
@@ -219,8 +219,8 @@ export function loginUser(user, options = {}) {
     sessionStorage.removeItem("ygsm_just_logged_in");
   } catch {}
 
-  // Sync session cookie client-side sesuai identifier otentik (prioritas id -> email -> username)
-  const validId = user?.id || user?.email || user?.username || "";
+  // Sync session cookie client-side sesuai token kriptografis atau identifier otentik
+  const validId = user?.sessionToken || user?.id || user?.email || user?.username || "";
   const userId = encodeURIComponent(validId);
   const role = encodeURIComponent(user?.role || "DONOR");
   if (userId) {

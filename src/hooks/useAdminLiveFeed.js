@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -14,6 +15,7 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
   const eventSourceRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const retryCountRef = useRef(0);
+  const connectRef = useRef(null);
 
   const connect = useCallback(() => {
     if (typeof window === "undefined" || !enabled) return;
@@ -44,6 +46,14 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
               duration: 6000,
             }
           );
+
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("pabe:admin-live-event", {
+                detail: { type: "DONATION_PAID", data, timestamp: new Date() },
+              })
+            );
+          }
         } catch {}
       });
 
@@ -59,6 +69,14 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
               duration: 5000,
             }
           );
+
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(
+              new CustomEvent("pabe:admin-live-event", {
+                detail: { type: "VOLUNTEER_CHECKIN", data, timestamp: new Date() },
+              })
+            );
+          }
         } catch {}
       });
 
@@ -73,7 +91,7 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
         if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
         reconnectTimeoutRef.current = setTimeout(() => {
           if (typeof document !== "undefined" && document.visibilityState === "visible") {
-            connect();
+            connectRef.current?.();
           }
         }, delay);
       };
@@ -81,6 +99,10 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
       setIsConnected(false);
     }
   }, [enabled]);
+
+  useEffect(() => {
+    connectRef.current = connect;
+  }, [connect]);
 
   useEffect(() => {
     connect();
@@ -107,4 +129,34 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
     isConnected,
     lastEvent,
   };
+}
+
+/**
+ * Hook untuk berlangganan event live admin tertentu dari bus internal.
+ * Memungkinkan komponen UI bereaksi tanpa membuka koneksi SSE baru.
+ *
+ * @param {string} [targetType] - Tipe event (misal: 'DONATION_PAID', 'VOLUNTEER_CHECKIN') atau null untuk semua
+ * @param {(event: { type: string, data: any, timestamp: Date }) => void} callback
+ */
+export function useAdminLiveEvent(targetType, callback) {
+  const savedCallback = useRef(callback);
+
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const handler = (e) => {
+      if (!targetType || e.detail?.type === targetType) {
+        savedCallback.current?.(e.detail);
+      }
+    };
+
+    window.addEventListener("pabe:admin-live-event", handler);
+    return () => {
+      window.removeEventListener("pabe:admin-live-event", handler);
+    };
+  }, [targetType]);
 }

@@ -1,8 +1,12 @@
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, ArrowUpRight } from "lucide-react";
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
-
-import { getFoundationWhatsAppUrl } from "@/lib/whatsappUtils";
+import {
+  getFoundationWhatsAppUrl,
+  getCustomerServices,
+  buildTelUrl,
+  buildWhatsAppUrl,
+} from "@/lib/whatsappUtils";
 
 /**
  * Contact details and WhatsApp consultation button for footer
@@ -16,6 +20,8 @@ export function FooterContactInfo({
   whatsappUrl,
 }) {
   const wa = whatsappUrl || getFoundationWhatsAppUrl();
+  const customerServices = getCustomerServices();
+  const telUrl = buildTelUrl(contacts.phone);
 
   return (
     <div className="space-y-3.5">
@@ -27,23 +33,49 @@ export function FooterContactInfo({
           href={`https://maps.google.com/?q=${encodeURIComponent(contacts.address)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-start gap-2 text-slate-200 hover:text-white transition-colors group cursor-pointer" aria-label="Buka di Google Maps"
+          className="flex items-start gap-2 text-slate-200 hover:text-white transition-colors group cursor-pointer"
+          aria-label="Buka di Google Maps"
         >
           <MapPin className="w-4 h-4 text-slate-300 shrink-0 mt-1 group-hover:scale-110 transition-transform" />
-          <span className="leading-relaxed">{contacts.address}</span>
+          <span className="leading-relaxed group-hover:underline underline-offset-2">{contacts.address}</span>
         </a>
-        <div className="flex items-center gap-2 text-slate-200">
-          <Phone className="w-4 h-4 text-slate-300 shrink-0" />
-          <span>{contacts.phone}</span>
-        </div>
-        <div className="flex items-center gap-2 text-slate-200">
-          <WhatsAppIcon className="w-4 h-4 text-slate-300 shrink-0" />
-          <span>{contacts.whatsapp}</span>
-        </div>
-        <div className="flex items-center gap-2 text-slate-200">
-          <Mail className="w-4 h-4 text-slate-300 shrink-0" />
-          <span>{contacts.email}</span>
-        </div>
+
+        {contacts.phone && (
+          <a
+            href={telUrl}
+            className="group flex items-center gap-2 text-slate-200 hover:text-white transition-colors"
+            aria-label={`Telepon kantor: ${contacts.phone}`}
+          >
+            <Phone className="w-4 h-4 text-slate-300 shrink-0" />
+            <span className="group-hover:underline underline-offset-2">{contacts.phone}</span>
+          </a>
+        )}
+
+        {customerServices.map((cs) => (
+          <a
+            key={cs.id}
+            href={buildWhatsAppUrl(cs.phone, cs.defaultMessage)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 text-slate-200 hover:text-white transition-colors"
+            aria-label={`WhatsApp: ${cs.phone}`}
+          >
+            <WhatsAppIcon className="w-4 h-4 text-slate-300 group-hover:text-emerald-400 shrink-0 transition-colors" />
+            <span className="group-hover:underline underline-offset-2">{cs.phone}</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+          </a>
+        ))}
+
+        {contacts.email && (
+          <a
+            href={`mailto:${contacts.email}`}
+            className="group flex items-center gap-2 text-slate-200 hover:text-white transition-colors"
+            aria-label={`Email: ${contacts.email}`}
+          >
+            <Mail className="w-4 h-4 text-slate-300 shrink-0" />
+            <span className="group-hover:underline underline-offset-2">{contacts.email}</span>
+          </a>
+        )}
       </div>
 
       {/* WhatsApp Consultation Button */}

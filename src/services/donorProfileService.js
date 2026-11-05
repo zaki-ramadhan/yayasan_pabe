@@ -247,3 +247,112 @@ export async function updateDonorPassword({ userEmail, oldPassword, newPassword 
 
   return { success: true, message: "Kata sandi akun Anda berhasil diperbarui." };
 }
+
+/**
+ * Meng-anonimkan akun donatur sesuai UU Pelindungan Data Pribadi (UU PDP No. 27/2022).
+ * Menghapus/menyamarkan seluruh data PII (nama, email, hp, alamat, avatar)
+ * namun mempertahankan integritas buku besar transaksi keuangan (SSOT ledger audit).
+ *
+ * @param {object} params
+ * @param {string} [params.userId]
+ * @param {string} [params.userEmail]
+ * @returns {Promise<{ success: boolean, message: string }>}
+ */
+export async function anonymizeDonorAccount({ userId, userEmail }) {
+  if (!userId && !userEmail) {
+    throw new Error("Identitas akun wajib disertakan.");
+  }
+
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        ...(userId ? [{ id: userId }] : []),
+        ...(userEmail ? [{ email: userEmail.trim().toLowerCase() }] : []),
+      ],
+    },
+  });
+
+  if (!user) {
+    throw new Error("Akun pengguna tidak ditemukan.");
+  }
+
+  if (user.role && user.role !== "DONOR") {
+    throw new Error("Akun pengurus atau staf yayasan tidak dapat dianonimkan secara mandiri.");
+  }
+
+  if (user.customAvatar && user.customAvatar.startsWith("/api/media/")) {
+    try {
+      await deleteFromR2(user.customAvatar);
+    } catch (r2Err) {
+      console.warn("Gagal menghapus avatar custom R2 saat anonimisasi akun:", r2Err?.message);
+    }
+  }
+
+  const anonymizedEmail = `deleted_${user.id}_${Date.now()}@anonymized.pabe.id`;
+  const anonymizedUsername = `anon_${user.id.slice(-8)}_${Date.now()}`;
+
+  await prisma.$transaction(async (tx) => {
+    // 1. Batalkan seluruh jadwal komitmen donasi rutin yang aktif
+    await tx.routineDonation.updateMany({
+      where: {
+        OR: [
+          { donorEmail: user.email },
+          ...(user.phone ? [{ donorPhone: user.phone }] : []),
+        ],
+        status: { in: ["ACTIVE", "PAUSED"] },
+      },
+      data: {
+        status: "CANCELLED",
+      },
+    });
+
+    // 2. Samarkan data donatur pada histori donasi finansial (integritas audit kas yayasan tetap utuh)
+    await tx.donation.updateMany({
+      where: {
+        donorEmail: user.email,
+      },
+      data: {
+        isAnonymous: true,
+        donorName: "Hamba Allah",
+        donorEmail: anonymizedEmail,
+        donorPhone: null,
+        donorAvatar: null,
+      },
+    });
+
+    // 3. Anonimkan data profil pengguna
+    await tx.user.update({
+      where: { id: user.id },
+      data: {
+        name: "Donatur Anonim (PDP)",
+        email: anonymizedEmail,
+        username: anonymizedUsername,
+        phone: null,
+        city: null,
+        address: null,
+        avatar: null,
+        customAvatar: null,
+        providerAvatar: null,
+        passwordHash: null,
+        isActive: false,
+      },
+    });
+
+    // 4. Catat ke Activity Log sistem
+    await tx.activityLog.create({
+      data: {
+        action: "PDP_ACCOUNT_ANONYMIZED",
+        targetType: "USER",
+        targetId: user.id,
+        description: `Akun donatur ${user.id} telah dianonimkan sesuai UU Pelindungan Data Pribadi (UU PDP No. 27/2022).`,
+        userName: "SYSTEM_PDP",
+        userRole: "SYSTEM",
+      },
+    });
+  });
+
+  return {
+    success: true,
+    message: "Permohonan hak penghapusan data pribadi (UU PDP) berhasil diproses. Seluruh data identitas Anda telah disamarkan secara permanen.",
+  };
+}

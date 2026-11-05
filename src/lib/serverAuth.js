@@ -5,6 +5,9 @@ import prisma from "@/lib/prisma";
 import { DEMO_USERS, USER_ROLES } from "@/services/authService";
 import { getInitials } from "@/lib/formatters";
 import { INFRASTRUCTURE_EMAILS } from "@/lib/infrastructureConstants";
+import { createSignedSessionToken, verifySessionToken, isSignedSessionTokenFormat } from "@/lib/sessionToken";
+
+export { createSignedSessionToken, verifySessionToken, isSignedSessionTokenFormat };
 
 /**
  * Retrieves the list of super admin emails from the server-only environment variable.
@@ -158,12 +161,30 @@ export async function getAuthenticatedUser(request) {
     return { authenticated: false, user: null, reason: "NO_SESSION_COOKIE" };
   }
 
+  // 5. Validasi Kriptografis Token Sesi (HMAC-SHA256 Anti-Forgery)
+  let verifiedUserId = null;
+  let verifiedEmail = null;
+  if (isSignedSessionTokenFormat(sessionId)) {
+    const verified = verifySessionToken(sessionId);
+    if (verified?.id) {
+      verifiedUserId = verified.id;
+      verifiedEmail = verified.email || null;
+    } else {
+      return { authenticated: false, user: null, reason: "INVALID_SESSION_SIGNATURE" };
+    }
+  } else if (process.env.NODE_ENV === "production") {
+    // Pada lingkungan produksi, tolak seluruh format sesi unsigned/plain-text
+    return { authenticated: false, user: null, reason: "UNSIGNED_SESSION_REJECTED" };
+  }
+
+  const lookupId = verifiedUserId || sessionId;
+
   try {
     let user = null;
     let lastDbError = null;
     try {
       user = await prisma.user.findUnique({
-        where: { id: sessionId },
+        where: { id: lookupId },
         select: {
           id: true,
           name: true,
@@ -179,15 +200,37 @@ export async function getAuthenticatedUser(request) {
           createdAt: true,
         },
       });
-      if (!user) {
-        // Also try finding by email, username, providerId, or stripped provider prefix
-        const cleanProviderId = sessionId.replace(/^USR-(?:GGL|FB)-/, "");
+
+      // Fallback: Jika lookup by id gagal namun token memiliki email terverifikasi (HMAC-SHA256),
+      // cari akun berdasarkan email tersebut (menangani id token OAuth USR-GGL/USR-FB)
+      if (!user && verifiedEmail) {
+        user = await prisma.user.findUnique({
+          where: { email: verifiedEmail.toLowerCase() },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            username: true,
+            role: true,
+            title: true,
+            avatar: true,
+            customAvatar: true,
+            providerAvatar: true,
+            phone: true,
+            provider: true,
+            createdAt: true,
+          },
+        });
+      }
+      if (!user && !verifiedUserId) {
+        // Fallback pencarian fleksibel hanya untuk mode dev/test
+        const cleanProviderId = lookupId.replace(/^USR-(?:GGL|FB)-/, "");
         user = await prisma.user.findFirst({
           where: {
             OR: [
-              { email: sessionId },
-              { username: sessionId },
-              { providerId: sessionId },
+              { email: lookupId },
+              { username: lookupId },
+              { providerId: lookupId },
               { providerId: cleanProviderId },
             ],
           },

@@ -39,6 +39,7 @@ vi.mock("@/lib/prisma", () => {
 vi.mock("@/services/midtransService", () => ({
   expireMidtransOrder: vi.fn().mockResolvedValue({ status_code: "200" }),
   checkMidtransOrderStatus: vi.fn().mockResolvedValue({ isPaid: false }),
+  invalidateMidtransStatusCache: vi.fn(),
 }));
 
 describe("Late Payment Webhook & Invoice Expiry Reconciliation", () => {
@@ -128,6 +129,43 @@ describe("Late Payment Webhook & Invoice Expiry Reconciliation", () => {
           userRole: "SYSTEM",
         }),
       });
+    });
+
+    it("menolak pelunasan donasi jika expectedAmount tidak cocok dengan totalAmount tagihan (Anti Nominal Tampering)", async () => {
+      prisma.donation.findUnique.mockResolvedValueOnce({
+        id: "don_tamper",
+        invoiceId: "INV-TAMPER-001",
+        status: "PENDING",
+        amount: 100000,
+        totalAmount: 100000,
+      });
+
+      await expect(
+        settleDonationStatus("INV-TAMPER-001", new Date(), { expectedAmount: 10000 })
+      ).rejects.toThrow("Inkonsistensi nominal pembayaran");
+
+      expect(prisma.donation.update).not.toHaveBeenCalled();
+    });
+
+    it("menerima pelunasan donasi jika expectedAmount cocok dengan totalAmount tagihan", async () => {
+      prisma.donation.findUnique.mockResolvedValueOnce({
+        id: "don_valid",
+        invoiceId: "INV-VALID-001",
+        status: "PENDING",
+        amount: 250000,
+        totalAmount: 250000,
+      });
+
+      prisma.donation.update.mockResolvedValueOnce({
+        id: "don_valid",
+        invoiceId: "INV-VALID-001",
+        status: "PAID",
+        paidAt: new Date(),
+      });
+
+      const result = await settleDonationStatus("INV-VALID-001", new Date(), { expectedAmount: 250000 });
+      expect(result.status).toBe("PAID");
+      expect(prisma.donation.update).toHaveBeenCalled();
     });
   });
 

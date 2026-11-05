@@ -61,6 +61,14 @@ vi.mock("@/services/emailService", () => {
       success: true,
       id: "resend-mock-456",
     }),
+    sendPasswordResetEmail: vi.fn().mockResolvedValue({
+      success: true,
+      id: "resend-mock-reset",
+    }),
+    sendAccountActivationEmail: vi.fn().mockResolvedValue({
+      success: true,
+      id: "resend-mock-activation",
+    }),
   };
 });
 
@@ -338,6 +346,82 @@ describe("Notification Queue & Worker Architecture", () => {
         expect.objectContaining({
           to: "081234567890",
           donorName: "Budi",
+        })
+      );
+    });
+
+    it("memproses antrean PASSWORD_RESET via sendPasswordResetEmail", async () => {
+      const prisma = (await import("@/lib/prisma")).default;
+      const { sendPasswordResetEmail } = await import("@/services/emailService");
+
+      const mockQueue = [
+        {
+          id: "queue-reset-1",
+          type: NOTIFICATION_TYPE.PASSWORD_RESET,
+          recipientPhone: "user@example.com",
+          payload: {
+            donorEmail: "user@example.com",
+            donorName: "User Test",
+            resetUrl: "http://localhost:3000/reset-password?token=abc",
+          },
+          attempts: 0,
+          maxAttempts: 3,
+          status: QUEUE_STATUS.PENDING,
+          scheduledFor: new Date(),
+        },
+      ];
+
+      prisma.notificationQueue.findMany.mockResolvedValueOnce(mockQueue);
+      prisma.notificationQueue.updateMany.mockResolvedValueOnce({ count: 1 });
+      prisma.notificationQueue.update.mockResolvedValueOnce({ id: "queue-reset-1", status: QUEUE_STATUS.SENT });
+      prisma.notificationLog.create.mockResolvedValueOnce({ id: "log-reset-1" });
+
+      const summary = await processNotificationQueue({ batchSize: 5 });
+
+      expect(summary.processed).toBe(1);
+      expect(summary.succeeded).toBe(1);
+      expect(sendPasswordResetEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: "user@example.com",
+          resetUrl: "http://localhost:3000/reset-password?token=abc",
+        })
+      );
+    });
+
+    it("memproses antrean ACCOUNT_ACTIVATION via sendAccountActivationEmail", async () => {
+      const prisma = (await import("@/lib/prisma")).default;
+      const { sendAccountActivationEmail } = await import("@/services/emailService");
+
+      const mockQueue = [
+        {
+          id: "queue-activation-1",
+          type: NOTIFICATION_TYPE.ACCOUNT_ACTIVATION,
+          recipientPhone: "newuser@example.com",
+          payload: {
+            donorEmail: "newuser@example.com",
+            donorName: "New User",
+            activationUrl: "http://localhost:3000/api/auth/verify-email?token=xyz",
+          },
+          attempts: 0,
+          maxAttempts: 3,
+          status: QUEUE_STATUS.PENDING,
+          scheduledFor: new Date(),
+        },
+      ];
+
+      prisma.notificationQueue.findMany.mockResolvedValueOnce(mockQueue);
+      prisma.notificationQueue.updateMany.mockResolvedValueOnce({ count: 1 });
+      prisma.notificationQueue.update.mockResolvedValueOnce({ id: "queue-activation-1", status: QUEUE_STATUS.SENT });
+      prisma.notificationLog.create.mockResolvedValueOnce({ id: "log-activation-1" });
+
+      const summary = await processNotificationQueue({ batchSize: 5 });
+
+      expect(summary.processed).toBe(1);
+      expect(summary.succeeded).toBe(1);
+      expect(sendAccountActivationEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: "newuser@example.com",
+          activationUrl: "http://localhost:3000/api/auth/verify-email?token=xyz",
         })
       );
     });

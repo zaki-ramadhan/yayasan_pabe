@@ -3,6 +3,7 @@ export {
   getDonorProfile,
   updateDonorProfile,
   updateDonorPassword,
+  anonymizeDonorAccount,
 } from "./donorProfileService";
 
 export {

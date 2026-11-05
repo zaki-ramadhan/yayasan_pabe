@@ -10,7 +10,7 @@ export async function getCampaignDonationsPaginated({ campaignSlug, skip = 0, li
   try {
     const campaign = await prisma.campaign.findUnique({
       where: { slug: campaignSlug },
-      select: { id: true, donorCount: true },
+      select: { id: true, donorCount: true, collectedAmount: true, targetAmount: true },
     });
 
     if (!campaign) {
@@ -78,6 +78,9 @@ export async function getCampaignDonationsPaginated({ campaignSlug, skip = 0, li
       donations: formattedDonations,
       totalCount,
       hasMore: skip + formattedDonations.length < totalCount,
+      collectedAmount: Number(campaign.collectedAmount || 0),
+      donorCount: campaign.donorCount || 0,
+      targetAmount: Number(campaign.targetAmount || 0),
     };
   } catch (error) {
     console.warn("Prisma getCampaignDonationsPaginated fallback:", error.message);

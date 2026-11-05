@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { verifySessionToken, isSignedSessionTokenFormat } from "./lib/sessionToken";
 
 export function proxy(request) {
   const { pathname } = request.nextUrl;
@@ -38,15 +39,20 @@ export function proxy(request) {
     }
   }
 
-  // Auto-recognize super admin if session identifier matches
-  const cleanSession = (session || "").toLowerCase().trim();
-  const isSuperSession =
-    cleanSession === "superadmin" ||
-    cleanSession === "superadmin@pabe.or.id" ||
-    cleanSession === "zakiram4dhan@gmail.com" ||
-    cleanSession === "piscokpiscok2610@gmail.com";
-  if (isSuperSession) {
-    role = "SUPER_ADMIN";
+  // 0. Validasi Kriptografis Token Sesi (Anti-Session Forgery & Anti-Privilege Escalation)
+  if (isSignedSessionTokenFormat(session)) {
+    const verified = verifySessionToken(session);
+    if (verified) {
+      session = verified.id;
+      role = verified.role;
+    } else {
+      session = null;
+      role = null;
+    }
+  } else if (process.env.NODE_ENV === "production") {
+    // Pada mode produksi, tolak seluruh format sesi unsigned/plain-text
+    session = null;
+    role = null;
   }
 
   // 1. Backward-Compatibility Redirect: /dashboard/* -> /admin/*

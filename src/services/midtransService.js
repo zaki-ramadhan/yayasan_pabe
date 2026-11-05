@@ -291,13 +291,38 @@ export function parseMidtransNotification(payload = {}) {
   };
 }
 
+const midtransStatusCache = new Map();
+const STATUS_CACHE_TTL_MS = 15000; // 15 detik cooldown per invoice ID
+
 /**
- * Checks live transaction status directly from Midtrans Core API
+ * Menghapus cache status Midtrans untuk nomor invoice tertentu (atau seluruh cache).
+ * @param {string} [orderId]
+ */
+export function invalidateMidtransStatusCache(orderId) {
+  if (orderId) {
+    midtransStatusCache.delete(orderId);
+  } else {
+    midtransStatusCache.clear();
+  }
+}
+
+/**
+ * Checks live transaction status directly from Midtrans Core API with a 15-second cache cooldown
+ * to prevent outbound HTTP request flooding from rapid client polling.
  * @param {string} orderId
+ * @param {object} [options]
+ * @param {boolean} [options.forceRefresh=false]
  * @returns {Promise<{ isFound: boolean, isPaid: boolean, status: string, rawStatus: string, settlementTime?: string }>}
  */
-export async function checkMidtransOrderStatus(orderId) {
+export async function checkMidtransOrderStatus(orderId, { forceRefresh = false } = {}) {
   if (!orderId) return { isFound: false, isPaid: false, status: "PENDING", rawStatus: "" };
+
+  const now = Date.now();
+  const cached = midtransStatusCache.get(orderId);
+  if (!forceRefresh && cached && (now - cached.timestamp < STATUS_CACHE_TTL_MS)) {
+    return cached.data;
+  }
+
   const authHeader = getMidtransAuthHeader();
   if (!authHeader) return { isFound: false, isPaid: false, status: "PENDING", rawStatus: "" };
 
@@ -324,7 +349,7 @@ export async function checkMidtransOrderStatus(orderId) {
       qrCodeUrl = `${baseUrl}/v2/qris/${data.transaction_id}/qr-code`;
     }
 
-    return {
+    const result = {
       isFound: true,
       orderId: data.order_id,
       status: domainStatus,
@@ -335,6 +360,9 @@ export async function checkMidtransOrderStatus(orderId) {
       qrCodeUrl,
       qrString: data.qr_string || "",
     };
+
+    midtransStatusCache.set(orderId, { timestamp: now, data: result });
+    return result;
   } catch (err) {
     console.warn("Midtrans checkOrderStatus error:", err.message);
     return { isFound: false, isPaid: false, status: "PENDING", rawStatus: "" };

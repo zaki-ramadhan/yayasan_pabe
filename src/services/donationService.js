@@ -7,12 +7,19 @@ import {
   validateEmail,
   sanitizePrayer,
   sanitizeInput,
+  maskEmail,
 } from "@/lib/security";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
-import { createCoreApiCharge, createSnapTransaction, checkMidtransOrderStatus } from "@/services/midtransService";
+import {
+  createCoreApiCharge,
+  createSnapTransaction,
+  checkMidtransOrderStatus,
+  invalidateMidtransStatusCache,
+} from "@/services/midtransService";
 import { getMidtransServerKey } from "@/lib/midtransConfig";
 import { calculateDonationExpiryDate } from "@/lib/donationExpiryConstants";
+import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 
 export async function createDonation({
   campaignId = null,
@@ -426,22 +433,47 @@ export async function updateDonationPrayer({ invoiceId, prayer, isAnonymous }) {
  * Atomically settles a donation as PAID and updates campaign metrics (idempotent)
  * @param {string} invoiceId
  * @param {Date} [paidAt]
+ * @param {object} [options]
+ * @param {number} [options.expectedAmount] - Nominal pelunasan dari payment gateway untuk verifikasi integritas
  * @returns {Promise<object|null>}
  */
-export async function settleDonationStatus(invoiceId, paidAt = new Date()) {
+export async function settleDonationStatus(invoiceId, paidAt = new Date(), options = {}) {
   if (!invoiceId) return null;
 
-  return await prisma.$transaction(async (tx) => {
+  const expectedAmount =
+    options?.expectedAmount !== undefined && options?.expectedAmount !== null
+      ? Number(options.expectedAmount)
+      : null;
+
+  let broadcastPayload = null;
+
+  const settled = await prisma.$transaction(async (tx) => {
     const donation = await tx.donation.findUnique({
       where: { invoiceId },
+      include: {
+        campaign: { select: { id: true, title: true, slug: true } },
+      },
     });
 
     if (!donation) return null;
+
+    // Verifikasi integritas nominal: selisih nominal tidak boleh melampaui toleransi pembulatan Rp 1
+    if (expectedAmount !== null && !isNaN(expectedAmount) && expectedAmount > 0) {
+      if (Math.abs(expectedAmount - Number(donation.totalAmount)) > 1) {
+        console.error(
+          `[PaymentIntegrity] Penolakan pelunasan: Nominal webhook (Rp ${expectedAmount}) tidak cocok dengan tagihan invoice ${invoiceId} (Rp ${donation.totalAmount})`
+        );
+        throw new Error(
+          `Inkonsistensi nominal pembayaran: Diterima Rp ${expectedAmount}, tetapi tagihan invoice adalah Rp ${donation.totalAmount}.`
+        );
+      }
+    }
+
     if (donation.status === "PAID") return donation;
 
     const previousStatus = donation.status;
 
-    const settled = await tx.donation.update({
+    const updated = await tx.donation.update({
       where: { invoiceId },
       data: {
         status: "PAID",
@@ -473,8 +505,40 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date()) {
       });
     }
 
-    return settled;
+    broadcastPayload = {
+      id: updated.id,
+      invoiceId: updated.invoiceId,
+      donorName: updated.isAnonymous ? "Hamba Allah" : updated.donorName,
+      rawDonorName: updated.donorName,
+      donorEmail: updated.donorEmail ? maskEmail(updated.donorEmail) : "",
+      donorPhone: updated.donorPhone || "",
+      donorAvatar: updated.donorAvatar || null,
+      isAnonymous: Boolean(updated.isAnonymous),
+      amount: Number(updated.amount),
+      totalAmount: Number(updated.totalAmount),
+      paymentChannel: updated.paymentChannel,
+      status: "PAID",
+      campaignTitle: donation.campaign?.title || "Donasi Umum",
+      campaignSlug: donation.campaign?.slug || "",
+      createdAt: updated.createdAt ? new Date(updated.createdAt).toISOString() : new Date().toISOString(),
+      paidAt: updated.paidAt ? new Date(updated.paidAt).toISOString() : new Date().toISOString(),
+    };
+
+    return updated;
   });
+
+  if (settled) {
+    invalidateMidtransStatusCache(invoiceId);
+    if (broadcastPayload) {
+      try {
+        broadcastAdminEvent("DONATION_PAID", broadcastPayload);
+      } catch (sseErr) {
+        console.warn("Peringatan: Gagal broadcast SSE admin:", sseErr?.message);
+      }
+    }
+  }
+
+  return settled;
 }
 
 export { getRecentDonations };

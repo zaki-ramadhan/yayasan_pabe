@@ -46,7 +46,7 @@ export function Footer() {
               <p><span className="text-white font-medium">NPWP:</span> {ORG_PROFILE.legal.npwp}</p>
             </div>
 
-            <FooterSocialLinks whatsappUrl={whatsappUrl} />
+            <FooterSocialLinks />
           </div>
 
           <div className="lg:col-span-3">

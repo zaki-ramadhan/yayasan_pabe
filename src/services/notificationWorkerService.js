@@ -11,6 +11,8 @@ import {
 import {
   sendRoutineDonationEmail,
   sendRoutineCompletionEmail,
+  sendPasswordResetEmail,
+  sendAccountActivationEmail,
 } from "@/services/emailService";
 import { formatRoutineSchedule } from "@/data/routineDonation";
 
@@ -103,7 +105,19 @@ export async function processNotificationQueue({
 
       if (targetEmail) {
         try {
-          if (item.type === NOTIFICATION_TYPE.ROUTINE_COMPLETION) {
+          if (item.type === NOTIFICATION_TYPE.PASSWORD_RESET) {
+            dispatchResult = await sendPasswordResetEmail({
+              to: targetEmail,
+              name: payload.donorName || "Pengguna PABE",
+              resetUrl: payload.resetUrl,
+            });
+          } else if (item.type === NOTIFICATION_TYPE.ACCOUNT_ACTIVATION) {
+            dispatchResult = await sendAccountActivationEmail({
+              to: targetEmail,
+              name: payload.donorName || "Pengguna PABE",
+              activationUrl: payload.activationUrl,
+            });
+          } else if (item.type === NOTIFICATION_TYPE.ROUTINE_COMPLETION) {
             dispatchResult = await sendRoutineCompletionEmail({
               to: targetEmail,
               donorName: payload.donorName,

@@ -1,7 +1,7 @@
-import { CheckCircle2, Phone, Mail, Clock, MapPin, ExternalLink } from "lucide-react";
+import { CheckCircle2, Phone, Mail, Clock, MapPin, ExternalLink, ArrowUpRight } from "lucide-react";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { ORG_PROFILE } from "@/data/orgProfile";
-import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
+import { buildWhatsAppUrl, buildTelUrl, getCustomerServices } from "@/lib/whatsappUtils";
 
 export function AboutSidebarInfo({ orgSettings = null }) {
   const legal = {
@@ -12,10 +12,11 @@ export function AboutSidebarInfo({ orgSettings = null }) {
     ...ORG_PROFILE.contacts,
     ...(orgSettings?.contacts || {}),
   };
+  const customerServices = getCustomerServices();
 
   const whatsappUrl = buildWhatsAppUrl(
     contacts.whatsapp,
-    "Assalamu'alaikum Yayasan Payung Berkah, mohon info program yayasan."
+    "Assalamu'alaikum Bapak/Ibu pengurus Yayasan Payung Berkah, saya ingin bertanya seputar yayasan dan donasi."
   );
 
   return (
@@ -135,15 +136,42 @@ export function AboutSidebarInfo({ orgSettings = null }) {
             <span className="leading-relaxed">{contacts.address}</span>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <Phone className="w-4 h-4 text-slate-500 shrink-0" />
-            <span>{contacts.phone} / {contacts.whatsapp}</span>
-          </div>
+          {contacts.phone && (
+            <a
+              href={buildTelUrl(contacts.phone)}
+              className="group flex items-center gap-2.5 hover:text-emerald-800 transition-colors"
+              aria-label={`Telepon kantor: ${contacts.phone}`}
+            >
+              <Phone className="w-4 h-4 text-slate-500 shrink-0" />
+              <span className="group-hover:underline underline-offset-2">{contacts.phone}</span>
+            </a>
+          )}
 
-          <div className="flex items-center gap-2.5">
-            <Mail className="w-4 h-4 text-slate-500 shrink-0" />
-            <span>{contacts.email}</span>
-          </div>
+          {customerServices.map((cs) => (
+            <a
+              key={cs.id}
+              href={buildWhatsAppUrl(cs.phone, cs.defaultMessage)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-2.5 hover:text-emerald-800 transition-colors"
+              aria-label={`WhatsApp: ${cs.phone}`}
+            >
+              <WhatsAppIcon className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span className="group-hover:underline underline-offset-2">{cs.phone}</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+            </a>
+          ))}
+
+          {contacts.email && (
+            <a
+              href={`mailto:${contacts.email}`}
+              className="group flex items-center gap-2.5 hover:text-emerald-800 transition-colors"
+              aria-label={`Email: ${contacts.email}`}
+            >
+              <Mail className="w-4 h-4 text-slate-500 shrink-0" />
+              <span className="group-hover:underline underline-offset-2">{contacts.email}</span>
+            </a>
+          )}
 
           <div className="flex items-center gap-2.5">
             <Clock className="w-4 h-4 text-slate-500 shrink-0" />
@@ -158,7 +186,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
               className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium transition-colors shadow-2xs cursor-pointer"
             >
               <WhatsAppIcon className="w-4.5 h-4.5 shrink-0" />
-              <span>Hubungi Layanan WhatsApp</span>
+              <span>Hubungi Layanan Utama</span>
             </a>
           </div>
         </div>

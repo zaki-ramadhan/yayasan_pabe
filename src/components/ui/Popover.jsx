@@ -21,8 +21,8 @@ const PopoverTrigger = React.forwardRef(({ render, children, asChild, ...props }
 PopoverTrigger.displayName = PopoverPrimitive.Trigger.displayName;
 
 const PopoverContent = React.forwardRef(
-  ({ className, align = "center", sideOffset = 4, collisionPadding = 12, ...props }, ref) => (
-    <PopoverPrimitive.Portal>
+  ({ className, align = "center", sideOffset = 4, collisionPadding = 12, usePortal = true, container, ...props }, ref) => {
+    const content = (
       <PopoverPrimitive.Content
         ref={ref}
         align={align}
@@ -34,8 +34,18 @@ const PopoverContent = React.forwardRef(
         )}
         {...props}
       />
-    </PopoverPrimitive.Portal>
-  )
+    );
+
+    if (!usePortal) {
+      return content;
+    }
+
+    return (
+      <PopoverPrimitive.Portal container={container}>
+        {content}
+      </PopoverPrimitive.Portal>
+    );
+  }
 );
 PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
