@@ -26,8 +26,10 @@ if (
     !globalForPrisma.prisma.galleryItem ||
     !globalForPrisma.prisma.instagramProfile ||
     !globalForPrisma.prisma.instagramPost ||
-    !globalForPrisma.prisma.passwordResetToken ||
-    !Prisma?.UserScalarFieldEnum?.gender)
+    !globalForPrisma.prisma._runtimeDataModel?.models?.User?.fields?.some?.((f) => f.name === "customAvatar") ||
+    !globalForPrisma.prisma._runtimeDataModel?.models?.User?.fields?.some?.((f) => f.name === "providerAvatar") ||
+    !Prisma?.UserScalarFieldEnum?.customAvatar ||
+    !Prisma?.UserScalarFieldEnum?.providerAvatar)
 ) {
   globalForPrisma.prisma = undefined;
 }

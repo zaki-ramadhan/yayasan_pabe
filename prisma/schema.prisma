@@ -161,14 +161,11 @@ model User {
   title           String?  @default("Donatur Terdaftar")
   gender          String?  @default("MALE") // MALE, FEMALE
   salutation      String?  @default("Bpk.")
-  bio             String?
   city            String?
   address         String?
-  coverImage      String?
-  bankName        String?
-  bankAccount     String?
-  bankAccountName String?
   avatar          String?
+  customAvatar    String?
+  providerAvatar  String?
   provider        String   @default("CREDENTIALS") // CREDENTIALS, GOOGLE, FACEBOOK
   providerId      String?
   isActive        Boolean  @default(true)
@@ -218,16 +215,20 @@ model RoutineDonation {
   status       String    @default("ACTIVE") // ACTIVE, PAUSED, CANCELLED
   selectedDay  String?
   monthlyDate  DateTime?
-  reminderTime String?   @default("05:00")
-  donorName    String
-  donorEmail   String?
-  donorPhone   String
-  isAnonymous  Boolean   @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  reminderTime    String?   @default("05:00")
+  hasCustomPeriod Boolean   @default(false)
+  startDate       DateTime?
+  endDate         DateTime?
+  donorName       String
+  donorEmail      String?
+  donorPhone      String?
+  isAnonymous     Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
   notificationQueues NotificationQueue[]
 
   @@index([donorEmail])
+  @@index([donorEmail, status])
   @@index([donorName])
   @@index([status])
   @@index([campaignId])

@@ -1,3 +1,5 @@
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
+
 /**
  * Menghapus seluruh karakter emoji, simbol piktografik, dan modifikator Unicode.
  */
@@ -80,30 +82,30 @@ export function sanitizeBankAccountName(input) {
 }
 
 /**
- * Sanitasi nomor HP/WhatsApp (hanya angka digit, maksimal 15 digit).
+ * Sanitasi nomor HP/WhatsApp (hanya angka digit, maksimal sesuai FIELD_LIMITS.PHONE.max).
  */
-export function sanitizePhone(input) {
+export function sanitizePhone(input, maxLength = FIELD_LIMITS.PHONE.max) {
   if (typeof input !== "string") return "";
-  return stripEmojis(input).replace(/\D/g, "").slice(0, 15);
+  return stripEmojis(input).replace(/\D/g, "").slice(0, maxLength);
 }
 
 /**
  * Sanitasi alamat email (tanpa spasi, tanpa emoji, lowercase, maksimal 100 karakter).
  */
-export function sanitizeEmail(input) {
+export function sanitizeEmail(input, maxLength = FIELD_LIMITS.EMAIL.max) {
   if (typeof input !== "string") return "";
-  return stripEmojis(input).replace(/\s/g, "").toLowerCase().slice(0, 100);
+  return stripEmojis(input).replace(/\s/g, "").toLowerCase().slice(0, maxLength);
 }
 
 /**
- * Sanitasi doa atau pesan donatur (mendukung emoji ekspresif, tanpa tag HTML, maksimal 200 karakter).
+ * Sanitasi doa atau pesan donatur (mendukung emoji ekspresif, tanpa tag HTML, maksimal 250 karakter).
  */
-export function sanitizePrayer(input) {
+export function sanitizePrayer(input, maxLength = FIELD_LIMITS.PRAYER.max) {
   if (typeof input !== "string") return "";
   return input
     .replace(/<[^>]*>?/gm, "")
     .replace(/\s{2,}/g, " ")
-    .slice(0, 200);
+    .slice(0, maxLength);
 }
 
 /**
@@ -129,50 +131,46 @@ export function hasMeaningfulText(input) {
 /**
  * Sanitasi kata kunci pencarian dari karakter berbahaya (mencegah XSS, SQLi, ekspresi regex jahat, dan emoji).
  */
-export function sanitizeSearchQuery(query) {
+export function sanitizeSearchQuery(query, maxLength = FIELD_LIMITS.SEARCH_QUERY.max) {
   if (typeof query !== "string") return "";
   return stripEmojis(query)
     .replace(/[<>'";\\`$={}[\]()]/g, "")
     .replace(/^\s+/, "")
     .replace(/\s{2,}/g, " ")
-    .slice(0, 80);
+    .slice(0, maxLength);
 }
 
 /**
  * Sanitasi tautan gambar (mencegah javascript: URI, tag inject, atau protocol berbahaya).
  */
-export function sanitizeImageUrl(url) {
+export function sanitizeImageUrl(url, maxLength = FIELD_LIMITS.MEDIA_URL.max) {
   if (typeof url !== "string") return "";
   const trimmed = url.trim();
   if (!trimmed) return "";
   if (!/^https?:\/\//i.test(trimmed) && !trimmed.startsWith("/")) {
     return "";
   }
-  return trimmed.replace(/[<>"'`\s]/g, "").slice(0, 500);
+  return trimmed.replace(/[<>"'`\s]/g, "").slice(0, maxLength);
 }
 
 /**
- * Sanitasi bio / moto pribadi pengguna (tanpa tag HTML, tanpa leading space, maksimal 200 karakter).
+ * Sanitasi bio pribadi (fallback kompatibilitas).
  */
-export function sanitizeBio(input) {
+export function sanitizeBio(input, maxLength = 160) {
+  if (typeof input !== "string") return "";
+  return input.trim().slice(0, maxLength);
+}
+
+/**
+ * Sanitasi alamat lengkap domisili (tanpa tag HTML, tanpa leading space, maksimal 255 karakter).
+ */
+export function sanitizeAddress(input, maxLength = FIELD_LIMITS.ADDRESS.max) {
   if (typeof input !== "string") return "";
   return stripEmojis(input)
     .replace(/<[^>]*>?/gm, "")
     .replace(/^\s+/, "")
     .replace(/[^\S\r\n]{2,}/g, " ")
-    .slice(0, 200);
-}
-
-/**
- * Sanitasi alamat lengkap domisili (tanpa tag HTML, tanpa leading space, maksimal 250 karakter).
- */
-export function sanitizeAddress(input) {
-  if (typeof input !== "string") return "";
-  return stripEmojis(input)
-    .replace(/<[^>]*>?/gm, "")
-    .replace(/^\s+/, "")
-    .replace(/[^\S\r\n]{2,}/g, " ")
-    .slice(0, 250);
+    .slice(0, maxLength);
 }
 
 /**

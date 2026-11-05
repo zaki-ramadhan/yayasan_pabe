@@ -195,7 +195,7 @@ const REAL_PROGRAMS = [
         content: "Penyaluran paket modal bergulir tanpa bunga untuk usaha kuliner rumahan.",
         disbursedAmount: 20000000,
         date: new Date("2026-08-01T15:00:00Z"),
-        images: ["https://images.unsplash.com/photo-1556742049-0a67e557223b?auto=format&fit=crop&w=800&q=80"],
+        images: ["https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80"],
       },
     ],
   },

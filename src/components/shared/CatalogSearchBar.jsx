@@ -1,6 +1,7 @@
 import { Filter, Search } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { SortDropdown } from "@/components/shared/SortDropdown";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
  * Shared search + sort control bar for catalog pages.
@@ -28,7 +29,8 @@ export function CatalogSearchBar({
           onChange={onSearch}
           onBlur={onBlur || (() => onSearch && onSearch({ target: { value: searchQuery.trim() } }))}
           onClear={onClear}
-          maxLength={60}
+          minLength={FIELD_LIMITS.SEARCH_QUERY.min}
+          maxLength={FIELD_LIMITS.SEARCH_QUERY.max}
           isLoading={isLoading}
           className="h-10 text-sm bg-white"
         />

@@ -30,7 +30,8 @@ export const ASSET_PATHS = {
     QRIS_BARCODE: "/img/branding/payments/qris-barcode.webp",
     QRIS_STANDEE: "/img/branding/payments/qris-standee.webp",
     BRI: "/img/branding/payments/bri.webp",
-    BNI: "/img/branding/payments/bni.webp",
+    BCA: "/img/branding/payments/bca-bank.webp",
+    BNI: "/img/branding/payments/bni-bank.webp",
     MANDIRI: "/img/branding/payments/mandiri.webp",
     GOPAY: "/img/branding/payments/gopay.webp",
     SHOPEEPAY: "/img/branding/payments/shopeepay.webp",
@@ -62,7 +63,14 @@ export const ASSET_PATHS = {
   AVATARS: {
     MALE: "/img/avatars/avatar-male.svg",
     FEMALE: "/img/avatars/avatar-female.svg",
+    MALE_1: "/img/avatars/avatar-male-1.webp",
+    MALE_2: "/img/avatars/avatar-male-2.webp",
+    MALE_3: "/img/avatars/avatar-male-3.webp",
+    FEMALE_1: "/img/avatars/avatar-female-1.webp",
+    FEMALE_2: "/img/avatars/avatar-female-2.webp",
+    FEMALE_3: "/img/avatars/avatar-female-3.webp",
   },
+
   ILLUSTRATIONS: {
     EMPTY_STATE: "/img/illustrations/empty-state.webp",
   },
@@ -77,3 +85,13 @@ export const ASSET_PATHS = {
     AUTH_SLIDE_3: "/img/banners/auth/auth-slide-3.webp",
   },
 };
+
+export const USER_AVATAR_PRESETS = [
+  ASSET_PATHS.AVATARS.MALE_1,
+  ASSET_PATHS.AVATARS.MALE_2,
+  ASSET_PATHS.AVATARS.MALE_3,
+  ASSET_PATHS.AVATARS.FEMALE_1,
+  ASSET_PATHS.AVATARS.FEMALE_2,
+  ASSET_PATHS.AVATARS.FEMALE_3,
+];
+

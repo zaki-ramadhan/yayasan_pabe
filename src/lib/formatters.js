@@ -163,6 +163,105 @@ export function formatDate(dateInput, options = {}) {
   return formatted;
 }
 
+/**
+ * Memformat waktu WIB dalam format "HH:mm WIB" atau "HH:mm:ss WIB"
+ * @param {string | Date | null} dateInput
+ * @param {{ withSeconds?: boolean }} [options]
+ * @returns {string}
+ */
+export function formatTime(dateInput, options = {}) {
+  if (!dateInput) return "-";
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) return "-";
+
+  const { withSeconds = false } = options;
+  const wibTime = new Date(date.getTime() + (7 * 60 + date.getTimezoneOffset()) * 60000);
+  const hours = String(wibTime.getHours()).padStart(2, "0");
+  const minutes = String(wibTime.getMinutes()).padStart(2, "0");
+
+  if (withSeconds) {
+    const seconds = String(wibTime.getSeconds()).padStart(2, "0");
+    return `${hours}:${minutes}:${seconds} WIB`;
+  }
+  return `${hours}:${minutes} WIB`;
+}
+
+/**
+ * Memformat rentang tanggal secara ringkas dan humanis:
+ * - Sama hari: "5 Nov 2026"
+ * - Sama bulan & tahun: "5 - 20 Nov 2026"
+ * - Beda bulan, sama tahun: "5 Nov - 10 Des 2026"
+ * - Beda tahun: "5 Nov 2026 - 10 Jan 2027"
+ * - Tanpa batas akhir: "Mulai 5 Nov 2026"
+ *
+ * @param {string | Date | null} startDateInput
+ * @param {string | Date | null} [endDateInput]
+ * @param {{ month?: "short" | "long" }} [options]
+ * @returns {string}
+ */
+export function formatDateRange(startDateInput, endDateInput, options = {}) {
+  const { month = "short" } = options;
+
+  const parseSafe = (input) => {
+    if (!input) return null;
+    if (input instanceof Date) return isNaN(input.getTime()) ? null : input;
+    if (typeof input === "string") {
+      const trimmed = input.trim();
+      if (!trimmed) return null;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+        const [y, m, d] = trimmed.split("-").map(Number);
+        const dateObj = new Date(y, m - 1, d);
+        return isNaN(dateObj.getTime()) ? null : dateObj;
+      }
+      const d = new Date(trimmed);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return null;
+  };
+
+  const start = parseSafe(startDateInput);
+  const end = parseSafe(endDateInput);
+
+  if (!start && !end) return "-";
+
+  const getMonthName = (date) =>
+    month === "long" ? ID_MONTHS_LONG[date.getMonth()] : ID_MONTHS_SHORT[date.getMonth()];
+
+  if (start && !end) {
+    return `Mulai ${start.getDate()} ${getMonthName(start)} ${start.getFullYear()}`;
+  }
+
+  if (!start && end) {
+    return `s/d ${end.getDate()} ${getMonthName(end)} ${end.getFullYear()}`;
+  }
+
+  const sDay = start.getDate();
+  const sMonth = start.getMonth();
+  const sYear = start.getFullYear();
+
+  const eDay = end.getDate();
+  const eMonth = end.getMonth();
+  const eYear = end.getFullYear();
+
+  // Sama persis
+  if (sDay === eDay && sMonth === eMonth && sYear === eYear) {
+    return `${sDay} ${getMonthName(start)} ${sYear}`;
+  }
+
+  // Sama bulan dan tahun
+  if (sMonth === eMonth && sYear === eYear) {
+    return `${sDay} - ${eDay} ${getMonthName(start)} ${sYear}`;
+  }
+
+  // Beda bulan, sama tahun
+  if (sYear === eYear) {
+    return `${sDay} ${getMonthName(start)} - ${eDay} ${getMonthName(end)} ${sYear}`;
+  }
+
+  // Beda tahun
+  return `${sDay} ${getMonthName(start)} ${sYear} - ${eDay} ${getMonthName(end)} ${eYear}`;
+}
+
 const ID_MONTH_ABBR_MAP = {
   januari: "Jan",
   februari: "Feb",

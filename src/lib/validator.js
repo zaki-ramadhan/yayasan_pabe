@@ -10,6 +10,7 @@ import {
   hasMeaningfulText,
 } from "./sanitizer";
 import { formatRupiah } from "./formatters";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export const RESERVED_KEYWORDS = [
   "admin",
@@ -35,8 +36,8 @@ export const RESERVED_KEYWORDS = [
 ];
 
 export const PRAYER_LIMITS = {
-  MIN_LENGTH: 5,
-  MAX_LENGTH: 150,
+  MIN_LENGTH: FIELD_LIMITS.PRAYER.min,
+  MAX_LENGTH: FIELD_LIMITS.PRAYER.max,
 };
 
 export const DONATION_LIMITS = {

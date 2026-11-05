@@ -2,6 +2,7 @@ import * as React from "react";
 import { formatNumber } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { useFormField } from "@/components/ui/FormField";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function CurrencyInput({
   value,
@@ -75,6 +76,8 @@ export function CurrencyInput({
         disabled={disabled}
         placeholder={placeholder}
         value={displayVal}
+        minLength={FIELD_LIMITS.CURRENCY_INPUT.min}
+        maxLength={FIELD_LIMITS.CURRENCY_INPUT.max}
         onKeyDown={handleKeyDown}
         onChange={handleChange}
         aria-invalid={hasError ? "true" : undefined}

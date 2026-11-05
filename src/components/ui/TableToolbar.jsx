@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/Select";
 import { cn } from "@/lib/utils";
 import { sanitizeSearchQuery } from "@/lib/sanitizer";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
  * Komponen toolbar terstandarisasi untuk seluruh tabel Admin, Superadmin, dan Donor
@@ -92,6 +93,82 @@ export function TableToolbar({
   };
 
   const hasHeaderInfo = Boolean(title || description);
+  const hasLeftSlots = Boolean(onSearchChange || filters || children);
+
+  // Jika terdapat header info (title/description) dan tidak ada slot pencarian/filter di sisi kiri,
+  // sejajarkan header info di sisi kiri dan tombol aksi/filter di sisi kanan dalam satu baris responsif.
+  if (hasHeaderInfo && !hasLeftSlots) {
+    return (
+      <div className={cn("flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3", className)}>
+        <div>
+          {title && <h2 className="text-base font-medium text-slate-900">{title}</h2>}
+          {description && (
+            <p className="text-sm font-normal text-slate-500 mt-0.5">{description}</p>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {extraActions}
+          {onLimitChange && limit !== undefined && (
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="text-sm font-medium text-slate-600">Baris:</span>
+              <Select
+                value={String(limit)}
+                onValueChange={(val) => onLimitChange(Number(val))}
+              >
+                <SelectTrigger className="w-20 h-10 text-sm rounded-md border-slate-300 bg-white">
+                  <SelectValue placeholder={String(limit)} />
+                </SelectTrigger>
+                <SelectContent>
+                  {limitOptions.map((opt) => (
+                    <SelectItem key={opt} value={String(opt)}>
+                      {opt}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {onRefresh && (
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={onRefresh}
+              disabled={isLoading}
+              className="h-10 w-10 rounded-md border-slate-300 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
+              aria-label="Segarkan data tabel"
+            >
+              <RefreshCw className={cn("w-4 h-4 text-slate-600", isLoading && "animate-spin text-primary")} />
+            </Button>
+          )}
+
+          {primaryAction && (
+            <Button
+              type="button"
+              onClick={primaryAction.onClick}
+              disabled={primaryAction.disabled || isLoading || primaryAction.isLoading}
+              isLoading={Boolean(isLoading || primaryAction.isLoading)}
+              className={cn(
+                "h-10 px-4 text-sm font-medium gap-1.5 cursor-pointer shrink-0 disabled:pointer-events-none disabled:cursor-not-allowed",
+                primaryAction.className
+              )}
+            >
+              {!isLoading && !primaryAction.isLoading && (
+                primaryAction.icon ? (
+                  <primaryAction.icon className="w-4 h-4" />
+                ) : (
+                  <Plus className="w-4 h-4" />
+                )
+              )}
+              <span>{primaryAction.label}</span>
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn("space-y-3", className)}>
@@ -117,7 +194,8 @@ export function TableToolbar({
                 icon={Search}
                 placeholder={searchPlaceholder}
                 value={search ?? ""}
-                maxLength={80}
+                minLength={FIELD_LIMITS.SEARCH_TOOLBAR.min}
+                maxLength={FIELD_LIMITS.SEARCH_TOOLBAR.max}
                 onChange={handleSearchChange}
                 onBlur={handleSearchBlur}
                 onClear={handleClear}

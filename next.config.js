@@ -84,6 +84,16 @@ const nextConfig = {
         destination: "/donatur/profil",
         permanent: true,
       },
+      {
+        source: "/program/:slug/donate",
+        destination: "/campaign/:slug/donate",
+        permanent: true,
+      },
+      {
+        source: "/program/:slug",
+        destination: "/campaign/:slug",
+        permanent: true,
+      },
     ];
   },
   async headers() {

@@ -7,6 +7,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/Popover
 import { Input } from "@/components/ui/Input";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useFormField } from "@/components/ui/FormField";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
  * Reusable Creatable Combobox with Search, Lookup, and Debounce.
@@ -42,6 +43,9 @@ export function CreatableCombobox({
   const [searchTerm, setSearchTerm] = React.useState("");
   const [isCreating, setIsCreating] = React.useState(false);
 
+  const [highlightedIndex, setHighlightedIndex] = React.useState(0);
+  const listRef = React.useRef(null);
+
   // Debounced search term for smooth lookup filtering without stuttering
   const debouncedSearch = useDebounce(searchTerm, 200);
 
@@ -76,6 +80,11 @@ export function CreatableCombobox({
     (opt) => opt.label.toLowerCase() === trimmedSearch.toLowerCase()
   );
   const canCreate = Boolean(onCreate) && trimmedSearch.length > 0 && !hasExactMatch;
+  const totalItems = filteredOptions.length + (canCreate ? 1 : 0);
+
+  React.useEffect(() => {
+    setHighlightedIndex(0);
+  }, [filteredOptions, canCreate]);
 
   const handleSelect = (item) => {
     if (onChange) {
@@ -110,16 +119,82 @@ export function CreatableCombobox({
     }
   };
 
+  // Navigasi keyboard (ArrowDown, ArrowUp, Enter, Tab, Escape)
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
-      if (filteredOptions.length === 1) {
-        handleSelect(filteredOptions[0]);
-      } else if (canCreate) {
+      if (!open) {
+        setOpen(true);
+        return;
+      }
+      if (totalItems > 0) {
+        setHighlightedIndex((prev) => (prev < totalItems - 1 ? prev + 1 : 0));
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!open) {
+        setOpen(true);
+        return;
+      }
+      if (totalItems > 0) {
+        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : totalItems - 1));
+      }
+    } else if (e.key === "Tab") {
+      // Shortcut Tab: Langsung pilih opsi yang sedang di-highlight
+      if (open && totalItems > 0) {
+        if (highlightedIndex < filteredOptions.length && filteredOptions[highlightedIndex]) {
+          e.preventDefault();
+          handleSelect(filteredOptions[highlightedIndex]);
+        } else if (highlightedIndex === filteredOptions.length && canCreate) {
+          e.preventDefault();
+          handleCreate();
+        }
+      }
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (open && totalItems > 0) {
+        if (highlightedIndex < filteredOptions.length && filteredOptions[highlightedIndex]) {
+          handleSelect(filteredOptions[highlightedIndex]);
+        } else if (highlightedIndex === filteredOptions.length && canCreate) {
+          handleCreate();
+        }
+      } else if (!open) {
+        setOpen(true);
+      }
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setOpen(false);
+    }
+  };
+
+  const handleTriggerKeyDown = (e) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!open) {
+        setOpen(true);
+      } else {
+        handleKeyDown(e);
+      }
+    } else if (open && (e.key === "Enter" || e.key === "Tab")) {
+      if (highlightedIndex < filteredOptions.length && filteredOptions[highlightedIndex]) {
+        e.preventDefault();
+        handleSelect(filteredOptions[highlightedIndex]);
+      } else if (highlightedIndex === filteredOptions.length && canCreate) {
+        e.preventDefault();
         handleCreate();
       }
     }
   };
+
+  // Scroll otomatis ke item yang di-highlight via keyboard
+  React.useEffect(() => {
+    if (open && listRef.current) {
+      const activeEl = listRef.current.children[highlightedIndex];
+      if (activeEl) {
+        activeEl.scrollIntoView({ block: "nearest" });
+      }
+    }
+  }, [highlightedIndex, open]);
 
   const formContext = useFormField();
   const hasError = formContext?.isInvalid || false;
@@ -130,7 +205,9 @@ export function CreatableCombobox({
         <button
           type="button"
           disabled={disabled}
+          aria-haspopup="listbox"
           aria-expanded={open}
+          onKeyDown={handleTriggerKeyDown}
           data-invalid={hasError ? "true" : undefined}
           className={cn(
             "flex h-10 w-full items-center justify-between rounded-lg border bg-white px-3 py-2 text-sm text-slate-900 transition-colors cursor-pointer focus:outline-none disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-50 text-left",
@@ -149,7 +226,11 @@ export function CreatableCombobox({
 
       <PopoverContent
         align="start"
-        className="w-[--radix-popover-trigger-width] min-w-[220px] p-2 z-[60] shadow-xl border border-slate-200 rounded-xl bg-white"
+        className="w-[var(--radix-popover-trigger-width)] min-w-[var(--radix-popover-trigger-width)] max-w-[var(--radix-popover-content-available-width)] p-2 z-[60] shadow-xl border border-slate-200 rounded-xl bg-white"
+        style={{
+          width: "var(--radix-popover-trigger-width)",
+          minWidth: "var(--radix-popover-trigger-width)",
+        }}
       >
         <div className="space-y-2">
           {/* Search Input with Debounce */}
@@ -157,6 +238,8 @@ export function CreatableCombobox({
             leftIcon={Search}
             placeholder={searchPlaceholder}
             value={searchTerm}
+            minLength={FIELD_LIMITS.COMBOBOX_SEARCH.min}
+            maxLength={FIELD_LIMITS.COMBOBOX_SEARCH.max}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
             onClear={() => setSearchTerm("")}
@@ -165,19 +248,32 @@ export function CreatableCombobox({
           />
 
           {/* Options List */}
-          <div className="max-h-52 overflow-y-auto space-y-0.5 pr-0.5">
+          <div
+            ref={listRef}
+            role="listbox"
+            tabIndex={-1}
+            className="max-h-52 overflow-y-auto space-y-0.5 pr-0.5 focus:outline-none"
+          >
             {filteredOptions.length > 0 ? (
-              filteredOptions.map((opt) => {
+              filteredOptions.map((opt, idx) => {
                 const isSelected = opt.value === String(value);
+                const isHighlighted = idx === highlightedIndex;
+
                 return (
                   <button
                     key={opt.value}
+                    role="option"
+                    aria-selected={isSelected}
                     type="button"
+                    tabIndex={-1}
                     onClick={() => handleSelect(opt)}
+                    onMouseEnter={() => setHighlightedIndex(idx)}
                     className={cn(
                       "w-full text-left px-2.5 py-1.5 rounded-md text-sm transition-colors flex items-center justify-between cursor-pointer",
                       isSelected
                         ? "bg-primary/10 text-primary font-medium"
+                        : isHighlighted
+                        ? "bg-slate-100 text-slate-900"
                         : "text-slate-800 hover:bg-slate-100"
                     )}
                   >
@@ -196,9 +292,16 @@ export function CreatableCombobox({
             {canCreate && (
               <button
                 type="button"
+                tabIndex={-1}
                 onClick={handleCreate}
+                onMouseEnter={() => setHighlightedIndex(filteredOptions.length)}
                 disabled={isCreating}
-                className="w-full text-left px-2.5 py-2 rounded-md hover:bg-primary/10 text-primary border-t border-slate-100 mt-1 flex items-center gap-2 font-medium text-xs sm:text-sm transition-colors cursor-pointer disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
+                className={cn(
+                  "w-full text-left px-2.5 py-2 rounded-md border-t border-slate-100 mt-1 flex items-center gap-2 font-medium text-xs sm:text-sm transition-colors cursor-pointer disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed",
+                  highlightedIndex === filteredOptions.length
+                    ? "bg-primary/15 text-primary"
+                    : "hover:bg-primary/10 text-primary"
+                )}
               >
                 {isCreating ? (
                   <Loader2 className="w-4 h-4 animate-spin shrink-0" />

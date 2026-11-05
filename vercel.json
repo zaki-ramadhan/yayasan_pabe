@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/routine-donations",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/expire-donations",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

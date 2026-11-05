@@ -53,17 +53,32 @@ function Calendar({
       }}
       components={{
         DayButton: ({ day, modifiers, className: _className, ...buttonProps }) => {
+          const isRangeMiddle = !!modifiers?.range_middle;
+          const isRangeStart = !!modifiers?.range_start;
+          const isRangeEnd = !!modifiers?.range_end;
           const isSelected = !!modifiers?.selected;
+
           return (
             <button
               type="button"
               {...buttonProps}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
-                "h-9 w-9 p-0 rounded-lg cursor-pointer transition-colors text-sm",
-                isSelected
+                "h-9 w-9 p-0 cursor-pointer transition-colors text-sm",
+                isRangeMiddle
+                  ? "!bg-blue-50 !text-primary !rounded-none hover:!bg-blue-100 font-medium"
+                  : isSelected
                   ? "!bg-primary !text-white hover:!bg-primary hover:!text-white focus:!bg-primary focus:!text-white !font-medium shadow-xs"
                   : "text-slate-900 hover:bg-blue-50 hover:text-primary font-normal",
+                isRangeStart && isRangeEnd
+                  ? "rounded-lg"
+                  : isRangeStart
+                  ? "rounded-l-lg rounded-r-none"
+                  : isRangeEnd
+                  ? "rounded-r-lg rounded-l-none"
+                  : !isRangeMiddle
+                  ? "rounded-lg"
+                  : "rounded-none",
                 modifiers?.today && !isSelected && "border border-primary/50 text-primary font-medium",
                 modifiers?.outside && "text-slate-300 opacity-50",
                 modifiers?.disabled && "text-slate-300 opacity-40 pointer-events-none"

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useFormField } from "@/components/ui/FormField";
+import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
  * Controlled 24-Hour Numeric Time Input (HH:MM)
@@ -211,7 +212,8 @@ export function TimeInput24Hour({ value = "05:00", onChange, error, isInvalid })
           type="text"
           inputMode="numeric"
           pattern="[0-9]*"
-          maxLength={2}
+          minLength={FIELD_LIMITS.TIME_DIGIT.min}
+          maxLength={FIELD_LIMITS.TIME_DIGIT.max}
           placeholder="05"
           aria-label="Jam pengingat (00-23)"
           aria-invalid={hasError ? "true" : undefined}
@@ -235,7 +237,8 @@ export function TimeInput24Hour({ value = "05:00", onChange, error, isInvalid })
           type="text"
           inputMode="numeric"
           pattern="[0-9]*"
-          maxLength={2}
+          minLength={FIELD_LIMITS.TIME_DIGIT.min}
+          maxLength={FIELD_LIMITS.TIME_DIGIT.max}
           placeholder="00"
           aria-label="Menit pengingat (00-59)"
           aria-invalid={hasError ? "true" : undefined}

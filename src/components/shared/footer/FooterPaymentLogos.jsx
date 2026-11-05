@@ -1,12 +1,17 @@
 
+import { ASSET_PATHS } from "@/lib/assetConstants";
+
 const DEFAULT_PAYMENT_LOGOS = [
-  { name: "QRIS", src: "/img/branding/payments/qris.webp", alt: "QRIS Nasional" },
-  { name: "Bank BRI", src: "/img/branding/payments/bri.webp", alt: "Bank BRI" },
-  { name: "Bank Mandiri", src: "/img/branding/payments/mandiri.webp", alt: "Bank Mandiri" },
-  { name: "GoPay", src: "/img/branding/payments/gopay.webp", alt: "GoPay" },
-  { name: "ShopeePay", src: "/img/branding/payments/shopeepay.webp", alt: "ShopeePay" },
-  { name: "Indomaret", src: "/img/branding/payments/indomaret.webp", alt: "Indomaret" },
-  { name: "Alfamart", src: "/img/branding/payments/alfamart.webp", alt: "Alfamart" },
+  { name: "QRIS", src: ASSET_PATHS.PAYMENTS.QRIS, alt: "QRIS Nasional" },
+  { name: "Bank BCA", src: ASSET_PATHS.PAYMENTS.BCA, alt: "Bank BCA" },
+  { name: "Bank Mandiri", src: ASSET_PATHS.PAYMENTS.MANDIRI, alt: "Bank Mandiri" },
+  { name: "Bank BNI", src: ASSET_PATHS.PAYMENTS.BNI, alt: "Bank BNI" },
+  { name: "Bank BRI", src: ASSET_PATHS.PAYMENTS.BRI, alt: "Bank BRI" },
+  { name: "Bank Permata", src: ASSET_PATHS.PAYMENTS.PERMATA, alt: "Bank Permata" },
+  { name: "GoPay", src: ASSET_PATHS.PAYMENTS.GOPAY, alt: "GoPay" },
+  { name: "ShopeePay", src: ASSET_PATHS.PAYMENTS.SHOPEEPAY, alt: "ShopeePay" },
+  { name: "Indomaret", src: ASSET_PATHS.PAYMENTS.INDOMARET, alt: "Indomaret" },
+  { name: "Alfamart", src: ASSET_PATHS.PAYMENTS.ALFAMART, alt: "Alfamart" },
 ];
 
 /**
@@ -21,7 +26,7 @@ export function FooterPaymentLogos({ logos = DEFAULT_PAYMENT_LOGOS }) {
   return (
     <div className="space-y-3">
       <h5 className="inline-block text-sm font-semibold uppercase tracking-wider text-white">
-        Tersedia metode pembayaran:
+        Pilihan saluran donasi:
       </h5>
       <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
         {logos.map((m) => (

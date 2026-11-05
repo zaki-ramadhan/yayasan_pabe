@@ -38,6 +38,7 @@ Thumbs.db
 *.pem
 
 # ide & editors
+.agents/
 .idea/
 .vscode/
 *.swp
@@ -52,6 +53,7 @@ yarn-error.log*
 *.tmp
 *.bak
 .tmp*
+/scratch/
 
 # env files (can opt-in for committing if needed)
 .env*

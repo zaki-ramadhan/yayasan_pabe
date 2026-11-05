@@ -5,6 +5,7 @@ import {
   formatNumber,
   calculateProgress,
   isCampaignClosed,
+  formatDateRange,
 } from "@/lib/formatters";
 
 describe("formatters - formatRupiah", () => {
@@ -60,5 +61,34 @@ describe("formatters - isCampaignClosed", () => {
   it("mengembalikan false jika campaign null atau status ACTIVE", () => {
     expect(isCampaignClosed(null)).toBe(false);
     expect(isCampaignClosed({ status: "ACTIVE" })).toBe(false);
+  });
+});
+
+describe("formatters - formatDateRange", () => {
+  it("memformat rentang tanggal dalam bulan dan tahun yang sama secara ringkas", () => {
+    expect(formatDateRange("2026-11-05", "2026-11-20")).toBe("5 - 20 Nov 2026");
+  });
+
+  it("memformat rentang tanggal dengan bulan berbeda tetapi tahun sama", () => {
+    expect(formatDateRange("2026-11-05", "2026-12-15")).toBe("5 Nov - 15 Des 2026");
+  });
+
+  it("memformat rentang tanggal dengan tahun berbeda", () => {
+    expect(formatDateRange("2026-11-05", "2027-01-10")).toBe("5 Nov 2026 - 10 Jan 2027");
+  });
+
+  it("memformat tanggal tunggal saat tanggal mulai dan akhir sama", () => {
+    expect(formatDateRange("2026-11-05", "2026-11-05")).toBe("5 Nov 2026");
+  });
+
+  it("memformat secara humanis saat hanya tanggal mulai yang ditentukan", () => {
+    expect(formatDateRange("2026-11-05", null)).toBe("Mulai 5 Nov 2026");
+    expect(formatDateRange("2026-11-05", "")).toBe("Mulai 5 Nov 2026");
+  });
+
+  it("mengembalikan '-' jika kedua tanggal kosong atau invalid", () => {
+    expect(formatDateRange(null, null)).toBe("-");
+    expect(formatDateRange("", "")).toBe("-");
+    expect(formatDateRange("invalid", "invalid")).toBe("-");
   });
 });

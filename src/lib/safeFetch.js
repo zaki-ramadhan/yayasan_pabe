@@ -11,10 +11,26 @@ export async function safeFetch(url, options = {}, timeoutMs = 12000) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
+  const headers = { ...options.headers };
+  if (typeof window !== "undefined") {
+    try {
+      const raw = localStorage.getItem("pabe_auth_user");
+      if (raw) {
+        const u = JSON.parse(raw);
+        const token = u?.id || u?.email || "";
+        if (token && !headers["x-pabe-session"] && !headers["authorization"]) {
+          headers["x-pabe-session"] = encodeURIComponent(token);
+          headers["authorization"] = `Bearer ${encodeURIComponent(token)}`;
+        }
+      }
+    } catch {}
+  }
+
   try {
     const res = await fetch(url, {
       credentials: options.credentials || "same-origin",
       ...options,
+      headers,
       signal: options.signal || controller.signal,
     });
     return res;
