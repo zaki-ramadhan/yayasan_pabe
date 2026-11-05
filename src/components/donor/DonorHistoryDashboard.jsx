@@ -50,14 +50,16 @@ export function DonorHistoryDashboard() {
   }, [isAuthenticated, router]);
 
   const fetchHistory = useCallback(
-    async (pageToLoad = 1, currentLimit = pagination.limit) => {
+    async (pageToLoad = 1, currentLimit = pagination.limit, { silent = false } = {}) => {
       if (!currentUser?.email && !currentUser?.name) {
         setIsInitialLoading(false);
         setIsTableLoading(false);
         return;
       }
 
-      setIsTableLoading(true);
+      if (!silent) {
+        setIsTableLoading(true);
+      }
       setFetchError(null);
       try {
         const params = new URLSearchParams({
@@ -81,14 +83,16 @@ export function DonorHistoryDashboard() {
             setPendingInvoices(json.data.pendingInvoices);
           }
         } else {
-          setFetchError(json.message || "Gagal memuat riwayat donasi.");
+          if (!silent) setFetchError(json.message || "Gagal memuat riwayat donasi.");
         }
       } catch (err) {
         console.error("Gagal memuat riwayat donasi:", err);
-        setFetchError(err.message || "Koneksi terputus saat mengambil data donasi.");
+        if (!silent) setFetchError(err.message || "Koneksi terputus saat mengambil data donasi.");
       } finally {
-        setIsInitialLoading(false);
-        setIsTableLoading(false);
+        if (!silent) {
+          setIsInitialLoading(false);
+          setIsTableLoading(false);
+        }
       }
     },
     [
@@ -104,6 +108,21 @@ export function DonorHistoryDashboard() {
       fetchHistory(1, pagination.limit);
     }
   }, [currentUser?.email, currentUser?.name, fetchHistory, pagination.limit]);
+
+  // Auto-sync real-time saat donatur kembali aktif membuka tab riwayat (zero-reload)
+  useEffect(() => {
+    const handleSync = () => {
+      if (document.visibilityState === "visible" && (currentUser?.email || currentUser?.name)) {
+        fetchHistory(pagination.currentPage, pagination.limit, { silent: true });
+      }
+    };
+    window.addEventListener("visibilitychange", handleSync);
+    window.addEventListener("focus", handleSync);
+    return () => {
+      window.removeEventListener("visibilitychange", handleSync);
+      window.removeEventListener("focus", handleSync);
+    };
+  }, [currentUser?.email, currentUser?.name, fetchHistory, pagination.currentPage, pagination.limit]);
 
   const handlePageChange = (newPage) => {
     fetchHistory(newPage, pagination.limit);

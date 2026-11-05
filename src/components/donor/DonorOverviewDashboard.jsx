@@ -52,8 +52,8 @@ export function DonorOverviewDashboard({ currentUser }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [fetchError, setFetchError] = useState(null);
 
-	// Initial fetch data dashboard menyeluruh untuk pengguna saat ini
-	const fetchDashboardData = useCallback(async () => {
+	// Fetch data dashboard menyeluruh untuk pengguna saat ini (mendukung silent background update)
+	const fetchDashboardData = useCallback(async ({ silent = false } = {}) => {
 		if (
 			!currentUser?.email &&
 			!currentUser?.name
@@ -62,7 +62,9 @@ export function DonorOverviewDashboard({ currentUser }) {
 			return;
 		}
 
-		setIsLoading(true);
+		if (!silent) {
+			setIsLoading(true);
+		}
 		setFetchError(null);
 		try {
 			const params =
@@ -93,23 +95,38 @@ export function DonorOverviewDashboard({ currentUser }) {
 					json.data,
 				);
 			} else {
-				setFetchError(json.message || "Gagal memuat data akun.");
+				if (!silent) setFetchError(json.message || "Gagal memuat data akun.");
 			}
 		} catch (err) {
 			console.error(
 				"Gagal memuat data dashboard:",
 				err,
 			);
-			setFetchError(err.message || "Koneksi terputus saat mengambil data donasi.");
+			if (!silent) setFetchError(err.message || "Koneksi terputus saat mengambil data donasi.");
 		} finally {
-			setIsLoading(
-				false,
-			);
+			if (!silent) {
+				setIsLoading(false);
+			}
 		}
 	}, [currentUser?.email, currentUser?.name]);
 
 	useEffect(() => {
 		fetchDashboardData();
+	}, [fetchDashboardData]);
+
+	// Auto-sync real-time saat donatur kembali aktif membuka tab dashboard (zero-reload)
+	useEffect(() => {
+		const handleSync = () => {
+			if (document.visibilityState === "visible") {
+				fetchDashboardData({ silent: true });
+			}
+		};
+		window.addEventListener("visibilitychange", handleSync);
+		window.addEventListener("focus", handleSync);
+		return () => {
+			window.removeEventListener("visibilitychange", handleSync);
+			window.removeEventListener("focus", handleSync);
+		};
 	}, [fetchDashboardData]);
 
 	// Auto-scroll dan highlight kartu donasi rutin saat URL memuat hash #donor-routine-card
