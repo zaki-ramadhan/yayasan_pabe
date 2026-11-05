@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
@@ -31,14 +31,18 @@ export function InvoiceDisplay({ donation: initialDonation }) {
   const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
   const [activePrayer, setActivePrayer] = useState(initialDonation?.prayer || "");
 
-  useEffect(() => {
-    if (initialDonation?.status) {
-      setCurrentStatus(initialDonation.status);
-    }
-    if (initialDonation?.paidAt) {
-      setPaidAt(initialDonation.paidAt);
-    }
-  }, [initialDonation?.status, initialDonation?.paidAt]);
+  const [prevInitialStatus, setPrevInitialStatus] = useState(initialDonation?.status);
+  const [prevInitialPaidAt, setPrevInitialPaidAt] = useState(initialDonation?.paidAt);
+
+  if (initialDonation?.status !== prevInitialStatus) {
+    setPrevInitialStatus(initialDonation?.status);
+    setCurrentStatus(initialDonation?.status || "PENDING");
+  }
+
+  if (initialDonation?.paidAt !== prevInitialPaidAt) {
+    setPrevInitialPaidAt(initialDonation?.paidAt);
+    setPaidAt(initialDonation?.paidAt || null);
+  }
 
   const handleStatusChange = (newStatus, newPaidAt) => {
     setCurrentStatus(newStatus);
@@ -62,11 +66,14 @@ export function InvoiceDisplay({ donation: initialDonation }) {
     },
   });
 
-  const donation = {
-    ...initialDonation,
-    status: currentStatus,
-    paidAt: paidAt || initialDonation?.paidAt,
-  };
+  const donation = useMemo(
+    () => ({
+      ...initialDonation,
+      status: currentStatus,
+      paidAt: paidAt || initialDonation?.paidAt,
+    }),
+    [initialDonation, currentStatus, paidAt]
+  );
 
   useEffect(() => {
     if (donation?.invoiceId) {
@@ -78,7 +85,13 @@ export function InvoiceDisplay({ donation: initialDonation }) {
         hasPrayer: Boolean(activePrayer && activePrayer.trim()),
       });
     }
-  }, [donation, activePrayer]);
+  }, [
+    donation?.invoiceId,
+    donation?.campaignSlug,
+    donation?.donorName,
+    donation?.isAnonymous,
+    activePrayer,
+  ]);
 
   // Timestamp-based countdown persistence (anti reset on refresh)
   useEffect(() => {

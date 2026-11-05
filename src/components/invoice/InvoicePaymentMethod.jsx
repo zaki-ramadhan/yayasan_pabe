@@ -22,7 +22,6 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
   const [copiedKey, setCopiedKey] = useState(false);
   const [copiedSimUrl, setCopiedSimUrl] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [liveQrUrl, setLiveQrUrl] = useState(donation.qrCodeUrl || "");
 
   const isQris = donation.paymentChannelType === "QRIS" || donation.paymentChannelId === "qris" || donation.paymentChannelType === "EWALLET";
   const isMandiri = donation.paymentChannelId === "mandiri_va";
@@ -33,17 +32,11 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
   const billerCode = donation.billerCode || "70012";
   const billKey = donation.billKey || donation.virtualAccountNumber || "";
   const isDevelopment = process.env.NODE_ENV === "development";
-  const effectiveSimulatorUrl = liveQrUrl || donation.qrCodeUrl || "";
+  const effectiveSimulatorUrl = donation.qrCodeUrl || "";
   const showSimulatorTools =
     isDevelopment &&
     Boolean(effectiveSimulatorUrl) &&
     effectiveSimulatorUrl.includes("sandbox");
-
-  useEffect(() => {
-    if (donation?.qrCodeUrl && donation.qrCodeUrl !== liveQrUrl) {
-      setLiveQrUrl(donation.qrCodeUrl);
-    }
-  }, [donation?.qrCodeUrl]);
 
   const handleDownloadQris = async () => {
     try {
@@ -273,12 +266,13 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
                   level="M"
                   className="w-full h-full object-contain"
                 />
-              ) : liveQrUrl || donation.qrCodeUrl ? (
-                <img
-                  src={liveQrUrl || donation.qrCodeUrl}
+              ) : donation.qrCodeUrl ? (
+                <Image
+                  src={donation.qrCodeUrl}
                   alt="QRIS Resmi Yayasan Payung Berkah"
                   width={230}
                   height={230}
+                  unoptimized
                   className="w-full h-full object-contain select-none"
                 />
               ) : (
