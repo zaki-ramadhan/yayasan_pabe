@@ -17,6 +17,14 @@ import {
   buildDonationReceiptEmailHtml,
   getDonationReceiptEmailSubject,
 } from "@/templates/emails/donationReceiptEmailTemplate";
+import {
+  buildVolunteerRegistrationEmailHtml,
+  VOLUNTEER_REGISTRATION_EMAIL_SUBJECT,
+} from "@/templates/emails/volunteerRegistrationEmailTemplate";
+import {
+  buildVolunteerApprovalEmailHtml,
+  VOLUNTEER_APPROVAL_EMAIL_SUBJECT,
+} from "@/templates/emails/volunteerApprovalEmailTemplate";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 
@@ -327,3 +335,53 @@ export async function sendDonationReceiptEmail({
 
 
 
+
+/**
+ * Mengirim email tanda terima berkas pendaftaran relawan baru
+ */
+export async function sendVolunteerRegistrationEmail({
+  to,
+  name,
+  city,
+  interest,
+  statusUrl,
+}) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const html = buildVolunteerRegistrationEmailHtml({
+    name,
+    city,
+    interest,
+    statusUrl,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject: VOLUNTEER_REGISTRATION_EMAIL_SUBJECT,
+    html,
+  });
+}
+
+/**
+ * Mengirim email pemberitahuan pendaftaran relawan yang telah disetujui resmi
+ */
+export async function sendVolunteerApprovedEmail({
+  to,
+  name,
+  volunteerId,
+  validationUrl,
+}) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const html = buildVolunteerApprovalEmailHtml({
+    name,
+    volunteerId,
+    validationUrl,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject: VOLUNTEER_APPROVAL_EMAIL_SUBJECT,
+    html,
+  });
+}

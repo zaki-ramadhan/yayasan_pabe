@@ -7,6 +7,7 @@ import {
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { broadcastAdminEvent } from "@/lib/sseBroadcast";
+import { sendVolunteerRegistrationEmail } from "@/services/emailService";
 
 /**
  * Service server-side untuk operasi database relawan (Prisma SSOT).
@@ -75,6 +76,19 @@ export async function registerVolunteer({
         }
       } catch (uErr) {
         console.warn("Gagal sinkronisasi otomatis nomor WhatsApp/domisili relawan ke profil:", uErr?.message);
+      }
+    }
+
+    if (cleanEmail) {
+      try {
+        await sendVolunteerRegistrationEmail({
+          to: cleanEmail,
+          name: created.fullName,
+          city: created.city,
+          interest: created.interest,
+        });
+      } catch (emailErr) {
+        console.warn("Gagal mengirim email konfirmasi pendaftaran relawan:", emailErr?.message);
       }
     }
 

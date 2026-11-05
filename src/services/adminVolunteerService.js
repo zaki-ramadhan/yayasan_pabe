@@ -1,3 +1,5 @@
+import { formatVolunteerId } from "@/lib/volunteerUtils";
+import { sendVolunteerApprovedEmail } from "@/services/emailService";
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
 
@@ -82,10 +84,27 @@ export async function updateVolunteerStatus(id, newStatus) {
     throw new Error("Status pendaftar relawan tidak valid.");
   }
 
-  return prisma.volunteer.update({
+  const updated = await prisma.volunteer.update({
     where: { id },
     data: { status },
   });
+
+  if (status === "APPROVED" && updated?.email) {
+    try {
+      const formattedId = formatVolunteerId(updated.id, updated.createdAt);
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.org").replace(/\/+$/, "");
+      await sendVolunteerApprovedEmail({
+        to: updated.email,
+        name: updated.fullName,
+        volunteerId: formattedId,
+        validationUrl: `${appUrl}/relawan/validasi/${updated.id}`,
+      });
+    } catch (emailErr) {
+      console.warn("Gagal mengirim email persetujuan relawan:", emailErr?.message);
+    }
+  }
+
+  return updated;
 }
 
 /**
@@ -126,5 +145,28 @@ export async function updateVolunteersStatusBatch(ids, newStatus) {
     where: { id: { in: ids } },
     data: { status },
   });
+
+  if (status === "APPROVED") {
+    try {
+      const volunteers = await prisma.volunteer.findMany({
+        where: { id: { in: ids }, email: { not: null } },
+        select: { id: true, fullName: true, email: true, createdAt: true },
+      });
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.org").replace(/\/+$/, "");
+      await Promise.allSettled(
+        volunteers.map((v) =>
+          sendVolunteerApprovedEmail({
+            to: v.email,
+            name: v.fullName,
+            volunteerId: formatVolunteerId(v.id, v.createdAt),
+            validationUrl: `${appUrl}/relawan/validasi/${v.id}`,
+          })
+        )
+      );
+    } catch (batchEmailErr) {
+      console.warn("Gagal mengirim email persetujuan relawan batch:", batchEmailErr?.message);
+    }
+  }
+
   return { count: result.count, status };
 }
