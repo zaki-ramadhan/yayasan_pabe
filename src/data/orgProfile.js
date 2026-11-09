@@ -57,7 +57,7 @@ export const ORG_PROFILE = {
   socialMedia: {
     facebook: "https://web.facebook.com/payung.berkah.161",
     instagram: "https://www.instagram.com/yayasanpayungberkah/",
-    tiktok: "https://www.tiktok.com/@yayasan.payung.be",
+    tiktok: "https://www.tiktok.com/@yayasanpabe?_r=1",
     youtube: "https://youtube.com/@yayasanpayungberkah9678?si=h15x9m5GMFpkwMVk",
   },
   officialBankAccounts: [

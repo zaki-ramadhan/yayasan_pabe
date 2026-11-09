@@ -23,7 +23,7 @@ export function FooterSocialLinks() {
     },
     {
       name: "TikTok",
-      href: ORG_PROFILE.socialMedia?.tiktok || "https://www.tiktok.com/@yayasan.payung.be",
+      href: ORG_PROFILE.socialMedia?.tiktok || "https://www.tiktok.com/@yayasanpabe?_r=1",
       icon: TikTokIcon,
     },
     {
