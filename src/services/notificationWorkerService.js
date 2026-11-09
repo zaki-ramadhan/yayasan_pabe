@@ -204,7 +204,12 @@ export async function processNotificationQueue({
         data: {
           queueId: item.id,
           recipientPhone: item.recipientPhone,
-          provider: usedChannel === "EMAIL" ? "resend_email" : (dispatchResult?.provider || "mock"),
+          provider:
+            usedChannel === "EMAIL"
+              ? dispatchResult?.provider === "brevo"
+                ? "brevo_email"
+                : "resend_email"
+              : dispatchResult?.provider || "mock",
           providerMessageId: dispatchResult?.id || dispatchResult?.messageId || null,
           status: "DELIVERED",
           attemptNumber: currentAttempt,

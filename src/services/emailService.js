@@ -31,18 +31,41 @@ import {
 } from "@/templates/emails/careerApplicationEmailTemplate";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
+const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
 /**
- * Mengambil konfigurasi Resend dari environment variable
+ * Mengambil konfigurasi Email (Resend & Brevo) dari environment variable
  */
-function getResendConfig() {
-  const apiKey = process.env.RESEND_API_KEY || "";
-  // Jika belum set domain khusus, Resend mengizinkan pengujian via onboarding@resend.dev
+export function getEmailConfig() {
+  const resendApiKey = process.env.RESEND_API_KEY || "";
+  const brevoApiKey = process.env.BREVO_API_KEY || "";
   const fromEmail =
     process.env.RESEND_FROM_EMAIL ||
-    "Yayasan Payung Berkah <onboarding@resend.dev>";
+    process.env.BREVO_FROM_EMAIL ||
+    "Yayasan Payung Berkah <noreply@pabe.or.id>";
 
-  return { apiKey, fromEmail };
+  return { resendApiKey, brevoApiKey, fromEmail };
+}
+
+/**
+ * Backward compatibility konfigurasi Resend
+ */
+export function getResendConfig() {
+  const config = getEmailConfig();
+  return { apiKey: config.resendApiKey, fromEmail: config.fromEmail };
+}
+
+/**
+ * Parsing format "Nama Pengirim <email@domain.com>" untuk payload Brevo
+ * @param {string} fromStr
+ * @returns {{ name: string, email: string }}
+ */
+export function parseEmailSender(fromStr) {
+  const match = (fromStr || "").match(/^(.*?)\s*<(.+?)>$/);
+  if (match) {
+    return { name: match[1].trim(), email: match[2].trim() };
+  }
+  return { name: "Yayasan Payung Berkah", email: (fromStr || "").trim() || "noreply@pabe.or.id" };
 }
 
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
@@ -109,29 +132,124 @@ export async function getPublicEmailLogoUrl() {
 }
 
 /**
- * Mengirim email transaksional via Resend REST API
+ * Kirim email via Resend REST API
+ */
+async function sendViaResend({ apiKey, fromEmail, to, subject, html, attachments }) {
+  const payload = {
+    from: fromEmail,
+    to: [to],
+    subject,
+    html,
+  };
+
+  if (Array.isArray(attachments) && attachments.length > 0) {
+    payload.attachments = attachments;
+  }
+
+  const response = await fetch(RESEND_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    console.error("[EmailService] Resend API Error:", data);
+    const rawMsg = data?.message || "";
+    let errMessage = rawMsg || "Gagal mengirimkan email melalui Resend.";
+    if (rawMsg.includes("You can only send testing emails")) {
+      errMessage =
+        "Akun Resend masih dalam mode uji coba (hanya bisa kirim ke email pemilik akun). Untuk kirim ke email lain, verifikasi domain yayasan di resend.com/domains.";
+    }
+    const error = new Error(errMessage);
+    error.status = response.status;
+    error.provider = "resend";
+    throw error;
+  }
+
+  return { success: true, id: data.id, provider: "resend" };
+}
+
+/**
+ * Kirim email via Brevo REST API
+ */
+async function sendViaBrevo({ apiKey, fromEmail, to, subject, html, attachments }) {
+  const sender = parseEmailSender(fromEmail);
+  const payload = {
+    sender,
+    to: [{ email: to }],
+    subject,
+    htmlContent: html,
+  };
+
+  if (Array.isArray(attachments) && attachments.length > 0) {
+    payload.attachment = attachments.map((att) => {
+      if (att.content) {
+        return { name: att.filename || att.name || "attachment", content: att.content };
+      }
+      if (att.path) {
+        return { url: att.path, name: att.filename || att.name || "attachment" };
+      }
+      return att;
+    });
+  }
+
+  const response = await fetch(BREVO_API_URL, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+      "api-key": apiKey,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    console.error("[EmailService] Brevo API Error:", data);
+    const rawMsg = data?.message || data?.error || "";
+    const error = new Error(rawMsg || "Gagal mengirimkan email melalui Brevo.");
+    error.status = response.status;
+    error.provider = "brevo";
+    throw error;
+  }
+
+  return { success: true, id: data.messageId || data.id, provider: "brevo" };
+}
+
+/**
+ * Mengirim email transaksional dengan arsitektur Dual-Provider (Resend + Brevo Failover)
+ * - Jalur Utama: Resend (100 email/hari)
+ * - Jalur Failover/Cadangan: Brevo (300 email/hari) saat Resend limit (429) atau error
+ * - Total kapasitas gratis harian: 400 email/hari
+ *
  * @param {object} params
  * @param {string} params.to - Alamat email penerima
  * @param {string} params.subject - Subjek email
  * @param {string} params.html - Konten email HTML
  * @param {Array<object>} [params.attachments] - Berkas lampiran / inline CID
- * @returns {Promise<{ success: boolean, id?: string, simulated?: boolean }>}
+ * @returns {Promise<{ success: boolean, id?: string, provider?: string, failover?: boolean, simulated?: boolean }>}
  */
 export async function sendEmail({ to, subject, html, attachments }) {
   if (process.env.NODE_ENV === "test" || process.env.VITEST) {
-    return { success: true, id: `test_email_${Date.now()}` };
+    return { success: true, id: `test_email_${Date.now()}`, provider: "mock_test" };
   }
 
-  const { apiKey, fromEmail } = getResendConfig();
+  const { resendApiKey, brevoApiKey, fromEmail } = getEmailConfig();
 
-  // Mode Fallback/Simulasi jika API key belum dikonfigurasi di .env
-  if (!apiKey) {
+  // Mode Fallback/Simulasi jika belum ada satupun API key yang dikonfigurasi di .env
+  if (!resendApiKey && !brevoApiKey) {
     const urlMatch = html ? html.match(/href="([^"]*token=[^"]*)"/) : null;
     const detectedUrl = urlMatch ? urlMatch[1] : null;
 
     console.info(
       `\n======================================================\n` +
-      `[SIMULASI EMAIL RESEND] RESEND_API_KEY belum dikonfigurasi di .env\n` +
+      `[SIMULASI EMAIL] RESEND_API_KEY / BREVO_API_KEY belum dikonfigurasi di .env\n` +
       `Kepada : ${to}\n` +
       `Subjek : ${subject}\n` +
       (detectedUrl ? `Tautan : ${detectedUrl}\n` : "") +
@@ -141,45 +259,55 @@ export async function sendEmail({ to, subject, html, attachments }) {
     return { success: true, simulated: true };
   }
 
-  try {
-    const payload = {
-      from: fromEmail,
-      to: [to],
-      subject,
-      html,
-    };
+  // 1. Coba jalur utama: Resend
+  if (resendApiKey) {
+    try {
+      return await sendViaResend({
+        apiKey: resendApiKey,
+        fromEmail,
+        to,
+        subject,
+        html,
+        attachments,
+      });
+    } catch (resendErr) {
+      console.warn(`[EmailService] Resend gagal (${resendErr.message}).`);
 
-    if (Array.isArray(attachments) && attachments.length > 0) {
-      payload.attachments = attachments;
-    }
-
-    const response = await fetch(RESEND_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error("[EmailService] Resend API Error:", data);
-      const rawMsg = data?.message || "";
-      if (rawMsg.includes("You can only send testing emails")) {
-        throw new Error(
-          "Akun Resend masih dalam mode uji coba (hanya bisa kirim ke email pemilik akun). Untuk kirim ke email lain, verifikasi domain yayasan di resend.com/domains."
-        );
+      // 2. Jika Brevo tersedia, aktifkan failover otomatis
+      if (brevoApiKey) {
+        console.info(`[EmailService] Mengaktifkan failover otomatis ke Brevo untuk ${to}...`);
+        try {
+          const brevoResult = await sendViaBrevo({
+            apiKey: brevoApiKey,
+            fromEmail,
+            to,
+            subject,
+            html,
+            attachments,
+          });
+          return { ...brevoResult, failover: true };
+        } catch (brevoErr) {
+          console.error("[EmailService] Failover ke Brevo juga gagal:", brevoErr.message);
+          throw new Error(
+            `Pengiriman email gagal pada kedua provider (Resend: ${resendErr.message}; Brevo: ${brevoErr.message})`
+          );
+        }
       }
-      throw new Error(rawMsg || "Gagal mengirimkan email melalui Resend.");
-    }
 
-    return { success: true, id: data.id };
-  } catch (err) {
-    console.error("[EmailService] Gagal menghubungi layanan Resend:", err.message);
-    throw err;
+      // Jika Brevo tidak dikonfigurasi, lemparkan error asli Resend
+      throw resendErr;
+    }
   }
+
+  // 3. Jika hanya Brevo yang dikonfigurasi
+  return sendViaBrevo({
+    apiKey: brevoApiKey,
+    fromEmail,
+    to,
+    subject,
+    html,
+    attachments,
+  });
 }
 
 /**

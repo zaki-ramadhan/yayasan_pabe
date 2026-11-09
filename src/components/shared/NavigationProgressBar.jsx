@@ -109,7 +109,7 @@ function NavigationProgressBarInner() {
     >
       <div
         ref={barRef}
-        className="h-full bg-emerald-600 shadow-[0_0_12px_rgba(5,150,105,0.8)] transition-all ease-out"
+        className="h-full bg-gradient-to-r from-blue-700 via-blue-600 to-sky-400 shadow-[0_0_12px_rgba(29,78,216,0.75)] transition-all ease-out"
         style={{ width: "0%", opacity: 1 }}
       />
     </div>
