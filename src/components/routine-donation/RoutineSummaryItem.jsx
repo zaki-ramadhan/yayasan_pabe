@@ -30,13 +30,9 @@ export function RoutineSummaryItem({ program, index, campaign }) {
           <span>{formatRoutineSchedule(program)} • {program.reminderTime || "05:00"} WIB</span>
         </span>
 
-        {/* Chip 2: Model Pelaksanaan + Nominal */}
+        {/* Chip 2: Nominal */}
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
-          {isReminderOnly ? (
-            <span>Pengingat Email</span>
-          ) : (
-            <span>Donasi Otomatis ({formatRupiah(nominal)})</span>
-          )}
+          <span>Nominal {formatRupiah(nominal)}</span>
         </span>
 
         {/* Chip 3 (Opsional): Periode Kustom */}

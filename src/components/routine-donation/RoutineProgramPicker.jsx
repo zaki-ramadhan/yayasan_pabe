@@ -36,7 +36,7 @@ export function RoutineProgramPicker({
         onChange={(val) => onChange(item.id, "campaignId", val)}
         placeholder="-- Silakan Pilih Program --"
         searchPlaceholder="Cari program atau kategori donasi..."
-        emptyMessage="Program donasi tidak ditemukan."
+        emptyMessage="Data tidak ditemukan."
         searchThreshold={5}
       />
     </div>

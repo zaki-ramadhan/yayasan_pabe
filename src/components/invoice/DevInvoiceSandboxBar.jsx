@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Zap, Clock, RotateCcw, ExternalLink, Copy, Check, Terminal } from "lucide-react";
+import { Zap, Clock, RotateCcw, ExternalLink, Copy, Check, Terminal, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
@@ -23,6 +23,7 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
   const isPending = donation.status === "PENDING";
   const isPaid = donation.status === "PAID";
   const isExpired = donation.status === "EXPIRED";
+  const isCancelled = donation.status === "CANCELLED";
 
   // Identifikasi Simulator Midtrans
   const isQris = donation.paymentChannelType === "QRIS" || donation.paymentChannelId === "qris";
@@ -132,7 +133,22 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
           </Button>
         )}
 
-        {/* 3. Tombol Reset ke Pending (Untuk uji coba berulang) */}
+        {/* 3. Tombol Simulasi Gagal / Pembatalan (Cancelled) */}
+        {!isCancelled && (
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => handleSimulate("CANCELLED")}
+            disabled={isLoading}
+            isLoading={isLoading}
+            className="h-8 px-3 text-xs font-semibold text-white bg-gradient-to-b from-slate-600 via-slate-700 to-slate-800 hover:from-slate-500 hover:via-slate-600 hover:to-slate-700 border-t border-t-slate-400 border-x border-x-slate-600 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(71,85,105,0.25)] active:translate-y-0.5 active:shadow-none rounded-lg gap-1.5 cursor-pointer disabled:opacity-60"
+          >
+            {!isLoading && <XCircle className="w-3.5 h-3.5 text-white" />}
+            <span>Simulasi Batal</span>
+          </Button>
+        )}
+
+        {/* 4. Tombol Reset ke Pending (Untuk uji coba berulang) */}
         {!isPending && (
           <Button
             type="button"

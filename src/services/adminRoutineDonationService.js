@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
+import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 import { VALID_ROUTINE_STATUSES } from "@/lib/routineDonationConstants";
 
 const VALID_STATUSES = VALID_ROUTINE_STATUSES;
@@ -116,10 +117,23 @@ export async function updateRoutineDonationStatus(id, newStatus) {
     throw new Error("Status donasi rutin tidak valid.");
   }
 
-  return prisma.routineDonation.update({
+  const updated = await prisma.routineDonation.update({
     where: { id },
     data: { status },
   });
+
+  try {
+    broadcastAdminEvent("ROUTINE_DONATION_STATUS_CHANGED", {
+      id: updated.id,
+      status: updated.status,
+      donorName: updated.donorName,
+      programTitle: updated.programTitle,
+    });
+  } catch (sseErr) {
+    console.warn("Peringatan: Gagal broadcast SSE routine status:", sseErr?.message);
+  }
+
+  return updated;
 }
 
 /**

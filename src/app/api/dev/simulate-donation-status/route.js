@@ -38,8 +38,20 @@ export async function POST(request) {
       );
     }
 
+    const previousStatus = donation.status;
+    const wasPaid = previousStatus === "PAID";
+
     // 1. Simulasi Pembayaran Berhasil (PAID)
     if (action === "PAID") {
+      if (donation.status === "PAID") {
+        return NextResponse.json({
+          success: true,
+          message: "Donasi sudah berstatus LUNAS (PAID). Tidak ada perubahan nominal.",
+          status: "PAID",
+          paidAt: donation.paidAt || new Date(),
+        });
+      }
+
       const settled = await settleDonationStatus(invoiceId, new Date());
 
       return NextResponse.json({
@@ -50,53 +62,77 @@ export async function POST(request) {
       });
     }
 
-    // 2. Simulasi Waktu Pembayaran Habis (EXPIRED)
-    if (action === "EXPIRED") {
-      const updated = await prisma.donation.update({
-        where: { invoiceId },
-        data: {
-          status: "EXPIRED",
-          expiredAt: new Date(Date.now() - 1000), // set waktu lampau
-        },
-        include: {
-          campaign: { select: { id: true, title: true, slug: true } },
-        },
-      });
-      try {
-        broadcastAdminEvent("DONATION_UPDATED", buildAdminDonationEventPayload(updated));
-      } catch {}
-      return NextResponse.json({
-        success: true,
-        message: "Simulasi kedaluwarsa berhasil! Status donasi sekarang KEDALUWARSA (EXPIRED).",
-        status: "EXPIRED",
-      });
-    }
+    // 2. Simulasi Waktu Pembayaran Habis (EXPIRED), Pembatalan (CANCELLED), atau Reset ke Menunggu (PENDING)
+    if (action === "EXPIRED" || action === "CANCELLED" || action === "RESET_PENDING") {
+      const targetStatus =
+        action === "RESET_PENDING"
+          ? "PENDING"
+          : action === "EXPIRED"
+          ? "EXPIRED"
+          : "CANCELLED";
 
-    // 3. Reset Status kembali ke Menunggu (PENDING) untuk kemudahan pengujian berulang
-    if (action === "RESET_PENDING") {
-      const updated = await prisma.donation.update({
-        where: { invoiceId },
-        data: {
-          status: "PENDING",
-          paidAt: null,
-          expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // perpanjang 24 jam
-        },
-        include: {
-          campaign: { select: { id: true, title: true, slug: true } },
-        },
+      if (donation.status === targetStatus) {
+        return NextResponse.json({
+          success: true,
+          message: `Status donasi sudah ${targetStatus}. Tidak ada perubahan.`,
+          status: targetStatus,
+        });
+      }
+
+      const updated = await prisma.$transaction(async (tx) => {
+        const donationDoc = await tx.donation.update({
+          where: { invoiceId },
+          data: {
+            status: targetStatus,
+            paidAt: null,
+            expiredAt:
+              targetStatus === "EXPIRED"
+                ? new Date(Date.now() - 1000)
+                : targetStatus === "PENDING"
+                ? new Date(Date.now() + 24 * 60 * 60 * 1000)
+                : donation.expiredAt,
+          },
+          include: {
+            campaign: { select: { id: true, title: true, slug: true } },
+          },
+        });
+
+        // Rekonsiliasi atomik total program jika status sebelumnya PAID (Rollback donasi)
+        if (donation.campaignId) {
+          const agg = await tx.donation.aggregate({
+            where: { campaignId: donation.campaignId, status: "PAID" },
+            _sum: { amount: true },
+            _count: { id: true },
+          });
+
+          await tx.campaign.update({
+            where: { id: donation.campaignId },
+            data: {
+              collectedAmount: Number(agg._sum.amount || 0),
+              donorCount: Number(agg._count.id || 0),
+            },
+          });
+        }
+
+        return donationDoc;
       });
+
       try {
-        broadcastAdminEvent("DONATION_UPDATED", buildAdminDonationEventPayload(updated));
+        broadcastAdminEvent(
+          "DONATION_UPDATED",
+          buildAdminDonationEventPayload(updated, { previousStatus })
+        );
       } catch {}
+
       return NextResponse.json({
         success: true,
-        message: "Status donasi berhasil dikembalikan ke MENUNGGU PEMBAYARAN (PENDING).",
-        status: "PENDING",
+        message: `Status donasi berhasil diubah ke ${targetStatus}.${wasPaid ? " Nominal donasi sebelumnya berhasil di-rollback dari total program." : ""}`,
+        status: targetStatus,
       });
     }
 
     return NextResponse.json(
-      { success: false, message: "Aksi tidak valid. Pilih: PAID, EXPIRED, atau RESET_PENDING." },
+      { success: false, message: "Aksi tidak valid. Pilih: PAID, EXPIRED, CANCELLED, atau RESET_PENDING." },
       { status: 400 }
     );
   } catch (error) {

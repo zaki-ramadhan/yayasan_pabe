@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default async function AdminRoutineDonationPage() {
-  const { items } = await getAdminRoutineDonations({ limit: 50 });
+  const { items } = await getAdminRoutineDonations({ status: "ACTIVE", limit: 50 });
 
   return (
     <div className="space-y-4">

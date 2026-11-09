@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
+import { formatPaymentChannel } from "@/lib/formatters";
 
 export async function GET(request) {
   // Enforce staff/admin roles only (Anti-Data Leak)
@@ -35,7 +36,8 @@ export async function GET(request) {
         include: { category: true },
       }),
       prisma.donation.findMany({
-        orderBy: { createdAt: "desc" },
+        where: { status: "PAID" },
+        orderBy: [{ paidAt: "desc" }, { createdAt: "desc" }],
         take: 8,
         include: {
           campaign: {
@@ -65,8 +67,8 @@ export async function GET(request) {
       id: d.invoiceId,
       donor: d.isAnonymous ? "Hamba Allah" : d.donorName,
       amount: d.amount,
-      channel: (d.paymentChannel || "qris").toUpperCase(),
-      date: d.createdAt.toISOString(),
+      channel: formatPaymentChannel(d.paymentChannel || "qris"),
+      date: (d.paidAt || d.createdAt).toISOString(),
       status: d.status,
       campaignTitle: d.campaign?.title || "Sedekah Umum PABE",
     }));

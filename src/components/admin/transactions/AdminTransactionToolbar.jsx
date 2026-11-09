@@ -14,8 +14,6 @@ export function AdminTransactionToolbar({
   search,
   onSearchChange,
   onClearSearch,
-  statusFilter,
-  onStatusChange,
   channelFilter,
   onChannelChange,
   onExportCsv,
@@ -31,50 +29,40 @@ export function AdminTransactionToolbar({
       searchPlaceholder="Cari nomor invoice, nama donatur..."
       searchWidth="flex-1 min-w-[200px] max-w-sm"
       filters={
-        <>
-          <Select value={statusFilter} onValueChange={onStatusChange}>
-            <SelectTrigger className="h-10 w-40 text-sm font-normal bg-white border border-slate-300 shrink-0">
-              <SelectValue placeholder="Semua status" />
-            </SelectTrigger>
-            <SelectContent className="bg-white border border-slate-200 z-50">
-              <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
-                Semua status
-              </SelectItem>
-              <SelectItem value="PAID" className="cursor-pointer text-sm font-normal py-2">
-                Berhasil (PAID)
-              </SelectItem>
-              <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
-                Menunggu (PENDING)
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={channelFilter} onValueChange={onChannelChange}>
-            <SelectTrigger className="h-10 w-40 text-sm font-normal bg-white border border-slate-300 shrink-0">
-              <SelectValue placeholder="Semua metode" />
-            </SelectTrigger>
-            <SelectContent className="bg-white border border-slate-200 z-50">
-              <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
-                Semua metode
-              </SelectItem>
-              <SelectItem value="QRIS" className="cursor-pointer text-sm font-normal py-2">
-                QRIS
-              </SelectItem>
-              <SelectItem value="BCA_VA" className="cursor-pointer text-sm font-normal py-2">
-                BCA VA
-              </SelectItem>
-              <SelectItem value="BRI_VA" className="cursor-pointer text-sm font-normal py-2">
-                BRI VA
-              </SelectItem>
-              <SelectItem value="BNI_VA" className="cursor-pointer text-sm font-normal py-2">
-                BNI VA
-              </SelectItem>
-              <SelectItem value="MANDIRI_VA" className="cursor-pointer text-sm font-normal py-2">
-                Mandiri VA
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </>
+        <Select value={channelFilter} onValueChange={onChannelChange}>
+          <SelectTrigger className="h-10 w-44 text-sm font-normal bg-white border border-slate-300 shrink-0">
+            <SelectValue placeholder="Semua metode" />
+          </SelectTrigger>
+          <SelectContent className="bg-white border border-slate-200 z-50">
+            <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
+              Semua metode
+            </SelectItem>
+            <SelectItem value="qris" className="cursor-pointer text-sm font-normal py-2">
+              QRIS
+            </SelectItem>
+            <SelectItem value="gopay" className="cursor-pointer text-sm font-normal py-2">
+              GoPay
+            </SelectItem>
+            <SelectItem value="shopeepay" className="cursor-pointer text-sm font-normal py-2">
+              ShopeePay
+            </SelectItem>
+            <SelectItem value="bca_va" className="cursor-pointer text-sm font-normal py-2">
+              BCA Virtual Account
+            </SelectItem>
+            <SelectItem value="mandiri_va" className="cursor-pointer text-sm font-normal py-2">
+              Mandiri Bill Payment
+            </SelectItem>
+            <SelectItem value="bri_va" className="cursor-pointer text-sm font-normal py-2">
+              BRI Virtual Account
+            </SelectItem>
+            <SelectItem value="bni_va" className="cursor-pointer text-sm font-normal py-2">
+              BNI Virtual Account
+            </SelectItem>
+            <SelectItem value="permata_va" className="cursor-pointer text-sm font-normal py-2">
+              Permata Virtual Account
+            </SelectItem>
+          </SelectContent>
+        </Select>
       }
       onRefresh={onRefresh}
       isLoading={isLoading}

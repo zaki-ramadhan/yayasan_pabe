@@ -24,7 +24,7 @@ export function RoutineSummaryCard({
           Ringkasan jadwal donasi
         </h3>
         <p className="text-sm text-slate-600 mt-0.5">
-          Program kebaikan pilihan Anda
+          Program donasi pilihan Anda
         </p>
       </div>
 

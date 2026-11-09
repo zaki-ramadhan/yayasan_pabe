@@ -43,15 +43,6 @@ export function startRoutineTour() {
         },
       },
       {
-        element: "#tour-routine-type",
-        popover: {
-          title: "Model pelaksanaan",
-          description: "Pilih cara kerja donasi: email pengingat biasa atau donasi otomatis dengan tautan invoice QRIS siap bayar.",
-          side: "top",
-          align: "start",
-        },
-      },
-      {
         element: "#tour-schedule-time",
         popover: {
           title: "Jam pengingat",

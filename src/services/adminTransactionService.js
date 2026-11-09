@@ -1,14 +1,12 @@
 import prisma from "@/lib/prisma";
 import { maskEmail } from "@/lib/security";
 import { settleDonationStatus } from "@/services/donationService";
-import { expireStalePendingDonations } from "@/services/donationExpiryService";
 
 /**
- * Mengambil daftar mutasi transaksi donasi dengan filter kanal dan status.
+ * Mengambil daftar mutasi transaksi donasi masuk yang telah berhasil (PAID).
  */
 export async function getAdminTransactions({
   search = "",
-  status = "",
   paymentChannel = "",
   page = 1,
   limit = 10,
@@ -16,11 +14,10 @@ export async function getAdminTransactions({
   const skip = (Math.max(1, page) - 1) * limit;
 
   try {
-    await expireStalePendingDonations(20).catch(() => {});
-
-    const where = {};
-    if (status && status !== "ALL") where.status = status;
-    if (paymentChannel && paymentChannel !== "ALL") where.paymentChannel = paymentChannel;
+    const where = { status: "PAID" };
+    if (paymentChannel && paymentChannel !== "ALL") {
+      where.paymentChannel = { equals: paymentChannel, mode: "insensitive" };
+    }
     if (search) {
       where.OR = [
         { invoiceId: { contains: search, mode: "insensitive" } },
@@ -36,7 +33,7 @@ export async function getAdminTransactions({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ paidAt: "desc" }, { createdAt: "desc" }],
         include: {
           campaign: { select: { id: true, title: true, slug: true } },
         },

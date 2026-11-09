@@ -73,6 +73,7 @@ export async function POST(request) {
 
     // Eksekusi mutasi atomik
     let updated = null;
+    let previousStatus = null;
 
     if (isPaid) {
       const grossAmount = isMidtransPayload
@@ -91,6 +92,8 @@ export async function POST(request) {
         if (!donation) {
           return null;
         }
+
+        previousStatus = donation.status;
 
         // Idempotensi: jika sudah PAID, jangan ubah ke EXPIRED atau CANCELLED
         if (donation.status === "PAID") {
@@ -128,7 +131,10 @@ export async function POST(request) {
 
     if (!isPaid && (updated.status === "EXPIRED" || updated.status === "CANCELLED")) {
       try {
-        broadcastAdminEvent("DONATION_UPDATED", buildAdminDonationEventPayload(updated));
+        broadcastAdminEvent(
+          "DONATION_UPDATED",
+          buildAdminDonationEventPayload(updated, { previousStatus })
+        );
       } catch {}
     }
 

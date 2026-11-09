@@ -19,7 +19,7 @@ export function buildRoutineCompletionEmailHtml({
   const safeName = donorName && donorName !== "Hamba Allah" ? donorName.trim() : "Sahabat Kebaikan";
 
   const buttonHtml = buildEmailCtaButton({
-    text: "Jelajahi Program Kebaikan Lainnya",
+    text: "Jelajahi Program Donasi Lainnya",
     url: catalogUrl,
     variant: "primary3d",
   });

@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 import {
   sanitizeInput,
   validateName,
@@ -150,6 +151,26 @@ export async function createRoutineDonations({
       data: cleanData,
     });
 
+    try {
+      broadcastAdminEvent("ROUTINE_DONATION_CREATED", {
+        id: createdRecord.id,
+        programTitle: createdRecord.programTitle,
+        amount: createdRecord.amount,
+        frequency: createdRecord.frequency,
+        status: createdRecord.status,
+        selectedDay: createdRecord.selectedDay,
+        reminderTime: createdRecord.reminderTime,
+        donorName: createdRecord.donorName,
+        donorEmail: createdRecord.donorEmail,
+        donorPhone: createdRecord.donorPhone,
+        isAnonymous: createdRecord.isAnonymous,
+        routineType: createdRecord.routineType,
+        createdAt: createdRecord.createdAt.toISOString(),
+      });
+    } catch (sseErr) {
+      console.warn("Peringatan: Gagal broadcast SSE routine donation:", sseErr?.message);
+    }
+
     return {
       success: true,
       data: [
@@ -221,6 +242,17 @@ export async function updateDonorRoutineDonationStatus({ id, status, userEmail }
     where: { id },
     data: { status: cleanStatus },
   });
+
+  try {
+    broadcastAdminEvent("ROUTINE_DONATION_STATUS_CHANGED", {
+      id: updated.id,
+      status: updated.status,
+      donorName: updated.donorName,
+      programTitle: updated.programTitle,
+    });
+  } catch (sseErr) {
+    console.warn("Peringatan: Gagal broadcast SSE routine status:", sseErr?.message);
+  }
 
   const message =
     cleanStatus === "PAUSED"

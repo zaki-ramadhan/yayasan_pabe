@@ -38,17 +38,11 @@ export function AdminRoutineDonationToolbar({
               <SelectValue placeholder="Semua status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL" className="text-sm font-normal">
-                Semua status
-              </SelectItem>
               <SelectItem value="ACTIVE" className="text-sm font-normal">
                 Aktif
               </SelectItem>
               <SelectItem value="PAUSED" className="text-sm font-normal">
                 Dijeda
-              </SelectItem>
-              <SelectItem value="CANCELLED" className="text-sm font-normal">
-                Dibatalkan
               </SelectItem>
               <SelectItem value="COMPLETED" className="text-sm font-normal">
                 Selesai
@@ -63,9 +57,6 @@ export function AdminRoutineDonationToolbar({
             <SelectContent>
               <SelectItem value="ALL" className="text-sm font-normal">
                 Semua
-              </SelectItem>
-              <SelectItem value="DAILY" className="text-sm font-normal">
-                Harian
               </SelectItem>
               <SelectItem value="WEEKLY" className="text-sm font-normal">
                 Mingguan

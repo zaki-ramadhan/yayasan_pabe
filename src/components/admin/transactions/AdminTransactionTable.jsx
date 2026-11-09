@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { formatDate } from "@/lib/formatters";
+import { formatDate, formatPaymentChannel } from "@/lib/formatters";
 import {
   Table,
   TableContainer,
@@ -13,7 +13,6 @@ import {
   TablePaginationFooter,
 } from "@/components/ui/Table";
 import { AdminTransactionDetailModal } from "@/components/admin/transactions/AdminTransactionDetailModal";
-import { AdminTransactionVerifyDialog } from "@/components/admin/transactions/AdminTransactionVerifyDialog";
 import { AdminTransactionToolbar } from "@/components/admin/transactions/AdminTransactionToolbar";
 import { AdminTransactionTableRow } from "@/components/admin/transactions/AdminTransactionTableRow";
 import { AdminTransactionTableSkeletonRows } from "@/components/admin/transactions/AdminTransactionSkeleton";
@@ -29,15 +28,14 @@ import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 const PAGE_SIZE = 10;
 
 export function AdminTransactionTable({ initialTransactions = [] }) {
-  const [transactions, setTransactions] = useState(initialTransactions);
+  const [transactions, setTransactions] = useState(
+    initialTransactions.filter((t) => t.status === "PAID")
+  );
   const [serverResults, setServerResults] = useState(null);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ALL");
   const [channelFilter, setChannelFilter] = useState("ALL");
   const [copiedId, setCopiedId] = useState(null);
   const [selectedDetail, setSelectedDetail] = useState(null);
-  const [verifyingTx, setVerifyingTx] = useState(null);
-  const [isVerifying, setIsVerifying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const applyLiveTransactionMutation = (incomingTx) => {
@@ -45,24 +43,29 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
 
     const updateList = (list) => {
       if (!Array.isArray(list)) return list;
+      if (incomingTx.status && incomingTx.status !== "PAID") {
+        return list.filter(
+          (t) => t.id !== incomingTx.id && t.invoiceId !== incomingTx.invoiceId
+        );
+      }
       const exists = list.some(
         (t) => t.id === incomingTx.id || t.invoiceId === incomingTx.invoiceId
       );
       if (exists) {
         return list.map((t) =>
-          t.invoiceId === incomingTx.invoiceId ? { ...t, ...incomingTx } : t
+          t.invoiceId === incomingTx.invoiceId ? { ...t, ...incomingTx, status: "PAID" } : t
         );
       }
-      return [incomingTx, ...list];
+      return [{ ...incomingTx, status: "PAID" }, ...list];
     };
 
     setTransactions((prev) => updateList(prev));
     setServerResults((prev) => (prev ? updateList(prev) : null));
-    setSelectedDetail((prev) =>
-      prev && prev.invoiceId === incomingTx.invoiceId
-        ? { ...prev, ...incomingTx }
-        : prev
-    );
+    setSelectedDetail((prev) => {
+      if (!prev || prev.invoiceId !== incomingTx.invoiceId) return prev;
+      if (incomingTx.status && incomingTx.status !== "PAID") return null;
+      return { ...prev, ...incomingTx };
+    });
   };
 
   useAdminLiveEvent("DONATION_PAID", (event) => {
@@ -80,7 +83,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   const debouncedSearch = useDebounce(search.trim(), 300);
   const isSearching = Boolean(search.trim().length > 0 && search.trim() !== debouncedSearch);
 
-  const hasFilter = Boolean(debouncedSearch || statusFilter !== "ALL" || channelFilter !== "ALL");
+  const hasFilter = Boolean(debouncedSearch || channelFilter !== "ALL");
 
   useEffect(() => {
     if (!hasFilter) return;
@@ -91,7 +94,6 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       try {
         const params = new URLSearchParams();
         if (debouncedSearch) params.set("search", debouncedSearch);
-        if (statusFilter !== "ALL") params.set("status", statusFilter);
         if (channelFilter !== "ALL") params.set("paymentChannel", channelFilter);
         params.set("limit", "100");
 
@@ -111,7 +113,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
     return () => {
       cancelled = true;
     };
-  }, [hasFilter, debouncedSearch, statusFilter, channelFilter]);
+  }, [hasFilter, debouncedSearch, channelFilter]);
 
   const activeTransactions = hasFilter && serverResults !== null ? serverResults : transactions;
 
@@ -131,8 +133,13 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
 
   const filtered = useMemo(() => {
     return activeTransactions.filter((t) => {
-      if (statusFilter !== "ALL" && t.status !== statusFilter) return false;
-      if (channelFilter !== "ALL" && t.paymentChannel !== channelFilter) return false;
+      if (t.status && t.status !== "PAID") return false;
+      if (
+        channelFilter !== "ALL" &&
+        String(t.paymentChannel || "").toLowerCase() !== channelFilter.toLowerCase()
+      ) {
+        return false;
+      }
       if (debouncedSearch) {
         const term = debouncedSearch.toLowerCase();
         const matchInv = t.invoiceId.toLowerCase().includes(term);
@@ -142,7 +149,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       }
       return true;
     });
-  }, [activeTransactions, statusFilter, channelFilter, debouncedSearch]);
+  }, [activeTransactions, channelFilter, debouncedSearch]);
 
   const {
     currentPage,
@@ -159,11 +166,6 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
 
   const handleClearSearch = () => {
     setSearch("");
-    resetPage();
-  };
-
-  const handleStatusChange = (val) => {
-    setStatusFilter(val);
     resetPage();
   };
 
@@ -190,37 +192,13 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
     }
   };
 
-  const handleConfirmVerify = async () => {
-    if (!verifyingTx?.id) return;
-    setIsVerifying(true);
-    try {
-      const res = await safeFetch(`/api/admin/transactions/${verifyingTx.id}/verify`, {
-        method: "POST",
-      });
-      const data = await res.json();
-      if (data.success) {
-        toast.success("Donasi berhasil diverifikasi dan dana terakumulasi.");
-        setTransactions((prev) =>
-          prev.map((t) => (t.id === verifyingTx.id ? { ...t, status: "PAID", paidAt: new Date().toISOString() } : t))
-        );
-        setVerifyingTx(null);
-      } else {
-        toast.error(data.message || "Gagal memverifikasi transaksi.");
-      }
-    } catch {
-      toast.error("Terjadi kendala jaringan saat memverifikasi transaksi.");
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
   const handleExportCsv = () => {
     if (filtered.length === 0) {
       toast.error("Tidak ada data transaksi untuk diekspor.");
       return;
     }
 
-    const headers = ["Invoice", "Donatur", "Email", "Nomor HP", "Program", "Nominal", "Metode", "Status", "Tanggal"];
+    const headers = ["Invoice", "Donatur", "Email", "Nomor HP", "Program", "Nominal", "Metode", "Status", "Tanggal Diterima"];
     const rows = filtered.map((t) => [
       t.invoiceId,
       `"${(t.donorName || "").replace(/"/g, '""')}"`,
@@ -228,13 +206,13 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       t.donorPhone || "-",
       `"${(t.campaignTitle || "").replace(/"/g, '""')}"`,
       t.amount,
-      t.paymentChannel,
+      `"${formatPaymentChannel(t.paymentChannel)}"`,
       t.status,
-      formatDate(t.createdAt),
+      formatDate(t.paidAt || t.createdAt),
     ]);
 
     const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    downloadCsv(`rekap-mutasi-transaksi-${new Date().toISOString().slice(0, 10)}.csv`, csvContent);
+    downloadCsv(`rekap-mutasi-donasi-masuk-${new Date().toISOString().slice(0, 10)}.csv`, csvContent);
     toast.success("Laporan mutasi berhasil diunduh.");
   };
 
@@ -244,8 +222,6 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
         search={search}
         onSearchChange={handleSearchChange}
         onClearSearch={handleClearSearch}
-        statusFilter={statusFilter}
-        onStatusChange={handleStatusChange}
         channelFilter={channelFilter}
         onChannelChange={handleChannelChange}
         onExportCsv={handleExportCsv}
@@ -266,7 +242,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                   Donatur
                 </TableHead>
                 <TableHead className="min-w-[240px] max-w-[340px] font-medium text-slate-600 text-sm py-2.5">
-                  Program tujuan
+                  Program donasi
                 </TableHead>
                 <TableHead className="w-px text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Nominal
@@ -295,14 +271,13 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                     item={item}
                     copiedId={copiedId}
                     onCopyInvoice={handleCopyInvoice}
-                    onOpenVerify={(tx) => setVerifyingTx(tx)}
                     onOpenDetail={(tx) => setSelectedDetail(tx)}
                   />
                 ))
               ) : (
                 <TableEmptyRow
                   colSpan={8}
-                  isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL" || channelFilter !== "ALL")}
+                  isFiltered={Boolean(debouncedSearch || channelFilter !== "ALL")}
                 />
               )}
             </TableBody>
@@ -325,16 +300,6 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
         isOpen={Boolean(selectedDetail)}
         onClose={() => setSelectedDetail(null)}
         transaction={selectedDetail}
-        onOpenVerify={(tx) => setVerifyingTx(tx)}
-      />
-
-      {/* Verify Confirmation Dialog */}
-      <AdminTransactionVerifyDialog
-        isOpen={Boolean(verifyingTx)}
-        onClose={() => setVerifyingTx(null)}
-        onConfirm={handleConfirmVerify}
-        transaction={verifyingTx}
-        isLoading={isVerifying}
       />
     </div>
   );

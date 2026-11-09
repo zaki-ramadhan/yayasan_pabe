@@ -1,7 +1,8 @@
 "use client";
 
-import { Copy, Check, ShieldCheck } from "lucide-react";
-import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
+import Link from "next/link";
+import { Copy, Check } from "lucide-react";
+import { formatRupiah, formatDate, decodeHtmlEntities, formatPaymentChannel } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { UserAvatar } from "@/components/ui/Avatar";
 import { StatusBadge } from "@/components/ui/Badge";
@@ -11,7 +12,6 @@ export function AdminTransactionTableRow({
   item,
   copiedId,
   onCopyInvoice,
-  onOpenVerify,
   onOpenDetail,
 }) {
   return (
@@ -69,18 +69,34 @@ export function AdminTransactionTableRow({
       {/* Program */}
       <TableCell className="text-sm text-slate-700 py-3 align-middle min-w-[240px] max-w-[340px]">
         <div className="max-w-[320px]">
-          <p
-            className="line-clamp-2 leading-snug font-normal text-slate-800 overflow-hidden"
-            title={item.campaignTitle}
-            style={{
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
-            {decodeHtmlEntities(item.campaignTitle)}
-          </p>
+          {item.campaignSlug ? (
+            <Link
+              href={`/campaign/${item.campaignSlug}`}
+              target="_blank"
+              className="line-clamp-2 leading-snug font-medium text-slate-900 hover:text-primary hover:underline cursor-pointer transition-colors block overflow-hidden"
+              aria-label={`Buka program: ${item.campaignTitle}`}
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
+              {decodeHtmlEntities(item.campaignTitle)}
+            </Link>
+          ) : (
+            <p
+              className="line-clamp-2 leading-snug font-normal text-slate-800 overflow-hidden"
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
+              {decodeHtmlEntities(item.campaignTitle)}
+            </p>
+          )}
         </div>
       </TableCell>
 
@@ -90,15 +106,15 @@ export function AdminTransactionTableRow({
       </TableCell>
 
       {/* Metode */}
-      <TableCell className="w-px text-center py-3 whitespace-nowrap uppercase align-middle">
-        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 max-w-[110px] truncate whitespace-nowrap">
-          {item.paymentChannel}
+      <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
+        <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap">
+          {formatPaymentChannel(item.paymentChannel)}
         </span>
       </TableCell>
 
       {/* Tanggal */}
       <TableCell className="w-px text-sm text-slate-500 py-3 whitespace-nowrap align-middle text-center tabular-nums">
-        {formatDate(item.createdAt)}
+        {formatDate(item.paidAt || item.createdAt)}
       </TableCell>
 
       {/* Status */}
@@ -106,23 +122,12 @@ export function AdminTransactionTableRow({
         <StatusBadge status={item.status} />
       </TableCell>
 
-      {/* Aksi: Verifikasi + Rincian */}
+      {/* Aksi: Rincian */}
       <TableCell className="w-24 text-right py-3 whitespace-nowrap align-middle pr-4">
         <TableRowActions
           onView={() => onOpenDetail(item)}
           viewTooltip={`Lihat rincian: ${item.invoiceId}`}
-        >
-          {item.status === "PENDING" && (
-            <button
-              type="button"
-              onClick={() => onOpenVerify(item)}
-              aria-label={`Verifikasi donasi: ${item.invoiceId}`}
-              className="p-1.5 rounded-md text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
-            >
-              <ShieldCheck className="w-4 h-4" />
-            </button>
-          )}
-        </TableRowActions>
+        />
       </TableCell>
     </TableRow>
   );

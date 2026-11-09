@@ -13,12 +13,14 @@ export function AdminTransactionSkeleton() {
     <div className="space-y-4 animate-pulse">
       {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex flex-1 flex-wrap items-center gap-2.5 max-w-2xl">
+        <div className="flex flex-1 flex-wrap items-center gap-2.5 max-w-xl">
           <Skeleton className="h-10 flex-1 min-w-[220px] rounded-lg" />
           <Skeleton className="h-10 w-44 rounded-lg shrink-0" />
-          <Skeleton className="h-10 w-44 rounded-lg shrink-0" />
         </div>
-        <Skeleton className="h-10 w-28 rounded-lg shrink-0" />
+        <div className="flex items-center gap-2 shrink-0">
+          <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
+          <Skeleton className="h-10 w-28 rounded-lg shrink-0" />
+        </div>
       </div>
 
       {/* Table Container */}
@@ -126,9 +128,8 @@ export function AdminTransactionTableSkeletonRows({ rows = 5 }) {
           </TableCell>
 
           {/* Actions */}
-          <TableCell className="w-24 py-3 text-right whitespace-nowrap align-middle">
+          <TableCell className="w-24 py-3 text-right whitespace-nowrap align-middle pr-4">
             <div className="flex items-center justify-end gap-1">
-              <Skeleton className="h-7 w-7 rounded" />
               <Skeleton className="h-7 w-7 rounded" />
             </div>
           </TableCell>

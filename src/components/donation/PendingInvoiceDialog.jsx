@@ -1,7 +1,7 @@
 "use client";
 
 import { Clock, AlertTriangle, ArrowRight, PlusCircle, Loader2 } from "lucide-react";
-import { formatRupiah } from "@/lib/formatters";
+import { formatRupiah, formatPaymentChannel } from "@/lib/formatters";
 import {
   Dialog,
   DialogContent,
@@ -78,8 +78,8 @@ export function PendingInvoiceDialog({
             </div>
             <div className="flex items-center justify-between text-slate-600">
               <span>Saluran pembayaran</span>
-              <span className="font-medium text-slate-900 uppercase">
-                {existingInvoice.paymentChannel?.replace("_", " ")}
+              <span className="font-medium text-slate-900">
+                {formatPaymentChannel(existingInvoice.paymentChannel)}
               </span>
             </div>
             <div className="flex items-center justify-between pt-1 border-t border-amber-200/80 text-amber-900 font-medium">

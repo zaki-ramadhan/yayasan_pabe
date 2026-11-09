@@ -24,7 +24,7 @@ import { sendDonationReceiptEmail } from "@/services/emailService";
 import { enqueueNotification } from "@/services/notificationQueueService";
 import { NOTIFICATION_TYPE } from "@/lib/notificationConstants";
 
-export function buildAdminDonationEventPayload(dbDonation) {
+export function buildAdminDonationEventPayload(dbDonation, extra = {}) {
   if (!dbDonation) return null;
   return {
     id: dbDonation.id,
@@ -39,10 +39,15 @@ export function buildAdminDonationEventPayload(dbDonation) {
     totalAmount: Number(dbDonation.totalAmount),
     paymentChannel: dbDonation.paymentChannel,
     status: dbDonation.status,
+    campaignId: dbDonation.campaignId || dbDonation.campaign?.id || null,
     campaignTitle: dbDonation.campaign?.title || "Donasi Umum",
     campaignSlug: dbDonation.campaign?.slug || "",
+    prayer: dbDonation.prayer || null,
+    isPrayerHidden: Boolean(dbDonation.isPrayerHidden),
+    isPrayerPinned: Boolean(dbDonation.isPrayerPinned),
     createdAt: dbDonation.createdAt ? new Date(dbDonation.createdAt).toISOString() : new Date().toISOString(),
     paidAt: dbDonation.paidAt ? new Date(dbDonation.paidAt).toISOString() : null,
+    ...extra,
   };
 }
 
@@ -524,13 +529,28 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
     });
 
     if (donation.campaignId) {
-      await tx.campaign.update({
-        where: { id: donation.campaignId },
-        data: {
-          collectedAmount: { increment: donation.amount },
-          donorCount: { increment: 1 },
-        },
-      });
+      if (typeof tx.donation.aggregate === "function") {
+        const agg = await tx.donation.aggregate({
+          where: { campaignId: donation.campaignId, status: "PAID" },
+          _sum: { amount: true },
+          _count: { id: true },
+        });
+        await tx.campaign.update({
+          where: { id: donation.campaignId },
+          data: {
+            collectedAmount: Number(agg._sum.amount || 0),
+            donorCount: Number(agg._count.id || 0),
+          },
+        });
+      } else {
+        await tx.campaign.update({
+          where: { id: donation.campaignId },
+          data: {
+            collectedAmount: { increment: donation.amount },
+            donorCount: { increment: 1 },
+          },
+        });
+      }
     }
 
     // Rekonsiliasi transaksi terlambat (Late Webhook / Expired Invoices yang akhirnya terbayar)
@@ -560,8 +580,12 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
       totalAmount: Number(updated.totalAmount),
       paymentChannel: updated.paymentChannel,
       status: "PAID",
+      campaignId: donation.campaignId || null,
       campaignTitle: donation.campaign?.title || "Donasi Umum",
       campaignSlug: donation.campaign?.slug || "",
+      prayer: updated.prayer || null,
+      isPrayerHidden: Boolean(updated.isPrayerHidden),
+      isPrayerPinned: Boolean(updated.isPrayerPinned),
       createdAt: updated.createdAt ? new Date(updated.createdAt).toISOString() : new Date().toISOString(),
       paidAt: updated.paidAt ? new Date(updated.paidAt).toISOString() : new Date().toISOString(),
     };

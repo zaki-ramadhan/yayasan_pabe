@@ -5,7 +5,6 @@ import { isCampaignClosed } from "@/lib/formatters";
 import { TimeInput24Hour } from "@/components/ui/TimeInput24Hour";
 import { RoutineProgramPicker } from "./RoutineProgramPicker";
 import { RoutineSchedulePicker } from "./RoutineSchedulePicker";
-import { RoutineTypeSelector } from "./RoutineTypeSelector";
 import { RoutineCustomPeriod } from "./RoutineCustomPeriod";
 import { RoutineReminderTimePicker } from "./RoutineReminderTimePicker";
 import { RoutineAutoDonationConfig } from "./RoutineAutoDonationConfig";
@@ -62,8 +61,8 @@ export function RoutineProgramItem({
         isFirstIndex={index === 0}
       />
 
-      {/* Model Pelaksanaan Donasi (Pengingat WA vs Auto-Invoice) */}
-      <RoutineTypeSelector
+      {/* Jam Pengingat (Format 24 Jam) */}
+      <RoutineReminderTimePicker
         item={item}
         onChange={onChange}
         isFirstIndex={index === 0}
@@ -72,24 +71,8 @@ export function RoutineProgramItem({
       {/* Batas Waktu / Masa Berlaku Opsional */}
       <RoutineCustomPeriod item={item} onChange={onChange} />
 
-      {/* Jam Pengingat (Format 24 Jam) */}
-      <RoutineReminderTimePicker
-        item={item}
-        onChange={onChange}
-        isFirstIndex={index === 0}
-      />
-
-      {/* Kondisional: Opsi Auto-Donation vs Mode Pengingat Email */}
-      {isAutoDonation ? (
-        <RoutineAutoDonationConfig item={item} onChange={onChange} />
-      ) : (
-        <div className="rounded-lg bg-blue-50/70 border border-blue-200/80 p-4 text-sm text-slate-700 space-y-1 pt-2 mt-2">
-          <p className="font-semibold text-blue-950">Mode pengingat email aktif</p>
-          <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
-            Sistem hanya akan mengirimkan pesan pengingat ke alamat email Anda setiap jadwal tiba. Anda dapat menentukan nominal dan menunaikan donasi melalui tautan aman yang dikirimkan.
-          </p>
-        </div>
-      )}
+      {/* Pengaturan Nominal Donasi Otomatis (Invoice Email) */}
+      <RoutineAutoDonationConfig item={item} onChange={onChange} />
     </div>
   );
 }

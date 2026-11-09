@@ -41,7 +41,7 @@ export function buildRoutineDonationInvoiceEmailHtml({
   const safeName = donorName && donorName !== "Hamba Allah" ? donorName.trim() : "Sahabat Kebaikan";
   const isAutoDonation = routineType === "AUTO_DONATION";
 
-  const buttonText = isAutoDonation ? "Tunaikan Donasi via QRIS" : "Buka Program Kebaikan";
+  const buttonText = isAutoDonation ? "Tunaikan Donasi via QRIS" : "Buka Program Donasi";
   const buttonHtml = buildEmailCtaButton({
     text: buttonText,
     url: actionUrl,
@@ -69,7 +69,7 @@ export function buildRoutineDonationInvoiceEmailHtml({
       <tr>
         <td style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0;">
           <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; display: block; margin-bottom: 4px;">
-            Program Kebaikan
+            Program Donasi
           </span>
           <span style="font-size: 15px; font-weight: 600; color: #0f172a; line-height: 1.4;">
             ${programTitle}

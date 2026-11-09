@@ -21,19 +21,38 @@ import { sanitizeSearchQuery } from "@/lib/security";
 import { downloadCsv } from "@/lib/exportCsv";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 const PAGE_SIZE = 10;
 
 export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
   const [items, setItems] = useState(initialRoutineDonations);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [statusFilter, setStatusFilter] = useState("ACTIVE");
   const [frequencyFilter, setFrequencyFilter] = useState("ALL");
   const [selectedItem, setSelectedItem] = useState(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const debouncedSearch = useDebounce(search.trim(), 300);
+
+  // 1. Live SSE: Menambahkan data pendaftaran komitmen donasi rutin baru secara real-time
+  useAdminLiveEvent("ROUTINE_DONATION_CREATED", (payload) => {
+    if (!payload?.id) return;
+    setItems((prev) => {
+      if (prev.some((it) => it.id === payload.id)) return prev;
+      return [payload, ...prev];
+    });
+    toast.info(`Donasi rutin baru terdaftar dari ${payload.donorName || "Donatur"}`);
+  });
+
+  // 2. Live SSE: Sinkronisasi pembaruan status (ACTIVE / PAUSED / CANCELLED) secara real-time
+  useAdminLiveEvent("ROUTINE_DONATION_STATUS_CHANGED", (payload) => {
+    if (!payload?.id) return;
+    setItems((prev) =>
+      prev.map((it) => (it.id === payload.id ? { ...it, status: payload.status } : it))
+    );
+  });
 
   const filtered = useMemo(() => {
     return items.filter((r) => {
@@ -184,16 +203,13 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                   Nomor WhatsApp
                 </TableHead>
                 <TableHead className="font-medium text-slate-600 text-sm py-2.5 min-w-[280px] max-w-[360px]">
-                  Program kebaikan
+                  Program donasi
                 </TableHead>
                 <TableHead className="w-36 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  Komitmen nominal
+                  Nominal donasi
                 </TableHead>
                 <TableHead className="w-40 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Frekuensi &amp; jadwal
-                </TableHead>
-                <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  Tipe komitmen
                 </TableHead>
                 <TableHead className="w-28 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Status
@@ -216,7 +232,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                 ))
               ) : (
                 <TableEmptyRow
-                  colSpan={8}
+                  colSpan={7}
                   isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL" || frequencyFilter !== "ALL")}
                 />
               )}

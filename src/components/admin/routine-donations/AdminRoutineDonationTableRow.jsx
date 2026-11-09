@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
@@ -48,24 +49,40 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
 
       {/* Program Kebaikan */}
       <TableCell className="text-sm text-slate-800 py-3 align-middle min-w-[280px] max-w-[360px]">
-        <span
-          className="font-medium leading-snug line-clamp-2 overflow-hidden"
-          title={item.programTitle}
-          style={{
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-          }}
-        >
-          {decodeHtmlEntities(item.programTitle)}
-        </span>
+        {item.campaignSlug ? (
+          <Link
+            href={`/campaign/${item.campaignSlug}`}
+            target="_blank"
+            className="font-medium leading-snug line-clamp-2 overflow-hidden text-slate-900 hover:text-primary hover:underline cursor-pointer transition-colors block"
+            aria-label={`Buka program: ${item.programTitle}`}
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {decodeHtmlEntities(item.programTitle)}
+          </Link>
+        ) : (
+          <span
+            className="font-medium leading-snug line-clamp-2 overflow-hidden text-slate-900 block"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {decodeHtmlEntities(item.programTitle)}
+          </span>
+        )}
         <span className="text-xs text-slate-500 font-normal block mt-0.5">
           Didaftarkan {formatDate(item.createdAt)}
         </span>
       </TableCell>
 
-      {/* Komitmen Nominal */}
+      {/* Nominal Donasi */}
       <TableCell className="w-36 text-sm font-medium text-slate-900 py-3 align-middle whitespace-nowrap text-right tabular-nums">
         {formatRupiah(item.amount)}
       </TableCell>
@@ -80,25 +97,6 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
             Pukul {item.reminderTime} WIB
           </span>
         </div>
-      </TableCell>
-
-      {/* Tipe Komitmen */}
-      <TableCell className="w-36 text-sm text-slate-600 py-3 align-middle whitespace-nowrap font-normal">
-        {item.routineType === "AUTO_DONATION" ? (
-          <span
-            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/60 whitespace-nowrap truncate max-w-[120px]"
-            title="Auto debet"
-          >
-            Auto debet
-          </span>
-        ) : (
-          <span
-            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-800 border border-blue-200/60 whitespace-nowrap truncate max-w-[120px]"
-            title="Pengingat"
-          >
-            Pengingat
-          </span>
-        )}
       </TableCell>
 
       {/* Status */}

@@ -54,9 +54,6 @@ export function AdminRoutineDonationSkeleton() {
                 <TableHead className="w-40 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-28 rounded" />
                 </TableHead>
-                <TableHead className="w-36 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  <Skeleton className="h-4 w-20 rounded" />
-                </TableHead>
                 <TableHead className="w-28 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-14 rounded mx-auto" />
                 </TableHead>
@@ -125,11 +122,6 @@ export function AdminRoutineDonationTableSkeletonRows({ rows = 5 }) {
               <Skeleton className="h-4 w-24 rounded" />
               <Skeleton className="h-3 w-28 rounded" />
             </div>
-          </TableCell>
-
-          {/* Tipe Komitmen Badge */}
-          <TableCell className="w-36 py-3 align-middle whitespace-nowrap">
-            <Skeleton className="h-5 w-20 rounded" />
           </TableCell>
 
           {/* Status Badge */}
