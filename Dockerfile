@@ -17,6 +17,8 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 # ---------------------------------------------------------
 FROM base AS deps
 
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+
 COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma/
 COPY prisma.config.js ./
@@ -28,6 +30,8 @@ RUN pnpm install --frozen-lockfile
 # Tahap 3: Builder (Kompilasi Standalone Next.js)
 # ---------------------------------------------------------
 FROM base AS builder
+
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
