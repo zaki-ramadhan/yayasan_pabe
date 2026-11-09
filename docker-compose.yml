@@ -1,4 +1,25 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: yayasan-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pabe_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-PabeJkt2026Secure!}
+      POSTGRES_DB: db_yayasan_gsm
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pabe_user -d db_yayasan_gsm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   web:
     container_name: yayasan-web
     build:
@@ -7,12 +28,16 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
     env_file:
       - .env
     environment:
       - NODE_ENV=production
       - PORT=3000
       - HOSTNAME=0.0.0.0
+      - RUN_DB_PUSH=true
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
       interval: 30s
@@ -24,3 +49,7 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+volumes:
+  postgres_data:
+    driver: local
