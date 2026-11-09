@@ -105,11 +105,11 @@ function NavigationProgressBarInner() {
       ref={containerRef}
       aria-hidden="true"
       style={{ display: "none" }}
-      className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none h-1 bg-transparent"
+      className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none h-[2px] bg-transparent"
     >
       <div
         ref={barRef}
-        className="h-full bg-gradient-to-r from-blue-700 via-blue-600 to-sky-400 shadow-[0_0_12px_rgba(29,78,216,0.75)] transition-all ease-out"
+        className="h-full bg-gradient-to-r from-blue-700 via-blue-600 to-sky-400 shadow-[0_0_8px_rgba(37,99,235,0.6)] transition-all ease-out"
         style={{ width: "0%", opacity: 1 }}
       />
     </div>
