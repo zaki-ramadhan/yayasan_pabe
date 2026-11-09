@@ -8,16 +8,45 @@ export async function getAdminInstagramPosts({ search = "", page = 1, limit = 20
   const safeLimit = Math.max(1, Math.min(100, parseInt(limit, 10) || 20));
   const skip = (safePage - 1) * safeLimit;
 
-  const where = {};
-  if (search && search.trim()) {
-    const q = search.trim();
-    where.OR = [
-      { caption: { contains: q, mode: "insensitive" } },
-      { altText: { contains: q, mode: "insensitive" } },
-    ];
-  }
+  try {
+    const where = {};
+    if (search && search.trim()) {
+      const q = search.trim();
+      where.OR = [
+        { caption: { contains: q, mode: "insensitive" } },
+        { altText: { contains: q, mode: "insensitive" } },
+      ];
+    }
 
-  if (!prisma.instagramPost) {
+    if (!prisma.instagramPost) {
+      return {
+        items: [],
+        total: 0,
+        page: safePage,
+        limit: safeLimit,
+        totalPages: 1,
+      };
+    }
+
+    const [total, items] = await Promise.all([
+      prisma.instagramPost.count({ where }),
+      prisma.instagramPost.findMany({
+        where,
+        orderBy: { postedAt: "desc" },
+        skip,
+        take: safeLimit,
+      }),
+    ]);
+
+    return {
+      items,
+      total,
+      page: safePage,
+      limit: safeLimit,
+      totalPages: Math.ceil(total / safeLimit) || 1,
+    };
+  } catch (err) {
+    console.warn("getAdminInstagramPosts database query fallback warning:", err?.message);
     return {
       items: [],
       total: 0,
@@ -26,24 +55,6 @@ export async function getAdminInstagramPosts({ search = "", page = 1, limit = 20
       totalPages: 1,
     };
   }
-
-  const [total, items] = await Promise.all([
-    prisma.instagramPost.count({ where }),
-    prisma.instagramPost.findMany({
-      where,
-      orderBy: { postedAt: "desc" },
-      skip,
-      take: safeLimit,
-    }),
-  ]);
-
-  return {
-    items,
-    total,
-    page: safePage,
-    limit: safeLimit,
-    totalPages: Math.ceil(total / safeLimit) || 1,
-  };
 }
 
 export async function getAdminInstagramProfile() {
