@@ -24,12 +24,18 @@ export function AdminUserAccessSelect({
   onChange,
   error,
   disabled = false,
+  canAssignSuperAdmin = false,
 }) {
-  const currentRole = STAFF_ACCESS_ROLES.find((r) => r.value === value);
+  const availableRoles = STAFF_ACCESS_ROLES.filter((r) => {
+    if (r.value === "SUPER_ADMIN" && !canAssignSuperAdmin) return false;
+    return true;
+  });
+
+  const currentRole = availableRoles.find((r) => r.value === value) || availableRoles[0];
 
   return (
     <FormField
-      label="Tingkat hak akses"
+      label="Tingkat hak akses dashboard"
       required
       error={error}
       hint={currentRole ? currentRole.description : "Menentukan wewenang pengurus di sistem."}
@@ -39,7 +45,7 @@ export function AdminUserAccessSelect({
           <SelectValue placeholder="Pilih hak akses" />
         </SelectTrigger>
         <SelectContent className="bg-white border border-slate-200 z-50">
-          {STAFF_ACCESS_ROLES.map((roleOpt) => (
+          {availableRoles.map((roleOpt) => (
             <SelectItem
               key={roleOpt.value}
               value={roleOpt.value}

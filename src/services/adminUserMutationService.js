@@ -6,6 +6,9 @@ import { USER_ROLES } from "@/services/authService";
 import { sanitizeEmail, sanitizePhoneInput, sanitizeText } from "@/lib/userParser";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 import { validatePhone } from "@/lib/validator";
+import { deleteFromR2 } from "@/lib/r2Storage";
+import { anonymizeDonorAccount } from "@/services/donorProfileService";
+import { isInfrastructureEmail } from "@/lib/infrastructureConstants";
 
 export const STAFF_ROLES = [
   USER_ROLES.SUPER_ADMIN,
@@ -30,7 +33,7 @@ export async function createAdminUser({
   gender = "MALE",
   password = "",
   hasLoginAccess = false,
-}) {
+}, actorUser = null) {
   const cleanName = sanitizeText(name);
   if (!cleanName) {
     throw new Error("Nama lengkap pengurus wajib diisi.");
@@ -72,6 +75,12 @@ export async function createAdminUser({
       throw new Error(phoneVal.message);
     }
     cleanPhone = phoneVal.sanitized;
+  }
+
+  if (hasLoginAccess && role === USER_ROLES.SUPER_ADMIN) {
+    if (!actorUser?.email || !isInfrastructureEmail(actorUser.email)) {
+      throw new Error("Hanya Developer / Pemilik Sistem yang berwenang memberikan hak akses Super Admin.");
+    }
   }
 
   const effectiveRole = hasLoginAccess
@@ -176,6 +185,13 @@ export async function updateAdminUser(id, payload, actorUser) {
   }
   const cleanTitle = payload.title !== undefined ? sanitizeText(payload.title) : target.title;
   const nextRole = payload.role && STAFF_ROLES.includes(payload.role) ? payload.role : target.role;
+
+  // Proteksi: Hanya Developer / Pemilik Sistem yang berwenang menaikkan akun lain menjadi Super Admin
+  if (nextRole === USER_ROLES.SUPER_ADMIN && target.role !== USER_ROLES.SUPER_ADMIN) {
+    if (!actorUser?.email || !isInfrastructureEmail(actorUser.email)) {
+      throw new Error("Hanya Developer / Pemilik Sistem yang berwenang menaikkan hak akses menjadi Super Admin.");
+    }
+  }
 
   let cleanGender = target.gender || "MALE";
   if (payload.gender !== undefined) {
@@ -357,7 +373,52 @@ export async function deleteAdminUser(id, actorUser) {
     }
   }
 
-  return prisma.user.delete({
-    where: { id },
+  // Jika target yang dihapus adalah akun donatur, jalankan anonimisasi PDP & pembatalan komitmen donasi rutin
+  if (target.role === USER_ROLES.DONOR) {
+    return anonymizeDonorAccount({ userId: target.id, userEmail: target.email });
+  }
+
+  // Jika target adalah pengurus/staf, batalkan donasi rutin aktif miliknya (jika ada) dan hapus avatar R2
+  if (target.customAvatar && target.customAvatar.startsWith("/api/media/")) {
+    try {
+      await deleteFromR2(target.customAvatar);
+    } catch (r2Err) {
+      console.warn("Gagal menghapus avatar custom staf dari R2 saat hapus akun:", r2Err?.message);
+    }
+  }
+
+  return prisma.$transaction(async (tx) => {
+    // Batalkan jadwal komitmen donasi rutin yang mungkin pernah dibuat pengurus dengan email/nomor ponselnya
+    if (target.email || target.phone) {
+      await tx.routineDonation.updateMany({
+        where: {
+          OR: [
+            ...(target.email ? [{ donorEmail: target.email }] : []),
+            ...(target.phone ? [{ donorPhone: target.phone }] : []),
+          ],
+          status: { in: ["ACTIVE", "PAUSED"] },
+        },
+        data: {
+          status: "CANCELLED",
+        },
+      });
+    }
+
+    // Catat audit trail aksi penghapusan pengurus oleh Super Admin
+    await tx.activityLog.create({
+      data: {
+        userId: actorUser?.id || null,
+        userName: actorUser?.name || "Super Admin",
+        userRole: actorUser?.role || "SUPER_ADMIN",
+        action: "DELETE_USER",
+        targetType: "USER",
+        targetId: target.id,
+        description: `Akun pengurus "${target.name}" (${target.role}) berhasil dihapus oleh ${actorUser?.name || "Super Admin"}.`,
+      },
+    });
+
+    return tx.user.delete({
+      where: { id },
+    });
   });
 }

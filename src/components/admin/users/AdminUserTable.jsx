@@ -183,6 +183,9 @@ export function AdminUserTable({
 				userToEdit={
 					editingUser
 				}
+				currentUser={
+					currentUser
+				}
 				isSubmitting={
 					isSubmitting
 				}

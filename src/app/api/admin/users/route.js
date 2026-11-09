@@ -30,7 +30,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const { errorResponse } = await requireAuth(request, [
+  const { user: authUser, errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
   ]);
   if (errorResponse) return errorResponse;
@@ -46,7 +46,7 @@ export async function POST(request) {
       gender: body.gender,
       password: body.password,
       hasLoginAccess: Boolean(body.hasLoginAccess),
-    });
+    }, authUser);
 
     return NextResponse.json(
       {

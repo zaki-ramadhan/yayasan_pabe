@@ -298,11 +298,14 @@ export async function getAuthenticatedUser(request) {
     }
 
     // Check demo users fallback
+    const lookupTarget = lookupId || sessionId;
     const demoMatch = DEMO_USERS.find(
       (u) =>
-        u.id === sessionId ||
-        (u.email && u.email.toLowerCase() === sessionId.toLowerCase()) ||
-        (u.username && u.username.toLowerCase() === sessionId.toLowerCase())
+        u.id === lookupTarget ||
+        (u.email &&
+          (u.email.toLowerCase() === lookupTarget.toLowerCase() ||
+            (verifiedEmail && u.email.toLowerCase() === verifiedEmail.toLowerCase()))) ||
+        (u.username && u.username.toLowerCase() === lookupTarget.toLowerCase())
     );
 
     if (demoMatch) {

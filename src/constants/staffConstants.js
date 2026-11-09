@@ -21,6 +21,38 @@ export const EXCLUDED_LEADERSHIP_EMAILS = [
 ];
 
 /**
+ * Kata kunci jabatan teknis non-struktural yang otomatis dikecualikan
+ * dari tampilan publik struktur organisasi (/tentang-kami).
+ */
+export const NON_STRUCTURAL_TECH_KEYWORDS = [
+  "admin web",
+  "pengelola web",
+  "webmaster",
+  "it support",
+  "staf it",
+  "staff it",
+  "developer",
+  "programmer",
+  "teknisi sistem",
+  "super admin",
+  "superadmin",
+  "super_admin",
+];
+
+/**
+ * Mengecek apakah suatu jabatan tergolong teknis non-struktural
+ * sehingga tidak boleh ditampilkan di jajaran pengurus publik.
+ *
+ * @param {string|null} title
+ * @returns {boolean}
+ */
+export function isNonStructuralTechTitle(title) {
+  if (!title || typeof title !== "string") return true;
+  const clean = title.trim().toLowerCase();
+  return NON_STRUCTURAL_TECH_KEYWORDS.some((kw) => clean === kw || clean.startsWith(`${kw} `) || clean.endsWith(` ${kw}`));
+}
+
+/**
  * Mengambil daftar email yang dikecualikan dari struktur organisasi publik.
  * Menggabungkan daftar preset bawaan dan variabel lingkungan EXCLUDED_LEADERSHIP_EMAILS bila ada.
  *

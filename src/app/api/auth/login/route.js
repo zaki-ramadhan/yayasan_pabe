@@ -57,6 +57,17 @@ export async function POST(request) {
       console.warn("DB login lookup fallback:", dbErr.message);
     }
 
+    // 1.1 Gatekeeper Pengurus Tanpa Akses Login (Internal Non-Login Staff)
+    if (user?.email?.endsWith("@internal.yayasanpayungberkah.org")) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Akun pengurus ini tidak memiliki hak akses login ke sistem.",
+        },
+        { status: 403 }
+      );
+    }
+
     // 2. If user exists in DB, verify password hash
     if (user) {
       if (!user.passwordHash) {

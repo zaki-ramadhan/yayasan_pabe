@@ -17,6 +17,7 @@ import {
 } from "@/lib/sanitizer";
 import { AdminUserGenderSelect } from "./AdminUserGenderSelect";
 import { AdminUserTitleCombobox } from "./AdminUserTitleCombobox";
+import { isInfrastructureEmail } from "@/lib/infrastructureConstants";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 /**
@@ -30,12 +31,14 @@ export function AdminUserModal({
   onSubmit,
   user = null,
   userToEdit = null,
+  currentUser = null,
   isLoading = false,
   isSubmitting = false,
 }) {
   const activeUser = user || userToEdit;
   const isEdit = !!activeUser;
   const isPending = isLoading || isSubmitting;
+  const canAssignSuperAdmin = isInfrastructureEmail(currentUser?.email);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -362,15 +365,17 @@ export function AdminUserModal({
 
       {/* Bagian 2: Pengaturan Hak Akses Login Dashboard */}
       <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-3">
+        {/* Checkbox 1: Akses Admin Operasional */}
         <div className="flex items-start gap-3">
           <Checkbox
             id="hasLoginAccess"
-            checked={formData.hasLoginAccess}
+            checked={formData.hasLoginAccess && formData.role !== USER_ROLES.SUPER_ADMIN}
             onCheckedChange={(checked) => {
               const isChecked = Boolean(checked);
               setFormData((prev) => ({
                 ...prev,
                 hasLoginAccess: isChecked,
+                role: isChecked ? USER_ROLES.ADMIN : USER_ROLES.ADMIN,
                 password: isChecked
                   ? prev.password || (!isEdit ? "Pabe2026!" : "")
                   : "",
@@ -390,13 +395,56 @@ export function AdminUserModal({
               htmlFor="hasLoginAccess"
               className="text-sm font-medium text-slate-900 cursor-pointer select-none"
             >
-              Beri hak akses login ke dashboard admin
+              Beri hak akses admin
             </label>
             <p className="text-xs text-slate-500 font-normal mt-0.5">
-              Aktifkan hanya jika pengurus ini bertugas mengoperasikan website atau mengelola data yayasan.
+              Mengelola program donasi, rekam penyaluran, artikel, dan operasional harian.
             </p>
           </div>
         </div>
+
+        {/* Checkbox 2: Akses Super Admin (Hanya tampil bagi Developer) */}
+        {canAssignSuperAdmin && (
+          <div className="flex items-start gap-3 pt-2.5 border-t border-slate-200/80">
+            <Checkbox
+              id="isSuperAdminAccess"
+              checked={formData.hasLoginAccess && formData.role === USER_ROLES.SUPER_ADMIN}
+              onCheckedChange={(checked) => {
+                const isChecked = Boolean(checked);
+                setFormData((prev) => ({
+                  ...prev,
+                  hasLoginAccess: isChecked,
+                  role: isChecked ? USER_ROLES.SUPER_ADMIN : USER_ROLES.ADMIN,
+                  password: isChecked
+                    ? prev.password || (!isEdit ? "Pabe2026!" : "")
+                    : "",
+                }));
+                if (!isChecked) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    email: undefined,
+                    password: undefined,
+                  }));
+                }
+              }}
+              className="mt-0.5 cursor-pointer data-[state=checked]:bg-purple-700 data-[state=checked]:border-purple-700"
+            />
+            <div className="space-y-0.5 leading-none">
+              <label
+                htmlFor="isSuperAdminAccess"
+                className="text-sm font-medium text-slate-900 cursor-pointer select-none flex items-center gap-1.5"
+              >
+                <span>Beri hak akses Super admin</span>
+                <span className="text-[10px] font-medium text-purple-700 bg-purple-50 px-1.5 py-0.2 rounded border border-purple-200">
+                  Otoritas penuh
+                </span>
+              </label>
+              <p className="text-xs text-slate-500 font-normal mt-0.5">
+                Memiliki kendali penuh atas sistem, termasuk menambah, mengatur akses, dan menghapus pengurus lain.
+              </p>
+            </div>
+          </div>
+        )}
 
         {formData.hasLoginAccess && (
           <div className="pt-3 border-t border-slate-200 space-y-3.5 animate-in fade-in duration-150">

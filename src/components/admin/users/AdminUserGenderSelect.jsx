@@ -30,7 +30,6 @@ export function AdminUserGenderSelect({
       label="Jenis kelamin"
       required
       error={error}
-      hint="Digunakan untuk menentukan avatar default pada profil & struktur organisasi."
     >
       <Select value={value} onValueChange={onChange} disabled={disabled}>
         <SelectTrigger className="w-full h-10 text-sm font-normal bg-white border border-slate-300 rounded-lg">

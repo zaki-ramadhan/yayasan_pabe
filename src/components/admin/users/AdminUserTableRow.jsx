@@ -4,6 +4,7 @@ import Image from "next/image";
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { AdminUserActionMenu } from "./AdminUserActionMenu";
 import { formatPhoneNumber } from "@/lib/userParser";
+import { maskPhone } from "@/lib/security";
 import { getInitials, formatDate } from "@/lib/formatters";
 import { resolveStaffAvatar } from "@/constants/staffConstants";
 import { USER_ROLES } from "@/services/authService";
@@ -18,6 +19,9 @@ export function AdminUserTableRow({
 }) {
   const isSelf = currentUser?.id === user.id;
   const avatarUrl = resolveStaffAvatar(user.avatar, user.gender);
+
+  // Privasi Kontak Pengurus: Nomor telepon selalu disensor di tabel umum untuk mencegah intipan layar
+  const displayPhone = user.phone ? maskPhone(user.phone) : "-";
 
   return (
     <TableRow key={user.id} className="hover:bg-slate-50/70 transition-colors">
@@ -41,10 +45,7 @@ export function AdminUserTableRow({
           </div>
           <div className="min-w-0 flex-1 space-y-0.5">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span
-                className="text-sm font-medium text-slate-900 leading-tight line-clamp-2 break-words"
-                title={user.name}
-              >
+              <span className="text-sm font-medium text-slate-900 leading-tight line-clamp-2 break-words">
                 {user.name}
               </span>
               {isSelf && (
@@ -63,10 +64,7 @@ export function AdminUserTableRow({
                 Tanpa akses login
               </span>
             ) : (
-              <span
-                className="text-xs text-slate-500 block line-clamp-2 break-all font-normal"
-                title={user.email}
-              >
+              <span className="text-xs text-slate-500 block line-clamp-2 break-all font-normal">
                 {user.email}
               </span>
             )}
@@ -77,17 +75,14 @@ export function AdminUserTableRow({
       {/* 2. Kontak (Centered) */}
       <TableCell className="py-3 px-4 w-36 max-w-[150px] text-center align-middle">
         <span className="text-sm font-normal text-slate-700 tabular-nums line-clamp-2 break-all block">
-          {formatPhoneNumber(user.phone) || "-"}
+          {displayPhone}
         </span>
       </TableCell>
 
       {/* 3. Jabatan & Akses */}
       <TableCell className="py-3 px-4 w-56 max-w-xs align-middle">
         <div className="space-y-1">
-          <span
-            className="text-sm font-medium text-slate-900 leading-snug line-clamp-2 break-words block"
-            title={user.title || "-"}
-          >
+          <span className="text-sm font-medium text-slate-900 leading-snug line-clamp-2 break-words block">
             {user.title || "-"}
           </span>
           {user.role === USER_ROLES.SUPER_ADMIN ? (
