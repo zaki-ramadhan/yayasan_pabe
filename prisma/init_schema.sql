@@ -629,8 +629,8 @@ INSERT INTO "Category" ("id", "name", "slug") VALUES
 ON CONFLICT ("id") DO NOTHING;
 
 -- Seed Initial Instagram Profile
-INSERT INTO "InstagramProfile" ("id", "username", "displayName", "bio", "followersCount", "followingCount", "postsCount") VALUES
-  ('ig_profile', 'yayasanpayungberkah', 'Yayasan Payung Berkah', 'Menghubungkan Hati, Memayungi Negeri 🌿 Lembaga Kesejahteraan Sosial (LKS) Berizin Resmi Kemensos RI & Dinsos DKI Jakarta.', 1250, 48, 12)
+INSERT INTO "InstagramProfile" ("id", "username", "displayName", "bio", "followersCount", "followingCount", "profileUrl", "updatedAt") VALUES
+  ('ig_profile', 'yayasanpayungberkah', 'Yayasan Payung Berkah', 'Menghubungkan Hati, Memayungi Negeri 🌿 Lembaga Kesejahteraan Sosial (LKS) Berizin Resmi Kemensos RI & Dinsos DKI Jakarta.', '186', 385, 'https://www.instagram.com/yayasanpayungberkah/', NOW())
 ON CONFLICT ("id") DO NOTHING;
 
 
