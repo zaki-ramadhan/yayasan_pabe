@@ -20,7 +20,9 @@ export function DonorRoutineDonationsCard({
   routineDonations: initialItems = [],
   isLoading = false,
 }) {
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState(
+    initialItems.filter((it) => it.status !== "CANCELLED")
+  );
   const [updatingId, setUpdatingId] = useState(null);
   const [cancelCommitmentItem, setCancelCommitmentItem] = useState(null);
 
@@ -34,9 +36,13 @@ export function DonorRoutineDonationsCard({
       });
       const data = await res.json();
       if (data.success) {
-        setItems((prev) =>
-          prev.map((it) => (it.id === id ? { ...it, status: newStatus } : it))
-        );
+        if (newStatus === "CANCELLED") {
+          setItems((prev) => prev.filter((it) => it.id !== id));
+        } else {
+          setItems((prev) =>
+            prev.map((it) => (it.id === id ? { ...it, status: newStatus } : it))
+          );
+        }
         toast.success(data.message);
       } else {
         toast.error(data.message || "Gagal mengubah status donasi rutin.");
@@ -89,18 +95,13 @@ export function DonorRoutineDonationsCard({
                   </div>
                 </div>
 
-                {/* 2. Body: Judul Program Lebar Penuh (Line Clamp 2) & Tipe Penagihan */}
+                {/* 2. Body: Judul Program Lebar Penuh (Line Clamp 2) */}
                 <div className="w-full space-y-1">
-                  <p
-                    className="text-sm font-semibold text-slate-900 leading-snug line-clamp-2"
-                    title={item.programTitle}
-                  >
+                  <p className="text-sm font-semibold text-slate-900 leading-snug line-clamp-2">
                     {item.programTitle}
                   </p>
                   <p className="text-xs text-slate-500">
-                    {item.routineType === "AUTO_DONATION"
-                      ? "Penagihan via invoice email"
-                      : "Pengingat jadwal via email"}
+                    Pengingat jadwal &amp; tagihan via email
                   </p>
                 </div>
 

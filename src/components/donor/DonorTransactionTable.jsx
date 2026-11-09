@@ -73,13 +73,13 @@ export function DonorTransactionTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-14 text-center">No.</TableHead>
-            <TableHead>Atas Nama</TableHead>
-            <TableHead className="text-right">Nominal Donasi</TableHead>
-            <TableHead>Program Kebaikan</TableHead>
-            <TableHead className="text-center">Metode Bayar</TableHead>
+            <TableHead>No.</TableHead>
+            <TableHead>Atas nama</TableHead>
+            <TableHead className="text-right">Nominal donasi</TableHead>
+            <TableHead>Program donasi</TableHead>
+            <TableHead className="text-center">Metode bayar</TableHead>
             <TableHead className="text-center w-28">Status</TableHead>
-            <TableHead className="text-center">Tanggal Transaksi</TableHead>
+            <TableHead className="text-center">Tanggal transaksi</TableHead>
             <TableHead className="text-center w-32">Aksi</TableHead>
           </TableRow>
         </TableHeader>
@@ -137,13 +137,13 @@ export function DonorTransactionTableSkeleton() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-14 text-center">No.</TableHead>
-            <TableHead>Atas Nama</TableHead>
-            <TableHead className="text-right">Nominal Donasi</TableHead>
-            <TableHead>Program Kebaikan</TableHead>
-            <TableHead className="text-center">Metode Bayar</TableHead>
+            <TableHead>No.</TableHead>
+            <TableHead>Atas nama</TableHead>
+            <TableHead className="text-right">Nominal donasi</TableHead>
+            <TableHead>Program donasi</TableHead>
+            <TableHead className="text-center">Metode bayar</TableHead>
             <TableHead className="text-center w-28">Status</TableHead>
-            <TableHead className="text-center">Tanggal Transaksi</TableHead>
+            <TableHead className="text-center">Tanggal transaksi</TableHead>
             <TableHead className="text-center w-32">Aksi</TableHead>
           </TableRow>
         </TableHeader>

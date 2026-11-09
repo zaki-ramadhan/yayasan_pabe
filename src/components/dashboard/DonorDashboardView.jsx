@@ -7,7 +7,7 @@ import { Plus, Download, CalendarClock, CheckCircle, Clock, RefreshCw } from "lu
 import { toast } from "@/hooks/useToast";
 import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/ui/Badge";
-import { formatRupiah, formatDate } from "@/lib/formatters";
+import { formatRupiah, formatDate, formatPaymentChannel } from "@/lib/formatters";
 import { formatRoutineSchedule } from "@/data/routineDonation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { DonorRoutineManageModal } from "@/components/donor/DonorRoutineManageModal";
@@ -78,7 +78,7 @@ export function DonorDashboardView({ currentUser: propUser }) {
               date: tx.paidAt || tx.createdAt,
               program: tx.campaign?.title || tx.donationType || "Donasi Umum",
               amount: tx.amount,
-              channel: (tx.paymentChannel || "QRIS").toUpperCase(),
+              channel: formatPaymentChannel(tx.paymentChannel || "QRIS"),
               status: tx.status,
             }))
           );
@@ -212,7 +212,7 @@ export function DonorDashboardView({ currentUser: propUser }) {
                   onSort={handleSort}
                 />
                 <TableSortHeader
-                  label="Program / Akad"
+                  label="Program donasi"
                   sortKey="program"
                   currentSortBy={sortBy}
                   currentSortOrder={sortOrder}

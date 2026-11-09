@@ -166,6 +166,7 @@ export async function getDonorDashboardOverview({ userEmail, userName, userPhone
             userEmail
               ? { donorEmail: { equals: userEmail.trim(), mode: "insensitive" } }
               : { donorName: { equals: userName.trim(), mode: "insensitive" } },
+            { status: { in: ["ACTIVE", "PAUSED"] } },
           ],
         },
         orderBy: { createdAt: "desc" },

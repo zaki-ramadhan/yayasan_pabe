@@ -47,10 +47,7 @@ export function DonorTransactionTableRow({ item }) {
       <TableCell className="text-center whitespace-nowrap align-middle">
         <StatusBadge status={item.status || "PAID"} />
       </TableCell>
-      <TableCell
-        className="whitespace-nowrap align-middle text-center"
-        title={formatDate(item.date, { withTime: true, withSeconds: true })}
-      >
+      <TableCell className="whitespace-nowrap align-middle text-center">
         <div className="flex flex-col items-center leading-tight">
           <span className="font-medium text-slate-900 text-xs sm:text-sm">
             {formatDate(item.date)}
@@ -69,7 +66,7 @@ export function DonorTransactionTableRow({ item }) {
                 : "/program"
             }
             className="text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
-            title="Donasi lagi untuk program ini"
+            aria-label="Donasi lagi untuk program ini"
           >
             Donasi lagi
           </Link>
@@ -85,7 +82,7 @@ export function DonorTransactionTableRow({ item }) {
             href={`/invoice/${item.invoiceId}`}
             target="_blank"
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
-            title="Cek kuitansi pembayaran resmi"
+            aria-label="Cek kuitansi pembayaran resmi"
           >
             <FileText className="w-3.5 h-3.5 shrink-0" />
             <span>Cek kuitansi</span>

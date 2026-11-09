@@ -288,10 +288,39 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
     }
   }
 
+  // Bersihkan berkas CV lamaran kerja jika donatur pernah melamar lowongan kerja
+  if (user.email) {
+    try {
+      const applications = await prisma.jobApplication.findMany({
+        where: { email: user.email },
+        select: { resumeUrl: true },
+      });
+      for (const app of applications) {
+        if (app.resumeUrl && app.resumeUrl.startsWith("/api/media/")) {
+          await deleteFromR2(app.resumeUrl).catch(() => {});
+        }
+      }
+    } catch (appErr) {
+      console.warn("Gagal membersihkan resume pelamar dari R2:", appErr?.message);
+    }
+  }
+
   const anonymizedEmail = `deleted_${user.id}_${Date.now()}@anonymized.pabe.id`;
   const anonymizedUsername = `anon_${user.id.slice(-8)}_${Date.now()}`;
 
   await prisma.$transaction(async (tx) => {
+    // Ambil daftar id RoutineDonation milik donatur untuk membatalkan antrean notifikasi terkait
+    const userRoutines = await tx.routineDonation.findMany({
+      where: {
+        OR: [
+          { donorEmail: user.email },
+          ...(user.phone ? [{ donorPhone: user.phone }] : []),
+        ],
+      },
+      select: { id: true },
+    });
+    const routineIds = userRoutines.map((r) => r.id);
+
     // 1. Batalkan seluruh jadwal komitmen donasi rutin yang aktif
     await tx.routineDonation.updateMany({
       where: {
@@ -306,7 +335,30 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
       },
     });
 
-    // 2. Samarkan data donatur pada histori donasi finansial (integritas audit kas yayasan tetap utuh)
+    // 2. Batalkan seluruh antrean notifikasi (NotificationQueue) yang belum terkirim
+    if (routineIds.length > 0 || user.phone) {
+      await tx.notificationQueue.deleteMany({
+        where: {
+          OR: [
+            ...(routineIds.length > 0 ? [{ routineDonationId: { in: routineIds } }] : []),
+            ...(user.phone ? [{ recipientPhone: user.phone }] : []),
+          ],
+          status: "PENDING",
+        },
+      });
+    }
+
+    // 3. Hapus token keamanan yang masih aktif (PasswordResetToken & AccountActivationToken)
+    if (user.email) {
+      await tx.passwordResetToken.deleteMany({
+        where: { email: user.email },
+      });
+      await tx.accountActivationToken.deleteMany({
+        where: { email: user.email },
+      });
+    }
+
+    // 4. Samarkan data donatur pada histori donasi finansial & sembunyikan doa dari publik
     await tx.donation.updateMany({
       where: {
         donorEmail: user.email,
@@ -317,10 +369,50 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
         donorEmail: anonymizedEmail,
         donorPhone: null,
         donorAvatar: null,
+        isPrayerHidden: true, // Praktik privasi: sembunyikan doa dari feed publik
       },
     });
 
-    // 3. Anonimkan data profil pengguna
+    // 5. Samarkan data pendaftaran relawan (Volunteer) jika pernah mendaftar
+    if (user.email || user.phone) {
+      await tx.volunteer.updateMany({
+        where: {
+          OR: [
+            ...(user.email ? [{ email: user.email }] : []),
+            ...(user.phone ? [{ phone: user.phone }] : []),
+          ],
+        },
+        data: {
+          fullName: "Relawan Anonim (PDP)",
+          email: anonymizedEmail,
+          phone: "000000000000",
+          motivation: "Data motivasi telah dihapus sesuai ketentuan UU PDP No. 27/2022.",
+        },
+      });
+    }
+
+    // 6. Samarkan data lamaran karier (JobApplication)
+    if (user.email || user.phone) {
+      await tx.jobApplication.updateMany({
+        where: {
+          OR: [
+            ...(user.email ? [{ email: user.email }] : []),
+            ...(user.phone ? [{ phone: user.phone }] : []),
+          ],
+        },
+        data: {
+          fullName: "Pelamar Anonim (PDP)",
+          email: anonymizedEmail,
+          phone: "000000000000",
+          coverLetter: "Data surat lamaran telah dihapus sesuai ketentuan UU PDP No. 27/2022.",
+          resumeUrl: null,
+          linkedinUrl: null,
+          portfolioUrl: null,
+        },
+      });
+    }
+
+    // 7. Anonimkan data profil pengguna
     await tx.user.update({
       where: { id: user.id },
       data: {
@@ -338,13 +430,13 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
       },
     });
 
-    // 4. Catat ke Activity Log sistem
+    // 8. Catat ke Activity Log sistem
     await tx.activityLog.create({
       data: {
         action: "PDP_ACCOUNT_ANONYMIZED",
         targetType: "USER",
         targetId: user.id,
-        description: `Akun donatur ${user.id} telah dianonimkan sesuai UU Pelindungan Data Pribadi (UU PDP No. 27/2022).`,
+        description: `Akun donatur ${user.id} telah dianonimkan secara komprehensif sesuai UU Pelindungan Data Pribadi (UU PDP No. 27/2022).`,
         userName: "SYSTEM_PDP",
         userRole: "SYSTEM",
       },

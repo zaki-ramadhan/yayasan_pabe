@@ -10,6 +10,7 @@ vi.mock("@/lib/prisma", () => {
     update: vi.fn(),
   };
   const mockRoutineDonation = {
+    findMany: vi.fn().mockResolvedValue([]),
     updateMany: vi.fn(),
   };
   const mockDonation = {
@@ -18,6 +19,22 @@ vi.mock("@/lib/prisma", () => {
   const mockActivityLog = {
     create: vi.fn(),
   };
+  const mockJobApplication = {
+    findMany: vi.fn().mockResolvedValue([]),
+    updateMany: vi.fn(),
+  };
+  const mockVolunteer = {
+    updateMany: vi.fn(),
+  };
+  const mockNotificationQueue = {
+    deleteMany: vi.fn(),
+  };
+  const mockPasswordResetToken = {
+    deleteMany: vi.fn(),
+  };
+  const mockAccountActivationToken = {
+    deleteMany: vi.fn(),
+  };
 
   return {
     default: {
@@ -25,12 +42,22 @@ vi.mock("@/lib/prisma", () => {
       routineDonation: mockRoutineDonation,
       donation: mockDonation,
       activityLog: mockActivityLog,
+      jobApplication: mockJobApplication,
+      volunteer: mockVolunteer,
+      notificationQueue: mockNotificationQueue,
+      passwordResetToken: mockPasswordResetToken,
+      accountActivationToken: mockAccountActivationToken,
       $transaction: vi.fn(async (cb) => {
         return cb({
           user: mockUser,
           routineDonation: mockRoutineDonation,
           donation: mockDonation,
           activityLog: mockActivityLog,
+          jobApplication: mockJobApplication,
+          volunteer: mockVolunteer,
+          notificationQueue: mockNotificationQueue,
+          passwordResetToken: mockPasswordResetToken,
+          accountActivationToken: mockAccountActivationToken,
         });
       }),
     },
@@ -80,7 +107,7 @@ describe("UU Pelindungan Data Pribadi (UU PDP No. 27/2022) - Donor Account Anony
       data: { status: "CANCELLED" },
     });
 
-    // Memverifikasi penyamaran data pada riwayat donasi finansial (SSOT audit ledger)
+    // Memverifikasi penyamaran data pada riwayat donasi finansial & penyembunyian doa publik
     expect(prisma.donation.updateMany).toHaveBeenCalledWith({
       where: { donorEmail: "budi.santoso@example.com" },
       data: expect.objectContaining({
@@ -88,7 +115,16 @@ describe("UU Pelindungan Data Pribadi (UU PDP No. 27/2022) - Donor Account Anony
         donorName: "Hamba Allah",
         donorPhone: null,
         donorAvatar: null,
+        isPrayerHidden: true,
       }),
+    });
+
+    // Memverifikasi pembersihan token reset password & aktivasi
+    expect(prisma.passwordResetToken.deleteMany).toHaveBeenCalledWith({
+      where: { email: "budi.santoso@example.com" },
+    });
+    expect(prisma.accountActivationToken.deleteMany).toHaveBeenCalledWith({
+      where: { email: "budi.santoso@example.com" },
     });
 
     // Memverifikasi penyamaran data pada tabel User
