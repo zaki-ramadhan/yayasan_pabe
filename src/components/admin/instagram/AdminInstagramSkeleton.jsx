@@ -60,12 +60,11 @@ export function AdminInstagramTableSkeletonRows({ rows = 8 }) {
             <Skeleton className="w-12 h-12 rounded-md shrink-0" />
           </TableCell>
 
-          {/* Caption & tautan */}
+          {/* Caption */}
           <TableCell className="min-w-[280px] py-2.5 align-middle">
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <Skeleton className="h-4 w-4/5 max-w-md rounded" />
               <Skeleton className="h-3.5 w-3/5 max-w-xs rounded" />
-              <Skeleton className="h-3 w-24 rounded mt-0.5" />
             </div>
           </TableCell>
 
@@ -120,7 +119,7 @@ export function AdminInstagramSkeleton() {
                     <Skeleton className="w-4 h-4 rounded mx-auto" />
                   </TableHead>
                   <TableHead className="w-16">Foto</TableHead>
-                  <TableHead className="min-w-[280px]">Caption & Tautan</TableHead>
+                  <TableHead className="min-w-[280px]">Caption</TableHead>
                   <TableHead className="w-40 text-center">Tanggal Posting</TableHead>
                   <TableHead className="w-20 text-right">Aksi</TableHead>
                 </TableRow>

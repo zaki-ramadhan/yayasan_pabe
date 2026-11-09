@@ -68,11 +68,10 @@ export function AdminArticleSkeleton() {
                     <Skeleton className="w-12 h-9 rounded" />
                   </TableCell>
 
-                  {/* Title & Slug */}
-                  <TableCell className="space-y-1.5 py-2.5 align-middle min-w-[280px] sm:min-w-[340px] max-w-lg">
-                    <Skeleton className="h-4 w-64 max-w-full rounded" />
-                    <Skeleton className="h-4 w-40 rounded" />
-                    <Skeleton className="h-3 w-32 rounded" />
+                  {/* Title */}
+                  <TableCell className="space-y-1 py-2.5 align-middle min-w-[280px] sm:min-w-[340px] max-w-lg">
+                    <Skeleton className="h-4 w-4/5 max-w-full rounded" />
+                    <Skeleton className="h-4 w-1/2 rounded" />
                   </TableCell>
 
                   {/* Category */}

@@ -239,7 +239,7 @@ export function AdminDistributionTable({
                   />
                 </TableHead>
                 <TableHead className="w-72 font-medium text-slate-600 text-sm py-2.5">
-                  Program donasi asal
+                  Program donasi
                 </TableHead>
                 <TableHead className="font-medium text-slate-600 text-sm py-2.5">
                   Kegiatan penyaluran

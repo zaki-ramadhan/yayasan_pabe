@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ExternalLink, Eye, EyeOff, Heart, Copy, Check, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Heart, Copy, Check, Loader2 } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { UserAvatar } from "@/components/ui/Avatar";
@@ -39,7 +39,7 @@ export function AdminPrayerTableRow({
       key={item.id}
       className={`hover:bg-slate-50/70 transition-colors ${
         isSelected
-          ? "bg-emerald-50/60 hover:bg-emerald-50/80"
+          ? "bg-primary/5 hover:bg-primary/10"
           : item.isPrayerHidden
           ? "bg-slate-50/60 opacity-80"
           : ""
@@ -102,12 +102,26 @@ export function AdminPrayerTableRow({
         </div>
       </TableCell>
 
-      {/* 3. Program Donasi (Lebar lega dengan line-clamp-2) */}
-      <TableCell className="min-w-[280px] max-w-[360px] py-3 align-top">
-        <div className="space-y-1">
+      {/* 3. Program Donasi */}
+      <TableCell className="min-w-[240px] max-w-[340px] py-3 align-top">
+        {item.campaignSlug ? (
+          <Link
+            href={`/campaign/${item.campaignSlug}`}
+            target="_blank"
+            className="font-medium text-sm text-slate-900 hover:text-primary hover:underline leading-snug line-clamp-2 cursor-pointer transition-colors block overflow-hidden"
+            aria-label={`Buka program: ${item.campaignTitle}`}
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {item.campaignTitle}
+          </Link>
+        ) : (
           <span
-            className="font-medium text-sm text-slate-900 leading-snug line-clamp-2 overflow-hidden"
-            title={item.campaignTitle}
+            className="font-medium text-sm text-slate-900 leading-snug line-clamp-2 block overflow-hidden"
             style={{
               display: "-webkit-box",
               WebkitLineClamp: 2,
@@ -117,17 +131,7 @@ export function AdminPrayerTableRow({
           >
             {item.campaignTitle}
           </span>
-          {item.campaignSlug && (
-            <Link
-              href={`/campaign/${item.campaignSlug}`}
-              target="_blank"
-              className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-normal"
-            >
-              <span>Lihat program</span>
-              <ExternalLink className="w-3 h-3" />
-            </Link>
-          )}
-        </div>
+        )}
       </TableCell>
 
       {/* 4. Nominal Donasi */}
@@ -137,10 +141,7 @@ export function AdminPrayerTableRow({
 
       {/* 5. Pesan Doa (line-clamp-2) */}
       <TableCell className="min-w-[240px] max-w-md py-3 align-top space-y-1.5">
-        <p
-          className="text-sm font-normal text-slate-800 leading-relaxed italic line-clamp-2"
-          title={item.prayer}
-        >
+        <p className="text-sm font-normal text-slate-800 leading-relaxed italic line-clamp-2">
           &ldquo;{item.prayer}&rdquo;
         </p>
         {item.aminCount > 0 && (

@@ -60,9 +60,8 @@ export function AdminPrayerToolbar({
               onChange={onCampaignFilterChange}
               placeholder="Semua program"
               searchPlaceholder="Cari program donasi..."
-              emptyMessage="Program tidak ditemukan."
+              emptyMessage="Data tidak ditemukan."
               className="h-10 w-48 sm:w-56 text-sm font-normal bg-white shrink-0"
-              popoverClassName="w-72 max-w-[min(calc(100vw-2rem),24rem)]"
               searchThreshold={5}
             />
           )}

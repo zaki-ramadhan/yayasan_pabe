@@ -26,7 +26,9 @@ export function AdminRecentTransactionsCard({
   maxRows = 7,
   scrollable = false,
 }) {
-  const [transactions, setTransactions] = useState(initialTransactions);
+  const [transactions, setTransactions] = useState(
+    initialTransactions.filter((t) => t.status === "PAID")
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
 
@@ -34,13 +36,18 @@ export function AdminRecentTransactionsCard({
     if (!incomingTx || !incomingTx.invoiceId) return;
 
     setTransactions((prev) => {
+      if (incomingTx.status && incomingTx.status !== "PAID") {
+        return prev.filter(
+          (t) => t.id !== incomingTx.id && t.invoiceId !== incomingTx.invoiceId
+        );
+      }
       const exists = prev.some((t) => t.id === incomingTx.id || t.invoiceId === incomingTx.invoiceId);
       if (exists) {
         return prev.map((t) =>
-          t.invoiceId === incomingTx.invoiceId ? { ...t, ...incomingTx } : t
+          t.invoiceId === incomingTx.invoiceId ? { ...t, ...incomingTx, status: "PAID" } : t
         );
       }
-      return [incomingTx, ...prev].slice(0, maxRows);
+      return [{ ...incomingTx, status: "PAID" }, ...prev].slice(0, maxRows);
     });
   };
 
@@ -125,7 +132,7 @@ export function AdminRecentTransactionsCard({
             <TableRow>
               <TableHead className="w-[170px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Invoice</TableHead>
               <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Donatur</TableHead>
-              <TableHead className="w-full font-medium text-slate-600 text-sm py-2.5 min-w-[280px] sm:min-w-[340px]">Program</TableHead>
+              <TableHead className="w-full font-medium text-slate-600 text-sm py-2.5 min-w-[280px] sm:min-w-[340px]">Program donasi</TableHead>
               <TableHead className="w-px text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Nominal</TableHead>
               <TableHead className="w-px text-center font-medium text-slate-600 text-sm py-1.5 leading-tight whitespace-nowrap">
                 Metode<br />Pembayaran
@@ -164,7 +171,6 @@ export function AdminRecentTransactionsCard({
                   <TableCell className="text-sm text-slate-700 py-3 align-middle min-w-[280px] sm:min-w-[340px]">
                     <span
                       className="line-clamp-2 leading-snug font-normal text-slate-800 overflow-hidden"
-                      title={item.campaignTitle}
                       style={{
                         display: "-webkit-box",
                         WebkitLineClamp: 2,

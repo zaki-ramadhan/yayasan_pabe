@@ -69,45 +69,37 @@ export async function createAdminVacancy(payload) {
   const title = sanitizeInput(payload.title || "").trim();
   const department = sanitizeInput(payload.department || "Umum").trim();
   const location = sanitizeInput(payload.location || "Jakarta Timur / Depok").trim();
-  const type = sanitizeInput(payload.type || "Penuh Waktu (Full-time)").trim();
-  const workplace = sanitizeInput(payload.workplace || "On-site").trim();
+  const type = payload.type || "Kontrak";
+  const workplace = payload.workplace || "On-site";
   const experience = sanitizeInput(payload.experience || "1 - 3 tahun").trim();
-  const deadline = sanitizeInput(payload.deadline || "").trim();
+  const deadline = sanitizeInput(payload.deadline || "30 November 2026").trim();
   const overview = sanitizeInput(payload.overview || "").trim();
+  const applyUrl = payload.applyUrl ? sanitizeInput(payload.applyUrl).trim() : null;
+
   const responsibilities = Array.isArray(payload.responsibilities)
     ? payload.responsibilities.map((r) => sanitizeInput(r).trim()).filter(Boolean)
     : [];
+
   const requirements = Array.isArray(payload.requirements)
     ? payload.requirements.map((r) => sanitizeInput(r).trim()).filter(Boolean)
     : [];
+
   const benefits = Array.isArray(payload.benefits)
     ? payload.benefits.map((b) => sanitizeInput(b).trim()).filter(Boolean)
     : [];
 
-  if (!title || !overview) {
-    throw new Error("Judul posisi dan deskripsi ringkasan wajib diisi.");
-  }
-
-  const jobCode = `JOB-${Date.now().toString().slice(-4)}`;
-  const publishedDate = new Date().toISOString().split("T")[0];
-
-  const requiresResume = payload.requiresResume !== false;
-  const applyUrl = payload.applyUrl
-    ? sanitizeInput(payload.applyUrl).trim()
-    : requiresResume
-    ? null
-    : "WITHOUT_RESUME";
+  const randomCode = `PABE-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
   return prisma.jobVacancy.create({
     data: {
-      jobCode,
+      jobCode: randomCode,
       title,
       department,
       location,
       type,
       workplace,
       experience,
-      publishedDate,
+      publishedDate: new Date().toISOString().split("T")[0],
       deadline,
       overview,
       responsibilities,
@@ -120,44 +112,55 @@ export async function createAdminVacancy(payload) {
 }
 
 /**
- * Memperbarui lowongan pekerjaan atau toggle status aktif.
+ * Memperbarui data lowongan pekerjaan.
  */
 export async function updateAdminVacancy(id, payload) {
-  const updateData = {};
-  if (payload.title !== undefined) updateData.title = sanitizeInput(payload.title).trim();
-  if (payload.department !== undefined) updateData.department = sanitizeInput(payload.department).trim();
-  if (payload.location !== undefined) updateData.location = sanitizeInput(payload.location).trim();
-  if (payload.type !== undefined) updateData.type = sanitizeInput(payload.type).trim();
-  if (payload.workplace !== undefined) updateData.workplace = sanitizeInput(payload.workplace).trim();
-  if (payload.experience !== undefined) updateData.experience = sanitizeInput(payload.experience).trim();
-  if (payload.deadline !== undefined) updateData.deadline = sanitizeInput(payload.deadline).trim();
-  if (payload.isActive !== undefined) updateData.isActive = Boolean(payload.isActive);
+  const data = {};
 
-  if (payload.requiresResume !== undefined) {
-    if (!payload.requiresResume) {
-      updateData.applyUrl = "WITHOUT_RESUME";
-    } else if (payload.applyUrl && payload.applyUrl !== "WITHOUT_RESUME") {
-      updateData.applyUrl = sanitizeInput(payload.applyUrl).trim();
-    } else {
-      updateData.applyUrl = null;
-    }
-  } else if (payload.applyUrl !== undefined) {
-    updateData.applyUrl = payload.applyUrl ? sanitizeInput(payload.applyUrl).trim() : null;
+  if (payload.title !== undefined) data.title = sanitizeInput(payload.title).trim();
+  if (payload.department !== undefined) data.department = sanitizeInput(payload.department).trim();
+  if (payload.location !== undefined) data.location = sanitizeInput(payload.location).trim();
+  if (payload.type !== undefined) data.type = payload.type;
+  if (payload.workplace !== undefined) data.workplace = payload.workplace;
+  if (payload.experience !== undefined) data.experience = sanitizeInput(payload.experience).trim();
+  if (payload.deadline !== undefined) data.deadline = sanitizeInput(payload.deadline).trim();
+  if (payload.overview !== undefined) data.overview = sanitizeInput(payload.overview).trim();
+  if (payload.applyUrl !== undefined) {
+    data.applyUrl = payload.applyUrl ? sanitizeInput(payload.applyUrl).trim() : null;
   }
+  if (payload.isActive !== undefined) data.isActive = Boolean(payload.isActive);
 
   if (Array.isArray(payload.responsibilities)) {
-    updateData.responsibilities = payload.responsibilities.map((r) => sanitizeInput(r).trim()).filter(Boolean);
+    data.responsibilities = payload.responsibilities
+      .map((r) => sanitizeInput(r).trim())
+      .filter(Boolean);
   }
+
   if (Array.isArray(payload.requirements)) {
-    updateData.requirements = payload.requirements.map((r) => sanitizeInput(r).trim()).filter(Boolean);
+    data.requirements = payload.requirements
+      .map((r) => sanitizeInput(r).trim())
+      .filter(Boolean);
   }
+
   if (Array.isArray(payload.benefits)) {
-    updateData.benefits = payload.benefits.map((b) => sanitizeInput(b).trim()).filter(Boolean);
+    data.benefits = payload.benefits
+      .map((b) => sanitizeInput(b).trim())
+      .filter(Boolean);
   }
 
   return prisma.jobVacancy.update({
     where: { id },
-    data: updateData,
+    data,
+  });
+}
+
+/**
+ * Mengubah status aktif/nonaktif lowongan pekerjaan.
+ */
+export async function toggleAdminVacancyStatus(id, isActive) {
+  return prisma.jobVacancy.update({
+    where: { id },
+    data: { isActive: Boolean(isActive) },
   });
 }
 
@@ -165,7 +168,6 @@ export async function updateAdminVacancy(id, payload) {
  * Menghapus lowongan pekerjaan beserta pelamar terkait (cascade) dan membersihkan berkas CV di R2.
  */
 export async function deleteAdminVacancy(id) {
-  // 1. Ambil seluruh URL berkas resume pelamar untuk dibersihkan dari Cloudflare R2
   const applications = await prisma.jobApplication.findMany({
     where: { vacancyId: id, resumeUrl: { not: null } },
     select: { resumeUrl: true },
@@ -198,7 +200,6 @@ export async function deleteAdminVacanciesBatch(ids) {
     throw new Error("Tidak ada ID lowongan yang valid.");
   }
 
-  // Ambil berkas resume pelamar dari seluruh lowongan yang akan dihapus
   const applications = await prisma.jobApplication.findMany({
     where: { vacancyId: { in: validIds }, resumeUrl: { not: null } },
     select: { resumeUrl: true },
@@ -221,32 +222,52 @@ export async function deleteAdminVacanciesBatch(ids) {
 }
 
 /**
- * Mengambil daftar pelamar pekerjaan.
+ * Mengambil daftar pelamar pekerjaan dengan dukungan filter, sorting, dan paginasi.
  */
-export async function getAdminApplications({ vacancyId = "", status = "" } = {}) {
+export async function getAdminApplications({
+  vacancyId = "",
+  status = "",
+  sort = "newest",
+  page = 1,
+  limit = 15,
+} = {}) {
   try {
     const where = {};
     if (vacancyId) where.vacancyId = vacancyId;
     if (status && status !== "ALL") where.status = status;
 
-    const applications = await prisma.jobApplication.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      include: {
-        vacancy: {
-          select: { id: true, title: true, department: true },
-        },
-      },
-    });
+    const parsedPage = Math.max(1, parseInt(page, 10) || 1);
+    const parsedLimit = Math.max(1, Math.min(50, parseInt(limit, 10) || 15));
+    const skip = (parsedPage - 1) * parsedLimit;
 
-    return applications.map((app) => ({
+    // Sorting createdAt desc / asc
+    const orderBy = {
+      createdAt: sort === "oldest" ? "asc" : "desc",
+    };
+
+    const [total, applications] = await Promise.all([
+      prisma.jobApplication.count({ where }),
+      prisma.jobApplication.findMany({
+        where,
+        skip,
+        take: parsedLimit,
+        orderBy,
+        include: {
+          vacancy: {
+            select: { id: true, title: true, department: true },
+          },
+        },
+      }),
+    ]);
+
+    const items = applications.map((app) => ({
       id: app.id,
       vacancyId: app.vacancyId,
       vacancyTitle: app.vacancy?.title || "Posisi Umum",
       department: app.vacancy?.department || "-",
       fullName: app.fullName,
-      email: app.email ? maskEmail(app.email) : "",
-      phone: app.phone,
+      email: app.email || "",
+      phone: app.phone || "",
       linkedinUrl: app.linkedinUrl || "",
       portfolioUrl: app.portfolioUrl || "",
       coverLetter: app.coverLetter || "",
@@ -254,9 +275,23 @@ export async function getAdminApplications({ vacancyId = "", status = "" } = {})
       status: app.status,
       createdAt: app.createdAt.toISOString(),
     }));
+
+    return {
+      items,
+      pagination: {
+        page: parsedPage,
+        limit: parsedLimit,
+        total,
+        totalPages: Math.ceil(total / parsedLimit),
+        hasMore: skip + items.length < total,
+      },
+    };
   } catch (error) {
     console.warn("Prisma getAdminApplications fallback:", error.message);
-    return [];
+    return {
+      items: [],
+      pagination: { page: 1, limit: 15, total: 0, totalPages: 0, hasMore: false },
+    };
   }
 }
 

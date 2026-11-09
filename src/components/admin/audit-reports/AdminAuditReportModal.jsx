@@ -39,7 +39,7 @@ export function AdminAuditReportModal({
 	const [beneficiaryCount, setBeneficiaryCount] =
 		useState("");
 	const [operationalRatio, setOperationalRatio] =
-		useState("12.4%");
+		useState("12.4");
 	const [pdfUrl, setPdfUrl] = useState("");
 	const [summary, setSummary] = useState("");
 	const [errors, setErrors] = useState({});
@@ -91,8 +91,7 @@ export function AdminAuditReportModal({
 				),
 			);
 			setOperationalRatio(
-				report.operationalRatio ||
-					"12.4%",
+				String(report.operationalRatio || "12.4%").replace("%", "").trim()
 			);
 			setPdfUrl(
 				report.pdfUrl ||
@@ -130,7 +129,7 @@ export function AdminAuditReportModal({
 				"",
 			);
 			setOperationalRatio(
-				"12.4%",
+				"12.4",
 			);
 			setPdfUrl(
 				"",
@@ -191,7 +190,9 @@ export function AdminAuditReportModal({
 			beneficiaryCount: parseThousandsToNumber(
 				beneficiaryCount,
 			),
-			operationalRatio: operationalRatio.trim(),
+			operationalRatio: operationalRatio.trim()
+				? `${operationalRatio.trim()}%`
+				: "12.4%",
 			pdfUrl:
 				(pdfUrl && typeof pdfUrl === "string"
 					? pdfUrl.trim()
@@ -222,7 +223,7 @@ export function AdminAuditReportModal({
 				totalFundsIn: String(report.totalFundsIn || ""),
 				totalFundsOut: String(report.totalFundsOut || ""),
 				beneficiaryCount: String(report.beneficiaryCount || ""),
-				operationalRatio: report.operationalRatio || "12.4%",
+				operationalRatio: String(report.operationalRatio || "12.4%").replace("%", "").trim(),
 				pdfUrl: report.pdfUrl || "",
 				summary: report.summary || "",
 			},
@@ -440,15 +441,39 @@ export function AdminAuditReportModal({
 				</FormField>
 
 				<FormField label="Rasio operasional yayasan">
-					<Input
-						value={operationalRatio}
-						minLength={FIELD_LIMITS.AUDIT_OPERATIONAL_RATIO.min}
-						maxLength={FIELD_LIMITS.AUDIT_OPERATIONAL_RATIO.max}
-						onChange={(e) => setOperationalRatio(sanitizeStandardText(e.target.value, FIELD_LIMITS.AUDIT_OPERATIONAL_RATIO.max))}
-						onBlur={() => setOperationalRatio((prev) => prev.trim())}
-						placeholder="Contoh: 12.4%"
-						className="text-sm font-normal"
-					/>
+					<div className="relative w-full flex items-center">
+						<Input
+							type="text"
+							inputMode="decimal"
+							value={operationalRatio}
+							onChange={(e) => {
+								// Hanya izinkan angka dan satu titik desimal
+								let val = e.target.value.replace(/,/g, ".").replace(/[^0-9.]/g, "");
+								const parts = val.split(".");
+								if (parts.length > 2) {
+									val = `${parts[0]}.${parts.slice(1).join("")}`;
+								}
+								// Batasi maksimal 100% dan maksimal 2 desimal
+								const num = parseFloat(val);
+								if (!isNaN(num) && num > 100) return;
+								setOperationalRatio(val);
+							}}
+							onBlur={() => {
+								const trimmed = operationalRatio.trim();
+								if (!trimmed) {
+									setOperationalRatio("12.4");
+								} else {
+									const parsed = parseFloat(trimmed);
+									setOperationalRatio(isNaN(parsed) ? "12.4" : String(parsed));
+								}
+							}}
+							placeholder="12.4"
+							className="text-sm font-normal pr-8 tabular-nums"
+						/>
+						<span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-500 pointer-events-none select-none">
+							%
+						</span>
+					</div>
 				</FormField>
 			</div>
 

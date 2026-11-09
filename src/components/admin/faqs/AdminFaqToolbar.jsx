@@ -36,9 +36,8 @@ export function AdminFaqToolbar({
           onChange={onCategoryChange}
           placeholder="Semua topik"
           searchPlaceholder="Cari topik FAQ..."
-          emptyMessage="Topik tidak ditemukan."
+          emptyMessage="Data tidak ditemukan."
           className="h-10 w-44 text-sm bg-white shrink-0 border-slate-300"
-          popoverClassName="w-64 max-w-[min(calc(100vw-2rem),24rem)]"
         />
       }
       onRefresh={onRefresh}

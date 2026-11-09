@@ -34,6 +34,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 export function AdminProgramTable({
   initialCampaigns = [],
@@ -61,6 +62,47 @@ export function AdminProgramTable({
   const PAGE_SIZE = 10;
 
   const debouncedSearch = useDebounce(search.trim(), 300);
+
+  // Live SSE: Memperbarui nominal terkumpul dan jumlah donatur program secara real-time
+  useAdminLiveEvent("DONATION_PAID", (payload) => {
+    if (!payload?.campaignTitle && !payload?.campaignSlug) return;
+    setCampaigns((prev) =>
+      prev.map((c) => {
+        const isMatch =
+          c.id === payload.campaignId ||
+          c.slug === payload.campaignSlug ||
+          c.title === payload.campaignTitle;
+        if (!isMatch) return c;
+        const newCollected = Number(c.collectedAmount || 0) + Number(payload.amount || 0);
+        const newDonors = Number(c.donorCount || 0) + 1;
+        return {
+          ...c,
+          collectedAmount: newCollected,
+          donorCount: newDonors,
+        };
+      })
+    );
+  });
+
+  useAdminLiveEvent("DONATION_UPDATED", (payload) => {
+    if (!payload?.campaignTitle && !payload?.campaignSlug) return;
+    if (payload.previousStatus === "PAID" && payload.status !== "PAID") {
+      setCampaigns((prev) =>
+        prev.map((c) => {
+          const isMatch =
+            c.id === payload.campaignId ||
+            c.slug === payload.campaignSlug ||
+            c.title === payload.campaignTitle;
+          if (!isMatch) return c;
+          return {
+            ...c,
+            collectedAmount: Math.max(0, Number(c.collectedAmount || 0) - Number(payload.amount || 0)),
+            donorCount: Math.max(0, Number(c.donorCount || 0) - 1),
+          };
+        })
+      );
+    }
+  });
 
   const filterCategoryOptions = useMemo(() => {
     return [
@@ -262,7 +304,7 @@ export function AdminProgramTable({
                     aria-label="Pilih semua program di halaman ini"
                   />
                 </TableHead>
-                <TableHead className="min-w-[240px] font-medium text-slate-600 text-sm py-2.5">Program Donasi</TableHead>
+                <TableHead className="min-w-[240px] font-medium text-slate-600 text-sm py-2.5">Nama program</TableHead>
                 <TableHead className="w-32 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Kategori</TableHead>
                 <TableHead className="w-56 min-w-[220px] text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Capaian &amp; Target</TableHead>
                 <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">Donatur &amp; Waktu</TableHead>

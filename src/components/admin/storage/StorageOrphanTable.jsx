@@ -159,7 +159,7 @@ export function StorageOrphanTable({
 
                     {/* Folder Badge */}
                     <TableCell className="text-center">
-                      <Badge variant="secondary" className="capitalize text-xs font-normal max-w-[120px] truncate" title={item.folder}>
+                      <Badge variant="secondary" className="capitalize text-xs font-normal max-w-[120px] truncate">
                         {item.folder}
                       </Badge>
                     </TableCell>

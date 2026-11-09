@@ -14,7 +14,7 @@ export function AdminFaqTableRow({
   return (
     <TableRow
       className={`hover:bg-slate-50/70 transition-colors ${
-        isSelected ? "bg-emerald-50/60 hover:bg-emerald-50/80" : ""
+        isSelected ? "bg-primary/5 hover:bg-primary/10" : ""
       }`}
     >
       {/* 0. Selection Checkbox */}

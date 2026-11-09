@@ -32,10 +32,13 @@ export function AdminCareerSkeleton() {
                 <TableHead className="w-12 text-center py-2.5 px-3">
                   <Skeleton className="w-4 h-4 rounded mx-auto" />
                 </TableHead>
-                <TableHead className="min-w-[260px] w-64 py-2.5">
+                <TableHead className="min-w-[240px] w-64 py-2.5">
                   <Skeleton className="h-4 w-32 rounded" />
                 </TableHead>
-                <TableHead className="min-w-[200px] w-56 py-2.5">
+                <TableHead className="w-36 py-2.5">
+                  <Skeleton className="h-4 w-24 rounded" />
+                </TableHead>
+                <TableHead className="min-w-[180px] w-48 py-2.5">
                   <Skeleton className="h-4 w-28 rounded" />
                 </TableHead>
                 <TableHead className="min-w-[160px] w-48 py-2.5">
@@ -63,18 +66,19 @@ export function AdminCareerSkeleton() {
                     <Skeleton className="w-4 h-4 rounded mx-auto" />
                   </TableCell>
 
-                  {/* Position & Code */}
-                  <TableCell className="min-w-[260px] w-64 space-y-1.5 py-3 align-middle">
-                    <div className="space-y-1">
-                      <Skeleton className="h-3.5 w-44 rounded" />
-                      <Skeleton className="h-3.5 w-28 rounded" />
-                    </div>
-                    <Skeleton className="h-3 w-32 rounded" />
+                  {/* Position */}
+                  <TableCell className="min-w-[240px] w-64 py-3 align-middle">
+                    <Skeleton className="h-4 w-44 rounded" />
                   </TableCell>
 
-                  {/* Department & System */}
-                  <TableCell className="min-w-[200px] w-56 space-y-1.5 py-3 align-middle">
-                    <Skeleton className="h-5 w-24 rounded" />
+                  {/* Experience */}
+                  <TableCell className="w-36 py-3 align-middle">
+                    <Skeleton className="h-4 w-24 rounded" />
+                  </TableCell>
+
+                  {/* Type & System */}
+                  <TableCell className="min-w-[180px] w-48 space-y-1.5 py-3 align-middle">
+                    <Skeleton className="h-4 w-28 rounded" />
                     <Skeleton className="h-3 w-20 rounded" />
                   </TableCell>
 

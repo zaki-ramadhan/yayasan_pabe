@@ -105,15 +105,15 @@ export function AdminDistributionMediaFields({
     <div className="space-y-4 pt-1">
       {/* 1. Pratinjau media yang sudah tersimpan sebelumnya (Mode Edit) */}
       {existingMedia.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs text-slate-700">
-            <span className="font-medium text-slate-800">
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm font-medium text-slate-800 block select-none">
               Media dokumentasi tersimpan ({existingMedia.length} berkas)
             </span>
-            <span className="text-slate-500 text-2xs">Klik ikon tong sampah untuk melepas media</span>
+            <span className="text-slate-500 text-xs">Klik ikon tong sampah untuk melepas</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-h-[220px] overflow-y-auto p-1.5 rounded-xl border border-slate-200 bg-slate-50/70">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-h-[220px] overflow-y-auto">
             {existingMedia.map((mediaUrl, index) => (
               <ExistingMediaCard
                 key={`${mediaUrl}-${index}`}

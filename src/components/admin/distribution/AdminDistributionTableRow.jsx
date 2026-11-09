@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Camera, Video, MapPin } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
@@ -18,7 +19,7 @@ export function AdminDistributionTableRow({
 		<TableRow
 			data-state={isSelected ? "selected" : undefined}
 			className={`transition-colors ${
-				isSelected ? "bg-emerald-50/60" : "hover:bg-slate-50/70"
+				isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-slate-50/70"
 			}`}
 		>
 			{/* Checkbox Pemilihan */}
@@ -49,9 +50,34 @@ export function AdminDistributionTableRow({
 						/>
 					</div>
 					<div className="min-w-0 space-y-0.5">
-						<span className="font-medium text-sm text-slate-900 block line-clamp-2 leading-snug">
-							{item.campaignTitle}
-						</span>
+						{item.campaignSlug ? (
+											<Link
+												href={`/campaign/${item.campaignSlug}`}
+												target="_blank"
+												className="font-medium text-sm text-slate-900 hover:text-primary hover:underline block line-clamp-2 leading-snug cursor-pointer transition-colors overflow-hidden"
+												aria-label={`Buka program: ${item.campaignTitle}`}
+												style={{
+													display: "-webkit-box",
+													WebkitLineClamp: 2,
+													WebkitBoxOrient: "vertical",
+													overflow: "hidden",
+												}}
+											>
+												{item.campaignTitle}
+											</Link>
+										) : (
+											<span
+												className="font-medium text-sm text-slate-900 block line-clamp-2 leading-snug overflow-hidden"
+												style={{
+													display: "-webkit-box",
+													WebkitLineClamp: 2,
+													WebkitBoxOrient: "vertical",
+													overflow: "hidden",
+												}}
+											>
+												{item.campaignTitle}
+											</span>
+										)}
 						{item.location && (
 							<span className="inline-flex items-center gap-1 text-xs text-slate-500 font-normal">
 								<MapPin className="w-3 h-3 text-slate-400 shrink-0" />
@@ -64,10 +90,7 @@ export function AdminDistributionTableRow({
 
 			{/* Judul & Media */}
 			<TableCell className="space-y-1.5 py-3 align-middle">
-				<p
-					className="font-normal text-sm text-slate-900 leading-snug line-clamp-2"
-					title={item.content || item.title}
-				>
+				<p className="font-normal text-sm text-slate-900 leading-snug line-clamp-2">
 					{item.title}
 				</p>
 				{(() => {

@@ -52,7 +52,7 @@ export function StorageScanToolbar({
             onChange={onFolderChange}
             placeholder="Semua folder"
             searchPlaceholder="Cari nama folder..."
-            emptyMessage="Folder tidak ditemukan."
+            emptyMessage="Data tidak ditemukan."
             className="h-10 w-44 text-sm bg-white shrink-0 border-slate-300"
           />
 

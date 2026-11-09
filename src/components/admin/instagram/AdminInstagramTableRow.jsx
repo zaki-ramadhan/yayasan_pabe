@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { ExternalLink } from "lucide-react";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { formatDate } from "@/lib/formatters";
@@ -20,7 +19,9 @@ export function AdminInstagramTableRow({
 
   return (
     <TableRow
-      className="hover:bg-slate-50/70 transition-colors"
+      className={`hover:bg-slate-50/70 transition-colors ${
+        isSelected ? "bg-primary/5 hover:bg-primary/10" : ""
+      }`}
       data-state={isSelected ? "selected" : undefined}
     >
       <TableCell className="w-12 text-center py-2.5 px-3 align-middle">
@@ -51,24 +52,35 @@ export function AdminInstagramTableRow({
       </TableCell>
 
       <TableCell className="min-w-[280px] py-2.5 align-middle">
-        <div className="space-y-1">
-          <p className="text-sm font-medium text-slate-900 line-clamp-2 leading-snug">
+        {post.postUrl ? (
+          <a
+            href={post.postUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-slate-900 hover:text-primary hover:underline line-clamp-2 leading-snug cursor-pointer transition-colors block overflow-hidden"
+            aria-label={`Buka postingan di Instagram: ${caption}`}
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {caption}
+          </a>
+        ) : (
+          <p
+            className="text-sm font-medium text-slate-900 line-clamp-2 leading-snug overflow-hidden"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
             {caption}
           </p>
-          {post.postUrl && (
-            <div className="flex items-center text-xs text-slate-500">
-              <a
-                href={post.postUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-emerald-700 hover:underline shrink-0"
-              >
-                <span>Buka postingan</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
-          )}
-        </div>
+        )}
       </TableCell>
 
       <TableCell className="w-40 py-2.5 align-middle text-center text-sm text-slate-600 whitespace-nowrap tabular-nums">

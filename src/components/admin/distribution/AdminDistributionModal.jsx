@@ -382,6 +382,24 @@ export function AdminDistributionModal({
 						if (errors.campaignId) {
 							setErrors((prev) => ({ ...prev, campaignId: "" }));
 						}
+						// Validasi ulang nominal penyaluran saat berganti program
+						if (disbursedAmount > 0) {
+							const newSelected = campaigns.find((c) => c.id === val) || null;
+							if (newSelected) {
+								const newBudget = calculateCampaignDisbursementBudget({
+									collectedAmount: newSelected.collectedAmount || 0,
+									totalDisbursed: newSelected.totalDisbursed || 0,
+									currentDisbursementAmount: isEditing
+										? Number(distributionToEdit?.disbursedAmount) || 0
+										: 0,
+								});
+								const check = validateDisbursementAmount(disbursedAmount, newBudget.remainingBudget);
+								setErrors((prev) => ({
+									...prev,
+									disbursedAmount: check.isValid ? "" : check.error,
+								}));
+							}
+						}
 					}}
 					placeholder="Pilih program asal dana penyaluran..."
 					searchPlaceholder="Cari nama program..."
@@ -432,7 +450,13 @@ export function AdminDistributionModal({
 						value={disbursedAmount}
 						onChange={(val) => {
 							setDisbursedAmount(val);
-							if (errors.disbursedAmount) {
+							if (val > 0 && currentCampaignBudget) {
+								const check = validateDisbursementAmount(val, currentCampaignBudget.remainingBudget);
+								setErrors((prev) => ({
+									...prev,
+									disbursedAmount: check.isValid ? "" : check.error,
+								}));
+							} else if (errors.disbursedAmount) {
 								setErrors((prev) => ({ ...prev, disbursedAmount: "" }));
 							}
 						}}

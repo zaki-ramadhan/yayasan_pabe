@@ -31,6 +31,7 @@ export function AdminCampaignOverviewCard({
     setCampaignList((prev) =>
       prev.map((c) => {
         if (
+          (newTx.campaignId && c.id === newTx.campaignId) ||
           (newTx.campaignSlug && c.slug === newTx.campaignSlug) ||
           (newTx.campaignTitle && c.title === newTx.campaignTitle)
         ) {
@@ -43,6 +44,29 @@ export function AdminCampaignOverviewCard({
         return c;
       })
     );
+  });
+
+  useAdminLiveEvent("DONATION_UPDATED", (event) => {
+    const tx = event?.data;
+    if (!tx || !tx.amount) return;
+
+    if (tx.previousStatus === "PAID" && tx.status !== "PAID") {
+      setCampaignList((prev) =>
+        prev.map((c) => {
+          const isMatch =
+            (tx.campaignId && c.id === tx.campaignId) ||
+            (tx.campaignSlug && c.slug === tx.campaignSlug) ||
+            (tx.campaignTitle && c.title === tx.campaignTitle);
+          if (!isMatch) return c;
+
+          return {
+            ...c,
+            collectedAmount: Math.max(0, Number(c.collectedAmount || 0) - Number(tx.amount)),
+            donorCount: Math.max(0, Number(c.donorCount || 0) - 1),
+          };
+        })
+      );
+    }
   });
 
   const displayCampaigns = campaignList ? campaignList.slice(0, maxItems) : [];

@@ -208,10 +208,16 @@ export async function getAdminDonorDetail({ email, phone, name, page = 1, limit 
 
     const [totalCount, donations] = await Promise.all([
       prisma.donation.count({
-        where: { OR: orConditions },
+        where: {
+          status: "PAID",
+          OR: orConditions,
+        },
       }),
       prisma.donation.findMany({
-        where: { OR: orConditions },
+        where: {
+          status: "PAID",
+          OR: orConditions,
+        },
         orderBy: { createdAt: "desc" },
         skip,
         take: safeLimit,

@@ -15,7 +15,7 @@ export function AdminAuditReportTableRow({
   return (
     <TableRow
       className={`hover:bg-slate-50/70 transition-colors ${
-        isSelected ? "bg-emerald-50/60 hover:bg-emerald-50/80" : ""
+        isSelected ? "bg-primary/5 hover:bg-primary/10" : ""
       }`}
     >
       {/* 0. Selection Checkbox */}
@@ -69,7 +69,7 @@ export function AdminAuditReportTableRow({
 					<span className="text-slate-500">
 						Masuk:
 					</span>
-					<span className="font-medium text-slate-900 ml-2 tabular-nums" title={formatRupiah(item.totalFundsIn)}>
+					<span className="font-medium text-slate-900 ml-2 tabular-nums">
 						{formatCompactRupiah(
 							item.totalFundsIn,
 							2,
@@ -81,7 +81,7 @@ export function AdminAuditReportTableRow({
 					<span className="text-slate-500">
 						Tersalurkan:
 					</span>
-					<span className="font-medium text-emerald-700 ml-2 tabular-nums" title={formatRupiah(item.totalFundsOut)}>
+					<span className="font-medium text-emerald-700 ml-2 tabular-nums">
 						{formatCompactRupiah(
 							item.totalFundsOut,
 							2,

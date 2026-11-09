@@ -5,6 +5,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useTableSelection } from "@/hooks/useTableSelection";
 import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
+import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 export function useAdminPrayerModeration({
   initialData = { prayers: [], total: 0, totalPages: 1, currentPage: 1 },
@@ -25,6 +26,40 @@ export function useAdminPrayerModeration({
 
   const debouncedSearch = useDebounce(search.trim(), 350);
   const isInitialMount = useRef(true);
+
+  // Live SSE: Menerima doa donatur baru saat donasi berhasil terbayar secara real-time
+  useAdminLiveEvent("DONATION_PAID", (payload) => {
+    if (!payload?.prayer) return;
+    setPrayers((prev) => {
+      if (prev.some((p) => p.id === payload.id)) return prev;
+      const newPrayer = {
+        id: payload.id,
+        donorName: payload.donorName || "Hamba Allah",
+        prayer: payload.prayer,
+        amount: payload.amount || 0,
+        createdAt: payload.paidAt || payload.createdAt || new Date().toISOString(),
+        isPrayerHidden: Boolean(payload.isPrayerHidden),
+        isPrayerPinned: Boolean(payload.isPrayerPinned),
+        campaignTitle: payload.campaignTitle || "Donasi Umum",
+        campaignSlug: payload.campaignSlug || "",
+      };
+      return [newPrayer, ...prev];
+    });
+    setTotal((prev) => prev + 1);
+    toast.info(`Doa kebaikan baru masuk dari ${payload.donorName || "Donatur"}`);
+  });
+
+  useAdminLiveEvent("DONATION_UPDATED", (payload) => {
+    if (!payload?.id) return;
+    if (payload.previousStatus === "PAID" && payload.status !== "PAID") {
+      setPrayers((prev) => {
+        const exists = prev.some((p) => p.id === payload.id);
+        if (!exists) return prev;
+        setTotal((t) => Math.max(0, t - 1));
+        return prev.filter((p) => p.id !== payload.id);
+      });
+    }
+  });
 
   const fetchPrayers = async ({
     page = currentPage,

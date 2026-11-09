@@ -28,7 +28,7 @@ export function AdminArticleToolbar({
           onChange={onCategoryChange}
           placeholder="Semua Kategori"
           searchPlaceholder="Cari kategori artikel..."
-          emptyMessage="Kategori tidak ditemukan."
+          emptyMessage="Data tidak ditemukan."
           className="h-10 w-44 text-sm bg-white shrink-0"
         />
       }

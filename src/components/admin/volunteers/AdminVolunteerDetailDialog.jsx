@@ -59,13 +59,13 @@ export function AdminVolunteerDetailDialog({
               <div>
                 <span className="text-sm text-slate-500 block font-normal">Email:</span>
                 <span className="font-medium text-slate-900">
-                  {volunteer.email ? maskEmail(volunteer.email) : "-"}
+                  {volunteer.email || "-"}
                 </span>
               </div>
               <div>
                 <span className="text-sm text-slate-500 block font-normal">Nomor telepon / WA:</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-slate-900">{volunteer.phone ? maskPhone(volunteer.phone) : "-"}</span>
+                  <span className="font-medium text-slate-900">{volunteer.phone || "-"}</span>
                   {waUrl && (
                     <a
                       href={waUrl}
@@ -172,3 +172,4 @@ export function AdminVolunteerDetailDialog({
     </Dialog>
   );
 }
+

@@ -53,7 +53,9 @@ export function AdminProgramTableRow({
 	return (
 		<TableRow
 			key={item.id}
-			className="hover:bg-slate-50/70 transition-colors"
+			className={`hover:bg-slate-50/70 transition-colors ${
+				isSelected ? "bg-primary/5 hover:bg-primary/10" : ""
+			}`}
 			data-state={isSelected ? "selected" : undefined}
 		>
 			<TableCell className="w-12 text-center py-3 px-3 align-middle">
@@ -65,12 +67,26 @@ export function AdminProgramTableRow({
 			</TableCell>
 
 			<TableCell className="space-y-1 py-3 align-middle max-w-sm">
-				<p
-					className="font-medium text-sm text-slate-900 leading-snug line-clamp-2"
-					title={item.title}
-				>
-					{item.title}
-				</p>
+				{item.slug ? (
+					<Link
+						href={`/campaign/${item.slug}`}
+						target="_blank"
+						className="font-medium text-sm text-slate-900 hover:text-primary hover:underline leading-snug line-clamp-2 cursor-pointer transition-colors block overflow-hidden"
+						aria-label={`Buka program: ${item.title}`}
+						style={{
+							display: "-webkit-box",
+							WebkitLineClamp: 2,
+							WebkitBoxOrient: "vertical",
+							overflow: "hidden",
+						}}
+					>
+						{item.title}
+					</Link>
+				) : (
+					<p className="font-medium text-sm text-slate-900 leading-snug line-clamp-2">
+						{item.title}
+					</p>
+				)}
 				<span className="text-xs text-slate-500 block truncate">
 					{item.location || "-"}
 				</span>
@@ -80,7 +96,6 @@ export function AdminProgramTableRow({
 				<Badge
 					variant="secondary"
 					className="max-w-[130px] truncate"
-					title={item.category}
 				>
 					{
 						item.category

@@ -17,11 +17,15 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const vacancyId = searchParams.get("vacancyId") || "";
     const status = searchParams.get("status") || "";
+    const sort = searchParams.get("sort") || "newest";
+    const page = parseInt(searchParams.get("page"), 10) || 1;
+    const limit = parseInt(searchParams.get("limit"), 10) || 15;
 
-    const applications = await getAdminApplications({ vacancyId, status });
+    const result = await getAdminApplications({ vacancyId, status, sort, page, limit });
     return NextResponse.json({
       success: true,
-      data: applications,
+      data: result.items,
+      pagination: result.pagination,
     });
   } catch (error) {
     return NextResponse.json(

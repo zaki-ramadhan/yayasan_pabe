@@ -106,9 +106,9 @@ export function AdminPrayerTableSkeletonRows({ rows = 5 }) {
           </TableCell>
 
           {/* 3. Program Donasi */}
-          <TableCell className="min-w-[280px] max-w-[360px] py-3 align-top space-y-1">
-            <Skeleton className="h-4 w-36 rounded" />
-            <Skeleton className="h-3 w-20 rounded" />
+          <TableCell className="min-w-[240px] max-w-[340px] py-3 align-top space-y-1">
+            <Skeleton className="h-4 w-44 rounded" />
+            <Skeleton className="h-4 w-28 rounded" />
           </TableCell>
 
           {/* 4. Nominal */}

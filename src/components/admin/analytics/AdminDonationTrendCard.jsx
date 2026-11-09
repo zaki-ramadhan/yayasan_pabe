@@ -106,6 +106,61 @@ export function AdminDonationTrendCard({
     });
   });
 
+  useAdminLiveEvent("DONATION_UPDATED", (event) => {
+    const tx = event?.data;
+    if (!tx || !tx.amount) return;
+
+    if (tx.previousStatus === "PAID" && tx.status !== "PAID") {
+      const amount = Number(tx.amount);
+      const dateKey = toWibDateKey(tx.paidAt || tx.createdAt || new Date());
+      const mKey = dateKey.substring(0, 7);
+
+      setTrends((prev) => {
+        const daily = Array.isArray(prev?.dailyTrend) ? [...prev.dailyTrend] : [];
+        const monthly = Array.isArray(prev?.monthlyTrend) ? [...prev.monthlyTrend] : [];
+
+        let runningCumulative = 0;
+        const updatedDaily = daily.map((d) => {
+          if (d.date === dateKey) {
+            const newDaily = Math.max(0, (Number(d.dailyAmount) || 0) - amount);
+            const newCount = Math.max(0, (Number(d.donationsCount) || 0) - 1);
+            runningCumulative += newDaily;
+            return {
+              ...d,
+              dailyAmount: newDaily,
+              cumulativeAmount: runningCumulative,
+              donationsCount: newCount,
+            };
+          }
+          runningCumulative = Math.max(
+            0,
+            (Number(d.cumulativeAmount) || runningCumulative) - (d.date > dateKey ? amount : 0)
+          );
+          return {
+            ...d,
+            cumulativeAmount: runningCumulative,
+          };
+        });
+
+        const updatedMonthly = monthly.map((m) => {
+          if (m.key === mKey) {
+            return {
+              ...m,
+              inflow: Math.max(0, (Number(m.inflow) || 0) - amount),
+              count: Math.max(0, (Number(m.count) || 0) - 1),
+            };
+          }
+          return m;
+        });
+
+        return {
+          dailyTrend: updatedDaily,
+          monthlyTrend: updatedMonthly,
+        };
+      });
+    }
+  });
+
   const viewModeOptions = React.useMemo(() => {
     const base = [
       { value: "all", label: "Grafik gabungan" },

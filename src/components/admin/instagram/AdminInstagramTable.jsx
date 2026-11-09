@@ -51,14 +51,7 @@ export function AdminInstagramTable({
         onRefresh={onRefresh}
         isLoading={isLoading}
         extraActions={
-          <span
-            className="text-sm font-medium select-none px-1"
-            title={
-              isLimitReached
-                ? "Batas maksimal postingan sudah tercapai, hapus untuk dapat memposting."
-                : `Jumlah postingan feed Instagram: ${effectiveTotal}/${MAX_POSTS}`
-            }
-          >
+          <span className="text-sm font-medium select-none px-1">
             <span className="text-slate-900">Postingan : </span>
             <span
               className={cn(
@@ -118,7 +111,7 @@ export function AdminInstagramTable({
                   />
                 </TableHead>
                 <TableHead className="w-16">Foto</TableHead>
-                <TableHead className="min-w-[280px]">Caption & Tautan</TableHead>
+                <TableHead className="min-w-[280px]">Caption</TableHead>
                 <TableHead className="w-40 text-center">Tanggal Posting</TableHead>
                 <TableHead className="w-20 text-right">Aksi</TableHead>
               </TableRow>

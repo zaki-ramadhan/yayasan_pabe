@@ -248,7 +248,8 @@ export function AdminCareerTable({ initialVacancies = [] }) {
                   aria-label="Pilih semua lowongan di halaman ini"
                 />
               </TableHead>
-              <TableHead className="min-w-[260px] w-64">Posisi &amp; Kode</TableHead>
+              <TableHead className="min-w-[240px] w-64">Posisi pekerjaan</TableHead>
+              <TableHead className="w-36">Pengalaman</TableHead>
               <TableHead className="min-w-[180px] w-48">Tipe &amp; Sistem</TableHead>
               <TableHead className="min-w-[160px] w-48">Lokasi</TableHead>
               <TableHead className="w-36 text-center">Batas Waktu</TableHead>
@@ -274,8 +275,8 @@ export function AdminCareerTable({ initialVacancies = [] }) {
               ))
             ) : (
               <TableEmptyRow
-                colSpan={8}
-                isFiltered={Boolean(search || departmentFilter !== "ALL")}
+                colSpan={9}
+                isFiltered={Boolean(search)}
               />
             )}
           </TableBody>

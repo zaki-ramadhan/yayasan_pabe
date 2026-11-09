@@ -22,7 +22,7 @@ export function AdminCareerTableRow({
 		<TableRow
 			key={job.id}
 			className={`hover:bg-slate-50/70 transition-colors ${
-				isSelected ? "bg-emerald-50/60 hover:bg-emerald-50/80" : ""
+				isSelected ? "bg-primary/5 hover:bg-primary/10" : ""
 			}`}
 		>
 			{/* 0. Selection Checkbox */}
@@ -34,22 +34,16 @@ export function AdminCareerTableRow({
 				/>
 			</TableCell>
 
-			<TableCell className="min-w-[260px] w-64 py-3 align-middle">
-				<div className="space-y-0.5">
-					<span
-						className="text-sm font-medium text-slate-900 block leading-snug line-clamp-2"
-					>
-						{job.title}
-					</span>
-					<span className="text-xs text-slate-500 font-normal">
-						{job.jobCode ||
-							job.id}{" "}
-						&bull;{" "}
-						{
-							job.experience
-						}
-					</span>
-				</div>
+			<TableCell className="min-w-[240px] w-64 py-3 align-middle">
+				<span
+					className="text-sm font-medium text-slate-900 block leading-snug line-clamp-2"
+				>
+					{job.title}
+				</span>
+			</TableCell>
+
+			<TableCell className="w-36 py-3 text-sm text-slate-700 align-middle">
+				{job.experience || "-"}
 			</TableCell>
 
 			<TableCell className="min-w-[180px] w-48 py-3 align-middle">
@@ -93,12 +87,12 @@ export function AdminCareerTableRow({
 									job,
 								)
 							}
-							className="h-7 px-2 rounded-md text-xs font-medium flex items-center gap-1.5 mx-auto cursor-pointer transition-colors text-primary border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50"
+							className="h-7 px-2 rounded-md text-xs font-normal flex items-center gap-1.5 mx-auto cursor-pointer transition-colors text-primary border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50"
 						>
 							<Users className="w-3 h-3 text-primary" />
 							<span className="tabular-nums">
 								{count}{" "}
-								Berkas
+								berkas
 							</span>
 						</Button>
 					);
@@ -121,11 +115,6 @@ export function AdminCareerTableRow({
 							job.isActive
 								? "ACTIVE"
 								: "CLOSED"
-						}
-						label={
-							job.isActive
-								? "Buka (Aktif)"
-								: "Ditutup"
 						}
 					/>
 				</button>

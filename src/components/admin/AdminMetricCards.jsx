@@ -19,6 +19,19 @@ export function AdminMetricCards({ stats: initialStats }) {
     }));
   });
 
+  useAdminLiveEvent("DONATION_UPDATED", (event) => {
+    const tx = event?.data;
+    if (!tx || !tx.amount) return;
+
+    if (tx.previousStatus === "PAID" && tx.status !== "PAID") {
+      setStats((prev) => ({
+        ...prev,
+        totalCollected: Math.max(0, Number(prev?.totalCollected || 0) - Number(tx.amount)),
+        totalTransactions: Math.max(0, Number(prev?.totalTransactions || 0) - 1),
+      }));
+    }
+  });
+
   useAdminLiveEvent("DISTRIBUTION_CREATED", (event) => {
     const dist = event?.data;
     if (!dist || !dist.disbursedAmount) return;

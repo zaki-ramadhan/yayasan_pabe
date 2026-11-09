@@ -152,57 +152,52 @@ export function AdminDonorDetailDrawer({
         </DialogHeader>
 
         {/* Scrollable Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-4">
-          {/* Identitas & Ringkasan Terpadu (Non-Bento Card) */}
-          <div className="bg-slate-50/70 border border-slate-200/90 rounded-lg p-3.5 sm:p-4">
-            <div className="flex items-center gap-3 pb-3 border-b border-slate-200/70">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5 sm:px-6 space-y-7">
+          {/* Identitas & Ringkasan Terpadu */}
+          <div className="pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
               <UserAvatar
                 src={donor.avatar}
                 name={donor.name}
                 fallback="D"
                 isAnonymous={donor.name === "Hamba Allah"}
-                className="w-11 h-11 bg-white"
+                className="w-11 h-11 bg-slate-100"
                 fallbackClassName="text-sm"
               />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h4 className="text-sm sm:text-base font-medium text-slate-900 leading-tight truncate">
+                  <h4 className="text-base sm:text-lg font-medium text-slate-900 leading-tight truncate">
                     {donor.name}
                   </h4>
-                  {donor.isRegisteredUser && (
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-2xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0 select-none">
-                      Akun Terdaftar
-                    </span>
-                  )}
                 </div>
-                <p className="text-xs text-slate-500 font-normal mt-0.5">
+                <p className="text-sm text-slate-500 font-normal mt-0.5">
                   Donasi pertama: {donor.firstDonatedAt ? formatDate(donor.firstDonatedAt) : "-"}
                 </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-3">
               <div>
-                <span className="text-slate-500 font-normal block">Email</span>
-                <span className="text-slate-800 font-medium truncate block mt-0.5">
+                <span className="text-xs text-slate-500 font-normal block">Email</span>
+                <span className="text-sm text-slate-800 font-medium truncate block mt-0.5">
                   {donor.email ? maskEmail(donor.email) : "-"}
                 </span>
               </div>
               <div>
-                <span className="text-slate-500 font-normal block">No. Telepon</span>
-                <span className="text-slate-800 font-medium tabular-nums truncate block mt-0.5">
+                <span className="text-xs text-slate-500 font-normal block">No. Telepon</span>
+                <span className="text-sm text-slate-800 font-medium tabular-nums truncate block mt-0.5">
                   {donor.phone ? maskPhone(donor.phone) : "-"}
                 </span>
               </div>
               <div>
-                <span className="text-slate-500 font-normal block">Total Donasi</span>
-                <span className="text-slate-900 font-medium tabular-nums block mt-0.5">
+                <span className="text-xs text-slate-500 font-normal block">Total Donasi</span>
+                <span className="text-sm text-slate-900 font-medium tabular-nums block mt-0.5">
                   {formatRupiah(donor.totalPaidAmount)}
                 </span>
               </div>
               <div>
-                <span className="text-slate-500 font-normal block">Frekuensi</span>
-                <span className="text-slate-900 font-medium block mt-0.5">
+                <span className="text-xs text-slate-500 font-normal block">Frekuensi</span>
+                <span className="text-sm text-slate-900 font-medium block mt-0.5">
                   {donor.paidCount}x
                 </span>
               </div>
@@ -211,7 +206,7 @@ export function AdminDonorDetailDrawer({
 
           {/* Riwayat Donasi Terkini dengan Infinite Scroll */}
           <div className="space-y-2.5">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-1 border-b border-slate-100">
               <h5 className="text-xs font-medium text-slate-700 uppercase tracking-wider">
                 Riwayat donasi
               </h5>
@@ -223,9 +218,9 @@ export function AdminDonorDetailDrawer({
             </div>
 
             {isLoading ? (
-              <div className="rounded-lg border border-slate-200 divide-y divide-slate-100 bg-white overflow-hidden animate-pulse">
+              <div className="divide-y divide-slate-100 animate-pulse">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="p-3 flex items-center justify-between gap-3">
+                  <div key={i} className="py-3 flex items-center justify-between gap-3">
                     <div className="space-y-1.5 flex-1 min-w-0">
                       <Skeleton className="h-3.5 w-28 rounded" />
                       <Skeleton className="h-3 w-48 rounded" />
@@ -239,9 +234,9 @@ export function AdminDonorDetailDrawer({
                 ))}
               </div>
             ) : donations.length > 0 ? (
-              <div className="rounded-lg border border-slate-200 divide-y divide-slate-100 bg-white overflow-hidden">
+              <div className="divide-y divide-slate-100">
                 {donations.map((d) => (
-                  <div key={d.id} className="p-3 flex items-center justify-between gap-3 text-sm hover:bg-slate-50/50 transition-colors">
+                  <div key={d.id} className="py-3 flex items-center justify-between gap-3 text-sm hover:bg-slate-50/50 transition-colors">
                     <div className="min-w-0 space-y-0.5 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-slate-900 text-xs block truncate select-all">
@@ -262,7 +257,7 @@ export function AdminDonorDetailDrawer({
                         {formatRupiah(d.totalAmount)}
                       </span>
                       <span
-                        className="inline-flex items-center justify-center px-1.5 py-0.5 mt-0.5 rounded text-2xs font-medium bg-slate-100 border border-slate-200 text-slate-600 max-w-[130px] truncate"
+                        className="inline-flex items-center justify-center px-1.5 py-0.5 mt-0.5 rounded text-[10px] leading-tight font-medium bg-slate-100 border border-slate-200 text-slate-600 max-w-[120px] truncate"
                       >
                         {formatPaymentChannel(d.paymentChannel)}
                       </span>
@@ -272,7 +267,7 @@ export function AdminDonorDetailDrawer({
 
                 {/* Infinite Scroll Sentinel / Loading More Indicator */}
                 {hasMore && (
-                  <div ref={sentinelRef} className="p-3 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
+                  <div ref={sentinelRef} className="py-3 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
                     {isFetchingMore ? (
                       <>
                         <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />
@@ -285,7 +280,7 @@ export function AdminDonorDetailDrawer({
                 )}
               </div>
             ) : (
-              <div className="py-8 text-center text-xs text-slate-500 border border-dashed border-slate-200 rounded-lg">
+              <div className="py-8 text-center text-xs text-slate-500">
                 Belum ada transaksi donasi yang tercatat untuk donatur ini.
               </div>
             )}

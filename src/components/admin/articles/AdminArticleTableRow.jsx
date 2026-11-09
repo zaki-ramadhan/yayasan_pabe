@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Badge } from "@/components/ui/Badge";
@@ -21,7 +20,7 @@ export function AdminArticleTableRow({
 	return (
 		<TableRow
 			className={`hover:bg-slate-50/70 transition-colors ${
-				isSelected ? "bg-emerald-50/60 hover:bg-emerald-50/80" : ""
+				isSelected ? "bg-primary/5 hover:bg-primary/10" : ""
 			}`}
 		>
 			{/* 0. Selection Checkbox */}
@@ -51,35 +50,20 @@ export function AdminArticleTableRow({
 			</TableCell>
 
 			<TableCell className="py-2.5 align-middle min-w-[280px] sm:min-w-[340px] max-w-lg">
-				<div className="space-y-0.5">
-					<span
-						className="text-sm font-medium text-slate-900 block line-clamp-2 leading-snug"
-					>
-						{article.title}
-					</span>
-					<div className="flex items-center gap-1 text-xs text-slate-500 font-normal">
-						<span>
-							/
-							{
-								article.slug
-							}
-						</span>
-						<Link
-							href={`/artikel/${article.slug}`}
-							target="_blank" aria-label="Buka artikel di tab baru"
-							className="text-slate-400 hover:text-primary transition-colors"
-						>
-							<ExternalLink className="w-3.5 h-3.5 ml-0.5" />
-						</Link>
-					</div>
-				</div>
+				<Link
+					href={`/artikel/${article.slug}`}
+					target="_blank"
+					className="text-sm font-medium text-slate-900 hover:text-primary hover:underline line-clamp-2 leading-snug cursor-pointer transition-colors"
+					aria-label={`Buka artikel: ${article.title}`}
+				>
+					{article.title}
+				</Link>
 			</TableCell>
 
 			<TableCell className="w-36 py-2.5 text-center align-middle whitespace-nowrap">
 				<Badge
 					variant="secondary"
 					className="max-w-[130px] truncate"
-					title={article.category}
 				>
 					{
 						article.category
@@ -90,7 +74,6 @@ export function AdminArticleTableRow({
 			<TableCell className="w-60 text-sm text-slate-600 py-2.5 align-middle">
 				<span
 					className="line-clamp-2 leading-snug font-normal overflow-hidden"
-					title={article.author}
 					style={{
 						display: "-webkit-box",
 						WebkitLineClamp: 2,

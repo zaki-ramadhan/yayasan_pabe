@@ -26,13 +26,12 @@ export function AdminGalleryTableRow({
 
   return (
     <TableRow
-      onClick={onToggleSelect ? () => onToggleSelect(item.id) : undefined}
-      className={`transition-colors cursor-pointer ${
+      className={`transition-colors ${
         isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-slate-50/70"
       }`}
     >
       {/* Checkbox Seleksi */}
-      <TableCell className="w-12 text-center py-2.5 align-middle" onClick={(e) => e.stopPropagation()}>
+      <TableCell className="w-12 text-center py-2.5 align-middle">
         {onToggleSelect && (
           <Checkbox
             checked={isSelected}
@@ -103,7 +102,7 @@ export function AdminGalleryTableRow({
 
       {/* Kategori */}
       <TableCell className="w-40 py-2.5 text-center align-middle whitespace-nowrap">
-        <Badge variant="secondary" className="max-w-[140px] truncate" title={item.category || "Umum"}>
+        <Badge variant="secondary" className="max-w-[140px] truncate">
           {item.category || "Umum"}
         </Badge>
       </TableCell>
