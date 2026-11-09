@@ -102,7 +102,7 @@ export async function getAdminDistributions({ page = 1, limit = 10 } = {}) {
       pagination: {
         page,
         limit,
-        total,
+        total: 0,
         totalPages: 1,
       },
       campaigns: [],

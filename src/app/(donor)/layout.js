@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { DonorLayoutClient } from "@/components/donor/DonorLayoutClient";
 import { getAuthenticatedUser } from "@/lib/serverAuth";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Dasbor Donatur",
   description:
