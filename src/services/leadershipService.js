@@ -7,6 +7,7 @@ import {
   TITLE_HIERARCHY_ORDER,
   resolveStaffAvatar,
   getExcludedLeadershipEmails,
+  isNonStructuralTechTitle,
 } from "@/constants/staffConstants";
 
 /**
@@ -97,11 +98,14 @@ export async function getPublicLeadership() {
       },
     });
 
-    // Sanitasi lapis kedua di memori untuk mengantisipasi variasi case email
+    // Sanitasi lapis kedua di memori: filter email vendor/dev dan jabatan murni teknis non-struktural
     const excludedSet = new Set(excludedEmails.map((e) => e.toLowerCase()));
-    const eligibleUsers = (users || []).filter(
-      (u) => !u.email || !excludedSet.has(u.email.toLowerCase())
-    );
+    const eligibleUsers = (users || []).filter((u) => {
+      if (u.email && excludedSet.has(u.email.toLowerCase())) return false;
+      // Jangan tampilkan akun dengan peran teknis murni website (Admin Web, IT, Developer, dll.)
+      if (isNonStructuralTechTitle(u.title)) return false;
+      return true;
+    });
 
     if (!eligibleUsers || eligibleUsers.length === 0) {
       return ORG_PROFILE.leadership || [];

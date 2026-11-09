@@ -188,7 +188,7 @@ export function DatePicker({
         {selectedDate && (
           <div className="p-2 border-t border-slate-100 flex items-center justify-between gap-2 bg-slate-50/50 rounded-b-xl">
             <span className="text-xs text-slate-500 pl-1">
-              {format(selectedDate, "EEEE, d MMMM yyyy", { locale: idLocale })}
+              {format(selectedDate, "EEEE, d MMM yyyy", { locale: idLocale })}
             </span>
             <Button
               type="button"

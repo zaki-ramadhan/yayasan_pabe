@@ -69,7 +69,7 @@ export function validateDisbursementAmount(requestedAmount, remainingBudget) {
   if (amount > budget) {
     return {
       isValid: false,
-      error: `Nominal penyaluran melebihi sisa dana program yang tersedia (Maksimal Rp ${budget.toLocaleString("id-ID")}).`,
+      error: `Maksimal penyaluran Rp ${budget.toLocaleString("id-ID")}.`,
     };
   }
 

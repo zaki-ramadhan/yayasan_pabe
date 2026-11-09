@@ -17,7 +17,7 @@ import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
  * @param {Function} props.onChange - (selectedValue, fullItem) => void
  * @param {string} [props.placeholder="Pilih opsi..."]
  * @param {string} [props.searchPlaceholder="Cari opsi..."]
- * @param {string} [props.emptyMessage="Tidak ada hasil ditemukan."]
+ * @param {string} [props.emptyMessage="Data tidak ditemukan."]
  * @param {number} [props.searchThreshold=5] - Batas minimal jumlah opsi untuk memunculkan input pencarian
  * @param {boolean} [props.alwaysShowSearch=false] - Selalu tampilkan input pencarian tanpa memandang jumlah opsi
  * @param {string} [props.className]
@@ -35,7 +35,7 @@ export function Combobox({
   onChange,
   placeholder = "Pilih opsi...",
   searchPlaceholder = "Cari opsi...",
-  emptyMessage = "Tidak ada hasil ditemukan.",
+  emptyMessage = "Data tidak ditemukan.",
   searchThreshold = 5,
   alwaysShowSearch = false,
   className = "",
@@ -331,7 +331,7 @@ export function Combobox({
                 );
               })
             ) : (
-              <div className="py-6 text-center text-xs text-slate-500">
+              <div className="py-5 text-center text-sm italic text-slate-800">
                 {emptyMessage}
               </div>
             )}

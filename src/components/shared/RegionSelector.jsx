@@ -101,7 +101,7 @@ export function RegionSelector({
           onChange={handleProvinceChange}
           placeholder="Pilih provinsi..."
           searchPlaceholder="Cari provinsi..."
-          emptyMessage="Provinsi tidak ditemukan."
+          emptyMessage="Data tidak ditemukan."
           disabled={disabled}
           className={inputClassName}
         />

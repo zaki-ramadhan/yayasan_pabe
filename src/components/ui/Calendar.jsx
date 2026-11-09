@@ -9,8 +9,8 @@ import { buttonVariants } from "@/components/ui/Button";
 function Calendar({
   className,
   classNames,
-  showOutsideDays = true,
-  fixedWeeks = true,
+  showOutsideDays = false,
+  fixedWeeks = false,
   ...props
 }) {
   const defaultClassNames = getDefaultClassNames();

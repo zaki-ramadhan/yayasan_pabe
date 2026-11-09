@@ -170,7 +170,7 @@ export default async function ArticleDetailPage({ params }) {
             href="/program"
             className="relative inline-flex items-center justify-center px-4 sm:px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs sm:text-sm border-t border-white/25 shadow-[0_3.5px_0_0_#1e3a8a] active:shadow-[0_1px_0_0_#1e3a8a] active:translate-y-[2.5px] transition-all cursor-pointer shrink-0 whitespace-nowrap self-start sm:self-auto select-none"
           >
-            Lihat Program Kebaikan
+            Lihat program donasi
           </Link>
         </div>
       </div>

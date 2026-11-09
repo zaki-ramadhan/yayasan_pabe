@@ -98,8 +98,7 @@ describe("Campaign Disbursement Budget Guard & Validation", () => {
     it("menolak nominal yang melampaui sisa saldo yang tersedia", () => {
       const check = validateDisbursementAmount(6000000, 5000000);
       expect(check.isValid).toBe(false);
-      expect(check.error).toContain("Nominal penyaluran melebihi sisa dana program yang tersedia");
-      expect(check.error).toContain("Rp 5.000.000");
+      expect(check.error).toBe("Maksimal penyaluran Rp 5.000.000.");
     });
   });
 });
