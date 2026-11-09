@@ -19,7 +19,7 @@ FROM base AS deps
 
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
 COPY prisma ./prisma/
 COPY prisma.config.js ./
 
