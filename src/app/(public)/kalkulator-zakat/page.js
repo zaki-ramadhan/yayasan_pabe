@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { InformationHeroHeader } from "@/components/shared/InformationHeroHeader";
 import { ZakatCalculator } from "@/components/modules/ZakatCalculator";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Kalkulator Zakat",
   description:

@@ -2,6 +2,8 @@ import { getCampaigns } from "@/services/campaignService";
 import { isCampaignClosed } from "@/lib/formatters";
 import { RoutineDonationForm } from "@/components/routine-donation/RoutineDonationForm";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Donasi Rutin (Sedekah Subuh & Bulanan)",
   description: "Atur jadwal sedekah subuh, infak jumat, atau donasi bulanan rutin untuk pendidikan anak yatim dan dhuafa.",

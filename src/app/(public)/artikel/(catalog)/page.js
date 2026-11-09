@@ -4,6 +4,8 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { ArticleCatalog } from "@/components/modules/ArticleCatalog";
 import { ArticleCardSkeleton } from "@/components/shared/ArticleCardSkeleton";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Berita & Artikel",
   description: "Kumpulan artikel edukasi fiqih zakat, sedekah subuh, dan kabar penyaluran bantuan Yayasan Payung Berkah.",

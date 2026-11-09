@@ -4,6 +4,8 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { ProgramCatalog } from "@/components/modules/ProgramCatalog";
 import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Program Donasi",
   description: "Temukan berbagai program donasi, beasiswa anak yatim, tanggap bencana, dan zakat produktif Yayasan Payung Berkah.",
