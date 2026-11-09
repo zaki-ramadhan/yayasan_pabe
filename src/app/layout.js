@@ -2,6 +2,7 @@ import { Geist, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/Toast";
 import { OfflineStatusBanner } from "@/components/shared/OfflineStatusBanner";
+import { NavigationProgressBar } from "@/components/shared/NavigationProgressBar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -93,6 +94,7 @@ export default function RootLayout({ children }) {
         className="min-h-full flex flex-col bg-surface text-slate-900 font-sans"
         suppressHydrationWarning
       >
+        <NavigationProgressBar />
         <OfflineStatusBanner />
         <Toaster />
         {children}

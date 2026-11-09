@@ -14,7 +14,7 @@ import { HomeArticlesSection } from "@/components/home/HomeArticlesSection";
 import { HomeFaqSection } from "@/components/home/HomeFaqSection";
 import { HomeCtaSection } from "@/components/home/HomeCtaSection";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata = {
   title: {

@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { ProgramCatalog } from "@/components/modules/ProgramCatalog";
 import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata = {
   title: "Program Donasi",

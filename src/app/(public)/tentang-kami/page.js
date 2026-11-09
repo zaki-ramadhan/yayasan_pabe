@@ -10,8 +10,7 @@ import { AboutBankAccounts } from "@/components/about/AboutBankAccounts";
 import { AboutSidebarInfo } from "@/components/about/AboutSidebarInfo";
 import { DashedDivider } from "@/components/ui/DashedDivider";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 300;
 
 export const metadata = {
   title: "Tentang Kami",

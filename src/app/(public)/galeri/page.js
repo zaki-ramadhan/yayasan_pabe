@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { GalleryCatalog } from "@/components/gallery/GalleryCatalog";
 import { GallerySkeleton } from "@/components/gallery/GallerySkeleton";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata = {
   title: "Galeri Dokumentasi & Rekam Jejak Kegiatan",
