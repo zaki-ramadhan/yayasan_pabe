@@ -326,6 +326,25 @@ export async function getAuthenticatedUser(request) {
       };
     }
 
+    // Fallback tangguh untuk Super Admin resmi dengan token sesi bertanda tangan kriptografis valid
+    if (verifiedEmail && isSuperAdminEmail(verifiedEmail)) {
+      return {
+        authenticated: true,
+        user: {
+          id: lookupId || `USR-SA-${Buffer.from(verifiedEmail).toString("hex").slice(0, 16)}`,
+          name: verifiedEmail.split("@")[0],
+          email: verifiedEmail.toLowerCase(),
+          username: verifiedEmail.split("@")[0].replace(/[^a-z0-9_]/g, "_").slice(0, 30),
+          role: USER_ROLES.SUPER_ADMIN,
+          title: "Super Admin",
+          avatar: null,
+          phone: null,
+          provider: "oauth",
+          initials: getInitials(verifiedEmail.split("@")[0], verifiedEmail),
+        },
+      };
+    }
+
     return { authenticated: false, user: null, reason: "USER_NOT_FOUND" };
   } catch (error) {
     console.error("serverAuth getAuthenticatedUser error:", error);
