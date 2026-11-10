@@ -24,7 +24,7 @@ export function PaymentChannelItem({
       onClick={onSelect}
       className={cn(
         "flex items-center rounded-lg border transition-all cursor-pointer",
-        compact ? "p-2 sm:p-2.5" : "p-2.5 sm:p-3",
+        compact ? "py-2.5 px-2.5 sm:p-2.5 min-h-[46px]" : "py-3.5 px-3 sm:py-3 sm:px-3 min-h-[52px] sm:min-h-[48px]",
         isSelected
           ? "bg-primary/5 border-primary shadow-xs"
           : "bg-white border-slate-300 hover:bg-slate-50",
