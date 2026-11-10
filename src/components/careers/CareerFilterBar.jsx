@@ -48,7 +48,7 @@ export function CareerFilterBar({
       </div>
 
       {/* Filter Selects Row */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-row sm:items-center sm:gap-3 shrink-0">
         <CareerFilterSelect
           label="Lokasi"
           value={location}

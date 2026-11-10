@@ -19,7 +19,7 @@ export default function KarierLoading() {
         {/* Filter Bar: Row 1 Search Input + 2 Dropdown Selects (no outer card wrapper) */}
         <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
           <Skeleton className="h-10 flex-1 rounded-lg" />
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-row sm:items-center sm:gap-3 shrink-0">
             <Skeleton className="h-10 w-full sm:w-44 lg:w-48 rounded-lg" />
             <Skeleton className="h-10 w-full sm:w-48 lg:w-56 rounded-lg" />
           </div>
