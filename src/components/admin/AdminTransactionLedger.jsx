@@ -41,7 +41,6 @@ const PAGE_SIZE = 10;
  */
 export function AdminTransactionLedger({
   transactions = [],
-  nextDistributionDate = "25 Sep 2026",
 }) {
   const [selectedPeriod, setSelectedPeriod] = useState("30d");
   const [selectedType, setSelectedType] = useState("ALL");
@@ -164,11 +163,6 @@ export function AdminTransactionLedger({
               label="Tipe Transaksi"
               className="h-10 px-3.5 text-sm font-normal border-slate-300 text-slate-800"
             />
-          </div>
-
-          <div className="text-sm font-normal text-slate-600 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-lg self-start lg:self-auto">
-            Estimasi penyaluran berikutnya:{" "}
-            <span className="font-medium text-slate-900">{nextDistributionDate}</span>
           </div>
         </div>
 

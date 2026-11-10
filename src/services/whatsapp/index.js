@@ -148,3 +148,54 @@ export async function sendWhatsAppCompletionNotification({
       });
   }
 }
+
+/**
+ * Dispatcher WhatsApp khusus untuk pemberitahuan pengalihan program donasi rutin.
+ */
+export async function sendWhatsAppRolloverNotification({
+  to,
+  donorName,
+  oldProgramTitle,
+  newProgramTitle,
+  actionUrl,
+}) {
+  const normalizedPhone = normalizeWhatsAppNumber(to);
+  if (!normalizedPhone) {
+    throw new Error(`Nomor telepon penerima tidak valid: ${to}`);
+  }
+
+  const { buildRoutineRolloverWhatsAppMessage } = await import("./rolloverTemplate");
+  const messageText = buildRoutineRolloverWhatsAppMessage({
+    donorName,
+    oldProgramTitle,
+    newProgramTitle,
+    actionUrl,
+  });
+
+  const activeDriver = (process.env.WA_DRIVER || "mock").toLowerCase();
+
+  switch (activeDriver) {
+    case "meta":
+      return await sendMetaCloudWhatsApp({
+        to: normalizedPhone,
+        message: messageText,
+        actionUrl,
+      });
+
+    case "fonnte":
+      return await sendFonnteWhatsApp({
+        to: normalizedPhone,
+        message: messageText,
+        actionUrl,
+      });
+
+    case "mock":
+    default:
+      return await sendMockWhatsApp({
+        to: normalizedPhone,
+        message: messageText,
+        actionUrl,
+        routineType: "ROLLOVER",
+      });
+  }
+}

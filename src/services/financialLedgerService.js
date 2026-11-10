@@ -128,12 +128,6 @@ export async function getFinancialLedgerData() {
     const totalSubsidies = incomingTx.reduce((acc, tx) => acc + (tx.subsidyFee || 0), 0);
     const netTotalIncome = Math.max(0, totalIncome - totalSubsidies);
 
-    const now = new Date();
-    const daysUntilNextFriday = ((5 - now.getDay() + 7) % 7) || 7;
-    const nextFridayDate = new Date(now.getTime() + daysUntilNextFriday * 24 * 60 * 60 * 1000);
-    const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-    const nextDistributionFormatted = `${nextFridayDate.getDate()} ${months[nextFridayDate.getMonth()]} ${nextFridayDate.getFullYear()}`;
-
     // Aggregasi data analitik riil untuk Rincian Laporan Keuangan & Arus Kas
     const analytics = aggregateFinancialAnalytics(donations, updates, totalIncome, totalExpenses);
 
@@ -155,7 +149,6 @@ export async function getFinancialLedgerData() {
         netTotalIncome,
         netBalance,
       },
-      nextDistributionDate: nextDistributionFormatted,
       financialDetails: analytics.financialDetails,
       cashFlowDetails: analytics.cashFlowDetails,
     };
@@ -172,7 +165,6 @@ export async function getFinancialLedgerData() {
         netTotalIncome: 0,
         netBalance: 0,
       },
-      nextDistributionDate: "Jumat Ini",
       financialDetails: fallbackAnalytics.financialDetails,
       cashFlowDetails: fallbackAnalytics.cashFlowDetails,
     };

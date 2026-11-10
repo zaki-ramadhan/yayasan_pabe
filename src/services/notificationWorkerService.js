@@ -7,10 +7,12 @@ import {
 import {
   sendWhatsAppNotification,
   sendWhatsAppCompletionNotification,
+  sendWhatsAppRolloverNotification,
 } from "@/services/whatsapp";
 import {
   sendRoutineDonationEmail,
   sendRoutineCompletionEmail,
+  sendRoutineRolloverEmail,
   sendPasswordResetEmail,
   sendAccountActivationEmail,
   sendDonationReceiptEmail,
@@ -137,6 +139,14 @@ export async function processNotificationQueue({
               programTitle: payload.programTitle,
               catalogUrl: payload.catalogUrl,
             });
+          } else if (item.type === NOTIFICATION_TYPE.ROUTINE_ROLLOVER) {
+            dispatchResult = await sendRoutineRolloverEmail({
+              to: targetEmail,
+              donorName: payload.donorName,
+              oldProgramTitle: payload.oldProgramTitle,
+              newProgramTitle: payload.newProgramTitle,
+              actionUrl: payload.actionUrl,
+            });
           } else {
             dispatchResult = await sendRoutineDonationEmail({
               to: targetEmail,
@@ -147,6 +157,7 @@ export async function processNotificationQueue({
               invoiceId: payload.invoiceId || null,
               actionUrl: payload.actionUrl,
               routineType: payload.routineType || "AUTO_DONATION",
+              paymentChannel: payload.paymentChannel || "qris",
             });
           }
 
@@ -166,6 +177,14 @@ export async function processNotificationQueue({
             donorName: payload.donorName,
             programTitle: payload.programTitle,
             catalogUrl: payload.catalogUrl,
+          });
+        } else if (item.type === NOTIFICATION_TYPE.ROUTINE_ROLLOVER) {
+          dispatchResult = await sendWhatsAppRolloverNotification({
+            to: targetPhone,
+            donorName: payload.donorName,
+            oldProgramTitle: payload.oldProgramTitle,
+            newProgramTitle: payload.newProgramTitle,
+            actionUrl: payload.actionUrl,
           });
         } else {
           dispatchResult = await sendWhatsAppNotification({

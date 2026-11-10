@@ -23,7 +23,6 @@ export function FinancialLedgerDashboard({
     totalExpenses: 0,
     netBalance: 0,
   },
-  nextDistributionDate = "Jumat Ini",
   financialDetails,
   cashFlowDetails,
   hideHeader = false,
@@ -48,7 +47,6 @@ export function FinancialLedgerDashboard({
 
         <UnifiedFinancialOverview
           grandTotals={grandTotals}
-          nextDistributionDate={nextDistributionDate}
           campaigns={campaigns}
           transactions={transactions}
         />

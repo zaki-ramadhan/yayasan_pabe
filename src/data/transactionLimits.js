@@ -74,3 +74,58 @@ export const EWALLET_QRIS_TRANSACTION_LIMITS = [
     maxAmount: 20000000,
   },
 ];
+
+export const TRANSACTION_LIMITS_CONFIG = {
+  MIN_AMOUNT: 10000,
+  QRIS_EWALLET: {
+    minAmount: 10000,
+    maxAmount: 20000000,
+    label: "QRIS & E-Wallet",
+  },
+  VA: {
+    minAmount: 10000,
+    maxAmount: 50000000,
+    label: "Virtual Account",
+  },
+  DEFAULT: {
+    minAmount: 10000,
+    maxAmount: 50000000,
+    label: "Donasi",
+  },
+};
+
+/**
+ * Mendapatkan batas transaksi minimum dan maksimum berdasarkan ID saluran pembayaran.
+ * @param {string} [channelId] - ID saluran (misal: "qris", "bca_va", "gopay")
+ * @returns {{minAmount: number, maxAmount: number, label: string}}
+ */
+export function getPaymentChannelLimits(channelId) {
+  if (!channelId) return TRANSACTION_LIMITS_CONFIG.DEFAULT;
+  const normalized = String(channelId).toLowerCase();
+
+  if (
+    normalized === "qris" ||
+    normalized.includes("qris") ||
+    normalized.includes("gopay") ||
+    normalized.includes("shopeepay") ||
+    normalized.includes("ewallet")
+  ) {
+    return TRANSACTION_LIMITS_CONFIG.QRIS_EWALLET;
+  }
+
+  if (
+    normalized.includes("va") ||
+    normalized.includes("virtual_account") ||
+    normalized.includes("bank") ||
+    normalized.includes("bca") ||
+    normalized.includes("mandiri") ||
+    normalized.includes("bri") ||
+    normalized.includes("bni") ||
+    normalized.includes("permata")
+  ) {
+    return TRANSACTION_LIMITS_CONFIG.VA;
+  }
+
+  return TRANSACTION_LIMITS_CONFIG.DEFAULT;
+}
+

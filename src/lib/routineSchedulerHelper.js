@@ -53,12 +53,12 @@ export function isRoutineScheduledForNow(routine, currentTime = new Date()) {
 
   if (frequency === "MONTHLY") {
     const currentDate = wibTime.getDate(); // 1 - 31
-    if (routine.monthlyDate) {
-      const targetDate = new Date(routine.monthlyDate).getDate();
-      return currentDate === targetDate;
-    }
-    // Default fallback jika tidak ada tanggal spesifik: tanggal 1 tiap bulan
-    return currentDate === 1;
+    const rawTargetDate = routine.monthlyDate ? new Date(routine.monthlyDate).getDate() : 1;
+    // End-of-Month Clamp: jika bulan berjalan hanya memiliki 28/29/30 hari dan target donatur > jumlah hari,
+    // maka eksekusi di hari terakhir bulan tersebut (misal tgl 31 di Februari -> dieksekusi 28/29 Februari)
+    const lastDayOfMonth = new Date(wibTime.getFullYear(), wibTime.getMonth() + 1, 0).getDate();
+    const effectiveTargetDate = Math.min(rawTargetDate, lastDayOfMonth);
+    return currentDate === effectiveTargetDate;
   }
 
   return false;

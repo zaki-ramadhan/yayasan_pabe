@@ -3,7 +3,10 @@ import { sanitizeInput } from "@/lib/security";
 import { toTitleCase } from "@/lib/formatters";
 import { cleanupOrphanCategories } from "./categoryService";
 import { deleteFromR2 } from "@/lib/r2Storage";
-import { completeRoutineDonationsForCampaign } from "./routineCompletionService";
+import {
+  completeRoutineDonationsForCampaign,
+  rolloverOrCompleteRoutineDonationsForCampaign,
+} from "./routineCompletionService";
 
 /**
  * Mengambil daftar program kampanye untuk tabel manajemen admin.
@@ -256,15 +259,15 @@ export async function updateAdminCampaign(id, payload) {
     data: updateData,
   });
 
-  // Jika status kampanye diubah menjadi COMPLETED, otomatis selesaikan komitmen donasi rutin yang terikat (Opsi A)
+  // Jika status kampanye diubah menjadi COMPLETED, otomatis alihkan komitmen donasi rutin yang terikat (Smart Rollover)
   if (updateData.status === "COMPLETED") {
     try {
-      await completeRoutineDonationsForCampaign(id, {
+      await rolloverOrCompleteRoutineDonationsForCampaign(id, {
         reason: "Campaign status updated to COMPLETED by admin",
         notifyDonors: true,
       });
     } catch (routineErr) {
-      console.error(`[AdminCampaign] Gagal menyelesaikan donasi rutin untuk program ${id}:`, routineErr);
+      console.error(`[AdminCampaign] Gagal mengalihkan donasi rutin untuk program ${id}:`, routineErr);
     }
   }
 
@@ -290,14 +293,14 @@ export async function deleteAdminCampaign(id) {
     );
   }
 
-  // Selesaikan dan lepas komitmen donasi rutin sebelum program dihapus
+  // Alihkan atau selesaikan komitmen donasi rutin sebelum program dihapus
   try {
-    await completeRoutineDonationsForCampaign(id, {
+    await rolloverOrCompleteRoutineDonationsForCampaign(id, {
       reason: "Campaign deleted by admin",
       notifyDonors: true,
     });
   } catch (routineErr) {
-    console.error(`[AdminCampaign] Gagal menyelesaikan donasi rutin saat menghapus program ${id}:`, routineErr);
+    console.error(`[AdminCampaign] Gagal mengalihkan donasi rutin saat menghapus program ${id}:`, routineErr);
   }
 
   const existing = await prisma.campaign.findUnique({

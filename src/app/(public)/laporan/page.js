@@ -25,7 +25,6 @@ export default async function LaporanPage() {
           transactions={ledgerData.transactions}
           campaigns={ledgerData.campaigns}
           grandTotals={ledgerData.grandTotals}
-          nextDistributionDate={ledgerData.nextDistributionDate}
           financialDetails={ledgerData.financialDetails}
           cashFlowDetails={ledgerData.cashFlowDetails}
           hideHeader

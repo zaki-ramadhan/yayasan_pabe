@@ -219,6 +219,7 @@ model RoutineDonation {
   amount       Float
   frequency    String    @default("MONTHLY") // DAILY, WEEKLY, MONTHLY
   routineType  String    @default("AUTO_DONATION") // REMINDER_ONLY, AUTO_DONATION
+  paymentChannel String?   @default("qris") // qris, bca_va, mandiri_va, bri_va, bsi_va
   status       String    @default("ACTIVE") // ACTIVE, PAUSED, CANCELLED
   selectedDay  String?
   monthlyDate  DateTime?

@@ -2,6 +2,7 @@
 
 import { PRESET_AMOUNTS } from "@/data/routineDonation";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
+import { getPaymentChannelLimits } from "@/data/transactionLimits";
 import { PaymentChannelPicker } from "@/components/donation/PaymentChannelPicker";
 import { FormField } from "@/components/ui/FormField";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
@@ -16,6 +17,8 @@ import { DONATION_LIMITS } from "@/lib/security";
  * @param {Function} props.onChange
  */
 export function RoutineAutoDonationConfig({ item, onChange }) {
+  const limits = getPaymentChannelLimits(item.paymentChannelId || "qris");
+
   return (
     <div className="space-y-4 pt-2 border-t border-slate-100 animate-in fade-in slide-in-from-top-1 duration-150">
       <div className="space-y-2">
@@ -42,17 +45,21 @@ export function RoutineAutoDonationConfig({ item, onChange }) {
         {item.isCustom && (
           <div className="pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
             <FormField
-              label={`Nominal lainnya (min. ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)})`}
+              label={`Nominal lainnya (min. ${formatRupiah(limits.minAmount)} - maks. ${formatRupiah(limits.maxAmount)})`}
               error={item.amountError}
             >
               <CurrencyInput
                 autoFocus
-                placeholder="0"
+                placeholder="10.000"
                 value={item.customAmount}
-                max={DONATION_LIMITS.MAX_AMOUNT}
+                min={limits.minAmount}
+                max={limits.maxAmount}
                 onChange={(clamped, raw) => {
                   onChange(item.id, "customAmount", raw);
                   onChange(item.id, "amount", clamped);
+                  if (item.amountError) {
+                    onChange(item.id, "amountError", "");
+                  }
                 }}
                 className="h-10 border-slate-300 text-sm font-normal text-slate-950 placeholder:text-slate-400 focus:ring-2 focus:ring-primary"
               />
@@ -65,7 +72,16 @@ export function RoutineAutoDonationConfig({ item, onChange }) {
         <PaymentChannelPicker
           channels={PAYMENT_CHANNELS}
           selectedChannelId={item.paymentChannelId || "qris"}
-          onSelectChannel={(channelId) => onChange(item.id, "paymentChannelId", channelId)}
+          onSelectChannel={(channelId) => {
+            onChange(item.id, "paymentChannelId", channelId);
+            const newLimits = getPaymentChannelLimits(channelId);
+            if (item.amount > newLimits.maxAmount) {
+              onChange(item.id, "amount", newLimits.maxAmount);
+              if (item.isCustom) {
+                onChange(item.id, "customAmount", String(newLimits.maxAmount));
+              }
+            }
+          }}
           containerCard={false}
           stepNumber={null}
           title="Saluran donasi"

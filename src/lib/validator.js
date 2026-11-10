@@ -11,6 +11,7 @@ import {
 } from "./sanitizer";
 import { formatRupiah } from "./formatters";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
+import { getPaymentChannelLimits } from "@/data/transactionLimits";
 
 export const RESERVED_KEYWORDS = [
   "admin",
@@ -418,20 +419,24 @@ export function validatePrayer(prayer, isRequired = false, minLength = PRAYER_LI
 }
 
 /**
- * Validasi nominal donasi dengan batas minimal dan maksimal
+ * Validasi nominal donasi dengan batas minimal dan maksimal sesuai metode pembayaran
+ * @param {number|string} amount
+ * @param {string} [channelId] - Saluran pembayaran (opsional)
  */
-export function validateDonationAmount(amount) {
+export function validateDonationAmount(amount, channelId = null) {
   const numericAmount = Number(amount);
-  if (isNaN(numericAmount) || numericAmount < DONATION_LIMITS.MIN_AMOUNT) {
+  const limits = getPaymentChannelLimits(channelId);
+
+  if (isNaN(numericAmount) || numericAmount < limits.minAmount) {
     return {
       isValid: false,
-      message: `Nominal donasi minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`,
+      message: `Nominal donasi minimal ${formatRupiah(limits.minAmount)}`,
     };
   }
-  if (numericAmount > DONATION_LIMITS.MAX_AMOUNT) {
+  if (numericAmount > limits.maxAmount) {
     return {
       isValid: false,
-      message: `Nominal donasi maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`,
+      message: `Nominal donasi maksimal untuk ${limits.label} adalah ${formatRupiah(limits.maxAmount)}`,
     };
   }
   return { isValid: true, message: "" };

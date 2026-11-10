@@ -66,7 +66,7 @@ export async function createDonation({
   prayer = "",
   idempotencyKey = "",
 }) {
-  const validation = validateDonationAmount(amount);
+  const validation = validateDonationAmount(amount, paymentChannelId);
   if (!validation.isValid) {
     throw new Error(validation.message);
   }
@@ -113,7 +113,8 @@ export async function createDonation({
     .digest("hex")
     .slice(0, 32);
 
-  const expiredAtDate = calculateDonationExpiryDate(channel.id, channel.type, now);
+  const isRoutine = Boolean(idempotencyKey && String(idempotencyKey).startsWith("ROUTINE_EXEC_"));
+  const expiredAtDate = calculateDonationExpiryDate(channel.id, channel.type, now, { isRoutine });
 
   let virtualAccountNumber = "";
   let billerCode = "";
@@ -130,6 +131,7 @@ export async function createDonation({
         donorName: cleanDonorName,
         donorEmail: cleanDonorEmail,
         donorPhone: cleanDonorPhone,
+        isRoutine,
       });
 
       if (channel.type === "VA") {

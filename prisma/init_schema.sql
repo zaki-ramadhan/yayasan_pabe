@@ -208,6 +208,7 @@ CREATE TABLE "RoutineDonation" (
     "amount" DOUBLE PRECISION NOT NULL,
     "frequency" TEXT NOT NULL DEFAULT 'MONTHLY',
     "routineType" TEXT NOT NULL DEFAULT 'AUTO_DONATION',
+    "paymentChannel" TEXT DEFAULT 'qris',
     "status" TEXT NOT NULL DEFAULT 'ACTIVE',
     "selectedDay" TEXT,
     "monthlyDate" TIMESTAMP(3),

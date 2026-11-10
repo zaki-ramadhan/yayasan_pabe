@@ -1,15 +1,13 @@
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
-import { FloatingRoutineDonate } from "@/components/shared/FloatingRoutineDonate";
-import { FloatingWhatsApp } from "@/components/shared/FloatingWhatsApp";
+import { FloatingActionDock } from "@/components/shared/FloatingActionDock";
 
 export default function PublicLayout({ children }) {
   return (
     <div className="min-h-screen flex flex-col bg-surface">
       <Navbar />
       <div className="flex-1">{children}</div>
-      <FloatingRoutineDonate />
-      <FloatingWhatsApp />
+      <FloatingActionDock />
       <Footer />
     </div>
   );

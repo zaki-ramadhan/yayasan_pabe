@@ -13,6 +13,8 @@ import {
   getRoutineInvoiceEmailSubject,
 } from "@/templates/emails/routineDonationInvoiceEmailTemplate";
 import { buildRoutineCompletionEmailHtml } from "@/templates/emails/routineCompletionEmailTemplate";
+import { buildRoutineRolloverEmailHtml } from "@/templates/emails/routineRolloverEmailTemplate";
+import { buildRoutinePausedDueToUnpaidEmailHtml } from "@/templates/emails/routinePausedDueToUnpaidEmailTemplate";
 import {
   buildDonationReceiptEmailHtml,
   getDonationReceiptEmailSubject,
@@ -367,6 +369,7 @@ export async function sendRoutineDonationEmail({
   invoiceId = null,
   actionUrl,
   routineType = "AUTO_DONATION",
+  paymentChannel = "qris",
 }) {
   const logoUrl = await getPublicEmailLogoUrl();
   const subject = getRoutineInvoiceEmailSubject(programTitle, invoiceId);
@@ -378,6 +381,7 @@ export async function sendRoutineDonationEmail({
     invoiceId,
     actionUrl,
     routineType,
+    paymentChannel,
     logoUrl,
   });
 
@@ -410,6 +414,69 @@ export async function sendRoutineCompletionEmail({
     donorName,
     programTitle,
     catalogUrl,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject,
+    html,
+  });
+}
+
+/**
+ * Mengirimkan email pemberitahuan pengalihan otomatis program donasi rutin
+ * @param {object} params
+ * @param {string} params.to - Alamat email donatur
+ * @param {string} params.donorName - Nama donatur
+ * @param {string} params.oldProgramTitle - Judul program lama yang selesai
+ * @param {string} params.newProgramTitle - Judul program baru tujuan pengalihan
+ * @param {string} params.actionUrl - Tautan ke rincian program / dashboard donatur
+ */
+export async function sendRoutineRolloverEmail({
+  to,
+  donorName,
+  oldProgramTitle,
+  newProgramTitle,
+  actionUrl,
+}) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const subject = `Pemberitahuan Pengalihan Program Donasi Rutin: ${newProgramTitle} - Yayasan PABE`;
+  const html = buildRoutineRolloverEmailHtml({
+    donorName,
+    oldProgramTitle,
+    newProgramTitle,
+    actionUrl,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject,
+    html,
+  });
+}
+
+/**
+ * Mengirimkan email pemberitahuan jeda otomatis jadwal donasi rutin karena 3 tagihan berturut-turut belum dibayar
+ * @param {object} params
+ * @param {string} params.to - Alamat email donatur
+ * @param {string} params.donorName - Nama donatur
+ * @param {string} params.programTitle - Judul program donasi
+ * @param {string} params.resumeUrl - Tautan untuk mengaktifkan kembali jadwal di dashboard
+ */
+export async function sendRoutinePausedDueToUnpaidEmail({
+  to,
+  donorName,
+  programTitle,
+  resumeUrl,
+}) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const subject = `Pemberitahuan Penjeda'an Jadwal Donasi Rutin: ${programTitle} - Yayasan PABE`;
+  const html = buildRoutinePausedDueToUnpaidEmailHtml({
+    donorName,
+    programTitle,
+    resumeUrl,
     logoUrl,
   });
 

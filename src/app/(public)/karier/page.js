@@ -125,6 +125,7 @@ export default function KarierPage() {
           <div className="lg:col-span-5 space-y-3">
             <CareerMasterList
               jobs={filteredJobs}
+              totalVacancies={vacancies.length}
               activeJobId={activeJob?.id || null}
               onSelectJob={setActiveJobId}
               onResetFilter={handleResetFilters}
@@ -136,7 +137,10 @@ export default function KarierPage() {
 
           {/* Right: Sticky Detail Panel */}
           <div className="lg:col-span-7 lg:sticky lg:top-24">
-            <CareerDetailPanel job={activeJob} />
+            <CareerDetailPanel
+              job={activeJob}
+              hasVacancies={filteredJobs.length > 0}
+            />
           </div>
         </section>
       </main>

@@ -14,16 +14,21 @@ import { CareerApplyModal } from "./CareerApplyModal";
  * Fully decomposed into modular sub-components without redundant raw code.
  * @param {object} props
  * @param {object|null} props.job
+ * @param {boolean} [props.hasVacancies]
  */
-export function CareerDetailPanel({ job }) {
+export function CareerDetailPanel({ job, hasVacancies = true }) {
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
   if (!job) {
     return (
       <EmptyState
         variant="dashed"
-        title="Belum ada posisi dipilih"
-        description="Pilih salah satu lowongan di sebelah kiri untuk melihat rincian amanah, kualifikasi, dan batas lamaran."
+        title={hasVacancies ? "Belum ada posisi dipilih" : "Informasi Lowongan"}
+        description={
+          hasVacancies
+            ? "Pilih salah satu lowongan di sebelah kiri untuk melihat rincian amanah, kualifikasi, dan batas lamaran."
+            : "Rincian amanah, kualifikasi, dan formulir pendaftaran akan ditampilkan di sini saat lowongan pekerjaan tersedia."
+        }
       />
     );
   }

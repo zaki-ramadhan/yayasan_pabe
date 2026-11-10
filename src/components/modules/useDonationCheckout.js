@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect, useSyncExternalStore, useRef } from "react";
+import { useState, useEffect, useSyncExternalStore, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
+import { getPaymentChannelLimits } from "@/data/transactionLimits";
 import { formatRupiah } from "@/lib/formatters";
 import {
   DONATION_LIMITS,
@@ -171,6 +172,22 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     }
   };
 
+  const channelLimits = useMemo(() => {
+    return getPaymentChannelLimits(selectedChannelId);
+  }, [selectedChannelId]);
+
+  const handleSelectChannel = (channelId) => {
+    setSelectedChannelId(channelId);
+    const newLimits = getPaymentChannelLimits(channelId);
+    if (amount > newLimits.maxAmount) {
+      setAmount(newLimits.maxAmount);
+      if (isCustomMode) {
+        setCustomAmountInput(String(newLimits.maxAmount));
+      }
+      toast.info(`Nominal donasi disesuaikan ke ${formatRupiah(newLimits.maxAmount)} (batas maksimal ${newLimits.label})`);
+    }
+  };
+
   const handleCustomModeClick = () => {
     setIsCustomMode(true);
     const num = Number(customAmountInput);
@@ -180,7 +197,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
   const handleCustomInputChange = (e) => {
     const rawVal = e.target.value.replace(/\D/g, "").slice(0, 9);
     const num = Number(rawVal);
-    const clamped = Math.min(num, DONATION_LIMITS.MAX_AMOUNT);
+    const clamped = Math.min(num, channelLimits.maxAmount);
     const finalRaw = clamped > 0 ? String(clamped) : (rawVal === "" ? "" : "0");
     setCustomAmountInput(finalRaw);
     setAmount(clamped);
@@ -189,10 +206,31 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     }
   };
 
+  const handleCustomInputBlur = () => {
+    if (isCustomMode && customAmountInput.trim() !== "") {
+      const num = Number(customAmountInput);
+      if (num > 0 && num < channelLimits.minAmount) {
+        setAmount(channelLimits.minAmount);
+        setCustomAmountInput(String(channelLimits.minAmount));
+        if (errors.amount) {
+          setErrors(({ amount: _stale, ...rest }) => rest);
+        }
+      } else if (num > channelLimits.maxAmount) {
+        setAmount(channelLimits.maxAmount);
+        setCustomAmountInput(String(channelLimits.maxAmount));
+        if (errors.amount) {
+          setErrors(({ amount: _stale, ...rest }) => rest);
+        }
+      }
+    }
+  };
+
   // Real-time feedback: kosong tidak dianggap error agar tidak "berteriak" sebelum user mengetik
   const liveAmountError =
-    isCustomMode && customAmountInput !== "" && amount < DONATION_LIMITS.MIN_AMOUNT
-      ? `Nominal donasi minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`
+    isCustomMode && customAmountInput !== "" && amount < channelLimits.minAmount
+      ? `Nominal donasi minimal ${formatRupiah(channelLimits.minAmount)}`
+      : isCustomMode && amount > channelLimits.maxAmount
+      ? `Batas maksimal transaksi ${channelLimits.label} adalah ${formatRupiah(channelLimits.maxAmount)}`
       : null;
   const amountError = liveAmountError || errors.amount || null;
 
@@ -212,10 +250,10 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     if (isSubmitting || isSubmittingRef.current) return;
 
     const newErrors = {};
-    if (amount < DONATION_LIMITS.MIN_AMOUNT) {
-      newErrors.amount = `Nominal donasi minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`;
-    } else if (amount > DONATION_LIMITS.MAX_AMOUNT) {
-      newErrors.amount = `Nominal donasi maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`;
+    if (amount < channelLimits.minAmount) {
+      newErrors.amount = `Nominal donasi minimal ${formatRupiah(channelLimits.minAmount)}`;
+    } else if (amount > channelLimits.maxAmount) {
+      newErrors.amount = `Nominal donasi maksimal ${channelLimits.label} adalah ${formatRupiah(channelLimits.maxAmount)}`;
     }
 
     const nameVal = validateName(donorName, isAnonymous);
@@ -396,7 +434,9 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     prayer,
     setPrayer,
     selectedChannelId,
-    setSelectedChannelId,
+    setSelectedChannelId: handleSelectChannel,
+    channelLimits,
+    handleCustomInputBlur,
     isSubmitting,
     isRedirecting,
     hasExistingPrayer,

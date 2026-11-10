@@ -55,8 +55,8 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-a
       setAmountError("Nominal donasi minimal Rp 10.000.");
       return;
     }
-    if (finalAmount > 100000000) {
-      setAmountError("Nominal donasi maksimal Rp 100.000.000.");
+    if (finalAmount > 50000000) {
+      setAmountError("Nominal donasi maksimal Rp 50.000.000.");
       return;
     }
     setAmountError("");
@@ -118,11 +118,11 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-a
         {/* Custom Nominal Input */}
         {isCustomMode && (
           <div className="animate-in fade-in slide-in-from-top-1 duration-150">
-            <FormField label="Nominal lainnya (min. Rp 10.000)" error={amountError}>
+            <FormField label="Nominal lainnya (min. Rp 10.000 - maks. Rp 50.000.000)" error={amountError}>
               <CurrencyInput
                 autoFocus
                 min={DONATION_LIMITS.MIN_AMOUNT}
-                max={DONATION_LIMITS.MAX_AMOUNT}
+                max={50000000}
                 placeholder="10.000"
                 value={customAmount}
                 onChange={handleCustomChange}

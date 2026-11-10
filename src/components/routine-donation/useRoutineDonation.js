@@ -7,6 +7,7 @@ import {
   validateName,
   validateEmail,
 } from "@/lib/security";
+import { getPaymentChannelLimits } from "@/data/transactionLimits";
 import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
 import { getRoutineProgramAmount } from "@/lib/routineDonationConstants";
 import { getStoredUser } from "@/services/authService";
@@ -172,16 +173,17 @@ export function useRoutineDonation({ campaigns = [] }) {
 
     if (program.routineType === "AUTO_DONATION") {
       const nominal = getRoutineProgramAmount(program);
+      const limits = getPaymentChannelLimits(program.paymentChannelId || "qris");
 
-      if (!nominal || nominal < DONATION_LIMITS.MIN_AMOUNT) {
-        handleProgramChange("amountError", `Nominal minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`);
-        toast.error(`Nominal minimal ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)}`);
+      if (!nominal || nominal < limits.minAmount) {
+        handleProgramChange("amountError", `Nominal minimal ${formatRupiah(limits.minAmount)}`);
+        toast.error(`Nominal minimal ${formatRupiah(limits.minAmount)}`);
         return;
       }
 
-      if (nominal > DONATION_LIMITS.MAX_AMOUNT) {
-        handleProgramChange("amountError", `Nominal maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`);
-        toast.error(`Nominal maksimal ${formatRupiah(DONATION_LIMITS.MAX_AMOUNT)}`);
+      if (nominal > limits.maxAmount) {
+        handleProgramChange("amountError", `Nominal maksimal untuk ${limits.label} adalah ${formatRupiah(limits.maxAmount)}`);
+        toast.error(`Nominal maksimal untuk ${limits.label} adalah ${formatRupiah(limits.maxAmount)}`);
         return;
       }
     }

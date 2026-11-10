@@ -43,7 +43,6 @@ function MetricCell({ label, value, subtext, className = "" }) {
  */
 export function UnifiedFinancialOverview({
   grandTotals = {},
-  nextDistributionDate = "Belum Terjadwal",
   campaigns = [],
   transactions = [],
   className,
@@ -82,11 +81,6 @@ export function UnifiedFinancialOverview({
             label="Saldo Kas Terkini"
             value={formatRupiah(netBalance)}
             subtext="Sisa kas siap salur"
-          />
-          <MetricCell
-            label="Penyaluran Mendatang"
-            value={nextDistributionDate}
-            subtext="Jadwal distribusi terdekat"
           />
         </div>
 

@@ -36,12 +36,30 @@ export function buildRoutineDonationInvoiceEmailHtml({
   invoiceId = null,
   actionUrl,
   routineType = "AUTO_DONATION",
+  paymentChannel = "qris",
   logoUrl,
 }) {
   const safeName = donorName && donorName !== "Hamba Allah" ? donorName.trim() : "Sahabat Kebaikan";
   const isAutoDonation = routineType === "AUTO_DONATION";
 
-  const buttonText = isAutoDonation ? "Tunaikan Donasi via QRIS" : "Buka Program Donasi";
+  const CHANNEL_NAMES = {
+    qris: "QRIS (Semua Bank & E-Wallet)",
+    gopay: "GoPay",
+    shopeepay: "ShopeePay",
+    bca_va: "BCA Virtual Account",
+    mandiri_va: "Mandiri Bill Payment",
+    bri_va: "BRI Virtual Account",
+    bsi_va: "BSI Virtual Account",
+  };
+  const channelLabel = CHANNEL_NAMES[paymentChannel] || "QRIS";
+  const isQrisFamily = !paymentChannel || paymentChannel === "qris" || paymentChannel === "gopay" || paymentChannel === "shopeepay";
+
+  const buttonText = isAutoDonation
+    ? isQrisFamily
+      ? "Tunaikan Donasi via QRIS"
+      : "Buka Instruksi Pembayaran VA"
+    : "Buka Program Donasi";
+
   const buttonHtml = buildEmailCtaButton({
     text: buttonText,
     url: actionUrl,
@@ -59,7 +77,7 @@ export function buildRoutineDonationInvoiceEmailHtml({
     <p style="margin: 0 0 24px 0; font-size: 14px; color: #374151; line-height: 1.6;">
       ${
         isAutoDonation
-          ? "Alhamdulillah, hari ini adalah jadwal komitmen donasi rutin Anda. Tagihan resmi dan kode QRIS telah berhasil diterbitkan oleh sistem:"
+          ? `Alhamdulillah, hari ini adalah jadwal komitmen donasi rutin Anda. Tagihan resmi ${isQrisFamily ? "dan kode QRIS" : "dan nomor Virtual Account"} telah berhasil diterbitkan oleh sistem:`
           : "Mengingatkan kembali bahwa hari ini adalah jadwal kebaikan donasi rutin Anda untuk program berikut:"
       }
     </p>
@@ -113,6 +131,10 @@ export function buildRoutineDonationInvoiceEmailHtml({
             <tr>
               <td style="color: #64748b; padding-top: 6px;">Nomor Tagihan</td>
               <td align="right" style="font-weight: 600; color: #1e293b; padding-top: 6px; font-family: monospace;">${invoiceId}</td>
+            </tr>
+            <tr>
+              <td style="color: #64748b; padding-top: 6px;">Metode Pembayaran</td>
+              <td align="right" style="font-weight: 500; color: #1e293b; padding-top: 6px;">${channelLabel}</td>
             </tr>
             `
                 : ""

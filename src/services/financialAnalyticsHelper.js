@@ -115,7 +115,7 @@ export function aggregateFinancialAnalytics(donations = [], updates = [], totalI
 
   const sortedMonthKeys = Array.from(monthMap.keys()).sort();
 
-  if (sortedMonthKeys.length < 4) {
+  if (sortedMonthKeys.length === 0) {
     return getFallbackAnalytics();
   }
 

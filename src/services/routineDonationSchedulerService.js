@@ -1,7 +1,12 @@
 import prisma from "@/lib/prisma";
 import { isRoutineScheduledForNow, getRoutineExecutionKey } from "@/lib/routineSchedulerHelper";
+import { isCampaignClosed } from "@/lib/formatters";
 import { createDonation } from "@/services/donationService";
-import { completeSingleRoutineDonation } from "@/services/routineCompletionService";
+import {
+  completeSingleRoutineDonation,
+  rolloverOrCompleteSingleRoutineDonation,
+} from "@/services/routineCompletionService";
+import { sendRoutinePausedDueToUnpaidEmail } from "@/services/emailService";
 import { enqueueNotification } from "@/services/notificationQueueService";
 import { processNotificationQueue } from "@/services/notificationWorkerService";
 import { NOTIFICATION_TYPE } from "@/lib/notificationConstants";
@@ -82,17 +87,27 @@ export async function processScheduledRoutineDonations({
         }
       }
 
-      // 3b. Fail-safe Fiqih: Jika program terikat sudah tidak aktif (COMPLETED / PAUSED), hentikan komitmen
-      if (routine.campaign && routine.campaign.status !== "ACTIVE") {
-        await completeSingleRoutineDonation(routine.id, { notifyDonor: true });
-        skipped++;
-        results.push({
-          routineId: routine.id,
-          donorPhone: routine.donorPhone,
-          status: "AUTO_COMPLETED",
-          reason: `Program "${routine.campaign.title || routine.programTitle}" berstatus ${routine.campaign.status}. Komitmen donasi otomatis diselesaikan.`,
+      // 3b. Fail-safe Fiqih & Smart Rollover: Jika program terikat sudah tidak aktif atau ditutup,
+      // alihkan ke program aktif yang paling membutuhkan dana. Jika tidak ada, selesaikan jadwal (Completed).
+      if (routine.campaign && (routine.campaign.status !== "ACTIVE" || isCampaignClosed(routine.campaign))) {
+        const rolloverRes = await rolloverOrCompleteSingleRoutineDonation(routine.id, {
+          notifyDonor: true,
         });
-        continue;
+
+        if (rolloverRes?.action === "ROLLED_OVER" && rolloverRes.targetCampaign) {
+          routine.campaign = rolloverRes.targetCampaign;
+          routine.campaignId = rolloverRes.targetCampaign.id;
+          routine.programTitle = rolloverRes.targetCampaign.title;
+        } else {
+          skipped++;
+          results.push({
+            routineId: routine.id,
+            donorPhone: routine.donorPhone,
+            status: "AUTO_COMPLETED",
+            reason: `Program "${routine.campaign.title || routine.programTitle}" berstatus tidak aktif/telah ditutup dan tidak ada program pengganti. Komitmen donasi otomatis diselesaikan.`,
+          });
+          continue;
+        }
       }
 
       // 4. Verifikasi Idempotensi: Cek apakah jadwal ini sudah pernah dieksekusi hari ini
@@ -121,11 +136,69 @@ export async function processScheduledRoutineDonations({
       let invoiceId = null;
       let actionUrl = `${baseUrl}/donasi-rutin`;
 
-      // 5. Jika mode Donasi Otomatis (Auto-Invoice), terbitkan invoice donasi baru dengan QRIS
+      // 4b. Consecutive Unpaid Guard: Cegah spam invoice jika 3 tagihan sebelumnya kedaluwarsa berturut-turut
+      if (routine.routineType === "AUTO_DONATION" && !forceRoutineId && typeof prisma?.donation?.findMany === "function") {
+        const recentInvoices = await prisma.donation.findMany({
+          where: {
+            idempotencyKey: { startsWith: `ROUTINE_EXEC_${routine.id}_` },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 3,
+          select: { id: true, status: true, invoiceId: true },
+        });
+
+        const isConsecutiveUnpaid =
+          recentInvoices.length >= 3 &&
+          recentInvoices.every((d) => d.status === "EXPIRED" || d.status === "CANCELLED");
+
+        if (isConsecutiveUnpaid) {
+          await prisma.routineDonation.update({
+            where: { id: routine.id },
+            data: { status: "PAUSED" },
+          });
+
+          await prisma.activityLog.create({
+            data: {
+              action: "ROUTINE_AUTO_PAUSED",
+              targetType: "RoutineDonation",
+              targetId: routine.id,
+              userName: "System",
+              description: `Jadwal donasi rutin otomatis dijeda karena 3 invoice berturut-turut (${recentInvoices.map((d) => d.invoiceId).join(", ")}) kedaluwarsa tanpa pelunasan.`,
+            },
+          });
+
+          const resumeUrl = `${baseUrl}/donatur/dashboard#donor-routine-card`;
+          if (routine.donorEmail) {
+            try {
+              await sendRoutinePausedDueToUnpaidEmail({
+                to: routine.donorEmail,
+                donorName: routine.donorName,
+                programTitle: routine.programTitle,
+                resumeUrl,
+              });
+            } catch (pauseErr) {
+              console.warn("[RoutineScheduler] Gagal kirim email pause:", pauseErr?.message);
+            }
+          }
+
+          skipped++;
+          results.push({
+            routineId: routine.id,
+            donorPhone: routine.donorPhone,
+            status: "AUTO_PAUSED",
+            reason: "Jadwal dijeda otomatis karena 3 tagihan sebelumnya kedaluwarsa tanpa pelunasan.",
+          });
+          continue;
+        }
+      }
+
+      // 5. Jika mode Donasi Otomatis (Auto-Invoice), terbitkan invoice donasi baru dengan saluran pilihan donatur
       if (routine.routineType === "AUTO_DONATION") {
         const donationIdempotencyKey = forceRoutineId
           ? `${execKey}_TEST_${Date.now()}`
           : execKey;
+
+        const channelId = routine.paymentChannel || "qris";
 
         const donation = await createDonation({
           campaignId: routine.campaignId || null,
@@ -133,7 +206,7 @@ export async function processScheduledRoutineDonations({
           campaignSlug: routine.campaign?.slug || "",
           donationType: "CAMPAIGN",
           amount: Number(routine.amount),
-          paymentChannelId: "qris",
+          paymentChannelId: channelId,
           donorName: routine.donorName,
           donorEmail: routine.donorEmail || "",
           donorPhone: routine.donorPhone,
@@ -168,6 +241,7 @@ export async function processScheduledRoutineDonations({
           selectedDay: routine.selectedDay,
           monthlyDate: routine.monthlyDate,
           routineType: routine.routineType,
+          paymentChannel: routine.paymentChannel || "qris",
           actionUrl,
           invoiceId,
         },

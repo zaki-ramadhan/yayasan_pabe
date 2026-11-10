@@ -73,8 +73,8 @@ export async function POST(request) {
 
     const body = await request.json();
 
-    // 1. Enforce Server-Side Amount Validation
-    const amountVal = validateDonationAmount(body.amount);
+    // 1. Enforce Server-Side Amount Validation (Channel-Specific Limits)
+    const amountVal = validateDonationAmount(body.amount, body.paymentChannelId || body.paymentChannel);
     if (!amountVal.isValid) {
       return NextResponse.json(
         { success: false, message: amountVal.message },

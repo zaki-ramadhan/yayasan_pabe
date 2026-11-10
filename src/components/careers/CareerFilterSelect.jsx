@@ -17,15 +17,17 @@ import { cn } from "@/lib/utils";
  * @param {string} props.value
  * @param {string[]} props.options
  * @param {Function} props.onChange
+ * @param {string} [props.className]
  */
 export function CareerFilterSelect({
   label,
   value,
   options = [],
   onChange,
+  className = "",
 }) {
   return (
-    <div className="flex-1 min-w-[180px]">
+    <div className={cn("w-full sm:w-auto", className)}>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <button

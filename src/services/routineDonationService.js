@@ -7,6 +7,7 @@ import {
   validateEmail,
   DONATION_LIMITS,
 } from "@/lib/security";
+import { getPaymentChannelLimits } from "@/data/transactionLimits";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
 
 export async function getActiveRoutineDonation(email) {
@@ -88,14 +89,15 @@ export async function createRoutineDonations({
   const amount = Number(p.amount) || 0;
 
   if (routineType === "AUTO_DONATION") {
-    if (amount < DONATION_LIMITS.MIN_AMOUNT) {
+    const limits = getPaymentChannelLimits(p.paymentChannelId || p.paymentChannel);
+    if (amount < limits.minAmount) {
       throw new Error(
-        `Nominal program minimal Rp ${DONATION_LIMITS.MIN_AMOUNT.toLocaleString("id-ID")}`
+        `Nominal program minimal Rp ${limits.minAmount.toLocaleString("id-ID")}`
       );
     }
-    if (amount > DONATION_LIMITS.MAX_AMOUNT) {
+    if (amount > limits.maxAmount) {
       throw new Error(
-        `Nominal program maksimal Rp ${DONATION_LIMITS.MAX_AMOUNT.toLocaleString("id-ID")}`
+        `Nominal program maksimal untuk ${limits.label} adalah Rp ${limits.maxAmount.toLocaleString("id-ID")}`
       );
     }
   }
@@ -127,12 +129,17 @@ export async function createRoutineDonations({
     }
   }
 
+  const rawChannel = String(p.paymentChannelId || p.paymentChannel || "qris").toLowerCase().trim();
+  const validPaymentChannels = ["qris", "gopay", "shopeepay", "bca_va", "mandiri_va", "bri_va", "bsi_va"];
+  const paymentChannel = validPaymentChannels.includes(rawChannel) ? rawChannel : "qris";
+
   const cleanData = {
     campaignId: p.campaignId ? String(p.campaignId) : null,
     programTitle: sanitizeInput(p.programTitle || "Program Kebaikan Rutin"),
     amount,
     frequency,
     routineType,
+    paymentChannel,
     status: "ACTIVE",
     selectedDay: p.selectedDay ? sanitizeInput(p.selectedDay) : null,
     monthlyDate,
@@ -179,6 +186,7 @@ export async function createRoutineDonations({
           programTitle: createdRecord.programTitle,
           amount: createdRecord.amount,
           frequency: createdRecord.frequency,
+          paymentChannel: createdRecord.paymentChannel,
           status: createdRecord.status,
           hasCustomPeriod: createdRecord.hasCustomPeriod,
           startDate: createdRecord.startDate,

@@ -7,6 +7,7 @@ import {
   Cell,
   Tooltip,
 } from "recharts";
+import { PieChart as PieChartIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ChartLegendGrid } from "./ChartLegendGrid";
 import { formatRupiah } from "@/lib/formatters";
@@ -18,6 +19,9 @@ import { formatRupiah } from "@/lib/formatters";
  * @param {Array<{name: string, value: number, percentage: number, color: string}>} props.data
  */
 export function FinancialIncomeDonutChart({ data = [] }) {
+  const totalValue = data.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+  const hasData = data.length > 0 && totalValue > 0;
+
   const legendItems = data.map((d) => ({
     label: d.name,
     color: d.color,
@@ -32,58 +36,72 @@ export function FinancialIncomeDonutChart({ data = [] }) {
           Distribusi Penghimpunan Keseluruhan
         </h3>
 
-        {/* Donut Chart */}
-        <div className="w-full flex-1 min-h-[220px] sm:min-h-[250px] aspect-auto">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (!active || !payload || payload.length === 0) return null;
-                  const item = payload[0];
-                  return (
-                    <div className="bg-white border border-slate-200 rounded-md shadow-md p-3 text-sm space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="w-2.5 h-2.5 rounded-xs shrink-0"
-                          style={{ backgroundColor: item.payload?.color }}
-                          aria-hidden="true"
-                        />
-                        <span className="font-medium text-slate-900">
-                          {item.name}
-                        </span>
-                      </div>
-                      <div className="text-slate-500 font-normal">
-                        {formatRupiah(Number(item.value))} ({item.payload?.percentage}%)
-                      </div>
-                    </div>
-                  );
-                }}
-              />
-              <Pie
-                data={data}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={65}
-                outerRadius={100}
-                paddingAngle={2}
-                stroke="#ffffff"
-                strokeWidth={2}
-              >
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`donut-cell-${entry.name}-${index}`}
-                    fill={entry.color}
+        {!hasData ? (
+          <div className="flex-1 flex flex-col items-center justify-center py-10 sm:py-14 text-center px-4">
+            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2.5">
+              <PieChartIcon className="w-5 h-5" />
+            </div>
+            <p className="text-sm font-semibold text-slate-900">Belum Ada Data Penghimpunan</p>
+            <p className="text-xs sm:text-sm text-slate-500 max-w-xs mt-1">
+              Belum ada donasi masuk yang tercatat pada periode tahun yang dipilih.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Donut Chart */}
+            <div className="w-full flex-1 min-h-[220px] sm:min-h-[250px] aspect-auto">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (!active || !payload || payload.length === 0) return null;
+                      const item = payload[0];
+                      return (
+                        <div className="bg-white border border-slate-200 rounded-md shadow-md p-3 text-sm space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="w-2.5 h-2.5 rounded-xs shrink-0"
+                              style={{ backgroundColor: item.payload?.color }}
+                              aria-hidden="true"
+                            />
+                            <span className="font-medium text-slate-900">
+                              {item.name}
+                            </span>
+                          </div>
+                          <div className="text-slate-500 font-normal">
+                            {formatRupiah(Number(item.value))} ({item.payload?.percentage}%)
+                          </div>
+                        </div>
+                      );
+                    }}
                   />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+                  <Pie
+                    data={data}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={65}
+                    outerRadius={100}
+                    paddingAngle={2}
+                    stroke="#ffffff"
+                    strokeWidth={2}
+                  >
+                    {data.map((entry, index) => (
+                      <Cell
+                        key={`donut-cell-${entry.name}-${index}`}
+                        fill={entry.color}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
 
-        {/* Legend Grid Below */}
-        <div className="pt-2 border-t border-slate-100">
-          <ChartLegendGrid items={legendItems} />
-        </div>
+            {/* Legend Grid Below */}
+            <div className="pt-2 border-t border-slate-100">
+              <ChartLegendGrid items={legendItems} />
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );

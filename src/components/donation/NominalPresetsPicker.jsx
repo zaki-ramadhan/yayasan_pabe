@@ -13,8 +13,13 @@ export function NominalPresetsPicker({
   onPresetClick,
   onCustomModeClick,
   onCustomInputChange,
+  onCustomInputBlur,
+  channelLimits,
   error,
 }) {
+  const minLimit = channelLimits?.minAmount || DONATION_LIMITS.MIN_AMOUNT;
+  const maxLimit = channelLimits?.maxAmount || DONATION_LIMITS.MAX_AMOUNT;
+
   return (
     <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
       <CheckoutStepHeader step={1} title="Pilih nominal donasi" />
@@ -35,14 +40,16 @@ export function NominalPresetsPicker({
       {isCustomMode && (
         <div className="pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
           <FormField
-            label={`Nominal lainnya (min. ${formatRupiah(DONATION_LIMITS.MIN_AMOUNT)})`}
+            label={`Nominal lainnya (min. ${formatRupiah(minLimit)} - maks. ${formatRupiah(maxLimit)})`}
             error={error}
           >
             <CurrencyInput
               autoFocus
-              placeholder="0"
+              placeholder="10.000"
               value={customAmountInput}
-              max={DONATION_LIMITS.MAX_AMOUNT}
+              min={minLimit}
+              max={maxLimit}
+              onBlur={onCustomInputBlur}
               onChange={(clamped, raw) => {
                 if (typeof onCustomInputChange === "function") {
                   onCustomInputChange({ target: { value: raw } });

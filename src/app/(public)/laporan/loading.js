@@ -24,7 +24,7 @@ export default function LaporanLoading() {
           <div className="flex flex-col lg:flex-row items-stretch gap-6 lg:gap-8">
             {/* Bilah Samping Skeleton (Tanpa border luar, murni divide-y) */}
             <div className="w-full lg:w-64 xl:w-72 shrink-0 divide-y divide-slate-200 flex flex-col justify-between">
-              {[1, 2, 3, 4].map((i) => (
+              {[1, 2, 3].map((i) => (
                 <div key={i} className="py-3 sm:py-3.5 space-y-1">
                   <Skeleton className="h-4 w-28 rounded" />
                   <Skeleton className="h-5.5 w-36 rounded" />

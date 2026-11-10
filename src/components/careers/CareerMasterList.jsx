@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchX, AlertCircle, RotateCcw } from "lucide-react";
+import { SearchX, AlertCircle, RotateCcw, Briefcase } from "lucide-react";
 import { CareerListItem } from "./CareerListItem";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/Button";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/Button";
  */
 export function CareerMasterList({
   jobs = [],
+  totalVacancies = 0,
   activeJobId,
   onSelectJob,
   onResetFilter,
@@ -62,22 +63,31 @@ export function CareerMasterList({
           }
         />
       ) : jobs.length === 0 ? (
-        <EmptyState
-          variant="dashed"
-          icon={SearchX}
-          title="Tidak ada posisi yang sesuai"
-          description="Coba ubah kata kunci pencarian atau sesuaikan opsi filter lokasi dan divisi."
-          action={
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onResetFilter}
-              className="text-sm font-medium"
-            >
-              Reset Semua Filter
-            </Button>
-          }
-        />
+        totalVacancies === 0 ? (
+          <EmptyState
+            variant="dashed"
+            icon={Briefcase}
+            title="Belum ada lowongan dibuka"
+            description="Saat ini belum ada posisi lowongan pekerjaan yang dibuka. Silakan cek kembali secara berkala untuk pembaruan kesempatan berkarier."
+          />
+        ) : (
+          <EmptyState
+            variant="dashed"
+            icon={SearchX}
+            title="Tidak ada posisi yang sesuai"
+            description="Coba ubah kata kunci pencarian atau sesuaikan opsi filter lokasi dan tipe pekerjaan."
+            action={
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onResetFilter}
+                className="text-sm font-medium"
+              >
+                Reset Semua Filter
+              </Button>
+            }
+          />
+        )
       ) : (
         <div className="space-y-2.5">
           {jobs.map((job) => (

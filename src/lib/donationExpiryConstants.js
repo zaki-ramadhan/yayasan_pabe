@@ -34,6 +34,12 @@ export const PAYMENT_EXPIRY_CONFIG = Object.freeze({
     milliseconds: 24 * 60 * 60 * 1000,
     label: "24 jam",
   },
+  ROUTINE_INVOICE: {
+    duration: 24,
+    unit: "hour",
+    milliseconds: 24 * 60 * 60 * 1000,
+    label: "24 jam",
+  },
   DEFAULT: {
     duration: 24,
     unit: "hour",
@@ -65,13 +71,24 @@ export function getChannelExpiryConfig(channelId = "", channelType = "") {
 
 /**
  * Menghitung objek Date kedaluwarsa dari waktu acuan.
+ * Untuk donasi rutin (isRoutine: true), batas kedaluwarsa diberikan 24 jam agar donatur memiliki waktu nyaman untuk membayar.
  * @param {string} channelId
  * @param {string} channelType
  * @param {Date|number} [fromDate]
+ * @param {object} [options]
+ * @param {boolean} [options.isRoutine=false]
  * @returns {Date}
  */
-export function calculateDonationExpiryDate(channelId = "", channelType = "", fromDate = new Date()) {
+export function calculateDonationExpiryDate(
+  channelId = "",
+  channelType = "",
+  fromDate = new Date(),
+  { isRoutine = false } = {}
+) {
   const baseTime = fromDate instanceof Date ? fromDate.getTime() : Number(fromDate) || Date.now();
+  if (isRoutine) {
+    return new Date(baseTime + PAYMENT_EXPIRY_CONFIG.ROUTINE_INVOICE.milliseconds);
+  }
   const config = getChannelExpiryConfig(channelId, channelType);
   return new Date(baseTime + config.milliseconds);
 }
@@ -97,9 +114,23 @@ export function formatMidtransOrderTime(date = new Date()) {
  * @param {string} channelId
  * @param {string} channelType
  * @param {Date} [fromDate]
+ * @param {object} [options]
+ * @param {boolean} [options.isRoutine=false]
  * @returns {{ order_time: string, expiry_duration: number, unit: string }}
  */
-export function buildMidtransCustomExpiry(channelId = "", channelType = "", fromDate = new Date()) {
+export function buildMidtransCustomExpiry(
+  channelId = "",
+  channelType = "",
+  fromDate = new Date(),
+  { isRoutine = false } = {}
+) {
+  if (isRoutine) {
+    return {
+      order_time: formatMidtransOrderTime(fromDate),
+      expiry_duration: PAYMENT_EXPIRY_CONFIG.ROUTINE_INVOICE.duration,
+      unit: PAYMENT_EXPIRY_CONFIG.ROUTINE_INVOICE.unit,
+    };
+  }
   const config = getChannelExpiryConfig(channelId, channelType);
   return {
     order_time: formatMidtransOrderTime(fromDate),

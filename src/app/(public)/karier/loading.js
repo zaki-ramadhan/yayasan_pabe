@@ -16,13 +16,12 @@ export default function KarierLoading() {
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-6 pb-10 sm:pb-12 space-y-5">
-        {/* Filter Bar: Row 1 Search Input, Row 2 3-Select Dropdowns */}
-        <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-2xs space-y-3 sm:space-y-4">
-          <Skeleton className="h-10 w-full rounded-lg" />
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <Skeleton className="h-10 sm:flex-1 rounded-lg" />
-            <Skeleton className="h-10 sm:flex-1 rounded-lg" />
-            <Skeleton className="h-10 sm:flex-1 rounded-lg" />
+        {/* Filter Bar: Row 1 Search Input + 2 Dropdown Selects (no outer card wrapper) */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+          <Skeleton className="h-10 flex-1 rounded-lg" />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+            <Skeleton className="h-10 w-full sm:w-44 lg:w-48 rounded-lg" />
+            <Skeleton className="h-10 w-full sm:w-48 lg:w-56 rounded-lg" />
           </div>
         </div>
 

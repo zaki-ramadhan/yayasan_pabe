@@ -37,6 +37,7 @@ export async function createCoreApiCharge({
   donorName = "Hamba Allah",
   donorEmail = "",
   donorPhone = "",
+  isRoutine = false,
 }) {
   if (!orderId || !amount || amount <= 0) {
     throw new Error("Parameter orderId dan nominal donasi valid diperlukan untuk Midtrans Core API.");
@@ -86,8 +87,8 @@ export async function createCoreApiCharge({
     };
   }
 
-  // Sinkronisasi batas waktu tagihan dengan Midtrans
-  payload.custom_expiry = buildMidtransCustomExpiry(channel);
+  // Sinkronisasi batas waktu tagihan dengan Midtrans (khusus donasi rutin berdurasi 24 jam)
+  payload.custom_expiry = buildMidtransCustomExpiry(channel, "", new Date(), { isRoutine });
 
   const response = await fetch(getMidtransCoreApiChargeUrl(), {
     method: "POST",

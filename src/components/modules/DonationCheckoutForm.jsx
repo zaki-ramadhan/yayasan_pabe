@@ -30,6 +30,8 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
     setPrayer,
     selectedChannelId,
     setSelectedChannelId,
+    channelLimits,
+    handleCustomInputBlur,
     isSubmitting,
     isRedirecting,
     hasExistingPrayer,
@@ -69,6 +71,8 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
           onPresetClick={handlePresetClick}
           onCustomModeClick={handleCustomModeClick}
           onCustomInputChange={handleCustomInputChange}
+          onCustomInputBlur={handleCustomInputBlur}
+          channelLimits={channelLimits}
           error={amountError}
         />
 
