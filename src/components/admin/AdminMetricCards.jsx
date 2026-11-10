@@ -77,7 +77,7 @@ export function AdminMetricCards({ stats: initialStats }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
       {cards.map((card) => (
         <div
           key={card.label}
@@ -91,7 +91,7 @@ export function AdminMetricCards({ stats: initialStats }) {
             draggable={false}
             fill
             priority
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            sizes="(max-width: 1024px) 50vw, 25vw"
             className="object-fill pointer-events-none select-none"
           />
 
@@ -127,15 +127,15 @@ export function AdminMetricCards({ stats: initialStats }) {
           </div>
 
           {/* Konten Metrik di Dalam Folder */}
-          <div className="relative z-10 h-full flex flex-col justify-end pb-3 sm:pb-3.5 md:pb-4 px-3.5 sm:px-4 md:px-4.5 space-y-0.5">
-            <span className="text-sm font-medium text-slate-600 block leading-tight truncate">
+          <div className="relative z-10 h-full flex flex-col justify-end pb-2.5 sm:pb-3.5 md:pb-4 px-2.5 sm:px-4 md:px-4.5 space-y-0.5">
+            <span className="text-xs sm:text-sm font-medium text-slate-600 block leading-tight truncate">
               {card.label}
             </span>
-            <div className="text-lg sm:text-xl font-semibold text-slate-900 tracking-tight truncate">
+            <div className="text-base sm:text-xl font-semibold text-slate-900 tracking-tight truncate">
               {card.value}
             </div>
             {card.detailValue && (
-              <p className="text-sm text-slate-500 font-normal leading-tight truncate mt-0.5 tabular-nums">
+              <p className="text-xs sm:text-sm text-slate-500 font-normal leading-tight truncate mt-0.5 tabular-nums">
                 {card.detailValue}
               </p>
             )}

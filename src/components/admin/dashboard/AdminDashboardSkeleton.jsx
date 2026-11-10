@@ -5,7 +5,7 @@ import { AdminDonationTrendSkeleton } from "@/components/admin/analytics/AdminDo
 export function AdminDashboardSkeleton() {
   return (
     <div className="space-y-2.5 animate-pulse">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
@@ -17,10 +17,10 @@ export function AdminDashboardSkeleton() {
               aria-hidden="true"
               draggable={false}
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              sizes="(max-width: 1024px) 50vw, 25vw"
               className="object-fill pointer-events-none select-none opacity-80"
             />
-            <div className="relative z-10 h-full flex flex-col justify-end pb-3.5 sm:pb-4 md:pb-4.5 px-3.5 sm:px-4 md:px-4.5 space-y-1.5">
+            <div className="relative z-10 h-full flex flex-col justify-end pb-2.5 sm:pb-4 md:pb-4.5 px-2.5 sm:px-4 md:px-4.5 space-y-1.5">
               <Skeleton className="h-3.5 w-28 rounded" />
               <Skeleton className="h-6 w-32 rounded" />
             </div>

@@ -6,9 +6,9 @@ export function AdminDonationTrendSkeleton() {
       {/* Header Skeleton */}
       <div className="p-3.5 sm:p-4 border-b border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3">
         <Skeleton className="h-5 w-48 rounded" />
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-9 w-38 rounded-lg" />
-          <Skeleton className="h-9 w-42 rounded-lg" />
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 w-full sm:w-auto">
+          <Skeleton className="h-9 w-full sm:w-38 rounded-lg" />
+          <Skeleton className="h-9 w-full sm:w-42 rounded-lg" />
         </div>
       </div>
 

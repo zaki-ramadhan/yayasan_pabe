@@ -233,20 +233,20 @@ export function AdminDonationTrendCard({
         </div>
 
         {/* Filter Bar */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 w-full sm:w-auto">
           <SortDropdown
             options={TIME_RANGE_OPTIONS}
             value={timeRange}
             onChange={setTimeRange}
             label="Rentang waktu"
-            className="h-9 px-3 text-sm w-full sm:w-[165px]"
+            className="h-9 px-2.5 sm:px-3 text-sm w-full sm:w-[165px]"
           />
           <SortDropdown
             options={viewModeOptions}
             value={viewMode}
             onChange={setViewMode}
             label="Mode grafik"
-            className="h-9 px-3 text-sm w-full sm:w-[175px]"
+            className="h-9 px-2.5 sm:px-3 text-sm w-full sm:w-[175px]"
           />
         </div>
       </CardHeader>
