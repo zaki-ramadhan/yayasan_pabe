@@ -13,8 +13,8 @@ export function BeneficiaryTableRow({ item, index }) {
       </TableCell>
 
       {/* Kolom Nama Penerima (Teks murni tanpa avatar) */}
-      <TableCell className="py-3.5 align-middle text-sm font-medium text-slate-900">
-        {item.name}
+      <TableCell className="py-3.5 align-middle text-sm font-medium text-slate-900 max-w-[240px]">
+        <span className="block truncate">{item.name}</span>
       </TableCell>
 
       {/* Kolom Kategori (Badge) */}

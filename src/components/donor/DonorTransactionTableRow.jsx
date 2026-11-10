@@ -13,15 +13,15 @@ export function DonorTransactionTableRow({ item }) {
       <TableCell className="text-center text-slate-700 font-normal align-middle">
         {item.no}
       </TableCell>
-      <TableCell className="font-medium text-slate-900 align-middle">
-        <div className="flex items-center gap-2.5">
+      <TableCell className="font-medium text-slate-900 align-middle max-w-[180px]">
+        <div className="flex items-center gap-2.5 min-w-0">
           <UserAvatar
             src={item.donorAvatar}
             name={item.donorName}
             fallback="D"
-            className="w-7 h-7"
+            className="w-7 h-7 shrink-0"
           />
-          <span className="truncate">{item.donorName}</span>
+          <span className="truncate block">{item.donorName}</span>
         </div>
       </TableCell>
       <TableCell className="text-right font-medium text-emerald-800 align-middle tabular-nums">

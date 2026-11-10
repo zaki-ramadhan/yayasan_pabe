@@ -42,7 +42,7 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
       {/* 3. Domisili */}
       <TableCell className="w-36 py-3 text-sm text-slate-700 align-middle text-center whitespace-nowrap">
         {donor.city ? (
-          <span className="font-normal">{donor.city}</span>
+          <span className="font-normal block truncate max-w-[130px] mx-auto">{donor.city}</span>
         ) : (
           <span className="text-sm text-slate-400 italic font-normal">-</span>
         )}

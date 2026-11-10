@@ -253,11 +253,17 @@ export function DonorDashboardView({ currentUser: propUser }) {
               ) : (
                 sortedTransactions.map((tx) => (
                   <TableRow key={tx.id}>
-                    <TableCell className="text-slate-900 font-medium align-middle">{tx.id}</TableCell>
+                    <TableCell className="text-slate-900 font-medium align-middle">
+                      <span className="block max-w-[130px] truncate">{tx.id}</span>
+                    </TableCell>
                     <TableCell className="text-slate-600 font-normal whitespace-nowrap align-middle">{formatDate(tx.date)}</TableCell>
-                    <TableCell className="font-normal text-slate-800 align-middle">{tx.program}</TableCell>
+                    <TableCell className="font-normal text-slate-800 align-middle">
+                      <span className="block max-w-[200px] truncate">{tx.program}</span>
+                    </TableCell>
                     <TableCell className="font-medium text-emerald-800 text-right align-middle">{formatRupiah(tx.amount)}</TableCell>
-                    <TableCell className="text-slate-600 font-normal align-middle">{tx.channel}</TableCell>
+                    <TableCell className="text-slate-600 font-normal align-middle">
+                      <span className="block max-w-[130px] truncate">{tx.channel}</span>
+                    </TableCell>
                     <TableCell className="text-center align-middle">
                       <Link
                         href={`/invoice/${tx.id}`}

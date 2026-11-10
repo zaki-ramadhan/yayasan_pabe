@@ -110,7 +110,7 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
                         ) : (
                           <Folder className="w-5 h-5 fill-amber-400 text-amber-500 shrink-0" />
                         )}
-                        <span className="font-normal text-sm text-slate-900 group-hover:text-primary transition-colors">
+                        <span className="font-normal text-sm text-slate-900 group-hover:text-primary transition-colors truncate max-w-[200px] sm:max-w-xs">
                           {item.folder}
                         </span>
                       </div>

@@ -103,10 +103,16 @@ export function AdminDashboardView({ userRole, stats }) {
               ) : (
                 sortedTransactions.map((tx) => (
                   <TableRow key={tx.id}>
-                    <TableCell className="text-slate-900 font-medium align-middle">{tx.id}</TableCell>
-                    <TableCell className="font-normal text-slate-800 align-middle">{tx.donor}</TableCell>
+                    <TableCell className="text-slate-900 font-medium align-middle">
+                      <span className="block max-w-[130px] truncate">{tx.id}</span>
+                    </TableCell>
+                    <TableCell className="font-normal text-slate-800 align-middle">
+                      <span className="block max-w-[160px] truncate">{tx.donor}</span>
+                    </TableCell>
                     <TableCell className="font-medium text-emerald-800 text-right align-middle">{formatRupiah(tx.amount)}</TableCell>
-                    <TableCell className="font-normal text-slate-600 align-middle">{tx.channel}</TableCell>
+                    <TableCell className="font-normal text-slate-600 align-middle">
+                      <span className="block max-w-[130px] truncate">{tx.channel}</span>
+                    </TableCell>
                     <TableCell className="font-normal text-slate-600 whitespace-nowrap align-middle">{formatDate(tx.date, { withTime: true })}</TableCell>
                     <TableCell className="text-center align-middle">
                       <StatusBadge status={tx.status} label={tx.status === "PAID" ? "Lunas" : undefined} />

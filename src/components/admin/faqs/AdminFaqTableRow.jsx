@@ -44,7 +44,7 @@ export function AdminFaqTableRow({
 
 			{/* Category Tag */}
 			<TableCell className="w-36 py-3 px-4 whitespace-nowrap align-middle text-center">
-				<span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200/90 whitespace-nowrap">
+				<span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200/90 whitespace-nowrap max-w-[130px] truncate">
 					{faq.category ||
 						"Umum"}
 				</span>

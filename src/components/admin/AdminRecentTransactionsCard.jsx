@@ -166,7 +166,9 @@ export function AdminRecentTransactionsCard({
                     </div>
                   </TableCell>
                   <TableCell className="w-px text-sm font-medium text-slate-900 py-3 whitespace-nowrap align-middle">
-                    {item.donorName}
+                    <span className="block max-w-[150px] sm:max-w-[170px] truncate">
+                      {item.donorName}
+                    </span>
                   </TableCell>
                   <TableCell className="text-sm text-slate-700 py-3 align-middle min-w-[280px] sm:min-w-[340px]">
                     <span

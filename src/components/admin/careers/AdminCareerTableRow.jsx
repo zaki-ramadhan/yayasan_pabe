@@ -43,24 +43,26 @@ export function AdminCareerTableRow({
 			</TableCell>
 
 			<TableCell className="w-36 py-3 text-sm text-slate-700 align-middle">
-				{job.experience || "-"}
+				<span className="block truncate max-w-[130px]">
+					{job.experience || "-"}
+				</span>
 			</TableCell>
 
 			<TableCell className="min-w-[180px] w-48 py-3 align-middle">
 				<div className="space-y-0.5">
-					<span className="text-sm font-medium text-slate-800 block">
+					<span className="text-sm font-medium text-slate-800 block truncate max-w-[170px]">
 						{job.type}
 					</span>
-					<span className="text-xs text-slate-500 font-normal">
+					<span className="text-xs text-slate-500 font-normal block truncate max-w-[170px]">
 						{formatWorkplace(job.workplace)}
 					</span>
 				</div>
 			</TableCell>
 
 			<TableCell className="min-w-[160px] w-48 text-sm text-slate-600 py-3 align-middle">
-				{
-					job.location
-				}
+				<span className="block line-clamp-2 leading-snug">
+					{job.location}
+				</span>
 			</TableCell>
 
 			<TableCell className="text-sm text-slate-600 py-3 whitespace-nowrap align-middle text-center tabular-nums">

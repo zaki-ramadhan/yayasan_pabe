@@ -21,7 +21,9 @@ export function FinancialTransactionRow({ transaction }) {
 
       {/* Source */}
       <TableCell className="font-normal text-slate-600 whitespace-nowrap align-middle">
-        {transaction.source}
+        <span className="block max-w-[150px] truncate">
+          {transaction.source}
+        </span>
       </TableCell>
 
       {/* Type */}
@@ -36,7 +38,9 @@ export function FinancialTransactionRow({ transaction }) {
 
       {/* Category */}
       <TableCell className="font-normal text-slate-600 whitespace-nowrap align-middle">
-        {transaction.category}
+        <span className="block max-w-[140px] truncate">
+          {transaction.category}
+        </span>
       </TableCell>
 
       {/* Amount */}
