@@ -237,7 +237,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
               ) : (
                 <TableEmptyRow
                   colSpan={7}
-                  isFiltered={Boolean(debouncedSearch || statusFilter !== "ALL" || frequencyFilter !== "ALL")}
+                  isFiltered={Boolean(debouncedSearch || frequencyFilter !== "ALL")}
                 />
               )}
             </TableBody>
