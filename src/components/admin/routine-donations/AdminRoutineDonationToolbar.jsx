@@ -2,8 +2,6 @@
 
 import { Download } from "lucide-react";
 import { TableToolbar } from "@/components/ui/Table";
-import { Button } from "@/components/ui/Button";
-import { AdminRoutineTriggerButton } from "./AdminRoutineTriggerButton";
 import {
   Select,
   SelectTrigger,
@@ -16,8 +14,6 @@ export function AdminRoutineDonationToolbar({
   search,
   onSearchChange,
   onClearSearch,
-  statusFilter,
-  onStatusFilterChange,
   frequencyFilter,
   onFrequencyFilterChange,
   onRefresh,
@@ -32,45 +28,25 @@ export function AdminRoutineDonationToolbar({
       searchPlaceholder="Cari donatur atau program..."
       searchWidth="flex-1 min-w-[200px] max-w-sm"
       filters={
-        <>
-          <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-            <SelectTrigger className="w-36 h-10 text-sm font-normal bg-white shrink-0">
-              <SelectValue placeholder="Semua status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ACTIVE" className="text-sm font-normal">
-                Aktif
-              </SelectItem>
-              <SelectItem value="PAUSED" className="text-sm font-normal">
-                Dijeda
-              </SelectItem>
-              <SelectItem value="COMPLETED" className="text-sm font-normal">
-                Selesai
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={frequencyFilter} onValueChange={onFrequencyFilterChange}>
-            <SelectTrigger className="w-36 h-10 text-sm font-normal bg-white shrink-0">
-              <SelectValue placeholder="Semua frekuensi" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL" className="text-sm font-normal">
-                Semua
-              </SelectItem>
-              <SelectItem value="WEEKLY" className="text-sm font-normal">
-                Mingguan
-              </SelectItem>
-              <SelectItem value="MONTHLY" className="text-sm font-normal">
-                Bulanan
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </>
+        <Select value={frequencyFilter} onValueChange={onFrequencyFilterChange}>
+          <SelectTrigger className="w-36 h-10 text-sm font-normal bg-white shrink-0">
+            <SelectValue placeholder="Semua frekuensi" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL" className="text-sm font-normal">
+              Semua
+            </SelectItem>
+            <SelectItem value="WEEKLY" className="text-sm font-normal">
+              Mingguan
+            </SelectItem>
+            <SelectItem value="MONTHLY" className="text-sm font-normal">
+              Bulanan
+            </SelectItem>
+          </SelectContent>
+        </Select>
       }
       onRefresh={onRefresh}
       isLoading={isLoading}
-      extraActions={<AdminRoutineTriggerButton isGlobal onSuccess={() => onRefresh?.({ silent: true })} />}
       primaryAction={
         onExportCsv
           ? {

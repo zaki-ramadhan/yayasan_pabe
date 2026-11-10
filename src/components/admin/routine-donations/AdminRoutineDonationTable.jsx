@@ -28,7 +28,6 @@ const PAGE_SIZE = 10;
 export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
   const [items, setItems] = useState(initialRoutineDonations);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ACTIVE");
   const [frequencyFilter, setFrequencyFilter] = useState("ALL");
   const [selectedItem, setSelectedItem] = useState(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
@@ -36,9 +35,9 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 
-  // 1. Live SSE: Menambahkan data pendaftaran komitmen donasi rutin baru secara real-time
+  // 1. Live SSE: Menambahkan data pendaftaran komitmen donasi rutin baru secara real-time (hanya jika aktif)
   useAdminLiveEvent("ROUTINE_DONATION_CREATED", (payload) => {
-    if (!payload?.id) return;
+    if (!payload?.id || payload.status !== "ACTIVE") return;
     setItems((prev) => {
       if (prev.some((it) => it.id === payload.id)) return prev;
       return [payload, ...prev];
@@ -46,17 +45,20 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
     toast.info(`Donasi rutin baru terdaftar dari ${payload.donorName || "Donatur"}`);
   });
 
-  // 2. Live SSE: Sinkronisasi pembaruan status (ACTIVE / PAUSED / CANCELLED) secara real-time
+  // 2. Live SSE: Sinkronisasi pembaruan status (jika tidak aktif lagi, keluarkan dari monitoring aktif)
   useAdminLiveEvent("ROUTINE_DONATION_STATUS_CHANGED", (payload) => {
     if (!payload?.id) return;
-    setItems((prev) =>
-      prev.map((it) => (it.id === payload.id ? { ...it, status: payload.status } : it))
-    );
+    setItems((prev) => {
+      if (payload.status !== "ACTIVE") {
+        return prev.filter((it) => it.id !== payload.id);
+      }
+      return prev.map((it) => (it.id === payload.id ? { ...it, status: payload.status } : it));
+    });
   });
 
   const filtered = useMemo(() => {
     return items.filter((r) => {
-      if (statusFilter !== "ALL" && r.status !== statusFilter) return false;
+      if (r.status !== "ACTIVE") return false;
       if (frequencyFilter !== "ALL" && r.frequency !== frequencyFilter) return false;
       if (debouncedSearch) {
         const q = debouncedSearch.toLowerCase();
@@ -68,7 +70,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
       }
       return true;
     });
-  }, [items, statusFilter, frequencyFilter, debouncedSearch]);
+  }, [items, frequencyFilter, debouncedSearch]);
 
   const {
     currentPage,
@@ -92,7 +94,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
     const isSilent = Boolean(typeof options === "object" && options?.silent);
     setIsLoading(true);
     try {
-      const res = await safeFetch("/api/admin/routine-donations?limit=100");
+      const res = await safeFetch("/api/admin/routine-donations?status=ACTIVE&limit=100");
       const data = await res.json();
       if (data.success && data.data) {
         setItems(data.data);
@@ -122,9 +124,13 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
       const data = await res.json();
 
       if (data.success) {
-        setItems((prev) =>
-          prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
-        );
+        if (newStatus !== "ACTIVE") {
+          setItems((prev) => prev.filter((r) => r.id !== id));
+        } else {
+          setItems((prev) =>
+            prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
+          );
+        }
         if (selectedItem && selectedItem.id === id) {
           setSelectedItem((prev) => ({ ...prev, status: newStatus }));
         }
@@ -182,8 +188,6 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
         search={search}
         onSearchChange={handleSearchChange}
         onClearSearch={handleClearSearch}
-        statusFilter={statusFilter}
-        onStatusFilterChange={(val) => { setStatusFilter(val); setCurrentPage(1); }}
         frequencyFilter={frequencyFilter}
         onFrequencyFilterChange={(val) => { setFrequencyFilter(val); setCurrentPage(1); }}
         onRefresh={refreshList}

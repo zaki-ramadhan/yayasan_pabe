@@ -18,16 +18,14 @@ export function AdminRoutineDonationSkeleton() {
     <div className="space-y-4">
       {/* 1. Filter & Action Toolbar Skeleton (Matches AdminRoutineDonationToolbar) */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        {/* Left Side: Search + 2 Select Filters */}
+        {/* Left Side: Search + 1 Select Filter (Frekuensi) */}
         <div className="flex flex-1 flex-wrap items-center gap-2.5">
           <Skeleton className="h-10 flex-1 min-w-[200px] max-w-sm rounded-lg" />
           <Skeleton className="h-10 w-36 rounded-lg shrink-0" />
-          <Skeleton className="h-10 w-36 rounded-lg shrink-0" />
         </div>
 
-        {/* Right Side: Tes Cron CTA + Refresh Icon + Ekspor CSV */}
+        {/* Right Side: Refresh Icon + Ekspor CSV */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <Skeleton className="h-10 w-36 rounded-md" />
           <Skeleton className="h-10 w-10 rounded-md" />
           <Skeleton className="h-10 w-28 rounded-md" />
         </div>

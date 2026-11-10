@@ -85,19 +85,37 @@ export async function getArticleCategories() {
 
 export async function updateArticleReaction(slug, type = "like") {
   try {
-    let data;
+    const existing = await prisma.article.findUnique({
+      where: { slug },
+      select: { id: true, likeCount: true, dislikeCount: true },
+    });
+    if (!existing) return null;
+
+    let nextLike = existing.likeCount;
+    let nextDislike = existing.dislikeCount;
+
     if (type === "dislike") {
-      data = { dislikeCount: { increment: 1 } };
+      nextDislike += 1;
     } else if (type === "undislike") {
-      data = { dislikeCount: { decrement: 1 } };
+      nextDislike = Math.max(0, nextDislike - 1);
     } else if (type === "unlike") {
-      data = { likeCount: { decrement: 1 } };
-    } else {
-      data = { likeCount: { increment: 1 } };
+      nextLike = Math.max(0, nextLike - 1);
+    } else if (type === "like_to_dislike") {
+      nextLike = Math.max(0, nextLike - 1);
+      nextDislike += 1;
+    } else if (type === "dislike_to_like") {
+      nextLike += 1;
+      nextDislike = Math.max(0, nextDislike - 1);
+    } else if (type === "like") {
+      nextLike += 1;
     }
+
     const updated = await prisma.article.update({
       where: { slug },
-      data,
+      data: {
+        likeCount: nextLike,
+        dislikeCount: nextDislike,
+      },
     });
     return formatArticleFromDb(updated);
   } catch (error) {

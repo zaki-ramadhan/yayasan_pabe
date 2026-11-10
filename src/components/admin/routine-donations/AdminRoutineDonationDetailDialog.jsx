@@ -16,7 +16,6 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/Select";
-import { AdminRoutineTriggerButton } from "./AdminRoutineTriggerButton";
 import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
 import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
@@ -177,11 +176,7 @@ export function AdminRoutineDonationDetailDialog({
           </div>
         </div>
 
-        <DialogFooter className="flex-col sm:flex-row sm:justify-between items-center gap-2">
-          <AdminRoutineTriggerButton
-            routineId={donation.id}
-            routineType={donation.routineType}
-          />
+        <DialogFooter className="flex justify-end items-center gap-2">
           <Button
             type="button"
             variant="outline"

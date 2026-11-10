@@ -34,7 +34,8 @@ function getServerSnapshot() {
 
 /**
  * Hook kustom untuk mengelola interaksi Like & Dislike artikel secara reaktif,
- * tersinkronisasi lintas komponen & tab browser melalui Web Storage API.
+ * tersinkronisasi lintas komponen & tab browser melalui Web Storage API,
+ * dengan transisi mutasi atomik server-side (anti-drift).
  */
 export function useArticleReaction({
   slug,
@@ -43,6 +44,8 @@ export function useArticleReaction({
   initialDislikes = 0,
 }) {
   const instanceId = useId();
+  const targetSlug = slug || articleId;
+
   const [likes, setLikes] = useState(initialLikes);
   const [prevInitialLikes, setPrevInitialLikes] = useState(initialLikes);
   if (prevInitialLikes !== initialLikes) {
@@ -56,17 +59,6 @@ export function useArticleReaction({
     setPrevInitialDislikes(initialDislikes);
     setDislikes(initialDislikes);
   }
-
-  const targetSlug = slug || articleId;
-  const reactionDebounceRef = useRef(null);
-
-  useEffect(() => {
-    return () => {
-      if (reactionDebounceRef.current) {
-        clearTimeout(reactionDebounceRef.current);
-      }
-    };
-  }, []);
 
   const storedLikesRaw = useSyncExternalStore(subscribeReactions, getLikesSnapshot, getServerSnapshot);
   const storedDislikesRaw = useSyncExternalStore(subscribeReactions, getDislikesSnapshot, getServerSnapshot);
@@ -95,6 +87,20 @@ export function useArticleReaction({
     }
   }, [storedDislikesRaw, articleId, targetSlug]);
 
+  const committedStateRef = useRef(null);
+  if (committedStateRef.current === null) {
+    committedStateRef.current = hasLiked ? "like" : (hasDisliked ? "dislike" : "none");
+  }
+
+  const pendingActionRef = useRef(null);
+  const debounceTimerRef = useRef(null);
+
+  useEffect(() => {
+    if (!pendingActionRef.current) {
+      committedStateRef.current = hasLiked ? "like" : (hasDisliked ? "dislike" : "none");
+    }
+  }, [hasLiked, hasDisliked]);
+
   // Tangani event sinkronisasi antar komponen di halaman yang sama
   useEffect(() => {
     const handleSync = (e) => {
@@ -105,10 +111,15 @@ export function useArticleReaction({
         (articleId && (detail.articleId === articleId || detail.alternateId === articleId));
 
       if (matches) {
-        if (typeof detail.likeDelta === "number") {
+        if (typeof detail.likes === "number") {
+          setLikes(detail.likes);
+        } else if (typeof detail.likeDelta === "number") {
           setLikes((prev) => Math.max(0, prev + detail.likeDelta));
         }
-        if (typeof detail.dislikeDelta === "number") {
+
+        if (typeof detail.dislikes === "number") {
+          setDislikes(detail.dislikes);
+        } else if (typeof detail.dislikeDelta === "number") {
           setDislikes((prev) => Math.max(0, prev + detail.dislikeDelta));
         }
       }
@@ -118,33 +129,91 @@ export function useArticleReaction({
     return () => window.removeEventListener(REACTION_SYNC_EVENT, handleSync);
   }, [instanceId, targetSlug, articleId]);
 
-  const scheduleServerReaction = useCallback((targetArticleSlug, type) => {
-    if (reactionDebounceRef.current) {
-      clearTimeout(reactionDebounceRef.current);
-    }
-    reactionDebounceRef.current = setTimeout(async () => {
-      try {
-        const res = await safeFetch("/api/articles/reaction", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ slug: targetArticleSlug, type }),
-        });
-        if (!res.ok) {
-          toast({
-            variant: "destructive",
-            title: "Gagal Menyimpan Reaksi",
-            description: "Koneksi terputus. Reaksi Anda belum tersimpan di server.",
-          });
+  const executeServerReaction = useCallback(async (transitionType, targetState) => {
+    if (!targetSlug || !transitionType) return;
+    try {
+      committedStateRef.current = targetState;
+      const res = await safeFetch("/api/articles/reaction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: targetSlug, type: transitionType }),
+        keepalive: true,
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json?.success && json?.data) {
+          if (typeof json.data.likeCount === "number") {
+            setLikes(json.data.likeCount);
+          }
+          if (typeof json.data.dislikeCount === "number") {
+            setDislikes(json.data.dislikeCount);
+          }
         }
-      } catch {
+      } else {
         toast({
           variant: "destructive",
           title: "Gagal Menyimpan Reaksi",
-          description: "Koneksi internet bermasalah. Reaksi belum tersimpan.",
+          description: "Reaksi Anda belum tersimpan di server.",
         });
       }
-    }, 400);
-  }, []);
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Gagal Menyimpan Reaksi",
+        description: "Koneksi internet bermasalah. Reaksi belum tersimpan.",
+      });
+    }
+  }, [targetSlug]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+      if (pendingActionRef.current) {
+        const action = pendingActionRef.current;
+        pendingActionRef.current = null;
+        executeServerReaction(action.transitionType, action.targetState);
+      }
+    };
+  }, [executeServerReaction]);
+
+  const scheduleTransition = useCallback((targetState) => {
+    const fromState = committedStateRef.current;
+    if (fromState === targetState) {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+      pendingActionRef.current = null;
+      return;
+    }
+
+    let transitionType = null;
+    if (fromState === "none" && targetState === "like") transitionType = "like";
+    else if (fromState === "like" && targetState === "none") transitionType = "unlike";
+    else if (fromState === "none" && targetState === "dislike") transitionType = "dislike";
+    else if (fromState === "dislike" && targetState === "none") transitionType = "undislike";
+    else if (fromState === "like" && targetState === "dislike") transitionType = "like_to_dislike";
+    else if (fromState === "dislike" && targetState === "like") transitionType = "dislike_to_like";
+
+    if (!transitionType) return;
+
+    pendingActionRef.current = { transitionType, targetState };
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      const action = pendingActionRef.current;
+      pendingActionRef.current = null;
+      debounceTimerRef.current = null;
+      if (action) {
+        executeServerReaction(action.transitionType, action.targetState);
+      }
+    }, 250);
+  }, [executeServerReaction]);
 
   const handleToggleLike = useCallback((e) => {
     e?.preventDefault?.();
@@ -154,6 +223,7 @@ export function useArticleReaction({
       const storedDislikes = JSON.parse(localStorage.getItem(DISLIKE_STORAGE_KEY) || "[]");
 
       const nextLiked = !hasLiked;
+      const targetState = nextLiked ? "like" : "none";
       const identifiersToRemove = [targetSlug, articleId].filter(Boolean);
 
       const updatedLikes = nextLiked
@@ -170,21 +240,13 @@ export function useArticleReaction({
       const likeDelta = nextLiked ? 1 : -1;
       const dislikeDelta = hasDisliked ? -1 : 0;
 
-      setLikes((prev) => Math.max(0, prev + likeDelta));
-      if (hasDisliked) {
-        setDislikes((prev) => Math.max(0, prev - 1));
-      }
+      const nextLikesCount = Math.max(0, likes + likeDelta);
+      const nextDislikesCount = Math.max(0, dislikes + dislikeDelta);
 
-      if (targetSlug) {
-        if (nextLiked) {
-          if (hasDisliked) {
-            scheduleServerReaction(targetSlug, "undislike");
-          }
-          scheduleServerReaction(targetSlug, "like");
-        } else {
-          scheduleServerReaction(targetSlug, "unlike");
-        }
-      }
+      setLikes(nextLikesCount);
+      setDislikes(nextDislikesCount);
+
+      scheduleTransition(targetState);
 
       window.dispatchEvent(
         new CustomEvent(REACTION_SYNC_EVENT, {
@@ -193,16 +255,18 @@ export function useArticleReaction({
             articleId: targetSlug,
             alternateId: articleId,
             hasLiked: nextLiked,
-            likeDelta,
             hasDisliked: false,
+            likeDelta,
             dislikeDelta,
+            likes: nextLikesCount,
+            dislikes: nextDislikesCount,
           },
         })
       );
     } catch {
       // ignore storage error
     }
-  }, [hasLiked, hasDisliked, targetSlug, articleId, instanceId, scheduleServerReaction]);
+  }, [hasLiked, hasDisliked, targetSlug, articleId, instanceId, likes, dislikes, scheduleTransition]);
 
   const handleToggleDislike = useCallback((e) => {
     e?.preventDefault?.();
@@ -212,6 +276,7 @@ export function useArticleReaction({
       const storedDislikes = JSON.parse(localStorage.getItem(DISLIKE_STORAGE_KEY) || "[]");
 
       const nextDisliked = !hasDisliked;
+      const targetState = nextDisliked ? "dislike" : "none";
       const identifiersToRemove = [targetSlug, articleId].filter(Boolean);
 
       const updatedDislikes = nextDisliked
@@ -228,21 +293,13 @@ export function useArticleReaction({
       const dislikeDelta = nextDisliked ? 1 : -1;
       const likeDelta = hasLiked ? -1 : 0;
 
-      setDislikes((prev) => Math.max(0, prev + dislikeDelta));
-      if (hasLiked) {
-        setLikes((prev) => Math.max(0, prev - 1));
-      }
+      const nextLikesCount = Math.max(0, likes + likeDelta);
+      const nextDislikesCount = Math.max(0, dislikes + dislikeDelta);
 
-      if (targetSlug) {
-        if (nextDisliked) {
-          if (hasLiked) {
-            scheduleServerReaction(targetSlug, "unlike");
-          }
-          scheduleServerReaction(targetSlug, "dislike");
-        } else {
-          scheduleServerReaction(targetSlug, "undislike");
-        }
-      }
+      setLikes(nextLikesCount);
+      setDislikes(nextDislikesCount);
+
+      scheduleTransition(targetState);
 
       window.dispatchEvent(
         new CustomEvent(REACTION_SYNC_EVENT, {
@@ -251,16 +308,18 @@ export function useArticleReaction({
             articleId: targetSlug,
             alternateId: articleId,
             hasDisliked: nextDisliked,
-            dislikeDelta,
             hasLiked: false,
+            dislikeDelta,
             likeDelta,
+            likes: nextLikesCount,
+            dislikes: nextDislikesCount,
           },
         })
       );
     } catch {
       // ignore storage error
     }
-  }, [hasDisliked, hasLiked, targetSlug, articleId, instanceId, scheduleServerReaction]);
+  }, [hasDisliked, hasLiked, targetSlug, articleId, instanceId, likes, dislikes, scheduleTransition]);
 
   return {
     likes,
