@@ -1,15 +1,20 @@
 import { MapPin } from "lucide-react";
 import { Progress } from "@/components/ui/Progress";
-import { formatRupiah } from "@/lib/formatters";
+import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
 import { FundedAmountDisplay } from "@/components/campaign/FundedAmountDisplay";
 
-export function CampaignHeader({ campaign, progress }) {
+export function CampaignHeader({ campaign, progress, daysLeft }) {
 	const hasTarget = Boolean(
 		campaign.targetAmount &&
 		Number(
 			campaign.targetAmount,
 		) > 0,
 	);
+	const hasEndDate = Boolean(
+		campaign.endDate &&
+		daysLeft !== null,
+	);
+	const isClosed = isCampaignClosed(campaign);
 
 	return (
 		<div className="space-y-3">
@@ -47,39 +52,66 @@ export function CampaignHeader({ campaign, progress }) {
 				)}
 			</div>
 
-			{/* Mobile-only Progress summary */}
-			<div className="lg:hidden space-y-3 pt-3 border-t border-slate-200">
+			{/* Mobile-only Keterangan Dana Terkumpul Card */}
+			<div className="lg:hidden p-4 bg-white rounded-xl border border-slate-300 space-y-3.5 shadow-xs">
 				{hasTarget ? (
-					<>
-						<Progress value={progress} className="h-2.5" />
-						<div className="flex justify-between items-baseline text-sm sm:text-base">
-							<FundedAmountDisplay
-								amount={campaign.collectedAmount}
-								labelClassName="text-sm text-slate-700 block"
-								amountClassName="text-lg sm:text-xl font-semibold text-primary block"
-							/>
-							<div className="text-right">
-								<span className="text-sm text-slate-700 block">
-									Target ({progress}%)
-								</span>
-								<span className="text-slate-900 font-medium text-sm sm:text-base">
-									{formatRupiah(campaign.targetAmount)}
-								</span>
-							</div>
-						</div>
-					</>
-				) : (
-					<div className="flex justify-between items-center">
+					<div className="space-y-2">
 						<FundedAmountDisplay
 							amount={campaign.collectedAmount}
-							labelClassName="text-sm text-slate-700 block"
-							amountClassName="text-lg sm:text-xl font-semibold text-primary block"
+							labelClassName="text-sm text-slate-700 block font-normal"
+							amountClassName="text-2xl font-semibold text-slate-950 tracking-tight block"
 						/>
-						<span className="text-xs sm:text-sm font-medium text-slate-600">
+						<div className="text-sm text-slate-700 flex justify-between items-center pt-0.5">
+							<span>
+								Target:{" "}
+								<strong className="font-medium text-slate-900">
+									{formatRupiah(campaign.targetAmount)}
+								</strong>
+							</span>
+							<span className="font-semibold text-slate-900">
+								{progress}%
+							</span>
+						</div>
+						<Progress value={progress} className="h-2.5" />
+					</div>
+				) : (
+					<div className="space-y-1">
+						<FundedAmountDisplay
+							amount={campaign.collectedAmount}
+							labelClassName="text-sm text-slate-700 block font-normal"
+							amountClassName="text-2xl font-semibold text-slate-950 tracking-tight block"
+						/>
+						<span className="text-sm text-emerald-700 font-medium block">
 							Program Berkelanjutan
 						</span>
 					</div>
 				)}
+
+				{/* Metrics Row: Orang Baik & Sisa Hari */}
+				<div className="grid grid-cols-2 divide-x divide-slate-200 pt-3 border-t border-slate-200 text-center">
+					<div className="pr-3">
+						<span className="block font-semibold text-slate-950 text-xl">
+							{campaign.donorCount}
+						</span>
+						<span className="text-sm text-slate-600">
+							Orang Baik
+						</span>
+					</div>
+					<div className="pl-3">
+						<span className="block font-semibold text-slate-950 text-xl">
+							{isClosed
+								? "Selesai"
+								: hasEndDate && daysLeft > 0
+								? daysLeft
+								: hasEndDate && daysLeft <= 0
+								? 0
+								: "-"}
+						</span>
+						<span className="text-sm text-slate-600">
+							{isClosed ? "Status" : "Hari Tersisa"}
+						</span>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

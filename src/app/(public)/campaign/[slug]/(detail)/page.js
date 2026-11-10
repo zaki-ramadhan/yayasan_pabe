@@ -82,6 +82,7 @@ export default async function CampaignDetailPage({ params }) {
           <CampaignDetailWrapper
             campaign={campaign}
             progress={progress}
+            daysLeft={daysLeft}
             donationStats={donationStats}
             prayersCount={prayersCount}
             hasDonations={hasDonations}

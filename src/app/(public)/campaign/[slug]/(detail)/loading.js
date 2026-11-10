@@ -39,11 +39,25 @@ export default function CampaignDetailLoading() {
           </div>
 
           {/* Mobile-Only Donation Metrics Placeholder */}
-          <div className="lg:hidden p-5 bg-white rounded-xl border border-slate-300 space-y-4">
+          <div className="lg:hidden p-4 bg-white rounded-xl border border-slate-300 space-y-3.5 shadow-xs">
             <div className="space-y-2">
               <Skeleton className="h-4 w-28 rounded" />
               <Skeleton className="h-8 w-44 rounded-md" />
-              <Skeleton className="h-2 w-full rounded-full" />
+              <div className="flex justify-between items-center pt-0.5">
+                <Skeleton className="h-3.5 w-24 rounded" />
+                <Skeleton className="h-3.5 w-16 rounded" />
+              </div>
+              <Skeleton className="h-2.5 w-full rounded-full" />
+            </div>
+            <div className="grid grid-cols-2 divide-x divide-slate-200 pt-3 border-t border-slate-200">
+              <div className="pr-3 flex flex-col items-center space-y-1">
+                <Skeleton className="h-6 w-14 rounded" />
+                <Skeleton className="h-3.5 w-20 rounded" />
+              </div>
+              <div className="pl-3 flex flex-col items-center space-y-1">
+                <Skeleton className="h-6 w-14 rounded" />
+                <Skeleton className="h-3.5 w-20 rounded" />
+              </div>
             </div>
           </div>
 
@@ -68,6 +82,20 @@ export default function CampaignDetailLoading() {
             <Skeleton className="h-6 w-64 rounded" />
             <Skeleton className="h-4 w-3/4 rounded" />
             <Skeleton className="h-10 w-44 rounded-lg" />
+          </div>
+
+          {/* Mobile-Only Forum Chat Skeleton */}
+          <div className="lg:hidden space-y-3 pt-2">
+            <Skeleton className="h-5 w-40 rounded" />
+            <div className="relative rounded-2xl border border-slate-300 overflow-hidden shadow-xs bg-slate-900 p-3.5 space-y-3 min-h-[220px]">
+              <div className="flex justify-center">
+                <Skeleton className="h-5 w-24 rounded-full bg-slate-800" />
+              </div>
+              <div className="flex items-end gap-2">
+                <Skeleton className="w-7 h-7 rounded-full bg-slate-800 shrink-0" />
+                <Skeleton className="h-14 w-48 rounded-2xl bg-slate-800" />
+              </div>
+            </div>
           </div>
         </div>
 
