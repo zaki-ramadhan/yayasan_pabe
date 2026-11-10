@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { DEMO_USERS } from "@/services/authService";
 import { sanitizeText } from "@/lib/userParser";
+import { ensureDefaultLeadersSeeded } from "./leadershipService";
 import {
   STAFF_ROLES,
   createAdminUser,
@@ -22,6 +23,7 @@ export {
 
 /**
  * Mengambil daftar pengurus yayasan dengan paginasi dan filter.
+ * Otomatis melakukan sinkronisasi profil pengurus bawaan jika tabel belum memiliki pengurus struktural.
  */
 export async function getAdminUsers({
   search = "",
@@ -35,6 +37,8 @@ export async function getAdminUsers({
   const skip = (safePage - 1) * safeLimit;
 
   try {
+    await ensureDefaultLeadersSeeded();
+
     const where = {
       role: role && role !== "ALL" ? role : { in: STAFF_ROLES },
     };

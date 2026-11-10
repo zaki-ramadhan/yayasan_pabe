@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import { updateAdminCampaign } from "@/services/adminService";
@@ -15,6 +16,14 @@ export async function PUT(request, { params }) {
     const body = await request.json();
 
     const updated = await updateAdminCampaign(id, body);
+
+    revalidatePath("/program");
+    revalidatePath("/");
+    revalidatePath("/admin/program");
+    if (updated?.slug) {
+      revalidatePath(`/campaign/${updated.slug}`);
+    }
+
     return NextResponse.json({
       success: true,
       message: "Data program donasi berhasil diperbarui.",

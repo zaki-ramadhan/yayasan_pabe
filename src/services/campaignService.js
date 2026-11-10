@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { isCampaignClosed } from "@/lib/formatters";
 import { formatCampaignFromDb } from "./campaignFormatter";
+import { CAMPAIGNS } from "@/data/campaigns";
 
 export async function getCampaigns({ category = "all", search = "", sort = "terbaru", status } = {}) {
   try {
@@ -44,8 +45,12 @@ export async function getCampaigns({ category = "all", search = "", sort = "terb
 
     return dbCampaigns.map(formatCampaignFromDb);
   } catch (error) {
-    console.error("Prisma getCampaigns error:", error);
-    return [];
+    console.warn("Prisma getCampaigns fallback warning:", error.message);
+    let fallback = CAMPAIGNS;
+    if (status) {
+      fallback = fallback.filter((c) => c.status === status);
+    }
+    return fallback;
   }
 }
 
@@ -128,7 +133,7 @@ export async function getCategories() {
     console.warn("Prisma getCategories fallback:", error.message);
   }
   return [
-    { id: "all", name: "Semua Program", slug: "semua" },
+    { id: "all", name: "Semua Program", slug: "all" },
     { id: "pendidikan", name: "Pendidikan & Beasiswa", slug: "pendidikan" },
     { id: "bencana", name: "Tanggap Bencana", slug: "bencana" },
     { id: "zakat", name: "ZISWAF", slug: "zakat" },

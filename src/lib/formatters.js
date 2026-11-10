@@ -339,8 +339,15 @@ export function calculateDaysLeft(endDateInput) {
   if (!endDateInput) return null;
   const targetDate = new Date(endDateInput);
   if (isNaN(targetDate.getTime())) return null;
+
+  // Jika format input adalah YYYY-MM-DD tanpa waktu, set ke akhir hari
+  if (typeof endDateInput === "string" && /^\d{4}-\d{2}-\d{2}$/.test(endDateInput.trim())) {
+    targetDate.setHours(23, 59, 59, 999);
+  }
+
   const now = new Date();
   const diffTime = targetDate.getTime() - now.getTime();
+  if (diffTime <= 0) return 0;
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return Math.max(0, diffDays);
 }
@@ -349,8 +356,13 @@ export function isCampaignClosed(campaign) {
   if (!campaign) return false;
   if (campaign.status === "CLOSED" || campaign.status === "COMPLETED") return true;
   if (campaign.endDate) {
-    const days = calculateDaysLeft(campaign.endDate);
-    if (days !== null && days <= 0) return true;
+    const targetDate = new Date(campaign.endDate);
+    if (!isNaN(targetDate.getTime())) {
+      if (typeof campaign.endDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(campaign.endDate.trim())) {
+        targetDate.setHours(23, 59, 59, 999);
+      }
+      if (targetDate.getTime() < Date.now()) return true;
+    }
   }
   return false;
 }

@@ -65,16 +65,24 @@ export function useAdminApplicants({ isOpen, vacancyId }) {
   );
 
   useEffect(() => {
+    let isCancelled = false;
+
     if (isOpen && vacancyId) {
-      setPage(1);
-      setApplications([]);
-      fetchApplications({
-        pageToLoad: 1,
-        append: false,
-        sortToUse: sortBy,
-        statusToUse: statusFilter,
+      Promise.resolve().then(() => {
+        if (!isCancelled) {
+          fetchApplications({
+            pageToLoad: 1,
+            append: false,
+            sortToUse: sortBy,
+            statusToUse: statusFilter,
+          });
+        }
       });
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, [isOpen, vacancyId, sortBy, statusFilter, fetchApplications]);
 
   const handleSortChange = (newSort) => {

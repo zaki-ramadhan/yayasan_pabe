@@ -1,11 +1,28 @@
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
+import { FAQS } from "@/data/faqs";
 
 /**
  * Mengambil daftar seluruh pertanyaan FAQ dari PostgreSQL dengan filter pencarian.
+ * Otomatis melakukan sinkronisasi data master default jika tabel FAQ masih kosong.
  */
 export async function getAdminFaqs({ search = "" } = {}) {
   try {
+    const totalCount = await prisma.faq.count().catch(() => 0);
+    if (totalCount === 0 && Array.isArray(FAQS) && FAQS.length > 0) {
+      for (const f of FAQS) {
+        await prisma.faq.create({
+          data: {
+            question: f.question,
+            answer: f.answer,
+            category: f.category || "Umum",
+            order: f.order || 0,
+            isActive: f.isActive ?? true,
+          },
+        }).catch(() => null);
+      }
+    }
+
     const where = { isActive: true };
     if (search && search.trim()) {
       const q = search.trim();

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import { getAdminUsers, createAdminUser } from "@/services/adminUserService";
@@ -47,6 +48,9 @@ export async function POST(request) {
       password: body.password,
       hasLoginAccess: Boolean(body.hasLoginAccess),
     }, authUser);
+
+    revalidatePath("/tentang-kami");
+    revalidatePath("/admin/pengguna");
 
     return NextResponse.json(
       {

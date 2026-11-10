@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import { updateAdminUser, deleteAdminUser } from "@/services/adminUserService";
@@ -14,6 +15,9 @@ export async function PATCH(request, { params }) {
   try {
     const body = await request.json();
     const updated = await updateAdminUser(id, body, authUser);
+
+    revalidatePath("/tentang-kami");
+    revalidatePath("/admin/pengguna");
 
     return NextResponse.json({
       success: true,
@@ -38,6 +42,9 @@ export async function DELETE(request, { params }) {
 
   try {
     await deleteAdminUser(id, authUser);
+
+    revalidatePath("/tentang-kami");
+    revalidatePath("/admin/pengguna");
 
     return NextResponse.json({
       success: true,

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import {
@@ -52,6 +53,10 @@ export async function POST(request) {
     }
 
     const faq = await createAdminFaq(body);
+
+    revalidatePath("/");
+    revalidatePath("/admin/faq");
+
     return NextResponse.json({
       success: true,
       message: "FAQ baru berhasil ditambahkan.",
@@ -87,6 +92,10 @@ export async function DELETE(request) {
     }
 
     const result = await deleteAdminFaqsBatch(ids);
+
+    revalidatePath("/");
+    revalidatePath("/admin/faq");
+
     return NextResponse.json({
       success: true,
       message: `${result.count} FAQ berhasil dihapus.`,

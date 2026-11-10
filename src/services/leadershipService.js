@@ -63,6 +63,105 @@ export function sanitizePublicLeadershipTitle(title, name = "") {
 }
 
 /**
+ * Memastikan 6 pengurus struktural yayasan default tersimpan di PostgreSQL
+ * jika database belum terisi pengurus (misal saat inisialisasi awal production).
+ */
+export async function ensureDefaultLeadersSeeded() {
+  try {
+    const excludedEmails = getExcludedLeadershipEmails();
+    const existingCount = await prisma.user.count({
+      where: {
+        role: { in: STAFF_ROLES },
+        ...(excludedEmails.length > 0
+          ? {
+              email: { notIn: excludedEmails },
+            }
+          : {}),
+      },
+    });
+
+    if (existingCount > 0) return;
+
+    const defaultLeaders = [
+      {
+        name: "Suko Pranoto",
+        email: "suko.pranoto@internal.yayasanpayungberkah.org",
+        role: "ADMIN",
+        title: "Ketua Dewan Pembina",
+        gender: "MALE",
+        avatar: "/img/avatars/avatar-male.svg",
+      },
+      {
+        name: "Katino",
+        email: "katino@internal.yayasanpayungberkah.org",
+        role: "ADMIN",
+        title: "Anggota Dewan Pembina",
+        gender: "MALE",
+        avatar: "/img/avatars/avatar-male.svg",
+      },
+      {
+        name: "Paimin",
+        email: "paimin@internal.yayasanpayungberkah.org",
+        role: "ADMIN",
+        title: "Dewan Pengawas",
+        gender: "MALE",
+        avatar: "/img/avatars/avatar-male.svg",
+      },
+      {
+        name: "Yuni Marlina, S.Pd.I.",
+        email: "admin@yayasanpayungberkah.org",
+        role: "ADMIN",
+        title: "Ketua Yayasan",
+        gender: "FEMALE",
+        avatar: "/img/avatars/avatar-female.svg",
+      },
+      {
+        name: "Shofi Hidayatullah Akbar, S.Ag.",
+        email: "relawan@yayasanpayungberkah.org",
+        role: "ADMIN",
+        title: "Sekretaris",
+        gender: "MALE",
+        avatar: "/img/avatars/avatar-male.svg",
+      },
+      {
+        name: "Sarini",
+        email: "finance@yayasanpayungberkah.org",
+        role: "FINANCE",
+        title: "Bendahara",
+        gender: "FEMALE",
+        avatar: "/img/avatars/avatar-female.svg",
+      },
+    ];
+
+    const hasGenderField = Boolean(Prisma?.UserScalarFieldEnum?.gender);
+
+    for (const leader of defaultLeaders) {
+      const exists = await prisma.user.findFirst({
+        where: {
+          OR: [{ email: leader.email }, { name: leader.name }],
+        },
+      });
+
+      if (!exists) {
+        await prisma.user.create({
+          data: {
+            name: leader.name,
+            email: leader.email,
+            role: leader.role,
+            title: leader.title,
+            avatar: leader.avatar,
+            isActive: true,
+            ...(hasGenderField ? { gender: leader.gender } : {}),
+          },
+        }).catch(() => null);
+      }
+    }
+  } catch (err) {
+    console.warn("ensureDefaultLeadersSeeded warning:", err.message);
+  }
+}
+
+/**
  * Mengambil daftar struktur kepengurusan resmi untuk ditampilkan pada halaman publik (/tentang-kami).
  * Memiliki fallback aman ke data statis orgProfile.js jika database belum terisi.
  * Mengecualikan akun vendor / developer teknis eksternal agar tidak tercantum di publik.
@@ -71,6 +170,8 @@ export function sanitizePublicLeadershipTitle(title, name = "") {
  */
 export async function getPublicLeadership() {
   try {
+    await ensureDefaultLeadersSeeded();
+
     const hasGenderField = Boolean(Prisma?.UserScalarFieldEnum?.gender);
     const excludedEmails = getExcludedLeadershipEmails();
 

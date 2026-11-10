@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import {
@@ -59,6 +60,11 @@ export async function POST(request) {
     }
 
     const campaign = await createAdminCampaign(body);
+
+    revalidatePath("/program");
+    revalidatePath("/");
+    revalidatePath("/admin/program");
+
     return NextResponse.json(
       {
         success: true,
@@ -107,6 +113,10 @@ export async function DELETE(request) {
       description: `Menghapus massal ${result.count || ids.length} program donasi`,
       request,
     });
+
+    revalidatePath("/program");
+    revalidatePath("/");
+    revalidatePath("/admin/program");
 
     return NextResponse.json({
       success: true,
