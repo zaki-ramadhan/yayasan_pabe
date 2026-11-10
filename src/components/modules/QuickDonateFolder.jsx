@@ -94,7 +94,7 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-a
         className="relative z-10 h-full flex flex-col justify-end pt-12 pb-9 sm:pb-11 px-6 sm:px-7 space-y-3 sm:space-y-3.5"
       >
         {/* Header Form */}
-        <div className="space-y-0.5 min-w-0">
+        <div className="space-y-0.5 min-w-0 pb-1.5 sm:pb-2">
           <h2 className="text-base font-semibold text-slate-950">
             Formulir donasi cepat
           </h2>
