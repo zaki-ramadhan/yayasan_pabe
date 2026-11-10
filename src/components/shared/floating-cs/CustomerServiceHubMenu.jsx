@@ -35,7 +35,7 @@ export function CustomerServiceHubMenu({
             </span>
             <div className="ml-auto flex items-center gap-1.5 shrink-0">
               {cs.isPrimary && (
-                <span className="text-[10px] font-semibold tracking-wide px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                <span className="text-sm font-semibold tracking-wide px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60">
                   Utama
                 </span>
               )}

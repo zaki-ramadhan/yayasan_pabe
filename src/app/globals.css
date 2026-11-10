@@ -23,6 +23,10 @@
   --font-mono: var(--font-geist-mono), monospace;
   --font-crustaceans: var(--font-crustaceans), cursive;
   --font-card: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+
+  /* Standarisasi batas minimal teks aplikasi: text-xs setara 14px (0.875rem) */
+  --text-xs: 0.875rem;
+  --text-xs--line-height: 1.25rem;
 }
 
 :root {
@@ -152,7 +156,7 @@ html body[style*="overflow: hidden"] {
 }
 
 .driver-popover.pabe-driver-popover .driver-popover-progress-text {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: #64748b;
 }

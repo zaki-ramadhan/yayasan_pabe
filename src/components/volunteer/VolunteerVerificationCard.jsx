@@ -118,7 +118,7 @@ export function VolunteerVerificationCard({ volunteer }) {
           </div>
         </div>
 
-        <div className="p-3.5 bg-emerald-50/70 border border-emerald-200/80 rounded-xl space-y-1.5 text-xs text-emerald-950">
+        <div className="p-3.5 bg-emerald-50/70 border border-emerald-200/80 rounded-xl space-y-1.5 text-sm text-emerald-950">
           <div className="flex items-center gap-1.5 font-semibold text-emerald-900">
             <HeartHandshake className="w-4 h-4 text-emerald-700 shrink-0" />
             <span>Pernyataan Keabsahan Mandat:</span>
@@ -126,14 +126,14 @@ export function VolunteerVerificationCard({ volunteer }) {
           <p className="text-slate-700 leading-relaxed font-normal">
             Pemegang kartu ini adalah personel relawan yang sah bertugas dalam aksi sosial kemanusiaan dan pendidikan {ORG_PROFILE.name}.
           </p>
-          <p className="text-[11px] text-slate-500 pt-1 border-t border-emerald-200/60 font-mono">
+          <p className="text-sm text-slate-500 pt-1 border-t border-emerald-200/60 font-mono">
             SK Kemenkumham: {ORG_PROFILE.legal.skKemenkumham}
           </p>
         </div>
 
         <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
           <Link href="/" className="inline-flex w-full sm:w-auto">
-            <Button variant="outline" className="w-full h-9 text-xs sm:text-sm font-normal cursor-pointer">
+            <Button variant="outline" className="w-full h-9 text-sm font-normal cursor-pointer">
               Profil Yayasan
             </Button>
           </Link>

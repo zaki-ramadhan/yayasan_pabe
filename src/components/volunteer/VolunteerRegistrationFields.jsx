@@ -194,7 +194,7 @@ export function VolunteerRegistrationFields({
           className="font-normal"
         />
         <div className="flex justify-end pt-1">
-          <span className="text-[11px] text-slate-400">
+          <span className="text-sm text-slate-400">
             {motivation.length}/{FIELD_LIMITS.MOTIVATION.max} karakter
           </span>
         </div>
@@ -209,7 +209,7 @@ export function VolunteerRegistrationFields({
         {loading ? "Mengirim pendaftaran..." : "Kirim pendaftaran relawan"}
       </Button>
 
-      <p className="text-[11px] text-slate-400 text-center leading-relaxed">
+      <p className="text-sm text-slate-400 text-center leading-relaxed">
         Dengan mendaftar, Anda menyetujui koordinasi aksi sosial dan kode etik relawan Yayasan Payung Berkah.
       </p>
     </form>

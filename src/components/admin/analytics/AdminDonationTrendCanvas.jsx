@@ -112,7 +112,7 @@ export function AdminDonationTrendCanvas({
                   if (isCumulativeKey) labelText = "Total Akumulasi";
 
                   return (
-                    <div className="space-y-1 text-xs">
+                    <div className="space-y-1 text-sm">
                       <div className="flex items-center justify-between w-full gap-4">
                         <span className="text-slate-600">{labelText}:</span>
                         <span className="font-semibold text-slate-900 tabular-nums">
@@ -120,7 +120,7 @@ export function AdminDonationTrendCanvas({
                         </span>
                       </div>
                       {!isCumulativeKey && (item?.payload?.count > 0 || item?.payload?.donationsCount > 0) && (
-                        <div className="flex items-center justify-between w-full gap-4 text-slate-500 text-[11px]">
+                        <div className="flex items-center justify-between w-full gap-4 text-slate-500 text-sm">
                           <span>Jumlah transaksi:</span>
                           <span className="tabular-nums">
                             {formatNumber(item.payload.count || item.payload.donationsCount)} donasi

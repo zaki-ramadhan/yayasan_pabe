@@ -53,19 +53,19 @@ export function StorageCapacityBanner({ overview }) {
                 Kapasitas penyimpanan cloud
               </h2>
               {isCritical && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-rose-100 text-rose-800 border border-rose-200">
-                  <AlertOctagon className="w-3 h-3 text-rose-600" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm font-medium bg-rose-100 text-rose-800 border border-rose-200">
+                  <AlertOctagon className="w-3.5 h-3.5 text-rose-600" />
                   Kritis
                 </span>
               )}
               {!isCritical && isWarning && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-100 text-amber-800 border border-amber-200">
-                  <AlertTriangle className="w-3 h-3 text-amber-600" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
                   Mendekati batas
                 </span>
               )}
             </div>
-            <div className="text-xs text-slate-700 font-normal space-y-0.5 leading-tight">
+            <div className="text-sm text-slate-700 font-normal space-y-0.5 leading-tight">
               <p>
                 {formatBytes(totalBytes)} dari {formatBytes(limitBytes)}{" "}
                 <span className="text-slate-500">(Batas kuota gratis 10 GB/bulan)</span>

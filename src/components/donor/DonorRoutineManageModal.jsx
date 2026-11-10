@@ -105,7 +105,7 @@ export function DonorRoutineManageModal({
                   <span className="font-medium text-slate-800 block truncate">
                     {routine.freq}
                   </span>
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-sm text-slate-500">
                     Pukul {routine.reminderTime || "05:00"} WIB
                   </span>
                 </div>
@@ -114,7 +114,7 @@ export function DonorRoutineManageModal({
 
             {/* Kotak Informasi Kontekstual */}
             {isActive && (
-              <div className="flex items-start gap-2.5 p-3 rounded-lg bg-emerald-50/70 border border-emerald-200/70 text-xs text-emerald-800">
+              <div className="flex items-start gap-2.5 p-3 rounded-lg bg-emerald-50/70 border border-emerald-200/70 text-sm text-emerald-800">
                 <CalendarClock className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                 <p>
                   Jadwal sedang <strong>aktif</strong>. Notifikasi pengingat WhatsApp atau tagihan otomatis akan dikirimkan sesuai waktu yang telah Anda tentukan.

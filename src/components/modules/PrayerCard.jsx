@@ -46,25 +46,25 @@ export function PrayerCard({ donor, isAmined, onToggleAmin, className }) {
         <div>
           {/* Header Identitas Donatur: Nama & Email Terproteksi */}
           <div className="min-w-0">
-            <h4 className="font-semibold text-slate-900 text-xs sm:text-sm truncate">
+            <h4 className="font-semibold text-slate-900 text-sm truncate">
               {donor.name}
             </h4>
             {displayedEmail && (
-              <span className="text-[11px] sm:text-xs text-slate-500 block truncate mt-0.5 font-normal">
+              <span className="text-sm text-slate-500 block truncate mt-0.5 font-normal">
                 {displayedEmail}
               </span>
             )}
           </div>
 
           {/* Isi Teks Doa */}
-          <p className="mt-2 text-xs sm:text-sm text-slate-800 leading-relaxed font-normal break-words">
+          <p className="mt-2 text-sm text-slate-800 leading-relaxed font-normal break-words">
             &ldquo;{cleanPrayer}&rdquo;
           </p>
         </div>
 
         {/* Footer: Keterangan Waktu di Kiri, Tombol Aamiin di Kanan */}
         <div className="mt-3 flex items-center justify-between gap-2">
-          <span className="text-[11px] sm:text-xs text-slate-500 font-normal whitespace-nowrap">
+          <span className="text-sm text-slate-500 font-normal whitespace-nowrap">
             {getRelativeTime(donor.date)}
           </span>
 

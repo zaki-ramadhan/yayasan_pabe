@@ -82,17 +82,17 @@ export function PrayerInputBar({
             minLength={minLength}
             maxLength={maxLength}
             autoComplete="off"
-            className="w-full bg-transparent text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed overflow-hidden p-0 disabled:cursor-not-allowed"
+            className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed overflow-hidden p-0 disabled:cursor-not-allowed"
           />
 
           {/* Indikator saat 1 baris (inline) */}
           {!isMultiLine && isTooShort && (
-            <span className="text-[11px] text-amber-600 font-medium select-none shrink-0">
+            <span className="text-sm text-amber-600 font-medium select-none shrink-0">
               min. {minLength}
             </span>
           )}
           {!isMultiLine && isOnlyEmojis && (
-            <span className="text-[11px] text-amber-600 font-medium select-none shrink-0">
+            <span className="text-sm text-amber-600 font-medium select-none shrink-0">
               sertakan kata doa
             </span>
           )}
@@ -102,19 +102,19 @@ export function PrayerInputBar({
         {(isNearMax || isOnlyEmojis || (isMultiLine && isTooShort)) && (
           <div className="flex items-center justify-end gap-1.5 mt-0.5 select-none leading-none">
             {isMultiLine && isTooShort && (
-              <span className="text-[10px] sm:text-[11px] text-amber-600 font-medium">
+              <span className="text-sm text-amber-600 font-medium">
                 min. {minLength} karakter
               </span>
             )}
             {isMultiLine && isOnlyEmojis && (
-              <span className="text-[10px] sm:text-[11px] text-amber-600 font-medium">
+              <span className="text-sm text-amber-600 font-medium">
                 sertakan kalimat doa
               </span>
             )}
             {isNearMax && (
               <span
                 className={cn(
-                  "text-[10px] sm:text-[11px] tabular-nums font-normal",
+                  "text-sm tabular-nums font-normal",
                   charCount >= maxLength
                     ? "text-rose-600 font-semibold"
                     : "text-slate-400"

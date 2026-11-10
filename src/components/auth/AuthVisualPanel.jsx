@@ -134,7 +134,7 @@ export function AuthVisualPanel() {
 
           {/* Generous Spacing Before Copyright */}
           <div className="mt-6 sm:mt-8 text-center">
-            <p className="text-[11px] sm:text-xs text-slate-400 font-normal">
+            <p className="text-sm text-slate-400 font-normal">
               © {new Date().getFullYear()} Yayasan PABE
             </p>
           </div>

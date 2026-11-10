@@ -56,7 +56,7 @@ export function AdminDistributionBudgetInfo({
 
         <span
           className={cn(
-            "text-[11px] font-medium px-2 py-0.5 rounded-full border",
+            "text-sm font-medium px-2.5 py-0.5 rounded-full border",
             hasZeroCollected
               ? "bg-amber-50 text-amber-800 border-amber-200"
               : isOverBudget
@@ -75,19 +75,19 @@ export function AdminDistributionBudgetInfo({
       {/* Grid 3 Kolom Metrik Finansial */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">
         <div className="bg-white rounded-lg p-2.5 border border-slate-200/80">
-          <span className="text-[11px] text-slate-700 block font-normal leading-none mb-1">
+          <span className="text-sm text-slate-700 block font-normal leading-none mb-1">
             Total Terkumpul
           </span>
-          <span className="text-xs sm:text-sm font-medium text-slate-900 block leading-tight">
+          <span className="text-sm font-medium text-slate-900 block leading-tight">
             {formatRupiah(budget.collectedAmount)}
           </span>
         </div>
 
         <div className="bg-white rounded-lg p-2.5 border border-slate-200/80">
-          <span className="text-[11px] text-slate-700 block font-normal leading-none mb-1">
+          <span className="text-sm text-slate-700 block font-normal leading-none mb-1">
             Telah Disalurkan
           </span>
-          <span className="text-xs sm:text-sm font-medium text-slate-900 block leading-tight">
+          <span className="text-sm font-medium text-slate-900 block leading-tight">
             {formatRupiah(budget.totalDisbursed)}
           </span>
         </div>
@@ -100,12 +100,12 @@ export function AdminDistributionBudgetInfo({
               : "bg-white border-slate-200/80 text-slate-900"
           )}
         >
-          <span className="text-[11px] text-slate-700 block font-normal leading-none mb-1">
+          <span className="text-sm text-slate-700 block font-normal leading-none mb-1">
             Sisa Saldo Tersedia
           </span>
           <span
             className={cn(
-              "text-xs sm:text-sm font-medium block leading-tight",
+              "text-sm font-medium block leading-tight",
               isOverBudget ? "text-rose-600 font-semibold" : "text-emerald-700"
             )}
           >
@@ -117,7 +117,7 @@ export function AdminDistributionBudgetInfo({
       {/* Pesan Kontekstual Edukatif */}
       <div
         className={cn(
-          "rounded-lg px-2.5 py-1.5 text-xs flex items-center gap-2 border leading-tight select-none",
+          "rounded-lg px-2.5 py-1.5 text-sm flex items-center gap-2 border leading-tight select-none",
           hasZeroCollected
             ? "bg-amber-50 text-amber-900 border-amber-200"
             : isOverBudget
@@ -142,7 +142,7 @@ export function AdminDistributionBudgetInfo({
               : `Batas maksimal alokasi untuk kegiatan ini adalah ${formatRupiah(remainingBudget)}.`}
           </span>
           {!isOverBudget && requested > 0 && (
-            <span className="text-[11px] text-emerald-700 whitespace-nowrap">
+            <span className="text-sm text-emerald-700 whitespace-nowrap">
               Estimasi sisa: {formatRupiah(simulatedRemaining)}
             </span>
           )}

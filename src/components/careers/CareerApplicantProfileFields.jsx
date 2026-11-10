@@ -36,7 +36,7 @@ export function CareerApplicantProfileFields({
         >
           {currentLength}/{MAX_COVER_LETTER_LENGTH}
           {isBelowMin && (
-            <span className="ml-1 text-[11px] font-normal">
+            <span className="ml-1 text-sm font-normal">
               (kurang {MIN_COVER_LETTER_LENGTH - currentLength} karakter)
             </span>
           )}

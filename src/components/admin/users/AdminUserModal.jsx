@@ -435,11 +435,11 @@ export function AdminUserModal({
                 className="text-sm font-medium text-slate-900 cursor-pointer select-none flex items-center gap-1.5"
               >
                 <span>Beri hak akses Super admin</span>
-                <span className="text-[10px] font-medium text-purple-700 bg-purple-50 px-1.5 py-0.2 rounded border border-purple-200">
+                <span className="text-sm font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
                   Otoritas penuh
                 </span>
               </label>
-              <p className="text-xs text-slate-500 font-normal mt-0.5">
+              <p className="text-sm text-slate-500 font-normal mt-0.5">
                 Memiliki kendali penuh atas sistem, termasuk menambah, mengatur akses, dan menghapus pengurus lain.
               </p>
             </div>

@@ -87,16 +87,16 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
             <Terminal className="w-3.5 h-3.5" />
           </div>
           <div>
-            <span className="text-xs font-bold text-amber-950 uppercase tracking-wider block">
+            <span className="text-sm font-bold text-amber-950 uppercase tracking-wider block">
               Sandbox Testing Simulator
             </span>
-            <span className="text-[11px] text-amber-800 font-normal">
+            <span className="text-sm text-amber-800 font-normal">
               Khusus mode pengembangan (Dev Mode) &bull; Status saat ini:{" "}
               <strong className="font-semibold">{donation.status}</strong>
             </span>
           </div>
         </div>
-        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-bold shrink-0">
+        <span className="text-sm font-mono px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-bold shrink-0">
           DEV ONLY
         </span>
       </div>

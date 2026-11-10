@@ -211,15 +211,15 @@ export function DonorSecurityFormCard({
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 )}
               </div>
-              <div className="space-y-0.5 text-xs sm:text-sm">
+              <div className="space-y-0.5 text-sm">
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-slate-900">Tertaut dengan {isGoogle ? "Google SSO" : provider}</span>
-                  <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    <CheckCircle2 className="w-2.5 h-2.5" />
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <CheckCircle2 className="w-3 h-3" />
                     Aktif
                   </span>
                 </div>
-                <p className="text-slate-500 font-normal leading-relaxed text-xs sm:text-sm">
+                <p className="text-slate-500 font-normal leading-relaxed text-sm">
                   Akun Anda dapat diakses menggunakan Google maupun kata sandi manual. Anda tetap dapat memperbarui kata sandi manual Anda di bawah ini.
                 </p>
               </div>

@@ -88,9 +88,9 @@ export function StorageDeleteModal({
 
         {/* Multiple Items List Summary */}
         {!isSingle && (
-          <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1.5 max-h-40 overflow-y-auto">
+          <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm space-y-1.5 max-h-40 overflow-y-auto">
             <p className="font-medium text-slate-800">Daftar berkas yang akan dihapus:</p>
-            <ul className="divide-y divide-slate-200/60 font-mono text-[11px] text-slate-600">
+            <ul className="divide-y divide-slate-200/60 font-mono text-sm text-slate-600">
               {itemsToDelete.slice(0, 5).map((item) => (
                 <li key={item.key} className="py-1 flex items-center justify-between gap-2">
                   <span className="truncate">{item.key}</span>

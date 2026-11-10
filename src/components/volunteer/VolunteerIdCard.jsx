@@ -126,7 +126,7 @@ export function VolunteerIdCard({ volunteer, className = "" }) {
             e.stopPropagation();
             setSide((prev) => (prev === "front" ? "back" : "front"));
           }}
-          className="absolute top-3 right-3 z-30 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/70 hover:bg-slate-900/90 text-white text-[11px] font-medium backdrop-blur-md shadow-md border border-white/15 transition-colors cursor-pointer print:hidden"
+          className="absolute top-3 right-3 z-30 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/70 hover:bg-slate-900/90 text-white text-sm font-medium backdrop-blur-md shadow-md border border-white/15 transition-colors cursor-pointer print:hidden"
           aria-label="Balik kartu"
         >
           <RotateCw className="w-3 h-3 text-emerald-400 transition-transform group-hover:rotate-45" />
@@ -188,7 +188,7 @@ export function VolunteerIdCard({ volunteer, className = "" }) {
               </div>
 
               {/* Baris Informasi Bawah: Teks Hitam Pekat Minimalis Sesuai Referensi */}
-              <div className="flex items-center justify-between text-xs sm:text-[12px] font-medium text-black mt-auto pt-2">
+              <div className="flex items-center justify-between text-sm font-medium text-black mt-auto pt-2">
                 <span className="tracking-tight font-medium">
                   Relawan Kebaikan
                 </span>
@@ -212,7 +212,7 @@ export function VolunteerIdCard({ volunteer, className = "" }) {
                   className="h-7 sm:h-8 w-auto object-contain brightness-0 invert"
                 />
               </div>
-              <p className="text-[10px] font-semibold text-emerald-300 tracking-[0.2em] uppercase pt-1">
+              <p className="text-sm font-semibold text-emerald-300 tracking-[0.15em] uppercase pt-1">
                 Kartu Tanda Anggota Resmi
               </p>
               <div className="w-20 h-0.5 bg-amber-400/40 mx-auto rounded-full mt-1.5" />
@@ -228,13 +228,13 @@ export function VolunteerIdCard({ volunteer, className = "" }) {
                   includeMargin={false}
                 />
               </div>
-              <p className="text-[11px] text-slate-300 text-center font-medium">
+              <p className="text-sm text-slate-300 text-center font-medium">
                 Pindai untuk verifikasi keaslian anggota
               </p>
             </div>
 
             {/* Info Tanggal & Legalitas SK Kemenkumham RI */}
-            <div className="space-y-2 pt-2 border-t border-slate-800 text-xs text-slate-300">
+            <div className="space-y-2 pt-2 border-t border-slate-800 text-sm text-slate-300">
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Tgl terdaftar</span>
                 <span className="text-white font-medium">{joinDate}</span>
@@ -243,7 +243,7 @@ export function VolunteerIdCard({ volunteer, className = "" }) {
                 <span className="text-slate-400">Masa berlaku</span>
                 <span className="text-emerald-400 font-medium">Aktif (1 Tahun)</span>
               </div>
-              <div className="text-[10px] text-slate-400 text-center pt-2 border-t border-slate-800/80 font-normal">
+              <div className="text-sm text-slate-400 text-center pt-2 border-t border-slate-800/80 font-normal">
                 SK Kemenkumham RI: AHU-0012345.AH.01.04.Tahun 2023
               </div>
             </div>

@@ -129,13 +129,13 @@ export function AdminDashboardView({ userRole, stats }) {
           </div>
           <div className="space-y-2.5">
             {volunteers.map((v) => (
-              <div key={v.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-1">
+              <div key={v.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-sm space-y-1">
                 <div className="flex justify-between items-center">
                   <strong className="text-slate-900">{v.name}</strong>
-                  <StatusBadge status={v.status} className="text-[10px] px-1.5 py-0.5" />
+                  <StatusBadge status={v.status} className="text-sm px-2 py-0.5" />
                 </div>
                 <p className="text-slate-600">{v.city}, {v.profession}</p>
-                <p className="text-[11px] text-slate-500 italic">Minat: {v.event}</p>
+                <p className="text-sm text-slate-500 italic">Minat: {v.event}</p>
               </div>
             ))}
           </div>

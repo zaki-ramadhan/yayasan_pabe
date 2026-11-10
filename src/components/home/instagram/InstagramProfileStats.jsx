@@ -12,7 +12,7 @@ export function InstagramProfileStats({ account, totalPostsCount }) {
         <div className="font-semibold text-sm sm:text-base text-white tracking-tight">
           {formatCompactNumber(totalPostsCount ?? account?.postsCount ?? 0)}
         </div>
-        <div className="text-[11px] sm:text-xs text-white/90">
+        <div className="text-sm text-white/90">
           postingan
         </div>
       </div>
@@ -20,7 +20,7 @@ export function InstagramProfileStats({ account, totalPostsCount }) {
         <div className="font-semibold text-sm sm:text-base text-white tracking-tight">
           {account?.followersCount || "0"}
         </div>
-        <div className="text-[11px] sm:text-xs text-white/90">
+        <div className="text-sm text-white/90">
           pengikut
         </div>
       </div>
@@ -28,7 +28,7 @@ export function InstagramProfileStats({ account, totalPostsCount }) {
         <div className="font-semibold text-sm sm:text-base text-white tracking-tight">
           {formatCompactNumber(account?.followingCount || 0)}
         </div>
-        <div className="text-[11px] sm:text-xs text-white/90">
+        <div className="text-sm text-white/90">
           mengikuti
         </div>
       </div>

@@ -23,7 +23,7 @@ export function PrayerChatBubble({
     <article className={cn("flex flex-col w-full", isOwn ? "items-end" : "items-start")}>
       <div
         className={cn(
-          "text-xs font-semibold mb-1 truncate max-w-full",
+          "text-sm font-semibold mb-1 truncate max-w-full",
           isOwn ? "text-slate-300" : "text-white",
           avatarOffset
         )}
@@ -48,12 +48,12 @@ export function PrayerChatBubble({
                 : "bg-slate-800/90 border border-slate-700/40 text-slate-100 rounded-2xl rounded-bl-xs"
             )}
           >
-            <p className="text-xs sm:text-sm text-inherit leading-relaxed font-normal break-words line-clamp-4">
+            <p className="text-sm text-inherit leading-relaxed font-normal break-words line-clamp-4">
               {cleanPrayer}
             </p>
 
-            <div className="flex items-center justify-end gap-1 mt-1 text-[10px] sm:text-[11px] opacity-75 select-none leading-none">
-              <Clock className="w-2.5 h-2.5 shrink-0 stroke-[2]" />
+            <div className="flex items-center justify-end gap-1 mt-1 text-sm opacity-75 select-none leading-none">
+              <Clock className="w-3.5 h-3.5 shrink-0 stroke-[2]" />
               <span>{formatClockTime(donor.date)}</span>
             </div>
           </div>

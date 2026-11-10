@@ -49,22 +49,22 @@ export function AdminUserTableRow({
                 {user.name}
               </span>
               {isSelf && (
-                <span className="text-[10px] font-medium text-primary bg-primary/10 px-1.5 py-0.2 rounded border border-primary/20 shrink-0">
+                <span className="text-sm font-medium text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 shrink-0">
                   Anda
                 </span>
               )}
               {!user.isActive && (
-                <span className="text-[10px] font-medium text-rose-700 bg-rose-50 border border-rose-200 px-1.5 py-0.2 rounded shrink-0">
+                <span className="text-sm font-medium text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded shrink-0">
                   Ditangguhkan
                 </span>
               )}
             </div>
             {user.email?.endsWith("@internal.yayasanpayungberkah.org") ? (
-              <span className="text-xs text-slate-400 block truncate font-normal italic">
+              <span className="text-sm text-slate-400 block truncate font-normal italic">
                 Tanpa akses login
               </span>
             ) : (
-              <span className="text-xs text-slate-500 block line-clamp-2 break-all font-normal">
+              <span className="text-sm text-slate-500 block line-clamp-2 break-all font-normal">
                 {user.email}
               </span>
             )}
@@ -86,11 +86,11 @@ export function AdminUserTableRow({
             {user.title || "-"}
           </span>
           {user.role === USER_ROLES.SUPER_ADMIN ? (
-            <span className="inline-flex items-center text-[11px] font-medium text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-md shrink-0">
+            <span className="inline-flex items-center text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-md shrink-0">
               Super admin
             </span>
           ) : user.hasLoginAccess ? (
-            <span className="inline-flex items-center text-[11px] font-medium text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-md shrink-0">
+            <span className="inline-flex items-center text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-md shrink-0">
               Admin
             </span>
           ) : null}

@@ -135,13 +135,13 @@ export function CampaignCard({
           {isClosed ? (
             <Button
               variant="outline"
-              className="w-full h-8.5 sm:h-9 rounded-lg text-xs sm:text-sm font-normal border-slate-300 text-slate-700 bg-white hover:bg-white hover:text-slate-700 hover:border-slate-300 shadow-none cursor-pointer transition-none"
+              className="w-full h-9 rounded-lg text-sm font-normal border-slate-300 text-slate-700 bg-white hover:bg-white hover:text-slate-700 hover:border-slate-300 shadow-none cursor-pointer transition-none"
             >
               Lihat Detail
             </Button>
           ) : (
             <Button
-              className="w-full h-8.5 sm:h-9 rounded-lg text-xs sm:text-sm font-medium bg-primary hover:bg-primary text-white hover:text-white shadow-none cursor-pointer transition-none"
+              className="w-full h-9 rounded-lg text-sm font-medium bg-primary hover:bg-primary text-white hover:text-white shadow-none cursor-pointer transition-none"
             >
               Donasi Sekarang
             </Button>

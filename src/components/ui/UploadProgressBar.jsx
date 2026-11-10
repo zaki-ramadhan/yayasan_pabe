@@ -91,7 +91,7 @@ export function UploadProgressBar({
         />
       </div>
 
-      <p className="text-[11px] text-slate-500 mt-2 font-normal">
+      <p className="text-sm text-slate-500 mt-2 font-normal">
         Mohon jangan menutup jendela ini
       </p>
 
@@ -99,7 +99,7 @@ export function UploadProgressBar({
         <button
           type="button"
           onClick={onCancel}
-          className="mt-2.5 inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50/60 transition-colors cursor-pointer"
+          className="mt-2.5 inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-sm font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50/60 transition-colors cursor-pointer"
           aria-label="Batalkan proses unggah berkas"
         >
           <X className="w-3.5 h-3.5" />

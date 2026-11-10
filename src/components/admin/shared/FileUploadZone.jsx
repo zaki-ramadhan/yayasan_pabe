@@ -201,7 +201,7 @@ export function FileUploadZone({
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onCancel={handleCancelUpload}
-              className={context === "USER_AVATAR" ? "py-2.5 px-3 min-h-[76px] [&_svg]:w-5 [&_svg]:h-5 [&_svg]:mb-1 [&_p.text-sm]:text-xs [&_p.text-xs]:text-[11px]" : ""}
+              className={context === "USER_AVATAR" ? "py-2.5 px-3 min-h-[76px] [&_svg]:w-5 [&_svg]:h-5 [&_svg]:mb-1 [&_p.text-sm]:text-sm [&_p.text-xs]:text-sm" : ""}
             />
 
             {multiple && files.length > 0 && (

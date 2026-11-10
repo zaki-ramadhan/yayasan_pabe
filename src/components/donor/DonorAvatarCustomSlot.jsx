@@ -103,10 +103,10 @@ export function DonorAvatarCustomSlot({
           </div>
         )}
         <div className="min-w-0">
-          <p className="text-xs font-medium text-slate-800 truncate">
+          <p className="text-sm font-medium text-slate-800 truncate">
             {customAvatar ? "Foto profil dari perangkat Anda" : "Pilih foto profil dari perangkat"}
           </p>
-          <p className="text-[11px] text-slate-500">
+          <p className="text-sm text-slate-500">
             {customAvatar
               ? isActive
                 ? "Sedang digunakan sebagai avatar aktif di atas"

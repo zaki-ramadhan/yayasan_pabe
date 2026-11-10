@@ -17,11 +17,11 @@ const ribbonBadgeVariants = cva(
       },
 
       size: {
-        xs: "text-[10px] leading-normal pl-1.5 pr-3 py-0.5",
-        default: "text-[11px] leading-tight pl-2 pr-3.5 py-0.5",
-        card: "text-xs sm:text-sm leading-tight pl-2.5 sm:pl-3 pr-4.5 sm:pr-5.5 py-1 sm:py-1.5",
-        sm: "text-xs leading-none pl-2 pr-3 py-0.5",
-        md: "text-xs sm:text-sm leading-normal pl-2.5 sm:pl-3 pr-4.5 sm:pr-5.5 py-1",
+        xs: "text-sm leading-normal pl-2 pr-3.5 py-0.5",
+        default: "text-sm leading-tight pl-2.5 pr-4 py-0.5",
+        card: "text-sm leading-tight pl-2.5 sm:pl-3 pr-4.5 sm:pr-5.5 py-1 sm:py-1.5",
+        sm: "text-sm leading-none pl-2.5 pr-3.5 py-0.5",
+        md: "text-sm leading-normal pl-2.5 sm:pl-3 pr-4.5 sm:pr-5.5 py-1",
       },
     },
     defaultVariants: {

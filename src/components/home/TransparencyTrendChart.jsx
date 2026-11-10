@@ -73,7 +73,7 @@ export function TransparencyTrendChart({ data = [], className = "" }) {
                       </span>
                     </div>
                     {item?.payload?.count > 0 && (
-                      <div className="flex items-center justify-between w-full gap-4 text-slate-500 text-[11px]">
+                      <div className="flex items-center justify-between w-full gap-4 text-slate-500 text-sm">
                         <span>Jumlah Transaksi:</span>
                         <span>{formatNumber(item.payload.count)} donasi</span>
                       </div>

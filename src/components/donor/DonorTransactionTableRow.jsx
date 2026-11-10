@@ -49,10 +49,10 @@ export function DonorTransactionTableRow({ item }) {
       </TableCell>
       <TableCell className="whitespace-nowrap align-middle text-center">
         <div className="flex flex-col items-center leading-tight">
-          <span className="font-medium text-slate-900 text-xs sm:text-sm">
+          <span className="font-medium text-slate-900 text-sm">
             {formatDate(item.date)}
           </span>
-          <span className="text-[11px] sm:text-xs text-slate-500 tabular-nums mt-0.5">
+          <span className="text-sm text-slate-500 tabular-nums mt-0.5">
             {formatTime(item.date)}
           </span>
         </div>

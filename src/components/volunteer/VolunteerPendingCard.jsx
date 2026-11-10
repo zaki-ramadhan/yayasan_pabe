@@ -33,22 +33,22 @@ export function VolunteerPendingCard({
           <Clock className="w-6 h-6 animate-pulse" />
         </div>
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100/80 text-amber-900 text-xs font-semibold">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100/80 text-amber-900 text-sm font-semibold">
             Status: Menunggu Verifikasi
           </div>
           <h2 className="text-base sm:text-lg font-semibold text-slate-900">
             Pendaftaran Relawan Sedang Ditinjau
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <p className="text-sm text-slate-600 leading-relaxed">
             Terima kasih telah mengajukan diri sebagai relawan aksi. Tim pengurus yayasan sedang memverifikasi data Anda.
           </p>
         </div>
       </div>
 
       {/* Ringkasan Data Pengajuan */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs sm:text-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-sm">
         <div>
-          <span className="text-slate-500 block text-[11px] uppercase tracking-wider font-medium">
+          <span className="text-slate-500 block text-sm uppercase tracking-wider font-medium">
             Nama Pendaftar
           </span>
           <span className="font-semibold text-slate-900 block mt-0.5">
@@ -56,7 +56,7 @@ export function VolunteerPendingCard({
           </span>
         </div>
         <div>
-          <span className="text-slate-500 block text-[11px] uppercase tracking-wider font-medium">
+          <span className="text-slate-500 block text-sm uppercase tracking-wider font-medium">
             Kota Domisili
           </span>
           <span className="font-semibold text-slate-900 block mt-0.5">
@@ -64,7 +64,7 @@ export function VolunteerPendingCard({
           </span>
         </div>
         <div>
-          <span className="text-slate-500 block text-[11px] uppercase tracking-wider font-medium">
+          <span className="text-slate-500 block text-sm uppercase tracking-wider font-medium">
             Tanggal Pengajuan
           </span>
           <span className="font-semibold text-slate-900 block mt-0.5">
@@ -72,7 +72,7 @@ export function VolunteerPendingCard({
           </span>
         </div>
         <div>
-          <span className="text-slate-500 block text-[11px] uppercase tracking-wider font-medium">
+          <span className="text-slate-500 block text-sm uppercase tracking-wider font-medium">
             Status Keanggotaan
           </span>
           <span className="font-semibold text-amber-700 block mt-0.5">
@@ -82,7 +82,7 @@ export function VolunteerPendingCard({
       </div>
 
       {/* Edukasi Anti-Spam & Tombol Batalkan */}
-      <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
+      <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-sm">
         <p className="text-slate-500 flex items-center gap-1.5">
           <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
           <span>Anda tidak perlu mendaftar ulang selama berkas masih ditinjau.</span>
@@ -93,7 +93,7 @@ export function VolunteerPendingCard({
             type="button"
             variant="outline"
             onClick={onCancelClick}
-            className="h-9 px-3.5 text-xs text-rose-700 hover:text-rose-800 hover:bg-rose-50 border-rose-200 shrink-0 font-medium cursor-pointer"
+            className="h-9 px-3.5 text-sm text-rose-700 hover:text-rose-800 hover:bg-rose-50 border-rose-200 shrink-0 font-medium cursor-pointer"
           >
             Batalkan pendaftaran
           </Button>

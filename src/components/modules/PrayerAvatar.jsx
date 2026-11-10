@@ -6,8 +6,8 @@ export function PrayerAvatar({ name = "H", avatar, src, size = "md", className }
   const avatarUrl = src || avatar || null;
 
   const sizeClasses = {
-    sm: "w-7 h-7 text-[11px]",
-    md: "w-8 h-8 text-xs",
+    sm: "w-7 h-7 text-xs font-medium",
+    md: "w-8 h-8 text-sm font-medium",
   };
 
   return (

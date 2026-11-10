@@ -44,7 +44,7 @@ export function AdminInstagramTableRow({
               unoptimized
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-[10px] text-slate-400">
+            <div className="w-full h-full flex items-center justify-center text-sm text-slate-400">
               No Media
             </div>
           )}

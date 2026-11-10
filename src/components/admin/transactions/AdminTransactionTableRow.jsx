@@ -37,7 +37,7 @@ export function AdminTransactionTableRow({
             </button>
           </div>
           {(item.routineDonationId || item.isRoutine) && (
-            <span className="inline-flex items-center px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 font-medium text-[10px] border border-emerald-200/60">
+            <span className="inline-flex items-center px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-medium text-sm border border-emerald-200/60">
               Donasi Rutin
             </span>
           )}
