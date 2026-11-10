@@ -34,7 +34,7 @@ export function NavMobileUserSection({ currentUser, onClose, onLogout }) {
               >
                 {currentUser.name}
               </span>
-              <span className="block text-xs text-slate-500 truncate font-mono">
+              <span className="block text-xs text-slate-500 truncate">
                 {currentUser.email || "Donatur Terdaftar"}
               </span>
             </div>

@@ -36,7 +36,7 @@ export function NavMobileAccordion({
       </button>
 
       {isOpen && (
-        <div className="pl-3 pr-2 py-1 space-y-1 bg-slate-50 rounded-lg mt-1 border-l-2 border-primary">
+        <div className="relative ml-4 pl-3.5 border-l-2 border-slate-200 space-y-1 py-1 mt-1">
           {items.map((item) => {
             const isItemActive = isNavItemActive(item.href, pathname);
             return (
@@ -45,10 +45,11 @@ export function NavMobileAccordion({
                 href={item.href}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center justify-between py-2 px-2.5 text-sm font-medium rounded-md transition-colors",
+                  "relative flex items-center justify-between py-2 px-2.5 text-sm font-medium rounded-lg transition-colors",
+                  "before:content-[''] before:absolute before:-left-3.5 before:top-1/2 before:-translate-y-1/2 before:w-3.5 before:h-[1.5px]",
                   isItemActive
-                    ? "bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white shadow-xs hover:bg-gradient-to-r hover:from-blue-600 hover:via-blue-700 hover:to-blue-800 hover:text-white cursor-default select-none pointer-events-none"
-                    : "text-slate-700 hover:text-slate-950 hover:bg-slate-100"
+                    ? "bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white shadow-xs before:bg-blue-600 cursor-default select-none pointer-events-none"
+                    : "text-slate-700 hover:text-slate-950 hover:bg-slate-100 before:bg-slate-300"
                 )}
               >
                 <span>{item.label}</span>
