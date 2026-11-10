@@ -31,8 +31,17 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
   };
 
   return (
-    <div className="lg:hidden border-b border-slate-300 bg-white px-4 pt-2 pb-6 space-y-3 animate-in fade-in slide-in-from-top-2">
-      <div className="space-y-1">
+    <>
+      {/* Backdrop Overlay (Klik luar untuk menutup menu) */}
+      <div
+        className="lg:hidden fixed inset-0 top-16 sm:top-20 bg-slate-900/40 backdrop-blur-xs z-40 animate-in fade-in"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Floating Menu Panel - Fixed & Tidak Menurunkan Konten Halaman Utama */}
+      <div className="lg:hidden fixed inset-x-0 top-16 sm:top-20 z-50 bg-white border-b border-slate-300 px-4 pt-2 pb-6 space-y-3 shadow-xl max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100dvh-5rem)] overflow-y-auto animate-in fade-in slide-in-from-top-2">
+        <div className="space-y-1">
         {/* Home */}
         <Link
           href="/"
@@ -113,5 +122,6 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
         onLogout={onLogout}
       />
     </div>
-  );
+  </>
+);
 }
