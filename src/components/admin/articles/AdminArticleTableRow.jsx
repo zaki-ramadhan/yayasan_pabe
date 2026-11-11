@@ -93,7 +93,7 @@ export function AdminArticleTableRow({
 				}
 			</TableCell>
 
-			<TableCell className="text-sm text-slate-700 py-2.5 text-center whitespace-nowrap font-medium align-middle tabular-nums">
+			<TableCell className="text-sm text-slate-600 py-2.5 text-center whitespace-nowrap font-normal align-middle tabular-nums">
 				{
 					article.likeCount
 				}{" "}

@@ -23,8 +23,23 @@ const badgeVariants = cva(
   }
 );
 
-function Badge({ className, variant, ...props }) {
-  return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
+function Badge({ className, variant, children, title, ...props }) {
+  const resolvedTitle =
+    title !== undefined
+      ? title
+      : typeof children === "string"
+      ? children
+      : undefined;
+
+  return (
+    <div
+      className={cn(badgeVariants({ variant }), className)}
+      title={resolvedTitle}
+      {...props}
+    >
+      {children}
+    </div>
+  );
 }
 
 const STATUS_CONFIG_MAP = {

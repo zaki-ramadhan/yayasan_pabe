@@ -31,6 +31,7 @@ export function DonorHistoryDashboard() {
     limit: 10,
   });
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [typeFilter, setTypeFilter] = useState("ALL");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isTableLoading, setIsTableLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
@@ -66,6 +67,7 @@ export function DonorHistoryDashboard() {
           email: currentUser.email || "",
           name: currentUser.name || "",
           status: statusFilter,
+          type: typeFilter,
           sortBy: "date",
           sortOrder: "desc",
           page: String(pageToLoad),
@@ -99,6 +101,7 @@ export function DonorHistoryDashboard() {
       currentUser?.email,
       currentUser?.name,
       statusFilter,
+      typeFilter,
       pagination.limit,
     ]
   );
@@ -160,7 +163,7 @@ export function DonorHistoryDashboard() {
       )}
 
       {/* 3 Metric Cards Strip */}
-      <DonorSummaryCards metrics={metrics} isLoading={false} />
+      <DonorSummaryCards metrics={metrics} typeFilter={typeFilter} isLoading={false} />
 
       {/* Error state if fetch failed */}
       {fetchError && (
@@ -181,8 +184,10 @@ export function DonorHistoryDashboard() {
         items={items}
         pagination={pagination}
         statusFilter={statusFilter}
+        typeFilter={typeFilter}
         isLoading={isTableLoading}
         onStatusFilterChange={setStatusFilter}
+        onTypeFilterChange={setTypeFilter}
         onPageChange={handlePageChange}
         onLimitChange={handleLimitChange}
         onRefresh={handleRefresh}

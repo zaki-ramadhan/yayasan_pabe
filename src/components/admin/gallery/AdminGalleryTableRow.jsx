@@ -93,7 +93,7 @@ export function AdminGalleryTableRow({
             {displayTitle}
           </span>
           {item.description && (
-            <p className="text-xs text-slate-500 line-clamp-1 leading-relaxed">
+            <p className="text-sm text-slate-500 line-clamp-1 leading-relaxed">
               {item.description}
             </p>
           )}

@@ -49,12 +49,18 @@ export function AdminUserTableRow({
                 {user.name}
               </span>
               {isSelf && (
-                <span className="text-sm font-medium text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 shrink-0">
+                <span
+                  title="Anda"
+                  className="text-sm font-medium text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 shrink-0 max-w-[80px] truncate whitespace-nowrap"
+                >
                   Anda
                 </span>
               )}
               {!user.isActive && (
-                <span className="text-sm font-medium text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded shrink-0">
+                <span
+                  title="Ditangguhkan"
+                  className="text-sm font-medium text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded shrink-0 max-w-[130px] truncate whitespace-nowrap"
+                >
                   Ditangguhkan
                 </span>
               )}
@@ -82,15 +88,21 @@ export function AdminUserTableRow({
       {/* 3. Jabatan & Akses */}
       <TableCell className="py-3 px-4 w-56 max-w-xs align-middle">
         <div className="space-y-1">
-          <span className="text-sm font-medium text-slate-900 leading-snug line-clamp-2 break-words block">
+          <span className="text-sm font-normal text-slate-700 leading-snug line-clamp-2 break-words block">
             {user.title || "-"}
           </span>
           {user.role === USER_ROLES.SUPER_ADMIN ? (
-            <span className="inline-flex items-center text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-md shrink-0">
+            <span
+              title="Super admin"
+              className="inline-flex items-center text-sm font-normal text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-md shrink-0 max-w-[140px] truncate whitespace-nowrap"
+            >
               Super admin
             </span>
           ) : user.hasLoginAccess ? (
-            <span className="inline-flex items-center text-sm font-medium text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-md shrink-0">
+            <span
+              title="Admin"
+              className="inline-flex items-center text-sm font-normal text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-md shrink-0 max-w-[140px] truncate whitespace-nowrap"
+            >
               Admin
             </span>
           ) : null}

@@ -57,7 +57,7 @@ export function AdminPrayerTableRow({
       <TableCell className="w-[170px] text-sm py-3 align-top">
         <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
           <span
-            className="font-medium text-slate-900 truncate block select-all"
+            className="font-normal font-mono text-slate-700 truncate block select-all"
           >
             {item.invoiceId}
           </span>
@@ -90,11 +90,11 @@ export function AdminPrayerTableRow({
               {item.donorName}
             </span>
             {item.isAnonymous ? (
-              <span className="text-xs font-normal text-slate-400 block">
+              <span className="text-sm font-normal text-slate-400 block">
                 (Anonim)
               </span>
             ) : item.donorEmail ? (
-              <span className="text-xs font-normal text-slate-500 block truncate">
+              <span className="text-sm font-normal text-slate-500 block truncate">
                 {maskEmail(item.donorEmail)}
               </span>
             ) : null}
@@ -108,7 +108,7 @@ export function AdminPrayerTableRow({
           <Link
             href={`/campaign/${item.campaignSlug}`}
             target="_blank"
-            className="font-medium text-sm text-slate-900 hover:text-primary hover:underline leading-snug line-clamp-2 cursor-pointer transition-colors block overflow-hidden"
+            className="font-normal text-sm text-slate-800 hover:text-primary hover:underline leading-snug line-clamp-2 cursor-pointer transition-colors block overflow-hidden"
             aria-label={`Buka program: ${item.campaignTitle}`}
             style={{
               display: "-webkit-box",
@@ -121,7 +121,7 @@ export function AdminPrayerTableRow({
           </Link>
         ) : (
           <span
-            className="font-medium text-sm text-slate-900 leading-snug line-clamp-2 block overflow-hidden"
+            className="font-normal text-sm text-slate-800 leading-snug line-clamp-2 block overflow-hidden"
             style={{
               display: "-webkit-box",
               WebkitLineClamp: 2,
@@ -135,7 +135,7 @@ export function AdminPrayerTableRow({
       </TableCell>
 
       {/* 4. Nominal Donasi */}
-      <TableCell className="w-32 py-3 align-top whitespace-nowrap text-sm font-medium text-slate-900 text-right tabular-nums">
+      <TableCell className="w-32 py-3 align-top whitespace-nowrap text-sm font-normal text-slate-700 text-right tabular-nums">
         {formatRupiah(item.amount)}
       </TableCell>
 
@@ -145,8 +145,8 @@ export function AdminPrayerTableRow({
           &ldquo;{item.prayer}&rdquo;
         </p>
         {item.aminCount > 0 && (
-          <span className="inline-flex items-center gap-1 text-xs text-rose-600 font-normal">
-            <Heart className="w-3 h-3 fill-rose-500 text-rose-500" />
+          <span className="inline-flex items-center gap-1 text-sm text-rose-600 font-normal">
+            <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
             <span>{item.aminCount} orang mengaminkan</span>
           </span>
         )}
@@ -155,10 +155,10 @@ export function AdminPrayerTableRow({
       {/* 6. Waktu Kirim (Dua baris tanggal & jam, teks jelas) */}
       <TableCell className="w-36 py-3 align-top whitespace-nowrap text-sm text-slate-700 font-normal text-center tabular-nums">
         <div className="space-y-0.5">
-          <span className="font-medium text-slate-900 block leading-tight">
+          <span className="font-normal text-slate-700 block leading-tight">
             {formatDate(item.createdAt)}
           </span>
-          <span className="text-xs text-slate-600 block">
+          <span className="text-sm text-slate-500 block">
             {formatClockTime(item.createdAt)} WIB
           </span>
         </div>
@@ -167,14 +167,14 @@ export function AdminPrayerTableRow({
       {/* 7. Status Moderasi (Badge) */}
       <TableCell className="w-32 text-center py-3 align-top whitespace-nowrap">
         {item.isPrayerHidden ? (
-          <Badge variant="danger" className="gap-1">
-            <EyeOff className="w-3 h-3 text-rose-600" />
-            <span>Disembunyikan</span>
+          <Badge variant="danger" className="gap-1 max-w-[140px]" title="Disembunyikan">
+            <EyeOff className="w-3 h-3 text-rose-600 shrink-0" />
+            <span className="truncate">Disembunyikan</span>
           </Badge>
         ) : (
-          <Badge variant="success" className="gap-1">
-            <Eye className="w-3 h-3 text-emerald-600" />
-            <span>Ditampilkan</span>
+          <Badge variant="success" className="gap-1 max-w-[140px]" title="Ditampilkan">
+            <Eye className="w-3 h-3 text-emerald-600 shrink-0" />
+            <span className="truncate">Ditampilkan</span>
           </Badge>
         )}
       </TableCell>

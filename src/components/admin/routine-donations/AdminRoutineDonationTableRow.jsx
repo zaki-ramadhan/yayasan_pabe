@@ -30,7 +30,7 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
               {item.donorName}
             </span>
             {item.donorEmail && (
-              <span className="text-xs text-slate-500 block truncate font-normal">
+              <span className="text-sm text-slate-500 block truncate font-normal">
                 {maskEmail(item.donorEmail)}
               </span>
             )}
@@ -53,7 +53,7 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
           <Link
             href={`/campaign/${item.campaignSlug}`}
             target="_blank"
-            className="font-medium leading-snug line-clamp-2 overflow-hidden text-slate-900 hover:text-primary hover:underline cursor-pointer transition-colors block"
+            className="font-normal leading-snug line-clamp-2 overflow-hidden text-slate-800 hover:text-primary hover:underline cursor-pointer transition-colors block"
             aria-label={`Buka program: ${item.programTitle}`}
             style={{
               display: "-webkit-box",
@@ -66,7 +66,7 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
           </Link>
         ) : (
           <span
-            className="font-medium leading-snug line-clamp-2 overflow-hidden text-slate-900 block"
+            className="font-normal leading-snug line-clamp-2 overflow-hidden text-slate-800 block"
             style={{
               display: "-webkit-box",
               WebkitLineClamp: 2,
@@ -77,7 +77,7 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
             {decodeHtmlEntities(item.programTitle)}
           </span>
         )}
-        <span className="text-xs text-slate-500 font-normal block mt-0.5">
+        <span className="text-sm text-slate-500 font-normal block mt-0.5">
           Didaftarkan {formatDate(item.createdAt)}
         </span>
       </TableCell>
@@ -90,10 +90,10 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
       {/* Frekuensi & Jadwal */}
       <TableCell className="w-40 text-sm text-slate-700 py-3 align-middle whitespace-nowrap">
         <div className="space-y-0.5">
-          <span className="font-medium text-slate-900 block leading-tight">
+          <span className="font-normal text-slate-800 block leading-tight">
             {getFrequencyText(item)}
           </span>
-          <span className="text-xs text-slate-500 font-normal block">
+          <span className="text-sm text-slate-500 font-normal block">
             Pukul {item.reminderTime} WIB
           </span>
         </div>

@@ -22,7 +22,7 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
               {donor.name}
             </span>
             {donor.email && (
-              <span className="text-xs text-slate-500 block truncate font-normal">
+              <span className="text-sm text-slate-500 block truncate font-normal">
                 {maskEmail(donor.email)}
               </span>
             )}

@@ -147,7 +147,7 @@ export function AdminRecentTransactionsCard({
                   <TableCell className="w-[170px] text-sm py-3 align-middle">
                     <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
                       <span
-                        className="font-medium text-slate-900 truncate block select-all"
+                        className="font-normal font-mono text-slate-700 truncate block select-all"
                       >
                         {item.invoiceId}
                       </span>
@@ -188,7 +188,7 @@ export function AdminRecentTransactionsCard({
                   </TableCell>
                   <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
                     <span
-                      className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-xs font-medium bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap"
+                      className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap"
                     >
                       {formatPaymentChannel(item.paymentChannel)}
                     </span>

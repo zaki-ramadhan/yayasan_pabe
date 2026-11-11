@@ -52,7 +52,7 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
             Rincian berkas per folder
           </h3>
         </div>
-        <span className="text-xs font-normal text-slate-500">
+        <span className="text-sm font-normal text-slate-500">
           {folders.length} folder sistem
         </span>
       </div>
@@ -62,13 +62,13 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
         <table className="w-full text-left text-sm font-normal">
           <thead className="sticky top-0 bg-slate-50 z-10 border-b border-slate-200">
             <tr className="text-slate-600 select-none">
-              <th scope="col" className="py-2.5 px-3 font-medium text-xs sm:text-sm">
+              <th scope="col" className="py-2.5 px-3 font-medium text-sm">
                 Nama
               </th>
-              <th scope="col" className="py-2.5 px-3 font-medium text-xs sm:text-sm text-right">
+              <th scope="col" className="py-2.5 px-3 font-medium text-sm text-right">
                 Jumlah berkas
               </th>
-              <th scope="col" className="py-2.5 px-3 font-medium text-xs sm:text-sm text-right">
+              <th scope="col" className="py-2.5 px-3 font-medium text-sm text-right">
                 Ukuran
               </th>
             </tr>
@@ -140,30 +140,30 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
                                   href={file.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="font-normal text-xs text-slate-700 hover:text-primary hover:underline truncate max-w-[200px] sm:max-w-xs md:max-w-sm" aria-label={`Buka ${file.name || file.key}`}
+                                  className="font-normal text-sm text-slate-700 hover:text-primary hover:underline truncate max-w-[200px] sm:max-w-xs md:max-w-sm" aria-label={`Buka ${file.name || file.key}`}
                                 >
                                   {file.name || file.key}
                                 </a>
                               ) : (
                                 <span
-                                  className="font-normal text-xs text-slate-700 truncate max-w-[200px] sm:max-w-xs md:max-w-sm"
+                                  className="font-normal text-sm text-slate-700 truncate max-w-[200px] sm:max-w-xs md:max-w-sm"
                                 >
                                   {file.name || file.key}
                                 </span>
                               )}
                             </div>
                           </td>
-                          <td className="py-1.5 px-3 font-normal text-xs text-slate-500 text-right whitespace-nowrap">
+                          <td className="py-1.5 px-3 font-normal text-sm text-slate-500 text-right whitespace-nowrap">
                             1 berkas
                           </td>
-                          <td className="py-1.5 px-3 font-normal text-xs text-slate-600 text-right whitespace-nowrap">
+                          <td className="py-1.5 px-3 font-normal text-sm text-slate-600 text-right whitespace-nowrap tabular-nums">
                             {formatBytes(file.size)}
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr className="bg-slate-50/30">
-                        <td colSpan={3} className="py-2 px-3 pl-9 sm:pl-10 text-xs text-slate-500 font-normal">
+                        <td colSpan={3} className="py-2 px-3 pl-9 sm:pl-10 text-sm text-slate-500 font-normal">
                           Memuat rincian {item.count} berkas...
                         </td>
                       </tr>

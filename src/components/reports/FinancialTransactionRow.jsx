@@ -15,7 +15,7 @@ export function FinancialTransactionRow({ transaction }) {
   return (
     <TableRow>
       {/* Date */}
-      <TableCell className="font-medium text-slate-800 whitespace-nowrap align-middle">
+      <TableCell className="font-normal text-slate-700 whitespace-nowrap align-middle tabular-nums">
         {formatDate(transaction.date, { month: "short" })}
       </TableCell>
 
@@ -44,7 +44,7 @@ export function FinancialTransactionRow({ transaction }) {
       </TableCell>
 
       {/* Amount */}
-      <TableCell className="font-medium whitespace-nowrap text-right align-middle">
+      <TableCell className="font-medium whitespace-nowrap text-right align-middle tabular-nums">
         <span className={isIncome ? "text-emerald-700" : "text-slate-900"}>
           {isIncome ? `+${formatRupiah(absAmount)}` : `-${formatRupiah(absAmount)}`}
         </span>
@@ -53,10 +53,11 @@ export function FinancialTransactionRow({ transaction }) {
       {/* Status */}
       <TableCell className="whitespace-nowrap text-center align-middle">
         <span
+          title={transaction.statusLabel || (isIncome ? "Diterima" : "Tersalurkan")}
           className={
             isIncome
-              ? "inline-block px-2.5 py-0.5 rounded-md text-sm font-medium text-emerald-800 bg-emerald-50 border border-emerald-200"
-              : "inline-block px-2.5 py-0.5 rounded-md text-sm font-medium text-slate-800 bg-slate-100 border border-slate-200"
+              ? "inline-block px-2.5 py-0.5 rounded-md text-sm font-normal text-emerald-800 bg-emerald-50 border border-emerald-200 max-w-[130px] truncate whitespace-nowrap align-middle"
+              : "inline-block px-2.5 py-0.5 rounded-md text-sm font-normal text-slate-800 bg-slate-100 border border-slate-200 max-w-[130px] truncate whitespace-nowrap align-middle"
           }
         >
           {transaction.statusLabel || (isIncome ? "Diterima" : "Tersalurkan")}

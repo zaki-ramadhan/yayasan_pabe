@@ -19,7 +19,7 @@ export function BeneficiaryTableRow({ item, index }) {
 
       {/* Kolom Kategori (Badge) */}
       <TableCell className="w-40 py-3.5 align-middle whitespace-nowrap">
-        <Badge variant={isYatim ? "success" : "info"} className="text-xs font-medium">
+        <Badge variant={isYatim ? "success" : "info"} className="text-sm font-normal">
           {item.categoryLabel}
         </Badge>
       </TableCell>

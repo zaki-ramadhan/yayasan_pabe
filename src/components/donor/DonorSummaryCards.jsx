@@ -20,22 +20,40 @@ export function DonorSummaryCardsSkeleton() {
   );
 }
 
-export function DonorSummaryCards({ metrics, isLoading = false }) {
-  const cards = [
-    {
-      title: "Total Nominal Donasi",
-      amount: metrics?.totalNominal || 0,
-      isCurrency: true,
-    },
-    {
-      title: "Frekuensi Donasi",
-      value: `${(metrics?.totalTransactions || 0).toLocaleString("id-ID")}x`,
-    },
-    {
-      title: "Program Didukung",
-      value: `${(metrics?.totalPrograms || 0).toLocaleString("id-ID")} Program`,
-    },
-  ];
+export function DonorSummaryCards({ metrics, typeFilter = "ALL", isLoading = false }) {
+  const isZakatMode = typeFilter === "ZAKAT";
+
+  const cards = isZakatMode
+    ? [
+        {
+          title: "Total Zakat Tertunaikan",
+          amount: metrics?.totalZakatNominal || metrics?.totalNominal || 0,
+          isCurrency: true,
+        },
+        {
+          title: "Frekuensi Setor Zakat",
+          value: `${(metrics?.totalZakatTransactions || metrics?.totalTransactions || 0).toLocaleString("id-ID")}x`,
+        },
+        {
+          title: "Penyaluran Amanah",
+          value: "8 Asnaf Mustahik",
+        },
+      ]
+    : [
+        {
+          title: "Total Nominal Donasi",
+          amount: metrics?.totalNominal || 0,
+          isCurrency: true,
+        },
+        {
+          title: "Frekuensi Transaksi",
+          value: `${(metrics?.totalTransactions || 0).toLocaleString("id-ID")}x`,
+        },
+        {
+          title: "Program Didukung",
+          value: `${(metrics?.totalPrograms || 0).toLocaleString("id-ID")} Program`,
+        },
+      ];
 
   if (isLoading) {
     return <DonorSummaryCardsSkeleton />;

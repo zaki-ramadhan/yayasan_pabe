@@ -13,9 +13,10 @@ export function AdminTransactionSkeleton() {
     <div className="space-y-4 animate-pulse">
       {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex flex-1 flex-wrap items-center gap-2.5 max-w-xl">
-          <Skeleton className="h-10 flex-1 min-w-[220px] rounded-lg" />
-          <Skeleton className="h-10 w-44 rounded-lg shrink-0" />
+        <div className="flex flex-1 flex-wrap items-center gap-2.5 max-w-2xl">
+          <Skeleton className="h-10 flex-1 min-w-[200px] rounded-lg" />
+          <Skeleton className="h-10 w-48 sm:w-52 rounded-lg shrink-0" />
+          <Skeleton className="h-10 w-48 sm:w-52 rounded-lg shrink-0" />
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
@@ -29,6 +30,9 @@ export function AdminTransactionSkeleton() {
           <Table>
             <TableHeader className="bg-slate-50/70 border-b border-slate-200/90">
               <TableRow>
+                <TableHead className="w-[170px] py-2.5 whitespace-nowrap">
+                  <Skeleton className="h-4 w-24 rounded" />
+                </TableHead>
                 <TableHead className="w-px py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-24 rounded" />
                 </TableHead>
@@ -81,11 +85,16 @@ export function AdminTransactionTableSkeletonRows({ rows = 5 }) {
       {Array.from({ length: rows }).map((_, i) => (
         <TableRow key={i} className="hover:bg-transparent">
           {/* Invoice */}
-          <TableCell className="w-px py-3 whitespace-nowrap align-middle">
+          <TableCell className="w-[170px] py-3 whitespace-nowrap align-middle">
             <div className="flex items-center gap-1.5">
               <Skeleton className="h-4 w-28 rounded" />
               <Skeleton className="h-4 w-4 rounded" />
             </div>
+          </TableCell>
+
+          {/* Jenis Transaksi */}
+          <TableCell className="w-px py-3 whitespace-nowrap align-middle">
+            <Skeleton className="h-6 w-24 rounded-md" />
           </TableCell>
 
           {/* Donor */}

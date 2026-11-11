@@ -79,8 +79,8 @@ export function AdminDistributionTableRow({
 											</span>
 										)}
 						{item.location && (
-							<span className="inline-flex items-center gap-1 text-xs text-slate-500 font-normal">
-								<MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+							<span className="inline-flex items-center gap-1 text-sm text-slate-500 font-normal">
+								<MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
 								<span className="truncate max-w-[160px]">{item.location}</span>
 							</span>
 						)}
@@ -90,7 +90,7 @@ export function AdminDistributionTableRow({
 
 			{/* Judul & Media */}
 			<TableCell className="space-y-1.5 py-3 align-middle">
-				<p className="font-normal text-sm text-slate-900 leading-snug line-clamp-2">
+				<p className="font-normal text-sm text-slate-800 leading-snug line-clamp-2">
 					{item.title}
 				</p>
 				{(() => {
@@ -100,17 +100,23 @@ export function AdminDistributionTableRow({
 					const photoCount = mediaList.length - videoCount;
 
 					return (
-						<div className="flex items-center gap-1.5 text-2xs text-slate-500 font-normal">
+						<div className="flex items-center gap-1.5 text-sm text-slate-500 font-normal">
 							{photoCount > 0 && (
-								<span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700">
-									<Camera className="w-3 h-3 text-slate-500" />
-									<span>{photoCount} Foto</span>
+								<span
+									title={`${photoCount} Foto`}
+									className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 font-normal max-w-[120px] truncate whitespace-nowrap"
+								>
+									<Camera className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+									<span className="truncate">{photoCount} Foto</span>
 								</span>
 							)}
 							{videoCount > 0 && (
-								<span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-medium border border-emerald-200/50">
-									<Video className="w-3 h-3 text-emerald-600" />
-									<span>{videoCount} Video</span>
+								<span
+									title={`${videoCount} Video`}
+									className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-normal border border-emerald-200/50 max-w-[120px] truncate whitespace-nowrap"
+								>
+									<Video className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+									<span className="truncate">{videoCount} Video</span>
 								</span>
 							)}
 						</div>

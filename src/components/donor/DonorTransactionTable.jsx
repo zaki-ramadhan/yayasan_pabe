@@ -26,8 +26,10 @@ export function DonorTransactionTable({
   items = [],
   pagination = { total: 0, totalPages: 1, currentPage: 1, limit: 10 },
   statusFilter = "ALL",
+  typeFilter = "ALL",
   isLoading = false,
   onStatusFilterChange,
+  onTypeFilterChange,
   onPageChange,
   onLimitChange,
   onRefresh,
@@ -43,28 +45,47 @@ export function DonorTransactionTable({
           onRefresh={onRefresh}
           isLoading={isLoading}
           extraActions={
-            <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-              <SelectTrigger className="h-10 w-36 sm:w-44 text-sm font-normal bg-white border border-slate-300 shrink-0">
-                <SelectValue placeholder="Semua status" />
-              </SelectTrigger>
-              <SelectContent className="bg-white border border-slate-200 z-50">
-                <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
-                  Semua status
-                </SelectItem>
-                <SelectItem value="PAID" className="cursor-pointer text-sm font-normal py-2">
-                  Berhasil
-                </SelectItem>
-                <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
-                  Menunggu
-                </SelectItem>
-                <SelectItem value="EXPIRED" className="cursor-pointer text-sm font-normal py-2">
-                  Kedaluwarsa
-                </SelectItem>
-                <SelectItem value="CANCELLED" className="cursor-pointer text-sm font-normal py-2">
-                  Dibatalkan
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap items-center gap-2">
+              <Select value={typeFilter} onValueChange={onTypeFilterChange}>
+                <SelectTrigger className="h-10 w-48 sm:w-52 text-sm font-normal bg-white border border-slate-300 shrink-0 whitespace-nowrap">
+                  <SelectValue placeholder="Semua kategori" className="truncate whitespace-nowrap" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border border-slate-200 z-50 min-w-[200px]">
+                  <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
+                    Semua transaksi
+                  </SelectItem>
+                  <SelectItem value="CAMPAIGN" className="cursor-pointer text-sm font-normal py-2">
+                    Donasi program
+                  </SelectItem>
+                  <SelectItem value="ZAKAT" className="cursor-pointer text-sm font-normal py-2">
+                    Zakat maal & fitrah
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={statusFilter} onValueChange={onStatusFilterChange}>
+                <SelectTrigger className="h-10 w-40 sm:w-44 text-sm font-normal bg-white border border-slate-300 shrink-0 whitespace-nowrap">
+                  <SelectValue placeholder="Semua status" className="truncate whitespace-nowrap" />
+                </SelectTrigger>
+                <SelectContent className="bg-white border border-slate-200 z-50 min-w-[160px]">
+                  <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
+                    Semua status
+                  </SelectItem>
+                  <SelectItem value="PAID" className="cursor-pointer text-sm font-normal py-2">
+                    Berhasil
+                  </SelectItem>
+                  <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
+                    Menunggu
+                  </SelectItem>
+                  <SelectItem value="EXPIRED" className="cursor-pointer text-sm font-normal py-2">
+                    Kedaluwarsa
+                  </SelectItem>
+                  <SelectItem value="CANCELLED" className="cursor-pointer text-sm font-normal py-2">
+                    Dibatalkan
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           }
         />
       </div>
@@ -95,7 +116,10 @@ export function DonorTransactionTable({
           ) : items.length === 0 ? (
             <TableEmptyRow
               colSpan={8}
-              isFiltered={Boolean(statusFilter && statusFilter !== "ALL")}
+              isFiltered={Boolean(
+                (statusFilter && statusFilter !== "ALL") ||
+                (typeFilter && typeFilter !== "ALL")
+              )}
             />
           ) : (
             items.map((item) => (
@@ -125,7 +149,8 @@ export function DonorTransactionTableSkeleton() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <Skeleton className="h-10 w-36 sm:w-44 rounded-md" />
+          <Skeleton className="h-10 w-48 sm:w-52 rounded-md" />
+          <Skeleton className="h-10 w-40 sm:w-44 rounded-md" />
           <div className="flex items-center gap-1.5 shrink-0">
             <span className="text-sm font-medium text-slate-600">Baris:</span>
             <Skeleton className="h-10 w-20 rounded-md" />

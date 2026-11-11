@@ -13,7 +13,7 @@ export function DonorTransactionTableRow({ item }) {
       <TableCell className="text-center text-slate-700 font-normal align-middle">
         {item.no}
       </TableCell>
-      <TableCell className="font-medium text-slate-900 align-middle max-w-[180px]">
+      <TableCell className="font-normal text-slate-700 align-middle max-w-[180px]">
         <div className="flex items-center gap-2.5 min-w-0">
           <UserAvatar
             src={item.donorAvatar}
@@ -27,19 +27,29 @@ export function DonorTransactionTableRow({ item }) {
       <TableCell className="text-right font-medium text-emerald-800 align-middle tabular-nums">
         {formatRupiah(item.amount)}
       </TableCell>
-      <TableCell className="font-normal text-slate-800 max-w-xs align-middle">
-        {item.campaignSlug ? (
-          <Link
-            href={`/campaign/${item.campaignSlug}`}
-            className="hover:text-primary transition-colors line-clamp-1"
-          >
-            {item.programTitle}
-          </Link>
-        ) : (
-          <span className="line-clamp-1">{item.programTitle}</span>
-        )}
+      <TableCell className="text-slate-900 max-w-xs align-middle">
+        <div className="flex items-center gap-1.5 min-w-0">
+          {item.donationType === "ZAKAT" && (
+            <span
+              title="Zakat"
+              className="inline-flex items-center px-2 py-0.5 rounded text-sm font-medium bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0 max-w-[100px] truncate whitespace-nowrap"
+            >
+              Zakat
+            </span>
+          )}
+          {item.campaignSlug ? (
+            <Link
+              href={`/campaign/${item.campaignSlug}`}
+              className="font-medium text-slate-900 hover:text-primary transition-colors line-clamp-1"
+            >
+              {item.programTitle}
+            </Link>
+          ) : (
+            <span className="font-medium text-slate-900 line-clamp-1">{item.programTitle}</span>
+          )}
+        </div>
       </TableCell>
-      <TableCell className="font-normal text-slate-800 whitespace-nowrap align-middle text-center">
+      <TableCell className="font-normal text-slate-700 whitespace-nowrap align-middle text-center">
         <span className="inline-block max-w-[140px] truncate whitespace-nowrap">
           {formatPaymentChannel(item.paymentChannel)}
         </span>
@@ -49,10 +59,10 @@ export function DonorTransactionTableRow({ item }) {
       </TableCell>
       <TableCell className="whitespace-nowrap align-middle text-center">
         <div className="flex flex-col items-center leading-tight">
-          <span className="font-medium text-slate-900 text-sm">
+          <span className="font-normal text-slate-600 text-sm">
             {formatDate(item.date)}
           </span>
-          <span className="text-sm text-slate-500 tabular-nums mt-0.5">
+          <span className="text-sm text-slate-500 tabular-nums mt-0.5 font-normal">
             {formatTime(item.date)}
           </span>
         </div>

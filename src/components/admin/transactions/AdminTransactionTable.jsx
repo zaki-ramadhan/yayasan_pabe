@@ -33,6 +33,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   );
   const [serverResults, setServerResults] = useState(null);
   const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("ALL");
   const [channelFilter, setChannelFilter] = useState("ALL");
   const [copiedId, setCopiedId] = useState(null);
   const [selectedDetail, setSelectedDetail] = useState(null);
@@ -83,7 +84,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   const debouncedSearch = useDebounce(search.trim(), 300);
   const isSearching = Boolean(search.trim().length > 0 && search.trim() !== debouncedSearch);
 
-  const hasFilter = Boolean(debouncedSearch || channelFilter !== "ALL");
+  const hasFilter = Boolean(debouncedSearch || channelFilter !== "ALL" || typeFilter !== "ALL");
 
   useEffect(() => {
     if (!hasFilter) return;
@@ -95,6 +96,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
         const params = new URLSearchParams();
         if (debouncedSearch) params.set("search", debouncedSearch);
         if (channelFilter !== "ALL") params.set("paymentChannel", channelFilter);
+        if (typeFilter !== "ALL") params.set("donationType", typeFilter);
         params.set("limit", "100");
 
         const res = await safeFetch(`/api/admin/transactions?${params.toString()}`);
@@ -113,7 +115,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
     return () => {
       cancelled = true;
     };
-  }, [hasFilter, debouncedSearch, channelFilter]);
+  }, [hasFilter, debouncedSearch, channelFilter, typeFilter]);
 
   const activeTransactions = hasFilter && serverResults !== null ? serverResults : transactions;
 
@@ -140,6 +142,10 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       ) {
         return false;
       }
+      if (typeFilter !== "ALL") {
+        if (typeFilter === "ZAKAT" && t.donationType !== "ZAKAT") return false;
+        if (typeFilter === "CAMPAIGN" && t.donationType === "ZAKAT") return false;
+      }
       if (debouncedSearch) {
         const term = debouncedSearch.toLowerCase();
         const matchInv = t.invoiceId.toLowerCase().includes(term);
@@ -149,7 +155,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       }
       return true;
     });
-  }, [activeTransactions, channelFilter, debouncedSearch]);
+  }, [activeTransactions, channelFilter, typeFilter, debouncedSearch]);
 
   const {
     currentPage,
@@ -166,6 +172,11 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
 
   const handleClearSearch = () => {
     setSearch("");
+    resetPage();
+  };
+
+  const handleTypeChange = (val) => {
+    setTypeFilter(val);
     resetPage();
   };
 
@@ -198,9 +209,10 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       return;
     }
 
-    const headers = ["Invoice", "Donatur", "Email", "Nomor HP", "Program", "Nominal", "Metode", "Status", "Tanggal Diterima"];
+    const headers = ["Invoice", "Kategori", "Donatur", "Email", "Nomor HP", "Program / Peruntukan", "Nominal", "Metode", "Status", "Tanggal Diterima"];
     const rows = filtered.map((t) => [
       t.invoiceId,
+      t.donationType === "ZAKAT" ? "Zakat" : "Donasi Program",
       `"${(t.donorName || "").replace(/"/g, '""')}"`,
       t.donorEmail ? maskEmail(t.donorEmail) : "-",
       t.donorPhone || "-",
@@ -212,7 +224,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
     ]);
 
     const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    downloadCsv(`rekap-mutasi-donasi-masuk-${new Date().toISOString().slice(0, 10)}.csv`, csvContent);
+    downloadCsv(`rekap-mutasi-transaksi-${new Date().toISOString().slice(0, 10)}.csv`, csvContent);
     toast.success("Laporan mutasi berhasil diunduh.");
   };
 
@@ -222,6 +234,8 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
         search={search}
         onSearchChange={handleSearchChange}
         onClearSearch={handleClearSearch}
+        typeFilter={typeFilter}
+        onTypeChange={handleTypeChange}
         channelFilter={channelFilter}
         onChannelChange={handleChannelChange}
         onExportCsv={handleExportCsv}
@@ -237,6 +251,9 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
               <TableRow>
                 <TableHead className="w-[170px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Invoice
+                </TableHead>
+                <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                  Jenis transaksi
                 </TableHead>
                 <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Donatur
@@ -276,8 +293,12 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                 ))
               ) : (
                 <TableEmptyRow
-                  colSpan={8}
-                  isFiltered={Boolean(debouncedSearch || channelFilter !== "ALL")}
+                  colSpan={9}
+                  isFiltered={Boolean(
+                    debouncedSearch ||
+                    channelFilter !== "ALL" ||
+                    typeFilter !== "ALL"
+                  )}
                 />
               )}
             </TableBody>

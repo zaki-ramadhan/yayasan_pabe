@@ -152,25 +152,25 @@ export function StorageOrphanTable({
                       <p className="text-sm font-medium text-slate-900 truncate">
                         {filename}
                       </p>
-                      <p className="text-xs text-slate-500 font-normal mt-0.5">
+                      <p className="text-sm text-slate-500 font-normal mt-0.5">
                         {item.ageHours > 0 ? `Diunggah ${item.ageHours} jam lalu` : item.ageMinutes > 0 ? `Baru diunggah (${item.ageMinutes} mnt lalu)` : "Baru saja diunggah"}
                       </p>
                     </TableCell>
 
                     {/* Folder Badge */}
                     <TableCell className="text-center">
-                      <Badge variant="secondary" className="capitalize text-xs font-normal max-w-[120px] truncate">
+                      <Badge variant="secondary" className="capitalize text-sm font-normal max-w-[120px] truncate">
                         {item.folder}
                       </Badge>
                     </TableCell>
 
                     {/* Ukuran Berkas */}
-                    <TableCell className="text-right font-normal text-xs text-slate-800">
+                    <TableCell className="text-right font-normal text-sm text-slate-700 tabular-nums">
                       {formatBytes(item.size)}
                     </TableCell>
 
                     {/* Waktu Unggah */}
-                    <TableCell className="text-xs font-normal text-slate-600">
+                    <TableCell className="text-sm font-normal text-slate-600 tabular-nums">
                       <span>{formatDate(item.lastModified, { withDay: false, withTime: true })}</span>
                     </TableCell>
 

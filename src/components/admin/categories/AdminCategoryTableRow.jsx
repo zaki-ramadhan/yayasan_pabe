@@ -38,11 +38,11 @@ export function AdminCategoryTableRow({
 				</span>
 			</TableCell>
 			<TableCell className="text-center py-3.5 align-middle">
-				<span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700">
-					{
-						item.campaignCount
-					}{" "}
-					program
+				<span
+					title={`${item.campaignCount} program`}
+					className="inline-flex items-center px-2 py-0.5 rounded-md text-sm font-normal bg-slate-100 text-slate-700 max-w-[140px] truncate whitespace-nowrap"
+				>
+					{item.campaignCount} program
 				</span>
 			</TableCell>
 			<TableCell className="text-right py-3.5 align-middle pr-4">

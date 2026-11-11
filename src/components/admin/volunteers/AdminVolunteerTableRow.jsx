@@ -44,7 +44,7 @@ export function AdminVolunteerTableRow({
               {item.fullName}
             </span>
             {item.email && (
-              <span className="text-xs text-slate-500 font-normal block truncate">
+              <span className="text-sm text-slate-500 font-normal block truncate">
                 {maskEmail(item.email)}
               </span>
             )}
@@ -68,11 +68,11 @@ export function AdminVolunteerTableRow({
 
       {/* 4. Bidang Minat */}
       <TableCell className="text-sm text-slate-800 py-3 align-middle">
-        <span className="font-medium block leading-snug line-clamp-1">
+        <span className="font-normal block leading-snug line-clamp-1">
           {item.interest}
         </span>
         {item.motivation && (
-          <p className="text-xs text-slate-500 line-clamp-1 font-normal mt-0.5">
+          <p className="text-sm text-slate-500 line-clamp-1 font-normal mt-0.5">
             {item.motivation}
           </p>
         )}

@@ -50,10 +50,10 @@ export function AdminCareerTableRow({
 
 			<TableCell className="min-w-[180px] w-48 py-3 align-middle">
 				<div className="space-y-0.5">
-					<span className="text-sm font-medium text-slate-800 block truncate max-w-[170px]">
+					<span className="text-sm font-normal text-slate-700 block truncate max-w-[170px]">
 						{job.type}
 					</span>
-					<span className="text-xs text-slate-500 font-normal block truncate max-w-[170px]">
+					<span className="text-sm text-slate-500 font-normal block truncate max-w-[170px]">
 						{formatWorkplace(job.workplace)}
 					</span>
 				</div>
@@ -89,9 +89,9 @@ export function AdminCareerTableRow({
 									job,
 								)
 							}
-							className="h-7 px-2 rounded-md text-xs font-normal flex items-center gap-1.5 mx-auto cursor-pointer transition-colors text-primary border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50"
+							className="h-7 px-2 rounded-md text-sm font-normal flex items-center gap-1.5 mx-auto cursor-pointer transition-colors text-primary border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50"
 						>
-							<Users className="w-3 h-3 text-primary" />
+							<Users className="w-3.5 h-3.5 text-primary" />
 							<span className="tabular-nums">
 								{count}{" "}
 								berkas
