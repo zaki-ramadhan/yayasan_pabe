@@ -3,7 +3,8 @@ import prisma from "@/lib/prisma";
 import { DEMO_USERS, USER_ROLES, getSessionDuration } from "@/services/authService";
 import { verifyPassword, hashPassword, isSuperAdminEmail, isSuperAdminIdentifier, createSignedSessionToken } from "@/lib/serverAuth";
 import { stripEmojis } from "@/lib/security";
-import { checkRateLimit } from "@/lib/rateLimit";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,21 @@ export async function POST(request) {
     if (rateLimitBlocked) return rateLimitBlocked;
 
     const body = await request.json();
-    const { identifier, password, rememberMe } = body || {};
+    const { identifier, password, rememberMe, turnstileToken } = body || {};
+
+    // Validasi Anti-Bot Cloudflare Turnstile
+    const clientIp = getClientIp(request);
+    const turnstileCheck = await verifyTurnstileToken(turnstileToken, clientIp);
+    if (!turnstileCheck.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: turnstileCheck.message || "Verifikasi keamanan Turnstile gagal.",
+          errorCodes: turnstileCheck.errorCodes,
+        },
+        { status: 403 }
+      );
+    }
 
     const cleanIdentifier = stripEmojis(identifier || "").trim().toLowerCase();
     const cleanPassword = typeof password === "string" ? password.trim() : "";

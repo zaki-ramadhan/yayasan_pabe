@@ -26,7 +26,7 @@ export function AuthFormSkeleton({ mode = "login" }) {
       <div className="space-y-3.5">
         {mode === "register" && (
           <div className="space-y-1.5">
-            <Skeleton className="h-4 w-24 rounded" />
+            <Skeleton className="h-4 w-28 rounded" />
             <Skeleton className="h-10 w-full rounded-lg" />
           </div>
         )}
@@ -35,6 +35,13 @@ export function AuthFormSkeleton({ mode = "login" }) {
           <Skeleton className="h-4 w-32 rounded" />
           <Skeleton className="h-10 w-full rounded-lg" />
         </div>
+
+        {mode === "register" && (
+          <div className="space-y-1.5">
+            <Skeleton className="h-4 w-32 rounded" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+          </div>
+        )}
 
         <div className="space-y-1.5">
           <div className="flex justify-between items-center">
@@ -50,6 +57,19 @@ export function AuthFormSkeleton({ mode = "login" }) {
             <Skeleton className="h-3.5 w-28 rounded" />
           </div>
         )}
+
+        {mode === "register" && (
+          <div className="flex items-center gap-2 pt-0.5">
+            <Skeleton className="w-4 h-4 rounded" />
+            <Skeleton className="h-3.5 w-56 rounded" />
+          </div>
+        )}
+
+        {/* Turnstile Security Verification Skeleton */}
+        <div className="space-y-1.5 pt-1">
+          <Skeleton className="h-4 w-36 rounded" />
+          <Skeleton className="h-[65px] w-full rounded-lg" />
+        </div>
       </div>
 
       {/* Submit Button */}

@@ -5,12 +5,14 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "@/hooks/useToast";
 import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
 import { RegisterTermsDialog } from "@/components/auth/RegisterTermsDialog";
 import { RegisterInputFields } from "@/components/auth/RegisterInputFields";
 import { SocialAuthGroup } from "@/components/auth/SocialAuthGroup";
 import { AuthFormHeader } from "@/components/auth/AuthFormHeader";
 import { AuthNoticeBanner } from "@/components/auth/AuthNoticeBanner";
 import { AuthDivider } from "@/components/auth/AuthDivider";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 import {
   loginUser,
   registerWithServer,
@@ -38,6 +40,8 @@ export function RegisterForm() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
   const handledErrorRef = useRef(false);
 
   const isSubmitDisabled =
@@ -48,7 +52,8 @@ export function RegisterForm() {
     !password ||
     password.length < 6 ||
     !agreeTerms ||
-    Boolean(errors.name || errors.email || errors.phone || errors.password || errors.agreeTerms);
+    Boolean(errors.name || errors.email || errors.phone || errors.password || errors.agreeTerms) ||
+    !turnstileToken;
 
   const rawRedirect = searchParams.get("redirect") || searchParams.get("callbackUrl");
   const redirectUrl = rawRedirect?.startsWith("/dashboard")
@@ -130,6 +135,7 @@ export function RegisterForm() {
         email: email.trim().toLowerCase(),
         phone: phone.trim(),
         password,
+        turnstileToken,
       });
 
       setIsLoading(false);
@@ -145,6 +151,8 @@ export function RegisterForm() {
       router.push(redirectUrl || getRedirectPathForRole(result?.role));
     } catch (err) {
       setIsLoading(false);
+      turnstileRef.current?.reset();
+      setTurnstileToken("");
       toast.error(err.message || "Gagal mendaftarkan akun. Silakan coba lagi.");
     }
   };
@@ -163,7 +171,7 @@ export function RegisterForm() {
     <div className="space-y-6">
       <AuthFormHeader
         title="Daftar Akun Baru"
-        subtitle="Lengkapi formulir singkat di bawah ini untuk membuat akun donatur."
+        subtitle="Daftar akun untuk mulai berdonasi."
       />
 
       {isDonationRedirect && (
@@ -201,6 +209,20 @@ export function RegisterForm() {
           onOpenTerms={() => setIsTermsModalOpen(true)}
         />
 
+        {/* Cloudflare Turnstile Anti-Bot Verification */}
+        <FormField label="Verifikasi keamanan" htmlFor="cf-turnstile-register">
+          <TurnstileWidget
+            id="cf-turnstile-register"
+            ref={turnstileRef}
+            action="register"
+            size="flexible"
+            className="w-full"
+            onSuccess={(token) => setTurnstileToken(token)}
+            onError={() => setTurnstileToken("")}
+            onExpire={() => setTurnstileToken("")}
+          />
+        </FormField>
+
         <Button
           type="submit"
           isLoading={isLoading}
@@ -212,7 +234,7 @@ export function RegisterForm() {
         </Button>
       </form>
 
-      <div className="pt-4 border-t border-slate-200 text-center text-sm text-slate-600">
+      <div className="pt-2 text-center text-sm text-slate-600">
         <span>Sudah memiliki akun? </span>
         <Link
           href={

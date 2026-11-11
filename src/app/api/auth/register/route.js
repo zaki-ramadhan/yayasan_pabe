@@ -11,7 +11,8 @@ import {
   validateUsername,
 } from "@/lib/security";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
-import { checkRateLimit } from "@/lib/rateLimit";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,21 @@ export async function POST(request) {
     if (rateLimitBlocked) return rateLimitBlocked;
 
     const body = await request.json();
-    const { name, fullName, username, email, phone, password } = body || {};
+    const { name, fullName, username, email, phone, password, turnstileToken } = body || {};
+
+    // Validasi Anti-Bot Cloudflare Turnstile
+    const clientIp = getClientIp(request);
+    const turnstileCheck = await verifyTurnstileToken(turnstileToken, clientIp);
+    if (!turnstileCheck.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: turnstileCheck.message || "Verifikasi keamanan Turnstile gagal.",
+          errorCodes: turnstileCheck.errorCodes,
+        },
+        { status: 403 }
+      );
+    }
 
     // 1. Sanitize & Validate Nama Lengkap (mengizinkan spasi, min 2 max 60)
     const rawName = (name || fullName || username || "").trim();

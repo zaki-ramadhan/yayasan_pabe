@@ -221,15 +221,16 @@ export function loginUser(user, options = {}) {
  * @param {string} params.identifier
  * @param {string} params.password
  * @param {boolean} [params.rememberMe]
+ * @param {string|null} [params.turnstileToken]
  * @returns {Promise<object>}
  */
-export async function loginWithServer({ identifier, password, rememberMe = false }) {
+export async function loginWithServer({ identifier, password, rememberMe = false, turnstileToken = null }) {
   const res = await safeFetch("/api/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ identifier, password, rememberMe }),
+    body: JSON.stringify({ identifier, password, rememberMe, turnstileToken }),
     timeoutMs: 15000,
   });
 
@@ -253,15 +254,16 @@ export async function loginWithServer({ identifier, password, rememberMe = false
  * @param {string} params.email
  * @param {string} params.phone
  * @param {string} params.password
+ * @param {string|null} [params.turnstileToken]
  * @returns {Promise<object>}
  */
-export async function registerWithServer({ username, name, email, phone, password }) {
+export async function registerWithServer({ username, name, email, phone, password, turnstileToken = null }) {
   const res = await safeFetch("/api/auth/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ username, name, email, phone, password }),
+    body: JSON.stringify({ username, name, email, phone, password, turnstileToken }),
     timeoutMs: 15000,
   });
 

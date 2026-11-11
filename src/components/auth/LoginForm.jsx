@@ -16,6 +16,7 @@ import { AuthDivider } from "@/components/auth/AuthDivider";
 import { AuthPasswordInput } from "@/components/auth/AuthPasswordInput";
 import { ForgotPasswordDialog } from "@/components/auth/ForgotPasswordDialog";
 import { AccountNotActivatedAlert } from "@/components/auth/AccountNotActivatedAlert";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 import {
   USER_ROLES,
   loginUser,
@@ -43,6 +44,8 @@ export function LoginForm() {
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
   const [unactivatedEmail, setUnactivatedEmail] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
   const handledErrorRef = useRef(false);
   const handledNoticeRef = useRef(false);
   const handledVerifiedRef = useRef(false);
@@ -56,13 +59,14 @@ export function LoginForm() {
     }
   }, []);
 
-  // Submit button is disabled if required fields are incomplete or invalid
+  // Submit button is disabled if required fields are incomplete, invalid, or turnstile pending
   const isSubmitDisabled =
     !identifier.trim() ||
     identifier.trim().length < 3 ||
     !password.trim() ||
     password.length < 6 ||
-    Boolean(errors.identifier || errors.password);
+    Boolean(errors.identifier || errors.password) ||
+    !turnstileToken;
 
   const rawRedirect = searchParams.get("redirect") || searchParams.get("callbackUrl");
   const redirectUrl = rawRedirect?.startsWith("/dashboard")
@@ -157,6 +161,7 @@ export function LoginForm() {
         identifier: identifier.trim(),
         password,
         rememberMe,
+        turnstileToken,
       });
 
       setIsLoading(false);
@@ -178,6 +183,8 @@ export function LoginForm() {
       router.push(finalTarget);
     } catch (err) {
       setIsLoading(false);
+      turnstileRef.current?.reset();
+      setTurnstileToken("");
       if (err.code === "ACCOUNT_NOT_ACTIVATED") {
         setUnactivatedEmail(err.email || identifier.trim());
         toast.error(err.message || "Akun Anda belum aktif. Silakan lakukan aktivasi email.");
@@ -202,7 +209,7 @@ export function LoginForm() {
       {/* Header */}
       <AuthFormHeader
         title="Masuk ke Akun"
-        subtitle="Masukkan nama pengguna/email dan kata sandi Anda untuk melanjutkan."
+        subtitle="Masuk untuk melanjutkan ke akun Anda."
       />
 
       {/* Unactivated Account Warning Alert */}
@@ -297,6 +304,20 @@ export function LoginForm() {
           </label>
         </div>
 
+        {/* Cloudflare Turnstile Anti-Bot Verification */}
+        <FormField label="Verifikasi keamanan" htmlFor="cf-turnstile-login">
+          <TurnstileWidget
+            id="cf-turnstile-login"
+            ref={turnstileRef}
+            action="login"
+            size="flexible"
+            className="w-full"
+            onSuccess={(token) => setTurnstileToken(token)}
+            onError={() => setTurnstileToken("")}
+            onExpire={() => setTurnstileToken("")}
+          />
+        </FormField>
+
         {/* Submit Button */}
         <Button
           type="submit"
@@ -310,7 +331,7 @@ export function LoginForm() {
       </form>
 
       {/* Switch to Register */}
-      <div className="pt-4 border-t border-slate-200 text-center text-sm text-slate-600">
+      <div className="pt-2 text-center text-sm text-slate-600">
         <span>Belum memiliki akun? </span>
         <Link
           href={
