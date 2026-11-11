@@ -218,7 +218,7 @@ export function AdminAuditReportTable({ initialReports = [] }) {
                   Tahun buku
                 </TableHead>
                 <TableHead className="min-w-[280px] sm:min-w-[360px] max-w-lg font-medium text-slate-600 text-sm py-2.5">
-                  Auditor independen &amp; judul
+                  Penyusun / Auditor &amp; judul
                 </TableHead>
                 <TableHead className="w-56 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Penerimaan &amp; penyaluran

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FileDown } from "lucide-react";
 import { DistributionAuditDonutChart } from "./DistributionAuditDonutChart";
 import { DistributionSectionHeader } from "./DistributionSectionHeader";
 import { DistributionYearFilter } from "./DistributionYearFilter";
@@ -55,11 +56,25 @@ export function DistributionAuditSection({ auditData = {} }) {
         title={title}
         description={currentAudit.description || "Laporan pertanggungjawaban pengelolaan dana donasi, infak, dan sedekah yang transparan dan akuntabel."}
         action={
-          <DistributionYearFilter
-            selectedYear={selectedYear}
-            options={availableYears}
-            onYearChange={setSelectedYear}
-          />
+          <div className="flex flex-wrap items-center gap-2">
+            <DistributionYearFilter
+              selectedYear={selectedYear}
+              options={availableYears}
+              onYearChange={setSelectedYear}
+            />
+            {currentAudit.pdfUrl && (
+              <a
+                href={currentAudit.pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+                title={`Unduh berkas PDF laporan pertanggungjawaban ${selectedYear}`}
+              >
+                <FileDown className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>Unduh PDF</span>
+              </a>
+            )}
+          </div>
         }
       />
 

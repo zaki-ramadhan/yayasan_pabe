@@ -13,12 +13,12 @@ export function AdminAuditReportToolbar({
     <TableToolbar
       search={search}
       onSearchChange={onSearchChange}
-      searchPlaceholder="Cari tahun atau nama auditor..."
+      searchPlaceholder="Cari tahun atau nama penyusun..."
       searchWidth="flex-1 min-w-[200px] max-w-sm"
       onRefresh={onRefresh}
       isLoading={isPending}
       primaryAction={{
-        label: "Tambah laporan audit",
+        label: "Tambah laporan keuangan",
         onClick: onOpenCreate,
       }}
     />

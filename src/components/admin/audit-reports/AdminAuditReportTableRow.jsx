@@ -39,29 +39,24 @@ export function AdminAuditReportTableRow({
 				<span
 					className="font-medium text-sm text-slate-900 block leading-tight line-clamp-1"
 				>
-					{item.auditorName}
+					{item.auditorName || "Internal Pembukuan Yayasan"}
 				</span>
 				<span
-					className="text-xs font-normal text-slate-500 block leading-normal line-clamp-2"
+					className="text-sm font-normal text-slate-500 block leading-normal line-clamp-2"
 				>
-					{item.title}
+					{item.title || `Laporan Pertanggungjawaban Keuangan Tahun ${item.year}`}
 				</span>
-				{item.pdfUrl && (
-					<a
-						href={
-							item.pdfUrl
-						}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-normal pt-0.5"
-					>
-						<Download className="w-3.5 h-3.5" />
-						<span>
-							Unduh
-							PDF
-						</span>
-					</a>
-				)}
+				<a
+					href={item.pdfUrl || `/api/documents/download?type=audit&year=${item.year}`}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-normal pt-0.5"
+				>
+					<Download className="w-3.5 h-3.5" />
+					<span>
+						{item.pdfUrl ? "Unduh PDF Berkas" : "Unduh PDF Sistem"}
+					</span>
+				</a>
 			</TableCell>
 
 			<TableCell className="py-3.5 align-middle space-y-1">
@@ -69,7 +64,7 @@ export function AdminAuditReportTableRow({
 					<span className="text-slate-500">
 						Masuk:
 					</span>
-					<span className="font-medium text-slate-900 ml-2 tabular-nums">
+					<span className="font-normal text-slate-700 ml-2 tabular-nums">
 						{formatCompactRupiah(
 							item.totalFundsIn,
 							2,
@@ -81,7 +76,7 @@ export function AdminAuditReportTableRow({
 					<span className="text-slate-500">
 						Tersalurkan:
 					</span>
-					<span className="font-medium text-emerald-700 ml-2 tabular-nums">
+					<span className="font-normal text-emerald-700 ml-2 tabular-nums">
 						{formatCompactRupiah(
 							item.totalFundsOut,
 							2,
@@ -92,7 +87,7 @@ export function AdminAuditReportTableRow({
 			</TableCell>
 
 			<TableCell className="text-center py-3.5 align-middle space-y-0.5">
-				<span className="text-sm font-medium text-slate-900 block">
+				<span className="text-sm font-normal text-slate-700 block">
 					{formatNumber(
 						item.beneficiaryCount,
 					)}{" "}

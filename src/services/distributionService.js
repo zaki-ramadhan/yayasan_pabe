@@ -66,6 +66,7 @@ export async function getDistributionAuditData() {
           maxAllowedRatio: AUDIT_SUMMARY_DATA.maxAllowedRatio,
           totalFundsManaged: Number(rep.totalFundsIn) || AUDIT_SUMMARY_DATA.totalFundsManaged,
           allocations: idx === 0 && updatesAllocations ? updatesAllocations : AUDIT_SUMMARY_DATA.allocations,
+          pdfUrl: rep.pdfUrl || `/api/documents/download?type=audit&year=${rep.year}`,
         };
       });
       return result;
@@ -80,6 +81,7 @@ export async function getDistributionAuditData() {
       year: 2025,
       title: "Laporan Pertanggungjawaban (Tahun 2025)",
       auditPeriod: "Tahun Buku 2025",
+      pdfUrl: "/api/documents/download?type=audit&year=2025",
     },
     "Tahun 2024": {
       ...AUDIT_SUMMARY_DATA,
@@ -88,6 +90,7 @@ export async function getDistributionAuditData() {
       auditPeriod: "Tahun Buku 2024",
       totalFundsManaged: 520000000,
       operationalRatio: "8.9%",
+      pdfUrl: "/api/documents/download?type=audit&year=2024",
     },
   };
 }

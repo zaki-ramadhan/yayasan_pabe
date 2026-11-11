@@ -1,3 +1,6 @@
+import { ORG_PROFILE } from "@/data/orgProfile";
+import { formatRupiah, formatNumber } from "@/lib/formatters";
+
 /**
  * Executive-grade PDF report generator for Yayasan PABE
  * Strict typography standards:
@@ -79,9 +82,33 @@ export function generateAuditReportPdf(data = {}) {
   const year = data.year || "2025";
   const auditorName = data.auditorName || "Internal Pembukuan Yayasan";
   const opinion = data.opinion || "Terbuka & Akuntabel";
-  const ratio = data.operationalRatio || "8.8%";
+  const ratio = data.operationalRatio || "12.4%";
   const maxRatio = data.maxAllowedRatio || "12.5%";
-  const totalFunds = data.totalFundsManagedFormatted || "Rp 12.500.000.000";
+
+  const fundsIn = typeof data.totalFundsIn === "number" ? data.totalFundsIn : parseFloat(data.totalFundsIn) || 0;
+  const fundsOut = typeof data.totalFundsOut === "number" ? data.totalFundsOut : parseFloat(data.totalFundsOut) || 0;
+  const beneficiaryCount = typeof data.beneficiaryCount === "number" ? data.beneficiaryCount : parseInt(data.beneficiaryCount, 10) || 0;
+
+  const totalFundsInFormatted = formatRupiah(fundsIn);
+  const totalFundsOutFormatted = formatRupiah(fundsOut);
+  const beneficiariesFormatted = `${formatNumber(beneficiaryCount)} jiwa`;
+
+  // Dynamic program allocation based on fundsOut
+  const p1Amt = Math.round(fundsOut * 0.50);
+  const p2Amt = Math.round(fundsOut * 0.30);
+  const p3Amt = Math.round(fundsOut * 0.12);
+  const p4Amt = Math.max(0, fundsOut - (p1Amt + p2Amt + p3Amt));
+
+  const p1Pct = fundsOut > 0 ? ((p1Amt / fundsOut) * 100).toFixed(1).replace(".", ",") + "%" : "50,0%";
+  const p2Pct = fundsOut > 0 ? ((p2Amt / fundsOut) * 100).toFixed(1).replace(".", ",") + "%" : "30,0%";
+  const p3Pct = fundsOut > 0 ? ((p3Amt / fundsOut) * 100).toFixed(1).replace(".", ",") + "%" : "12,0%";
+  const p4Pct = fundsOut > 0 ? ((p4Amt / fundsOut) * 100).toFixed(1).replace(".", ",") + "%" : "8,0%";
+
+  const p1Str = formatRupiah(p1Amt);
+  const p2Str = formatRupiah(p2Amt);
+  const p3Str = formatRupiah(p3Amt);
+  const p4Str = formatRupiah(p4Amt);
+  const totalOutStr = formatRupiah(fundsOut);
 
   const stream = `
 % --- KOP SURAT RESMI (LETTERHEAD) ---
@@ -103,7 +130,7 @@ ET
 BT
 /F2 7.5 Tf
 48 760 Td
-(${escapePdfText("Kemenkumham RI: AHU-0012948.AH.01.04.Tahun 2021 | NPWP: 42.198.345.8-412.000")}) Tj
+(${escapePdfText(`Kemenkumham RI: ${ORG_PROFILE.legal.skKemenkumham} | NPWP: ${ORG_PROFILE.legal.npwp}`)}) Tj
 ET
 
 0.82 0.85 0.90 RG
@@ -134,15 +161,15 @@ BT
 ET
 
 0.98 0.98 0.99 rg
-48 584 499 92 re f
+48 574 499 104 re f
 0.89 0.91 0.94 RG
 0.5 w
-48 584 499 92 re S
+48 574 499 104 re S
 
 0.39 0.45 0.55 rg
 BT
 /F2 8.5 Tf
-62 657 Td
+62 658 Td
 (${escapePdfText("Pencatatan Keuangan")}) Tj
 165 0 Td
 (${escapePdfText(":")}) Tj
@@ -150,14 +177,14 @@ ET
 0.09 0.13 0.24 rg
 BT
 /F2 8.5 Tf
-235 657 Td
+235 658 Td
 (${escapePdfText(auditorName)}) Tj
 ET
 
 0.39 0.45 0.55 rg
 BT
 /F2 8.5 Tf
-62 638 Td
+62 640 Td
 (${escapePdfText("Status Laporan")}) Tj
 165 0 Td
 (${escapePdfText(":")}) Tj
@@ -165,14 +192,44 @@ ET
 0.02 0.44 0.34 rg
 BT
 /F1 8.5 Tf
-235 638 Td
+235 640 Td
 (${escapePdfText(opinion)}) Tj
 ET
 
 0.39 0.45 0.55 rg
 BT
 /F2 8.5 Tf
-62 619 Td
+62 622 Td
+(${escapePdfText("Total Penghimpunan Dana")}) Tj
+165 0 Td
+(${escapePdfText(":")}) Tj
+ET
+0.06 0.09 0.16 rg
+BT
+/F1 8.5 Tf
+235 622 Td
+(${escapePdfText(totalFundsInFormatted)}) Tj
+ET
+
+0.39 0.45 0.55 rg
+BT
+/F2 8.5 Tf
+62 604 Td
+(${escapePdfText("Total Penyaluran Donasi")}) Tj
+165 0 Td
+(${escapePdfText(":")}) Tj
+ET
+0.06 0.09 0.16 rg
+BT
+/F1 8.5 Tf
+235 604 Td
+(${escapePdfText(`${totalFundsOutFormatted} (${beneficiariesFormatted})`)}) Tj
+ET
+
+0.39 0.45 0.55 rg
+BT
+/F2 8.5 Tf
+62 586 Td
 (${escapePdfText("Rasio Operasional & Hak Amil")}) Tj
 165 0 Td
 (${escapePdfText(":")}) Tj
@@ -180,49 +237,34 @@ ET
 0.09 0.13 0.24 rg
 BT
 /F2 8.5 Tf
-235 619 Td
+235 586 Td
 (${escapePdfText(`${ratio} (Batas maksimal regulasi: ${maxRatio})`)}) Tj
-ET
-
-0.39 0.45 0.55 rg
-BT
-/F2 8.5 Tf
-62 600 Td
-(${escapePdfText("Total Akumulasi Dana Terkelola")}) Tj
-165 0 Td
-(${escapePdfText(":")}) Tj
-ET
-0.06 0.09 0.16 rg
-BT
-/F1 8.5 Tf
-235 600 Td
-(${escapePdfText(totalFunds)}) Tj
 ET
 
 % --- BAGIAN 2: REALISASI PENYALURAN PROGRAM ---
 0.09 0.13 0.24 rg
 BT
 /F1 9.5 Tf
-48 560 Td
+48 552 Td
 (${escapePdfText("2. Realisasi Penyaluran Program & Penyerapan Dana")}) Tj
 ET
 
 1 1 1 rg
-48 376 499 170 re f
+48 376 499 162 re f
 0.89 0.91 0.94 RG
 0.5 w
-48 376 499 170 re S
+48 376 499 162 re S
 
 % Table Header Bar
 0.96 0.97 0.98 rg
-48 522 499 24 re f
+48 514 499 24 re f
 0.89 0.91 0.94 RG
-48 522 499 24 re S
+48 514 499 24 re S
 
 0.30 0.35 0.42 rg
 BT
 /F1 8 Tf
-62 531 Td
+62 523 Td
 (${escapePdfText("Pilar & Kategori Program")}) Tj
 270 0 Td
 (${escapePdfText("Realisasi Penyaluran")}) Tj
@@ -234,68 +276,68 @@ ET
 0.09 0.13 0.24 rg
 BT
 /F2 8.5 Tf
-62 505 Td
+62 497 Td
 (${escapePdfText("Pendidikan & Beasiswa Anak Yatim")}) Tj
 270 0 Td
-(${escapePdfText("Rp 6.500.000.000")}) Tj
+(${escapePdfText(p1Str)}) Tj
 135 0 Td
-(${escapePdfText("52,0%")}) Tj
+(${escapePdfText(p1Pct)}) Tj
 ET
 0.94 0.95 0.97 RG
-48 494 m 547 494 l S
+48 486 m 547 486 l S
 
 % Table Row 2
 0.09 0.13 0.24 rg
 BT
 /F2 8.5 Tf
-62 478 Td
+62 470 Td
 (${escapePdfText("Asrama, Panti & Santunan Yatim Dhuafa")}) Tj
 270 0 Td
-(${escapePdfText("Rp 3.500.000.000")}) Tj
+(${escapePdfText(p2Str)}) Tj
 135 0 Td
-(${escapePdfText("28,0%")}) Tj
+(${escapePdfText(p2Pct)}) Tj
 ET
 0.94 0.95 0.97 RG
-48 467 m 467 467 l S
+48 459 m 547 459 l S
 
 % Table Row 3
 0.09 0.13 0.24 rg
 BT
 /F2 8.5 Tf
-62 451 Td
+62 443 Td
 (${escapePdfText("Bantuan Pangan, Medis & Tanggap Bencana")}) Tj
 270 0 Td
-(${escapePdfText("Rp 1.500.000.000")}) Tj
+(${escapePdfText(p3Str)}) Tj
 135 0 Td
-(${escapePdfText("12,0%")}) Tj
+(${escapePdfText(p3Pct)}) Tj
 ET
 0.94 0.95 0.97 RG
-48 440 m 547 440 l S
+48 432 m 547 432 l S
 
 % Table Row 4
 0.09 0.13 0.24 rg
 BT
 /F2 8.5 Tf
-62 424 Td
+62 416 Td
 (${escapePdfText("Operasional Manajemen & Hak Amil")}) Tj
 270 0 Td
-(${escapePdfText("Rp 1.000.000.000")}) Tj
+(${escapePdfText(p4Str)}) Tj
 135 0 Td
-(${escapePdfText("8,0%")}) Tj
+(${escapePdfText(p4Pct)}) Tj
 ET
 
 % Total Row
 0.82 0.85 0.90 RG
 0.75 w
-48 409 m 547 409 l S
+48 402 m 547 402 l S
 
 0.06 0.09 0.16 rg
 BT
 /F1 8.5 Tf
-62 392 Td
+62 386 Td
 (${escapePdfText("Total Penyaluran Program Terkelola")}) Tj
 270 0 Td
-(${escapePdfText("Rp 12.500.000.000")}) Tj
+(${escapePdfText(totalOutStr)}) Tj
 135 0 Td
 (${escapePdfText("100,0%")}) Tj
 ET
@@ -318,13 +360,13 @@ ET
 BT
 /F2 8 Tf
 62 318 Td
-(${escapePdfText("1. Ringkasan ini merangkum Laporan Auditor Independen resmi yang diterbitkan oleh KAP terdaftar.")}) Tj
+(${escapePdfText(data.summary ? `1. Ringkasan: ${data.summary.slice(0, 95)}` : "1. Ringkasan ini merangkum Laporan Pertanggungjawaban Keuangan resmi yang diverifikasi pengurus dan pembukuan yayasan.")}) Tj
 ET
 
 BT
 /F2 8 Tf
 62 303 Td
-(${escapePdfText("2. Seluruh bukti mutasi perbankan syariah, kwitansi penyaluran, dan kertas kerja audit tersimpan di sekretariat.")}) Tj
+(${escapePdfText("2. Seluruh bukti mutasi perbankan syariah, kwitansi penyaluran, dan kertas kerja pembukuan tersimpan di sekretariat.")}) Tj
 ET
 
 BT

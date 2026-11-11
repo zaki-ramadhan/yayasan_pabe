@@ -17,13 +17,13 @@ export function AuditReportCard({ report }) {
               {report.opinionStatus}
             </span>
           </div>
-          <h3 className="text-lg sm:text-xl font-semibold text-slate-950">{report.title}</h3>
-          <p className="text-sm text-slate-700">Kantor Akuntan Publik: {report.auditorName}</p>
+          <h3 className="text-lg sm:text-xl font-semibold text-slate-950">{report.title || `Laporan Pertanggungjawaban Keuangan Tahun ${report.year}`}</h3>
+          <p className="text-sm text-slate-700">Penyusun / Akuntan: {report.auditorName || "Internal Pembukuan Yayasan"}</p>
         </div>
 
         <a
           href={report.pdfUrl || `/api/documents/download?type=audit&year=${report.year}`}
-          download={`Laporan-Audit-Keuangan-PABE-${report.year}.pdf`}
+          download={`Laporan-Akuntabilitas-PABE-${report.year}.pdf`}
           className="group inline-block shrink-0"
         >
           <Button

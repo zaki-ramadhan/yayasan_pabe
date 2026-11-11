@@ -27,16 +27,27 @@ export async function GET(request) {
         where: { year: parseInt(year, 10) || 2025 },
       }).catch(() => null);
 
+      // Jika ada berkas PDF fisik yang diunggah oleh admin, alihkan langsung ke URL berkas tersebut
+      if (dbReport?.pdfUrl && typeof dbReport.pdfUrl === "string" && dbReport.pdfUrl.trim()) {
+        const targetUrl = dbReport.pdfUrl.startsWith("http")
+          ? dbReport.pdfUrl
+          : new URL(dbReport.pdfUrl, request.url).toString();
+        return NextResponse.redirect(targetUrl);
+      }
+
       const pdfBuffer = generateAuditReportPdf({
         year,
         auditorName: dbReport?.auditorName || AUDIT_SUMMARY_DATA.auditorName,
         opinion: dbReport?.opinionStatus || AUDIT_SUMMARY_DATA.opinion,
         operationalRatio: dbReport?.operationalRatio || AUDIT_SUMMARY_DATA.operationalRatio,
         maxAllowedRatio: AUDIT_SUMMARY_DATA.maxAllowedRatio,
-        totalFundsManagedFormatted: formatRupiah(dbReport ? dbReport.totalFundsIn : AUDIT_SUMMARY_DATA.totalFundsManaged),
+        totalFundsIn: dbReport ? dbReport.totalFundsIn : AUDIT_SUMMARY_DATA.totalFundsManaged,
+        totalFundsOut: dbReport ? dbReport.totalFundsOut : Math.round(AUDIT_SUMMARY_DATA.totalFundsManaged * 0.92),
+        beneficiaryCount: dbReport ? dbReport.beneficiaryCount : 1250,
+        summary: dbReport?.summary || "",
       });
 
-      const filename = `Laporan-Audit-Keuangan-PABE-${year}.pdf`;
+      const filename = `Laporan-Pertanggungjawaban-Keuangan-PABE-${year}.pdf`;
 
       return new NextResponse(pdfBuffer, {
         status: 200,

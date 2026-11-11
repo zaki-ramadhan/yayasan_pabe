@@ -46,7 +46,7 @@ export async function createAuditReport({
   year,
   title,
   auditorName,
-  opinionStatus = "WTP",
+  opinionStatus = "Terbuka & Akuntabel",
   totalFundsIn,
   totalFundsOut,
   beneficiaryCount,
@@ -59,29 +59,31 @@ export async function createAuditReport({
     throw new Error("Tahun buku tidak valid.");
   }
 
-  const cleanTitle = sanitizeInput(title) || `Laporan Keuangan & Audit Tahun ${parsedYear}`;
-  const cleanAuditor = sanitizeInput(auditorName);
-  if (!cleanAuditor) {
-    throw new Error("Nama kantor akuntan publik / auditor wajib diisi.");
-  }
+  const cleanTitle = sanitizeInput(title) || `Laporan Pertanggungjawaban Keuangan Tahun ${parsedYear}`;
+  const cleanAuditor = sanitizeInput(auditorName) || "Internal Pembukuan Yayasan";
 
   const existing = await prisma.auditReport.findFirst({
     where: { year: parsedYear },
   });
   if (existing) {
-    throw new Error(`Laporan audit untuk tahun buku ${parsedYear} sudah terdaftar.`);
+    throw new Error(`Laporan keuangan untuk tahun buku ${parsedYear} sudah terdaftar.`);
   }
+
+  const cleanRatioNum = parseFloat(String(operationalRatio || "").replace("%", "").trim());
+  const validRatio = !isNaN(cleanRatioNum) && cleanRatioNum >= 0 && cleanRatioNum <= 100
+    ? `${cleanRatioNum.toFixed(1)}%`
+    : "12.4%";
 
   const report = await prisma.auditReport.create({
     data: {
       year: parsedYear,
       title: cleanTitle,
       auditorName: cleanAuditor,
-      opinionStatus: sanitizeInput(opinionStatus) || "WTP",
-      totalFundsIn: parseFloat(totalFundsIn) || 0,
-      totalFundsOut: parseFloat(totalFundsOut) || 0,
-      beneficiaryCount: parseInt(beneficiaryCount, 10) || 0,
-      operationalRatio: sanitizeInput(operationalRatio) || "12.4%",
+      opinionStatus: sanitizeInput(opinionStatus) || "Terbuka & Akuntabel",
+      totalFundsIn: Math.max(0, parseFloat(totalFundsIn) || 0),
+      totalFundsOut: Math.max(0, parseFloat(totalFundsOut) || 0),
+      beneficiaryCount: Math.max(0, parseInt(beneficiaryCount, 10) || 0),
+      operationalRatio: validRatio,
       summary: sanitizeInput(summary) || null,
       pdfUrl: sanitizeInput(pdfUrl) || null,
     },
@@ -98,7 +100,7 @@ export async function updateAuditReport({
   year,
   title,
   auditorName,
-  opinionStatus = "WTP",
+  opinionStatus = "Terbuka & Akuntabel",
   totalFundsIn,
   totalFundsOut,
   beneficiaryCount,
@@ -107,12 +109,27 @@ export async function updateAuditReport({
   pdfUrl,
 }) {
   const parsedYear = parseInt(year, 10);
-  const cleanTitle = sanitizeInput(title);
-  const cleanAuditor = sanitizeInput(auditorName);
-
-  if (!cleanAuditor) {
-    throw new Error("Nama auditor wajib diisi.");
+  if (!parsedYear || parsedYear < 2000 || parsedYear > 2100) {
+    throw new Error("Tahun buku tidak valid.");
   }
+
+  const duplicateYear = await prisma.auditReport.findFirst({
+    where: {
+      year: parsedYear,
+      id: { not: id },
+    },
+  });
+  if (duplicateYear) {
+    throw new Error(`Laporan keuangan untuk tahun buku ${parsedYear} sudah terdaftar.`);
+  }
+
+  const cleanTitle = sanitizeInput(title) || `Laporan Pertanggungjawaban Keuangan Tahun ${parsedYear || ""}`;
+  const cleanAuditor = sanitizeInput(auditorName) || "Internal Pembukuan Yayasan";
+
+  const cleanRatioNum = parseFloat(String(operationalRatio || "").replace("%", "").trim());
+  const validRatio = !isNaN(cleanRatioNum) && cleanRatioNum >= 0 && cleanRatioNum <= 100
+    ? `${cleanRatioNum.toFixed(1)}%`
+    : "12.4%";
 
   const report = await prisma.auditReport.update({
     where: { id },
@@ -120,11 +137,11 @@ export async function updateAuditReport({
       year: parsedYear,
       title: cleanTitle,
       auditorName: cleanAuditor,
-      opinionStatus: sanitizeInput(opinionStatus) || "WTP",
-      totalFundsIn: parseFloat(totalFundsIn) || 0,
-      totalFundsOut: parseFloat(totalFundsOut) || 0,
-      beneficiaryCount: parseInt(beneficiaryCount, 10) || 0,
-      operationalRatio: sanitizeInput(operationalRatio) || "12.4%",
+      opinionStatus: sanitizeInput(opinionStatus) || "Terbuka & Akuntabel",
+      totalFundsIn: Math.max(0, parseFloat(totalFundsIn) || 0),
+      totalFundsOut: Math.max(0, parseFloat(totalFundsOut) || 0),
+      beneficiaryCount: Math.max(0, parseInt(beneficiaryCount, 10) || 0),
+      operationalRatio: validRatio,
       summary: sanitizeInput(summary) || null,
       pdfUrl: sanitizeInput(pdfUrl) || null,
     },

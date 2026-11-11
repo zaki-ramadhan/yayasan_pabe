@@ -275,8 +275,8 @@ export function AdminAuditReportModal({
 			maxWidth="max-w-2xl"
 			title={
 				isEdit
-					? "Edit laporan audit tahunan"
-					: "Catat laporan audit tahunan baru"
+					? "Edit laporan akuntabilitas & keuangan"
+					: "Catat laporan akuntabilitas & keuangan baru"
 			}
 			isSubmitting={isSubmitting}
 			submitText="Simpan"
@@ -303,14 +303,14 @@ export function AdminAuditReportModal({
 							}
 						}}
 						onBlur={() => setYear((prev) => prev.trim())}
-						placeholder="2024"
+						placeholder="2025"
 						className="text-sm font-normal"
 						required
 					/>
 				</FormField>
 
 				<FormField
-					label="Opini audit independen"
+					label="Opini / Status akuntabilitas"
 					required
 				>
 					<Select
@@ -322,16 +322,16 @@ export function AdminAuditReportModal({
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value="Terbuka & Akuntabel">
-								Terbuka &amp; Akuntabel (Internal)
+								Terbuka &amp; Akuntabel (Internal Yayasan)
 							</SelectItem>
 							<SelectItem value="WTP">
-								WTP (Wajar Tanpa Pengecualian)
+								WTP - Wajar Tanpa Pengecualian (KAP)
 							</SelectItem>
 							<SelectItem value="WDP">
-								WDP (Wajar Dengan Pengecualian)
+								WDP - Wajar Dengan Pengecualian (KAP)
 							</SelectItem>
 							<SelectItem value="TMP">
-								TMP (Tidak Menyatakan Pendapat)
+								TMP - Tidak Menyatakan Pendapat (KAP)
 							</SelectItem>
 						</SelectContent>
 					</Select>
@@ -339,7 +339,7 @@ export function AdminAuditReportModal({
 			</div>
 
 			<FormField
-				label="Nama kantor akuntan publik / auditor independen"
+				label="Penyusun laporan / Kantor Akuntan Publik (KAP)"
 				required
 				error={errors.auditorName}
 			>
@@ -355,7 +355,7 @@ export function AdminAuditReportModal({
 						}
 					}}
 					onBlur={() => setAuditorName((prev) => prev.trim())}
-					placeholder="Contoh: KAP Ahmad, Rasyid & Rekan (Registered Public Accountants)"
+					placeholder="Contoh: Internal Pembukuan Yayasan atau KAP Ahmad & Rekan"
 					className="text-sm font-normal"
 					required
 				/>
@@ -417,6 +417,20 @@ export function AdminAuditReportModal({
 					/>
 				</FormField>
 			</div>
+
+			{Boolean(
+				parseThousandsToNumber(totalFundsIn) > 0 &&
+				parseThousandsToNumber(totalFundsOut) > parseThousandsToNumber(totalFundsIn)
+			) && (
+				<div className="rounded-lg border border-amber-200 bg-amber-50/70 p-3 text-xs text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-300">
+					<p className="font-medium text-amber-900 dark:text-amber-200">
+						Perhatian: Penyaluran melebihi penghimpunan tahun berjalan
+					</p>
+					<p className="mt-0.5 text-amber-700 dark:text-amber-400">
+						Terdapat defisit kas berjalan. Pastikan mencantumkan catatan penggunaan saldo kas cadangan tahun sebelumnya pada ringkasan laporan.
+					</p>
+				</div>
+			)}
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 				<FormField
@@ -485,13 +499,13 @@ export function AdminAuditReportModal({
 				context="AUDIT_REPORT"
 				identifier={`audit-${year || "laporan"}`}
 				onUploadSuccess={trackUpload}
-				label="Berkas laporan audit resmi (PDF)"
-				helperText="Format dokumen PDF resmi (Maks. 15MB) atau gunakan tautan dokumen."
+				label="Berkas dokumen fisik laporan (PDF)"
+				helperText="Format dokumen PDF resmi (Maks. 15MB). Kosongkan jika ingin sistem men-generate berkas PDF resmi otomatis."
 				accept="application/pdf"
 				error={errors.pdfUrl}
 			/>
 
-			<FormField label="Ringkasan catatan auditor">
+			<FormField label="Ringkasan catatan akuntabilitas & transparansi">
 				<AutoResizeTextarea
 					value={summary}
 					minLength={FIELD_LIMITS.AUDIT_SUMMARY.min}
