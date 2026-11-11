@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getCampaignBySlug } from "@/services/campaignService";
 import { isCampaignClosed } from "@/lib/formatters";
 import { sanitizePrayer } from "@/lib/security";
@@ -56,6 +56,14 @@ export default async function DonatePage({ params, searchParams }) {
     campaign.categorySlug === "zakat" ||
     campaign.category?.slug === "zakat" ||
     sParams?.type === "ZAKAT";
+
+  if (isZakat) {
+    const qParams = new URLSearchParams();
+    if (initialAmount) qParams.set("amount", String(initialAmount));
+    if (sParams?.type && sParams.type !== "ZAKAT") qParams.set("type", sParams.type);
+    const qs = qParams.toString();
+    redirect(`/zakat/bayar${qs ? `?${qs}` : ""}`);
+  }
 
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-4">

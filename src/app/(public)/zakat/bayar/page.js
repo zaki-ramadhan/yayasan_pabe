@@ -31,15 +31,15 @@ export default async function ZakatBayarPage({ searchParams }) {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
-      <div className="space-y-3">
+    <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-4">
+      <div className="space-y-4">
         <BackLink
           href="/kalkulator-zakat"
           label="Hitung kewajiban di kalkulator zakat"
         />
         <PageHeader
           title="Formulir pembayaran zakat"
-          description="Tunaikan rukun Islam penyuci harta secara tertib, transparan, dan disalurkan tepat sasaran kepada mustahik 8 asnaf."
+          description="Tunaikan kewajiban zakat secara amanah, transparan, dan tepat sasaran kepada 8 asnaf mustahik."
         />
       </div>
 

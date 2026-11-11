@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { RibbonBadge } from "@/components/ui/RibbonBadge";
 import { SummaryRow } from "@/components/donation/SummaryRow";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 
 export function DonationCheckoutSummary({
   campaign,
@@ -14,6 +15,9 @@ export function DonationCheckoutSummary({
   isSubmitting,
   isRedirecting = false,
   isZakat = false,
+  turnstileToken,
+  setTurnstileToken,
+  turnstileRef,
 }) {
   return (
     <div className="lg:col-span-5 lg:sticky lg:top-20">
@@ -78,20 +82,36 @@ export function DonationCheckoutSummary({
           </div>
         </div>
 
-        {/* Submit Action */}
+        {/* Verification (Invisible) & Submit Action */}
         <div className="space-y-2.5 pt-0.5">
+          <TurnstileWidget
+            ref={turnstileRef}
+            action="donation"
+            invisible
+            onSuccess={(t) => setTurnstileToken?.(t)}
+            onError={() => setTurnstileToken?.("")}
+            onExpire={() => setTurnstileToken?.("")}
+          />
+
           <Button
             type="submit"
             isLoading={isSubmitting || isRedirecting}
-            disabled={isSubmitting || isRedirecting || !amount || amount <= 0 || amount < DONATION_LIMITS.MIN_AMOUNT}
+            disabled={
+              isSubmitting ||
+              isRedirecting ||
+              !amount ||
+              amount <= 0 ||
+              amount < DONATION_LIMITS.MIN_AMOUNT ||
+              !turnstileToken
+            }
             variant="primary3d"
-            className="w-full h-12 rounded-lg text-base disabled:opacity-50 disabled:pointer-events-none"
+            className="w-full h-12 rounded-lg text-base disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
           >
             {isRedirecting
               ? "Mengalihkan ke pembayaran..."
               : isSubmitting
-              ? (isZakat ? "Memproses zakat..." : "Memproses donasi...")
-              : (isZakat ? `Zakat - ${formatRupiah(totalPayment)}` : "Lanjut donasi")}
+              ? (isZakat ? "Memproses pembayaran..." : "Memproses pembayaran...")
+              : "Lanjutkan Pembayaran"}
           </Button>
         </div>
       </div>

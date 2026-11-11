@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -10,6 +11,7 @@ import {
   generateIdempotencyKey,
   validateName,
   validatePhone,
+  validateEmail,
   sanitizePrayer,
 } from "@/lib/security";
 
@@ -31,11 +33,35 @@ export function useZakatCheckout({
   });
 
   const [selectedChannelId, setSelectedChannelId] = useState("qris");
-  const [salutation, setSalutation] = useState("Bapak");
   const [isAnonymous, setIsAnonymous] = useState(false);
-  const [muzakkiName, setMuzakkiName] = useState("");
-  const [muzakkiPhone, setMuzakkiPhone] = useState("");
-  const [muzakkiEmail, setMuzakkiEmail] = useState("");
+  const [muzakkiName, setMuzakkiName] = useState(() => {
+    if (typeof window !== "undefined") {
+      const u = getStoredUser();
+      return (u?.name && u.name !== "Pengguna Google" && u.name !== "Pengguna Facebook") ? u.name : "";
+    }
+    return "";
+  });
+  const [muzakkiPhone, setMuzakkiPhone] = useState(() => {
+    if (typeof window !== "undefined") {
+      const u = getStoredUser();
+      return (u?.phone && u.phone !== "-") ? u.phone : "";
+    }
+    return "";
+  });
+  const [muzakkiEmail, setMuzakkiEmail] = useState(() => {
+    if (typeof window !== "undefined") {
+      const u = getStoredUser();
+      return (u?.email && !u.email.endsWith("@google.user") && !u.email.endsWith("@facebook.user")) ? u.email : "";
+    }
+    return "";
+  });
+  const [isEmailLocked, setIsEmailLocked] = useState(() => {
+    if (typeof window !== "undefined") {
+      const u = getStoredUser();
+      return Boolean(u?.email && !u.email.endsWith("@google.user") && !u.email.endsWith("@facebook.user"));
+    }
+    return false;
+  });
   const [muzakkiNpwp, setMuzakkiNpwp] = useState("");
   const [prayer, setPrayer] = useState("");
   const [errors, setErrors] = useState({});
@@ -47,15 +73,30 @@ export function useZakatCheckout({
 
   const isSubmittingRef = useRef(false);
 
-  // Auto-fill profil muzakki jika sudah login
+  // Verifikasi sesi login & sinkronisasi data profil muzakki
   useEffect(() => {
     const user = getStoredUser();
-    if (user) {
-      if (user.name) setMuzakkiName(user.name);
-      if (user.email) setMuzakkiEmail(user.email);
-      if (user.phone) setMuzakkiPhone(user.phone);
+    if (!user) {
+      const currentUrl = typeof window !== "undefined"
+        ? window.location.pathname + window.location.search
+        : "/zakat/bayar";
+      router.replace(
+        `/login?redirect=${encodeURIComponent(currentUrl)}&reason=donation_requires_login`
+      );
+      return;
     }
-  }, []);
+
+    if (user.name && user.name !== "Pengguna Google" && user.name !== "Pengguna Facebook") {
+      setMuzakkiName(user.name);
+    }
+    if (user.email && !user.email.endsWith("@google.user") && !user.email.endsWith("@facebook.user")) {
+      setMuzakkiEmail(user.email);
+      setIsEmailLocked(true);
+    }
+    if (user.phone && user.phone !== "-") {
+      setMuzakkiPhone(user.phone);
+    }
+  }, [router]);
 
   const selectedChannel =
     PAYMENT_CHANNELS.find((c) => c.id === selectedChannelId) || PAYMENT_CHANNELS[0];
@@ -70,16 +111,23 @@ export function useZakatCheckout({
       newErrors.amount = "Nominal zakat minimal Rp 10.000.";
     }
 
-    if (!isAnonymous) {
-      const nameVal = validateName(muzakkiName);
-      if (!nameVal.isValid) {
-        newErrors.muzakkiName = nameVal.message || "Nama lengkap wajib diisi.";
-      }
+    const nameVal = validateName(muzakkiName, false);
+    if (!nameVal.isValid) {
+      newErrors.muzakkiName = nameVal.message || "Nama lengkap wajib diisi.";
     }
 
-    const phoneVal = validatePhone(muzakkiPhone, { isRequired: true });
-    if (!phoneVal.isValid) {
-      newErrors.muzakkiPhone = phoneVal.message || "Nomor WhatsApp wajib diisi.";
+    // Email wajib untuk pengiriman bukti setor zakat & invoice digital
+    const emailVal = validateEmail(muzakkiEmail, true);
+    if (!emailVal.isValid) {
+      newErrors.muzakkiEmail = emailVal.message || "Alamat email aktif wajib diisi.";
+    }
+
+    // Nomor telepon opsional
+    if (muzakkiPhone && muzakkiPhone.trim()) {
+      const phoneVal = validatePhone(muzakkiPhone, { isRequired: false });
+      if (!phoneVal.isValid) {
+        newErrors.muzakkiPhone = phoneVal.message || "Format nomor telepon tidak valid.";
+      }
     }
 
     setErrors(newErrors);
@@ -92,9 +140,7 @@ export function useZakatCheckout({
       isSubmittingRef.current = true;
 
       const idempotencyKey = generateIdempotencyKey();
-      const rawName = isAnonymous
-        ? "Hamba Allah"
-        : `${salutation ? salutation + " " : ""}${muzakkiName.trim()}`;
+      const rawName = muzakkiName.trim();
 
       // Susun catatan doa & NPWP jika ada
       let finalPrayer = sanitizePrayer(prayer || "");
@@ -111,8 +157,8 @@ export function useZakatCheckout({
         amount: Number(amount),
         paymentChannelId: selectedChannelId,
         donorName: rawName,
-        donorEmail: muzakkiEmail.trim() || undefined,
-        donorPhone: muzakkiPhone.trim(),
+        donorEmail: muzakkiEmail.trim().toLowerCase(),
+        donorPhone: muzakkiPhone.trim() || undefined,
         isAnonymous: Boolean(isAnonymous),
         prayer: finalPrayer,
         idempotencyKey,
@@ -208,8 +254,6 @@ export function useZakatCheckout({
     selectedChannelId,
     setSelectedChannelId,
     selectedChannel,
-    salutation,
-    setSalutation,
     isAnonymous,
     setIsAnonymous,
     muzakkiName,
@@ -218,6 +262,7 @@ export function useZakatCheckout({
     setMuzakkiPhone,
     muzakkiEmail,
     setMuzakkiEmail,
+    isEmailLocked,
     muzakkiNpwp,
     setMuzakkiNpwp,
     prayer,

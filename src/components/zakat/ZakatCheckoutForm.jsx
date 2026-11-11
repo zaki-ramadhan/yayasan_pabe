@@ -1,15 +1,12 @@
 "use client";
 
 import { useZakatCheckout } from "./useZakatCheckout";
-import { ZakatTypeSelector } from "./ZakatTypeSelector";
 import { ZakatNiatCard } from "./ZakatNiatCard";
-import { ZakatNominalInputSection } from "./ZakatNominalInputSection";
 import { ZakatMuzakkiSection } from "./ZakatMuzakkiSection";
 import { ZakatPaymentSummaryCard } from "./ZakatPaymentSummaryCard";
 import { PaymentCategoryGroupList } from "@/components/donation/PaymentCategoryGroupList";
 import { PendingInvoiceDialog } from "@/components/donation/PendingInvoiceDialog";
 import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
-import { Card } from "@/components/ui/Card";
 
 export function ZakatCheckoutForm({
   initialType = "ZAKAT_PENGHASILAN",
@@ -24,8 +21,6 @@ export function ZakatCheckoutForm({
     selectedChannelId,
     setSelectedChannelId,
     selectedChannel,
-    salutation,
-    setSalutation,
     isAnonymous,
     setIsAnonymous,
     muzakkiName,
@@ -34,6 +29,7 @@ export function ZakatCheckoutForm({
     setMuzakkiPhone,
     muzakkiEmail,
     setMuzakkiEmail,
+    isEmailLocked,
     muzakkiNpwp,
     setMuzakkiNpwp,
     prayer,
@@ -53,34 +49,12 @@ export function ZakatCheckoutForm({
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      {/* Kolom Kiri: Form Input & Akad (8 Kolom) */}
-      <div className="lg:col-span-8 space-y-6">
-        {/* 1. Pemilihan Jenis Zakat */}
-        <Card className="p-5 sm:p-6 border-slate-200 bg-white shadow-2xs">
-          <ZakatTypeSelector
-            selectedTypeId={selectedTypeId}
-            onSelectType={setSelectedTypeId}
-          />
-        </Card>
-
-        {/* 2. Lafadz Niat & Doa Amil */}
-        <ZakatNiatCard selectedTypeId={selectedTypeId} />
-
-        {/* 3. Input Nominal Zakat */}
-        <Card className="p-5 sm:p-6 border-slate-200 bg-white shadow-2xs">
-          <ZakatNominalInputSection
-            amount={amount}
-            onChangeAmount={setAmount}
-            error={errors.amount}
-          />
-        </Card>
-
-        {/* 4. Data Identitas Muzakki */}
-        <Card className="p-5 sm:p-6 border-slate-200 bg-white shadow-2xs">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+      {/* Kolom Kiri: Form Input Muzakki & Kanal Bayar (7 Kolom) */}
+      <div className="lg:col-span-7 space-y-4">
+        {/* 1. Data Identitas Muzakki */}
+        <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
           <ZakatMuzakkiSection
-            salutation={salutation}
-            setSalutation={setSalutation}
             isAnonymous={isAnonymous}
             setIsAnonymous={setIsAnonymous}
             muzakkiName={muzakkiName}
@@ -89,6 +63,7 @@ export function ZakatCheckoutForm({
             setMuzakkiPhone={setMuzakkiPhone}
             muzakkiEmail={muzakkiEmail}
             setMuzakkiEmail={setMuzakkiEmail}
+            isEmailLocked={isEmailLocked}
             muzakkiNpwp={muzakkiNpwp}
             setMuzakkiNpwp={setMuzakkiNpwp}
             prayer={prayer}
@@ -96,15 +71,15 @@ export function ZakatCheckoutForm({
             errors={errors}
             setErrors={setErrors}
           />
-        </Card>
+        </div>
 
-        {/* 5. Kanal Pembayaran */}
-        <Card className="p-5 sm:p-6 border-slate-200 bg-white shadow-2xs space-y-4">
+        {/* 2. Kanal Pembayaran */}
+        <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
           <div className="space-y-1">
-            <h3 className="text-base font-medium text-slate-800">
+            <h3 className="text-base font-semibold text-slate-900">
               Pilih saluran pembayaran
             </h3>
-            <p className="text-sm font-normal text-slate-500">
+            <p className="text-sm font-normal text-slate-600">
               Pilih metode pembayaran instan via QRIS atau Virtual Account bank resmi yayasan.
             </p>
           </div>
@@ -114,11 +89,15 @@ export function ZakatCheckoutForm({
             selectedChannelId={selectedChannelId}
             onSelectChannel={setSelectedChannelId}
           />
-        </Card>
+        </div>
       </div>
 
-      {/* Kolom Kanan: Ringkasan Sticky (4 Kolom) */}
-      <div className="lg:col-span-4">
+      {/* Kolom Kanan: Akad & Ringkasan Sticky (5 Kolom) */}
+      <div className="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
+        {/* Akad & Niat Zakat */}
+        <ZakatNiatCard selectedTypeId={selectedTypeId} />
+
+        {/* Ringkasan Pembayaran */}
         <ZakatPaymentSummaryCard
           selectedTypeId={selectedTypeId}
           amount={amount}
@@ -132,9 +111,10 @@ export function ZakatCheckoutForm({
       <PendingInvoiceDialog
         isOpen={pendingInvoiceModal.isOpen}
         onClose={() => setPendingInvoiceModal({ isOpen: false, invoice: null })}
-        pendingInvoice={pendingInvoiceModal.invoice}
-        onContinue={handleContinueExisting}
+        existingInvoice={pendingInvoiceModal.invoice}
+        onContinueExisting={handleContinueExisting}
         onCreateNew={handleCreateNewAfterCancel}
+        isZakat={true}
       />
     </div>
   );

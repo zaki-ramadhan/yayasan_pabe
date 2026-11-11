@@ -4,12 +4,10 @@ import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { Textarea } from "@/components/ui/Textarea";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { DonorSalutationPicker } from "@/components/zakat/DonorSalutationPicker";
+import { cn } from "@/lib/utils";
 import { sanitizeName, sanitizePhone, sanitizeEmail, sanitizePrayer } from "@/lib/security";
 
 export function ZakatMuzakkiSection({
-  salutation,
-  setSalutation,
   isAnonymous,
   setIsAnonymous,
   muzakkiName,
@@ -18,6 +16,7 @@ export function ZakatMuzakkiSection({
   setMuzakkiPhone,
   muzakkiEmail,
   setMuzakkiEmail,
+  isEmailLocked = false,
   muzakkiNpwp,
   setMuzakkiNpwp,
   prayer,
@@ -34,67 +33,96 @@ export function ZakatMuzakkiSection({
   return (
     <div className="space-y-4">
       <div className="space-y-1">
-        <h3 className="text-base font-medium text-slate-800">
+        <h3 className="text-base font-semibold text-slate-900">
           Data identitas muzakki
         </h3>
-        <p className="text-sm font-normal text-slate-500">
-          Identitas diperlukan untuk penerbitan kuitansi dan Bukti Setor Zakat (BSZ) resmi.
+        <p className="text-sm font-normal text-slate-600">
+          Identitas diperlukan untuk penerbitan kuitansi zakat resmi yayasan.
         </p>
       </div>
 
       {/* Opsi Hamba Allah */}
-      <div className="flex items-center gap-2.5 p-3 rounded-lg border border-slate-200 bg-slate-50/70">
+      <div className="flex items-start gap-2.5 p-3 rounded-lg border border-slate-300 bg-slate-50">
         <Checkbox
           id="muzakki-anonymous"
           checked={isAnonymous}
           onCheckedChange={(checked) => {
-            const val = Boolean(checked);
-            setIsAnonymous(val);
-            if (val) clearError("muzakkiName");
+            setIsAnonymous(Boolean(checked));
           }}
+          className="mt-0.5"
         />
-        <label
-          htmlFor="muzakki-anonymous"
-          className="text-sm font-medium text-slate-700 cursor-pointer select-none"
-        >
-          Tunaikan sebagai Hamba Allah (nama disamarkan pada rekap publik)
-        </label>
+        <div className="space-y-0.5">
+          <label
+            htmlFor="muzakki-anonymous"
+            className="text-sm font-medium text-slate-800 cursor-pointer select-none block"
+          >
+            Tunaikan sebagai Hamba Allah
+          </label>
+          <p className="text-xs text-slate-500">
+            Nama disamarkan pada rekap publik, nama asli tetap tercatat di kuitansi resmi.
+          </p>
+        </div>
       </div>
 
-      {/* Sapaan */}
-      {!isAnonymous && (
-        <DonorSalutationPicker
-          selectedSalutation={salutation}
-          onSelect={setSalutation}
+      {/* Nama Lengkap (Selalu diisi untuk kuitansi resmi) */}
+      <FormField
+        label="Nama lengkap muzakki"
+        required
+        error={errors.muzakkiName}
+        hint={
+          isAnonymous
+            ? "Nama disamarkan pada rekap publik."
+            : "Nama lengkap sesuai KTP untuk penerbitan kuitansi zakat resmi."
+        }
+      >
+        <Input
+          value={muzakkiName}
+          onChange={(e) => {
+            setMuzakkiName(sanitizeName(e.target.value));
+            clearError("muzakkiName");
+          }}
+          placeholder="Masukkan nama lengkap sesuai KTP"
+          className="h-11 text-sm font-normal"
         />
-      )}
+      </FormField>
 
-      {/* Nama Lengkap */}
-      {!isAnonymous && (
-        <FormField
-          label="Nama lengkap muzakki"
-          required
-          error={errors.muzakkiName}
-        >
-          <Input
-            value={muzakkiName}
-            onChange={(e) => {
-              setMuzakkiName(sanitizeName(e.target.value));
-              clearError("muzakkiName");
-            }}
-            placeholder="Masukkan nama lengkap sesuai KTP"
-            className="h-11 text-sm font-normal"
-          />
-        </FormField>
-      )}
-
-      {/* No HP & Email */}
+      {/* Email & Kontak Telepon */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         <FormField
-          label="Nomor WhatsApp"
+          label="Alamat email aktif"
           required
+          error={errors.muzakkiEmail}
+          hint={
+            isEmailLocked
+              ? "Email terkunci sesuai akun login Anda. Kuitansi zakat & invoice dikirim ke sini."
+              : "Kuitansi zakat resmi dan invoice akan dikirim ke email ini."
+          }
+        >
+          <div className={isEmailLocked ? "cursor-not-allowed" : ""}>
+            <Input
+              type="email"
+              readOnly={isEmailLocked}
+              tabIndex={isEmailLocked ? -1 : undefined}
+              value={muzakkiEmail}
+              onChange={(e) => {
+                if (!isEmailLocked) {
+                  setMuzakkiEmail(sanitizeEmail(e.target.value));
+                  clearError("muzakkiEmail");
+                }
+              }}
+              placeholder="nama@email.com"
+              className={cn(
+                "h-11 text-sm font-normal",
+                isEmailLocked && "bg-slate-100 text-slate-500 border-slate-300 focus:border-slate-300 focus:ring-0 hover:border-slate-300 pointer-events-none select-none shadow-none"
+              )}
+            />
+          </div>
+        </FormField>
+
+        <FormField
+          label="Nomor telepon / kontak (opsional)"
           error={errors.muzakkiPhone}
-          caption="Bukti setor dan invoice akan dikirim ke nomor ini."
+          hint="Opsional, untuk koordinasi & konfirmasi darurat jika diperlukan."
         >
           <Input
             type="tel"
@@ -108,29 +136,12 @@ export function ZakatMuzakkiSection({
             className="h-11 text-sm font-normal"
           />
         </FormField>
-
-        <FormField
-          label="Alamat email"
-          error={errors.muzakkiEmail}
-          caption="Opsional, untuk salinan kuitansi digital."
-        >
-          <Input
-            type="email"
-            value={muzakkiEmail}
-            onChange={(e) => {
-              setMuzakkiEmail(sanitizeEmail(e.target.value));
-              clearError("muzakkiEmail");
-            }}
-            placeholder="nama@email.com"
-            className="h-11 text-sm font-normal"
-          />
-        </FormField>
       </div>
 
-      {/* NPWP / NIK untuk BSZ Pengurang Pajak */}
+      {/* NPWP / NIK untuk Pengurang Pajak */}
       <FormField
         label="Nomor Pokok Wajib Pajak (NPWP / NIK)"
-        caption="Opsional. Diperlukan jika Anda memerlukan Bukti Setor Zakat (BSZ) untuk pengurang Penghasilan Kena Pajak (PKP) pada SPT tahunan."
+        hint="Opsional. Diperlukan jika Anda memerlukan kuitansi zakat untuk pengurang pajak penghasilan pada SPT tahunan."
       >
         <Input
           value={muzakkiNpwp}
@@ -143,7 +154,7 @@ export function ZakatMuzakkiSection({
       {/* Doa / Catatan Khusus */}
       <FormField
         label="Doa atau hajat kebaikan"
-        caption="Doa Anda akan diamini oleh pengurus yayasan dan para mustahik binaan."
+        hint="Doa Anda akan diamini oleh pengurus yayasan dan para mustahik binaan."
       >
         <Textarea
           value={prayer}

@@ -7,10 +7,10 @@ export function ZakatTypeSelector({ selectedTypeId, onSelectType }) {
   return (
     <div className="space-y-3">
       <div className="space-y-1">
-        <label className="text-base font-medium text-slate-800 block">
+        <label className="text-base font-semibold text-slate-900 block">
           Pilih jenis zakat
         </label>
-        <p className="text-sm font-normal text-slate-500">
+        <p className="text-sm font-normal text-slate-600">
           Tentukan kategori zakat yang hendak Anda tunaikan sesuai ketentuan syariat.
         </p>
       </div>

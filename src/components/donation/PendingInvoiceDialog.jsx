@@ -28,11 +28,22 @@ export function PendingInvoiceDialog({
   isOpen,
   onClose,
   existingInvoice,
+  pendingInvoice,
   onContinueExisting,
+  onContinue,
   onCreateNew,
   isCancelling = false,
+  isZakat = false,
 }) {
-  if (!existingInvoice) return null;
+  const invoice = existingInvoice || pendingInvoice;
+  const handleContinue = onContinueExisting || onContinue;
+  if (!invoice) return null;
+
+  const isZakatContext =
+    isZakat ||
+    invoice.campaignSlug === "zakat" ||
+    (typeof invoice.campaignTitle === "string" &&
+      invoice.campaignTitle.toLowerCase().includes("zakat"));
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isCancelling && onClose()}>
@@ -44,7 +55,7 @@ export function PendingInvoiceDialog({
             </div>
             <div>
               <DialogTitle className="text-base font-semibold text-slate-900">
-                Tagihan Donasi Masih Aktif
+                {isZakatContext ? "Tagihan Zakat Masih Aktif" : "Tagihan Donasi Masih Aktif"}
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-500 mt-0.5">
                 Anda memiliki tagihan yang belum diselesaikan
@@ -55,11 +66,17 @@ export function PendingInvoiceDialog({
 
         <div className="p-5 sm:p-6 space-y-4 text-sm">
           <p className="text-slate-600 leading-relaxed">
-            Anda masih memiliki tagihan donasi aktif untuk program{" "}
-            <span className="font-semibold text-slate-900">
-              {existingInvoice.campaignTitle}
-            </span>
-            . Apakah Anda ingin melanjutkan pembayaran tagihan ini atau membuat tagihan baru?
+            {isZakatContext ? (
+              <>
+                Anda masih memiliki tagihan zakat aktif untuk{" "}
+                <span className="font-semibold text-slate-900">{invoice.campaignTitle}</span>. Apakah Anda ingin melanjutkan pembayaran tagihan ini atau membuat tagihan baru?
+              </>
+            ) : (
+              <>
+                Anda masih memiliki tagihan donasi aktif untuk program{" "}
+                <span className="font-semibold text-slate-900">{invoice.campaignTitle}</span>. Apakah Anda ingin melanjutkan pembayaran tagihan ini atau membuat tagihan baru?
+              </>
+            )}
           </p>
 
           {/* Kartu Ringkasan Tagihan Aktif */}
@@ -67,19 +84,19 @@ export function PendingInvoiceDialog({
             <div className="flex items-center justify-between text-slate-600">
               <span>Nomor invoice</span>
               <span className="font-mono font-medium text-slate-900">
-                {existingInvoice.invoiceId}
+                {invoice.invoiceId}
               </span>
             </div>
             <div className="flex items-center justify-between text-slate-600">
-              <span>Nominal donasi</span>
+              <span>{isZakatContext ? "Nominal zakat" : "Nominal donasi"}</span>
               <span className="font-semibold text-emerald-800 text-sm sm:text-base">
-                {formatRupiah(existingInvoice.amount)}
+                {formatRupiah(invoice.amount)}
               </span>
             </div>
             <div className="flex items-center justify-between text-slate-600">
               <span>Saluran pembayaran</span>
               <span className="font-medium text-slate-900">
-                {formatPaymentChannel(existingInvoice.paymentChannel)}
+                {formatPaymentChannel(invoice.paymentChannel)}
               </span>
             </div>
             <div className="flex items-center justify-between pt-1 border-t border-amber-200/80 text-amber-900 font-medium">
@@ -87,7 +104,7 @@ export function PendingInvoiceDialog({
                 <Clock className="w-3.5 h-3.5" />
                 Sisa waktu bayar
               </span>
-              <span>{existingInvoice.remainingLabel || "Aktif"}</span>
+              <span>{invoice.remainingLabel || "Aktif"}</span>
             </div>
           </div>
 
@@ -120,7 +137,7 @@ export function PendingInvoiceDialog({
           <Button
             type="button"
             variant="warning"
-            onClick={onContinueExisting}
+            onClick={handleContinue}
             disabled={isCancelling}
             className="w-full sm:w-auto h-10 text-xs sm:text-sm font-medium cursor-pointer"
           >

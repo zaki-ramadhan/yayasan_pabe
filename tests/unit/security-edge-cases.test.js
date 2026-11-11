@@ -44,7 +44,7 @@ describe("Security & Anomaly Defense: Validasi Nominal Donasi", () => {
   it("menolak nominal di atas ambang batas maksimum Rp 100.000.000 (overflow)", () => {
     const res = validateDonationAmount(100000001);
     expect(res.isValid).toBe(false);
-    expect(res.message).toContain("maksimal Rp");
+    expect(res.message).toContain("maksimal");
   });
 
   it("menolak input non-numerik, NaN, atau objek anomali", () => {

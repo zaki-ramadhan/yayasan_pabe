@@ -62,7 +62,8 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
   const [customAmountInput, setCustomAmountInput] = useState(
     isPresetInitial ? "" : initialAmount.toString()
   );
-  const [salutation, setSalutation] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [donorName, setDonorName] = useState("");
   const [donorPhone, setDonorPhone] = useState("");
@@ -272,14 +273,16 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       newErrors.amount = `Nominal donasi maksimal ${channelLimits.label} adalah ${formatRupiah(channelLimits.maxAmount)}`;
     }
 
-    const nameVal = validateName(donorName, isAnonymous);
+    const nameVal = validateName(donorName, false);
     if (!nameVal.isValid) {
       newErrors.donorName = nameVal.message;
     }
 
-    const phoneVal = validatePhone(donorPhone);
-    if (!phoneVal.isValid) {
-      newErrors.donorPhone = phoneVal.message;
+    if (donorPhone && donorPhone.trim()) {
+      const phoneVal = validatePhone(donorPhone, { isRequired: false, fieldName: "Nomor telepon" });
+      if (!phoneVal.isValid) {
+        newErrors.donorPhone = phoneVal.message;
+      }
     }
 
     const emailVal = validateEmail(donorEmail, true);
@@ -331,9 +334,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       const idempotencyKey = generateIdempotencyKey();
       const sanitizedPrayer = prayer.trim().replace(/\s+/g, " ");
 
-      const effectiveDonorName = isAnonymous
-        ? "Hamba Allah"
-        : (salutation ? `${salutation} ${donorName.trim()}`.trim() : donorName.trim());
+      const effectiveDonorName = donorName.trim();
 
       const res = await safeFetch("/api/donations", {
         method: "POST",
@@ -352,11 +353,14 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
           isAnonymous,
           prayer: sanitizedPrayer,
           idempotencyKey,
+          turnstileToken,
         }),
       });
 
       const json = await res.json();
       if (!res.ok || !json.success) {
+        turnstileRef.current?.reset();
+        setTurnstileToken("");
         throw new Error(json.message || "Gagal memproses donasi.");
       }
 
@@ -390,6 +394,8 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       setIsRedirecting(true);
       router.push(targetUrl);
     } catch (err) {
+      turnstileRef.current?.reset();
+      setTurnstileToken("");
       toast.error(err.message || "Gagal memproses transaksi. Silakan coba kembali.");
       isSubmittingRef.current = false;
       setIsSubmitting(false);
@@ -474,7 +480,8 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     handleContinueExistingInvoice,
     handleCreateNewAfterCancel,
     isZakat,
-    salutation,
-    setSalutation,
+    turnstileToken,
+    setTurnstileToken,
+    turnstileRef,
   };
 }

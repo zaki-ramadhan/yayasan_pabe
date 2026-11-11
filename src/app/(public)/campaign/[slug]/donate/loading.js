@@ -72,6 +72,9 @@ export default function DonateLoading() {
               <Skeleton className="w-6 h-6 rounded-full" />
               <Skeleton className="h-5 w-56 rounded" />
             </div>
+            {/* Checkbox Hamba Allah */}
+            <Skeleton className="h-11 w-full rounded-lg" />
+            {/* Nama Lengkap */}
             <Skeleton className="h-11 w-full rounded-lg" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Skeleton className="h-11 w-full rounded-lg" />

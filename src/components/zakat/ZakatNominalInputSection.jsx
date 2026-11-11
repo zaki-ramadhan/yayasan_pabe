@@ -1,76 +1,46 @@
 "use client";
 
-import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import { ZAKAT_NOMINAL_PRESETS } from "@/constants/zakatTypes";
-import { formatNumber } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { formatRupiah } from "@/lib/formatters";
+import { Calculator, Lock } from "lucide-react";
 
-export function ZakatNominalInputSection({
-  amount,
-  onChangeAmount,
-  error,
-}) {
+export function ZakatNominalInputSection({ amount }) {
+  const safeAmount = Number(amount) || 0;
+
   return (
-    <div className="space-y-3.5">
-      <div className="space-y-1">
-        <label htmlFor="zakat-amount-input" className="text-base font-medium text-slate-800 block">
-          Nominal zakat yang ditunaikan
-        </label>
-        <p className="text-sm font-normal text-slate-500">
-          Masukkan kewajiban zakat hasil perhitungan atau nominal yang hendak Anda bayarkan.
-        </p>
-      </div>
-
-      <div className="space-y-2">
-        <div className="relative">
-          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-medium text-slate-500 pointer-events-none select-none">
-            Rp
-          </span>
-          <CurrencyInput
-            id="zakat-amount-input"
-            value={amount}
-            onChange={(val) => onChangeAmount(val)}
-            min={10000}
-            max={500000000}
-            placeholder="0"
-            className="pl-11 h-12 text-base font-medium text-slate-900 border-slate-300 focus:border-primary focus:ring-primary"
-            isInvalid={Boolean(error)}
-          />
-        </div>
-
-        {error && (
-          <p className="text-sm font-normal text-rose-600">
-            {error}
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-2">
+        <div className="space-y-0.5">
+          <h3 className="text-base font-semibold text-slate-900">
+            Nominal kewajiban zakat
+          </h3>
+          <p className="text-sm text-slate-600">
+            Nominal terkunci sesuai hasil perhitungan kalkulator zakat Anda.
           </p>
-        )}
+        </div>
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 text-xs font-medium border border-emerald-200 shrink-0">
+          <Lock className="w-3 h-3 text-emerald-700" />
+          Terkunci
+        </span>
       </div>
 
-      {/* Preset Cepat */}
-      <div className="space-y-1.5">
-        <span className="text-sm font-normal text-slate-600 block">
-          Pilihan nominal cepat:
-        </span>
-        <div className="flex flex-wrap gap-2">
-          {ZAKAT_NOMINAL_PRESETS.map((preset) => {
-            const isSelected = amount === preset;
-            return (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => onChangeAmount(preset)}
-                className={cn(
-                  "px-3.5 py-1.5 text-sm font-medium rounded-lg border transition-all duration-150 cursor-pointer focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
-                  isSelected
-                    ? "bg-primary text-white border-primary shadow-2xs"
-                    : "bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                )}
-                aria-pressed={isSelected}
-              >
-                Rp {formatNumber(preset)}
-              </button>
-            );
-          })}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-300 gap-3">
+        <div>
+          <span className="text-xs font-medium text-slate-500 uppercase tracking-wider block">
+            Total Nilai Zakat
+          </span>
+          <span className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">
+            {formatRupiah(safeAmount)}
+          </span>
         </div>
+
+        <Link
+          href="/kalkulator-zakat"
+          className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-100 rounded-lg border border-slate-300 transition-colors shadow-2xs self-start sm:self-auto cursor-pointer"
+        >
+          <Calculator className="w-4 h-4 text-slate-600" />
+          <span>Hitung ulang di kalkulator</span>
+        </Link>
       </div>
     </div>
   );

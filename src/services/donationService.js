@@ -75,7 +75,7 @@ export async function createDonation({
   if (!nameVal.isValid) {
     throw new Error(nameVal.message);
   }
-  const cleanDonorName = isAnonymous ? "Hamba Allah" : (nameVal.sanitized || donorName || "Hamba Allah");
+  const cleanDonorName = nameVal.sanitized || donorName || (isAnonymous ? "Hamba Allah" : "");
 
   const isPhoneRequired = !donorEmail || !donorEmail.trim();
   const phoneVal = validatePhone(donorPhone, { isRequired: isPhoneRequired });

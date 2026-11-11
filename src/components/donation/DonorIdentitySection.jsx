@@ -6,7 +6,6 @@ import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { CheckoutStepHeader } from "@/components/donation/CheckoutStepHeader";
-import { DonorSalutationPicker } from "@/components/zakat/DonorSalutationPicker";
 
 export function DonorIdentitySection({
   isAnonymous,
@@ -17,8 +16,6 @@ export function DonorIdentitySection({
   setDonorPhone,
   donorEmail,
   setDonorEmail,
-  salutation = "",
-  setSalutation,
   isEmailLocked = false,
   errors = {},
   setErrors,
@@ -46,53 +43,89 @@ export function DonorIdentitySection({
         checked={isAnonymous}
         onChange={(val) => {
           setIsAnonymous(val);
-          if (val) clearError("donorName");
         }}
       />
 
-      {/* Sapaan Muzakki / Donatur */}
-      {!isAnonymous && typeof setSalutation === "function" && (
-        <DonorSalutationPicker
-          selectedSalutation={salutation}
-          onSelect={setSalutation}
+      {/* Nama Lengkap (Selalu diisi untuk keperluan kuitansi & audit resmi) */}
+      <FormField
+        label={isZakat ? "Nama lengkap muzakki" : "Nama lengkap"}
+        required
+        error={errors.donorName}
+        hint={
+          isAnonymous
+            ? "Nama disamarkan pada rekap publik & feed doa."
+            : isZakat
+            ? "Nama lengkap sesuai KTP untuk penerbitan kuitansi zakat resmi."
+            : "Nama lengkap Anda untuk penerbitan kuitansi resmi yayasan."
+        }
+      >
+        <Input
+          type="text"
+          required
+          value={donorName}
+          minLength={FIELD_LIMITS.NAME.min}
+          maxLength={FIELD_LIMITS.NAME.max}
+          onChange={(e) => {
+            setDonorName(sanitizeName(e.target.value));
+            clearError("donorName");
+          }}
+          onBlur={() => setDonorName((prev) => prev.trim())}
+          placeholder={isZakat ? "Masukkan nama lengkap sesuai KTP" : "Nama lengkap Anda"}
+          className="h-11 text-sm font-normal"
         />
-      )}
+      </FormField>
 
-      {!isAnonymous && (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         <FormField
-          label="Nama lengkap"
+          label="Alamat email aktif"
           required
-          error={errors.donorName}
+          error={errors.donorEmail}
+          hint={
+            isEmailLocked
+              ? isZakat
+                ? "Email terkunci sesuai akun login Anda. Kuitansi zakat & invoice dikirim ke sini."
+                : "Email terkunci sesuai akun login Anda. Kuitansi donasi & invoice dikirim ke sini."
+              : isZakat
+              ? "Kuitansi zakat resmi dan invoice akan dikirim ke email ini."
+              : "Invoice dan kuitansi donasi digital resmi akan dikirim ke email ini."
+          }
         >
-          <Input
-            type="text"
-            required={!isAnonymous}
-            value={donorName}
-            minLength={FIELD_LIMITS.NAME.min}
-            maxLength={FIELD_LIMITS.NAME.max}
-            onChange={(e) => {
-              setDonorName(sanitizeName(e.target.value));
-              clearError("donorName");
-            }}
-            onBlur={() => setDonorName((prev) => prev.trim())}
-            placeholder="Nama lengkap Anda"
-            className="h-11 text-sm font-normal"
-          />
+          <div className={isEmailLocked ? "cursor-not-allowed" : ""}>
+            <Input
+              type="email"
+              inputMode="email"
+              spellCheck={false}
+              required
+              readOnly={isEmailLocked}
+              tabIndex={isEmailLocked ? -1 : undefined}
+              value={donorEmail}
+              minLength={FIELD_LIMITS.EMAIL.min}
+              maxLength={FIELD_LIMITS.EMAIL.max}
+              onChange={(e) => {
+                if (!isEmailLocked) {
+                  setDonorEmail(sanitizeEmail(e.target.value));
+                  clearError("donorEmail");
+                }
+              }}
+              onBlur={() => setDonorEmail((prev) => prev.trim())}
+              placeholder="email@domain.com"
+              className={cn(
+                "h-11 text-sm font-normal",
+                isEmailLocked && "bg-slate-100 text-slate-500 border-slate-300 focus:border-slate-300 focus:ring-0 hover:border-slate-300 pointer-events-none select-none shadow-none"
+              )}
+            />
+          </div>
         </FormField>
-      )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
-          label="Nomor WhatsApp"
-          required
+          label="Nomor telepon / kontak (opsional)"
           error={errors.donorPhone}
-          hint="Untuk pengiriman invoice & bukti donasi"
+          hint="Opsional, untuk koordinasi & konfirmasi darurat jika diperlukan."
         >
           <Input
             type="tel"
             inputMode="tel"
             autoComplete="tel"
-            required
             value={donorPhone}
             minLength={FIELD_LIMITS.PHONE.min}
             maxLength={FIELD_LIMITS.PHONE.max}
@@ -103,40 +136,6 @@ export function DonorIdentitySection({
             onBlur={() => setDonorPhone((prev) => prev.trim())}
             placeholder="081234567890"
             className="h-11 text-sm font-normal"
-          />
-        </FormField>
-
-        <FormField
-          label="Email"
-          required
-          error={errors.donorEmail}
-          hint={
-            isEmailLocked
-              ? "Email terkunci sesuai akun login Anda untuk integrasi riwayat donasi."
-              : undefined
-          }
-        >
-          <Input
-            type="email"
-            inputMode="email"
-            spellCheck={false}
-            required
-            readOnly={isEmailLocked}
-            value={donorEmail}
-            minLength={FIELD_LIMITS.EMAIL.min}
-            maxLength={FIELD_LIMITS.EMAIL.max}
-            onChange={(e) => {
-              if (!isEmailLocked) {
-                setDonorEmail(sanitizeEmail(e.target.value));
-                clearError("donorEmail");
-              }
-            }}
-            onBlur={() => setDonorEmail((prev) => prev.trim())}
-            placeholder="email@domain.com"
-            className={cn(
-              "h-11 text-sm font-normal",
-              isEmailLocked && "bg-slate-100 text-slate-600 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
-            )}
           />
         </FormField>
       </div>

@@ -89,7 +89,7 @@ export const TRANSACTION_LIMITS_CONFIG = {
   },
   DEFAULT: {
     minAmount: 10000,
-    maxAmount: 50000000,
+    maxAmount: 100000000,
     label: "Donasi",
   },
 };
