@@ -35,6 +35,7 @@ export async function GET(request) {
     const requestedName = searchParams.get("name");
     const mode = searchParams.get("mode") || "";
     const status = searchParams.get("status") || "ALL";
+    const type = searchParams.get("type") || searchParams.get("donationType") || "ALL";
     const year = searchParams.get("year") || "";
     const search = searchParams.get("search") || "";
     const sortBy = searchParams.get("sortBy") || "date";
@@ -133,6 +134,7 @@ export async function GET(request) {
       userName,
       userPhone,
       status,
+      type,
       search,
       sortBy,
       sortOrder,

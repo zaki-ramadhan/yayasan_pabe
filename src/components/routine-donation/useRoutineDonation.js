@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   DONATION_LIMITS,
   validateName,
@@ -10,11 +11,15 @@ import {
 import { getPaymentChannelLimits } from "@/data/transactionLimits";
 import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
 import { getRoutineProgramAmount } from "@/lib/routineDonationConstants";
-import { getStoredUser } from "@/services/authService";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 
 export function useRoutineDonation({ campaigns = [] }) {
+  const router = useRouter();
+  const { currentUser } = useCurrentUser();
+  const isLoggedIn = Boolean(currentUser);
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -57,18 +62,20 @@ export function useRoutineDonation({ campaigns = [] }) {
       }
     } catch {}
 
-    const user = getStoredUser();
-    if (!user) return;
+    if (currentUser?.email) {
+      setEmail(currentUser.email);
+    }
+  }, [currentUser]);
 
-    queueMicrotask(() => {
-      if (user.name && user.name !== "Pengguna Google" && user.name !== "Pengguna Facebook") {
-        setFullName((prev) => prev || user.name);
-      }
-      if (user.email) {
-        setEmail((prev) => prev || user.email);
-      }
-    });
-  }, []);
+  useEffect(() => {
+    if (!currentUser) return;
+    if (currentUser.email) {
+      setEmail(currentUser.email);
+    }
+    if (currentUser.name && currentUser.name !== "Pengguna Google" && currentUser.name !== "Pengguna Facebook") {
+      setFullName((prev) => prev || currentUser.name);
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -127,7 +134,21 @@ export function useRoutineDonation({ campaigns = [] }) {
     program.routineType === "REMINDER_ONLY" ? 0 : getRoutineProgramAmount(program);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+
+    // Guard Wajib Login: Simpan seluruh draft dan alihkan ke halaman login
+    if (!currentUser) {
+      try {
+        sessionStorage.setItem(
+          "pabe_routine_draft",
+          JSON.stringify({ fullName, email, isAnonymous, program })
+        );
+      } catch {}
+      router.push(
+        `/login?redirect=${encodeURIComponent("/donasi-rutin")}&reason=donation_requires_login`
+      );
+      return;
+    }
 
     if (existingActiveRoutine) {
       const msg =
@@ -144,10 +165,11 @@ export function useRoutineDonation({ campaigns = [] }) {
       newErrors.fullName = nameVal.message;
     }
 
-    if (!email || !email.trim()) {
-      newErrors.email = "Alamat email wajib diisi untuk menerima invoice donasi.";
+    const cleanEmail = currentUser.email;
+    if (!cleanEmail || !cleanEmail.trim()) {
+      newErrors.email = "Akun Anda belum memiliki alamat email yang valid.";
     } else {
-      const emailVal = validateEmail(email.trim(), false);
+      const emailVal = validateEmail(cleanEmail.trim(), false);
       if (!emailVal.isValid) {
         newErrors.email = emailVal.message;
       }
@@ -223,7 +245,7 @@ export function useRoutineDonation({ campaigns = [] }) {
         body: JSON.stringify({
           donorName: isAnonymous ? "Hamba Allah" : fullName.trim(),
           donorPhone: null,
-          donorEmail: email && email.trim() ? email.trim() : null,
+          donorEmail: currentUser?.email ? currentUser.email.trim() : email.trim(),
           isAnonymous,
           programs: [payloadProgram],
         }),
@@ -247,6 +269,8 @@ export function useRoutineDonation({ campaigns = [] }) {
   };
 
   return {
+    isLoggedIn,
+    currentUser,
     fullName,
     setFullName,
     email,

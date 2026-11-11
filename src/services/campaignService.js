@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { isCampaignClosed } from "@/lib/formatters";
 import { formatCampaignFromDb } from "./campaignFormatter";
 import { CAMPAIGNS } from "@/data/campaigns";
+import { DEFAULT_ZAKAT_SPEC } from "@/constants/zakatProgram";
 
 export async function getCampaigns({ category = "all", search = "", sort = "terbaru", status } = {}) {
   try {
@@ -71,8 +72,89 @@ export async function getFeaturedCampaigns() {
   }
 }
 
+export async function getOrCreateDefaultZakatCampaign() {
+  try {
+    const directZakat = await prisma.campaign.findUnique({
+      where: { slug: "zakat" },
+      include: {
+        category: true,
+        updates: { orderBy: { date: "desc" } },
+        donations: {
+          where: { status: "PAID" },
+          orderBy: { paidAt: "desc" },
+          take: 10,
+        },
+      },
+    });
+    if (directZakat) {
+      return formatCampaignFromDb(directZakat);
+    }
+
+    const existingActive = await prisma.campaign.findFirst({
+      where: {
+        status: "ACTIVE",
+        OR: [
+          { category: { slug: "zakat" } },
+          { slug: { contains: "zakat", mode: "insensitive" } },
+        ],
+      },
+      include: {
+        category: true,
+        updates: { orderBy: { date: "desc" } },
+        donations: {
+          where: { status: "PAID" },
+          orderBy: { paidAt: "desc" },
+          take: 10,
+        },
+      },
+    });
+    if (existingActive) {
+      return formatCampaignFromDb(existingActive);
+    }
+
+    const created = await prisma.campaign.upsert({
+      where: { slug: "zakat" },
+      update: {},
+      create: {
+        title: DEFAULT_ZAKAT_SPEC.title,
+        slug: DEFAULT_ZAKAT_SPEC.slug,
+        targetAmount: null,
+        collectedAmount: 0,
+        donorCount: 0,
+        isFeatured: true,
+        location: DEFAULT_ZAKAT_SPEC.location,
+        bannerUrl: DEFAULT_ZAKAT_SPEC.bannerUrl,
+        excerpt: DEFAULT_ZAKAT_SPEC.excerpt,
+        story: DEFAULT_ZAKAT_SPEC.story,
+        status: "ACTIVE",
+        category: {
+          connectOrCreate: {
+            where: { slug: "zakat" },
+            create: {
+              name: "ZISWAF",
+              slug: "zakat",
+              iconName: "HeartHandshake",
+            },
+          },
+        },
+      },
+      include: {
+        category: true,
+        updates: true,
+        donations: true,
+      },
+    });
+    return formatCampaignFromDb(created);
+  } catch (error) {
+    console.warn("getOrCreateDefaultZakatCampaign fallback warning:", error?.message);
+    return DEFAULT_ZAKAT_SPEC;
+  }
+}
+
 export async function getCampaignBySlug(slug) {
   if (!slug) return null;
+  const isZakatSlug = typeof slug === "string" && slug.toLowerCase().includes("zakat");
+
   try {
     const dbCampaign = await prisma.campaign.findUnique({
       where: { slug },
@@ -92,6 +174,11 @@ export async function getCampaignBySlug(slug) {
   } catch (error) {
     console.error("Prisma getCampaignBySlug error:", error);
   }
+
+  if (isZakatSlug) {
+    return await getOrCreateDefaultZakatCampaign();
+  }
+
   return null;
 }
 

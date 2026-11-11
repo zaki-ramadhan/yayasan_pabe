@@ -12,6 +12,8 @@ import { useRoutineDonation } from "./useRoutineDonation";
 
 export function RoutineDonationForm({ campaigns = [] }) {
   const {
+    isLoggedIn,
+    currentUser,
     fullName,
     setFullName,
     email,
@@ -103,6 +105,8 @@ export function RoutineDonationForm({ campaigns = [] }) {
             setIsAnonymous={setIsAnonymous}
             errors={errors}
             setErrors={setErrors}
+            isLoggedIn={isLoggedIn}
+            currentUser={currentUser}
           />
 
           <RoutineProgramItem
@@ -122,6 +126,7 @@ export function RoutineDonationForm({ campaigns = [] }) {
             campaigns={activeCampaigns}
             onStartTour={startRoutineTour}
             existingActiveRoutine={existingActiveRoutine}
+            isLoggedIn={isLoggedIn}
           />
         </div>
       </form>

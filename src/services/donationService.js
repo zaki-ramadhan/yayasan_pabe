@@ -180,11 +180,16 @@ export async function createDonation({
     }
   }
 
+  const effectiveCampaignTitle =
+    donationType === "ZAKAT" && campaignTitle === "Sedekah Umum PABE"
+      ? "Tunaikan Zakat Yayasan PABE"
+      : campaignTitle;
+
   const donationData = {
     invoiceId,
     accessToken,
     campaignId,
-    campaignTitle,
+    campaignTitle: effectiveCampaignTitle,
     campaignSlug,
     donationType,
     amount: Number(amount),

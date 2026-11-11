@@ -48,6 +48,9 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
     isCancellingOldInvoice,
     handleContinueExistingInvoice,
     handleCreateNewAfterCancel,
+    isZakat,
+    salutation,
+    setSalutation,
   } = useDonationCheckout({ campaign, initialAmount, initialPrayer });
 
   if (isAuthChecking) {
@@ -74,6 +77,7 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
           onCustomInputBlur={handleCustomInputBlur}
           channelLimits={channelLimits}
           error={amountError}
+          isZakat={isZakat}
         />
 
         <PaymentChannelPicker
@@ -91,6 +95,8 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
           setDonorPhone={setDonorPhone}
           donorEmail={donorEmail}
           setDonorEmail={setDonorEmail}
+          salutation={salutation}
+          setSalutation={setSalutation}
           isEmailLocked={isEmailLocked}
           errors={errors}
           setErrors={setErrors}
@@ -98,6 +104,7 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
           setPrayer={setPrayer}
           onPrayerChange={handlePrayerChange}
           hasExistingPrayer={hasExistingPrayer}
+          isZakat={isZakat}
         />
       </div>
 
@@ -110,6 +117,7 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
         totalPayment={totalPayment}
         isSubmitting={isSubmitting}
         isRedirecting={isRedirecting}
+        isZakat={isZakat}
       />
 
       {/* Dialog Penanganan Tagihan Donasi Aktif Duplikat */}

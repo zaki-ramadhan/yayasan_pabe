@@ -41,12 +41,28 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
   const router = useRouter();
   const isSubmittingRef = useRef(false);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
+
+  const isZakat = useMemo(() => {
+    if (typeof window !== "undefined") {
+      const sp = new URLSearchParams(window.location.search);
+      const queryType = sp.get("type") || sp.get("donationType");
+      if (queryType && queryType.toUpperCase() === "ZAKAT") return true;
+    }
+    return Boolean(
+      campaign?.slug === "zakat" ||
+      campaign?.categoryId === "zakat" ||
+      campaign?.categorySlug === "zakat" ||
+      (typeof campaign?.title === "string" && campaign.title.toLowerCase().includes("zakat"))
+    );
+  }, [campaign]);
+
   const isPresetInitial = NOMINAL_PRESETS.includes(initialAmount);
   const [isCustomMode, setIsCustomMode] = useState(!isPresetInitial);
   const [amount, setAmount] = useState(initialAmount);
   const [customAmountInput, setCustomAmountInput] = useState(
     isPresetInitial ? "" : initialAmount.toString()
   );
+  const [salutation, setSalutation] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [donorName, setDonorName] = useState("");
   const [donorPhone, setDonorPhone] = useState("");
@@ -315,17 +331,21 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       const idempotencyKey = generateIdempotencyKey();
       const sanitizedPrayer = prayer.trim().replace(/\s+/g, " ");
 
+      const effectiveDonorName = isAnonymous
+        ? "Hamba Allah"
+        : (salutation ? `${salutation} ${donorName.trim()}`.trim() : donorName.trim());
+
       const res = await safeFetch("/api/donations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           campaignId: campaign?.id || null,
-          campaignTitle: campaign?.title || "Sedekah Umum PABE",
-          campaignSlug: campaign?.slug || "",
-          donationType: "CAMPAIGN",
+          campaignTitle: campaign?.title || (isZakat ? "Tunaikan Zakat, Hadirkan Manfaat" : "Sedekah Umum PABE"),
+          campaignSlug: campaign?.slug || (isZakat ? "zakat" : ""),
+          donationType: isZakat ? "ZAKAT" : "CAMPAIGN",
           amount,
           paymentChannelId: selectedChannelId,
-          donorName: isAnonymous ? "Hamba Allah" : donorName.trim(),
+          donorName: effectiveDonorName,
           donorEmail: donorEmail.trim(),
           donorPhone: donorPhone.trim(),
           donorAvatar: isAnonymous ? null : (currentUser?.avatar || null),
@@ -453,5 +473,8 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     isCancellingOldInvoice,
     handleContinueExistingInvoice,
     handleCreateNewAfterCancel,
+    isZakat,
+    salutation,
+    setSalutation,
   };
 }

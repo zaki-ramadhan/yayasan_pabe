@@ -6,6 +6,7 @@ import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { CheckoutStepHeader } from "@/components/donation/CheckoutStepHeader";
+import { DonorSalutationPicker } from "@/components/zakat/DonorSalutationPicker";
 
 export function DonorIdentitySection({
   isAnonymous,
@@ -16,6 +17,8 @@ export function DonorIdentitySection({
   setDonorPhone,
   donorEmail,
   setDonorEmail,
+  salutation = "",
+  setSalutation,
   isEmailLocked = false,
   errors = {},
   setErrors,
@@ -23,6 +26,7 @@ export function DonorIdentitySection({
   setPrayer,
   onPrayerChange,
   hasExistingPrayer = false,
+  isZakat = false,
 }) {
   const clearError = (field) => {
     if (setErrors && errors[field]) {
@@ -32,7 +36,10 @@ export function DonorIdentitySection({
 
   return (
     <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
-      <CheckoutStepHeader step={3} title="Data donatur & doa kebaikan" />
+      <CheckoutStepHeader
+        step={3}
+        title={isZakat ? "Data muzakki & niat kebaikan" : "Data donatur & doa kebaikan"}
+      />
 
       {/* Anonim checkbox */}
       <AnonymousCheckbox
@@ -42,6 +49,14 @@ export function DonorIdentitySection({
           if (val) clearError("donorName");
         }}
       />
+
+      {/* Sapaan Muzakki / Donatur */}
+      {!isAnonymous && typeof setSalutation === "function" && (
+        <DonorSalutationPicker
+          selectedSalutation={salutation}
+          onSelect={setSalutation}
+        />
+      )}
 
       {!isAnonymous && (
         <FormField

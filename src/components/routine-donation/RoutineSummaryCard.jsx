@@ -10,6 +10,7 @@ export function RoutineSummaryCard({
   campaigns = [],
   onStartTour,
   existingActiveRoutine = null,
+  isLoggedIn = false,
 }) {
   const campaignList = Array.isArray(campaigns) ? campaigns : [];
 
@@ -66,7 +67,7 @@ export function RoutineSummaryCard({
           isLoading={isSubmitting}
           disabled={
             isSubmitting ||
-            Boolean(existingActiveRoutine) ||
+            (isLoggedIn && Boolean(existingActiveRoutine)) ||
             selectedPrograms.length === 0 ||
             (hasAnyAutoDonation && totalPerCommitment <= 0)
           }

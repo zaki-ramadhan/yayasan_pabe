@@ -7,6 +7,7 @@ export async function getDonorHistory({
   userName,
   userPhone,
   status = "ALL",
+  type = "ALL",
   search = "",
   sortBy = "date",
   sortOrder = "desc",
@@ -43,7 +44,7 @@ export async function getDonorHistory({
   };
 
   try {
-    const [aggregates, distinctCampaigns] = await Promise.all([
+    const [aggregates, distinctCampaigns, zakatAggregates] = await Promise.all([
       prisma.donation.aggregate({
         where: basePaidWhere,
         _sum: { amount: true },
@@ -54,6 +55,11 @@ export async function getDonorHistory({
         select: { campaignId: true, donationType: true },
         distinct: ["campaignId", "donationType"],
       }),
+      prisma.donation.aggregate({
+        where: { ...basePaidWhere, donationType: "ZAKAT" },
+        _sum: { amount: true },
+        _count: { id: true },
+      }),
     ]);
 
     const totalNominal = aggregates._sum.amount || 0;
@@ -63,6 +69,16 @@ export async function getDonorHistory({
     const filterConditions = [userCondition];
     if (status && status.toUpperCase() !== "ALL") {
       filterConditions.push({ status: status.toUpperCase() });
+    }
+
+    if (type && type.toUpperCase() !== "ALL") {
+      if (type.toUpperCase() === "ZAKAT") {
+        filterConditions.push({ donationType: "ZAKAT" });
+      } else if (type.toUpperCase() === "CAMPAIGN") {
+        filterConditions.push({ donationType: { not: "ZAKAT" } });
+      } else {
+        filterConditions.push({ donationType: type.toUpperCase() });
+      }
     }
 
     if (search && typeof search === "string" && search.trim().length > 0) {
@@ -139,6 +155,7 @@ export async function getDonorHistory({
         paymentChannel: d.paymentChannel || "QRIS",
         date: (d.createdAt || d.paidAt).toISOString(),
         status: d.status,
+        donationType: d.donationType || "CAMPAIGN",
       };
     });
 
@@ -149,6 +166,8 @@ export async function getDonorHistory({
         totalNominal,
         totalTransactions,
         totalPrograms,
+        totalZakatNominal: zakatAggregates?._sum?.amount || 0,
+        totalZakatTransactions: zakatAggregates?._count?.id || 0,
       },
       items,
       pendingInvoices,

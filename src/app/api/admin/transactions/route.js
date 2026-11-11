@@ -19,10 +19,11 @@ export async function GET(request) {
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
     const paymentChannel = searchParams.get("paymentChannel") || "";
+    const donationType = searchParams.get("donationType") || searchParams.get("type") || "";
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 
-    const result = await getAdminTransactions({ search, status, paymentChannel, page, limit });
+    const result = await getAdminTransactions({ search, status, paymentChannel, donationType, page, limit });
     return NextResponse.json({
       success: true,
       data: result.items,

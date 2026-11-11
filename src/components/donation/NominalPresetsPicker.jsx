@@ -16,13 +16,17 @@ export function NominalPresetsPicker({
   onCustomInputBlur,
   channelLimits,
   error,
+  isZakat = false,
 }) {
   const minLimit = channelLimits?.minAmount || DONATION_LIMITS.MIN_AMOUNT;
   const maxLimit = channelLimits?.maxAmount || DONATION_LIMITS.MAX_AMOUNT;
 
   return (
     <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
-      <CheckoutStepHeader step={1} title="Pilih nominal donasi" />
+      <CheckoutStepHeader
+        step={1}
+        title={isZakat ? "Zakat terbaik Anda" : "Pilih nominal donasi"}
+      />
 
       {/* Presets Grid */}
       <NominalGridPicker
@@ -33,7 +37,7 @@ export function NominalPresetsPicker({
         onSelectCustom={onCustomModeClick}
         columns="2-to-3"
         buttonHeight="sm"
-        customLabel="Nominal lainnya"
+        customLabel={isZakat ? "Nominal zakat lainnya" : "Nominal lainnya"}
       />
 
       {/* Custom Input: Only rendered when isCustomMode is active */}

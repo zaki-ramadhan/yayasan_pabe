@@ -30,7 +30,7 @@ export function InvoiceReceiptCard({
       <div className="bg-white rounded-t-xl border-t border-x border-slate-300 p-5 sm:p-6 sm:py-4 pb-4 space-y-2.5">
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-slate-600 block">
-            Tagihan Donasi
+            {donation.donationType === "ZAKAT" ? "Tagihan Zakat" : "Tagihan Donasi"}
           </span>
           {donation.status === "PAID" ? (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium">

@@ -13,6 +13,7 @@ export function DonationCheckoutSummary({
   totalPayment,
   isSubmitting,
   isRedirecting = false,
+  isZakat = false,
 }) {
   return (
     <div className="lg:col-span-5 lg:sticky lg:top-20">
@@ -22,7 +23,7 @@ export function DonationCheckoutSummary({
         {campaign && (
           <div className="space-y-3 pb-4 border-b border-slate-200">
             <span className="text-xs sm:text-sm text-slate-600 block font-normal">
-              Anda akan berdonasi dalam program:
+              {isZakat ? "Anda akan melakukan zakat dalam program:" : "Anda akan berdonasi dalam program:"}
             </span>
             <div className="flex gap-3.5 items-center">
               {campaign.bannerUrl && (
@@ -52,20 +53,24 @@ export function DonationCheckoutSummary({
         {/* Payment Breakdown Section */}
         <div className="space-y-3">
           <div className="space-y-0.5">
-            <h3 className="text-base sm:text-lg font-semibold text-slate-950">Ringkasan donasi</h3>
-            <p className="text-sm text-slate-600">Pastikan rincian donasi Anda telah sesuai</p>
+            <h3 className="text-base sm:text-lg font-semibold text-slate-950">
+              {isZakat ? "Ringkasan zakat" : "Ringkasan donasi"}
+            </h3>
+            <p className="text-sm text-slate-600">
+              {isZakat ? "Pastikan rincian zakat Anda telah sesuai" : "Pastikan rincian donasi Anda telah sesuai"}
+            </p>
           </div>
 
           <div className="space-y-2.5 text-sm">
-            <SummaryRow label="Nominal donasi" value={formatRupiah(amount)} />
-            <SummaryRow label="Saluran donasi" value={selectedChannel.name} />
+            <SummaryRow label={isZakat ? "Nominal zakat" : "Nominal donasi"} value={formatRupiah(amount)} />
+            <SummaryRow label={isZakat ? "Saluran zakat" : "Saluran donasi"} value={selectedChannel.name} />
             <SummaryRow
               label="Biaya layanan"
               value={adminFee === 0 ? "Gratis (ditanggung yayasan)" : formatRupiah(adminFee)}
               valueClass={adminFee === 0 ? "text-emerald-700 font-medium" : ""}
             />
             <div className="flex justify-between items-baseline text-sm font-medium text-slate-950 pt-2.5 border-t border-slate-200">
-              <span>Total donasi</span>
+              <span>{isZakat ? "Total zakat" : "Total donasi"}</span>
               <span className="text-primary text-base sm:text-lg font-semibold">
                 {formatRupiah(totalPayment)}
               </span>
@@ -85,8 +90,8 @@ export function DonationCheckoutSummary({
             {isRedirecting
               ? "Mengalihkan ke pembayaran..."
               : isSubmitting
-              ? "Memproses donasi..."
-              : "Lanjut donasi"}
+              ? (isZakat ? "Memproses zakat..." : "Memproses donasi...")
+              : (isZakat ? `Zakat - ${formatRupiah(totalPayment)}` : "Lanjut donasi")}
           </Button>
         </div>
       </div>

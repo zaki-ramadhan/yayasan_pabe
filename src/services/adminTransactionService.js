@@ -8,6 +8,7 @@ import { settleDonationStatus } from "@/services/donationService";
 export async function getAdminTransactions({
   search = "",
   paymentChannel = "",
+  donationType = "",
   page = 1,
   limit = 10,
 } = {}) {
@@ -17,6 +18,13 @@ export async function getAdminTransactions({
     const where = { status: "PAID" };
     if (paymentChannel && paymentChannel !== "ALL") {
       where.paymentChannel = { equals: paymentChannel, mode: "insensitive" };
+    }
+    if (donationType && donationType !== "ALL") {
+      if (donationType === "CAMPAIGN") {
+        where.donationType = { not: "ZAKAT" };
+      } else {
+        where.donationType = { equals: donationType, mode: "insensitive" };
+      }
     }
     if (search) {
       where.OR = [
@@ -54,7 +62,8 @@ export async function getAdminTransactions({
         totalAmount: Number(d.totalAmount),
         paymentChannel: d.paymentChannel,
         status: d.status,
-        campaignTitle: d.campaign?.title || "Donasi Umum",
+        donationType: d.donationType || "CAMPAIGN",
+        campaignTitle: d.campaign?.title || (d.donationType === "ZAKAT" ? "Zakat Maal & Fitrah" : "Donasi Umum"),
         campaignSlug: d.campaign?.slug || "",
         createdAt: d.createdAt.toISOString(),
         paidAt: d.paidAt ? d.paidAt.toISOString() : null,

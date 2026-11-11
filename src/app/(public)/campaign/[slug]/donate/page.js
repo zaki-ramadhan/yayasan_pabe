@@ -12,9 +12,17 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const campaign = await getCampaignBySlug(slug);
   if (!campaign) return { title: "Program Tidak Ditemukan" };
+  const isZakat =
+    campaign.slug === "zakat" ||
+    campaign.categoryId === "zakat" ||
+    campaign.categorySlug === "zakat" ||
+    campaign.category?.slug === "zakat";
+
   return {
-    title: `Donasi: ${campaign.title}`,
-    description: `Salurkan donasi Anda untuk ${campaign.title} melalui Yayasan Payung Berkah. Hidup Berkah dengan Sedekah.`,
+    title: isZakat ? `Tunaikan Zakat: ${campaign.title}` : `Donasi: ${campaign.title}`,
+    description: isZakat
+      ? `Tunaikan zakat Anda untuk ${campaign.title} melalui Yayasan Payung Berkah. Bersihkan harta, hadirkan manfaat.`
+      : `Salurkan donasi Anda untuk ${campaign.title} melalui Yayasan Payung Berkah. Hidup Berkah dengan Sedekah.`,
   };
 }
 
@@ -32,7 +40,7 @@ export default async function DonatePage({ params, searchParams }) {
     return <CampaignClosedNotice campaign={campaign} />;
   }
 
-  const rawQuery = sParams?.amount;
+  const rawQuery = sParams?.amount || sParams?.total;
   const sanitized = typeof rawQuery === "string" ? rawQuery.replace(/\D/g, "") : rawQuery;
   const rawAmount = sanitized ? Number(sanitized) : null;
   const initialAmount = rawAmount && !isNaN(rawAmount) && rawAmount > 0 ? rawAmount : 50000;
@@ -42,19 +50,27 @@ export default async function DonatePage({ params, searchParams }) {
     ? sanitizePrayer(rawPrayer.trim()).slice(0, FIELD_LIMITS.PRAYER.max)
     : "";
 
+  const isZakat =
+    campaign.slug === "zakat" ||
+    campaign.categoryId === "zakat" ||
+    campaign.categorySlug === "zakat" ||
+    campaign.category?.slug === "zakat" ||
+    sParams?.type === "ZAKAT";
+
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-4">
       {/* Back button & Title */}
       <div className="space-y-4">
         <BackLink
-          href={`/campaign/${campaign.slug}`}
-          label="Kembali ke detail program"
+          href={isZakat ? "/kalkulator-zakat" : `/campaign/${campaign.slug}`}
+          label={isZakat ? "Kembali ke kalkulator zakat" : "Kembali ke detail program"}
         />
         <PageHeader
-          title="Formulir donasi kebaikan"
+          title={isZakat ? "Tunaikan zakat terbaik Anda" : "Formulir donasi kebaikan"}
           description={
             <>
-              Menyalurkan bantuan untuk: <strong className="text-slate-900 font-semibold">{campaign.title}</strong>
+              {isZakat ? "Menunaikan kewajiban zakat untuk: " : "Menyalurkan bantuan untuk: "}
+              <strong className="text-slate-900 font-semibold">{campaign.title}</strong>
             </>
           }
         />
