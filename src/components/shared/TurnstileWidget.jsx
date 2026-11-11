@@ -44,10 +44,28 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
     onExpireRef.current = onExpire;
   }, [onExpire]);
 
-  const effectiveSiteKey =
+  const [activeSiteKey, setActiveSiteKey] = useState(
     siteKey ||
     process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
-    CLOUDFLARE_TEST_SITE_KEY;
+    CLOUDFLARE_TEST_SITE_KEY
+  );
+
+  useEffect(() => {
+    if (siteKey && siteKey !== CLOUDFLARE_TEST_SITE_KEY) {
+      setActiveSiteKey(siteKey);
+      return;
+    }
+
+    // Fallback runtime query jika siteKey belum diinjeksi saat build
+    fetch("/api/auth/turnstile-config")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.siteKey && data.siteKey !== CLOUDFLARE_TEST_SITE_KEY) {
+          setActiveSiteKey(data.siteKey);
+        }
+      })
+      .catch(() => {});
+  }, [siteKey]);
 
   useImperativeHandle(ref, () => ({
     reset: () => {
@@ -105,7 +123,7 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
         }
 
         widgetIdRef.current = window.turnstile.render(containerRef.current, {
-          sitekey: effectiveSiteKey,
+          sitekey: activeSiteKey,
           action,
           theme,
           size,
@@ -166,7 +184,7 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
         }
       }
     };
-  }, [effectiveSiteKey, action, theme, size]);
+  }, [activeSiteKey, action, theme, size]);
 
   return (
     <div

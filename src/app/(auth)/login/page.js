@@ -3,6 +3,8 @@ import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { AuthFormSkeleton } from "@/components/auth/AuthFormSkeleton";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Masuk Akun Donatur",
   description: "Masuk ke akun donatur Yayasan Payung Berkah untuk mengelola infaq rutin dan e-Kwitansi. Hidup Berkah dengan Sedekah.",
