@@ -189,7 +189,7 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
   return (
     <div
       className={cn(
-        "turnstile-wrapper my-1.5 relative w-full block min-h-[65px]",
+        "turnstile-wrapper mt-1 mb-0 relative w-full block min-h-[65px]",
         className
       )}
     >

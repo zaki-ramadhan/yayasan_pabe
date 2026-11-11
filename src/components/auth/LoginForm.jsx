@@ -325,7 +325,7 @@ export function LoginForm({ siteKey }) {
           isLoading={isLoading}
           disabled={isLoading || isGoogleLoading || isSubmitDisabled}
           variant="primary3d"
-          className="w-full h-11 rounded-lg text-sm mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-11 rounded-lg text-sm mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? "Memverifikasi Kredensial..." : "Masuk ke Akun"}
         </Button>

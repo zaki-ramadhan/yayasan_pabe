@@ -73,7 +73,7 @@ export function AuthFormSkeleton({ mode = "login" }) {
       </div>
 
       {/* Submit Button */}
-      <Skeleton className="h-11 w-full rounded-lg mt-2" />
+      <Skeleton className="h-11 w-full rounded-lg mt-1" />
 
       {/* Switch Link */}
       <div className="pt-2 text-center">
