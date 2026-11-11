@@ -27,7 +27,7 @@ import {
   validateName,
 } from "@/lib/security";
 
-export function RegisterForm() {
+export function RegisterForm({ siteKey }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [name, setName] = useState("");
@@ -214,6 +214,7 @@ export function RegisterForm() {
           <TurnstileWidget
             id="cf-turnstile-register"
             ref={turnstileRef}
+            siteKey={siteKey}
             action="register"
             size="flexible"
             className="w-full"

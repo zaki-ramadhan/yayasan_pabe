@@ -9,10 +9,15 @@ export const metadata = {
 };
 
 export default function LoginPage() {
+  const turnstileSiteKey =
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
+    process.env.TURNSTILE_SITE_KEY ||
+    "";
+
   return (
     <AuthSplitLayout mode="login">
       <Suspense fallback={<AuthFormSkeleton mode="login" />}>
-        <LoginForm />
+        <LoginForm siteKey={turnstileSiteKey} />
       </Suspense>
     </AuthSplitLayout>
   );

@@ -32,7 +32,7 @@ import {
 import { stripEmojis } from "@/lib/security";
 import { cn } from "@/lib/utils";
 
-export function LoginForm() {
+export function LoginForm({ siteKey }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [identifier, setIdentifier] = useState("");
@@ -309,6 +309,7 @@ export function LoginForm() {
           <TurnstileWidget
             id="cf-turnstile-login"
             ref={turnstileRef}
+            siteKey={siteKey}
             action="login"
             size="flexible"
             className="w-full"
