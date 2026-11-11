@@ -7,7 +7,7 @@
 set -e
 
 echo "🚀 [1/5] Mengambil pembaruan kode terbaru dari Git..."
-git pull origin main
+git pull origin master || git pull
 
 echo "📦 [2/5] Memeriksa & memperbarui dependensi..."
 pnpm install --frozen-lockfile
