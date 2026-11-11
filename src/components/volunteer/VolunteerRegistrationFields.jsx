@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { FormField } from "@/components/ui/FormField";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 import { VolunteerRegionSelector } from "@/components/volunteer/VolunteerRegionSelector";
 import { cn } from "@/lib/utils";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
@@ -35,6 +36,9 @@ export function VolunteerRegistrationFields({
   isFormValid = false,
   errors = {},
   setErrors,
+  turnstileToken,
+  setTurnstileToken,
+  turnstileRef,
   onSubmit,
 }) {
   return (
@@ -200,10 +204,21 @@ export function VolunteerRegistrationFields({
         </div>
       </FormField>
 
+      {/* Verifikasi Keamanan Senyap (Invisible Turnstile) */}
+      <TurnstileWidget
+        id="cf-turnstile-volunteer"
+        ref={turnstileRef}
+        action="volunteer"
+        invisible
+        onSuccess={(t) => setTurnstileToken?.(t)}
+        onError={() => setTurnstileToken?.("")}
+        onExpire={() => setTurnstileToken?.("")}
+      />
+
       {/* Submit Button */}
       <Button
         type="submit"
-        disabled={loading}
+        disabled={loading || !turnstileToken}
         className="w-full h-11 text-sm font-semibold bg-emerald-700 hover:bg-emerald-800 text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? "Mengirim pendaftaran..." : "Kirim pendaftaran relawan"}

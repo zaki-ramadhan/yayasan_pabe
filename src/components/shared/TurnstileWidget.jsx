@@ -18,6 +18,8 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
     action = "login",
     theme = "light",
     size = "flexible",
+    appearance,
+    invisible = false,
     className,
     siteKey,
   },
@@ -122,11 +124,15 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
           widgetIdRef.current = null;
         }
 
+        const effectiveAppearance = appearance || (invisible ? "interaction-only" : "always");
+        const effectiveSize = invisible ? "invisible" : size;
+
         widgetIdRef.current = window.turnstile.render(containerRef.current, {
           sitekey: activeSiteKey,
           action,
           theme,
-          size,
+          size: effectiveSize,
+          appearance: effectiveAppearance,
           callback: (token) => {
             setIsWidgetLoaded(true);
             onSuccessRef.current?.(token);
@@ -184,7 +190,21 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
         }
       }
     };
-  }, [activeSiteKey, action, theme, size]);
+  }, [activeSiteKey, action, theme, size, appearance, invisible]);
+
+  if (invisible) {
+    return (
+      <div
+        className={cn(
+          "w-0 h-0 opacity-0 overflow-hidden pointer-events-none absolute",
+          className
+        )}
+        aria-hidden="true"
+      >
+        <div ref={containerRef} />
+      </div>
+    );
+  }
 
   return (
     <div

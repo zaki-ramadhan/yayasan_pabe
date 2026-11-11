@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { toast } from "@/hooks/useToast";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,8 @@ export function ForgotPasswordDialog({
   const [forgotInput, setForgotInput] = useState(initialIdentifier);
   const [forgotError, setForgotError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
 
   const { cooldown, startCooldown, isCoolingDown } = usePersistentCooldown(
     "pabe_pwd_reset_cooldown_until",
@@ -47,8 +50,16 @@ export function ForgotPasswordDialog({
         );
       }
       setForgotError("");
+    } else {
+      setTurnstileToken("");
     }
   }
+
+  useEffect(() => {
+    if (!isOpen) {
+      turnstileRef.current?.reset();
+    }
+  }, [isOpen]);
 
   const isInputValid = useMemo(() => {
     const clean = stripEmojis(forgotInput).trim();
@@ -84,12 +95,14 @@ export function ForgotPasswordDialog({
       const res = await safeFetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: clean }),
+        body: JSON.stringify({ email: clean, turnstileToken }),
         timeoutMs: 15000,
       });
 
       const data = await res.json();
       if (!res.ok || !data.success) {
+        setTurnstileToken("");
+        turnstileRef.current?.reset();
         // Jika gagal: jangan aktifkan cooldown, tetap buka modal agar user bisa perbaiki input
         throw new Error(
           data.message || "Gagal mengirimkan tautan reset kata sandi."
@@ -101,8 +114,12 @@ export function ForgotPasswordDialog({
       toast.success(
         data.message || "Tautan pemulihan kata sandi telah dikirim ke email Anda."
       );
+      setTurnstileToken("");
+      turnstileRef.current?.reset();
       onOpenChange(false);
     } catch (err) {
+      setTurnstileToken("");
+      turnstileRef.current?.reset();
       setForgotError(err.message || "Terjadi kendala saat mengirimkan tautan.");
       toast.error(err.message || "Terjadi kendala saat mengirimkan tautan.");
     } finally {
@@ -113,9 +130,11 @@ export function ForgotPasswordDialog({
   const handleClose = () => {
     onOpenChange(false);
     setForgotError("");
+    setTurnstileToken("");
+    turnstileRef.current?.reset();
   };
 
-  const isSubmitDisabled = !isInputValid || isSubmitting || isCoolingDown;
+  const isSubmitDisabled = !isInputValid || isSubmitting || isCoolingDown || !turnstileToken;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -173,6 +192,19 @@ export function ForgotPasswordDialog({
                   }
                 }}
                 className="h-10 text-sm font-normal"
+              />
+            </FormField>
+
+            <FormField label="Verifikasi keamanan" htmlFor="cf-turnstile-forgot">
+              <TurnstileWidget
+                id="cf-turnstile-forgot"
+                ref={turnstileRef}
+                action="forgot_password"
+                size="flexible"
+                className="w-full mt-1 mb-0"
+                onSuccess={(t) => setTurnstileToken(t)}
+                onError={() => setTurnstileToken("")}
+                onExpire={() => setTurnstileToken("")}
               />
             </FormField>
           </div>

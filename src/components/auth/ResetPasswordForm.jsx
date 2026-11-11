@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { FormField } from "@/components/ui/FormField";
 import { AuthFormHeader } from "@/components/auth/AuthFormHeader";
 import { ResetPasswordFields } from "@/components/auth/ResetPasswordFields";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 
@@ -13,11 +15,13 @@ import { toast } from "@/hooks/useToast";
  * Formulir pengisian kata sandi baru.
  * Single Responsibility: Menangani validasi form, submit ke API, dan feedback.
  */
-export function ResetPasswordForm({ token, userEmail = "", onSuccess }) {
+export function ResetPasswordForm({ token, siteKey, userEmail = "", onSuccess }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
 
   const validateForm = () => {
     const newErrors = {};
@@ -52,12 +56,14 @@ export function ResetPasswordForm({ token, userEmail = "", onSuccess }) {
       const res = await safeFetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword: password }),
+        body: JSON.stringify({ token, newPassword: password, turnstileToken }),
         timeoutMs: 15000,
       });
 
       const data = await res.json();
       if (!res.ok || !data.success) {
+        setTurnstileToken("");
+        turnstileRef.current?.reset();
         throw new Error(data.message || "Gagal mengatur ulang kata sandi.");
       }
 
@@ -66,6 +72,8 @@ export function ResetPasswordForm({ token, userEmail = "", onSuccess }) {
         onSuccess();
       }
     } catch (err) {
+      setTurnstileToken("");
+      turnstileRef.current?.reset();
       toast.error(err.message || "Terjadi kendala saat mengatur ulang kata sandi.");
     } finally {
       setIsSubmitting(false);
@@ -77,6 +85,7 @@ export function ResetPasswordForm({ token, userEmail = "", onSuccess }) {
     password.length < 6 ||
     !confirmPassword.trim() ||
     password !== confirmPassword ||
+    !turnstileToken ||
     isSubmitting;
 
   return (
@@ -100,6 +109,20 @@ export function ResetPasswordForm({ token, userEmail = "", onSuccess }) {
           setErrors={setErrors}
           disabled={isSubmitting}
         />
+
+        <FormField label="Verifikasi keamanan" htmlFor="cf-turnstile-reset">
+          <TurnstileWidget
+            id="cf-turnstile-reset"
+            ref={turnstileRef}
+            siteKey={siteKey}
+            action="reset_password"
+            size="flexible"
+            className="w-full mt-1 mb-0"
+            onSuccess={(t) => setTurnstileToken(t)}
+            onError={() => setTurnstileToken("")}
+            onExpire={() => setTurnstileToken("")}
+          />
+        </FormField>
 
         <Button
           type="submit"

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Loader2, ShieldCheck, CheckCircle2, ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Loader2, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";
@@ -34,8 +35,11 @@ export function DonorSecurityFormCard({
   const isGoogle = provider === "GOOGLE";
   const isPureOAuth = isLinkedOAuth && !hasPassword;
 
+  const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   const validator = useCallback((vals) => {
     if (!vals.oldPassword) return false;
@@ -110,6 +114,39 @@ export function DonorSecurityFormCard({
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsDeletingAccount(true);
+    try {
+      const res = await safeFetch("/api/user/profile", {
+        method: "DELETE",
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || "Gagal memproses penghapusan akun.");
+      }
+
+      setIsDeleteDialogOpen(false);
+      logoutUser();
+      toast({
+        title: "Akun Dihapus",
+        description:
+          json.message ||
+          "Akun Anda berhasil dianonimkan sesuai ketentuan UU PDP.",
+        variant: "success",
+      });
+      router.replace("/");
+    } catch (err) {
+      toast({
+        title: "Gagal Menghapus Akun",
+        description:
+          err.message || "Terjadi kesalahan saat memproses penghapusan akun.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeletingAccount(false);
     }
   };
 
@@ -323,7 +360,7 @@ export function DonorSecurityFormCard({
 
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
+        onClose={() => !isDeletingAccount && setIsDeleteDialogOpen(false)}
         onConfirm={handleDeleteAccount}
         title="Hapus dan anonimkan akun Anda?"
         description="Tindakan ini permanen sesuai UU PDP No. 27/2022. Komitmen donasi rutin Anda akan dibatalkan, data pribadi Anda akan dihapus, dan seluruh riwayat donasi akan dianonimkan menjadi Hamba Allah. Apakah Anda yakin?"

@@ -12,7 +12,7 @@ import { ResetPasswordSuccessState } from "@/components/auth/ResetPasswordSucces
  * Single Responsibility: Mengorkestrasi state siklus hidup token (validating, invalid, valid, success)
  * dan mendelegasikan render ke sub-komponen modular.
  */
-export function ResetPasswordCard({ token }) {
+export function ResetPasswordCard({ token, siteKey }) {
   const [status, setStatus] = useState(token ? "validating" : "invalid");
   const [userEmail, setUserEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState(
@@ -86,6 +86,7 @@ export function ResetPasswordCard({ token }) {
   return (
     <ResetPasswordForm
       token={token}
+      siteKey={siteKey}
       userEmail={userEmail}
       onSuccess={() => setStatus("success")}
     />

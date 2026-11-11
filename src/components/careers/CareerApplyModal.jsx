@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Loader2 } from "lucide-react";
 import {
   Dialog,
@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/Button";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 import { CareerApplySuccessState } from "./CareerApplySuccessState";
 import { CareerApplyFormFields } from "./CareerApplyFormFields";
 import { sanitizeInput, sanitizeName, sanitizePhone, sanitizeEmail } from "@/lib/security";
@@ -50,6 +51,8 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errors, setErrors] = useState({});
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
 
   const { trackUpload, commitUploads, discardUploads } = useStagedUploads();
 
@@ -57,6 +60,8 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     if (!isSuccess) {
       discardUploads();
     }
+    setTurnstileToken("");
+    turnstileRef.current?.reset();
     onClose();
   };
 
@@ -190,12 +195,15 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
           phone: phoneValidation.sanitized,
           resumeUrl: formData.resumeUrl.trim(),
           coverLetter: coverLetterTrimmed,
+          turnstileToken,
         }),
         timeoutMs: 15000,
       });
 
       const result = await response.json();
       if (!response.ok || !result.success) {
+        setTurnstileToken("");
+        turnstileRef.current?.reset();
         throw new Error(result.message || "Gagal mengirimkan lamaran.");
       }
 
@@ -212,6 +220,8 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
       } catch {}
       toast.success("Lamaran berhasil dikirim. Tim kami akan segera meninjaunya.");
     } catch (error) {
+      setTurnstileToken("");
+      turnstileRef.current?.reset();
       toast.error(error.message || "Terjadi kendala saat mengirimkan lamaran.");
     } finally {
       setIsSubmitting(false);
@@ -245,6 +255,17 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
                 requiresResume={requiresResume}
                 errors={errors}
               />
+
+              {/* Verifikasi Keamanan Senyap (Invisible Turnstile) */}
+              <TurnstileWidget
+                id="cf-turnstile-career"
+                ref={turnstileRef}
+                action="career_apply"
+                invisible
+                onSuccess={(t) => setTurnstileToken(t)}
+                onError={() => setTurnstileToken("")}
+                onExpire={() => setTurnstileToken("")}
+              />
             </div>
 
             <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex items-center justify-end gap-2.5">
@@ -259,8 +280,8 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting}
-                className="h-10 text-sm bg-primary hover:bg-primary-hover text-white font-medium px-4 cursor-pointer gap-1.5 disabled:pointer-events-none disabled:cursor-not-allowed"
+                disabled={isSubmitting || !turnstileToken}
+                className="h-10 text-sm bg-primary hover:bg-primary-hover text-white font-medium px-4 cursor-pointer gap-1.5 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
               >
                 {isSubmitting && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
                 <span>{isSubmitting ? "Mengirimkan..." : "Kirim Lamaran"}</span>

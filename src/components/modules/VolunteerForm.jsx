@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getStoredUser, loginUser } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -100,6 +100,8 @@ export function VolunteerForm() {
   const [checkingStatus, setCheckingStatus] = useState(() => Boolean(userEmail));
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
 
   // Cancellation Modal State
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -186,9 +188,12 @@ export function VolunteerForm() {
         email: email.trim().toLowerCase(),
         city: city.trim(),
         motivation: motivation.trim().slice(0, FIELD_LIMITS.MOTIVATION.max),
+        turnstileToken,
       });
 
       if (!res.success) {
+        turnstileRef.current?.reset();
+        setTurnstileToken("");
         throw new Error(res.message);
       }
 
@@ -211,6 +216,8 @@ export function VolunteerForm() {
         router.push("/login?redirect=/donatur/relawan");
       }
     } catch (err) {
+      turnstileRef.current?.reset();
+      setTurnstileToken("");
       toast.error(err.message || "Gagal mengirim pendaftaran relawan.");
     } finally {
       setLoading(false);
@@ -316,6 +323,9 @@ export function VolunteerForm() {
       isFormValid={isFormValid}
       errors={errors}
       setErrors={setErrors}
+      turnstileToken={turnstileToken}
+      setTurnstileToken={setTurnstileToken}
+      turnstileRef={turnstileRef}
       onSubmit={handleSubmit}
     />
   );

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { checkRateLimit } from "@/lib/rateLimit";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { validatePasswordInput } from "@/lib/validator";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 import {
   verifyPasswordResetToken,
   resetPasswordWithToken,
@@ -73,7 +74,21 @@ export async function POST(request) {
     if (rateLimitBlocked) return rateLimitBlocked;
 
     const body = await request.json().catch(() => ({}));
-    const { token, newPassword } = body || {};
+    const { token, newPassword, turnstileToken } = body || {};
+
+    // Validasi Anti-Bot Cloudflare Turnstile
+    const clientIp = getClientIp(request);
+    const turnstileCheck = await verifyTurnstileToken(turnstileToken, clientIp);
+    if (!turnstileCheck.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: turnstileCheck.message || "Verifikasi keamanan Turnstile gagal.",
+          errorCodes: turnstileCheck.errorCodes,
+        },
+        { status: 403 }
+      );
+    }
 
     if (!token || typeof token !== "string") {
       return NextResponse.json(

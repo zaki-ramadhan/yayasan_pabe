@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { checkRateLimit, rollbackRateLimit } from "@/lib/rateLimit";
+import { checkRateLimit, rollbackRateLimit, getClientIp } from "@/lib/rateLimit";
 import { validateEmail } from "@/lib/security";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 import {
   requestPasswordReset,
   checkDailyPasswordResetLimit,
@@ -27,7 +28,24 @@ export async function POST(request) {
     if (rateLimitBlocked) return rateLimitBlocked;
 
     const body = await request.json().catch(() => ({}));
-    const { email } = body || {};
+    const { email, turnstileToken } = body || {};
+
+    // Validasi Anti-Bot Cloudflare Turnstile
+    const clientIp = getClientIp(request);
+    const turnstileCheck = await verifyTurnstileToken(turnstileToken, clientIp);
+    if (!turnstileCheck.success) {
+      if (!isRateLimitDisabled) {
+        rollbackRateLimit(request, { action: ipRateLimitAction });
+      }
+      return NextResponse.json(
+        {
+          success: false,
+          message: turnstileCheck.message || "Verifikasi keamanan Turnstile gagal.",
+          errorCodes: turnstileCheck.errorCodes,
+        },
+        { status: 403 }
+      );
+    }
 
     const cleanEmail = String(email || "").trim().toLowerCase();
     const emailCheck = validateEmail(cleanEmail, true);
