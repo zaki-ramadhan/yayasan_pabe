@@ -70,10 +70,16 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
     emas: false,
   });
 
-  // Hidrasi sesi dari sessionStorage
+  // Flag reaktif agar tidak menimpa storage saat pertama kali mount sebelum restorasi selesai
+  const [isRestored, setIsRestored] = useState(false);
+
+  // Hidrasi sesi dari localStorage / sessionStorage saat pertama kali dibuka
   useEffect(() => {
     try {
-      const saved = sessionStorage.getItem("zakat_calculator_state");
+      const saved =
+        (typeof window !== "undefined" && localStorage.getItem("zakat_calculator_state")) ||
+        (typeof window !== "undefined" && sessionStorage.getItem("zakat_calculator_state"));
+
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed.activeMode) setActiveMode(parsed.activeMode);
@@ -86,11 +92,15 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
       }
     } catch {
       // Abaikan jika parsing gagal
+    } finally {
+      setIsRestored(true);
     }
   }, []);
 
-  // Simpan sinkronisasi sesi ke sessionStorage
+  // Simpan sinkronisasi sesi ke localStorage & sessionStorage (hanya setelah restorasi selesai)
   useEffect(() => {
+    if (!isRestored) return;
+
     try {
       const dataToSave = {
         activeMode,
@@ -101,11 +111,13 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
         emas,
         calculatedState,
       };
-      sessionStorage.setItem("zakat_calculator_state", JSON.stringify(dataToSave));
+      const serialized = JSON.stringify(dataToSave);
+      localStorage.setItem("zakat_calculator_state", serialized);
+      sessionStorage.setItem("zakat_calculator_state", serialized);
     } catch {
-      // Abaikan jika kuota penuh
+      // Abaikan jika kuota storage penuh
     }
-  }, [activeMode, penghasilan, maal, perusahaan, perdagangan, emas, calculatedState]);
+  }, [isRestored, activeMode, penghasilan, maal, perusahaan, perdagangan, emas, calculatedState]);
 
   const updateField = (setter) => (field, value) => {
     setter((prev) => ({ ...prev, [field]: value }));

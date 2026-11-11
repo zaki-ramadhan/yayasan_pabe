@@ -6,12 +6,13 @@ import { formatRupiah } from "@/lib/formatters";
  */
 export function FundedAmountDisplay({
   amount,
+  label = "Dana Terkumpul",
   labelClassName = "text-sm text-slate-700 block",
   amountClassName = "text-lg sm:text-xl font-semibold text-primary",
 }) {
   return (
     <div>
-      <span className={labelClassName}>Dana Terkumpul</span>
+      <span className={labelClassName}>{label}</span>
       <span className={amountClassName}>{formatRupiah(amount)}</span>
     </div>
   );

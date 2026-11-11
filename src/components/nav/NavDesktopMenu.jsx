@@ -85,7 +85,7 @@ export function NavDesktopMenu({ pathname }) {
 				</DropdownMenuTrigger>
 				<DropdownMenuContent
 					align="start"
-					className="w-60 p-1.5 shadow-md bg-white border border-slate-200 rounded-lg"
+					className="w-64 p-1.5 shadow-md bg-white border border-slate-200 rounded-lg"
 				>
 					{PROGRAM_MENU.map((item) => {
 						const isActive = isNavItemActive(item.href, pathname);

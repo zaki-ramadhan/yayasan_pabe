@@ -32,11 +32,11 @@ export function ZakatResultPanel({
     setTimeout(() => setIsSaved(false), 2500);
 
     if (copied) {
-      toast.success("Hasil Perhitungan Disimpan", {
-        description: "Rincian zakat aktif di sesi Anda dan telah disalin ke papan klip.",
+      toast.success("Rincian Disalin", {
+        description: "Rincian perhitungan zakat telah disalin ke papan klip.",
       });
     } else {
-      toast.info("Hasil Perhitungan Disimpan", {
+      toast.info("Rincian Zakat Aktif", {
         description: "Rincian zakat aktif tersimpan di sesi browser Anda.",
       });
     }
@@ -51,9 +51,9 @@ export function ZakatResultPanel({
     <div className="rounded-lg border border-slate-200 bg-white p-6 sm:p-7 space-y-6 shadow-xs">
       {/* 1. Header Hero Number ala Earnest */}
       <div className="space-y-1.5">
-        <span className="text-sm font-medium text-slate-600 uppercase tracking-wider block">
+        <h2 className="text-xl font-medium text-slate-950">
           Total Kewajiban Zakat
-        </span>
+        </h2>
         <div className="text-3xl sm:text-4xl font-medium text-slate-950 tracking-tight flex items-baseline gap-1.5">
           <span className="text-xl sm:text-2xl font-medium text-slate-950">
             Rp
@@ -143,7 +143,7 @@ export function ZakatResultPanel({
           onClick={handleSaveResult}
           className="w-full h-10 text-sm font-medium rounded-md border-slate-300 text-slate-700 hover:text-slate-900 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
         >
-          {isSaved ? "Hasil tersimpan" : "Simpan hasil perhitungan"}
+          {isSaved ? "Rincian tersalin" : "Salin rincian perhitungan"}
         </Button>
 
         {!isNisabMet && (

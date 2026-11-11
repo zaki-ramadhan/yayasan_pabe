@@ -2,8 +2,10 @@
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { Loader2 } from "lucide-react";
-import { CATEGORIES } from "@/data/categories";
-import { PROGRAM_SORT_OPTIONS, PROGRAM_STATUS_FILTER_OPTIONS } from "@/data/sortOptions";
+import {
+  PROGRAM_SORT_OPTIONS,
+  PROGRAM_STATUS_FILTER_OPTIONS,
+} from "@/data/sortOptions";
 import { useCatalogState } from "@/hooks/useCatalogState";
 import { isCampaignClosed } from "@/lib/formatters";
 import { CampaignCard } from "@/components/shared/CampaignCard";
@@ -15,6 +17,17 @@ import { EmptyState } from "@/components/shared/EmptyState";
 const BATCH_SIZE = 6;
 
 function filterCampaign(campaign, { category, searchQuery, categories, status = "all" }) {
+  // Selalu filter keluar program zakat/ZIS dari katalog program donasi umum
+  const isZakat =
+    campaign?.slug === "zakat" ||
+    campaign?.categoryId === "zakat" ||
+    campaign?.categorySlug === "zakat" ||
+    campaign?.category?.slug === "zakat" ||
+    campaign?.categoryName?.toLowerCase().includes("zakat") ||
+    campaign?.categoryName?.toLowerCase().includes("zis");
+
+  if (isZakat) return false;
+
   if (category !== "all" && category !== "semua") {
     const catName = categories.find((c) => c.id === category)?.name ?? "";
     const matchCategory =
@@ -50,7 +63,7 @@ function sortCampaigns(items, sortBy) {
   return sorted;
 }
 
-export function ProgramCatalog({ initialCampaigns = [], categories = CATEGORIES }) {
+export function ProgramCatalog({ initialCampaigns = [], categories = [] }) {
   const [statusFilter, setStatusFilter] = useState("all");
 
   const filterFn = useCallback(

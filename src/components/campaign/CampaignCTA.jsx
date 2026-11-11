@@ -50,13 +50,30 @@ export function CampaignCTA({
     return null;
   }
 
-  const effectiveTitle = title || "Salurkan Sedekah & Doa Terbaik Anda";
+  const isZakat =
+    campaign?.slug === "zakat" ||
+    campaign?.categoryId === "zakat" ||
+    campaign?.categorySlug === "zakat" ||
+    campaign?.category?.slug === "zakat" ||
+    campaign?.categoryName?.toLowerCase().includes("zakat") ||
+    campaign?.categoryName?.toLowerCase().includes("ziswaf");
+
+  const effectiveTitle =
+    title || (isZakat ? "Tunaikan Kewajiban Zakat Anda" : "Salurkan Sedekah & Doa Terbaik Anda");
   const effectiveDescription =
     description ||
-    "Satu sedekah tulus Anda menghadirkan senyuman dan harapan bagi saudara yang membutuhkan.";
-  const effectiveButtonText = buttonText || "Ikut Berdonasi Sekarang";
+    (isZakat
+      ? "Sucikan harta dan bersihkan jiwa dengan menunaikan zakat tepat sasaran kepada 8 asnaf mustahik binaan."
+      : "Satu sedekah tulus Anda menghadirkan senyuman dan harapan bagi saudara yang membutuhkan.");
+  const effectiveButtonText =
+    buttonText || (isZakat ? "Tunaikan Zakat Sekarang" : "Ikut Berdonasi Sekarang");
   const effectiveHref =
-    buttonHref || (campaign?.slug ? `/campaign/${campaign.slug}/donate` : "/program");
+    buttonHref ||
+    (isZakat
+      ? "/zakat/bayar"
+      : campaign?.slug
+      ? `/campaign/${campaign.slug}/donate`
+      : "/program");
   const effectiveBannerUrl =
     campaign?.bannerUrl || ASSET_PATHS.BANNERS.CTA_MAIN;
 

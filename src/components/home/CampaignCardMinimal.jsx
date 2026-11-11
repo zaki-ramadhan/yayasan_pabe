@@ -19,6 +19,11 @@ export function CampaignCardMinimal({
   const hasTarget = Boolean(campaign.targetAmount && Number(campaign.targetAmount) > 0);
   const progress = hasTarget ? calculateProgress(campaign.collectedAmount, campaign.targetAmount) : 0;
   const isClosed = isCampaignClosed(campaign);
+  const isZakat =
+    campaign?.slug === "zakat" ||
+    campaign?.categoryId === "zakat" ||
+    campaign?.categorySlug === "zakat" ||
+    campaign?.category?.slug === "zakat";
 
   return (
     <div
@@ -105,7 +110,7 @@ export function CampaignCardMinimal({
             <Button
               className="w-full h-8.5 sm:h-9 rounded-lg text-xs sm:text-sm font-medium bg-primary hover:bg-primary-hover text-white shadow-none cursor-pointer"
             >
-              Donasi Sekarang
+              {isZakat ? "Tunaikan Zakat" : "Donasi Sekarang"}
             </Button>
           )}
         </Link>

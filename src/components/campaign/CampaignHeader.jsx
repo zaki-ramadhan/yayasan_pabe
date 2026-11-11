@@ -15,6 +15,13 @@ export function CampaignHeader({ campaign, progress, daysLeft }) {
 		daysLeft !== null,
 	);
 	const isClosed = isCampaignClosed(campaign);
+	const isZakat =
+		campaign?.slug === "zakat" ||
+		campaign?.categoryId === "zakat" ||
+		campaign?.categorySlug === "zakat" ||
+		campaign?.category?.slug === "zakat" ||
+		campaign?.categoryName?.toLowerCase().includes("zakat") ||
+		campaign?.categoryName?.toLowerCase().includes("ziswaf");
 
 	return (
 		<div className="space-y-3">
@@ -58,6 +65,7 @@ export function CampaignHeader({ campaign, progress, daysLeft }) {
 					<div className="space-y-2">
 						<FundedAmountDisplay
 							amount={campaign.collectedAmount}
+							label={isZakat ? "Zakat Terhimpun" : "Dana Terkumpul"}
 							labelClassName="text-sm text-slate-700 block font-normal"
 							amountClassName="text-2xl font-semibold text-slate-950 tracking-tight block"
 						/>
@@ -78,11 +86,12 @@ export function CampaignHeader({ campaign, progress, daysLeft }) {
 					<div className="space-y-1">
 						<FundedAmountDisplay
 							amount={campaign.collectedAmount}
+							label={isZakat ? "Zakat Terhimpun" : "Dana Terkumpul"}
 							labelClassName="text-sm text-slate-700 block font-normal"
 							amountClassName="text-2xl font-semibold text-slate-950 tracking-tight block"
 						/>
 						<span className="text-sm text-emerald-700 font-medium block">
-							Program Berkelanjutan
+							{isZakat ? "Penyaluran Berkelanjutan" : "Program Berkelanjutan"}
 						</span>
 					</div>
 				)}
@@ -94,7 +103,7 @@ export function CampaignHeader({ campaign, progress, daysLeft }) {
 							{campaign.donorCount}
 						</span>
 						<span className="text-sm text-slate-600">
-							Orang Baik
+							{isZakat ? "Muzakki" : "Donatur"}
 						</span>
 					</div>
 					<div className="pl-3">

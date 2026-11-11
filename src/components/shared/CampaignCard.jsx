@@ -20,6 +20,13 @@ export function CampaignCard({
   const daysLeft = calculateDaysLeft(campaign.endDate);
   const totalDonors = campaign.donorCount || 0;
   const isClosed = isCampaignClosed(campaign);
+  const isZakat =
+    campaign?.slug === "zakat" ||
+    campaign?.categoryId === "zakat" ||
+    campaign?.categorySlug === "zakat" ||
+    campaign?.category?.slug === "zakat" ||
+    campaign?.categoryName?.toLowerCase().includes("zakat") ||
+    campaign?.categoryName?.toLowerCase().includes("ziswaf");
 
   return (
     <div className={cn("flex flex-col h-full w-full rounded-xl border border-slate-300 bg-white overflow-hidden", className)}>
@@ -111,7 +118,7 @@ export function CampaignCard({
           <div className="flex items-center gap-1.5 min-w-0">
             <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
             <span className="text-slate-600 font-normal truncate">
-              <strong className="text-slate-900 font-medium">{totalDonors}</strong> donatur
+              <strong className="text-slate-900 font-medium">{totalDonors}</strong> {isZakat ? "muzakki" : "donatur"}
             </span>
           </div>
 
@@ -143,7 +150,7 @@ export function CampaignCard({
             <Button
               className="w-full h-9 rounded-lg text-sm font-medium bg-primary hover:bg-primary text-white hover:text-white shadow-none cursor-pointer transition-none"
             >
-              Donasi Sekarang
+              {isZakat ? "Tunaikan Zakat" : "Donasi Sekarang"}
             </Button>
           )}
         </Link>

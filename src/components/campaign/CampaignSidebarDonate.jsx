@@ -19,6 +19,15 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 		daysLeft !== null,
 	);
 	const isClosed = isCampaignClosed(campaign);
+	const isZakat =
+		campaign?.slug === "zakat" ||
+		campaign?.categoryId === "zakat" ||
+		campaign?.categorySlug === "zakat" ||
+		campaign?.category?.slug === "zakat" ||
+		campaign?.categoryName?.toLowerCase().includes("zakat") ||
+		campaign?.categoryName?.toLowerCase().includes("ziswaf");
+	const donateHref = isZakat ? "/zakat/bayar" : `/campaign/${campaign.slug}/donate`;
+	const ctaLabel = isZakat ? "Tunaikan Zakat" : "Donasi Sekarang";
 
 	return (
 		<div id="tour-sidebar-donate" className="lg:col-span-4 hidden lg:block sticky top-24 space-y-4">
@@ -27,6 +36,7 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 					<div className="space-y-2.5">
 						<FundedAmountDisplay
 							amount={campaign.collectedAmount}
+							label={isZakat ? "Zakat Terhimpun" : "Dana Terkumpul"}
 							labelClassName="text-sm sm:text-base text-slate-700 block font-normal"
 							amountClassName="text-3xl font-semibold text-slate-950 tracking-tight block"
 						/>
@@ -57,6 +67,7 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 					<div className="space-y-2.5">
 						<FundedAmountDisplay
 							amount={campaign.collectedAmount}
+							label={isZakat ? "Zakat Terhimpun" : "Dana Terkumpul"}
 							labelClassName="text-sm sm:text-base text-slate-700 block font-normal"
 							amountClassName="text-3xl font-semibold text-slate-950 tracking-tight block"
 						/>
@@ -70,7 +81,7 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 							{campaign.donorCount}
 						</span>
 						<span className="text-sm text-slate-700">
-							Orang Baik
+							{isZakat ? "Muzakki" : "Donatur"}
 						</span>
 					</div>
 					<div className="pl-3">
@@ -97,24 +108,26 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 							disabled
 							className="w-full text-base font-normal h-10.5 rounded-lg bg-slate-200 text-slate-600 cursor-not-allowed shadow-none"
 						>
-							Penggalangan Dana Ditutup
+							{isZakat ? "Penyaluran Zakat Ditutup" : "Penggalangan Dana Ditutup"}
 						</Button>
 						<p className="text-sm text-slate-700 text-center leading-relaxed px-1">
-							Program telah selesai. Terima kasih atas kepedulian Anda.
+							{isZakat
+								? "Program zakat telah disalurkan. Terima kasih atas kepedulian Anda."
+								: "Program telah selesai. Terima kasih atas kepedulian Anda."}
 						</p>
 					</div>
 				) : (
 					<>
 						<div className="flex items-center gap-2">
 							<Link
-								href={`/campaign/${campaign.slug}/donate`}
+								href={donateHref}
 								className="flex-1"
 							>
 								<Button
 									size="lg"
 									className="w-full text-base font-normal h-10.5 shadow-xs rounded-lg bg-primary hover:bg-primary-hover text-white cursor-pointer"
 								>
-									Donasi Sekarang
+									{ctaLabel}
 								</Button>
 							</Link>
 							<SidebarTourButton slug={campaign.slug} hasDonations={hasDonations} />

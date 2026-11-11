@@ -4,14 +4,14 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { ProgramCatalog } from "@/components/modules/ProgramCatalog";
 import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Program Donasi",
-  description: "Temukan berbagai program donasi, beasiswa anak yatim, tanggap bencana, dan zakat produktif Yayasan Payung Berkah.",
+  description: "Temukan berbagai program donasi kemanusiaan, beasiswa anak yatim, tanggap bencana, dan pemberdayaan umat Yayasan Payung Berkah.",
   openGraph: {
     title: "Program Donasi - Yayasan Payung Berkah",
-    description: "Temukan berbagai program donasi, beasiswa anak yatim, tanggap bencana, dan zakat produktif Yayasan Payung Berkah.",
+    description: "Temukan berbagai program donasi kemanusiaan, beasiswa anak yatim, tanggap bencana, dan pemberdayaan umat Yayasan Payung Berkah.",
     url: "/program",
     type: "website",
     images: [
@@ -26,16 +26,24 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Program Donasi - Yayasan Payung Berkah",
-    description: "Temukan berbagai program donasi dan zakat produktif Yayasan Payung Berkah.",
+    description: "Temukan berbagai program donasi kemanusiaan dan pemberdayaan umat Yayasan Payung Berkah.",
     images: ["/img/branding/logo-ypabe.webp"],
   },
 };
 
 export default async function ProgramPage() {
-  const [campaigns, categories] = await Promise.all([
-    getCampaigns(),
+  const [campaigns, allCategories] = await Promise.all([
+    getCampaigns({ excludeZakat: true }),
     getCategories(),
   ]);
+
+  const categories = allCategories.filter(
+    (c) =>
+      c.id !== "zakat" &&
+      c.slug !== "zakat" &&
+      !c.name.toLowerCase().includes("zakat") &&
+      !c.name.toLowerCase().includes("zis")
+  );
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">

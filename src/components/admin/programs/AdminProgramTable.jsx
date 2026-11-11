@@ -40,6 +40,7 @@ export function AdminProgramTable({
   initialCampaigns = [],
   categories = [],
   initialEditId,
+  initialCategoryFilter = "ALL",
   initialError = null,
 }) {
   const [error, setError] = useState(initialError);
@@ -52,10 +53,21 @@ export function AdminProgramTable({
     );
   }, [initialEditId, initialCampaigns]);
 
+  const resolvedInitialCat = useMemo(() => {
+    if (!initialCategoryFilter || initialCategoryFilter === "ALL") return "ALL";
+    const found = (categories || []).find(
+      (c) =>
+        c.id === initialCategoryFilter ||
+        c.slug === initialCategoryFilter ||
+        c.name?.toLowerCase() === initialCategoryFilter.toLowerCase()
+    );
+    return found ? (found.id || found.name) : initialCategoryFilter;
+  }, [initialCategoryFilter, categories]);
+
   const [campaigns, setCampaigns] = useState(initialCampaigns);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [categoryFilter, setCategoryFilter] = useState("ALL");
+  const [categoryFilter, setCategoryFilter] = useState(resolvedInitialCat);
   const [isModalOpen, setIsModalOpen] = useState(Boolean(initialEditCampaign));
   const [editingCampaign, setEditingCampaign] = useState(initialEditCampaign);
   const [isLoading, setIsLoading] = useState(false);

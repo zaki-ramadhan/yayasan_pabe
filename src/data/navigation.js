@@ -1,5 +1,6 @@
 export const PROGRAM_MENU = [
-  { label: "Semua Program Donasi", href: "/program" },
+  { label: "Program Donasi", href: "/program" },
+  { label: "Zakat, Infaq & Sedekah", href: "/zis" },
   { label: "Donasi Rutin", href: "/donasi-rutin" },
 ];
 
@@ -15,6 +16,7 @@ export const INFORMASI_MENU = [
 export const FOOTER_QUICK_LINKS = [
   { label: "Tentang Kami", href: "/tentang-kami" },
   { label: "Program Donasi", href: "/program" },
+  { label: "Zakat, Infaq & Sedekah", href: "/zis" },
   { label: "Donasi Rutin", href: "/donasi-rutin" },
   { label: "Berita & Artikel", href: "/artikel" },
   { label: "Galeri Dokumentasi", href: "/galeri" },
@@ -31,8 +33,14 @@ export function isNavItemActive(href, pathname) {
   if (href === "/") {
     return pathname === "/";
   }
+  if (href === "/zis") {
+    return pathname === "/zis" || pathname.startsWith("/zis/") || pathname.startsWith("/zakat");
+  }
   if (href === "/program") {
-    return pathname === "/program" || pathname.startsWith("/campaign") || pathname.startsWith("/program/");
+    return (
+      (pathname === "/program" || pathname.startsWith("/program/")) ||
+      (pathname.startsWith("/campaign") && !pathname.includes("zakat"))
+    );
   }
   if (href === "/artikel") {
     return pathname === "/artikel" || pathname.startsWith("/artikel/");

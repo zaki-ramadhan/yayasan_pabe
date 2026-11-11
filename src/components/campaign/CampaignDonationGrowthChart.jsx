@@ -22,6 +22,14 @@ export function CampaignDonationGrowthChart({
   const [timeRange, setTimeRange] = React.useState("30d");
   const [viewMode, setViewMode] = React.useState("all"); // 'all' | 'daily' | 'cumulative'
 
+  const isZakat =
+    campaign?.slug === "zakat" ||
+    campaign?.categoryId === "zakat" ||
+    campaign?.categorySlug === "zakat" ||
+    campaign?.category?.slug === "zakat" ||
+    campaign?.categoryName?.toLowerCase().includes("zakat") ||
+    campaign?.categoryName?.toLowerCase().includes("ziswaf");
+
   const { chartData, summaryMetrics, currentChartConfig } = useCampaignChartData({
     initialData,
     campaign,
@@ -35,10 +43,12 @@ export function CampaignDonationGrowthChart({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="space-y-0.5">
           <h3 className="text-base sm:text-lg font-semibold text-slate-950">
-            Grafik Perkembangan Donasi
+            {isZakat ? "Grafik Penghimpunan Zakat" : "Grafik Perkembangan Donasi"}
           </h3>
           <p className="text-sm sm:text-base text-slate-600">
-            Visualisasi akumulasi dana dan tren donasi harian yang terverifikasi sistem.
+            {isZakat
+              ? "Visualisasi akumulasi dana dan tren penunaian zakat yang terverifikasi sistem."
+              : "Visualisasi akumulasi dana dan tren donasi harian yang terverifikasi sistem."}
           </p>
         </div>
 

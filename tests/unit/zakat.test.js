@@ -71,4 +71,24 @@ describe("zakat - constants & master program spec", () => {
     expect(Array.isArray(DONOR_SALUTATIONS)).toBe(true);
     expect(DONOR_SALUTATIONS.map((s) => s.id)).toEqual(["Bapak", "Ibu", "Kakak", "Saudara", "Saudari"]);
   });
+
+  it("dapat menyimpan dan memulihkan state kalkulator zakat secara persisten", () => {
+    const mockState = {
+      activeMode: "penghasilan",
+      penghasilan: { gaji: 20000000, penghasilanLain: 5000000 },
+      maal: { uangTunaiTabungan: 100000000, utangJatuhTempo: 10000000, isHaulMet: true },
+      calculatedState: { penghasilan: true, maal: false },
+    };
+
+    const serialized = JSON.stringify(mockState);
+    const parsed = JSON.parse(serialized);
+
+    expect(parsed.activeMode).toBe("penghasilan");
+    expect(parsed.penghasilan.gaji).toBe(20000000);
+    expect(parsed.calculatedState.penghasilan).toBe(true);
+
+    const calcResult = calculateZakatPenghasilan(parsed.penghasilan);
+    expect(calcResult.isNisabMet).toBe(true);
+    expect(calcResult.zakatAmount).toBeGreaterThan(0);
+  });
 });

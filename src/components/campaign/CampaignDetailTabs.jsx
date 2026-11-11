@@ -30,6 +30,14 @@ export function CampaignDetailTabs({
   activeTab,
   onTabChange,
 }) {
+  const isZakat =
+    campaign?.slug === "zakat" ||
+    campaign?.categoryId === "zakat" ||
+    campaign?.categorySlug === "zakat" ||
+    campaign?.category?.slug === "zakat" ||
+    campaign?.categoryName?.toLowerCase().includes("zakat") ||
+    campaign?.categoryName?.toLowerCase().includes("ziswaf");
+
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="w-full pt-2 sm:pt-3">
       <TabsList className="w-full justify-start border-b border-slate-300 pb-0 rounded-none bg-transparent h-auto p-0 gap-0 overflow-x-auto flex-nowrap">
@@ -64,7 +72,7 @@ export function CampaignDetailTabs({
             value="riwayat"
             className={TAB_TRIGGER_CLASS}
           >
-            Riwayat Donasi{campaign.donorCount > 0 ? ` (${campaign.donorCount})` : ""}
+            {isZakat ? "Riwayat Zakat" : "Riwayat Donasi"}{campaign.donorCount > 0 ? ` (${campaign.donorCount})` : ""}
           </TabsTrigger>
         )}
       </TabsList>
@@ -95,6 +103,7 @@ export function CampaignDetailTabs({
             donors={campaign.recentDonors || []}
             totalDonorsCount={campaign.donorCount || 0}
             campaignSlug={campaign.slug}
+            isZakat={isZakat}
           />
         </TabsContent>
       )}

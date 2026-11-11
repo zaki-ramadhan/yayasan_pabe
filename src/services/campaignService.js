@@ -1,14 +1,21 @@
 import prisma from "@/lib/prisma";
 import { isCampaignClosed } from "@/lib/formatters";
 import { formatCampaignFromDb } from "./campaignFormatter";
-import { CAMPAIGNS } from "@/data/campaigns";
 import { DEFAULT_ZAKAT_SPEC } from "@/constants/zakatProgram";
+import { ZIS_CAMPAIGN_WHERE } from "@/lib/zisFilter";
 
-export async function getCampaigns({ category = "all", search = "", sort = "terbaru", status } = {}) {
+export async function getCampaigns({ category = "all", search = "", sort = "terbaru", status, excludeZakat = false } = {}) {
   try {
     const where = {};
     if (status) {
       where.status = status;
+    }
+
+    if (excludeZakat) {
+      where.AND = [
+        ...(where.AND || []),
+        { NOT: ZIS_CAMPAIGN_WHERE },
+      ];
     }
 
     if (category && category !== "all" && category !== "semua") {
@@ -46,12 +53,54 @@ export async function getCampaigns({ category = "all", search = "", sort = "terb
 
     return dbCampaigns.map(formatCampaignFromDb);
   } catch (error) {
-    console.warn("Prisma getCampaigns fallback warning:", error.message);
-    let fallback = CAMPAIGNS;
+    console.error("Prisma getCampaigns error:", error.message);
+    return [];
+  }
+}
+
+export async function getZisCampaigns({ search = "", sort = "terbaru", status } = {}) {
+  try {
+    const where = {
+      ...ZIS_CAMPAIGN_WHERE,
+    };
     if (status) {
-      fallback = fallback.filter((c) => c.status === status);
+      where.status = status;
     }
-    return fallback;
+    if (search && search.trim().length >= 2) {
+      where.title = { contains: search.trim(), mode: "insensitive" };
+    }
+
+    let orderBy = { endDate: "desc" };
+    if (sort === "terpopuler") {
+      orderBy = { donorCount: "desc" };
+    } else if (sort === "dana-terbanyak") {
+      orderBy = { collectedAmount: "desc" };
+    }
+
+    const dbCampaigns = await prisma.campaign.findMany({
+      where,
+      orderBy,
+      include: {
+        category: true,
+        updates: { orderBy: { date: "desc" } },
+        donations: {
+          where: { status: "PAID" },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+        },
+      },
+    });
+
+    const formatted = dbCampaigns.map(formatCampaignFromDb);
+    if (formatted.length === 0) {
+      const defaultZakat = await getOrCreateDefaultZakatCampaign();
+      return defaultZakat ? [defaultZakat] : [];
+    }
+    return formatted;
+  } catch (error) {
+    console.error("Prisma getZisCampaigns error:", error.message);
+    const defaultZakat = await getOrCreateDefaultZakatCampaign();
+    return defaultZakat ? [defaultZakat] : [];
   }
 }
 
@@ -217,16 +266,9 @@ export async function getCategories() {
       ];
     }
   } catch (error) {
-    console.warn("Prisma getCategories fallback:", error.message);
+    console.error("Prisma getCategories error:", error.message);
   }
-  return [
-    { id: "all", name: "Semua Program", slug: "all" },
-    { id: "pendidikan", name: "Pendidikan & Beasiswa", slug: "pendidikan" },
-    { id: "bencana", name: "Tanggap Bencana", slug: "bencana" },
-    { id: "zakat", name: "ZISWAF", slug: "zakat" },
-    { id: "yatim", name: "Kemandirian Yatim", slug: "yatim" },
-    { id: "ekonomi", name: "Pemberdayaan Umat", slug: "ekonomi" },
-  ];
+  return [{ id: "all", name: "Semua Program", slug: "all", count: 0 }];
 }
 
 export { getCampaignUpdates } from "./campaignFeedService";

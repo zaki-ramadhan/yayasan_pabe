@@ -16,7 +16,9 @@ export function CampaignTransactionsList({
   donors = [],
   totalDonorsCount = 0,
   campaignSlug = "",
+  isZakat = false,
 }) {
+  const effectiveIsZakat = isZakat || campaignSlug === "zakat";
   const [donorList, setDonorList] = useState(donors);
   const [visibleCount, setVisibleCount] = useState(INITIAL_PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -100,14 +102,16 @@ export function CampaignTransactionsList({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
         <div>
           <h3 className="text-base sm:text-lg font-semibold text-slate-950">
-            Riwayat Transaksi Donasi
+            {effectiveIsZakat ? "Riwayat Penunaian Zakat" : "Riwayat Transaksi Donasi"}
           </h3>
           <p className="text-sm text-slate-600">
-            Catatan mutasi donasi masuk yang telah berhasil terverifikasi oleh sistem.
+            {effectiveIsZakat
+              ? "Catatan zakat tertunaikan yang telah berhasil terverifikasi oleh sistem."
+              : "Catatan mutasi donasi masuk yang telah berhasil terverifikasi oleh sistem."}
           </p>
         </div>
         <span className="text-xs sm:text-sm font-medium text-slate-700">
-          ({totalDonorsCount || donorList.length} Donasi Masuk)
+          ({totalDonorsCount || donorList.length} {effectiveIsZakat ? "Zakat Tertunaikan" : "Donasi Masuk"})
         </span>
       </div>
 
