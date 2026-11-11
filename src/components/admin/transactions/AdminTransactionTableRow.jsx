@@ -7,6 +7,7 @@ import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { UserAvatar } from "@/components/ui/Avatar";
 import { StatusBadge } from "@/components/ui/Badge";
 import { maskEmail } from "@/lib/security";
+import { isZisTransaction, getTransactionTypeLabel } from "@/lib/zisFilter";
 
 export function AdminTransactionTableRow({
   item,
@@ -14,6 +15,8 @@ export function AdminTransactionTableRow({
   onCopyInvoice,
   onOpenDetail,
 }) {
+  const txIsZis = isZisTransaction(item);
+  const typeLabel = getTransactionTypeLabel(item);
   return (
     <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
       {/* Invoice */}
@@ -39,12 +42,12 @@ export function AdminTransactionTableRow({
 
       {/* Jenis Transaksi */}
       <TableCell className="w-px py-3 whitespace-nowrap align-middle">
-        {item.donationType === "ZAKAT" ? (
+        {txIsZis ? (
           <span
-            title="Zakat"
+            title={typeLabel}
             className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 border border-amber-200/80 text-sm font-medium max-w-[150px] truncate whitespace-nowrap"
           >
-            Zakat
+            {typeLabel}
           </span>
         ) : item.routineDonationId || item.isRoutine ? (
           <span

@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { maskEmail } from "@/lib/security";
 import { settleDonationStatus } from "@/services/donationService";
+import { buildDonationTypeWhere, isZisTransaction } from "@/lib/zisFilter";
 
 /**
  * Mengambil daftar mutasi transaksi donasi masuk yang telah berhasil (PAID).
@@ -15,25 +16,30 @@ export async function getAdminTransactions({
   const skip = (Math.max(1, page) - 1) * limit;
 
   try {
-    const where = { status: "PAID" };
+    const andConditions = [{ status: "PAID" }];
     if (paymentChannel && paymentChannel !== "ALL") {
-      where.paymentChannel = { equals: paymentChannel, mode: "insensitive" };
+      andConditions.push({
+        paymentChannel: { equals: paymentChannel, mode: "insensitive" },
+      });
     }
     if (donationType && donationType !== "ALL") {
-      if (donationType === "CAMPAIGN") {
-        where.donationType = { not: "ZAKAT" };
-      } else {
-        where.donationType = { equals: donationType, mode: "insensitive" };
+      const typeWhere = buildDonationTypeWhere(donationType);
+      if (Object.keys(typeWhere).length > 0) {
+        andConditions.push(typeWhere);
       }
     }
     if (search) {
-      where.OR = [
-        { invoiceId: { contains: search, mode: "insensitive" } },
-        { donorName: { contains: search, mode: "insensitive" } },
-        { donorEmail: { contains: search, mode: "insensitive" } },
-        { donorPhone: { contains: search } },
-      ];
+      andConditions.push({
+        OR: [
+          { invoiceId: { contains: search, mode: "insensitive" } },
+          { donorName: { contains: search, mode: "insensitive" } },
+          { donorEmail: { contains: search, mode: "insensitive" } },
+          { donorPhone: { contains: search } },
+        ],
+      });
     }
+
+    const where = { AND: andConditions };
 
     const [total, items] = await Promise.all([
       prisma.donation.count({ where }),
@@ -43,7 +49,14 @@ export async function getAdminTransactions({
         take: limit,
         orderBy: [{ paidAt: "desc" }, { createdAt: "desc" }],
         include: {
-          campaign: { select: { id: true, title: true, slug: true } },
+          campaign: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              category: { select: { slug: true, name: true } },
+            },
+          },
         },
       }),
     ]);
@@ -63,8 +76,17 @@ export async function getAdminTransactions({
         paymentChannel: d.paymentChannel,
         status: d.status,
         donationType: d.donationType || "CAMPAIGN",
-        campaignTitle: d.campaign?.title || (d.donationType === "ZAKAT" ? "Zakat Maal & Fitrah" : "Donasi Umum"),
+        campaignTitle:
+          d.campaign?.title ||
+          (d.donationType === "ZAKAT"
+            ? "Zakat Maal & Fitrah"
+            : d.donationType === "INFAK_SUBUH"
+            ? "Sedekah Subuh"
+            : "Donasi Umum"),
         campaignSlug: d.campaign?.slug || "",
+        categorySlug: d.campaign?.category?.slug || "",
+        categoryName: d.campaign?.category?.name || "",
+        isZis: isZisTransaction(d),
         createdAt: d.createdAt.toISOString(),
         paidAt: d.paidAt ? d.paidAt.toISOString() : null,
       })),

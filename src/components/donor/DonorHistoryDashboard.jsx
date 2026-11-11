@@ -5,11 +5,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { useDebounce } from "@/hooks/useDebounce";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { DonorSummaryCards } from "@/components/donor/DonorSummaryCards";
 import { DonorTransactionTable } from "@/components/donor/DonorTransactionTable";
 import { DonorHistorySkeleton } from "@/components/donor/DonorHistorySkeleton";
 import { DonorPendingInvoiceBanner } from "@/components/donor/DonorPendingInvoiceBanner";
 import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";
+import { TRANSACTION_TABS } from "@/lib/zisFilter";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 
@@ -30,11 +33,15 @@ export function DonorHistoryDashboard() {
     currentPage: 1,
     limit: 10,
   });
+  const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [typeFilter, setTypeFilter] = useState("ALL");
+  const [typeFilter, setTypeFilter] = useState(TRANSACTION_TABS.ALL);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isTableLoading, setIsTableLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
+
+  const debouncedSearch = useDebounce(search.trim(), 300);
+  const isSearching = Boolean(search.trim().length > 0 && search.trim() !== debouncedSearch);
 
   // Check auth and redirect if guest
   useEffect(() => {
@@ -68,6 +75,7 @@ export function DonorHistoryDashboard() {
           name: currentUser.name || "",
           status: statusFilter,
           type: typeFilter,
+          search: debouncedSearch,
           sortBy: "date",
           sortOrder: "desc",
           page: String(pageToLoad),
@@ -102,6 +110,7 @@ export function DonorHistoryDashboard() {
       currentUser?.name,
       statusFilter,
       typeFilter,
+      debouncedSearch,
       pagination.limit,
     ]
   );
@@ -131,14 +140,18 @@ export function DonorHistoryDashboard() {
     fetchHistory(newPage, pagination.limit);
   };
 
-  const handleLimitChange = (newLimit) => {
-    setPagination((prev) => ({ ...prev, limit: newLimit }));
-    fetchHistory(1, newLimit);
+  const handleSearchChange = (val) => {
+    const str = typeof val === "string" ? val : val?.target?.value || "";
+    setSearch(str);
+  };
+
+  const handleClearSearch = () => {
+    setSearch("");
   };
 
   const handleRefresh = async () => {
     await fetchHistory(pagination.currentPage, pagination.limit);
-    toast.success("Riwayat donasi berhasil diperbarui.");
+    toast.success("Riwayat transaksi berhasil diperbarui.");
   };
 
   const handleInvoiceCancelled = (cancelledInvoiceId) => {
@@ -162,6 +175,15 @@ export function DonorHistoryDashboard() {
         />
       )}
 
+      {/* Segmented Tabs Pemisah Donasi Umum vs ZIS */}
+      <Tabs value={typeFilter} onValueChange={setTypeFilter}>
+        <TabsList className="bg-sidebar border border-slate-200/90 shadow-2xs">
+          <TabsTrigger value={TRANSACTION_TABS.ALL}>Semua Transaksi</TabsTrigger>
+          <TabsTrigger value={TRANSACTION_TABS.CAMPAIGN}>Donasi Program</TabsTrigger>
+          <TabsTrigger value={TRANSACTION_TABS.ZIS}>Zakat, Infaq &amp; Sedekah</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       {/* 3 Metric Cards Strip */}
       <DonorSummaryCards metrics={metrics} typeFilter={typeFilter} isLoading={false} />
 
@@ -169,11 +191,11 @@ export function DonorHistoryDashboard() {
       {fetchError && (
         <DataFetchErrorState
           compact
-          title="Kendala Sinkronisasi Riwayat Donasi"
+          title="Kendala Sinkronisasi Riwayat Transaksi"
           description={
             typeof fetchError === "string"
               ? fetchError
-              : "Gagal memuat riwayat transaksi donasi. Silakan coba lagi."
+              : "Gagal memuat riwayat transaksi Anda. Silakan coba lagi."
           }
           onRetry={() => fetchHistory(pagination.currentPage, pagination.limit)}
         />
@@ -183,13 +205,15 @@ export function DonorHistoryDashboard() {
       <DonorTransactionTable
         items={items}
         pagination={pagination}
+        search={search}
         statusFilter={statusFilter}
         typeFilter={typeFilter}
         isLoading={isTableLoading}
+        isSearching={isSearching}
+        onSearchChange={handleSearchChange}
+        onClearSearch={handleClearSearch}
         onStatusFilterChange={setStatusFilter}
-        onTypeFilterChange={setTypeFilter}
         onPageChange={handlePageChange}
-        onLimitChange={handleLimitChange}
         onRefresh={handleRefresh}
       />
     </div>

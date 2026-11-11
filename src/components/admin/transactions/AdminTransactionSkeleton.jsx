@@ -11,11 +11,13 @@ import {
 export function AdminTransactionSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
+      {/* Segmented Tabs Skeleton */}
+      <Skeleton className="h-10 w-80 sm:w-96 rounded-lg" />
+
       {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex flex-1 flex-wrap items-center gap-2.5 max-w-2xl">
           <Skeleton className="h-10 flex-1 min-w-[200px] rounded-lg" />
-          <Skeleton className="h-10 w-48 sm:w-52 rounded-lg shrink-0" />
           <Skeleton className="h-10 w-48 sm:w-52 rounded-lg shrink-0" />
         </div>
         <div className="flex items-center gap-2 shrink-0">

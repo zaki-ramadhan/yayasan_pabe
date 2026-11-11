@@ -1,6 +1,12 @@
 import prisma from "@/lib/prisma";
+import { isCampaignClosed } from "@/lib/formatters";
 import { buildUserWhereClause } from "./donorAnalyticsHelper";
 import { getPendingInvoicesForUser } from "./donationExpiryService";
+import {
+  ZIS_DONATION_WHERE,
+  buildDonationTypeWhere,
+  isZisTransaction,
+} from "@/lib/zisFilter";
 
 export async function getDonorHistory({
   userEmail,
@@ -44,7 +50,8 @@ export async function getDonorHistory({
   };
 
   try {
-    const [aggregates, distinctCampaigns, zakatAggregates] = await Promise.all([
+    const campaignOnlyWhere = buildDonationTypeWhere("CAMPAIGN");
+    const [aggregates, distinctCampaigns, zakatAggregates, campaignAggregates] = await Promise.all([
       prisma.donation.aggregate({
         where: basePaidWhere,
         _sum: { amount: true },
@@ -52,19 +59,35 @@ export async function getDonorHistory({
       }),
       prisma.donation.findMany({
         where: basePaidWhere,
-        select: { campaignId: true, donationType: true },
+        select: {
+          campaignId: true,
+          donationType: true,
+          campaign: {
+            select: {
+              slug: true,
+              category: { select: { slug: true, name: true } },
+            },
+          },
+        },
         distinct: ["campaignId", "donationType"],
       }),
       prisma.donation.aggregate({
-        where: { ...basePaidWhere, donationType: "ZAKAT" },
+        where: { ...basePaidWhere, ...ZIS_DONATION_WHERE },
+        _sum: { amount: true },
+        _count: { id: true },
+      }),
+      prisma.donation.aggregate({
+        where: { ...basePaidWhere, ...campaignOnlyWhere },
         _sum: { amount: true },
         _count: { id: true },
       }),
     ]);
 
-    const totalNominal = aggregates._sum.amount || 0;
-    const totalTransactions = aggregates._count.id || 0;
+    const totalNominal = aggregates?._sum?.amount || 0;
+    const totalTransactions = aggregates?._count?.id || 0;
     const totalPrograms = distinctCampaigns.length;
+    const totalZakatPrograms = distinctCampaigns.filter((d) => isZisTransaction(d)).length;
+    const totalCampaignPrograms = Math.max(0, totalPrograms - totalZakatPrograms);
 
     const filterConditions = [userCondition];
     if (status && status.toUpperCase() !== "ALL") {
@@ -72,12 +95,9 @@ export async function getDonorHistory({
     }
 
     if (type && type.toUpperCase() !== "ALL") {
-      if (type.toUpperCase() === "ZAKAT") {
-        filterConditions.push({ donationType: "ZAKAT" });
-      } else if (type.toUpperCase() === "CAMPAIGN") {
-        filterConditions.push({ donationType: { not: "ZAKAT" } });
-      } else {
-        filterConditions.push({ donationType: type.toUpperCase() });
+      const typeWhere = buildDonationTypeWhere(type);
+      if (Object.keys(typeWhere).length > 0) {
+        filterConditions.push(typeWhere);
       }
     }
 
@@ -122,6 +142,14 @@ export async function getDonorHistory({
             select: {
               title: true,
               slug: true,
+              status: true,
+              endDate: true,
+              category: {
+                select: {
+                  slug: true,
+                  name: true,
+                },
+              },
             },
           },
         },
@@ -144,6 +172,10 @@ export async function getDonorHistory({
           ? "Wakaf Produktif PABE"
           : "Sedekah Umum PABE");
 
+      const campaignUnavailable = d.campaign
+        ? isCampaignClosed(d.campaign) || d.campaign.status === "PAUSED"
+        : d.donationType !== "ZAKAT" && d.donationType !== "INFAK_SUBUH";
+
       return {
         id: d.id,
         no: skip + index + 1,
@@ -152,10 +184,16 @@ export async function getDonorHistory({
         amount: d.amount,
         programTitle: effectiveProgramTitle,
         campaignSlug: d.campaign?.slug || "",
+        campaignStatus: d.campaign?.status || null,
+        isCampaignClosed: campaignUnavailable,
+        canDonateAgain: !campaignUnavailable,
+        categorySlug: d.campaign?.category?.slug || "",
+        categoryName: d.campaign?.category?.name || "",
         paymentChannel: d.paymentChannel || "QRIS",
         date: (d.createdAt || d.paidAt).toISOString(),
         status: d.status,
         donationType: d.donationType || "CAMPAIGN",
+        isZis: isZisTransaction(d),
       };
     });
 
@@ -168,6 +206,10 @@ export async function getDonorHistory({
         totalPrograms,
         totalZakatNominal: zakatAggregates?._sum?.amount || 0,
         totalZakatTransactions: zakatAggregates?._count?.id || 0,
+        totalZakatPrograms,
+        totalCampaignNominal: campaignAggregates?._sum?.amount || 0,
+        totalCampaignTransactions: campaignAggregates?._count?.id || 0,
+        totalCampaignPrograms,
       },
       items,
       pendingInvoices,

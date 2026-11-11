@@ -12,6 +12,7 @@ import {
   TableEmptyRow,
   TablePaginationFooter,
 } from "@/components/ui/Table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { AdminTransactionDetailModal } from "@/components/admin/transactions/AdminTransactionDetailModal";
 import { AdminTransactionToolbar } from "@/components/admin/transactions/AdminTransactionToolbar";
 import { AdminTransactionTableRow } from "@/components/admin/transactions/AdminTransactionTableRow";
@@ -24,6 +25,11 @@ import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
 import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
+import {
+  TRANSACTION_TABS,
+  isZisTransaction,
+  getTransactionTypeLabel,
+} from "@/lib/zisFilter";
 
 const PAGE_SIZE = 10;
 
@@ -33,7 +39,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   );
   const [serverResults, setServerResults] = useState(null);
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("ALL");
+  const [typeFilter, setTypeFilter] = useState(TRANSACTION_TABS.ALL);
   const [channelFilter, setChannelFilter] = useState("ALL");
   const [copiedId, setCopiedId] = useState(null);
   const [selectedDetail, setSelectedDetail] = useState(null);
@@ -142,9 +148,10 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       ) {
         return false;
       }
-      if (typeFilter !== "ALL") {
-        if (typeFilter === "ZAKAT" && t.donationType !== "ZAKAT") return false;
-        if (typeFilter === "CAMPAIGN" && t.donationType === "ZAKAT") return false;
+      if (typeFilter !== TRANSACTION_TABS.ALL) {
+        const txIsZis = isZisTransaction(t);
+        if ((typeFilter === TRANSACTION_TABS.ZIS || typeFilter === "ZAKAT") && !txIsZis) return false;
+        if (typeFilter === TRANSACTION_TABS.CAMPAIGN && txIsZis) return false;
       }
       if (debouncedSearch) {
         const term = debouncedSearch.toLowerCase();
@@ -212,7 +219,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
     const headers = ["Invoice", "Kategori", "Donatur", "Email", "Nomor HP", "Program / Peruntukan", "Nominal", "Metode", "Status", "Tanggal Diterima"];
     const rows = filtered.map((t) => [
       t.invoiceId,
-      t.donationType === "ZAKAT" ? "Zakat" : "Donasi Program",
+      getTransactionTypeLabel(t),
       `"${(t.donorName || "").replace(/"/g, '""')}"`,
       t.donorEmail ? maskEmail(t.donorEmail) : "-",
       t.donorPhone || "-",
@@ -223,19 +230,32 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
       formatDate(t.paidAt || t.createdAt),
     ]);
 
+    const filePrefix =
+      typeFilter === TRANSACTION_TABS.ZIS
+        ? "rekap-mutasi-zis"
+        : typeFilter === TRANSACTION_TABS.CAMPAIGN
+        ? "rekap-mutasi-donasi"
+        : "rekap-mutasi-transaksi";
+
     const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
-    downloadCsv(`rekap-mutasi-transaksi-${new Date().toISOString().slice(0, 10)}.csv`, csvContent);
+    downloadCsv(`${filePrefix}-${new Date().toISOString().slice(0, 10)}.csv`, csvContent);
     toast.success("Laporan mutasi berhasil diunduh.");
   };
 
   return (
     <div className="space-y-4">
+      <Tabs value={typeFilter} onValueChange={handleTypeChange}>
+        <TabsList>
+          <TabsTrigger value={TRANSACTION_TABS.ALL}>Semua Mutasi</TabsTrigger>
+          <TabsTrigger value={TRANSACTION_TABS.CAMPAIGN}>Donasi Program</TabsTrigger>
+          <TabsTrigger value={TRANSACTION_TABS.ZIS}>Zakat, Infaq &amp; Sedekah</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
       <AdminTransactionToolbar
         search={search}
         onSearchChange={handleSearchChange}
         onClearSearch={handleClearSearch}
-        typeFilter={typeFilter}
-        onTypeChange={handleTypeChange}
         channelFilter={channelFilter}
         onChannelChange={handleChannelChange}
         onExportCsv={handleExportCsv}

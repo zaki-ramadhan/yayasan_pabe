@@ -87,4 +87,64 @@ describe("Donor History Service - Chronological Sorting Audit", () => {
     expect(result.items[1].id).toBe("don-older-expired");
     expect(result.items[1].status).toBe("EXPIRED");
   });
+
+  it("menandai canDonateAgain false jika program ditutup, dijeda, atau dihapus", async () => {
+    prisma.donation.aggregate.mockResolvedValue({
+      _sum: { amount: 0 },
+      _count: { id: 0 },
+    });
+
+    prisma.donation.findMany.mockImplementation(async (query) => {
+      if (query.distinct) return [];
+      return [
+        {
+          id: "don-closed",
+          invoiceId: "INV-CLOSED-1",
+          donorName: "Budi",
+          amount: 50000,
+          paymentChannel: "qris",
+          status: "EXPIRED",
+          donationType: "CAMPAIGN",
+          createdAt: new Date("2026-11-01T10:00:00Z"),
+          campaign: { title: "Program Selesai", slug: "selesai", status: "COMPLETED" },
+        },
+        {
+          id: "don-deleted",
+          invoiceId: "INV-DELETED-1",
+          donorName: "Budi",
+          amount: 50000,
+          paymentChannel: "qris",
+          status: "EXPIRED",
+          donationType: "CAMPAIGN",
+          createdAt: new Date("2026-11-01T09:00:00Z"),
+          campaign: null,
+        },
+        {
+          id: "don-active",
+          invoiceId: "INV-ACTIVE-1",
+          donorName: "Budi",
+          amount: 50000,
+          paymentChannel: "qris",
+          status: "EXPIRED",
+          donationType: "CAMPAIGN",
+          createdAt: new Date("2026-11-01T08:00:00Z"),
+          campaign: { title: "Program Aktif", slug: "aktif", status: "ACTIVE" },
+        },
+      ];
+    });
+
+    prisma.donation.count.mockResolvedValueOnce(3);
+
+    const result = await getDonorHistory({
+      userEmail: "budi@example.com",
+      userName: "Budi",
+    });
+
+    expect(result.items[0].canDonateAgain).toBe(false);
+    expect(result.items[0].isCampaignClosed).toBe(true);
+    expect(result.items[1].canDonateAgain).toBe(false);
+    expect(result.items[1].isCampaignClosed).toBe(true);
+    expect(result.items[2].canDonateAgain).toBe(true);
+    expect(result.items[2].isCampaignClosed).toBe(false);
+  });
 });

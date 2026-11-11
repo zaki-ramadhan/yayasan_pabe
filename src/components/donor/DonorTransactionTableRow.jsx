@@ -5,36 +5,43 @@ import { FileText } from "lucide-react";
 import { formatRupiah, formatDate, formatTime, formatPaymentChannel } from "@/lib/formatters";
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { StatusBadge } from "@/components/ui/Badge";
-import { UserAvatar } from "@/components/ui/Avatar";
+import { isZisTransaction, getTransactionTypeLabel } from "@/lib/zisFilter";
 
 export function DonorTransactionTableRow({ item }) {
+  const isZis = isZisTransaction(item);
+  const badgeLabel = getTransactionTypeLabel(item);
+  const isRetryableStatus =
+    item.status === "EXPIRED" ||
+    item.status === "CANCELLED" ||
+    item.status === "FAILED";
+  const canRetry =
+    item.canDonateAgain !== false &&
+    (Boolean(item.campaignSlug) ||
+      item.donationType === "ZAKAT" ||
+      item.donationType === "INFAK_SUBUH");
+
+  const retryHref = item.campaignSlug
+    ? `/campaign/${item.campaignSlug}/donate?amount=${item.amount}`
+    : isZis
+    ? `/zakat/bayar?amount=${item.amount}`
+    : "/program";
+
   return (
     <TableRow>
-      <TableCell className="text-center text-slate-700 font-normal align-middle">
-        {item.no}
+      <TableCell className="font-normal text-slate-800 align-middle max-w-[180px]">
+        <span className="truncate block">{item.donorName}</span>
       </TableCell>
-      <TableCell className="font-normal text-slate-700 align-middle max-w-[180px]">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <UserAvatar
-            src={item.donorAvatar}
-            name={item.donorName}
-            fallback="D"
-            className="w-7 h-7 shrink-0"
-          />
-          <span className="truncate block">{item.donorName}</span>
-        </div>
-      </TableCell>
-      <TableCell className="text-right font-medium text-emerald-800 align-middle tabular-nums">
+      <TableCell className="text-right font-medium text-sm text-emerald-800 align-middle tabular-nums whitespace-nowrap min-w-[125px]">
         {formatRupiah(item.amount)}
       </TableCell>
-      <TableCell className="text-slate-900 max-w-xs align-middle">
-        <div className="flex items-center gap-1.5 min-w-0">
-          {item.donationType === "ZAKAT" && (
+      <TableCell className="text-slate-900 min-w-[210px] max-w-xs align-middle">
+        <div className="flex items-center gap-2 min-w-0">
+          {isZis && (
             <span
-              title="Zakat"
-              className="inline-flex items-center px-2 py-0.5 rounded text-sm font-medium bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0 max-w-[100px] truncate whitespace-nowrap"
+              title={badgeLabel}
+              className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/80 shrink-0 whitespace-nowrap"
             >
-              Zakat
+              {badgeLabel}
             </span>
           )}
           {item.campaignSlug ? (
@@ -49,41 +56,46 @@ export function DonorTransactionTableRow({ item }) {
           )}
         </div>
       </TableCell>
-      <TableCell className="font-normal text-slate-700 whitespace-nowrap align-middle text-center">
-        <span className="inline-block max-w-[140px] truncate whitespace-nowrap">
+      <TableCell className="text-center whitespace-nowrap align-middle min-w-[160px]">
+        <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 whitespace-nowrap">
           {formatPaymentChannel(item.paymentChannel)}
         </span>
       </TableCell>
       <TableCell className="text-center whitespace-nowrap align-middle">
-        <StatusBadge status={item.status || "PAID"} />
+        <StatusBadge
+          status={item.status || "PAID"}
+          className="text-sm font-normal px-2.5 py-0.5"
+        />
       </TableCell>
       <TableCell className="whitespace-nowrap align-middle text-center">
         <div className="flex flex-col items-center leading-tight">
-          <span className="font-normal text-slate-600 text-sm">
+          <span className="text-sm font-medium text-slate-800">
             {formatDate(item.date)}
           </span>
-          <span className="text-sm text-slate-500 tabular-nums mt-0.5 font-normal">
+          <span className="text-[12px] font-normal text-slate-500 tabular-nums mt-0.5">
             {formatTime(item.date)}
           </span>
         </div>
       </TableCell>
       <TableCell className="text-center whitespace-nowrap align-middle">
-        {item.status === "EXPIRED" ? (
-          <Link
-            href={
-              item.campaignSlug
-                ? `/campaign/${item.campaignSlug}/donate?amount=${item.amount}`
-                : "/program"
-            }
-            className="text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
-            aria-label="Donasi lagi untuk program ini"
-          >
-            Donasi lagi
-          </Link>
+        {isRetryableStatus ? (
+          canRetry ? (
+            <Link
+              href={retryHref}
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+              aria-label={isZis ? "Tunaikan lagi untuk program ini" : "Donasi lagi untuk program ini"}
+            >
+              {isZis ? "Tunaikan lagi" : "Donasi lagi"}
+            </Link>
+          ) : (
+            <span className="text-sm font-normal text-slate-400">
+              Program ditutup
+            </span>
+          )
         ) : item.status === "PENDING" ? (
           <Link
             href={`/invoice/${item.invoiceId}`}
-            className="text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+            className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
           >
             Bayar
           </Link>
@@ -91,7 +103,7 @@ export function DonorTransactionTableRow({ item }) {
           <Link
             href={`/invoice/${item.invoiceId}`}
             target="_blank"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
             aria-label="Cek kuitansi pembayaran resmi"
           >
             <FileText className="w-3.5 h-3.5 shrink-0" />

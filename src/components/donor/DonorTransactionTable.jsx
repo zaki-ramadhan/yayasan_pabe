@@ -22,16 +22,44 @@ import {
 } from "@/components/ui/Select";
 import { DonorTransactionTableRow } from "./DonorTransactionTableRow";
 
+const SKELETON_CELL_ALIGNMENTS = [
+  "left",
+  "right",
+  "left",
+  "center",
+  "center",
+  "center",
+  "center",
+];
+
+function DonorTransactionTableHeader() {
+  return (
+    <TableHeader>
+      <TableRow>
+        <TableHead className="whitespace-nowrap">Atas nama</TableHead>
+        <TableHead className="text-right whitespace-nowrap min-w-[125px]">Nominal</TableHead>
+        <TableHead className="whitespace-nowrap min-w-[210px]">Program / Peruntukan</TableHead>
+        <TableHead className="text-center whitespace-nowrap min-w-[160px]">Metode bayar</TableHead>
+        <TableHead className="text-center whitespace-nowrap w-28">Status</TableHead>
+        <TableHead className="text-center whitespace-nowrap">Waktu transaksi</TableHead>
+        <TableHead className="text-center whitespace-nowrap w-32">Aksi</TableHead>
+      </TableRow>
+    </TableHeader>
+  );
+}
+
 export function DonorTransactionTable({
   items = [],
   pagination = { total: 0, totalPages: 1, currentPage: 1, limit: 10 },
+  search = "",
   statusFilter = "ALL",
   typeFilter = "ALL",
   isLoading = false,
+  isSearching = false,
+  onSearchChange,
+  onClearSearch,
   onStatusFilterChange,
-  onTypeFilterChange,
   onPageChange,
-  onLimitChange,
   onRefresh,
 }) {
   return (
@@ -40,83 +68,58 @@ export function DonorTransactionTable({
       <div className="p-4 sm:p-5 border-b border-slate-200">
         <TableToolbar
           title="Daftar Riwayat Transaksi"
-          limit={pagination.limit}
-          onLimitChange={onLimitChange}
+          search={search}
+          onSearchChange={onSearchChange}
+          onClearSearch={onClearSearch}
+          searchPlaceholder="Cari nomor invoice atau program..."
+          searchWidth="flex-1 min-w-[200px] max-w-sm"
+          filters={
+            <Select value={statusFilter} onValueChange={onStatusFilterChange}>
+              <SelectTrigger className="h-10 w-40 sm:w-44 text-sm font-normal bg-white border border-slate-300 shrink-0 whitespace-nowrap">
+                <SelectValue placeholder="Semua status" className="truncate whitespace-nowrap" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-slate-200 z-50 min-w-[160px]">
+                <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
+                  Semua status
+                </SelectItem>
+                <SelectItem value="PAID" className="cursor-pointer text-sm font-normal py-2">
+                  Berhasil
+                </SelectItem>
+                <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
+                  Menunggu
+                </SelectItem>
+                <SelectItem value="EXPIRED" className="cursor-pointer text-sm font-normal py-2">
+                  Kedaluwarsa
+                </SelectItem>
+                <SelectItem value="CANCELLED" className="cursor-pointer text-sm font-normal py-2">
+                  Dibatalkan
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          }
           onRefresh={onRefresh}
           isLoading={isLoading}
-          extraActions={
-            <div className="flex flex-wrap items-center gap-2">
-              <Select value={typeFilter} onValueChange={onTypeFilterChange}>
-                <SelectTrigger className="h-10 w-48 sm:w-52 text-sm font-normal bg-white border border-slate-300 shrink-0 whitespace-nowrap">
-                  <SelectValue placeholder="Semua kategori" className="truncate whitespace-nowrap" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border border-slate-200 z-50 min-w-[200px]">
-                  <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
-                    Semua transaksi
-                  </SelectItem>
-                  <SelectItem value="CAMPAIGN" className="cursor-pointer text-sm font-normal py-2">
-                    Donasi program
-                  </SelectItem>
-                  <SelectItem value="ZAKAT" className="cursor-pointer text-sm font-normal py-2">
-                    Zakat maal & fitrah
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-                <SelectTrigger className="h-10 w-40 sm:w-44 text-sm font-normal bg-white border border-slate-300 shrink-0 whitespace-nowrap">
-                  <SelectValue placeholder="Semua status" className="truncate whitespace-nowrap" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border border-slate-200 z-50 min-w-[160px]">
-                  <SelectItem value="ALL" className="cursor-pointer text-sm font-normal py-2">
-                    Semua status
-                  </SelectItem>
-                  <SelectItem value="PAID" className="cursor-pointer text-sm font-normal py-2">
-                    Berhasil
-                  </SelectItem>
-                  <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
-                    Menunggu
-                  </SelectItem>
-                  <SelectItem value="EXPIRED" className="cursor-pointer text-sm font-normal py-2">
-                    Kedaluwarsa
-                  </SelectItem>
-                  <SelectItem value="CANCELLED" className="cursor-pointer text-sm font-normal py-2">
-                    Dibatalkan
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          }
+          isSearching={isSearching}
         />
       </div>
 
       {/* Standar Reusable Table Primitives */}
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>No.</TableHead>
-            <TableHead>Atas nama</TableHead>
-            <TableHead className="text-right">Nominal donasi</TableHead>
-            <TableHead>Program donasi</TableHead>
-            <TableHead className="text-center">Metode bayar</TableHead>
-            <TableHead className="text-center w-28">Status</TableHead>
-            <TableHead className="text-center">Tanggal transaksi</TableHead>
-            <TableHead className="text-center w-32">Aksi</TableHead>
-          </TableRow>
-        </TableHeader>
+        <DonorTransactionTableHeader />
 
         <TableBody>
           {isLoading ? (
             <TableSkeletonRows
               rows={5}
-              columns={8}
-              cellAlignments={["center", "left", "right", "left", "center", "center", "center", "center"]}
+              columns={7}
+              cellAlignments={SKELETON_CELL_ALIGNMENTS}
               height="h-4"
             />
           ) : items.length === 0 ? (
             <TableEmptyRow
-              colSpan={8}
+              colSpan={7}
               isFiltered={Boolean(
+                (search && search.trim().length > 0) ||
                 (statusFilter && statusFilter !== "ALL") ||
                 (typeFilter && typeFilter !== "ALL")
               )}
@@ -141,42 +144,29 @@ export function DonorTransactionTable({
 export function DonorTransactionTableSkeleton() {
   return (
     <TableContainer className="bg-sidebar animate-pulse">
-      <div className="p-4 sm:p-5 border-b border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div className="p-4 sm:p-5 border-b border-slate-200 space-y-3">
         <div>
           <h2 className="text-base font-medium text-slate-900">
             Daftar Riwayat Transaksi
           </h2>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
-          <Skeleton className="h-10 w-48 sm:w-52 rounded-md" />
-          <Skeleton className="h-10 w-40 sm:w-44 rounded-md" />
-          <div className="flex items-center gap-1.5 shrink-0">
-            <span className="text-sm font-medium text-slate-600">Baris:</span>
-            <Skeleton className="h-10 w-20 rounded-md" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="flex flex-1 flex-wrap items-center gap-2.5">
+            <Skeleton className="h-10 flex-1 min-w-[200px] max-w-sm rounded-md" />
+            <Skeleton className="h-10 w-40 sm:w-44 rounded-md shrink-0" />
           </div>
-          <Skeleton className="h-10 w-10 rounded-md" />
+          <Skeleton className="h-10 w-10 rounded-md shrink-0" />
         </div>
       </div>
 
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>No.</TableHead>
-            <TableHead>Atas nama</TableHead>
-            <TableHead className="text-right">Nominal donasi</TableHead>
-            <TableHead>Program donasi</TableHead>
-            <TableHead className="text-center">Metode bayar</TableHead>
-            <TableHead className="text-center w-28">Status</TableHead>
-            <TableHead className="text-center">Tanggal transaksi</TableHead>
-            <TableHead className="text-center w-32">Aksi</TableHead>
-          </TableRow>
-        </TableHeader>
+        <DonorTransactionTableHeader />
         <TableBody>
           <TableSkeletonRows
             rows={5}
-            columns={8}
-            cellAlignments={["center", "left", "right", "left", "center", "center", "center", "center"]}
+            columns={7}
+            cellAlignments={SKELETON_CELL_ALIGNMENTS}
             height="h-4"
           />
         </TableBody>
