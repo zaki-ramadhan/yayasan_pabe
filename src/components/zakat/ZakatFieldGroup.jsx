@@ -35,7 +35,7 @@ export function ZakatFieldGroup({
         )}
         <div>{children}</div>
         {error ? (
-          <p className="text-xs text-rose-500 font-medium leading-relaxed" role="alert">
+          <p className="text-sm text-rose-500 font-medium leading-relaxed" role="alert">
             {error}
           </p>
         ) : helperText ? (

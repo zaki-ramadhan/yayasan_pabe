@@ -60,3 +60,15 @@ describe("zakat - calculateZakatMaal", () => {
     expect(result.zakatAmount).toBe(0);
   });
 });
+
+describe("zakat - constants & master program spec", () => {
+  it("menyediakan spesifikasi default zakat campaign dengan kategori ZISWAF", async () => {
+    const { DEFAULT_ZAKAT_SPEC, DEFAULT_ZAKAT_SLUG, DONOR_SALUTATIONS } = await import("@/constants/zakatProgram");
+    expect(DEFAULT_ZAKAT_SLUG).toBe("zakat");
+    expect(DEFAULT_ZAKAT_SPEC.slug).toBe("zakat");
+    expect(DEFAULT_ZAKAT_SPEC.title).toContain("Zakat");
+    expect(DEFAULT_ZAKAT_SPEC.categorySlug).toBe("zakat");
+    expect(Array.isArray(DONOR_SALUTATIONS)).toBe(true);
+    expect(DONOR_SALUTATIONS.map((s) => s.id)).toEqual(["Bapak", "Ibu", "Kakak", "Saudara", "Saudari"]);
+  });
+});

@@ -11,13 +11,14 @@ export const metadata = {
 };
 
 export default async function KalkulatorZakatPage() {
-  let targetSlug = "zakat-penghasilan-pemberdayaan-mustahik";
+  let targetSlug = "zakat";
   try {
     const activeZakat = await prisma.campaign.findFirst({
       where: {
         status: "ACTIVE",
         OR: [
-          { category: { slug: { contains: "zakat", mode: "insensitive" } } },
+          { slug: "zakat" },
+          { category: { slug: "zakat" } },
           { slug: { contains: "zakat", mode: "insensitive" } },
         ],
       },

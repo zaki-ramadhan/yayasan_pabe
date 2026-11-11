@@ -54,8 +54,8 @@ export function ZakatResultPanel({
         <span className="text-sm font-medium text-slate-600 uppercase tracking-wider block">
           Total Kewajiban Zakat
         </span>
-        <div className="text-3xl sm:text-4xl font-semibold text-slate-950 tracking-tight flex items-baseline gap-1.5">
-          <span className="text-xl sm:text-2xl font-semibold text-slate-950">
+        <div className="text-3xl sm:text-4xl font-medium text-slate-950 tracking-tight flex items-baseline gap-1.5">
+          <span className="text-xl sm:text-2xl font-medium text-slate-950">
             Rp
           </span>
           <span>{formatNumber(zakatAmount)}</span>
