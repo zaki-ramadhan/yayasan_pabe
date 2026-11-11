@@ -16,7 +16,7 @@ export function TransparencyLedgerStrip({
 }) {
   const isLaporan = variant === "laporan";
 
-  const compactDonations = getCompactRupiahParts(metrics.totalDonationsAllTime || 0, 1);
+  const compactDonations = getCompactRupiahParts(metrics.totalDonationsAllTime || 0, 2);
 
   return (
     <div

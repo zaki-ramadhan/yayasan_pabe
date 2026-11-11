@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { formatCompactRupiah, formatRupiah, formatNumber } from "@/lib/formatters";
+import { formatRupiah, formatNumber } from "@/lib/formatters";
 import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 export function AdminMetricCards({ stats: initialStats }) {
@@ -50,15 +50,13 @@ export function AdminMetricCards({ stats: initialStats }) {
   const cards = [
     {
       label: "Total Donasi Terhimpun",
-      value: formatCompactRupiah(totalCollected),
-      detailValue: formatRupiah(totalCollected),
+      value: formatRupiah(totalCollected),
       fullValue: formatRupiah(totalCollected),
       radialColor: "#10B981", // Emerald (Kas Masuk)
     },
     {
       label: "Dana Telah Disalurkan",
-      value: formatCompactRupiah(totalDisbursed),
-      detailValue: formatRupiah(totalDisbursed),
+      value: formatRupiah(totalDisbursed),
       fullValue: formatRupiah(totalDisbursed),
       radialColor: "#0284C7", // Sky/Blue (Penyaluran)
     },

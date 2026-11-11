@@ -3,7 +3,19 @@ export function formatRupiah(amount) {
   return `Rp ${new Intl.NumberFormat("id-ID").format(amount)}`;
 }
 
-export function formatCompactRupiah(amount, maxDecimals = 1, options = {}) {
+export function truncateDecimals(num, maxDecimals = 2) {
+  if (typeof num !== "number" || isNaN(num)) return "0";
+  const str = num.toString();
+  if (!str.includes(".")) {
+    return num.toLocaleString("id-ID");
+  }
+  const [intPart, decPart] = str.split(".");
+  const truncatedDec = decPart.slice(0, maxDecimals).replace(/0+$/, "");
+  const formattedInt = Number(intPart).toLocaleString("id-ID");
+  return truncatedDec.length > 0 ? `${formattedInt},${truncatedDec}` : formattedInt;
+}
+
+export function formatCompactRupiah(amount, maxDecimals = 2, options = {}) {
   if (typeof amount !== "number" || isNaN(amount)) return "Rp 0";
   const abs = Math.abs(amount);
   const sign = amount < 0 ? "-" : "";
@@ -11,88 +23,72 @@ export function formatCompactRupiah(amount, maxDecimals = 1, options = {}) {
 
   if (abs >= 1_000_000_000_000) {
     const val = abs / 1_000_000_000_000;
-    const formatted = val.toLocaleString("id-ID", {
-      maximumFractionDigits: maxDecimals,
-    });
+    const formatted = truncateDecimals(val, maxDecimals);
     return `${sign}Rp ${formatted} ${isShort ? "T" : "Triliun"}`;
   }
 
   if (abs >= 1_000_000_000) {
     const val = abs / 1_000_000_000;
-    const formatted = val.toLocaleString("id-ID", {
-      maximumFractionDigits: maxDecimals,
-    });
+    const formatted = truncateDecimals(val, maxDecimals);
     return `${sign}Rp ${formatted} ${isShort ? "M" : "Miliar"}`;
   }
 
   if (abs >= 1_000_000) {
     const val = abs / 1_000_000;
-    const formatted = val.toLocaleString("id-ID", {
-      maximumFractionDigits: maxDecimals,
-    });
+    const formatted = truncateDecimals(val, maxDecimals);
     return `${sign}Rp ${formatted} ${isShort ? "Jt" : "Juta"}`;
   }
 
   if (abs >= 1_000) {
     const val = abs / 1_000;
-    const formatted = val.toLocaleString("id-ID", {
-      maximumFractionDigits: maxDecimals,
-    });
+    const formatted = truncateDecimals(val, maxDecimals);
     return `${sign}Rp ${formatted} ${isShort ? "rb" : "Ribu"}`;
   }
 
   return formatRupiah(amount);
 }
 
-export function getCompactRupiahParts(amount, maxDecimals = 1) {
+export function getCompactRupiahParts(amount, maxDecimals = 2) {
   if (typeof amount !== "number" || isNaN(amount) || amount === 0) {
     return { value: 0, unit: "", prefix: "Rp ", decimals: 0, fullFormatted: "Rp 0" };
   }
 
   const abs = Math.abs(amount);
 
-  if (abs >= 1_000_000_000_000) {
-    const val = Number((abs / 1_000_000_000_000).toFixed(maxDecimals));
+  const formatPart = (divider, unit) => {
+    const rawVal = abs / divider;
+    const str = rawVal.toString();
+    let val = rawVal;
+    let decimalCount = 0;
+    if (str.includes(".")) {
+      const [intPart, decPart] = str.split(".");
+      const truncatedDec = decPart.slice(0, maxDecimals).replace(/0+$/, "");
+      decimalCount = truncatedDec.length;
+      val = Number(`${intPart}${decimalCount > 0 ? "." + truncatedDec : ""}`);
+    }
     return {
       value: val,
-      unit: " Triliun",
+      unit,
       prefix: "Rp ",
-      decimals: val % 1 !== 0 ? maxDecimals : 0,
+      decimals: decimalCount,
       fullFormatted: formatRupiah(amount),
     };
+  };
+
+  if (abs >= 1_000_000_000_000) {
+    return formatPart(1_000_000_000_000, " Triliun");
   }
 
   if (abs >= 1_000_000_000) {
-    const val = Number((abs / 1_000_000_000).toFixed(maxDecimals));
-    return {
-      value: val,
-      unit: " Miliar",
-      prefix: "Rp ",
-      decimals: val % 1 !== 0 ? maxDecimals : 0,
-      fullFormatted: formatRupiah(amount),
-    };
+    return formatPart(1_000_000_000, " Miliar");
   }
 
   if (abs >= 1_000_000) {
-    const val = Number((abs / 1_000_000).toFixed(maxDecimals));
-    return {
-      value: val,
-      unit: " Juta",
-      prefix: "Rp ",
-      decimals: val % 1 !== 0 ? maxDecimals : 0,
-      fullFormatted: formatRupiah(amount),
-    };
+    return formatPart(1_000_000, " Juta");
   }
 
   if (abs >= 1_000) {
-    const val = Number((abs / 1_000).toFixed(maxDecimals));
-    return {
-      value: val,
-      unit: " Ribu",
-      prefix: "Rp ",
-      decimals: val % 1 !== 0 ? maxDecimals : 0,
-      fullFormatted: formatRupiah(amount),
-    };
+    return formatPart(1_000, " Ribu");
   }
 
   return {
@@ -367,24 +363,24 @@ export function isCampaignClosed(campaign) {
   return false;
 }
 
-export function formatCompactNumber(num, maxDecimals = 1) {
+export function formatCompactNumber(num, maxDecimals = 2) {
   if (typeof num !== "number" || isNaN(num)) return "0";
   const abs = Math.abs(num);
   if (abs >= 1_000_000_000_000) {
     const val = num / 1_000_000_000_000;
-    return `${val % 1 === 0 ? val : Number(val.toFixed(maxDecimals))} T`;
+    return `${truncateDecimals(val, maxDecimals)} T`;
   }
   if (abs >= 1_000_000_000) {
     const val = num / 1_000_000_000;
-    return `${val % 1 === 0 ? val : Number(val.toFixed(maxDecimals))} M`;
+    return `${truncateDecimals(val, maxDecimals)} M`;
   }
   if (abs >= 1_000_000) {
     const val = num / 1_000_000;
-    return `${val % 1 === 0 ? val : Number(val.toFixed(maxDecimals))} Jt`;
+    return `${truncateDecimals(val, maxDecimals)} Jt`;
   }
   if (abs >= 1_000) {
     const val = num / 1_000;
-    return `${val % 1 === 0 ? val : Number(val.toFixed(maxDecimals))} rb`;
+    return `${truncateDecimals(val, maxDecimals)} rb`;
   }
   return String(num);
 }

@@ -10,7 +10,7 @@ import {
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
 } from "recharts";
-import { formatRupiah } from "@/lib/formatters";
+import { formatRupiah, formatCompactRupiah } from "@/lib/formatters";
 
 const MONTH_NAMES = [
   "Jan",
@@ -101,15 +101,8 @@ export function DonorTrendChartCanvas({ data = [], isChartEmpty = false }) {
             tickLine={false}
             axisLine={false}
             tickFormatter={(val) => {
-              if (val >= 1000000) {
-                const formatted = (val / 1000000).toFixed(1).replace(/\.0$/, "");
-                return `Rp\u00A0${formatted}jt`;
-              }
-              if (val > 0) {
-                const formatted = (val / 1000).toFixed(0);
-                return `Rp\u00A0${formatted}rb`;
-              }
-              return "Rp\u00A00";
+              if (!val) return "Rp 0";
+              return formatCompactRupiah(val, 2, { short: true });
             }}
           />
 

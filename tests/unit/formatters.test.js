@@ -29,6 +29,18 @@ describe("formatters - formatCompactRupiah", () => {
     expect(formatCompactRupiah(2000000000)).toMatch(/2\sMiliar/);
     expect(formatCompactRupiah(500000)).toMatch(/500\sRibu/);
   });
+
+  it("mempertahankan hingga maksimal 2 desimal tanpa pembulatan kasar dan tidak melebih-lebihkan angka (tanpa round-up)", () => {
+    expect(formatCompactRupiah(85425000)).toBe("Rp 85,42 Juta");
+    expect(formatCompactRupiah(85425000, 2, { short: true })).toBe("Rp 85,42 Jt");
+    expect(formatCompactRupiah(85425000, 3)).toBe("Rp 85,425 Juta");
+    expect(formatCompactRupiah(83462000)).toBe("Rp 83,46 Juta");
+    expect(formatCompactRupiah(83462000, 2, { short: true })).toBe("Rp 83,46 Jt");
+    expect(formatCompactRupiah(1000000)).toBe("Rp 1 Juta");
+    expect(formatCompactRupiah(1000000, 2, { short: true })).toBe("Rp 1 Jt");
+    expect(formatCompactRupiah(1500000)).toBe("Rp 1,5 Juta");
+    expect(formatCompactRupiah(1500000, 2, { short: true })).toBe("Rp 1,5 Jt");
+  });
 });
 
 describe("formatters - formatNumber", () => {

@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { formatRupiah, formatNumber } from "@/lib/formatters";
+import { formatRupiah, formatNumber, formatCompactRupiah } from "@/lib/formatters";
 
 /**
  * Molecule component: Smooth Area Chart for monthly distribution trend
@@ -48,7 +48,7 @@ export function DistributionAreaChart({ data = [] }) {
               tickLine={false}
               axisLine={false}
               tick={{ fontSize: 13, fill: "#64748b", fontWeight: 500 }}
-              tickFormatter={(v) => `${(v / 1000000).toFixed(0)} jt`}
+              tickFormatter={(v) => formatCompactRupiah(v, 2, { short: true })}
               width={56}
             />
             <Tooltip
