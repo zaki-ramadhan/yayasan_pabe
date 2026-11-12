@@ -25,7 +25,7 @@ export function buildVolunteerRegistrationEmailHtml({
   const safeCity = city ? city.trim() : "-";
   const safeInterest = interest ? interest.trim() : "Relawan Kebaikan";
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.org").replace(/\/+$/, "");
-  const targetUrl = statusUrl || `${appUrl}/volunteer`;
+  const targetUrl = statusUrl || `${appUrl}/relawan`;
 
   const buttonHtml = buildEmailCtaButton({
     text: "Pantau Status Relawan",

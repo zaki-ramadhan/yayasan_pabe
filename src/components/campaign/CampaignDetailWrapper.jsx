@@ -6,6 +6,7 @@ import { CampaignDetailTabs } from "./CampaignDetailTabs";
 import { CampaignCTA } from "./CampaignCTA";
 import { CampaignPrayersSidebar } from "@/components/modules/CampaignPrayersSidebar";
 import { isCampaignClosed } from "@/lib/formatters";
+import { isZisCampaign } from "@/lib/zisFilter";
 import { useCampaignDetailTour } from "@/hooks/useCampaignDetailTour";
 
 /**
@@ -34,6 +35,7 @@ export function CampaignDetailWrapper({
   useCampaignDetailTour({ slug: campaign.slug, hasDonations });
 
   const isClosed = isCampaignClosed(campaign);
+  const isZis = isZisCampaign(campaign);
 
   return (
     <div className="lg:col-span-8 space-y-4">
@@ -57,6 +59,7 @@ export function CampaignDetailWrapper({
         <CampaignPrayersSidebar
           initialDonors={campaign.recentDonors || []}
           campaignSlug={campaign.slug}
+          isZis={isZis}
           isClosed={isClosed}
         />
       </div>

@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
+import { getCampaignDetailHref, isZisCampaign } from "@/lib/zisFilter";
 
 /**
  * Notice banner displayed when a campaign is finished / no longer accepting donations.
  * @param {{ slug: string, title: string }} campaign
  */
 export function CampaignClosedNotice({ campaign }) {
+  const isZis = isZisCampaign(campaign);
+  const catalogHref = isZis ? "/zis" : "/program";
+
   return (
     <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 text-center space-y-6">
       <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-300 shadow-xs space-y-4">
@@ -20,13 +24,13 @@ export function CampaignClosedNotice({ campaign }) {
         </p>
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
-            href={`/campaign/${campaign.slug}`}
+            href={getCampaignDetailHref(campaign)}
             className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 bg-white hover:bg-slate-50 font-medium text-sm transition-colors text-center"
           >
             Lihat Detail &amp; Penyaluran
           </Link>
           <Link
-            href="/program"
+            href={catalogHref}
             className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white font-medium text-sm transition-colors text-center"
           >
             Lihat Program Aktif Lainnya

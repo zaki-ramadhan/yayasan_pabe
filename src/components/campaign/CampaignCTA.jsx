@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { isCampaignClosed } from "@/lib/formatters";
 import { ASSET_PATHS } from "@/lib/assetConstants";
+import { getCampaignDonateHref } from "@/lib/zisFilter";
 
 function subscribeAuth(callback) {
   window.addEventListener("pabe_auth_change", callback);
@@ -72,7 +73,7 @@ export function CampaignCTA({
     (isZakat
       ? "/zakat/bayar"
       : campaign?.slug
-      ? `/campaign/${campaign.slug}/donate`
+      ? getCampaignDonateHref(campaign)
       : "/program");
   const effectiveBannerUrl =
     campaign?.bannerUrl || ASSET_PATHS.BANNERS.CTA_MAIN;

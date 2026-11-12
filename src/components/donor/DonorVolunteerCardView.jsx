@@ -96,7 +96,7 @@ export function DonorVolunteerCardView() {
           title="Tertarik Menjadi Relawan Kebaikan?"
           description="Salurkan keahlian dan waktu Anda dalam program sosial, pendidikan Al-Qur'an, dan aksi kemanusiaan bersama Yayasan Payung Berkah."
           buttonText="Daftar Jadi Relawan Sekarang"
-          buttonHref="/volunteer"
+          buttonHref="/relawan"
           ignoreAuthCheck={true}
           variant="emerald"
           campaign={{

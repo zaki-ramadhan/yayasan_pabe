@@ -28,7 +28,7 @@ export default async function VolunteerValidationPage({ params }) {
       <Breadcrumb
         items={[
           { label: "Beranda", href: "/" },
-          { label: "Relawan", href: "/volunteer" },
+          { label: "Relawan", href: "/relawan" },
           { label: "Validasi Kartu Anggota" },
         ]}
       />

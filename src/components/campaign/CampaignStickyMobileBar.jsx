@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
+import { getCampaignDonateHref } from "@/lib/zisFilter";
 
 export function CampaignStickyMobileBar({ campaign }) {
   const isClosed = isCampaignClosed(campaign);
@@ -11,7 +12,7 @@ export function CampaignStickyMobileBar({ campaign }) {
     campaign?.category?.slug === "zakat" ||
     campaign?.categoryName?.toLowerCase().includes("zakat") ||
     campaign?.categoryName?.toLowerCase().includes("ziswaf");
-  const donateHref = isZakat ? "/zakat/bayar" : `/campaign/${campaign.slug}/donate`;
+  const donateHref = isZakat ? "/zakat/bayar" : getCampaignDonateHref(campaign);
   const ctaLabel = isZakat ? "Tunaikan Zakat" : "Donasi Sekarang";
 
   return (

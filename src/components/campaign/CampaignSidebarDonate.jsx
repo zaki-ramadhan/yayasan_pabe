@@ -6,6 +6,7 @@ import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
 import { CampaignPrayersSidebar } from "@/components/modules/CampaignPrayersSidebar";
 import { FundedAmountDisplay } from "@/components/campaign/FundedAmountDisplay";
 import { SidebarTourButton } from "@/components/campaign/SidebarTourButton";
+import { getCampaignDonateHref, isZisCampaign } from "@/lib/zisFilter";
 
 export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonations = false }) {
 	const hasTarget = Boolean(
@@ -26,7 +27,7 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 		campaign?.category?.slug === "zakat" ||
 		campaign?.categoryName?.toLowerCase().includes("zakat") ||
 		campaign?.categoryName?.toLowerCase().includes("ziswaf");
-	const donateHref = isZakat ? "/zakat/bayar" : `/campaign/${campaign.slug}/donate`;
+	const donateHref = isZakat ? "/zakat/bayar" : getCampaignDonateHref(campaign);
 	const ctaLabel = isZakat ? "Tunaikan Zakat" : "Donasi Sekarang";
 
 	return (
@@ -156,6 +157,7 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 				campaignSlug={
 					campaign.slug
 				}
+				isZis={isZisCampaign(campaign)}
 				isClosed={isClosed}
 			/>
 		</div>

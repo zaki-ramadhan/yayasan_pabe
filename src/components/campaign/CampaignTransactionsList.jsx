@@ -104,7 +104,7 @@ export function CampaignTransactionsList({
           <h3 className="text-base sm:text-lg font-semibold text-slate-950">
             {effectiveIsZakat ? "Riwayat Penunaian Zakat" : "Riwayat Transaksi Donasi"}
           </h3>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm sm:text-base text-slate-600">
             {effectiveIsZakat
               ? "Catatan zakat tertunaikan yang telah berhasil terverifikasi oleh sistem."
               : "Catatan mutasi donasi masuk yang telah berhasil terverifikasi oleh sistem."}
