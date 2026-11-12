@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { formatDate } from "@/lib/formatters";
+import { getCampaignDetailHref } from "@/lib/zisFilter";
 
 export function DonorReportItem({ report }) {
   if (!report) return null;
@@ -26,7 +27,10 @@ export function DonorReportItem({ report }) {
       </div>
       {report.campaignSlug && (
         <Link
-          href={`/campaign/${report.campaignSlug}`}
+          href={getCampaignDetailHref({
+            slug: report.campaignSlug,
+            categoryName: report.categoryName,
+          })}
           className="text-sm font-medium text-primary hover:underline whitespace-nowrap self-start sm:self-center shrink-0"
         >
           Lihat Berita

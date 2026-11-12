@@ -10,6 +10,7 @@ export function FloatingRoutineDonateButton() {
   // Sembunyikan pada rute administrasi, otentikasi, atau halaman donasi langsung
   const isDonationPage =
     pathname?.startsWith("/program") ||
+    pathname?.startsWith("/zis") ||
     pathname?.startsWith("/campaign") ||
     pathname?.startsWith("/donasi-rutin") ||
     pathname?.startsWith("/kalkulator-zakat");

@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
 import { toTitleCase } from "@/lib/formatters";
-import { cleanupOrphanCategories } from "./categoryService";
+import { ZIS_CAMPAIGN_WHERE, isZisCategory } from "@/lib/zisFilter";
+import { cleanupOrphanCategories, ensureLockedZisCategories } from "./categoryService";
 import { deleteFromR2 } from "@/lib/r2Storage";
 import {
   completeRoutineDonationsForCampaign,
@@ -11,20 +12,37 @@ import {
 /**
  * Mengambil daftar program kampanye untuk tabel manajemen admin.
  */
-export async function getAdminCampaigns({ search = "", status = "", page = 1, limit = 10 } = {}) {
+export async function getAdminCampaigns({
+  search = "",
+  status = "",
+  mode = "all",
+  page = 1,
+  limit = 10,
+} = {}) {
   const skip = (Math.max(1, page) - 1) * limit;
 
   try {
-    const where = {};
+    const andConditions = [];
+    if (mode === "zis") {
+      andConditions.push(ZIS_CAMPAIGN_WHERE);
+    } else if (mode === "donation") {
+      andConditions.push({ NOT: ZIS_CAMPAIGN_WHERE });
+    }
     if (status && status !== "ALL") {
-      where.status = status;
+      andConditions.push({ status });
     }
     if (search) {
-      where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { location: { contains: search, mode: "insensitive" } },
-      ];
+      andConditions.push({
+        OR: [
+          { title: { contains: search, mode: "insensitive" } },
+          { location: { contains: search, mode: "insensitive" } },
+        ],
+      });
     }
+
+    const where = andConditions.length > 0 ? { AND: andConditions } : {};
+
+    await ensureLockedZisCategories();
 
     const [total, items, categories] = await Promise.all([
       prisma.campaign.count({ where }),
@@ -48,6 +66,7 @@ export async function getAdminCampaigns({ search = "", status = "", page = 1, li
         title: c.title,
         slug: c.slug,
         category: c.category?.name || "Program Umum",
+        categorySlug: c.category?.slug || "",
         categoryId: c.categoryId,
         targetAmount: Number(c.targetAmount || 0),
         collectedAmount: Number(c.collectedAmount || 0),
@@ -138,6 +157,14 @@ export async function createAdminCampaign(payload) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
   const uniqueSlug = `${baseSlug}-${Date.now().toString().slice(-4)}`;
+
+  if (payload.mode === "zis" && newCategoryName) {
+    throw new Error("Kategori program ZIS bersifat tetap (Zakat, Infaq, atau Sedekah).");
+  }
+
+  if (newCategoryName && isZisCategory({ name: newCategoryName })) {
+    throw new Error("Gunakan halaman Kelola Program ZIS untuk kategori Zakat, Infaq, dan Sedekah.");
+  }
 
   if (!categoryId && newCategoryName) {
     return prisma.$transaction(async (tx) => {
@@ -231,6 +258,9 @@ export async function updateAdminCampaign(id, payload) {
     const rawCat = sanitizeInput(payload.newCategoryName).trim();
     const newCatName = rawCat ? toTitleCase(rawCat) : null;
     if (newCatName) {
+      if (payload.mode === "zis" || isZisCategory({ name: newCatName })) {
+        throw new Error("Kategori program ZIS bersifat tetap (Zakat, Infaq, atau Sedekah).");
+      }
       let category = await prisma.category.findFirst({
         where: { name: { equals: newCatName, mode: "insensitive" } },
       });

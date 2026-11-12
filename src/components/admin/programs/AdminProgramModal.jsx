@@ -8,6 +8,13 @@ import { Input } from "@/components/ui/Input";
 import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
+import {
+	Select,
+	SelectTrigger,
+	SelectValue,
+	SelectContent,
+	SelectItem,
+} from "@/components/ui/Select";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 import { toTitleCase } from "@/lib/formatters";
@@ -17,15 +24,18 @@ import { isFormDirty } from "@/lib/formUtils";
 import { sanitizeStandardText } from "@/lib/sanitizer";
 import { useStagedUploads } from "@/hooks/useStagedUploads";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
+import { isZisCategory, ZIS_LOCKED_CATEGORIES } from "@/lib/zisFilter";
 
 export function AdminProgramModal({
 	isOpen,
 	onOpenChange,
 	campaignToEdit = null,
 	categories = [],
+	mode = "all",
 	onSuccess,
 }) {
 	const isEditing = Boolean(campaignToEdit);
+	const isZisMode = mode === "zis";
 
 	const [createdCategories, setCreatedCategories] =
 		useState([]);
@@ -46,7 +56,25 @@ export function AdminProgramModal({
 		onOpenChange(false);
 	};
 
+	const zisCategoryOptions = useMemo(() => {
+		return ZIS_LOCKED_CATEGORIES.map((locked) => {
+			const matched = (categories || []).find(
+				(c) =>
+					String(c.slug || "").toLowerCase() === locked.slug ||
+					String(c.id || "").toLowerCase() === locked.id
+			);
+			return {
+				id: matched?.id || locked.id,
+				name: locked.name,
+				slug: locked.slug,
+			};
+		});
+	}, [categories]);
+
 	const categoryList = useMemo(() => {
+		if (isZisMode) {
+			return zisCategoryOptions;
+		}
 		const combined = [
 			...(categories ||
 				[]),
@@ -63,10 +91,24 @@ export function AdminProgramModal({
 					item,
 				);
 		});
-		return Array.from(
-			map.values(),
-		);
-	}, [categories, createdCategories]);
+		const all = Array.from(map.values());
+		if (mode === "donation") {
+			const donationCats = all.filter((c) => !isZisCategory(c));
+			return donationCats.length > 0 ? donationCats : all;
+		}
+		return all;
+	}, [categories, createdCategories, isZisMode, mode, zisCategoryOptions]);
+
+	const defaultCategoryId = useMemo(() => {
+		if (isZisMode) {
+			return zisCategoryOptions[0]?.id || "zakat";
+		}
+		if (mode === "donation") {
+			const donCat = (categories || []).find((c) => !isZisCategory(c));
+			if (donCat?.id) return donCat.id;
+		}
+		return categories[0]?.id || "";
+	}, [categories, isZisMode, mode, zisCategoryOptions]);
 
 	useEffect(() => {
 		setErrors({});
@@ -110,9 +152,7 @@ export function AdminProgramModal({
 				"",
 			);
 			setCategoryId(
-				categories[0]
-					?.id ||
-					"",
+				defaultCategoryId,
 			);
 			setTargetAmount(
 				0,
@@ -130,7 +170,7 @@ export function AdminProgramModal({
 				"",
 			);
 		}
-	}, [campaignToEdit, categories, isOpen]);
+	}, [campaignToEdit, categories, defaultCategoryId, isOpen]);
 
 	const handleCreateCategory = (name) => {
 		const formatted =
@@ -138,6 +178,15 @@ export function AdminProgramModal({
 				name,
 			);
 		if (!formatted) return;
+
+		if (
+			isZisMode ||
+			isZisCategory({ name: formatted }) ||
+			formatted.toLowerCase().includes("ziswaf")
+		) {
+			toast.error("Kategori Zakat, Infaq, dan Sedekah dikelola secara khusus di halaman Kelola Program ZIS.");
+			return null;
+		}
 
 		// Cek apakah sudah ada di categories existing dengan perbandingan case-insensitive
 		const existing =
@@ -226,6 +275,7 @@ export function AdminProgramModal({
 		try {
 			const isNewCat = categoryId.startsWith("new:");
 			const payload = {
+				mode,
 				title,
 				targetAmount,
 				endDate: endDate ? new Date(endDate).toISOString() : null,
@@ -353,7 +403,15 @@ export function AdminProgramModal({
 			onClose={handleClose}
 			onSubmit={handleSubmit}
 			maxWidth="max-w-2xl"
-			title={isEditing ? "Edit Program Donasi" : "Tambah Program Donasi Baru"}
+			title={
+				isZisMode
+					? isEditing
+						? "Edit Program ZIS"
+						: "Tambah Program ZIS Baru"
+					: isEditing
+					? "Edit Program Donasi"
+					: "Tambah Program Donasi Baru"
+			}
 			submitText="Simpan"
 			submittingText="Menyimpan..."
 			isSubmitting={isSubmitting}
@@ -367,7 +425,11 @@ export function AdminProgramModal({
 			>
 				<Input
 					type="text"
-					placeholder="Contoh: Beasiswa Pendidikan Anak Yatim Piatu"
+					placeholder={
+						isZisMode
+							? "Contoh: Sedekah Subuh Berkah atau Zakat Maal"
+							: "Contoh: Beasiswa Pendidikan Anak Yatim Piatu"
+					}
 					value={title}
 					minLength={FIELD_LIMITS.PROGRAM_TITLE.min}
 					maxLength={FIELD_LIMITS.PROGRAM_TITLE.max}
@@ -386,25 +448,52 @@ export function AdminProgramModal({
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
 				{/* Kategori program */}
 				<FormField
-					label="Kategori program"
+					label={isZisMode ? "Kategori ZIS" : "Kategori program"}
 					required
 					error={errors.categoryId}
 				>
-					<CreatableCombobox
-						options={categoryList}
-						value={categoryId}
-						onChange={(val) => {
-							setCategoryId(val);
-							if (errors.categoryId) {
-								setErrors((prev) => ({ ...prev, categoryId: "" }));
-							}
-						}}
-						onCreate={handleCreateCategory}
-						placeholder="Pilih kategori..."
-						searchPlaceholder="Cari kategori atau buat baru..."
-						createPrefix="Buat kategori"
-						className="bg-white"
-					/>
+					{isZisMode ? (
+						<Select
+							value={categoryId}
+							onValueChange={(val) => {
+								setCategoryId(val);
+								if (errors.categoryId) {
+									setErrors((prev) => ({ ...prev, categoryId: "" }));
+								}
+							}}
+						>
+							<SelectTrigger className="h-10 text-sm bg-white border border-slate-300 rounded-lg">
+								<SelectValue placeholder="Pilih kategori ZIS..." />
+							</SelectTrigger>
+							<SelectContent className="bg-white border border-slate-200 z-50">
+								{categoryList.map((cat) => (
+									<SelectItem
+										key={cat.id}
+										value={cat.id}
+										className="cursor-pointer text-sm font-normal py-2"
+									>
+										{cat.name}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					) : (
+						<CreatableCombobox
+							options={categoryList}
+							value={categoryId}
+							onChange={(val) => {
+								setCategoryId(val);
+								if (errors.categoryId) {
+									setErrors((prev) => ({ ...prev, categoryId: "" }));
+								}
+							}}
+							onCreate={handleCreateCategory}
+							placeholder="Pilih kategori..."
+							searchPlaceholder="Cari kategori atau buat baru..."
+							createPrefix="Buat kategori"
+							className="bg-white"
+						/>
+					)}
 				</FormField>
 
 				{/* Target donasi */}

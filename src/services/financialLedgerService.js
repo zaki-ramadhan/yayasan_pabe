@@ -97,7 +97,7 @@ export async function getFinancialLedgerData() {
         type: "INCOME",
         typeLabel: "Donasi Masuk",
         description: d.campaign?.title || (d.donationType === "ZAKAT" ? "Zakat Penghasilan" : "Sedekah Umum"),
-        category: d.campaign?.category?.name || "ZISWAF",
+        category: d.campaign?.category?.name || "Zakat & Sedekah",
         amount: d.amount,
         subsidyFee,
         netReceived,

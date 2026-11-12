@@ -22,25 +22,41 @@ export function AdminProgramToolbar({
   onRefresh,
   onOpenAdd,
   isLoading,
+  isZisMode = false,
 }) {
   return (
     <TableToolbar
       search={search}
       onSearchChange={onSearchChange}
       onClearSearch={onClearSearch}
-      searchPlaceholder="Cari judul program donasi..."
+      searchPlaceholder={isZisMode ? "Cari judul program ZIS..." : "Cari judul program donasi..."}
       searchWidth="flex-1 min-w-[200px] max-w-sm"
       filters={
         <>
-          <CreatableCombobox
-            options={filterCategoryOptions}
-            value={categoryFilter}
-            onChange={onCategoryChange}
-            placeholder="Semua Kategori"
-            searchPlaceholder="Cari kategori program..."
-            emptyMessage="Data tidak ditemukan."
-            className="h-10 w-44 text-sm bg-white shrink-0"
-          />
+          {isZisMode ? (
+            <Select value={categoryFilter} onValueChange={onCategoryChange}>
+              <SelectTrigger className="h-10 w-44 text-sm bg-white shrink-0">
+                <SelectValue placeholder="Semua Kategori" />
+              </SelectTrigger>
+              <SelectContent align="start">
+                {filterCategoryOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <CreatableCombobox
+              options={filterCategoryOptions}
+              value={categoryFilter}
+              onChange={onCategoryChange}
+              placeholder="Semua Kategori"
+              searchPlaceholder="Cari kategori program..."
+              emptyMessage="Data tidak ditemukan."
+              className="h-10 w-44 text-sm bg-white shrink-0"
+            />
+          )}
 
           <Select value={statusFilter} onValueChange={onStatusChange}>
             <SelectTrigger className="h-10 w-36 text-sm bg-white shrink-0">
@@ -58,7 +74,7 @@ export function AdminProgramToolbar({
       onRefresh={onRefresh}
       isLoading={isLoading}
       primaryAction={{
-        label: "Program baru",
+        label: isZisMode ? "Program ZIS baru" : "Program baru",
         onClick: onOpenAdd,
       }}
     />

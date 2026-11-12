@@ -8,7 +8,7 @@ export const INFORMASI_MENU = [
   { label: "Laporan Akuntabilitas", href: "/laporan" },
   { label: "Distribusi", href: "/distribusi" },
   { label: "Kalkulator Zakat", href: "/kalkulator-zakat" },
-  { label: "Gabung Jadi Relawan", href: "/volunteer" },
+  { label: "Gabung Jadi Relawan", href: "/relawan" },
   { label: "Karier", href: "/karier" },
   { label: "Ketentuan Transaksi", href: "/ketentuan-transaksi" },
 ];
@@ -23,7 +23,7 @@ export const FOOTER_QUICK_LINKS = [
   { label: "Laporan Akuntabilitas", href: "/laporan" },
   { label: "Distribusi", href: "/distribusi" },
   { label: "Kalkulator Zakat", href: "/kalkulator-zakat" },
-  { label: "Gabung Relawan", href: "/volunteer" },
+  { label: "Gabung Relawan", href: "/relawan" },
   { label: "Karier", href: "/karier" },
   { label: "Ketentuan Transaksi", href: "/ketentuan-transaksi" },
 ];
@@ -37,10 +37,7 @@ export function isNavItemActive(href, pathname) {
     return pathname === "/zis" || pathname.startsWith("/zis/") || pathname.startsWith("/zakat");
   }
   if (href === "/program") {
-    return (
-      (pathname === "/program" || pathname.startsWith("/program/")) ||
-      (pathname.startsWith("/campaign") && !pathname.includes("zakat"))
-    );
+    return pathname === "/program" || pathname.startsWith("/program/");
   }
   if (href === "/artikel") {
     return pathname === "/artikel" || pathname.startsWith("/artikel/");

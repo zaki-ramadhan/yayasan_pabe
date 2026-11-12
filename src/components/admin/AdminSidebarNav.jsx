@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LogOut, ExternalLink } from "lucide-react";
 import { logoutUser } from "@/services/authService";
 import { USER_ROLES } from "@/services/authService";
@@ -19,7 +19,7 @@ const ADMIN_NAV_GROUPS = [
       { href: "/admin", label: "Dashboard Utama", short: "DB", exact: true },
       { href: "/admin/donatur", label: "Daftar Donatur", short: "DD" },
       { href: "/admin/program", label: "Kelola Program Donasi", short: "PD" },
-      { href: "/admin/program?category=zakat", label: "Kelola Program ZIS", short: "PZ" },
+      { href: "/admin/zis", label: "Kelola Program ZIS", short: "PZ" },
       { href: "/admin/distribusi", label: "Rekam Penyaluran", short: "RP" },
       { href: "/admin/transaksi", label: "Mutasi Transaksi", short: "MT" },
       { href: "/admin/donasi-rutin", label: "Donasi Rutin", short: "DR" },
@@ -45,7 +45,6 @@ export function AdminSidebarNav({
   onCloseMobile,
 }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const { currentUser } = useCurrentUser();
   const { health } = useStorageAlert();
@@ -172,17 +171,9 @@ export function AdminSidebarNav({
                   );
                 }
 
-                const currentCategory = searchParams?.get("category");
-                let isActive = false;
-                if (item.href.includes("category=zakat")) {
-                  isActive = pathname === "/admin/program" && currentCategory === "zakat";
-                } else if (item.href === "/admin/program") {
-                  isActive = pathname === "/admin/program" && currentCategory !== "zakat";
-                } else if (item.exact) {
-                  isActive = pathname === item.href;
-                } else {
-                  isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                }
+                const isActive = item.exact
+                  ? pathname === item.href
+                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
                 return (
                   <Link

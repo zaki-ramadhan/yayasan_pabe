@@ -12,7 +12,9 @@ import { getInitials } from "@/lib/formatters";
 const ADMIN_PAGE_TITLES = {
   "/admin": "Dashboard Utama",
   "/admin/donatur": "Daftar Donatur",
-  "/admin/program": "Kelola Program",
+  "/admin/program": "Kelola Program Donasi",
+  "/admin/zis": "Kelola Program ZIS",
+  "/admin/kategori": "Kategori Program",
   "/admin/distribusi": "Rekam Penyaluran",
   "/admin/transaksi": "Mutasi Transaksi",
   "/admin/donasi-rutin": "Donasi Rutin",

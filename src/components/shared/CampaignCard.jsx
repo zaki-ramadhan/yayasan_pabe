@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/Progress";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { RibbonBadge } from "@/components/ui/RibbonBadge";
 import { HighlightText } from "@/components/shared/HighlightText";
+import { getCampaignDetailHref } from "@/lib/zisFilter";
 import { cn } from "@/lib/utils";
 
 export function CampaignCard({
@@ -138,7 +139,7 @@ export function CampaignCard({
         </div>
 
         {/* Full-Width CTA Button: Static colors without hover transitions */}
-        <Link href={`/campaign/${campaign.slug}`} className="block w-full">
+        <Link href={getCampaignDetailHref(campaign)} className="block w-full">
           {isClosed ? (
             <Button
               variant="outline"

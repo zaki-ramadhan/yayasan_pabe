@@ -35,6 +35,7 @@ import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
+import { isZisCategory, isZisCampaign, ZIS_LOCKED_CATEGORIES } from "@/lib/zisFilter";
 
 export function AdminProgramTable({
   initialCampaigns = [],
@@ -42,7 +43,9 @@ export function AdminProgramTable({
   initialEditId,
   initialCategoryFilter = "ALL",
   initialError = null,
+  mode = "all",
 }) {
+  const isZisMode = mode === "zis";
   const [error, setError] = useState(initialError);
   const initialEditCampaign = useMemo(() => {
     if (!initialEditId) return null;
@@ -117,27 +120,53 @@ export function AdminProgramTable({
   });
 
   const filterCategoryOptions = useMemo(() => {
+    if (mode === "zis") {
+      return [
+        { value: "ALL", label: "Semua Kategori" },
+        ...ZIS_LOCKED_CATEGORIES.map((locked) => {
+          const matched = (categories || []).find(
+            (cat) =>
+              String(cat.slug || "").toLowerCase() === locked.slug ||
+              String(cat.id || "").toLowerCase() === locked.id
+          );
+          return {
+            value: matched?.id || locked.id,
+            label: locked.name,
+          };
+        }),
+      ];
+    }
+
+    const visibleCategories =
+      mode === "donation"
+        ? (categories || []).filter((cat) => !isZisCategory(cat))
+        : (categories || []);
+
     return [
       { value: "ALL", label: "Semua Kategori" },
-      ...(categories || []).map((cat) => ({
+      ...visibleCategories.map((cat) => ({
         value: cat.id || cat.name,
         label: cat.name || cat.label,
       })),
     ];
-  }, [categories]);
+  }, [categories, mode]);
 
   const filteredCampaigns = useMemo(() => {
     return campaigns.filter((item) => {
+      if (mode === "zis" && !isZisCampaign(item)) return false;
+      if (mode === "donation" && isZisCampaign(item)) return false;
       if (statusFilter !== "ALL" && item.status !== statusFilter) return false;
       if (categoryFilter !== "ALL") {
+        const filterLower = categoryFilter.toLowerCase();
         const matchesId = item.categoryId === categoryFilter;
-        const matchesName = item.category?.toLowerCase() === categoryFilter.toLowerCase();
-        if (!matchesId && !matchesName) return false;
+        const matchesSlug = item.categorySlug?.toLowerCase() === filterLower;
+        const matchesName = item.category?.toLowerCase() === filterLower;
+        if (!matchesId && !matchesSlug && !matchesName) return false;
       }
       if (debouncedSearch && !item.title.toLowerCase().includes(debouncedSearch.toLowerCase())) return false;
       return true;
     });
-  }, [campaigns, statusFilter, categoryFilter, debouncedSearch]);
+  }, [campaigns, mode, statusFilter, categoryFilter, debouncedSearch]);
 
   const {
     currentPage,
@@ -178,13 +207,17 @@ export function AdminProgramTable({
   const refreshList = async () => {
     setIsLoading(true);
     try {
-      const res = await safeFetch("/api/admin/programs?limit=100");
+      const res = await safeFetch(`/api/admin/programs?limit=100&mode=${encodeURIComponent(mode)}`);
       const data = await res.json();
       if (data.success && data.data) {
         setCampaigns(data.data);
         setError(null);
         selection.clearSelection();
-        toast.success("Data program donasi berhasil diperbarui.");
+        toast.success(
+          isZisMode
+            ? "Data program ZIS berhasil diperbarui."
+            : "Data program donasi berhasil diperbarui."
+        );
       } else {
         const errMsg = data.message || data.error || "Gagal menyegarkan data program.";
         setError(errMsg);
@@ -270,6 +303,7 @@ export function AdminProgramTable({
         onRefresh={refreshList}
         onOpenAdd={handleOpenAdd}
         isLoading={isLoading}
+        isZisMode={isZisMode}
       />
 
       {error && (
@@ -369,6 +403,7 @@ export function AdminProgramTable({
         onOpenChange={setIsModalOpen}
         campaignToEdit={editingCampaign}
         categories={categories}
+        mode={mode}
         onSuccess={refreshList}
       />
 

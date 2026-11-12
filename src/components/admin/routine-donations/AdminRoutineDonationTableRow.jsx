@@ -5,6 +5,7 @@ import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { UserAvatar } from "@/components/ui/Avatar";
+import { getCampaignDetailHref } from "@/lib/zisFilter";
 import { AdminRoutineDonationStatusBadge } from "./AdminRoutineDonationStatusBadge";
 
 export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
@@ -51,7 +52,7 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
       <TableCell className="text-sm text-slate-800 py-3 align-middle min-w-[280px] max-w-[360px]">
         {item.campaignSlug ? (
           <Link
-            href={`/campaign/${item.campaignSlug}`}
+            href={getCampaignDetailHref(item.campaignSlug)}
             target="_blank"
             className="font-normal leading-snug line-clamp-2 overflow-hidden text-slate-800 hover:text-primary hover:underline cursor-pointer transition-colors block"
             aria-label={`Buka program: ${item.programTitle}`}

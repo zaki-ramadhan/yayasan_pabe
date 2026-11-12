@@ -3,6 +3,7 @@ import { getCampaigns, getCategories } from "@/services/campaignService";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { ProgramCatalog } from "@/components/modules/ProgramCatalog";
 import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
+import { isZisCategory } from "@/lib/zisFilter";
 
 export const dynamic = "force-dynamic";
 
@@ -37,13 +38,7 @@ export default async function ProgramPage() {
     getCategories(),
   ]);
 
-  const categories = allCategories.filter(
-    (c) =>
-      c.id !== "zakat" &&
-      c.slug !== "zakat" &&
-      !c.name.toLowerCase().includes("zakat") &&
-      !c.name.toLowerCase().includes("zis")
-  );
+  const categories = allCategories.filter((c) => !isZisCategory(c));
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">

@@ -10,6 +10,7 @@ import {
   DonorEmptyText,
 } from "@/components/donor/DonorDashboardPrimitives";
 import { formatDate } from "@/lib/formatters";
+import { getCampaignDetailHref } from "@/lib/zisFilter";
 import { safeFetch } from "@/lib/safeFetch";
 
 export function DonorPrayersCard({ currentUser }) {
@@ -86,7 +87,7 @@ export function DonorPrayersCard({ currentUser }) {
 
                 {item.campaignSlug && (
                   <Link
-                    href={`/campaign/${item.campaignSlug}`}
+                    href={getCampaignDetailHref(item.campaignSlug)}
                     target="_blank"
                     className="inline-flex items-center gap-1 text-primary hover:underline font-medium"
                   >

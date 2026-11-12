@@ -8,7 +8,7 @@ const DEFAULT_NAV_LINKS = [
   { href: "/laporan", label: "Laporan Keuangan" },
   { href: "/tentang-kami", label: "Profil Pengurus" },
   { href: "/artikel", label: "Kabar Lapangan" },
-  { href: "/volunteer", label: "Pendaftaran Relawan" },
+  { href: "/relawan", label: "Pendaftaran Relawan" },
 ];
 
 /**

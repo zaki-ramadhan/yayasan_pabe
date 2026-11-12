@@ -20,6 +20,7 @@ import { saveDonationDraft, loadDonationDraft, clearDonationDraft } from "@/lib/
 import { saveDonorInvoice } from "@/lib/donorStorage";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
+import { getCampaignDonateHref } from "@/lib/zisFilter";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export const NOMINAL_PRESETS = [25000, 50000, 100000, 250000, 500000];
@@ -108,7 +109,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
         const currentUrl =
           typeof window !== "undefined"
             ? window.location.pathname + window.location.search
-            : `/campaign/${campaign?.slug}/donate`;
+            : getCampaignDonateHref(campaign);
         const queryPrayer =
           typeof window !== "undefined"
             ? new URLSearchParams(window.location.search).get("prayer")

@@ -15,7 +15,7 @@ export function AdminProgramSkeleton() {
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex flex-1 flex-wrap items-center gap-2.5 max-w-2xl">
           <Skeleton className="h-10 flex-1 min-w-[200px] rounded-lg" />
-          <Skeleton className="h-10 w-48 rounded-lg shrink-0" />
+          <Skeleton className="h-10 w-44 rounded-lg shrink-0" />
           <Skeleton className="h-10 w-36 rounded-lg shrink-0" />
         </div>
         <Skeleton className="h-10 w-40 rounded-lg shrink-0" />

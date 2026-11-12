@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/Badge";
 import { formatDate, formatRupiah, formatClockTime } from "@/lib/formatters";
 import { maskEmail } from "@/lib/security";
 import { copyToClipboard } from "@/lib/clipboard";
+import { getCampaignDetailHref } from "@/lib/zisFilter";
 import { toast } from "@/hooks/useToast";
 
 export function AdminPrayerTableRow({
@@ -106,7 +107,7 @@ export function AdminPrayerTableRow({
       <TableCell className="min-w-[240px] max-w-[340px] py-3 align-top">
         {item.campaignSlug ? (
           <Link
-            href={`/campaign/${item.campaignSlug}`}
+            href={getCampaignDetailHref(item.campaignSlug)}
             target="_blank"
             className="font-normal text-sm text-slate-800 hover:text-primary hover:underline leading-snug line-clamp-2 cursor-pointer transition-colors block overflow-hidden"
             aria-label={`Buka program: ${item.campaignTitle}`}

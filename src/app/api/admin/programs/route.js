@@ -24,10 +24,11 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
+    const mode = searchParams.get("mode") || "all";
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
 
-    const result = await getAdminCampaigns({ search, status, page, limit });
+    const result = await getAdminCampaigns({ search, status, mode, page, limit });
     return NextResponse.json({
       success: true,
       data: result.items,
@@ -62,8 +63,10 @@ export async function POST(request) {
     const campaign = await createAdminCampaign(body);
 
     revalidatePath("/program");
+    revalidatePath("/zis");
     revalidatePath("/");
     revalidatePath("/admin/program");
+    revalidatePath("/admin/zis");
 
     return NextResponse.json(
       {
@@ -115,8 +118,10 @@ export async function DELETE(request) {
     });
 
     revalidatePath("/program");
+    revalidatePath("/zis");
     revalidatePath("/");
     revalidatePath("/admin/program");
+    revalidatePath("/admin/zis");
 
     return NextResponse.json({
       success: true,

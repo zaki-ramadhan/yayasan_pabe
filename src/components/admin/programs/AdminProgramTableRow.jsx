@@ -10,6 +10,7 @@ import {
 	CheckCircle,
 } from "lucide-react";
 import { formatRupiah, calculateDaysLeft } from "@/lib/formatters";
+import { getCampaignDetailHref } from "@/lib/zisFilter";
 import { Progress } from "@/components/ui/Progress";
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -69,7 +70,7 @@ export function AdminProgramTableRow({
 			<TableCell className="space-y-1 py-3 align-middle max-w-sm">
 				{item.slug ? (
 					<Link
-						href={`/campaign/${item.slug}`}
+						href={getCampaignDetailHref(item)}
 						target="_blank"
 						className="font-medium text-sm text-slate-900 hover:text-primary hover:underline leading-snug line-clamp-2 cursor-pointer transition-colors block overflow-hidden"
 						aria-label={`Buka program: ${item.title}`}
@@ -213,7 +214,7 @@ export function AdminProgramTableRow({
 							asChild
 						>
 							<Link
-								href={`/campaign/${item.slug}`}
+								href={getCampaignDetailHref(item)}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="text-sm py-2 cursor-pointer flex items-center gap-2"

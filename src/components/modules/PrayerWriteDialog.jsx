@@ -14,6 +14,7 @@ import { FormField } from "@/components/ui/FormField";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { sanitizePrayer, sanitizeName } from "@/lib/security";
+import { getCampaignDonateHref } from "@/lib/zisFilter";
 import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
@@ -164,7 +165,7 @@ export function PrayerWriteDialog({
               <p className="text-center text-xs text-slate-500">
                 Ingin sekaligus berdonasi?{" "}
                 <Link
-                  href={`/campaign/${campaignSlug}/donate`}
+                  href={getCampaignDonateHref(campaignSlug)}
                   className="font-medium text-primary hover:underline"
                   onClick={() => onOpenChange(false)}
                 >

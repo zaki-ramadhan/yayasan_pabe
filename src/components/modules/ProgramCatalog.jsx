@@ -8,6 +8,7 @@ import {
 } from "@/data/sortOptions";
 import { useCatalogState } from "@/hooks/useCatalogState";
 import { isCampaignClosed } from "@/lib/formatters";
+import { isZisCampaign } from "@/lib/zisFilter";
 import { CampaignCard } from "@/components/shared/CampaignCard";
 import { CatalogSearchBar } from "@/components/shared/CatalogSearchBar";
 import { CategoryTabs } from "@/components/shared/CategoryTabs";
@@ -17,16 +18,8 @@ import { EmptyState } from "@/components/shared/EmptyState";
 const BATCH_SIZE = 6;
 
 function filterCampaign(campaign, { category, searchQuery, categories, status = "all" }) {
-  // Selalu filter keluar program zakat/ZIS dari katalog program donasi umum
-  const isZakat =
-    campaign?.slug === "zakat" ||
-    campaign?.categoryId === "zakat" ||
-    campaign?.categorySlug === "zakat" ||
-    campaign?.category?.slug === "zakat" ||
-    campaign?.categoryName?.toLowerCase().includes("zakat") ||
-    campaign?.categoryName?.toLowerCase().includes("zis");
-
-  if (isZakat) return false;
+  // Selalu filter keluar program ZIS (Zakat, Infaq, Sedekah) dari katalog program donasi umum
+  if (isZisCampaign(campaign)) return false;
 
   if (category !== "all" && category !== "semua") {
     const catName = categories.find((c) => c.id === category)?.name ?? "";

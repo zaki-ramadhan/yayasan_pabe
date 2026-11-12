@@ -12,6 +12,7 @@ import { getStoredUser } from "@/services/authService";
 import { DateStickyBadge } from "@/components/shared/DateStickyBadge";
 import { getDateKey, getDateBadgeLabel } from "@/lib/dateUtils";
 import { validatePrayer } from "@/lib/security";
+import { getCampaignDonateHref } from "@/lib/zisFilter";
 import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +20,7 @@ const PAGE_SIZE = 5;
 
 
 
-export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClosed = false }) {
+export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis = false, isClosed = false }) {
   const { donors, aminedSet, handleToggleAmin } = usePrayersSync(initialDonors, campaignSlug);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -190,7 +191,8 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isClo
       return;
     }
     const user = getStoredUser();
-    const donateUrl = `/campaign/${campaignSlug}/donate?prayer=${encodeURIComponent(trimmed)}`;
+    const campaignTarget = isZis ? { slug: campaignSlug, categorySlug: "zis" } : campaignSlug;
+    const donateUrl = `${getCampaignDonateHref(campaignTarget)}?prayer=${encodeURIComponent(trimmed)}`;
 
     if (!user) {
       toast.info("Masuk akun dan selesaikan donasi untuk menitipkan doa.");

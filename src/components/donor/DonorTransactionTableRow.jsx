@@ -5,7 +5,12 @@ import { FileText } from "lucide-react";
 import { formatRupiah, formatDate, formatTime, formatPaymentChannel } from "@/lib/formatters";
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { StatusBadge } from "@/components/ui/Badge";
-import { isZisTransaction, getTransactionTypeLabel } from "@/lib/zisFilter";
+import {
+  isZisTransaction,
+  getTransactionTypeLabel,
+  getCampaignDetailHref,
+  getCampaignDonateHref,
+} from "@/lib/zisFilter";
 
 export function DonorTransactionTableRow({ item }) {
   const isZis = isZisTransaction(item);
@@ -21,7 +26,12 @@ export function DonorTransactionTableRow({ item }) {
       item.donationType === "INFAK_SUBUH");
 
   const retryHref = item.campaignSlug
-    ? `/campaign/${item.campaignSlug}/donate?amount=${item.amount}`
+    ? `${getCampaignDonateHref({
+        slug: item.campaignSlug,
+        categorySlug: item.categorySlug,
+        categoryName: item.categoryName,
+        category: item.campaign?.category || (isZis ? "ZIS" : ""),
+      })}?amount=${item.amount}`
     : isZis
     ? `/zakat/bayar?amount=${item.amount}`
     : "/program";
@@ -46,7 +56,12 @@ export function DonorTransactionTableRow({ item }) {
           )}
           {item.campaignSlug ? (
             <Link
-              href={`/campaign/${item.campaignSlug}`}
+              href={getCampaignDetailHref({
+                slug: item.campaignSlug,
+                categorySlug: item.categorySlug,
+                categoryName: item.categoryName,
+                category: item.campaign?.category || (isZis ? "ZIS" : ""),
+              })}
               className="font-medium text-slate-900 hover:text-primary transition-colors line-clamp-1"
             >
               {item.programTitle}

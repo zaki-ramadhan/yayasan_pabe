@@ -8,6 +8,7 @@ import { FormField } from "@/components/ui/FormField";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { NominalGridPicker } from "@/components/donation/NominalGridPicker";
 import { DONATION_LIMITS } from "@/lib/security";
+import { getCampaignDonateHref } from "@/lib/zisFilter";
 import { getStoredUser } from "@/services/authService";
 
 const PRESET_AMOUNTS = [25000, 50000, 100000];
@@ -62,7 +63,7 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-a
     setAmountError("");
 
     const user = getStoredUser();
-    const targetUrl = `/campaign/${defaultCampaignSlug}/donate?amount=${finalAmount}`;
+    const targetUrl = `${getCampaignDonateHref(defaultCampaignSlug)}?amount=${finalAmount}`;
 
     if (!user) {
       router.push(

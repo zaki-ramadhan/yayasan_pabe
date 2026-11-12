@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Progress } from "@/components/ui/Progress";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { RibbonBadge } from "@/components/ui/RibbonBadge";
+import { getCampaignDetailHref } from "@/lib/zisFilter";
 import { cn } from "@/lib/utils";
 
 /**
@@ -98,7 +99,7 @@ export function CampaignCardMinimal({
         </div>
 
         {/* Tombol Donasi Ramping */}
-        <Link href={`/campaign/${campaign.slug}`} className="block w-full mt-auto">
+        <Link href={getCampaignDetailHref(campaign)} className="block w-full mt-auto">
           {isClosed ? (
             <Button
               variant="outline"

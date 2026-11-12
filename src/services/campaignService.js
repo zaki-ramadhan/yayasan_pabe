@@ -180,9 +180,9 @@ export async function getOrCreateDefaultZakatCampaign() {
           connectOrCreate: {
             where: { slug: "zakat" },
             create: {
-              name: "ZISWAF",
+              name: "Zakat",
               slug: "zakat",
-              iconName: "HeartHandshake",
+              iconName: "Coins",
             },
           },
         },

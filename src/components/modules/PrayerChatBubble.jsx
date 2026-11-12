@@ -1,12 +1,9 @@
 "use client";
 
-import { Clock } from "lucide-react";
 import { PrayerAvatar } from "@/components/modules/PrayerAvatar";
 import { PrayerAminButton } from "@/components/modules/PrayerAminButton";
 import { formatClockTime } from "@/lib/dateUtils";
 import { cn } from "@/lib/utils";
-
-const BUBBLE_THEME = "bg-gradient-to-br from-slate-800 to-slate-900 text-white";
 
 export function PrayerChatBubble({
   donor,
@@ -23,7 +20,7 @@ export function PrayerChatBubble({
     <article className={cn("flex flex-col w-full", isOwn ? "items-end" : "items-start")}>
       <div
         className={cn(
-          "text-sm font-semibold mb-1 truncate max-w-full",
+          "text-sm font-medium mb-1 truncate max-w-full",
           isOwn ? "text-slate-300" : "text-white",
           avatarOffset
         )}
@@ -52,8 +49,7 @@ export function PrayerChatBubble({
               {cleanPrayer}
             </p>
 
-            <div className="flex items-center justify-end gap-1 mt-1 text-sm opacity-75 select-none leading-none">
-              <Clock className="w-3.5 h-3.5 shrink-0 stroke-[2]" />
+            <div className="flex items-center justify-end mt-1 text-[12px] font-normal opacity-75 select-none leading-normal tabular-nums">
               <span>{formatClockTime(donor.date)}</span>
             </div>
           </div>

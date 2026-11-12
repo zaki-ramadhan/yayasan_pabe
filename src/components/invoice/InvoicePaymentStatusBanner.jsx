@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Check, X } from "lucide-react";
+import { getCampaignDonateHref } from "@/lib/zisFilter";
 
 /**
  * Komponen status terminal pembayaran (PAID, EXPIRED, CANCELLED)
@@ -38,7 +39,7 @@ export function InvoicePaymentStatusBanner({ donation }) {
 
   if (donation.status === "EXPIRED") {
     const renewHref = donation.campaignSlug
-      ? `/campaign/${donation.campaignSlug}/donate?amount=${donation.amount}`
+      ? `${getCampaignDonateHref(donation.campaignSlug)}?amount=${donation.amount}`
       : "/program";
 
     return (
@@ -75,7 +76,7 @@ export function InvoicePaymentStatusBanner({ donation }) {
 
   if (donation.status === "CANCELLED") {
     const renewHref = donation.campaignSlug
-      ? `/campaign/${donation.campaignSlug}/donate?amount=${donation.amount}`
+      ? `${getCampaignDonateHref(donation.campaignSlug)}?amount=${donation.amount}`
       : "/program";
 
     return (

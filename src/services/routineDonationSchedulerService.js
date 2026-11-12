@@ -10,6 +10,7 @@ import { sendRoutinePausedDueToUnpaidEmail } from "@/services/emailService";
 import { enqueueNotification } from "@/services/notificationQueueService";
 import { processNotificationQueue } from "@/services/notificationWorkerService";
 import { NOTIFICATION_TYPE } from "@/lib/notificationConstants";
+import { getCampaignDetailHref } from "@/lib/zisFilter";
 
 /**
  * Executes routine donation schedules: creates invoices and enqueues notification tasks to PostgreSQL queue,
@@ -218,7 +219,7 @@ export async function processScheduledRoutineDonations({
         invoiceId = donation.invoiceId;
         actionUrl = `${baseUrl}/invoice/${donation.invoiceId}?token=${donation.accessToken}`;
       } else if (routine.campaign?.slug) {
-        actionUrl = `${baseUrl}/campaign/${routine.campaign.slug}`;
+        actionUrl = `${baseUrl}${getCampaignDetailHref(routine.campaign)}`;
       }
 
       // 6. Masukkan tugas pengiriman pesan ke PostgreSQL Queue (Producer)

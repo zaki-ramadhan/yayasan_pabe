@@ -18,9 +18,13 @@ export async function PUT(request, { params }) {
     const updated = await updateAdminCampaign(id, body);
 
     revalidatePath("/program");
+    revalidatePath("/zis");
     revalidatePath("/");
     revalidatePath("/admin/program");
+    revalidatePath("/admin/zis");
     if (updated?.slug) {
+      revalidatePath(`/program/${updated.slug}`);
+      revalidatePath(`/zis/${updated.slug}`);
       revalidatePath(`/campaign/${updated.slug}`);
     }
 

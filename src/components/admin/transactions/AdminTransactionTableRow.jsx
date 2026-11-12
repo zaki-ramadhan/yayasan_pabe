@@ -7,7 +7,7 @@ import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { UserAvatar } from "@/components/ui/Avatar";
 import { StatusBadge } from "@/components/ui/Badge";
 import { maskEmail } from "@/lib/security";
-import { isZisTransaction, getTransactionTypeLabel } from "@/lib/zisFilter";
+import { isZisTransaction, getTransactionTypeLabel, getCampaignDetailHref } from "@/lib/zisFilter";
 
 export function AdminTransactionTableRow({
   item,
@@ -93,7 +93,12 @@ export function AdminTransactionTableRow({
         <div className="max-w-[320px]">
           {item.campaignSlug ? (
             <Link
-              href={`/campaign/${item.campaignSlug}`}
+              href={getCampaignDetailHref({
+                slug: item.campaignSlug,
+                categorySlug: item.categorySlug,
+                categoryName: item.categoryName,
+                category: item.campaign?.category || (txIsZis ? "ZIS" : ""),
+              })}
               target="_blank"
               className="line-clamp-2 leading-snug font-normal text-slate-800 hover:text-primary hover:underline cursor-pointer transition-colors block overflow-hidden"
               aria-label={`Buka program: ${item.campaignTitle}`}

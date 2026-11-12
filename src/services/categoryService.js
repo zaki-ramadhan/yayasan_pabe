@@ -1,5 +1,33 @@
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
+import {
+  ZIS_LOCKED_CATEGORIES,
+  ZIS_LOCKED_CATEGORY_IDS,
+  isLockedZisCategoryId,
+} from "@/lib/zisFilter";
+
+/**
+ * Memastikan 3 kategori mutlak ZIS (Zakat, Infaq, Sedekah) selalu tersedia
+ * dan merapikan nama kategori Zakat bila masih tertulis ZISWAF.
+ */
+export async function ensureLockedZisCategories(client = prisma) {
+  try {
+    for (const item of ZIS_LOCKED_CATEGORIES) {
+      await client.category.upsert({
+        where: { slug: item.slug },
+        update: { name: item.name },
+        create: {
+          id: item.id,
+          name: item.name,
+          slug: item.slug,
+          iconName: item.iconName,
+        },
+      });
+    }
+  } catch (err) {
+    console.warn("ensureLockedZisCategories warning:", err?.message);
+  }
+}
 
 /**
  * Mengambil daftar kategori kampanye yayasan.
@@ -77,6 +105,19 @@ export async function createCategory({ name, slug, iconName }) {
  * Memperbarui kategori.
  */
 export async function updateCategory({ id, name, slug, iconName }) {
+  const existing = await prisma.category.findUnique({
+    where: { id },
+    select: { id: true, slug: true },
+  });
+  if (
+    existing &&
+    (isLockedZisCategoryId(existing.id) || isLockedZisCategoryId(existing.slug))
+  ) {
+    throw new Error(
+      "Kategori ZIS (Zakat, Infaq, Sedekah) bersifat tetap dan tidak dapat diubah."
+    );
+  }
+
   const cleanName = sanitizeInput(name);
   const cleanSlug = sanitizeInput(slug || name)
     .toLowerCase()
@@ -100,9 +141,22 @@ export async function updateCategory({ id, name, slug, iconName }) {
 }
 
 /**
- * Menghapus kategori jika tidak memiliki program terhubung.
+ * Menghapus kategori jika tidak memiliki program terhubung dan bukan kategori tetap ZIS.
  */
 export async function deleteCategory({ id }) {
+  const existing = await prisma.category.findUnique({
+    where: { id },
+    select: { id: true, slug: true },
+  });
+  if (
+    existing &&
+    (isLockedZisCategoryId(existing.id) || isLockedZisCategoryId(existing.slug))
+  ) {
+    throw new Error(
+      "Kategori ZIS (Zakat, Infaq, Sedekah) bersifat tetap dan tidak dapat dihapus."
+    );
+  }
+
   const count = await prisma.campaign.count({ where: { categoryId: id } });
   if (count > 0) {
     throw new Error(
@@ -123,6 +177,24 @@ export async function deleteCategory({ id }) {
 export async function deleteCategoriesBatch({ ids }) {
   if (!Array.isArray(ids) || ids.length === 0) {
     throw new Error("Daftar ID kategori tidak boleh kosong.");
+  }
+
+  const lockedCategories = await prisma.category.findMany({
+    where: {
+      id: { in: ids },
+      OR: [
+        { id: { in: ZIS_LOCKED_CATEGORY_IDS } },
+        { slug: { in: ZIS_LOCKED_CATEGORY_IDS } },
+      ],
+    },
+    select: { name: true },
+  });
+
+  if (lockedCategories.length > 0) {
+    const names = lockedCategories.map((c) => `"${c.name}"`).join(", ");
+    throw new Error(
+      `Kategori tetap ZIS (${names}) tidak dapat dihapus dari sistem.`
+    );
   }
 
   const categoriesWithCampaigns = await prisma.category.findMany({
@@ -148,8 +220,8 @@ export async function deleteCategoriesBatch({ ids }) {
 }
 
 /**
- * Membersihkan kategori kosong yang tidak memiliki program kampanye terhubung.
- * Menjamin database selalu bersih dan tidak ada kategori yatim (orphan) tanpa data.
+ * Membersihkan kategori kosong yang tidak memiliki program kampanye terhubung,
+ * sambil mempertahankan 3 kategori tetap ZIS (Zakat, Infaq, Sedekah).
  * @param {object} [client] - Prisma client atau transaction
  * @returns {Promise<number>} - Jumlah kategori yang dibersihkan
  */
@@ -157,6 +229,8 @@ export async function cleanupOrphanCategories(client = prisma) {
   try {
     const orphans = await client.category.findMany({
       where: {
+        id: { notIn: ZIS_LOCKED_CATEGORY_IDS },
+        slug: { notIn: ZIS_LOCKED_CATEGORY_IDS },
         campaigns: {
           none: {},
         },
