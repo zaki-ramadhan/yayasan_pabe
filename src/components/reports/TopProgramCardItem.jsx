@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { formatRupiah } from "@/lib/formatters";
+import { getCampaignDetailHref } from "@/lib/zisFilter";
 import { cn } from "@/lib/utils";
 
 /**
@@ -28,7 +29,11 @@ export function TopProgramCardItem({ rank, program, maxAmount = 1 }) {
     Math.max(8, Math.round((program.displayAmount / maxAmount) * 100))
   );
 
-  const campaignHref = `/campaign/${program.slug || program.id}`;
+  const campaignHref = getCampaignDetailHref({
+    slug: program.slug || program.id,
+    categoryName: program.categoryName || program.category,
+    categorySlug: program.categorySlug,
+  });
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
@@ -42,21 +47,13 @@ export function TopProgramCardItem({ rank, program, maxAmount = 1 }) {
         {/* Photo Thumbnail (Clickable) */}
         <Link
           href={campaignHref}
-          className="relative w-12 h-12 rounded-md overflow-hidden shrink-0 border border-slate-200 bg-slate-100 hover:opacity-90 transition-opacity"
+          className="relative w-12 h-12 rounded-md overflow-hidden shrink-0 border border-slate-200 bg-white hover:opacity-90 transition-opacity"
         >
-          {program.bannerUrl ? (
-            <Image
-              src={program.bannerUrl}
-              alt={program.title}
-              fill
-              className="object-cover"
-              sizes="48px"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400 text-sm font-medium">
-              Foto
-            </div>
-          )}
+          <SafeImage
+            src={program.bannerUrl}
+            alt={program.title}
+            sizes="48px"
+          />
         </Link>
 
         {/* Program Title (Clickable) & Category */}

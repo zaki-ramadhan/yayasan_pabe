@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { formatDate } from "@/lib/formatters";
@@ -33,21 +33,12 @@ export function AdminInstagramTableRow({
       </TableCell>
 
       <TableCell className="w-16 py-2.5 align-middle">
-        <div className="w-12 h-12 rounded-md bg-slate-100 overflow-hidden relative border border-slate-200 shrink-0 select-none">
-          {post.imageUrl ? (
-            <Image
-              src={post.imageUrl}
-              alt={post.altText || caption.slice(0, 50)}
-              fill
-              className="object-cover"
-              sizes="48px"
-              unoptimized
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-sm text-slate-400">
-              No Media
-            </div>
-          )}
+        <div className="w-12 h-12 rounded-md bg-white overflow-hidden relative border border-slate-200 shrink-0 select-none">
+          <SafeImage
+            src={post.imageUrl}
+            alt={post.altText || caption.slice(0, 50)}
+            sizes="48px"
+          />
         </div>
       </TableCell>
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { FileCheck, Trash2, Edit2, Image as ImageIcon, Video } from "lucide-react";
+import { FileCheck, Trash2, Edit2, Video } from "lucide-react";
+import { ImageFallback } from "@/components/ui/ImageFallback";
 import { Button } from "@/components/ui/Button";
 import { isVideoUrl } from "@/lib/galleryGroupHelper";
 
@@ -60,9 +61,7 @@ export function FileUploadPreview({
           }
         >
           {isError || !resolvedSrc ? (
-            <div className="flex flex-col items-center justify-center text-slate-400 p-1">
-              <ImageIcon className="w-5 h-5 text-slate-400" />
-            </div>
+            <ImageFallback alt="Preview Berkas" />
           ) : isVideo ? (
             <>
               <video

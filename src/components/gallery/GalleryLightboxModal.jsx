@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { X, Calendar, Tag, ChevronLeft, ChevronRight, Images, Play } from "lucide-react";
 import { Dialog, DialogOverlay, DialogPortal } from "@/components/ui/Dialog";
 import { Badge } from "@/components/ui/Badge";
@@ -110,15 +110,13 @@ export function GalleryLightboxModal({ item = null, onClose }) {
                   objectFit="contain"
                 />
               ) : (
-                <Image
+                <SafeImage
                   key={activeImageUrl}
                   src={activeImageUrl}
                   alt={`${displayTitle} - Media ${currentIndex + 1}`}
-                  fill
                   className="object-contain"
                   sizes="(max-width: 1024px) 100vw, 1200px"
                   priority
-                  unoptimized
                 />
               )}
 
@@ -181,13 +179,11 @@ export function GalleryLightboxModal({ item = null, onClose }) {
                     >
                       {isYouTubeUrl(imgUrl) ? (
                         <div className="relative w-full h-full bg-slate-900">
-                          <Image
+                          <SafeImage
                             src={getYouTubeThumbnail(imgUrl)}
                             alt={`Thumbnail ${idx + 1}`}
-                            fill
                             sizes="60px"
                             className="object-cover"
-                            unoptimized
                           />
                           <div className="absolute inset-0 flex items-center justify-center bg-slate-950/30">
                             <Play className="w-3 h-3 fill-white text-white" />
@@ -198,13 +194,11 @@ export function GalleryLightboxModal({ item = null, onClose }) {
                           <Play className="w-3 h-3 fill-white text-white" />
                         </div>
                       ) : (
-                        <Image
+                        <SafeImage
                           src={imgUrl}
                           alt={`Thumbnail ${idx + 1}`}
-                          fill
                           sizes="60px"
                           className="object-cover"
-                          unoptimized
                         />
                       )}
                     </button>

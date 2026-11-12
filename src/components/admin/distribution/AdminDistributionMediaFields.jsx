@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, Video, Image as ImageIcon } from "lucide-react";
+import { Trash2, Video } from "lucide-react";
+import { ImageFallback } from "@/components/ui/ImageFallback";
 import { YouTubeIcon } from "@/components/icons/SocialIcons";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
@@ -39,10 +40,7 @@ function ExistingMediaCard({ mediaUrl, index, isUploading, onRemove }) {
           className="w-full h-full object-cover"
         />
       ) : hasError ? (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800 text-slate-400 p-2 text-center select-none">
-          <ImageIcon className="w-5 h-5 text-slate-400 mb-1" />
-          <span className="text-3xs text-slate-400 line-clamp-1">Gagal memuat cover</span>
-        </div>
+        <ImageFallback alt={`Dokumentasi tersimpan ${index + 1}`} />
       ) : (
         /* eslint-disable-next-line @next/next/no-img-element */
         <img

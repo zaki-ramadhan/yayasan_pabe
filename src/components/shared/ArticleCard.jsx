@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Image as ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { HighlightText } from "@/components/shared/HighlightText";
@@ -46,19 +45,13 @@ export function ArticleCard({
 			{/* Top Section: Side-by-side Thumbnail + Content */}
 			<div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 items-start flex-1">
 				{/* Left: Thumbnail with fixed aspect ratio / square size so it doesn't stretch vertically */}
-				<div className="relative w-full aspect-[16/9] sm:aspect-square sm:w-32 md:w-36 sm:h-32 md:h-36 shrink-0 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 flex items-center justify-center">
-					{article.bannerUrl ? (
-						<SafeImage
-							src={article.bannerUrl}
-							alt={article.title}
-							sizes="(max-width: 640px) 100vw, 150px"
-							fallbackText={article.category}
-						/>
-					) : (
-						<div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
-							<ImageIcon className="w-8 h-8 text-slate-400 stroke-[1.5]" />
-						</div>
-					)}
+				<div className="relative w-full aspect-[16/9] sm:aspect-square sm:w-32 md:w-36 sm:h-32 md:h-36 shrink-0 rounded-lg overflow-hidden bg-white border border-slate-200 flex items-center justify-center">
+					<SafeImage
+						src={article.bannerUrl}
+						alt={article.title}
+						sizes="(max-width: 640px) 100vw, 150px"
+						fallbackText={article.category}
+					/>
 				</div>
 
 				{/* Right: Content (Category, Title, Excerpt, Tags) */}

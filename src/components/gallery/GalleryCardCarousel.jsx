@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { isVideoUrl } from "@/lib/galleryGroupHelper";
 import { VideoPlayer } from "@/components/shared/VideoPlayer";
 
@@ -25,7 +25,7 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
 
   const mediaList = Array.isArray(images) && images.length > 0
     ? images
-    : ["/img/branding/logo-ypabe.webp"];
+    : [null];
 
   const total = mediaList.length;
 
@@ -80,14 +80,11 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
                   objectFit="cover"
                 />
               ) : (
-                <Image
+                <SafeImage
                   src={url}
                   alt={`${title} - Foto ${idx + 1}`}
-                  fill
-                  className="object-cover"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   loading={idx === 0 ? "eager" : "lazy"}
-                  unoptimized
                 />
               )}
             </div>

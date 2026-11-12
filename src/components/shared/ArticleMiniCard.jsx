@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Image as ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { HighlightText } from "@/components/shared/HighlightText";
@@ -28,20 +27,14 @@ export function ArticleMiniCard({
         className
       )}
     >
-      {/* Left: Compact Square Thumbnail or Fallback Image Icon */}
-      <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-md overflow-hidden bg-slate-100 border border-slate-200 aspect-square flex items-center justify-center">
-        {article.bannerUrl ? (
-          <SafeImage
-            src={article.bannerUrl}
-            alt={article.title}
-            sizes="64px"
-            fallbackText={article.category}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
-            <ImageIcon className="w-6 h-6 text-slate-400 stroke-[1.5]" />
-          </div>
-        )}
+      {/* Left: Compact Square Thumbnail or Brand Fallback */}
+      <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-md overflow-hidden bg-white border border-slate-200 aspect-square flex items-center justify-center">
+        <SafeImage
+          src={article.bannerUrl}
+          alt={article.title}
+          sizes="64px"
+          fallbackText={article.category}
+        />
       </div>
 
       {/* Right: Category + Title with font-medium */}

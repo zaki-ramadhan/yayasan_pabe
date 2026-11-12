@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ImageFallback } from "@/components/ui/ImageFallback";
 
 export function SafeImage({
   src,
@@ -12,31 +12,25 @@ export function SafeImage({
   width,
   height,
   className,
+  fallbackClassName,
   priority = false,
+  loading,
   quality,
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
-  fallbackText = "Gambar tidak tersedia",
 }) {
-  const [hasError, setHasError] = useState(false);
+  const [failedSrc, setFailedSrc] = useState(null);
 
-  // If no source provided or error occurred, show clean fallback icon only
-  if (!src || hasError) {
-    return (
-      <div
-        className={cn(
-          "w-full h-full bg-slate-100 flex items-center justify-center text-slate-400 p-2 select-none",
-          className
-        )}
-      >
-        <ImageIcon className="w-6 h-6 sm:w-8 sm:h-8 text-slate-400 stroke-[1.75]" />
-      </div>
-    );
-  }
-
+  const normalizedSrc = typeof src === "string" ? src.trim() : src;
   const resolvedSrc =
-    typeof src === "string" && src.includes(".r2.dev/")
-      ? `/api/media/${src.split(".r2.dev/")[1]}`
-      : src;
+    typeof normalizedSrc === "string" && normalizedSrc.includes(".r2.dev/")
+      ? `/api/media/${normalizedSrc.split(".r2.dev/")[1]}`
+      : normalizedSrc;
+
+  const hasError = Boolean(resolvedSrc && failedSrc === resolvedSrc);
+
+  if (!resolvedSrc || hasError) {
+    return <ImageFallback alt={alt} className={fallbackClassName} />;
+  }
 
   const isUnoptimized =
     typeof resolvedSrc === "string" &&
@@ -46,6 +40,8 @@ export function SafeImage({
       resolvedSrc.startsWith("http://") ||
       resolvedSrc.startsWith("https://"));
 
+  const loadingProp = !priority && loading ? { loading } : {};
+
   if (fill) {
     return (
       <Image
@@ -54,10 +50,11 @@ export function SafeImage({
         fill
         sizes={sizes}
         priority={priority}
+        {...loadingProp}
         {...(quality ? { quality } : {})}
         unoptimized={isUnoptimized}
         referrerPolicy="no-referrer"
-        onError={() => setHasError(true)}
+        onError={() => setFailedSrc(resolvedSrc)}
         className={cn("object-cover transition-opacity duration-300", className)}
       />
     );
@@ -71,10 +68,11 @@ export function SafeImage({
       height={height || 400}
       sizes={sizes}
       priority={priority}
+      {...loadingProp}
       {...(quality ? { quality } : {})}
       unoptimized={isUnoptimized}
       referrerPolicy="no-referrer"
-      onError={() => setHasError(true)}
+      onError={() => setFailedSrc(resolvedSrc)}
       className={cn("object-cover transition-opacity duration-300", className)}
     />
   );

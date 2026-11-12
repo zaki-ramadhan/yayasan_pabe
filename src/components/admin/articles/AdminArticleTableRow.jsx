@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Badge } from "@/components/ui/Badge";
@@ -33,18 +33,11 @@ export function AdminArticleTableRow({
 			</TableCell>
 
 			<TableCell className="py-2.5 align-middle">
-				<div className="w-12 h-9 rounded bg-slate-100 overflow-hidden relative border border-slate-200 shrink-0">
-					<Image
-						src={
-							article.bannerUrl ||
-							"/img/branding/logo-ypabe.webp"
-						}
-						alt={
-							article.title
-						}
-						fill
-						className="object-cover"
-						unoptimized
+				<div className="w-12 h-9 rounded bg-white overflow-hidden relative border border-slate-200 shrink-0">
+					<SafeImage
+						src={article.bannerUrl}
+						alt={article.title}
+						sizes="48px"
 					/>
 				</div>
 			</TableCell>

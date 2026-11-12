@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatDate } from "@/lib/formatters";
 
@@ -25,14 +25,11 @@ export function AdminGalleryDeleteDialog({
     >
       <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 space-y-2.5 my-2">
         <div className="flex items-center gap-3">
-          <div className="w-16 h-16 rounded-md bg-slate-200 overflow-hidden relative shrink-0 border border-slate-300">
-            <Image
+          <div className="w-16 h-16 rounded-md bg-white overflow-hidden relative shrink-0 border border-slate-300">
+            <SafeImage
               src={item.imageUrl}
               alt={item.title || "Dokumentasi"}
-              fill
-              className="object-cover"
               sizes="64px"
-              unoptimized
             />
           </div>
           <div className="min-w-0 flex-1">

@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { Camera, Video, MapPin } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { isVideoUrl } from "@/lib/galleryGroupHelper";
+import { getCampaignDetailHref } from "@/lib/zisFilter";
 
 export function AdminDistributionTableRow({
 	item,
@@ -34,25 +35,17 @@ export function AdminDistributionTableRow({
 			{/* Program Donasi Asal */}
 			<TableCell className="w-72 py-3 align-middle">
 				<div className="flex items-center gap-2.5">
-					<div className="w-10 h-10 rounded-md bg-slate-100 overflow-hidden relative border border-slate-200 shrink-0">
-						<Image
-							src={
-								item.campaignBannerUrl ||
-								"/img/branding/logo-ypabe.webp"
-							}
-							alt={
-								item.campaignTitle ||
-								"Program donasi"
-							}
-							fill
-							className="object-cover"
-							unoptimized
+					<div className="w-10 h-10 rounded-md bg-white overflow-hidden relative border border-slate-200 shrink-0">
+						<SafeImage
+							src={item.campaignBannerUrl}
+							alt={item.campaignTitle || "Program donasi"}
+							sizes="40px"
 						/>
 					</div>
 					<div className="min-w-0 space-y-0.5">
 						{item.campaignSlug ? (
 											<Link
-												href={`/campaign/${item.campaignSlug}`}
+												href={getCampaignDetailHref(item.campaignSlug)}
 												target="_blank"
 												className="font-medium text-sm text-slate-900 hover:text-primary hover:underline block line-clamp-2 leading-snug cursor-pointer transition-colors overflow-hidden"
 												aria-label={`Buka program: ${item.campaignTitle}`}

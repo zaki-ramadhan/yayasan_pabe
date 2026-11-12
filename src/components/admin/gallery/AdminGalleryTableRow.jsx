@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { Video, Play } from "lucide-react";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Badge } from "@/components/ui/Badge";
@@ -47,13 +47,10 @@ export function AdminGalleryTableRow({
         >
           {isYt ? (
             <>
-              <Image
+              <SafeImage
                 src={getYouTubeThumbnail(item.imageUrl)}
                 alt={displayTitle}
-                fill
-                className="object-cover"
                 sizes="56px"
-                unoptimized
               />
               <div className="absolute inset-0 bg-slate-950/20 flex items-center justify-center">
                 <Play className="w-3 h-3 fill-white text-white drop-shadow-xs" />
@@ -72,13 +69,10 @@ export function AdminGalleryTableRow({
               </div>
             </>
           ) : (
-            <Image
+            <SafeImage
               src={item.imageUrl}
               alt={displayTitle}
-              fill
-              className="object-cover"
               sizes="56px"
-              unoptimized
             />
           )}
         </div>

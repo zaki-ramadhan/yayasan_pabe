@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Image from "next/image";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { Play, Video as VideoIcon } from "lucide-react";
 import {
   isYouTubeUrl,
@@ -122,13 +122,11 @@ export function VideoPlayer({
             }}
           >
             {resolvedPoster ? (
-              <Image
+              <SafeImage
                 src={resolvedPoster}
                 alt={title}
-                fill
                 className={`object-${objectFit}`}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                unoptimized
               />
             ) : (
               <div className="w-full h-full bg-slate-900" />
