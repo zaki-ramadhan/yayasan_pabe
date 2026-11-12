@@ -10,6 +10,7 @@ import {
   isVideoUrl,
   isYouTubeUrl,
   getYouTubeThumbnail,
+  getVideoPosterUrl,
 } from "@/lib/galleryGroupHelper";
 import { VideoPlayer } from "@/components/shared/VideoPlayer";
 import { AdminInlineEditButton } from "@/components/shared/AdminInlineEditButton";
@@ -105,7 +106,7 @@ export function GalleryLightboxModal({ item = null, onClose }) {
                 <VideoPlayer
                   key={activeImageUrl}
                   src={activeImageUrl}
-                  poster={images.find((u) => !isVideoUrl(u))}
+                  poster={getVideoPosterUrl(activeImageUrl) || images.find((u) => !isVideoUrl(u))}
                   isActive={true}
                   objectFit="contain"
                 />
@@ -190,8 +191,16 @@ export function GalleryLightboxModal({ item = null, onClose }) {
                           </div>
                         </div>
                       ) : isThumbVideo ? (
-                        <div className="relative w-full h-full bg-slate-950 flex items-center justify-center">
-                          <Play className="w-3 h-3 fill-white text-white" />
+                        <div className="relative w-full h-full bg-slate-950">
+                          <SafeImage
+                            src={getVideoPosterUrl(imgUrl)}
+                            alt={`Thumbnail ${idx + 1}`}
+                            sizes="60px"
+                            className="object-cover"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center bg-slate-950/30">
+                            <Play className="w-3 h-3 fill-white text-white" />
+                          </div>
                         </div>
                       ) : (
                         <SafeImage

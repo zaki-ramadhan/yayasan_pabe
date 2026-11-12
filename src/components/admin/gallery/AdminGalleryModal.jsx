@@ -178,6 +178,7 @@ export function AdminGalleryModal({
             file: item.file,
             context: isVid ? "GALLERY_VIDEO" : "GALLERY",
             identifier: resolvedTitle,
+            posterDataUrl: isVid ? item.thumbnailUrl : undefined,
             onProgress: (percent) => {
               setUploadProgressText(
                 percent < 100

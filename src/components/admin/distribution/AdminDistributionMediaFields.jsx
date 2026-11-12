@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { Trash2, Video } from "lucide-react";
 import { ImageFallback } from "@/components/ui/ImageFallback";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { YouTubeIcon } from "@/components/icons/SocialIcons";
 import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { FileUploadZone } from "@/components/admin/shared/FileUploadZone";
-import { isVideoUrl, isYouTubeUrl, getYouTubeThumbnail } from "@/lib/galleryGroupHelper";
+import { isVideoUrl, isYouTubeUrl, getYouTubeThumbnail, getVideoPosterUrl } from "@/lib/galleryGroupHelper";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 function ExistingMediaCard({ mediaUrl, index, isUploading, onRemove }) {
@@ -32,12 +33,10 @@ function ExistingMediaCard({ mediaUrl, index, isUploading, onRemove }) {
           onError={() => setHasError(true)}
         />
       ) : isVid ? (
-        <video
-          src={resolvedSrc}
-          preload="metadata"
-          muted
-          playsInline
-          className="w-full h-full object-cover"
+        <SafeImage
+          src={getVideoPosterUrl(mediaUrl)}
+          alt={`Dokumentasi tersimpan ${index + 1}`}
+          sizes="160px"
         />
       ) : hasError ? (
         <ImageFallback alt={`Dokumentasi tersimpan ${index + 1}`} />

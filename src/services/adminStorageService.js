@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { listR2Objects, deleteMultipleFromR2, isR2Configured } from "@/lib/r2Storage";
 import { extractR2Key } from "@/lib/r2KeyUtils";
+import { isDirectVideoUrl, VIDEO_POSTER_SUFFIX } from "@/lib/galleryGroupHelper";
 import {
   STORAGE_CONTEXTS,
   R2_FREE_TIER_BYTES,
@@ -138,7 +139,12 @@ export async function getReferencedStorageKeys() {
     list.forEach((url) => {
       if (typeof url === "string" && url.trim()) {
         const key = extractR2Key(url);
-        if (key) referencedKeys.add(key);
+        if (key) {
+          referencedKeys.add(key);
+          if (isDirectVideoUrl(key)) {
+            referencedKeys.add(`${key}${VIDEO_POSTER_SUFFIX}`);
+          }
+        }
       }
     });
   };

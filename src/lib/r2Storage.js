@@ -9,6 +9,7 @@ import { validateUploadFile, FILE_UPLOAD_LIMITS } from "./fileValidator";
 import { getStorageContext } from "./storageConstants";
 import { generateR2Key, extractR2Key } from "./r2KeyUtils";
 import { optimizeImageIfNeeded } from "./imageOptimizer";
+import { isDirectVideoUrl, VIDEO_POSTER_SUFFIX } from "./galleryGroupHelper";
 
 const accountId = process.env.R2_ACCOUNT_ID;
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
@@ -84,6 +85,7 @@ export async function uploadToR2({
   context,
   identifier = "",
   folder,
+  customKey,
   maxBytes,
   allowedTypes,
   optimize,
@@ -157,9 +159,11 @@ export async function uploadToR2({
       ? Math.round(((originalSize - finalSize) / originalSize) * 100)
       : 0;
 
-  // 3. Bangun Kunci R2 Unik (Delegasi ke Key Utils)
+  // 3. Bangun Kunci R2 Unik (Delegasi ke Key Utils atau gunakan customKey terverifikasi)
   let key = "";
-  if (context) {
+  if (customKey && typeof customKey === "string") {
+    key = customKey.replace(/^\/+|\/+$/g, "");
+  } else if (context) {
     key = generateR2Key({
       contextKey: context,
       identifier,
@@ -226,6 +230,17 @@ export async function deleteFromR2(urlOrKey) {
         Key: key,
       })
     );
+
+    if (isDirectVideoUrl(key)) {
+      await client
+        .send(
+          new DeleteObjectCommand({
+            Bucket: bucketName,
+            Key: `${key}${VIDEO_POSTER_SUFFIX}`,
+          })
+        )
+        .catch(() => {});
+    }
   } catch (err) {
     console.warn(`Peringatan: Gagal menghapus berkas R2 [${key}]:`, err?.message);
   }

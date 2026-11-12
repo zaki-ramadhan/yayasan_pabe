@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { uploadToR2, deleteFromR2, isR2Configured } from "@/lib/r2Storage";
 import { getStorageContext } from "@/lib/storageConstants";
+import { VIDEO_POSTER_SUFFIX } from "@/lib/galleryGroupHelper";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import { checkRateLimit } from "@/lib/rateLimit";
@@ -26,6 +27,7 @@ export async function POST(request) {
 
     const formData = await request.formData();
     const file = formData.get("file");
+    const posterFile = formData.get("poster");
     const rawImageUrl = formData.get("imageUrl");
     const contextKey = formData.get("context");
     const identifier = formData.get("identifier") || "";
@@ -191,11 +193,40 @@ export async function POST(request) {
       identifier: typeof identifier === "string" ? identifier.trim() : "",
     });
 
+    // Jika berkas utama berupa video dan poster pendamping disertakan, unggah cover .poster.webp
+    let posterUrl = null;
+    if (
+      result?.mimeType?.startsWith("video/") &&
+      posterFile &&
+      typeof posterFile !== "string"
+    ) {
+      try {
+        const posterBuffer = await posterFile.arrayBuffer();
+        const posterResult = await uploadToR2({
+          data: posterBuffer,
+          originalName: "poster.webp",
+          declaredType: posterFile.type || "image/webp",
+          allowedTypes: ["image/jpeg", "image/png", "image/webp"],
+          maxBytes: 5 * 1024 * 1024,
+          optimize: true,
+          maxWidth: 960,
+          quality: 80,
+          customKey: `${result.key}${VIDEO_POSTER_SUFFIX}`,
+        });
+        posterUrl = posterResult?.url || null;
+      } catch (posterErr) {
+        console.warn("Peringatan: Gagal mengunggah cover poster video:", posterErr?.message);
+      }
+    }
+
     return NextResponse.json(
       {
         success: true,
         message: "Berkas berhasil diunggah dan dioptimasi.",
-        data: result,
+        data: {
+          ...result,
+          ...(posterUrl ? { posterUrl } : {}),
+        },
       },
       { status: 200 }
     );

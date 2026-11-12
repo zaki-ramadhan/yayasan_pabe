@@ -53,6 +53,34 @@ export function isDirectVideoUrl(url) {
   );
 }
 
+export const VIDEO_POSTER_SUFFIX = ".poster.webp";
+
+/**
+ * Menghasilkan URL cover/poster deterministik untuk berkas video langsung atau YouTube.
+ * Untuk video langsung (R2), mengembalikan `<url_video>.poster.webp`.
+ *
+ * @param {string} url - URL berkas video
+ * @returns {string|null} URL gambar poster atau null jika bukan URL video yang didukung
+ */
+export function getVideoPosterUrl(url) {
+  if (!url || typeof url !== "string") return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  if (isYouTubeUrl(trimmed)) {
+    return getYouTubeThumbnail(trimmed);
+  }
+
+  const [withoutQuery] = trimmed.split(/[?#]/);
+  const cleanVideoUrl = withoutQuery.replace(/\/(stream|play)\/?$/i, "");
+
+  if (!isDirectVideoUrl(cleanVideoUrl)) {
+    return null;
+  }
+
+  return `${cleanVideoUrl}${VIDEO_POSTER_SUFFIX}`;
+}
+
 /**
  * Memeriksa apakah sebuah URL mengarah ke file media video atau penyedia video (R2/YouTube/Vimeo).
  *

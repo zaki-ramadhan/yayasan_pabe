@@ -41,8 +41,8 @@ export function HomeInstagramFeed({ posts = [], account = DEFAULT_ACCOUNT }) {
         <EmptyState
           variant="dashed"
           icon={InstagramIcon}
-          title="Belum ada postingan yang disorot"
-          description="Ikuti akun resmi kami di Instagram untuk melihat dokumentasi kegiatan anak asuh, penyaluran donasi, dan informasi terkini."
+          title="Belum ada postingan Instagram"
+          description="Ikuti akun resmi kami untuk kabar kegiatan terbaru."
           action={
             <a
               href={currentAccount.profileUrl}

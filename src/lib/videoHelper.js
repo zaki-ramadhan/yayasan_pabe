@@ -212,3 +212,36 @@ export function extractVideoMetadata(file) {
     video.src = objectUrl;
   });
 }
+
+/**
+ * Mengonversi DataURL (misal hasil tangkapan Canvas) menjadi objek Blob untuk diunggah.
+ * Mengembalikan null apabila DataURL tidak valid.
+ *
+ * @param {string} dataUrl
+ * @returns {Blob|null}
+ */
+export function dataUrlToBlob(dataUrl) {
+  if (!dataUrl || typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) {
+    return null;
+  }
+
+  const commaIndex = dataUrl.indexOf(",");
+  if (commaIndex === -1) return null;
+
+  const header = dataUrl.slice(5, commaIndex);
+  const base64Data = dataUrl.slice(commaIndex + 1);
+  if (!base64Data) return null;
+
+  const mimeType = header.split(";")[0] || "image/webp";
+
+  try {
+    const binaryString = atob(base64Data);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return new Blob([bytes], { type: mimeType });
+  } catch {
+    return null;
+  }
+}

@@ -3,6 +3,7 @@
  * Memisahkan logika jaringan, pembuatan FormData, dan sanitasi respon dari komponen UI.
  */
 import { safeFetch } from "@/lib/safeFetch";
+import { dataUrlToBlob } from "@/lib/videoHelper";
 
 /**
  * Mengunggah berkas ke server R2 melalui endpoint /api/upload.
@@ -38,6 +39,7 @@ export async function uploadFileToServer({
   file,
   context,
   identifier = "",
+  posterDataUrl,
   onProgress,
   signal,
   timeoutMs: customTimeoutMs,
@@ -64,6 +66,13 @@ export async function uploadFileToServer({
 
   if (identifier && typeof identifier === "string") {
     formData.append("identifier", identifier.trim());
+  }
+
+  if (posterDataUrl && typeof posterDataUrl === "string") {
+    const posterBlob = dataUrlToBlob(posterDataUrl);
+    if (posterBlob) {
+      formData.append("poster", posterBlob, "poster.webp");
+    }
   }
 
   const isLargeOrVideo = Boolean(
@@ -202,6 +211,13 @@ export async function uploadImageUrlToServer({ imageUrl, context, identifier = "
 
   if (identifier && typeof identifier === "string") {
     formData.append("identifier", identifier.trim());
+  }
+
+  if (posterDataUrl && typeof posterDataUrl === "string") {
+    const posterBlob = dataUrlToBlob(posterDataUrl);
+    if (posterBlob) {
+      formData.append("poster", posterBlob, "poster.webp");
+    }
   }
 
   const response = await safeFetch("/api/upload", {

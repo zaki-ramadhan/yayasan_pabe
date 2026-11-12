@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SafeImage } from "@/components/ui/SafeImage";
-import { isVideoUrl } from "@/lib/galleryGroupHelper";
+import { isVideoUrl, getVideoPosterUrl } from "@/lib/galleryGroupHelper";
 import { VideoPlayer } from "@/components/shared/VideoPlayer";
 
 /**
@@ -68,13 +68,14 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
         {mediaList.map((url, idx) => {
           const isVid = isVideoUrl(url);
           const companionPhoto = isVid ? mediaList.find((u) => !isVideoUrl(u)) : null;
+          const videoPoster = isVid ? getVideoPosterUrl(url) || companionPhoto : null;
 
           return (
             <div key={idx} className="relative w-full h-full shrink-0">
               {isVid ? (
                 <VideoPlayer
                   src={url}
-                  poster={companionPhoto}
+                  poster={videoPoster}
                   title={`${title} - Video ${idx + 1}`}
                   isActive={idx === currentIndex}
                   objectFit="cover"

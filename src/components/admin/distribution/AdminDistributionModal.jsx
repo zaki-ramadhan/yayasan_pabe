@@ -191,6 +191,7 @@ export function AdminDistributionModal({
 					file: item.file,
 					context: isVid ? "CAMPAIGN_UPDATE_VIDEO" : "CAMPAIGN_UPDATE",
 					identifier: title.trim(),
+					posterDataUrl: isVid ? item.thumbnailUrl : undefined,
 					onProgress: (percent) => {
 						setUploadProgressText(
 							percent < 100

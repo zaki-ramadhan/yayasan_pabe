@@ -10,6 +10,7 @@ import {
   isVideoUrl,
   isYouTubeUrl,
   getYouTubeThumbnail,
+  getVideoPosterUrl,
 } from "@/lib/galleryGroupHelper";
 
 export function AdminGalleryTableRow({
@@ -58,11 +59,10 @@ export function AdminGalleryTableRow({
             </>
           ) : isVid ? (
             <>
-              <video
-                src={item.imageUrl}
-                muted
-                playsInline
-                className="w-full h-full object-cover opacity-80"
+              <SafeImage
+                src={getVideoPosterUrl(item.imageUrl)}
+                alt={displayTitle}
+                sizes="56px"
               />
               <div className="absolute inset-0 bg-slate-950/20 flex items-center justify-center">
                 <Video className="w-3.5 h-3.5 text-white drop-shadow-xs" />

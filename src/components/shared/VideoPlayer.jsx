@@ -6,7 +6,7 @@ import { Play, Video as VideoIcon } from "lucide-react";
 import {
   isYouTubeUrl,
   getYouTubeVideoId,
-  getYouTubeThumbnail,
+  getVideoPosterUrl,
 } from "@/lib/galleryGroupHelper";
 
 /**
@@ -50,7 +50,7 @@ export function VideoPlayer({
 
   const isYt = isYouTubeUrl(src);
   const ytVideoId = isYt ? getYouTubeVideoId(src) : null;
-  const resolvedPoster = poster || (isYt ? getYouTubeThumbnail(src) : null);
+  const resolvedPoster = getVideoPosterUrl(src) || poster || null;
   const resolvedSrc = isYt ? src : getStreamingUrl(src);
 
   // Auto-pause saat berpindah slide carousel atau tidak aktif (React derived state pattern)
@@ -149,23 +149,21 @@ export function VideoPlayer({
       ) : (
         // Mode Video Langsung (Cloudflare R2 / MP4 / WebM / MOV)
         <div className="relative w-full h-full">
-          <video
-            ref={videoRef}
-            src={`${resolvedSrc}#t=0.001`}
-            poster={resolvedPoster || undefined}
-            controls={isPlaying}
-            playsInline
-            muted={!isPlaying}
-            preload="metadata"
-            className={`w-full h-full object-${objectFit}`}
-            onEnded={() => setIsPlaying(false)}
-          />
-
-          {/* Overlay Siap Putar (Hanya Muncul Saat Belum Dimainkan) */}
-          {!isPlaying && (
+          {isPlaying ? (
+            <video
+              ref={videoRef}
+              src={resolvedSrc}
+              poster={resolvedPoster || undefined}
+              controls
+              autoPlay
+              playsInline
+              className={`w-full h-full object-${objectFit}`}
+              onEnded={() => setIsPlaying(false)}
+            />
+          ) : (
             <div
               onClick={handleStartPlay}
-              className="absolute inset-0 z-10 cursor-pointer group/player bg-slate-950/20 hover:bg-slate-950/35 transition-colors flex items-center justify-center"
+              className="relative w-full h-full cursor-pointer group/player"
               role="button"
               tabIndex={0}
               aria-label={`Putar video: ${title}`}
@@ -176,15 +174,24 @@ export function VideoPlayer({
                 }
               }}
             >
-              {/* Lencana Video Langsung */}
-              <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-950/80 text-white text-xs font-medium tracking-normal shadow-2xs backdrop-blur-xs border border-white/10 pointer-events-none">
-                <VideoIcon className="w-3 h-3 text-slate-300" />
-                Video
-              </span>
+              <SafeImage
+                src={resolvedPoster}
+                alt={title}
+                className={objectFit === "contain" ? "object-contain" : "object-cover"}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              />
 
-              {/* Tombol Play Beranimasi Halus */}
-              <div className="w-12 h-12 rounded-full bg-slate-950/75 hover:bg-slate-950 text-white flex items-center justify-center shadow-lg group-hover/player:scale-110 transition-all border border-white/20 backdrop-blur-xs">
-                <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+              <div className="absolute inset-0 z-10 bg-slate-950/15 group-hover/player:bg-slate-950/30 transition-colors flex items-center justify-center">
+                {/* Lencana Video Langsung */}
+                <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-950/80 text-white text-xs font-medium tracking-normal shadow-2xs backdrop-blur-xs border border-white/10 pointer-events-none">
+                  <VideoIcon className="w-3 h-3 text-slate-300" />
+                  Video
+                </span>
+
+                {/* Tombol Play Beranimasi Halus */}
+                <div className="w-12 h-12 rounded-full bg-slate-950/75 hover:bg-slate-950 text-white flex items-center justify-center shadow-lg group-hover/player:scale-110 transition-all border border-white/20 backdrop-blur-xs">
+                  <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+                </div>
               </div>
             </div>
           )}
