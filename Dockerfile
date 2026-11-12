@@ -46,6 +46,19 @@ ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
 RUN pnpm build
 
 # ---------------------------------------------------------
+# Tahap 3b: Prisma CLI terisolasi (npm, layout flat tanpa symlink pnpm)
+# Versi dikunci sama persis dengan hasil resolve lockfile.
+# ---------------------------------------------------------
+FROM deps AS prisma-cli
+
+WORKDIR /opt/prisma-cli
+RUN npm init -y > /dev/null && \
+    npm install --no-audit --no-fund \
+      prisma@$(node -p "require('/app/node_modules/prisma/package.json').version")
+COPY prisma ./prisma
+COPY prisma.config.js ./
+
+# ---------------------------------------------------------
 # Tahap 4: Production Runner (Minimal & Aman)
 # ---------------------------------------------------------
 FROM node:22-alpine AS runner
@@ -70,8 +83,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.js ./prisma.config.js
 COPY --from=deps --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=deps --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
-COPY --from=deps --chown=nextjs:nodejs /app/node_modules/.bin ./node_modules/.bin
+COPY --from=prisma-cli --chown=nextjs:nodejs /opt/prisma-cli /opt/prisma-cli
 
 # Salin dan bersihkan format baris (CRLF -> LF) serta berikan izin eksekusi skrip entrypoint
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
