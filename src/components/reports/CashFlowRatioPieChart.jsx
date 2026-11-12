@@ -63,9 +63,9 @@ export function CashFlowRatioPieChart({ totals = { cashIn: 0, cashOut: 0 } }) {
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2.5">
               <PieChartIcon className="w-5 h-5" />
             </div>
-            <p className="text-sm font-semibold text-slate-900">Belum Ada Rasio Arus Kas</p>
+            <p className="text-sm font-semibold text-slate-900">Belum ada data rasio arus kas</p>
             <p className="text-xs sm:text-sm text-slate-500 max-w-xs mt-1">
-              Rasio perbandingan akan tampil otomatis ketika ada transaksi kas masuk atau kas keluar.
+              Rasio tampil otomatis saat ada transaksi.
             </p>
           </div>
         ) : (

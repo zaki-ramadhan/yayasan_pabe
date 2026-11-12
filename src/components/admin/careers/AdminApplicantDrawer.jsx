@@ -75,8 +75,8 @@ export function AdminApplicantDrawer({
           ) : (
             <div className="h-full min-h-[300px] flex items-center justify-center text-sm text-slate-500 font-normal">
               {statusFilter !== "ALL"
-                ? "Tidak ada berkas pelamar dengan status ini."
-                : "Belum ada berkas lamaran yang masuk untuk posisi ini."}
+                ? "Pelamar tidak ditemukan."
+                : "Belum ada lamaran masuk."}
             </div>
           )}
 

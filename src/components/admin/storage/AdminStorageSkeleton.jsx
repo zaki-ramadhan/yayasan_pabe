@@ -192,8 +192,8 @@ export function AdminStorageSkeleton() {
                 <TableHead className="w-28 text-right py-2.5">
                   <Skeleton className="h-4 w-14 rounded ml-auto" />
                 </TableHead>
-                <TableHead className="w-40 py-2.5">
-                  <Skeleton className="h-4 w-24 rounded" />
+                <TableHead className="w-48 text-center py-2.5">
+                  <Skeleton className="h-4 w-24 rounded mx-auto" />
                 </TableHead>
                 <TableHead className="w-20 text-center py-2.5">
                   <Skeleton className="h-4 w-8 rounded mx-auto" />
@@ -219,8 +219,11 @@ export function AdminStorageSkeleton() {
                   <TableCell className="text-right py-3">
                     <Skeleton className="h-4 w-16 rounded ml-auto" />
                   </TableCell>
-                  <TableCell className="py-3">
-                    <Skeleton className="h-4 w-28 rounded" />
+                  <TableCell className="text-center py-3">
+                    <div className="flex flex-col items-center gap-1">
+                      <Skeleton className="h-4 w-24 rounded" />
+                      <Skeleton className="h-3 w-12 rounded" />
+                    </div>
                   </TableCell>
                   <TableCell className="text-center py-3">
                     <Skeleton className="w-8 h-8 rounded-md mx-auto" />

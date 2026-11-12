@@ -138,9 +138,9 @@ export function DonorDashboardView({ currentUser: propUser }) {
         ) : schedules.length === 0 ? (
           <div className="p-6 text-center border border-dashed border-slate-200 rounded-xl space-y-2">
             <CalendarClock className="w-8 h-8 text-slate-400 mx-auto" />
-            <p className="text-sm font-medium text-slate-700">Belum ada jadwal donasi rutin aktif</p>
+            <p className="text-sm font-medium text-slate-700">Belum ada jadwal donasi rutin.</p>
             <p className="text-sm text-slate-500 font-normal max-w-sm mx-auto">
-              Buat jadwal otomatis atau pengingat WhatsApp harian/bulanan agar sedekah tetap terjaga istiqamah.
+              Buat jadwal atau pengingat agar sedekah tetap rutin.
             </p>
           </div>
         ) : (

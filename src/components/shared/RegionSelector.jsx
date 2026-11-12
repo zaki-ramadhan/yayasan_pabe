@@ -130,7 +130,7 @@ export function RegionSelector({
           }
           searchPlaceholder="Cari kota / kabupaten..."
           createPrefix="Gunakan kota"
-          emptyMessage="Kota tidak ditemukan di provinsi ini. Ketik nama lalu tekan enter untuk gunakan opsi baru."
+          emptyMessage="Kota tidak ditemukan. Tekan Enter untuk tambah baru."
           disabled={disabled || !effectiveProvince}
           className={inputClassName}
         />

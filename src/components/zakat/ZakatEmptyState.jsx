@@ -12,10 +12,10 @@ export function ZakatEmptyState({ className }) {
       )}
     >
       <h3 className="text-xl font-medium text-slate-950 max-w-xs leading-snug">
-        Hasil perhitungan akan<br></br> tampil di sini
+        Hasil perhitungan<br></br> tampil di sini
       </h3>
       <p className="text-sm text-slate-600 leading-relaxed max-w-xs">
-        Isi nominal objek zakat pada formulir di samping lalu klik tombol Hitung Zakat
+        Isi nominal di samping lalu klik Hitung Zakat.
       </p>
     </div>
   );

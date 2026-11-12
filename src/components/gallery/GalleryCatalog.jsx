@@ -226,11 +226,11 @@ export function GalleryCatalog({
           </div>
         ) : (
           <EmptyState
-            title={initialItems.length === 0 ? "Belum Ada Dokumentasi Kegiatan" : "Dokumentasi Tidak Ditemukan"}
+            title={initialItems.length === 0 ? "Belum ada dokumentasi" : "Dokumentasi tidak ditemukan"}
             description={
               initialItems.length === 0
-                ? "Dokumentasi kegiatan dan rekam jejak penyaluran amanah akan segera kami publikasikan di sini."
-                : "Tidak ada dokumentasi kegiatan yang cocok dengan kata kunci atau filter yang Anda pilih."
+                ? "Foto dan video kegiatan akan segera dipublikasikan."
+                : "Coba ubah kata kunci atau filter."
             }
             variant="card"
             action={

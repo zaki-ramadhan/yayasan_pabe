@@ -110,11 +110,11 @@ export function ArticleCatalog({ initialArticles = [], categories = ARTICLE_CATE
           </div>
         ) : (
           <EmptyState
-            title={initialArticles.length === 0 ? "Belum Ada Artikel Dipublikasikan" : "Tidak Ada Artikel Ditemukan"}
+            title={initialArticles.length === 0 ? "Belum ada artikel" : "Artikel tidak ditemukan"}
             description={
               initialArticles.length === 0
-                ? "Artikel, kabar kegiatan, dan edukasi ziswaf yayasan akan segera hadir di sini."
-                : "Coba kata kunci lain atau pilih kategori lain."
+                ? "Artikel dan kabar kegiatan akan segera hadir."
+                : "Coba kata kunci atau kategori lain."
             }
             variant="dashed"
             action={

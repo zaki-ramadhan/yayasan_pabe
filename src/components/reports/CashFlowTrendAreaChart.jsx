@@ -33,9 +33,9 @@ export function CashFlowTrendAreaChart({ data = [] }) {
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2.5">
               <TrendingUp className="w-5 h-5" />
             </div>
-            <p className="text-sm font-semibold text-slate-900">Belum Ada Data Arus Kas</p>
+            <p className="text-sm font-semibold text-slate-900">Belum ada data arus kas</p>
             <p className="text-xs sm:text-sm text-slate-500 max-w-sm mt-1">
-              Belum ada mutasi penghimpunan maupun penyaluran kas tercatat pada periode ini.
+              Belum ada mutasi kas tercatat pada periode ini.
             </p>
           </div>
         ) : (

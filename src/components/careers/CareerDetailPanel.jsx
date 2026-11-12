@@ -23,11 +23,11 @@ export function CareerDetailPanel({ job, hasVacancies = true }) {
     return (
       <EmptyState
         variant="dashed"
-        title={hasVacancies ? "Belum ada posisi dipilih" : "Informasi Lowongan"}
+        title={hasVacancies ? "Pilih posisi lowongan" : "Belum ada lowongan tersedia"}
         description={
           hasVacancies
-            ? "Pilih salah satu lowongan di sebelah kiri untuk melihat rincian amanah, kualifikasi, dan batas lamaran."
-            : "Rincian amanah, kualifikasi, dan formulir pendaftaran akan ditampilkan di sini saat lowongan pekerjaan tersedia."
+            ? "Klik salah satu posisi di sebelah kiri untuk melihat detail."
+            : "Rincian posisi dan pendaftaran akan tampil di sini."
         }
       />
     );

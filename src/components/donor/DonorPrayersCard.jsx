@@ -58,7 +58,7 @@ export function DonorPrayersCard({ currentUser }) {
         {isLoading ? (
           <DonorListSkeleton count={3} height="h-16" />
         ) : prayers.length === 0 ? (
-          <DonorEmptyText message="Belum ada doa yang Anda kirimkan saat berdonasi" />
+          <DonorEmptyText message="Belum ada doa terkirim." />
         ) : (
           prayers.map((item) => (
             <DonorListItem key={item.id} className="flex-col items-start gap-1.5 p-3">

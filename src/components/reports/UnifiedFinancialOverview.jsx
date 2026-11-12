@@ -131,7 +131,7 @@ export function UnifiedFinancialOverview({
               ))
             ) : (
               <div className="py-10 text-center text-sm font-normal text-slate-500">
-                Tidak ada catatan program pada tahun dan mode yang dipilih.
+                Belum ada data program pada periode ini.
               </div>
             )}
           </div>

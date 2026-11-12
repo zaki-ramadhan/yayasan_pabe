@@ -41,9 +41,9 @@ export function FinancialIncomeDonutChart({ data = [] }) {
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2.5">
               <PieChartIcon className="w-5 h-5" />
             </div>
-            <p className="text-sm font-semibold text-slate-900">Belum Ada Data Penghimpunan</p>
+            <p className="text-sm font-semibold text-slate-900">Belum ada data penghimpunan</p>
             <p className="text-xs sm:text-sm text-slate-500 max-w-xs mt-1">
-              Belum ada donasi masuk yang tercatat pada periode tahun yang dipilih.
+              Belum ada donasi masuk pada tahun ini.
             </p>
           </div>
         ) : (

@@ -18,7 +18,7 @@ export function DonorRecentReportsCard({ recentReports = [], isLoading = false }
         {isLoading ? (
           <DonorReportListSkeleton count={2} />
         ) : recentReports.length === 0 ? (
-          <DonorEmptyText message="Belum ada kabar penyaluran dari program yang Anda dukung" />
+          <DonorEmptyText message="Belum ada kabar penyaluran." />
         ) : (
           recentReports.map((rep) => (
             <DonorReportItem key={rep.id} report={rep} />

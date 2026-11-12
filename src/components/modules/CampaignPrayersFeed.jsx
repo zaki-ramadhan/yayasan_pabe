@@ -49,7 +49,7 @@ export function CampaignPrayersFeed({ initialDonors = [] }) {
         variant="dashed"
         icon={Heart}
         title="Belum ada doa dan dukungan"
-        description="Jadilah orang baik pertama yang mendoakan kelancaran dan keberkahan program ini."
+        description="Jadilah yang pertama mengirim doa untuk program ini."
       />
     );
   }

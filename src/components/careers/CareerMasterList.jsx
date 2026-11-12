@@ -67,15 +67,15 @@ export function CareerMasterList({
           <EmptyState
             variant="dashed"
             icon={Briefcase}
-            title="Belum ada lowongan dibuka"
-            description="Saat ini belum ada posisi lowongan pekerjaan yang dibuka. Silakan cek kembali secara berkala untuk pembaruan kesempatan berkarier."
+            title="Belum ada lowongan"
+            description="Cek kembali secara berkala untuk posisi terbaru."
           />
         ) : (
           <EmptyState
             variant="dashed"
             icon={SearchX}
-            title="Tidak ada posisi yang sesuai"
-            description="Coba ubah kata kunci pencarian atau sesuaikan opsi filter lokasi dan tipe pekerjaan."
+            title="Posisi tidak ditemukan"
+            description="Coba ubah kata kunci atau filter."
             action={
               <Button
                 variant="outline"

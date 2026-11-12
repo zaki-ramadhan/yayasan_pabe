@@ -209,11 +209,11 @@ export function ProgramCatalog({ initialCampaigns = [], categories = [] }) {
           </div>
         ) : (
           <EmptyState
-            title={initialCampaigns.length === 0 ? "Belum Ada Program Donasi" : "Program Tidak Ditemukan"}
+            title={initialCampaigns.length === 0 ? "Belum ada program donasi" : "Program tidak ditemukan"}
             description={
               initialCampaigns.length === 0
-                ? "Program donasi dan amanah kebaikan akan segera hadir di sini."
-                : "Tidak ada program donasi yang cocok dengan kata kunci atau filter yang Anda pilih."
+                ? "Program donasi terbaru akan segera hadir."
+                : "Coba ubah kata kunci atau filter."
             }
             variant="card"
             action={

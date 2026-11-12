@@ -133,7 +133,7 @@ export function AdminCampaignOverviewCard({
             })
           ) : (
             <p className="text-sm text-slate-500 text-center py-6">
-              Belum ada program aktif yang berjalan.
+              Belum ada program aktif.
             </p>
           )}
         </div>

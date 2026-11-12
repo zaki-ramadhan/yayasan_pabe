@@ -160,9 +160,9 @@ export function formatDate(dateInput, options = {}) {
 }
 
 /**
- * Memformat waktu WIB dalam format "HH:mm WIB" atau "HH:mm:ss WIB"
+ * Memformat waktu WIB dalam format "HH:mm WIB" atau "HH:mm:ss WIB" (opsional tanpa "WIB")
  * @param {string | Date | null} dateInput
- * @param {{ withSeconds?: boolean }} [options]
+ * @param {{ withSeconds?: boolean, withTimezone?: boolean }} [options]
  * @returns {string}
  */
 export function formatTime(dateInput, options = {}) {
@@ -170,16 +170,14 @@ export function formatTime(dateInput, options = {}) {
   const date = new Date(dateInput);
   if (isNaN(date.getTime())) return "-";
 
-  const { withSeconds = false } = options;
+  const { withSeconds = false, withTimezone = true } = options;
   const wibTime = new Date(date.getTime() + (7 * 60 + date.getTimezoneOffset()) * 60000);
   const hours = String(wibTime.getHours()).padStart(2, "0");
   const minutes = String(wibTime.getMinutes()).padStart(2, "0");
+  const seconds = String(wibTime.getSeconds()).padStart(2, "0");
 
-  if (withSeconds) {
-    const seconds = String(wibTime.getSeconds()).padStart(2, "0");
-    return `${hours}:${minutes}:${seconds} WIB`;
-  }
-  return `${hours}:${minutes} WIB`;
+  const timeString = withSeconds ? `${hours}:${minutes}:${seconds}` : `${hours}:${minutes}`;
+  return withTimezone ? `${timeString} WIB` : timeString;
 }
 
 /**

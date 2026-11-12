@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import { usePagination } from "@/hooks/usePagination";
-import { formatBytes, formatDate } from "@/lib/formatters";
+import { formatBytes, formatDate, formatTime } from "@/lib/formatters";
 
 const PAGE_SIZE = 10;
 
@@ -91,7 +91,7 @@ export function StorageOrphanTable({
               <TableHead>Nama Berkas</TableHead>
               <TableHead className="w-28 text-center">Folder</TableHead>
               <TableHead className="w-28 text-right">Ukuran</TableHead>
-              <TableHead className="w-40">Waktu Unggah</TableHead>
+              <TableHead className="w-48 text-center">Waktu Unggah</TableHead>
               <TableHead className="w-20 text-center">Aksi</TableHead>
             </TableRow>
           </TableHeader>
@@ -170,8 +170,15 @@ export function StorageOrphanTable({
                     </TableCell>
 
                     {/* Waktu Unggah */}
-                    <TableCell className="text-sm font-normal text-slate-600 tabular-nums">
-                      <span>{formatDate(item.lastModified, { withDay: false, withTime: true })}</span>
+                    <TableCell className="text-center whitespace-nowrap align-middle">
+                      <div className="flex flex-col items-center leading-tight">
+                        <span className="text-sm font-normal text-slate-700 tabular-nums">
+                          {formatDate(item.lastModified)}
+                        </span>
+                        <span className="text-xs font-normal text-slate-500 tabular-nums mt-0.5">
+                          {formatTime(item.lastModified, { withTimezone: false })}
+                        </span>
+                      </div>
                     </TableCell>
 
                     {/* Tombol Hapus Satuan */}
@@ -194,8 +201,8 @@ export function StorageOrphanTable({
                 colSpan={7}
                 message={
                   isScanned
-                    ? "Tidak ada berkas sampah ditemukan. Seluruh berkas terhubung dengan benar."
-                    : "Klik 'Pindai berkas tidak terpakai' di atas untuk memeriksa berkas sampah."
+                    ? "Tidak ada berkas sampah."
+                    : "Klik pindai untuk memeriksa berkas tidak terpakai."
                 }
               />
             )}

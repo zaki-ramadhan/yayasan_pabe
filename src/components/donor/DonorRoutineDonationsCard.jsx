@@ -66,7 +66,7 @@ export function DonorRoutineDonationsCard({
         {isLoading ? (
           <DonorRoutineListSkeleton count={1} />
         ) : items.length === 0 ? (
-          <DonorEmptyText message="Belum ada komitmen donasi rutin tersimpan" />
+          <DonorEmptyText message="Belum ada komitmen donasi rutin." />
         ) : (
           items.map((item) => {
             const isProcessing = updatingId === item.id;

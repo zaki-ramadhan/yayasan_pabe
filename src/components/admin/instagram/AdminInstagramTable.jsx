@@ -125,8 +125,8 @@ export function AdminInstagramTable({
                   isFiltered={Boolean(search)}
                   message={
                     search
-                      ? `Tidak ditemukan postingan dengan kata kunci "${search}".`
-                      : "Belum ada postingan feed Instagram. Klik tombol 'Tambah postingan' untuk menambahkan konten pertama."
+                      ? "Postingan tidak ditemukan."
+                      : "Belum ada postingan Instagram."
                   }
                 />
               ) : (

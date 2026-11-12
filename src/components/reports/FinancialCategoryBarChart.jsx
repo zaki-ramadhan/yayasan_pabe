@@ -40,9 +40,9 @@ export function FinancialCategoryBarChart({ data = [], categories = [] }) {
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2.5">
               <BarChart3 className="w-5 h-5" />
             </div>
-            <p className="text-sm font-semibold text-slate-900">Belum Ada Data Laporan</p>
+            <p className="text-sm font-semibold text-slate-900">Belum ada data laporan</p>
             <p className="text-xs sm:text-sm text-slate-500 max-w-sm mt-1">
-              Belum ada transaksi penghimpunan maupun penyaluran program yang tercatat pada periode ini.
+              Belum ada transaksi tercatat pada periode ini.
             </p>
           </div>
         ) : (

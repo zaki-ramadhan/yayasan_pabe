@@ -120,7 +120,7 @@ export function AdminSettingsBankSection({
 
         {bankAccounts.length === 0 && (
           <p className="text-sm text-slate-500 text-center py-4 italic font-normal">
-            Belum ada rekening bank resmi yang ditambahkan.
+            Belum ada rekening bank.
           </p>
         )}
       </CardContent>

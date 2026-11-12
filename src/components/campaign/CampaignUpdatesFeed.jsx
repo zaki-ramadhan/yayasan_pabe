@@ -32,7 +32,7 @@ export function CampaignUpdatesFeed({ updates = [] }) {
         variant="dashed"
         icon={FileText}
         title="Belum ada kabar penyaluran"
-        description="Laporan implementasi dan dokumentasi penyaluran donasi untuk program ini akan diperbarui oleh tim lapangan yayasan."
+        description="Dokumentasi penyaluran akan diperbarui oleh tim yayasan."
       />
     );
   }
