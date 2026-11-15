@@ -2,6 +2,9 @@
 const nextConfig = {
   output: "standalone",
   reactCompiler: true,
+  experimental: {
+    authInterrupts: true,
+  },
   allowedDevOrigins: [
     "*.loca.lt",
     "*.trycloudflare.com",
@@ -82,16 +85,6 @@ const nextConfig = {
       {
         source: "/profil",
         destination: "/donatur/profil",
-        permanent: true,
-      },
-      {
-        source: "/program/:slug/donate",
-        destination: "/campaign/:slug/donate",
-        permanent: true,
-      },
-      {
-        source: "/program/:slug",
-        destination: "/campaign/:slug",
         permanent: true,
       },
     ];
