@@ -54,7 +54,7 @@ export function AdminTopHeader({
   }, [pathname]);
 
   const avatarUrl = !imgError
-    ? (currentUser?.customAvatar || currentUser?.avatar || currentUser?.providerAvatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
+    ? (currentUser?.avatar || currentUser?.customAvatar || currentUser?.providerAvatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
     : null;
 
   const fallbackInitial =

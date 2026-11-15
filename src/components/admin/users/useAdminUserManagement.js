@@ -145,23 +145,17 @@ export function useAdminUserManagement({ initialData = {} }) {
     }
   };
 
-  const handleResetPassword = (user) => {
-    setResetDialogData(user);
-  };
-
-  const handleResetSubmit = async (newPassword) => {
-    if (!resetDialogData) return;
+  const handleResetPassword = async (user) => {
+    if (!user?.id) return;
     setIsSubmitting(true);
     try {
-      const res = await safeFetch(`/api/admin/users/${resetDialogData.id}/reset-password`, {
+      const res = await safeFetch(`/api/admin/users/${user.id}/reset-password`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newPassword }),
       });
       const json = await res.json();
-      if (json.success) {
-        toast.success(json.message);
-        setResetDialogData(null);
+      if (json.success && json.data) {
+        toast.success(json.message || "Kata sandi sementara berhasil dibuat.");
+        setResetDialogData(json.data);
       } else {
         toast.error(json.message || "Gagal mengatur ulang kata sandi.");
       }
@@ -170,6 +164,10 @@ export function useAdminUserManagement({ initialData = {} }) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleResetSubmit = () => {
+    setResetDialogData(null);
   };
 
   const handleOpenToggleStatus = (user) => {

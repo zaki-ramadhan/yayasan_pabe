@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -280,11 +279,17 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
               </Button>
               <Button
                 type="submit"
+                isLoading={isSubmitting || !turnstileToken}
                 disabled={isSubmitting || !turnstileToken}
                 className="h-10 text-sm bg-primary hover:bg-primary-hover text-white font-medium px-4 cursor-pointer gap-1.5 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
               >
-                {isSubmitting && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
-                <span>{isSubmitting ? "Mengirimkan..." : "Kirim Lamaran"}</span>
+                <span>
+                  {isSubmitting
+                    ? "Mengirimkan..."
+                    : !turnstileToken
+                    ? "Mohon tunggu..."
+                    : "Kirim Lamaran"}
+                </span>
               </Button>
             </div>
           </form>

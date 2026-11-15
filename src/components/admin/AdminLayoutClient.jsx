@@ -141,7 +141,7 @@ export function AdminLayoutClient({ children, initialUser }) {
               current.name !== data.data.name ||
               current.customAvatar !== data.data.customAvatar)
           ) {
-            loginUser({ ...current, ...data.data });
+            loginUser({ ...current, ...data.data }, { notifyLogin: false });
             setCurrentUser((prev) => ({ ...prev, ...data.data }));
           }
         }

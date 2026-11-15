@@ -13,11 +13,13 @@ import {
   updateVolunteerStatus,
   updateVolunteersStatusBatch,
 } from "@/services/adminVolunteerService";
+import { clearEmailDispatchHistory } from "@/lib/emailDispatchGuard";
 import prisma from "@/lib/prisma";
 
 describe("Volunteer Transactional Email & Approval System", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    clearEmailDispatchHistory();
   });
 
   describe("Volunteer Registration Email Template", () => {
@@ -94,6 +96,14 @@ describe("Volunteer Transactional Email & Approval System", () => {
       const sendApprovalSpy = vi
         .spyOn(emailService, "sendVolunteerApprovedEmail")
         .mockResolvedValueOnce({ success: true });
+
+      vi.spyOn(prisma.volunteer, "findUnique").mockResolvedValueOnce({
+        id: "vol-approved-1",
+        fullName: "Fatimah Azzahra",
+        email: "fatimah@example.com",
+        status: "PENDING",
+        createdAt: new Date("2026-11-01T10:00:00Z"),
+      });
 
       vi.spyOn(prisma.volunteer, "update").mockResolvedValueOnce({
         id: "vol-approved-1",

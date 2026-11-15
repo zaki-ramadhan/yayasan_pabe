@@ -16,6 +16,7 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
 import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import { AdminVolunteerDetailDialog } from "./AdminVolunteerDetailDialog";
+import { AdminVolunteerStatusDialog } from "./AdminVolunteerStatusDialog";
 import { AdminVolunteerToolbar } from "./AdminVolunteerToolbar";
 import { AdminVolunteerTableRow } from "./AdminVolunteerTableRow";
 import { AdminVolunteerTableSkeletonRows } from "./AdminVolunteerSkeleton";
@@ -36,6 +37,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedVolunteer, setSelectedVolunteer] = useState(null);
+  const [volunteerToEditStatus, setVolunteerToEditStatus] = useState(null);
   const [cardVolunteer, setCardVolunteer] = useState(null);
   const [volunteerToDelete, setVolunteerToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -43,6 +45,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const [isBulkStatusUpdating, setIsBulkStatusUpdating] = useState(false);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+  const [bulkStatusToConfirm, setBulkStatusToConfirm] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // 1. Live SSE: Menyisipkan pendaftar relawan baru secara instan tanpa reload browser
@@ -56,7 +59,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         email: payload.email || "",
         phone: payload.phone || "",
         city: payload.city || "-",
-        interest: payload.interest || "Relawan Kebaikan",
+        interest: payload.interest || "Anggota",
         motivation: payload.motivation || "",
         status: payload.status || "PENDING",
         createdAt: payload.timestamp || new Date().toISOString(),
@@ -270,7 +273,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
           variant="outline"
           size="sm"
           disabled={isBulkStatusUpdating}
-          onClick={() => handleBulkUpdateStatus("APPROVED")}
+          onClick={() => setBulkStatusToConfirm("APPROVED")}
           className="bg-white border-slate-300 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 font-medium h-8 text-xs gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
         >
           {isBulkStatusUpdating ? (
@@ -285,7 +288,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
           variant="outline"
           size="sm"
           disabled={isBulkStatusUpdating}
-          onClick={() => handleBulkUpdateStatus("REJECTED")}
+          onClick={() => setBulkStatusToConfirm("REJECTED")}
           className="bg-white border-slate-300 text-rose-700 hover:bg-rose-50 hover:border-rose-300 font-medium h-8 text-xs gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
         >
           {isBulkStatusUpdating ? (
@@ -354,6 +357,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                     isSelected={selection.isSelected(item.id)}
                     onToggleSelect={selection.toggleSelect}
                     onViewDetail={setSelectedVolunteer}
+                    onEditStatus={setVolunteerToEditStatus}
                     onPrintCard={setCardVolunteer}
                     onDelete={handleDelete}
                   />
@@ -386,11 +390,18 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         isOpen={Boolean(selectedVolunteer)}
         onClose={() => setSelectedVolunteer(null)}
         volunteer={selectedVolunteer}
-        onStatusChange={handleUpdateStatus}
         onPrintCard={(v) => {
           setSelectedVolunteer(null);
           setCardVolunteer(v);
         }}
+      />
+
+      <AdminVolunteerStatusDialog
+        key={volunteerToEditStatus?.id || "status-dialog"}
+        isOpen={Boolean(volunteerToEditStatus)}
+        onClose={() => setVolunteerToEditStatus(null)}
+        volunteer={volunteerToEditStatus}
+        onStatusChange={handleUpdateStatus}
         isUpdating={isUpdatingStatus}
       />
 
@@ -420,6 +431,30 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} data pendaftar relawan terpilih? Tindakan ini tidak dapat dibatalkan.`}
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
+      />
+
+      <ConfirmDialog
+        isOpen={Boolean(bulkStatusToConfirm)}
+        onClose={() => setBulkStatusToConfirm(null)}
+        onConfirm={async () => {
+          const targetStatus = bulkStatusToConfirm;
+          setBulkStatusToConfirm(null);
+          await handleBulkUpdateStatus(targetStatus);
+        }}
+        isLoading={isBulkStatusUpdating}
+        title={
+          bulkStatusToConfirm === "APPROVED"
+            ? `Setujui ${selection.selectedCount} relawan terpilih?`
+            : `Tolak ${selection.selectedCount} relawan terpilih?`
+        }
+        description={
+          bulkStatusToConfirm === "APPROVED"
+            ? `Apakah Anda yakin ingin menyetujui ${selection.selectedCount} pendaftar relawan terpilih? Surat resmi tanda anggota akan dikirimkan ke email masing-masing pendaftar.`
+            : `Apakah Anda yakin ingin menandai belum disetujui untuk ${selection.selectedCount} pendaftar relawan terpilih? Surat pemberitahuan santun akan dikirimkan ke email masing-masing pendaftar.`
+        }
+        confirmLabel={bulkStatusToConfirm === "APPROVED" ? "Ya, setujui semua" : "Ya, tolak semua"}
+        confirmVariant={bulkStatusToConfirm === "APPROVED" ? "default" : "destructive"}
+        cancelLabel="Batal"
       />
     </div>
   );

@@ -109,6 +109,9 @@ export function AdminArticleTableRow({
 					disabled={
 						isDeleting
 					}
+					isDeleting={
+						isDeleting
+					}
 					editTooltip="Edit artikel"
 					deleteTooltip="Hapus artikel"
 				/>

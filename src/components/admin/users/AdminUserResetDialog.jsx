@@ -18,12 +18,14 @@ export function AdminUserResetDialog({
   isOpen,
   onClose,
   data,
+  targetUser,
 }) {
+  const activeData = data || targetUser;
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = async () => {
-    if (!data?.temporaryPassword) return;
-    const ok = await copyToClipboard(data.temporaryPassword);
+    if (!activeData?.temporaryPassword) return;
+    const ok = await copyToClipboard(activeData.temporaryPassword);
     if (ok) {
       setIsCopied(true);
       toast.success("Kata sandi sementara berhasil disalin.");
@@ -46,18 +48,18 @@ export function AdminUserResetDialog({
           <div className="rounded-lg bg-slate-50 border border-slate-200 p-3 space-y-2 text-sm">
             <div className="flex items-center justify-between text-slate-600">
               <span>Pengurus:</span>
-              <span className="font-medium text-slate-900">{data?.userName || "-"}</span>
+              <span className="font-medium text-slate-900">{activeData?.userName || "-"}</span>
             </div>
             <div className="flex items-center justify-between text-slate-600">
               <span>Email:</span>
-              <span className="font-medium text-slate-900 select-all">{data?.userEmail || "-"}</span>
+              <span className="font-medium text-slate-900 select-all">{activeData?.userEmail || "-"}</span>
             </div>
           </div>
 
           <FormField label="Kata sandi sementara:">
             <div className="flex items-center justify-between bg-slate-100 border border-slate-300 rounded-lg p-2.5">
               <code className="text-sm font-medium font-mono text-slate-900 select-all tracking-wider">
-                {data?.temporaryPassword}
+                {activeData?.temporaryPassword}
               </code>
               <Button
                 type="button"

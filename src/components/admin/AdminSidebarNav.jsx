@@ -3,7 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, ExternalLink } from "lucide-react";
+import {
+  LogOut,
+  ExternalLink,
+  HeartHandshake,
+  Newspaper,
+  ShieldCheck,
+  Server,
+} from "lucide-react";
 import { logoutUser } from "@/services/authService";
 import { USER_ROLES } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -15,6 +22,7 @@ import { useStorageAlert } from "@/hooks/useStorageAlert";
 const ADMIN_NAV_GROUPS = [
   {
     title: "Program & Donasi",
+    icon: HeartHandshake,
     items: [
       { href: "/admin", label: "Dashboard Utama", short: "DB", exact: true },
       { href: "/admin/donatur", label: "Daftar Donatur", short: "DD" },
@@ -28,6 +36,7 @@ const ADMIN_NAV_GROUPS = [
   },
   {
     title: "Konten & Informasi",
+    icon: Newspaper,
     items: [
       { href: "/admin/artikel", label: "Berita & Artikel", short: "BA" },
       { href: "/admin/galeri", label: "Galeri Dokumentasi", short: "GD" },
@@ -59,6 +68,7 @@ export function AdminSidebarNav({
       ? [
           {
             title: "Hak Akses & Pengurus",
+            icon: ShieldCheck,
             items: [
               { href: "/admin/pengguna", label: "Kelola Pengurus", short: "KP" },
               { href: "/admin/pengaturan", label: "Pengaturan Yayasan", short: "PY" },
@@ -70,6 +80,7 @@ export function AdminSidebarNav({
       ? [
           {
             title: "Infrastruktur & Sistem",
+            icon: Server,
             items: [
               {
                 href: "/admin/penyimpanan",
@@ -136,84 +147,122 @@ export function AdminSidebarNav({
       </div>
 
       {/* Main Navigation Groups (Scrollable if many items) */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 sidebar-scrollbar">
-        {navGroups.map((group) => (
-          <div key={group.title} className="space-y-1.5">
-            {!isCollapsed && (
-              <p className="px-3 text-xs font-normal text-slate-500 uppercase tracking-wider truncate">
-                {group.title}
-              </p>
-            )}
-            <nav className="space-y-0.5">
-              {group.items.map((item) => {
-                if (item.isExternal) {
-                  return (
-                    <a
-                      key={item.href}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={onCloseMobile}
-                      className={cn(
-                        "flex items-center rounded-md text-sm transition-all font-normal text-slate-900 hover:bg-slate-200/50",
-                        isCollapsed ? "justify-center p-2 text-xs" : "px-3 py-2 justify-between"
-                      )}
-                    >
-                      {isCollapsed ? (
-                        <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
-                      ) : (
-                        <>
-                          <span className="truncate font-normal">{item.label}</span>
-                          <ExternalLink className="w-3.5 h-3.5 text-slate-500 shrink-0 ml-1.5" />
-                        </>
-                      )}
-                    </a>
-                  );
-                }
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 sidebar-scrollbar">
+        {navGroups.map((group, index) => {
+          const GroupIcon = group.icon;
+          const groupActiveIndex = group.items.findIndex((item) =>
+            item.exact
+              ? pathname === item.href
+              : pathname === item.href || pathname.startsWith(`${item.href}/`)
+          );
 
-                const isActive = item.exact
-                  ? pathname === item.href
-                  : pathname === item.href || pathname.startsWith(`${item.href}/`);
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={onCloseMobile}
-                    className={cn(
-                      "flex items-center rounded-md text-sm transition-all font-normal text-slate-900",
-                      isCollapsed ? "justify-center p-2 text-xs" : "px-3 py-2",
-                      isActive
-                        ? "bg-slate-200/90 shadow-2xs"
-                        : "hover:bg-slate-200/50"
-                    )}
-                  >
-                    {isCollapsed ? (
-                      <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
-                    ) : (
-                      <>
-                        <span className="truncate font-normal">{item.label}</span>
-                        {item.href === "/admin/penyimpanan" && (health?.isCritical || health?.isWarning) && (
-                          <span
-                            className={cn(
-                              "ml-auto w-2 h-2 rounded-full shrink-0",
-                              health.isCritical ? "bg-rose-500 animate-pulse" : "bg-amber-500"
-                            )}
-                            title={
-                              health.isCritical
-                                ? "Kapasitas R2 kritis (≥95%)"
-                                : "Kapasitas R2 mendekati batas (≥80%)"
-                            }
-                          />
+          return (
+            <div
+              key={group.title}
+              className={cn(index > 0 && "pt-3 border-t border-dashed border-slate-200")}
+            >
+              {isCollapsed ? (
+                <>
+                  {GroupIcon && (
+                    <div className="flex justify-center py-1 text-slate-400" title={group.title}>
+                      <GroupIcon className="w-4 h-4 shrink-0" />
+                    </div>
+                  )}
+                  <nav className="space-y-0.5 mt-1">
+                    {group.items.map((item) => {
+                      const isActive = item.exact
+                        ? pathname === item.href
+                        : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={onCloseMobile}
+                          className={cn(
+                            "flex items-center rounded-md text-sm transition-all font-normal justify-center p-2 text-xs",
+                            isActive
+                              ? "text-slate-950 bg-slate-200/80 shadow-2xs"
+                              : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                          )}
+                        >
+                          <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 px-3 py-1.5 text-sm select-none">
+                    {GroupIcon && (
+                      <GroupIcon
+                        className={cn(
+                          "w-4 h-4 shrink-0 transition-colors",
+                          groupActiveIndex !== -1 ? "text-slate-950" : "text-slate-500"
                         )}
-                      </>
+                      />
                     )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        ))}
+                    <span className="truncate font-normal text-slate-900">
+                      {group.title}
+                    </span>
+                  </div>
+                  <nav className="space-y-0.5 mt-0.5">
+                    {group.items.map((item) => {
+                      const isActive = item.exact
+                        ? pathname === item.href
+                        : pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+                      if (item.isExternal) {
+                        return (
+                          <a
+                            key={item.href}
+                            href={item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={onCloseMobile}
+                            className="flex items-center rounded-md text-sm transition-all px-3 py-2 justify-between text-slate-600 hover:text-slate-950 hover:bg-slate-200/40 font-normal"
+                          >
+                            <span className="truncate">{item.label}</span>
+                            <ExternalLink className="w-3.5 h-3.5 text-slate-500 shrink-0 ml-1.5" />
+                          </a>
+                        );
+                      }
+
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={onCloseMobile}
+                          className={cn(
+                            "flex items-center rounded-md text-sm transition-all font-normal px-3 py-2",
+                            isActive
+                              ? "text-slate-950 bg-slate-200/80 shadow-2xs"
+                              : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                          )}
+                        >
+                          <span className="truncate">{item.label}</span>
+                          {item.href === "/admin/penyimpanan" && (health?.isCritical || health?.isWarning) && (
+                            <span
+                              className={cn(
+                                "ml-auto w-2 h-2 rounded-full shrink-0",
+                                health.isCritical ? "bg-rose-500 animate-pulse" : "bg-amber-500"
+                              )}
+                              title={
+                                health.isCritical
+                                  ? "Kapasitas R2 kritis (≥95%)"
+                                  : "Kapasitas R2 mendekati batas (≥80%)"
+                              }
+                            />
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Bottom Actions (Fixed Bottom, Never Overflown) */}

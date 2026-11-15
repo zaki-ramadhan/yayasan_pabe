@@ -17,13 +17,13 @@ export const VOLUNTEER_REGISTRATION_EMAIL_SUBJECT =
 export function buildVolunteerRegistrationEmailHtml({
   name,
   city = "-",
-  interest = "Relawan Kebaikan",
+  interest = "Anggota",
   statusUrl = "",
   logoUrl,
 }) {
   const safeName = name ? name.trim() : "Sahabat Relawan";
   const safeCity = city ? city.trim() : "-";
-  const safeInterest = interest ? interest.trim() : "Relawan Kebaikan";
+  const safeInterest = interest ? interest.trim() : "Anggota";
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.org").replace(/\/+$/, "");
   const targetUrl = statusUrl || `${appUrl}/relawan`;
 
@@ -41,7 +41,7 @@ export function buildVolunteerRegistrationEmailHtml({
 
     <!-- Pengantar -->
     <p style="margin: 0 0 24px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Terima kasih atas niat mulia dan kesediaan Anda menjadi bagian dari <strong>Relawan Kebaikan</strong> Yayasan Payung Berkah. Berkas pendaftaran Anda telah berhasil kami terima dalam sistem.
+      Terima kasih atas niat mulia dan kesediaan Anda menjadi bagian dari <strong>Relawan</strong> Yayasan Payung Berkah. Berkas pendaftaran Anda telah berhasil kami terima dalam sistem.
     </p>
 
     <!-- Ringkasan Rincian Pendaftaran -->

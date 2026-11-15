@@ -28,9 +28,21 @@ import {
   VOLUNTEER_APPROVAL_EMAIL_SUBJECT,
 } from "@/templates/emails/volunteerApprovalEmailTemplate";
 import {
+  buildVolunteerRejectionEmailHtml,
+  VOLUNTEER_REJECTION_EMAIL_SUBJECT,
+} from "@/templates/emails/volunteerRejectionEmailTemplate";
+import {
   buildCareerApplicationEmailHtml,
   getCareerApplicationEmailSubject,
 } from "@/templates/emails/careerApplicationEmailTemplate";
+import {
+  buildCareerShortlistEmailHtml,
+  getCareerShortlistEmailSubject,
+} from "@/templates/emails/careerShortlistEmailTemplate";
+import {
+  buildCareerRejectionEmailHtml,
+  getCareerRejectionEmailSubject,
+} from "@/templates/emails/careerRejectionEmailTemplate";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
@@ -597,6 +609,74 @@ export async function sendCareerApplicationEmail({
   const logoUrl = await getPublicEmailLogoUrl();
   const subject = getCareerApplicationEmailSubject(position);
   const html = buildCareerApplicationEmailHtml({
+    name,
+    position,
+    department,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject,
+    html,
+  });
+}
+
+/**
+ * Mengirim email pemberitahuan pendaftaran relawan yang belum dapat diterima
+ */
+export async function sendVolunteerRejectionEmail({ to, name, interest }) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const html = buildVolunteerRejectionEmailHtml({
+    name,
+    interest,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject: VOLUNTEER_REJECTION_EMAIL_SUBJECT,
+    html,
+  });
+}
+
+/**
+ * Mengirim email pemberitahuan pelamar kerja yang lolos seleksi berkas (SHORTLISTED)
+ */
+export async function sendCareerShortlistEmail({
+  to,
+  name,
+  position,
+  department,
+}) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const subject = getCareerShortlistEmailSubject(position);
+  const html = buildCareerShortlistEmailHtml({
+    name,
+    position,
+    department,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to,
+    subject,
+    html,
+  });
+}
+
+/**
+ * Mengirim email pemberitahuan pelamar kerja yang belum lolos seleksi (REJECTED)
+ */
+export async function sendCareerRejectionEmail({
+  to,
+  name,
+  position,
+  department,
+}) {
+  const logoUrl = await getPublicEmailLogoUrl();
+  const subject = getCareerRejectionEmailSubject(position);
+  const html = buildCareerRejectionEmailHtml({
     name,
     position,
     department,

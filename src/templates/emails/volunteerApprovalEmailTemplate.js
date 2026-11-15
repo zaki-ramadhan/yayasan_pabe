@@ -9,7 +9,7 @@ export const VOLUNTEER_APPROVAL_EMAIL_SUBJECT =
  * @param {object} params
  * @param {string} params.name - Nama relawan
  * @param {string} params.volunteerId - Kode identitas resmi relawan (contoh: YPABE-202611-001)
- * @param {string} params.validationUrl - Tautan halaman validasi/kartu tanda anggota relawan
+ * @param {string} params.validationUrl - Tautan halaman validasi/kartu relawan
  * @param {string} [params.logoUrl] - URL logo yayasan
  * @returns {string} Markup HTML email lengkap
  */
@@ -23,7 +23,7 @@ export function buildVolunteerApprovalEmailHtml({
   const safeId = volunteerId || "YPABE-VOLUNTEER";
 
   const buttonHtml = buildEmailCtaButton({
-    text: "Buka Kartu Anggota Resmi",
+    text: "Buka Kartu Relawan Resmi",
     url: validationUrl,
     variant: "primary3d",
   });
@@ -36,7 +36,7 @@ export function buildVolunteerApprovalEmailHtml({
 
     <!-- Berita Utama -->
     <p style="margin: 0 0 24px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Alhamdulillah, pendaftaran Anda untuk bergabung menjadi bagian dari <strong>Relawan Kebaikan</strong> Yayasan Payung Berkah telah <strong>disetujui</strong> oleh tim pengurus yayasan.
+      Alhamdulillah, pendaftaran Anda untuk bergabung menjadi bagian dari <strong>Relawan</strong> Yayasan Payung Berkah telah <strong>disetujui</strong> oleh tim pengurus yayasan.
     </p>
 
     <!-- Kotak Sertifikasi & Nomor Anggota -->
@@ -56,7 +56,7 @@ export function buildVolunteerApprovalEmailHtml({
     </table>
 
     <p style="margin: 0 0 28px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Kartu tanda anggota (KTA) digital resmi Anda telah aktif. Anda dapat melihat kartu interaktif 3D Lanyard, mengunduh, atau mencetak kartu identitas relawan Anda melalui tautan di bawah ini:
+      Kartu relawan resmi Anda telah aktif. Anda dapat melihat, mengunduh, atau mencetak kartu identitas relawan Anda melalui tautan di bawah ini:
     </p>
 
     <!-- Tombol CTA -->

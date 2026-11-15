@@ -138,6 +138,9 @@ export function AdminCareerTableRow({
 					disabled={
 						isDeleting
 					}
+					isDeleting={
+						isDeleting
+					}
 					editTooltip="Edit lowongan"
 					deleteTooltip="Hapus lowongan"
 				/>

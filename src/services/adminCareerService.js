@@ -2,6 +2,11 @@ import prisma from "@/lib/prisma";
 import { DEPARTMENT_OPTIONS, TYPE_OPTIONS, LOCATION_OPTIONS, CAREER_VACANCIES } from "@/data/careers";
 import { sanitizeInput, maskEmail } from "@/lib/security";
 import { deleteMultipleFromR2 } from "@/lib/r2Storage";
+import {
+  sendCareerShortlistEmail,
+  sendCareerRejectionEmail,
+} from "@/services/emailService";
+import { shouldSendStatusEmail } from "@/lib/emailDispatchGuard";
 
 /**
  * Mengambil daftar seluruh lowongan pekerjaan (termasuk yang nonaktif) beserta jumlah pelamar.
@@ -304,8 +309,66 @@ export async function updateApplicationStatus(applicationId, newStatus) {
     throw new Error("Status pelamar tidak valid.");
   }
 
-  return prisma.jobApplication.update({
+  const existing = await prisma.jobApplication.findUnique({
+    where: { id: applicationId },
+    include: {
+      vacancy: {
+        select: {
+          title: true,
+          department: true,
+        },
+      },
+    },
+  });
+  if (!existing) {
+    throw new Error("Data pelamar tidak ditemukan.");
+  }
+
+  if (existing.status === newStatus) {
+    return existing;
+  }
+
+  const updated = await prisma.jobApplication.update({
     where: { id: applicationId },
     data: { status: newStatus },
+    include: {
+      vacancy: {
+        select: {
+          title: true,
+          department: true,
+        },
+      },
+    },
   });
+
+  if (updated?.email) {
+    const position = updated.vacancy?.title || "Lowongan Pekerjaan";
+    const department = updated.vacancy?.department || "Yayasan Payung Berkah";
+
+    if (newStatus === "SHORTLISTED" && shouldSendStatusEmail(updated.email, "SHORTLISTED")) {
+      try {
+        await sendCareerShortlistEmail({
+          to: updated.email,
+          name: updated.fullName,
+          position,
+          department,
+        });
+      } catch (emailErr) {
+        console.warn("Gagal mengirim email shortlist pelamar:", emailErr?.message);
+      }
+    } else if (newStatus === "REJECTED" && shouldSendStatusEmail(updated.email, "REJECTED")) {
+      try {
+        await sendCareerRejectionEmail({
+          to: updated.email,
+          name: updated.fullName,
+          position,
+          department,
+        });
+      } catch (emailErr) {
+        console.warn("Gagal mengirim email penolakan pelamar:", emailErr?.message);
+      }
+    }
+  }
+
+  return updated;
 }

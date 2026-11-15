@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/Select";
 import { UserAvatar } from "@/components/ui/Avatar";
 import { StatusBadge } from "@/components/ui/Badge";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatDate } from "@/lib/formatters";
 import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
@@ -22,7 +24,24 @@ export function AdminApplicantItem({
   isUpdating = false,
   onStatusChange,
 }) {
+  const [pendingStatus, setPendingStatus] = useState(null);
   const waUrl = application.phone ? buildWhatsAppUrl(application.phone) : null;
+
+  const handleSelectStatus = (val) => {
+    if (!val || val === application.status) return;
+    if (val === "SHORTLISTED" || val === "REJECTED") {
+      setPendingStatus(val);
+    } else {
+      onStatusChange(application.id, val);
+    }
+  };
+
+  const handleConfirmStatus = async () => {
+    if (!pendingStatus) return;
+    const targetStatus = pendingStatus;
+    setPendingStatus(null);
+    await onStatusChange(application.id, targetStatus);
+  };
 
   return (
     <div className="py-4 space-y-3 first:pt-4 last:pb-4">
@@ -49,7 +68,7 @@ export function AdminApplicantItem({
 
           <Select
             value={application.status}
-            onValueChange={(val) => onStatusChange(application.id, val)}
+            onValueChange={handleSelectStatus}
             disabled={isUpdating}
           >
             <SelectTrigger className="h-8 w-36 text-sm bg-white text-slate-700 font-normal border-slate-200">
@@ -131,6 +150,26 @@ export function AdminApplicantItem({
           {application.coverLetter}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={Boolean(pendingStatus)}
+        onClose={() => setPendingStatus(null)}
+        onConfirm={handleConfirmStatus}
+        isLoading={isUpdating}
+        title={
+          pendingStatus === "SHORTLISTED"
+            ? "Loloskan berkas lamaran kerja?"
+            : "Tolak berkas lamaran kerja?"
+        }
+        description={
+          pendingStatus === "SHORTLISTED"
+            ? `Pelamar atas nama "${application.fullName}" akan ditandai lolos seleksi berkas, dan surat pemberitahuan wawancara akan dikirimkan ke email beliau.`
+            : `Pelamar atas nama "${application.fullName}" akan ditandai belum sesuai kriteria, dan surat pemberitahuan santun akan dikirimkan ke email beliau.`
+        }
+        confirmLabel={pendingStatus === "SHORTLISTED" ? "Ya, loloskan" : "Ya, tolak"}
+        confirmVariant={pendingStatus === "SHORTLISTED" ? "default" : "destructive"}
+        cancelLabel="Batal"
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Phone, MapPin, Calendar, Heart, ShieldCheck, QrCode, Loader2 } from "lucide-react";
+import { Phone, MapPin, Calendar, Heart, QrCode } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,25 +9,19 @@ import {
   DialogFooter,
 } from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/Button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/Select";
 import { formatDate } from "@/lib/formatters";
-import { maskEmail, maskPhone } from "@/lib/security";
 import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 import { AdminVolunteerStatusBadge } from "./AdminVolunteerStatusBadge";
 
+/**
+ * Modal murni baca (Read-Only) untuk melihat profil dan rincian lengkap pendaftar relawan.
+ * Bebas dari aksi perubahan status agar aman dibaca kapan saja oleh pengurus.
+ */
 export function AdminVolunteerDetailDialog({
   isOpen,
   onClose,
   volunteer = null,
-  onStatusChange,
   onPrintCard,
-  isUpdating = false,
 }) {
   if (!volunteer) return null;
 
@@ -35,7 +29,7 @@ export function AdminVolunteerDetailDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+      <DialogContent className="sm:max-w-xl md:max-w-2xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader className="border-b border-slate-100">
           <div className="flex items-center gap-2.5">
             <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
@@ -112,42 +106,9 @@ export function AdminVolunteerDetailDialog({
               &ldquo;{volunteer.motivation || "Tidak menuliskan catatan motivasi khusus."}&rdquo;
             </p>
           </div>
-
-          {/* Pengaturan Status Pendaftar */}
-          <div className="p-3 border border-slate-200 rounded-lg space-y-2">
-            <span className="text-sm text-slate-700 block font-medium">
-              Ubah status tindak lanjut:
-            </span>
-            <div className="flex items-center gap-2">
-              <Select
-                value={volunteer.status}
-                onValueChange={(val) => onStatusChange(volunteer.id, val)}
-                disabled={isUpdating}
-              >
-                <SelectTrigger className="h-10 flex-1 text-sm font-normal bg-white border border-slate-300">
-                  <SelectValue placeholder="Pilih status" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border border-slate-200 z-50">
-                  <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
-                    Menunggu (PENDING)
-                  </SelectItem>
-                  <SelectItem value="CONTACTED" className="cursor-pointer text-sm font-normal py-2">
-                    Sudah Dihubungi (CONTACTED)
-                  </SelectItem>
-                  <SelectItem value="APPROVED" className="cursor-pointer text-sm font-normal py-2">
-                    Disetujui / Aktif (APPROVED)
-                  </SelectItem>
-                  <SelectItem value="REJECTED" className="cursor-pointer text-sm font-normal py-2">
-                    Ditolak / Batal (REJECTED)
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-emerald-600 shrink-0" />}
-            </div>
-          </div>
         </div>
 
-        <DialogFooter className="flex-col sm:flex-row gap-2">
+        <DialogFooter className="flex-col sm:flex-row gap-2 border-t border-slate-100 p-4">
           {volunteer.status === "APPROVED" && onPrintCard && (
             <Button
               type="button"
@@ -155,7 +116,7 @@ export function AdminVolunteerDetailDialog({
               className="h-9 px-3.5 text-sm font-medium gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white cursor-pointer w-full sm:w-auto"
             >
               <QrCode className="w-4 h-4" />
-              <span>Lihat KTA &amp; QR</span>
+              <span>Lihat kartu &amp; QR</span>
             </Button>
           )}
 
@@ -172,4 +133,3 @@ export function AdminVolunteerDetailDialog({
     </Dialog>
   );
 }
-

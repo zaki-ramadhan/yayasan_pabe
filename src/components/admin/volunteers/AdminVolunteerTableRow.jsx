@@ -13,6 +13,7 @@ export function AdminVolunteerTableRow({
   isSelected = false,
   onToggleSelect,
   onViewDetail,
+  onEditStatus,
   onPrintCard,
   onDelete,
 }) {
@@ -92,15 +93,17 @@ export function AdminVolunteerTableRow({
       <TableCell className="w-24 text-right py-3 whitespace-nowrap align-middle pr-4">
         <TableRowActions
           onView={() => onViewDetail(item)}
+          onEdit={() => onEditStatus(item)}
           onDelete={() => onDelete(item.id, item.fullName)}
           viewTooltip="Lihat rincian pendaftar"
+          editTooltip="Tindak lanjut / ubah status"
           deleteTooltip="Hapus berkas pendaftar"
         >
           {item.status === "APPROVED" && onPrintCard && (
             <button
               type="button"
               onClick={() => onPrintCard(item)}
-              aria-label="Cetak kartu tanda anggota"
+              aria-label="Cetak kartu relawan"
               className="p-1.5 rounded-md text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
             >
               <QrCode className="w-4 h-4" />

@@ -1,7 +1,11 @@
 import { formatVolunteerId } from "@/lib/volunteerUtils";
-import { sendVolunteerApprovedEmail } from "@/services/emailService";
+import {
+  sendVolunteerApprovedEmail,
+  sendVolunteerRejectionEmail,
+} from "@/services/emailService";
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
+import { shouldSendStatusEmail } from "@/lib/emailDispatchGuard";
 
 const VALID_STATUSES = ["PENDING", "APPROVED", "CONTACTED", "REJECTED"];
 
@@ -84,12 +88,23 @@ export async function updateVolunteerStatus(id, newStatus) {
     throw new Error("Status pendaftar relawan tidak valid.");
   }
 
+  const existing = await prisma.volunteer.findUnique({
+    where: { id },
+  });
+  if (!existing) {
+    throw new Error("Data pendaftar relawan tidak ditemukan.");
+  }
+
+  if (existing.status === status) {
+    return existing;
+  }
+
   const updated = await prisma.volunteer.update({
     where: { id },
     data: { status },
   });
 
-  if (status === "APPROVED" && updated?.email) {
+  if (status === "APPROVED" && updated?.email && shouldSendStatusEmail(updated.email, "APPROVED")) {
     try {
       const formattedId = formatVolunteerId(updated.id, updated.createdAt);
       const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.org").replace(/\/+$/, "");
@@ -101,6 +116,16 @@ export async function updateVolunteerStatus(id, newStatus) {
       });
     } catch (emailErr) {
       console.warn("Gagal mengirim email persetujuan relawan:", emailErr?.message);
+    }
+  } else if (status === "REJECTED" && updated?.email && shouldSendStatusEmail(updated.email, "REJECTED")) {
+    try {
+      await sendVolunteerRejectionEmail({
+        to: updated.email,
+        name: updated.fullName,
+        interest: updated.interest,
+      });
+    } catch (emailErr) {
+      console.warn("Gagal mengirim email penolakan relawan:", emailErr?.message);
     }
   }
 
@@ -152,9 +177,10 @@ export async function updateVolunteersStatusBatch(ids, newStatus) {
         where: { id: { in: ids }, email: { not: null } },
         select: { id: true, fullName: true, email: true, createdAt: true },
       });
+      const eligible = volunteers.filter((v) => shouldSendStatusEmail(v.email, "APPROVED"));
       const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.org").replace(/\/+$/, "");
       await Promise.allSettled(
-        volunteers.map((v) =>
+        eligible.map((v) =>
           sendVolunteerApprovedEmail({
             to: v.email,
             name: v.fullName,
@@ -165,6 +191,25 @@ export async function updateVolunteersStatusBatch(ids, newStatus) {
       );
     } catch (batchEmailErr) {
       console.warn("Gagal mengirim email persetujuan relawan batch:", batchEmailErr?.message);
+    }
+  } else if (status === "REJECTED") {
+    try {
+      const volunteers = await prisma.volunteer.findMany({
+        where: { id: { in: ids }, email: { not: null } },
+        select: { id: true, fullName: true, email: true, interest: true },
+      });
+      const eligible = volunteers.filter((v) => shouldSendStatusEmail(v.email, "REJECTED"));
+      await Promise.allSettled(
+        eligible.map((v) =>
+          sendVolunteerRejectionEmail({
+            to: v.email,
+            name: v.fullName,
+            interest: v.interest,
+          })
+        )
+      );
+    } catch (batchEmailErr) {
+      console.warn("Gagal mengirim email penolakan relawan batch:", batchEmailErr?.message);
     }
   }
 
