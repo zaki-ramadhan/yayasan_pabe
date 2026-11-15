@@ -112,21 +112,32 @@ export async function POST(request) {
             );
           }
 
-          const hostname = parsedUrl.hostname.toLowerCase();
-          const isBlockedHost =
-            hostname === "localhost" ||
-            hostname.endsWith(".localhost") ||
-            hostname.endsWith(".local") ||
-            hostname === "0.0.0.0" ||
-            hostname === "::1" ||
-            hostname === "127.0.0.1" ||
-            hostname.startsWith("127.") ||
-            hostname.startsWith("10.") ||
-            hostname.startsWith("192.168.") ||
-            hostname.startsWith("169.254.") ||
-            /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname);
+          const isBlockedSsrfHost = (rawHost) => {
+            if (!rawHost) return true;
+            const h = rawHost.toLowerCase().replace(/^\[|\]$/g, "");
+            return (
+              h === "localhost" ||
+              h.endsWith(".localhost") ||
+              h.endsWith(".local") ||
+              h.endsWith(".internal") ||
+              h === "0.0.0.0" ||
+              h === "::1" ||
+              h === "0:0:0:0:0:0:0:1" ||
+              h.startsWith("::ffff:") ||
+              h.startsWith("fc") ||
+              h.startsWith("fd") ||
+              h.startsWith("fe80:") ||
+              h === "127.0.0.1" ||
+              h.startsWith("127.") ||
+              h.startsWith("10.") ||
+              h.startsWith("192.168.") ||
+              h.startsWith("169.254.") ||
+              /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(h) ||
+              /^100\.(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-7])\./.test(h)
+            );
+          };
 
-          if (isBlockedHost) {
+          if (isBlockedSsrfHost(parsedUrl.hostname)) {
             return NextResponse.json(
               { success: false, message: "Akses ke alamat internal atau privat diblokir demi keamanan." },
               { status: 403 }
@@ -143,11 +154,46 @@ export async function POST(request) {
             signal: AbortSignal.timeout(10000),
           });
 
+          // Validasi ulang URL final setelah redirect (Anti-Redirect SSRF Bypass)
+          if (fetchRes.url) {
+            try {
+              const finalUrl = new URL(fetchRes.url);
+              if (
+                (finalUrl.protocol !== "http:" && finalUrl.protocol !== "https:") ||
+                isBlockedSsrfHost(finalUrl.hostname)
+              ) {
+                return NextResponse.json(
+                  { success: false, message: "Pengalihan (redirect) ke jaringan internal diblokir demi keamanan." },
+                  { status: 403 }
+                );
+              }
+            } catch {
+              return NextResponse.json(
+                { success: false, message: "URL tujuan akhir tidak valid." },
+                { status: 400 }
+              );
+            }
+          }
+
           if (!fetchRes.ok) {
             return NextResponse.json(
               {
                 success: false,
                 message: `Gagal mengunduh gambar dari tautan tersebut (Server merespons HTTP ${fetchRes.status} ${fetchRes.statusText}). Tautan mungkin kedaluwarsa atau diblokir oleh pemilik situs. Silakan unduh gambar ke komputer dan unggah langsung.`,
+              },
+              { status: 400 }
+            );
+          }
+
+          const contentLengthHeader = Number(fetchRes.headers.get("content-length") || 0);
+          if (
+            contextConfig?.maxBytes &&
+            contentLengthHeader > contextConfig.maxBytes
+          ) {
+            return NextResponse.json(
+              {
+                success: false,
+                message: "Ukuran berkas dari tautan melebihi batas maksimal yang diizinkan.",
               },
               { status: 400 }
             );

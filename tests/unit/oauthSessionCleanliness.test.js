@@ -1,11 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { getStoredUser, loginUser } from "@/services/authService";
+import { getStoredUser, loginUser, updateStoredUser } from "@/services/authService";
 
 describe("OAuth Session Cleanliness and Client-Side Cookie Guards", () => {
   let store = {};
+  let sessionStore = {};
 
   beforeEach(() => {
     store = {};
+    sessionStore = {};
     globalThis.window = {
       addEventListener: () => {},
       removeEventListener: () => {},
@@ -21,9 +23,13 @@ describe("OAuth Session Cleanliness and Client-Side Cookie Guards", () => {
       },
     };
     globalThis.sessionStorage = {
-      getItem: () => null,
-      setItem: () => {},
-      removeItem: () => {},
+      getItem: (k) => sessionStore[k] || null,
+      setItem: (k, v) => {
+        sessionStore[k] = String(v);
+      },
+      removeItem: (k) => {
+        delete sessionStore[k];
+      },
     };
     let cookieJar = {};
     globalThis.document = {
@@ -81,5 +87,32 @@ describe("OAuth Session Cleanliness and Client-Side Cookie Guards", () => {
 
     expect(globalThis.document.cookie).toContain("pabe_role=DONOR");
     expect(globalThis.document.cookie).toContain("pabe_session=signed_mock_token.payload_sig");
+  });
+
+  it("does not set pabe_just_logged_in in sessionStorage when notifyLogin is false or updateStoredUser is used", () => {
+    const dummyUser = {
+      id: "cmvylylb4000cv4fsz0s1jy58",
+      name: "Zaki Ramadhan",
+      email: "zakiram4dhan.2@gmail.com",
+      role: "DONOR",
+      phone: "-",
+      expiresAt: Date.now() + 86400000,
+    };
+
+    // 1. Initial login sets pabe_just_logged_in
+    loginUser(dummyUser);
+    expect(globalThis.sessionStorage.getItem("pabe_just_logged_in")).toBe("Zaki Ramadhan");
+
+    // Clear after banner displayed
+    globalThis.sessionStorage.removeItem("pabe_just_logged_in");
+    expect(globalThis.sessionStorage.getItem("pabe_just_logged_in")).toBeNull();
+
+    // 2. Profile update (e.g. syncing phone during volunteer registration) must NOT re-trigger login banner
+    updateStoredUser({ phone: "081234567890" });
+    expect(globalThis.sessionStorage.getItem("pabe_just_logged_in")).toBeNull();
+
+    const updated = getStoredUser();
+    expect(updated.phone).toBe("081234567890");
+    expect(updated.name).toBe("Zaki Ramadhan");
   });
 });

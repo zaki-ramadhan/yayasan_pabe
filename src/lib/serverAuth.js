@@ -146,18 +146,7 @@ export async function getAuthenticatedUser(request) {
     sessionId = String(sessionId).replace(/^["']|["']$/g, "").trim();
   }
 
-  // Graceful recovery jika sesi client sebelumnya tercemar dummy USR-DONOR
-  if (sessionId === "USR-DONOR" && request) {
-    try {
-      const u = new URL(request.url);
-      const emailParam = u.searchParams.get("email");
-      if (emailParam) {
-        sessionId = emailParam.trim();
-      }
-    } catch {}
-  }
-
-  if (!sessionId) {
+  if (!sessionId || sessionId === "USR-DONOR") {
     return { authenticated: false, user: null, reason: "NO_SESSION_COOKIE" };
   }
 
@@ -179,28 +168,30 @@ export async function getAuthenticatedUser(request) {
 
   const lookupId = verifiedUserId || sessionId;
 
+  const userSelectFields = {
+    id: true,
+    name: true,
+    email: true,
+    username: true,
+    role: true,
+    title: true,
+    avatar: true,
+    customAvatar: true,
+    providerAvatar: true,
+    phone: true,
+    city: true,
+    address: true,
+    provider: true,
+    isActive: true,
+    createdAt: true,
+  };
+
   try {
     let user = null;
-    let lastDbError = null;
     try {
       user = await prisma.user.findUnique({
         where: { id: lookupId },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          username: true,
-          role: true,
-          title: true,
-          avatar: true,
-          customAvatar: true,
-          providerAvatar: true,
-          phone: true,
-          city: true,
-          address: true,
-          provider: true,
-          createdAt: true,
-        },
+        select: userSelectFields,
       });
 
       // Fallback: Jika lookup by id gagal namun token memiliki email terverifikasi (HMAC-SHA256),
@@ -208,22 +199,7 @@ export async function getAuthenticatedUser(request) {
       if (!user && verifiedEmail) {
         user = await prisma.user.findUnique({
           where: { email: verifiedEmail.toLowerCase() },
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            username: true,
-            role: true,
-            title: true,
-            avatar: true,
-            customAvatar: true,
-            providerAvatar: true,
-            phone: true,
-            city: true,
-            address: true,
-            provider: true,
-            createdAt: true,
-          },
+          select: userSelectFields,
         });
       }
       if (!user && !verifiedUserId) {
@@ -238,22 +214,7 @@ export async function getAuthenticatedUser(request) {
               { providerId: cleanProviderId },
             ],
           },
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            username: true,
-            role: true,
-            title: true,
-            avatar: true,
-            customAvatar: true,
-            providerAvatar: true,
-            phone: true,
-            city: true,
-            address: true,
-            provider: true,
-            createdAt: true,
-          },
+          select: userSelectFields,
         });
       }
     } catch (dbErr) {

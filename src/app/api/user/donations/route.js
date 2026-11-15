@@ -87,11 +87,13 @@ export async function GET(request) {
 
     if (mode === "pending") {
       const campaignId = searchParams.get("campaignId") || null;
+      const donationType = type !== "ALL" ? type : null;
       const data = await getPendingInvoicesForUser({
         userEmail,
         userName,
         userPhone,
         campaignId,
+        donationType,
         limit: 10,
       });
 

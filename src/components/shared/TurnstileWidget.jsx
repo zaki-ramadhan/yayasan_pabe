@@ -58,20 +58,35 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
       return;
     }
 
-    // Fallback runtime query jika siteKey belum diinjeksi saat build
+    if (
+      process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY &&
+      process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY !== CLOUDFLARE_TEST_SITE_KEY
+    ) {
+      return;
+    }
+
+    let isMounted = true;
     fetch("/api/auth/turnstile-config")
       .then((res) => res.json())
       .then((data) => {
-        if (data?.siteKey && data.siteKey !== CLOUDFLARE_TEST_SITE_KEY) {
+        if (isMounted && data?.siteKey && data.siteKey !== CLOUDFLARE_TEST_SITE_KEY) {
           setActiveSiteKey(data.siteKey);
         }
       })
       .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
   }, [siteKey]);
 
   useImperativeHandle(ref, () => ({
     reset: () => {
-      if (widgetIdRef.current !== null && window?.turnstile) {
+      if (
+        widgetIdRef.current !== null &&
+        window?.turnstile &&
+        containerRef.current?.isConnected
+      ) {
         setIsWidgetLoaded(false);
         try {
           window.turnstile.reset(widgetIdRef.current);
@@ -82,9 +97,12 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
     },
     remove: () => {
       if (widgetIdRef.current !== null && window?.turnstile) {
+        const currentId = widgetIdRef.current;
+        widgetIdRef.current = null;
         try {
-          window.turnstile.remove(widgetIdRef.current);
-          widgetIdRef.current = null;
+          if (containerRef.current?.isConnected) {
+            window.turnstile.remove(currentId);
+          }
         } catch {
           // ignore
         }
@@ -110,19 +128,31 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    let isCancelled = false;
+    let loadedTimer = null;
+
+    const cleanupWidget = () => {
+      if (loadedTimer) {
+        clearTimeout(loadedTimer);
+        loadedTimer = null;
+      }
+      if (widgetIdRef.current !== null && window?.turnstile) {
+        const currentId = widgetIdRef.current;
+        widgetIdRef.current = null;
+        try {
+          window.turnstile.remove(currentId);
+        } catch {
+          // ignore
+        }
+      }
+    };
+
     const renderWidget = () => {
-      if (!containerRef.current || !window?.turnstile) return;
+      if (isCancelled || !containerRef.current || !window?.turnstile) return;
 
       try {
+        cleanupWidget();
         containerRef.current.innerHTML = "";
-        if (widgetIdRef.current !== null) {
-          try {
-            window.turnstile.remove(widgetIdRef.current);
-          } catch {
-            // ignore
-          }
-          widgetIdRef.current = null;
-        }
 
         const effectiveAppearance = appearance || (invisible ? "interaction-only" : "always");
         const effectiveSize = invisible ? "invisible" : size;
@@ -134,22 +164,26 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
           size: effectiveSize,
           appearance: effectiveAppearance,
           callback: (token) => {
+            if (isCancelled) return;
             setIsWidgetLoaded(true);
             onSuccessRef.current?.(token);
           },
           "error-callback": (err) => {
+            if (isCancelled) return;
             console.warn("[Turnstile] Error callback:", err);
             onErrorRef.current?.(err);
           },
           "expired-callback": () => {
+            if (isCancelled) return;
             setIsWidgetLoaded(false);
             onExpireRef.current?.();
           },
         });
 
-        // Tampilkan widget setelah inisialisasi iframe berhasil
-        setTimeout(() => {
-          setIsWidgetLoaded(true);
+        loadedTimer = setTimeout(() => {
+          if (!isCancelled) {
+            setIsWidgetLoaded(true);
+          }
         }, 800);
       } catch (err) {
         console.warn("[Turnstile] Render error:", err.message);
@@ -157,38 +191,36 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
       }
     };
 
+    let interval = null;
+    let timeout = null;
+
     if (window.turnstile) {
       renderWidget();
     } else {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         if (window.turnstile) {
           clearInterval(interval);
+          interval = null;
           renderWidget();
         }
       }, 100);
 
-      const timeout = setTimeout(() => {
-        clearInterval(interval);
-        if (!window.turnstile) {
+      timeout = setTimeout(() => {
+        if (interval) {
+          clearInterval(interval);
+          interval = null;
+        }
+        if (!window.turnstile && !isCancelled) {
           onErrorRef.current?.("TURNSTILE_SCRIPT_TIMEOUT");
         }
       }, 10000);
-
-      return () => {
-        clearInterval(interval);
-        clearTimeout(timeout);
-      };
     }
 
     return () => {
-      if (widgetIdRef.current !== null && window?.turnstile) {
-        try {
-          window.turnstile.remove(widgetIdRef.current);
-          widgetIdRef.current = null;
-        } catch {
-          // ignore
-        }
-      }
+      isCancelled = true;
+      if (interval) clearInterval(interval);
+      if (timeout) clearTimeout(timeout);
+      cleanupWidget();
     };
   }, [activeSiteKey, action, theme, size, appearance, invisible]);
 

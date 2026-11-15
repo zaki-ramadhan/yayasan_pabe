@@ -17,7 +17,19 @@ const TURNSTILE_VERIFY_ENDPOINT = "https://challenges.cloudflare.com/turnstile/v
  * @returns {Promise<{ success: boolean, message?: string, errorCodes?: string[] }>}
  */
 export async function verifyTurnstileToken(token, remoteIp = null) {
-  const secretKey = process.env.TURNSTILE_SECRET_KEY || CLOUDFLARE_TEST_SECRET_KEY;
+  const configuredSecret = (process.env.TURNSTILE_SECRET_KEY || "").trim();
+  const isProd = process.env.NODE_ENV === "production";
+
+  if (isProd && (!configuredSecret || configuredSecret === CLOUDFLARE_TEST_SECRET_KEY)) {
+    console.error("[Turnstile] TURNSTILE_SECRET_KEY belum dikonfigurasi dengan benar di produksi.");
+    return {
+      success: false,
+      message: "Layanan verifikasi keamanan sedang mengalami gangguan konfigurasi. Silakan coba sesaat lagi.",
+      errorCodes: ["missing-secret-config"],
+    };
+  }
+
+  const secretKey = configuredSecret || CLOUDFLARE_TEST_SECRET_KEY;
 
   // Jika di lingkungan automated test dan token tidak dikirim, izinkan lewat agar tidak memblokir tes modul lain
   if (process.env.NODE_ENV === "test" && !token) {

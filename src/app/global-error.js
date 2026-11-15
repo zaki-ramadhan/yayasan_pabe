@@ -1,34 +1,40 @@
 "use client";
 
-import { AlertCircle, RotateCcw } from "lucide-react";
+import Image from "next/image";
 
-export default function GlobalError({ error, reset }) {
+export default function GlobalError({ reset }) {
   return (
     <html lang="id">
-      <body className="min-h-screen bg-slate-50 flex items-center justify-center p-4 font-sans text-slate-900 antialiased">
-        <main className="w-full max-w-md text-center bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-sm">
-          <div className="w-12 h-12 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-6 h-6" aria-hidden="true" />
+      <body className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 font-sans text-slate-900 antialiased">
+        <main className="w-full max-w-2xl text-center flex flex-col items-center justify-center py-8">
+          {/* Hero Illustration (1.5x lebih lebar) */}
+          <div className="relative w-full max-w-[460px] sm:max-w-[540px] mb-3 sm:mb-4 flex justify-center">
+            <Image
+              src="/img/illustrations/error-500.svg?v=2"
+              alt="Ilustrasi kendala sistem fatal"
+              width={540}
+              height={215}
+              className="w-full h-auto object-contain select-none"
+              priority
+              unoptimized
+            />
           </div>
 
-          <h1 className="text-xl sm:text-2xl font-semibold text-slate-950 mb-2">
+          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight mb-2 sm:mb-3">
             Terjadi Kendala Sistem
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-600 mb-6 leading-relaxed">
-            Aplikasi mengalami kendala saat memuat halaman. Silakan muat ulang halaman atau coba beberapa saat lagi.
+          <p className="text-sm sm:text-base text-slate-600 max-w-md mx-auto mb-6 sm:mb-7 leading-relaxed">
+            Aplikasi mengalami kendala mendasar saat memuat tata letak. Silakan coba muat ulang halaman.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              type="button"
-              onClick={() => reset()}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer"
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span>Muat Ulang Halaman</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => reset()}
+            className="text-white font-medium bg-gradient-to-b from-blue-600 via-blue-700 to-blue-800 hover:from-blue-500 hover:via-blue-600 hover:to-blue-700 border-t border-t-blue-400 border-x border-x-blue-600 border-b-2 border-b-blue-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_3px_6px_rgba(29,78,216,0.25)] active:translate-y-0.5 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] rounded-lg px-7 h-11 text-sm inline-flex items-center justify-center transition-all cursor-pointer select-none"
+          >
+            Muat Ulang Halaman
+          </button>
         </main>
       </body>
     </html>

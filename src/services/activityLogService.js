@@ -1,23 +1,7 @@
 import { prisma } from "@/lib/prisma";
+import { getClientIp } from "@/lib/rateLimit";
 
-/**
- * Ekstraksi alamat IP klien dari request headers Next.js (mendukung proxy/CDN).
- *
- * @param {Request} [request]
- * @returns {string}
- */
-export function getClientIp(request) {
-  if (!request || !request.headers) return "127.0.0.1";
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    return forwarded.split(",")[0].trim();
-  }
-  const realIp = request.headers.get("x-real-ip");
-  if (realIp) return realIp.trim();
-  const cfIp = request.headers.get("cf-connecting-ip");
-  if (cfIp) return cfIp.trim();
-  return "127.0.0.1";
-}
+export { getClientIp };
 
 /**
  * Mencatat aktivitas audit internal yayasan secara terstandar ke database.

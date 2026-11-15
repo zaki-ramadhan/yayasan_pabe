@@ -92,7 +92,7 @@ export async function GET(request) {
 
     const profile = await userInfoResponse.json();
 
-    if (!profile.email) {
+    if (!profile.email || profile.verified_email === false) {
       return NextResponse.redirect(`${origin}/login?error=no_email_provided`);
     }
 
@@ -108,47 +108,62 @@ export async function GET(request) {
     const resolvedTitle = isSuperAdmin ? "Super Admin" : "Donatur";
 
     let dbUser = null;
+    let isSuspendedAccount = false;
     try {
       const existingUser = await prisma.user.findUnique({
         where: { email: profile.email.toLowerCase() },
-        select: { avatar: true },
+        select: { avatar: true, isActive: true, provider: true },
       });
 
-      let uniqueUsername = sanitizedUsername;
-      if (!existingUser) {
-        const usernameTaken = await prisma.user.findUnique({
-          where: { username: sanitizedUsername },
-          select: { id: true },
-        });
-        if (usernameTaken) {
-          uniqueUsername = `${sanitizedUsername}_${String(profile.id || Date.now()).slice(-4)}`;
+      if (existingUser && existingUser.isActive === false && !isSuperAdmin) {
+        isSuspendedAccount = true;
+      } else {
+        let uniqueUsername = sanitizedUsername;
+        if (!existingUser) {
+          const usernameTaken = await prisma.user.findUnique({
+            where: { username: sanitizedUsername },
+            select: { id: true },
+          });
+          if (usernameTaken) {
+            uniqueUsername = `${sanitizedUsername}_${String(profile.id || Date.now()).slice(-4)}`;
+          }
         }
-      }
 
-      dbUser = await prisma.user.upsert({
-        where: { email: profile.email.toLowerCase() },
-        update: {
-          name: profile.name || undefined,
-          providerAvatar: profile.picture || undefined,
-          ...(existingUser?.avatar ? {} : { avatar: profile.picture || undefined }),
-          provider: "GOOGLE",
-          providerId: profile.id,
-          ...(isSuperAdmin ? { role: "SUPER_ADMIN", title: "Super Admin" } : {}),
-        },
-        create: {
-          name: profile.name || profile.email.split("@")[0],
-          email: profile.email.toLowerCase(),
-          username: uniqueUsername,
-          avatar: profile.picture || null,
-          providerAvatar: profile.picture || null,
-          role: resolvedRole,
-          title: resolvedTitle,
-          provider: "GOOGLE",
-          providerId: profile.id,
-        },
-      });
+        const preserveExistingProvider =
+          existingUser?.provider && existingUser.provider !== "GOOGLE";
+
+        dbUser = await prisma.user.upsert({
+          where: { email: profile.email.toLowerCase() },
+          update: {
+            name: profile.name || undefined,
+            providerAvatar: profile.picture || undefined,
+            ...(existingUser?.avatar ? {} : { avatar: profile.picture || undefined }),
+            ...(preserveExistingProvider
+              ? {}
+              : { provider: "GOOGLE", providerId: profile.id }),
+            ...(isSuperAdmin ? { role: "SUPER_ADMIN", title: "Super Admin", isActive: true } : {}),
+          },
+          create: {
+            name: profile.name || profile.email.split("@")[0],
+            email: profile.email.toLowerCase(),
+            username: uniqueUsername,
+            avatar: profile.picture || null,
+            providerAvatar: profile.picture || null,
+            role: resolvedRole,
+            title: resolvedTitle,
+            provider: "GOOGLE",
+            providerId: profile.id,
+          },
+        });
+      }
     } catch (dbError) {
       console.warn("Database sync warning (continuing with verified Google OAuth session):", dbError?.message);
+    }
+
+    if (isSuspendedAccount) {
+      const suspendedRes = NextResponse.redirect(`${origin}/login?error=account_suspended`);
+      suspendedRes.cookies.delete("pabe_google_oauth_state");
+      return suspendedRes;
     }
 
     const userId = dbUser?.id || `USR-GGL-${profile.id || Date.now()}`;
@@ -260,15 +275,14 @@ export async function GET(request) {
               sessionStorage.setItem('pabe_last_activity', String(Date.now()));
 
               const durSec = ${durationSec};
-              const sessionToken = encodeURIComponent(session.sessionToken || session.id || '');
-              if (sessionToken) {
-                document.cookie = 'pabe_session=' + sessionToken + '; path=/; max-age=' + durSec + '; SameSite=Lax';
-              }
               document.cookie = 'pabe_role=' + encodeURIComponent(session.role || 'DONOR') + '; path=/; max-age=' + durSec + '; SameSite=Lax';
 
               window.dispatchEvent(new Event('pabe_auth_change'));
               window.dispatchEvent(new Event('storage'));
-              window.location.replace('${targetUrl}');
+
+              setTimeout(function() {
+                window.location.replace('${targetUrl}');
+              }, 150);
             } catch (err) {
               window.location.replace('${targetUrl}');
             }
@@ -281,9 +295,9 @@ export async function GET(request) {
       headers: { "Content-Type": "text/html; charset=utf-8" },
     });
 
-    // Set secure session cookie with role-based maxAge
+    // Set secure session cookie with role-based maxAge (httpOnly untuk proteksi sesi server)
     const cookieOpts = {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: durationSec,

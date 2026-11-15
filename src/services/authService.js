@@ -176,6 +176,7 @@ export function loginUser(user, options = {}) {
   if (typeof window === "undefined" || !user) return;
 
   const rememberMe = Boolean(options.rememberMe);
+  const notifyLogin = options.notifyLogin !== false;
   const durationSec =
     user.expiresAt && typeof user.expiresAt === "number"
       ? Math.max(60, Math.floor((user.expiresAt - Date.now()) / 1000))
@@ -192,7 +193,9 @@ export function loginUser(user, options = {}) {
   const userJson = JSON.stringify(userWithSession);
   localStorage.setItem(AUTH_STORAGE_KEY, userJson);
   localStorage.setItem("pabe_auth_session", userJson);
-  sessionStorage.setItem("pabe_just_logged_in", user.name || "Donatur");
+  if (notifyLogin) {
+    sessionStorage.setItem("pabe_just_logged_in", user.name || "Donatur");
+  }
   sessionStorage.setItem("pabe_last_activity", String(Date.now()));
 
   // Clean up legacy keys if present
@@ -213,6 +216,18 @@ export function loginUser(user, options = {}) {
 
   window.dispatchEvent(new Event("pabe_auth_change"));
   window.dispatchEvent(new Event("storage"));
+}
+
+/**
+ * Memperbarui data profil lokal pengguna tanpa memicu notifikasi sambutan login ulang
+ */
+export function updateStoredUser(updatedFields = {}) {
+  if (typeof window === "undefined" || !updatedFields) return null;
+  const current = getStoredUser();
+  if (!current) return null;
+  const merged = { ...current, ...updatedFields };
+  loginUser(merged, { notifyLogin: false });
+  return merged;
 }
 
 /**

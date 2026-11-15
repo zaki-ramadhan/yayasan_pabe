@@ -1,18 +1,53 @@
 import crypto from "crypto";
 
-const DEFAULT_SECRET = "pabe_secure_session_signing_secret_2026";
+const FORBIDDEN_PLACEHOLDER_SECRETS = new Set([
+  "your_secure_random_64_char_session_secret",
+  "pabe_secure_session_signing_secret_2026",
+  "pabe_inv_secure_salt_key",
+]);
+
+const globalForSession = globalThis;
+
+function getDeterministicDevSecret() {
+  if (!globalForSession.__pabeDeterministicDevSecret) {
+    // Generate secret deterministik per-proyek lokal agar identik di seluruh worker Next.js
+    const projectSeed = `pabe-dev-session-seed:${process.cwd()}`;
+    globalForSession.__pabeDeterministicDevSecret = crypto
+      .createHash("sha256")
+      .update(projectSeed)
+      .digest("hex");
+  }
+  return globalForSession.__pabeDeterministicDevSecret;
+}
 
 /**
  * Mengambil secret key untuk penandatanganan kriptografis sesi.
+ * Pada mode produksi, wajib menggunakan secret environment yang kuat (fail-closed).
  * @returns {string}
  */
 export function getSessionSecret() {
-  return (
+  const rawSecret = (
+    process.env.SESSION_SECRET ||
     process.env.AUTH_SECRET ||
     process.env.NEXTAUTH_SECRET ||
-    process.env.SESSION_SECRET ||
-    DEFAULT_SECRET
-  );
+    ""
+  ).trim();
+
+  if (
+    rawSecret &&
+    rawSecret.length >= 16 &&
+    !FORBIDDEN_PLACEHOLDER_SECRETS.has(rawSecret)
+  ) {
+    return rawSecret;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "SESSION_SECRET wajib dikonfigurasi dengan minimal 16 karakter acak pada lingkungan produksi."
+    );
+  }
+
+  return getDeterministicDevSecret();
 }
 
 /**

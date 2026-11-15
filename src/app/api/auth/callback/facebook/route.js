@@ -178,36 +178,55 @@ export async function GET(request) {
     const resolvedTitle = isSuperAdmin ? "Super Admin" : "Donatur";
 
     let dbUser = null;
+    let isSuspendedAccount = false;
     try {
       const existingUser = await prisma.user.findUnique({
         where: { email: userEmail },
-        select: { avatar: true },
+        select: { avatar: true, isActive: true, provider: true },
       });
 
-      dbUser = await prisma.user.upsert({
-        where: { email: userEmail },
-        update: {
-          name: cleanName || undefined,
-          providerAvatar: fbAvatar || undefined,
-          ...(existingUser?.avatar ? {} : (fbAvatar ? { avatar: fbAvatar } : {})),
-          provider: "FACEBOOK",
-          providerId: profileData.id,
-          ...(isSuperAdmin ? { role: "SUPER_ADMIN", title: "Super Admin" } : {}),
-        },
-        create: {
-          name: cleanName,
-          email: userEmail,
-          username: `${sanitizedUsername}_${String(profileData.id).slice(-4)}`,
-          avatar: fbAvatar || null,
-          providerAvatar: fbAvatar || null,
-          role: resolvedRole,
-          title: resolvedTitle,
-          provider: "FACEBOOK",
-          providerId: profileData.id,
-        },
-      });
+      if (existingUser && existingUser.isActive === false && !isSuperAdmin) {
+        isSuspendedAccount = true;
+      } else {
+        const preserveExistingProvider =
+          existingUser?.provider && existingUser.provider !== "FACEBOOK";
+
+        dbUser = await prisma.user.upsert({
+          where: { email: userEmail },
+          update: {
+            name: cleanName || undefined,
+            providerAvatar: fbAvatar || undefined,
+            ...(existingUser?.avatar ? {} : (fbAvatar ? { avatar: fbAvatar } : {})),
+            ...(preserveExistingProvider
+              ? {}
+              : { provider: "FACEBOOK", providerId: profileData.id }),
+            ...(isSuperAdmin ? { role: "SUPER_ADMIN", title: "Super Admin", isActive: true } : {}),
+          },
+          create: {
+            name: cleanName,
+            email: userEmail,
+            username: `${sanitizedUsername}_${String(profileData.id).slice(-4)}`,
+            avatar: fbAvatar || null,
+            providerAvatar: fbAvatar || null,
+            role: resolvedRole,
+            title: resolvedTitle,
+            provider: "FACEBOOK",
+            providerId: profileData.id,
+          },
+        });
+      }
     } catch (dbError) {
       console.warn("Database sync warning (continuing with verified Facebook OAuth session):", dbError?.message);
+    }
+
+    if (isSuspendedAccount) {
+      const suspendedRedirect = new URL(fallbackBaseUrl, origin);
+      suspendedRedirect.searchParams.set("error", "account_suspended");
+      const res = NextResponse.redirect(suspendedRedirect);
+      res.cookies.delete("pabe_fb_oauth_state");
+      res.cookies.delete("pabe_auth_mode");
+      res.cookies.delete("pabe_auth_redirect");
+      return res;
     }
 
     const userId = dbUser?.id || `USR-FB-${profileData.id}`;
@@ -320,15 +339,14 @@ export async function GET(request) {
               sessionStorage.setItem('pabe_last_activity', String(Date.now()));
 
               const durSec = ${durationSec};
-              const sessionToken = encodeURIComponent(session.sessionToken || session.id || '');
-              if (sessionToken) {
-                document.cookie = 'pabe_session=' + sessionToken + '; path=/; max-age=' + durSec + '; SameSite=Lax';
-              }
               document.cookie = 'pabe_role=' + encodeURIComponent(session.role || 'DONOR') + '; path=/; max-age=' + durSec + '; SameSite=Lax';
 
               window.dispatchEvent(new Event('pabe_auth_change'));
               window.dispatchEvent(new Event('storage'));
-              window.location.replace('${targetUrl}');
+
+              setTimeout(function() {
+                window.location.replace('${targetUrl}');
+              }, 150);
             } catch (err) {
               window.location.replace('${targetUrl}');
             }
@@ -342,7 +360,7 @@ export async function GET(request) {
     });
 
     const cookieOpts = {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: durationSec,

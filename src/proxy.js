@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { verifySessionToken, isSignedSessionTokenFormat } from "./lib/sessionToken";
+import { canAccessAdminPath } from "./lib/routeAccess";
 
 export function proxy(request) {
   const { pathname } = request.nextUrl;
-  let session = request.cookies.get("pabe_session")?.value;
+  const rawSession = request.cookies.get("pabe_session")?.value;
+  let session = rawSession;
   if (!session && request?.headers) {
     const cookieHeader =
       typeof request.headers.get === "function"
@@ -102,14 +104,17 @@ export function proxy(request) {
       }
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(loginUrl);
+      const redirectRes = NextResponse.redirect(loginUrl);
+      if (rawSession && !session) {
+        redirectRes.cookies.delete("pabe_session");
+        redirectRes.cookies.delete("pabe_role");
+      }
+      return redirectRes;
     }
 
-    // Khusus rute manajemen pengurus: hanya SUPER_ADMIN yang diizinkan
-    if (pathname === "/admin/pengguna" || pathname.startsWith("/admin/pengguna/")) {
-      if (role !== "SUPER_ADMIN") {
-        return NextResponse.redirect(new URL("/admin", request.url));
-      }
+    // Validasi akses rute spesifik berdasarkan role (SSOT routeAccess)
+    if (!canAccessAdminPath(pathname, role)) {
+      return NextResponse.redirect(new URL("/admin", request.url));
     }
 
     const response = NextResponse.next();
@@ -125,7 +130,12 @@ export function proxy(request) {
     if (!session) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(loginUrl);
+      const redirectRes = NextResponse.redirect(loginUrl);
+      if (rawSession && !session) {
+        redirectRes.cookies.delete("pabe_session");
+        redirectRes.cookies.delete("pabe_role");
+      }
+      return redirectRes;
     }
 
     if (role && role !== "DONOR") {
@@ -145,7 +155,6 @@ export function proxy(request) {
 
   // 5. Guard Sensitive Internal API Endpoints (/api/admin/*, /api/user/*, /api/dashboard/*)
   if (pathname.startsWith("/api/admin")) {
-    const role = request.cookies.get("pabe_role")?.value;
     const isStaff = Boolean(session && role && role !== "DONOR");
 
     // Kembalikan 404 palsu untuk API admin agar bot scanner tidak mendeteksi endpoint admin

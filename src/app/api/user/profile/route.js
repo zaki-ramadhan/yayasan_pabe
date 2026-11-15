@@ -13,10 +13,10 @@ export async function GET(request) {
     const requestedEmail = searchParams.get("email");
     const requestedId = searchParams.get("id");
 
-    // Only internal admins can inspect other users; normal users can only access their own profile
-    const isAdmin = authUser.role && authUser.role !== USER_ROLES.DONOR;
-    const targetEmail = (isAdmin && requestedEmail) ? requestedEmail : authUser.email;
-    const targetId = (isAdmin && requestedId) ? requestedId : authUser.id;
+    // Only SUPER_ADMIN and ADMIN can inspect other users; other roles can only access their own profile
+    const canInspectOthers = [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN].includes(authUser.role);
+    const targetEmail = (canInspectOthers && requestedEmail) ? requestedEmail : authUser.email;
+    const targetId = (canInspectOthers && requestedId) ? requestedId : authUser.id;
 
     const data = await getDonorProfile({ userEmail: targetEmail, userId: targetId });
 
@@ -124,7 +124,7 @@ export async function DELETE(request) {
 
     const response = NextResponse.json({
       success: true,
-      message: result.message || "Akun berhasil dianonimkan sesuai UU PDP.",
+      message: result.message || "Akun Anda berhasil dihapus.",
     });
 
     // Hapus cookie sesi agar klien langsung logout secara bersih

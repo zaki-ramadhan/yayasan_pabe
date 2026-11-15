@@ -60,11 +60,18 @@ export async function GET(request, { params }) {
   // 3. Kepatuhan UU PDP No. 27/2022: Akses berkas resume pelamar (PII) khusus administrator
   const isResume = key.startsWith("careers/resumes/");
   if (isResume) {
-    const user = await getAuthenticatedUser(request);
-    if (!user) {
+    const authResult = await getAuthenticatedUser(request);
+    const resolvedUser =
+      authResult && typeof authResult === "object" && "authenticated" in authResult
+        ? authResult.authenticated
+          ? authResult.user
+          : null
+        : authResult;
+
+    if (!resolvedUser) {
       return new NextResponse("Autentikasi administrator diperlukan untuk mengakses berkas resume pelamar", { status: 401 });
     }
-    if (user.role !== USER_ROLES.SUPER_ADMIN && user.role !== USER_ROLES.ADMIN) {
+    if (resolvedUser.role !== USER_ROLES.SUPER_ADMIN && resolvedUser.role !== USER_ROLES.ADMIN) {
       return new NextResponse("Hanya administrator yang berwenang mengakses berkas resume pelamar", { status: 403 });
     }
   }
