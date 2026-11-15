@@ -15,17 +15,35 @@ import {
 import { VolunteerApprovedCard } from "@/components/volunteer/VolunteerApprovedCard";
 import { VolunteerPendingCard } from "@/components/volunteer/VolunteerPendingCard";
 import { VolunteerCancellationDialog } from "@/components/volunteer/VolunteerCancellationDialog";
+import { VolunteerIdCardSkeleton } from "@/components/volunteer/VolunteerIdCard";
 
 export function DonorVolunteerCardSkeleton() {
   return (
-    <div className="space-y-5 animate-pulse">
-      <Skeleton className="h-32 sm:h-28 w-full rounded-md" />
-      <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-4 shadow-2xs">
-        <Skeleton className="w-56 h-56 sm:w-72 sm:h-72 mx-auto rounded-xl" />
-        <div className="space-y-2">
-          <Skeleton className="h-5 w-48 mx-auto rounded" />
-          <Skeleton className="h-4 w-72 max-w-full mx-auto rounded" />
+    <div className="space-y-6 animate-pulse">
+      {/* 1. Top Identity Banner Skeleton */}
+      <div className="relative w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950 p-5 sm:p-6 shadow-md">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+          <div className="space-y-2.5 w-full max-w-xl">
+            <Skeleton className="h-3 w-32 bg-slate-800 rounded" />
+            <Skeleton className="h-5 sm:h-6 w-48 bg-slate-800 rounded" />
+            <Skeleton className="h-4 w-80 max-w-full bg-slate-800/80 rounded" />
+          </div>
+          <div className="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
+            <Skeleton className="h-9 w-28 bg-slate-800 rounded-md" />
+            <Skeleton className="h-9 w-28 bg-slate-800 rounded-md" />
+          </div>
         </div>
+      </div>
+
+      {/* 2. Kartu Identitas Relawan 2D Skeleton (CR80) */}
+      <div className="py-2">
+        <VolunteerIdCardSkeleton />
+      </div>
+
+      {/* 3. Bottom Row Link & Action Skeleton */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100">
+        <Skeleton className="h-4 w-52 rounded" />
+        <Skeleton className="h-4 w-36 rounded" />
       </div>
     </div>
   );
@@ -36,7 +54,7 @@ export function DonorVolunteerCardView() {
   const userEmail = currentUser?.email || "";
 
   const [volunteer, setVolunteer] = useState(null);
-  const [isLoading, setIsLoading] = useState(() => Boolean(userEmail));
+  const [isLoading, setIsLoading] = useState(true);
 
   // Cancellation Modal State
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -89,7 +107,7 @@ export function DonorVolunteerCardView() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* 1. Banner CTA (Hanya jika belum terdaftar relawan) */}
       {!volunteer && (
         <CampaignCTA
@@ -107,19 +125,7 @@ export function DonorVolunteerCardView() {
         />
       )}
 
-      {/* 2. Heading Halaman (Hanya muncul jika sudah ada data relawan/pending) */}
-      {volunteer && (
-        <div>
-          <h1 className="text-lg sm:text-xl font-medium tracking-tight text-slate-950">
-            Kartu Relawan
-          </h1>
-          <p className="text-sm font-normal text-slate-500 mt-0.5">
-            Identitas resmi personel relawan aksi lapangan yayasan
-          </p>
-        </div>
-      )}
-
-      {/* 3. Konten Utama Sesuai Status Keanggotaan */}
+      {/* 2. Konten Utama Sesuai Status Keanggotaan */}
       {volunteer && volunteer.isApproved ? (
         <VolunteerApprovedCard
           volunteer={volunteer}
@@ -129,6 +135,7 @@ export function DonorVolunteerCardView() {
         <VolunteerPendingCard
           volunteer={volunteer}
           onCancelClick={() => setIsCancelModalOpen(true)}
+          showViewCardButton={false}
         />
       ) : (
         <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-3 shadow-2xs">
@@ -149,7 +156,7 @@ export function DonorVolunteerCardView() {
               Kartu Relawan Belum Tersedia
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
-              Daftar melalui banner di atas untuk mendapatkan Kartu Tanda Anggota (KTA) resmi.
+              Daftar melalui banner di atas untuk mendapatkan kartu relawan resmi.
             </p>
           </div>
         </div>

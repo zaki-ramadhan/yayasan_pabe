@@ -1,99 +1,104 @@
 "use client";
 
-import { Clock, ShieldAlert } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { formatDate } from "@/lib/formatters";
+import { Skeleton } from "@/components/ui/Skeleton";
+
+/**
+ * Skeleton loader yang proporsional untuk VolunteerPendingCard.
+ */
+export function VolunteerPendingSkeleton({ className = "", showViewCardButton = true }) {
+  const pathname = usePathname();
+  const isAlreadyOnCardPage = pathname === "/donatur/relawan" || pathname?.startsWith("/donatur/relawan");
+  const shouldShowViewCard = showViewCardButton && !isAlreadyOnCardPage;
+
+  return (
+    <div
+      className={`relative w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950 p-5 sm:p-6 shadow-md animate-pulse ${className}`}
+    >
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        <div className="space-y-2.5 w-full max-w-xl">
+          <Skeleton className="h-3 w-36 bg-slate-800 rounded" />
+          <Skeleton className="h-5 sm:h-6 w-64 bg-slate-800 rounded" />
+          <Skeleton className="h-4 w-80 max-w-full bg-slate-800/80 rounded" />
+          {shouldShowViewCard && <Skeleton className="h-3.5 w-36 bg-slate-800/60 rounded pt-1" />}
+        </div>
+        <Skeleton className="h-9 w-36 bg-slate-800 rounded-md shrink-0 self-start sm:self-auto" />
+      </div>
+    </div>
+  );
+}
 
 /**
  * Komponen status kartu pendaftaran relawan yang sedang dalam proses verifikasi (PENDING).
- * Menampilkan ringkasan pendaftaran dan tombol pembatalan.
+ * Menggunakan format ads banner yang simpel, bersih, dan konsisten dengan banner yayasan.
  */
 export function VolunteerPendingCard({
   volunteer,
   onCancelClick,
+  showViewCardButton = true,
+  viewCardHref = "/donatur/relawan",
   className = "",
 }) {
+  const pathname = usePathname();
   if (!volunteer) return null;
 
-  const joinDate = volunteer.createdAt
-    ? formatDate(volunteer.createdAt, {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
-    : "-";
+  const isAlreadyOnCardPage = pathname === "/donatur/relawan" || pathname?.startsWith("/donatur/relawan");
+  const shouldShowViewCard = showViewCardButton && !isAlreadyOnCardPage;
 
   return (
     <div
-      className={`bg-white p-6 sm:p-8 rounded-2xl border border-amber-200/90 shadow-sm space-y-6 ${className}`}
+      className={`relative w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950 text-white p-5 sm:p-6 shadow-md ${className}`}
     >
-      {/* Header Status Peninjauan */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pb-5 border-b border-amber-100">
-        <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center shrink-0">
-          <Clock className="w-6 h-6 animate-pulse" />
-        </div>
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100/80 text-amber-900 text-sm font-semibold">
-            Status: Menunggu Verifikasi
+      {/* Atmospheric Background Image & Overlay */}
+      <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+        <Image
+          src="/img/banners/covers/volunteer-cover.webp"
+          alt=""
+          fill
+          sizes="(max-width: 768px) 100vw, 800px"
+          className="object-cover opacity-30 pointer-events-none select-none"
+          draggable={false}
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(180,83,9,0.45)_0%,_rgba(15,23,42,0.85)_55%,_rgba(2,6,23,0.96)_100%)]" />
+      </div>
+
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        {/* Konten Kiri: Status, Judul, Penjelasan, & Teks Link Buka/Periksa Kartu */}
+        <div className="space-y-2">
+          <div className="text-xs font-medium text-amber-400">
+            Status: Menunggu Persetujuan
           </div>
-          <h2 className="text-base sm:text-lg font-semibold text-slate-900">
-            Pendaftaran Relawan Sedang Ditinjau
-          </h2>
-          <p className="text-sm text-slate-600 leading-relaxed">
-            Terima kasih telah mengajukan diri sebagai relawan aksi. Tim pengurus yayasan sedang memverifikasi data Anda.
+          <h3 className="font-semibold text-white text-base sm:text-lg">
+            Pendaftaran Anda Sedang Diperiksa
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-200 max-w-xl font-normal leading-relaxed">
+            Berkas pendaftaran Anda sudah kami terima dan sedang diproses.
           </p>
-        </div>
-      </div>
 
-      {/* Ringkasan Data Pengajuan */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-sm">
-        <div>
-          <span className="text-slate-500 block text-sm uppercase tracking-wider font-medium">
-            Nama Pendaftar
-          </span>
-          <span className="font-semibold text-slate-900 block mt-0.5">
-            {volunteer.fullName}
-          </span>
+          {shouldShowViewCard && (
+            <div className="pt-0.5">
+              <Link
+                href={viewCardHref}
+                className="inline-flex items-center gap-1 text-xs sm:text-sm font-normal text-slate-200 hover:text-white hover:underline transition-colors"
+              >
+                <span>Lihat kartu relawan</span>
+                <ArrowUpRight className="w-4 h-4 text-slate-300" />
+              </Link>
+            </div>
+          )}
         </div>
-        <div>
-          <span className="text-slate-500 block text-sm uppercase tracking-wider font-medium">
-            Kota Domisili
-          </span>
-          <span className="font-semibold text-slate-900 block mt-0.5">
-            {volunteer.city || "-"}
-          </span>
-        </div>
-        <div>
-          <span className="text-slate-500 block text-sm uppercase tracking-wider font-medium">
-            Tanggal Pengajuan
-          </span>
-          <span className="font-semibold text-slate-900 block mt-0.5">
-            {joinDate}
-          </span>
-        </div>
-        <div>
-          <span className="text-slate-500 block text-sm uppercase tracking-wider font-medium">
-            Status Keanggotaan
-          </span>
-          <span className="font-semibold text-amber-700 block mt-0.5">
-            Menunggu Verifikasi
-          </span>
-        </div>
-      </div>
 
-      {/* Edukasi Anti-Spam & Tombol Batalkan */}
-      <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-sm">
-        <p className="text-slate-500 flex items-center gap-1.5">
-          <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
-          <span>Anda tidak perlu mendaftar ulang selama berkas masih ditinjau.</span>
-        </p>
-
+        {/* Konten Kanan: Tombol Batalkan Berlatar Merah (Gaya CTA) */}
         {onCancelClick && (
           <Button
             type="button"
-            variant="outline"
             onClick={onCancelClick}
-            className="h-9 px-3.5 text-sm text-rose-700 hover:text-rose-800 hover:bg-rose-50 border-rose-200 shrink-0 font-medium cursor-pointer"
+            className="relative inline-flex items-center justify-center h-9 px-3.5 text-xs sm:text-sm font-medium rounded-md bg-rose-700 hover:bg-rose-600 text-white border-t border-white/25 shadow-[0_3px_0_0_#881337] active:shadow-[0_1px_0_0_#881337] active:translate-y-[2px] transition-all cursor-pointer shrink-0 whitespace-nowrap self-start sm:self-auto select-none"
           >
             Batalkan pendaftaran
           </Button>

@@ -3,74 +3,152 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
-import { RotateCw } from "lucide-react";
 import { formatDate } from "@/lib/formatters";
-import { formatVolunteerId, formatVolunteerBadgeName } from "@/lib/volunteerUtils";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
+export const CARD_BG_COLOR = "#FFFFFF";
+
 /**
- * Komponen potret studio netral elegan jika relawan belum memiliki foto profil
+ * Skeleton loader presisi 1:1 dengan rasio CR80 (54 x 85.6 mm) untuk kedua sisi kartu.
  */
-function StudioPortraitFallback() {
+export function VolunteerIdCardSkeleton({ className = "", rounded = true }) {
   return (
-    <div className="w-full h-full bg-gradient-to-b from-slate-800 via-slate-900 to-[#022c22] flex flex-col items-center justify-end relative overflow-hidden select-none">
-      <svg
-        viewBox="0 0 200 240"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full max-h-[95%] object-contain mt-auto"
-        aria-label="Ilustrasi Relawan"
-      >
-        {/* Torso & Pakaian Turtleneck Putih Bersih */}
-        <path
-          d="M15 240 C20 185 55 160 100 160 C145 160 180 185 185 240 Z"
-          fill="#f8fafc"
-        />
-        {/* Garis Lipatan Kerah Turtleneck */}
-        <path
-          d="M80 170 H120"
-          stroke="#cbd5e1"
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        {/* Leher */}
-        <rect x="85" y="125" width="30" height="40" fill="#e2e8f0" rx="4" />
-        {/* Kepala Potret */}
-        <circle cx="100" cy="95" r="38" fill="#e2e8f0" />
-        {/* Gaya Rambut Modern Rapi */}
-        <path
-          d="M62 88 C62 58 76 46 100 46 C124 46 138 58 138 88 C138 88 132 70 118 68 C105 66 95 72 88 68 C77 66 62 88 62 88 Z"
-          fill="#0f172a"
-        />
-      </svg>
+    <div className={`w-full max-w-2xl mx-auto select-none ${className}`}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start justify-center">
+        {/* Skeleton Depan (Dengan Footer) */}
+        <div className="flex flex-col items-center w-full max-w-[320px] mx-auto">
+          <div className={`relative w-full aspect-[54/85.6] overflow-hidden shadow-md border border-slate-200/90 bg-white flex flex-col justify-between ${
+            rounded ? "rounded-2xl" : "rounded-none"
+          }`}>
+            {/* Pattern placeholder */}
+            <div className="absolute left-0 right-0 top-[26%] h-[38%] bg-slate-50 z-0 animate-pulse" />
+
+            <div className="relative z-10 w-full flex-1 flex flex-col justify-between p-4.5 pb-2">
+              {/* Header: punch hole (spasi tak terlihat) & logo */}
+              <div className="flex flex-col items-center w-full">
+                <div className="w-10 h-2 invisible pointer-events-none select-none mx-auto" aria-hidden="true" />
+                <div className="h-6 w-28 bg-slate-100 rounded mx-auto mt-3 animate-pulse" />
+              </div>
+
+              {/* Avatar center (skala lebih besar) */}
+              <div className="w-24 h-24 sm:w-26 sm:h-26 rounded-full ring-6 ring-white shadow-md bg-slate-100 mx-auto my-auto animate-pulse" />
+
+              {/* Nama & Role */}
+              <div className="w-full text-center pb-2 -translate-y-5 sm:-translate-y-6 space-y-1.5 flex flex-col items-center">
+                <div className="h-4.5 w-36 bg-slate-200/80 rounded animate-pulse" />
+                <div className="h-3.5 w-24 bg-slate-100 rounded animate-pulse" />
+              </div>
+            </div>
+
+            {/* Footer Bar Skeleton Khusus Depan */}
+            <div className="w-full h-8 bg-slate-200/80 shrink-0 animate-pulse" />
+          </div>
+        </div>
+
+        {/* Skeleton Belakang (Hijau Solid #0D3B2E) */}
+        <div className="flex flex-col items-center w-full max-w-[320px] mx-auto">
+          <div className={`relative w-full aspect-[54/85.6] overflow-hidden shadow-md border border-[#092B21] bg-[#0D3B2E] flex flex-col justify-between p-5 ${
+            rounded ? "rounded-2xl" : "rounded-none"
+          }`}>
+            {/* Pattern placeholder */}
+            <div className="absolute inset-0 bg-white/5 z-0 animate-pulse" />
+
+            {/* Header: punch hole (spasi tak terlihat) & label */}
+            <div className="relative z-10 flex flex-col items-center w-full pt-0.5">
+              <div className="w-10 h-2 invisible pointer-events-none select-none mx-auto" aria-hidden="true" />
+              <div className="h-4 w-36 bg-white/20 rounded mx-auto mt-3 animate-pulse" />
+            </div>
+
+            {/* QR Persegi Putih */}
+            <div className="relative z-10 flex flex-col items-center justify-center my-auto space-y-3">
+              <div className="w-[132px] h-[132px] border-2 border-white/25 bg-transparent animate-pulse" />
+              <div className="h-3 w-44 bg-white/20 rounded animate-pulse" />
+            </div>
+
+            {/* Info tanggal */}
+            <div className="relative z-10 pt-3 pb-0.5 border-t border-white/20 flex justify-between items-center w-full">
+              <div className="h-3 w-24 bg-white/20 rounded animate-pulse" />
+              <div className="h-3 w-20 bg-white/20 rounded animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-export function VolunteerIdCard({ volunteer, className = "" }) {
+/**
+ * Komponen Kartu Relawan CR80 Cetak Fisik (85.6 x 54 mm).
+ * Menampilkan tampak depan dan tampak belakang secara beriringan (side-by-side).
+ */
+export function VolunteerIdCard({
+  volunteer,
+  mode = "both",
+  rounded = true,
+  validationUrl: customValidationUrl,
+  className = "",
+}) {
   const { currentUser } = useCurrentUser();
-  const [side, setSide] = useState("front"); // "front" | "back"
+  const [imgError, setImgError] = useState(false);
 
-  // Resolve profil foto (pfp) akun login atau profil relawan
+  // Resolve foto profil asli akun pengguna atau data relawan (Prioritaskan avatar aktif yang dipilih user)
   const pfp =
-    volunteer?.avatarUrl ||
     currentUser?.avatar ||
+    volunteer?.avatarUrl ||
+    currentUser?.customAvatar ||
+    currentUser?.providerAvatar ||
     currentUser?.avatarUrl ||
     currentUser?.image ||
     currentUser?.picture ||
     null;
 
-  // Construct absolute validation URL untuk QR code
+  // Construct absolute validation URL deterministik untuk QR code (identik di SSR dan Client)
   const validationUrl = useMemo(() => {
+    if (customValidationUrl) return customValidationUrl;
     if (!volunteer?.id) return "";
-    if (typeof window !== "undefined") {
-      return `${window.location.origin}/relawan/validasi/${volunteer.id}`;
+    const baseUrl = (
+      process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.id"
+    ).replace(/\/+$/, "");
+    return `${baseUrl}/relawan/validasi/${volunteer.id}`;
+  }, [customValidationUrl, volunteer?.id]);
+
+  const fullName = volunteer?.fullName || currentUser?.name || "Anggota Relawan";
+
+  // Skala proporsional berpasangan: Nama & Peran selalu menjaga hierarki visual tanpa elipsis
+  const { nameClass, roleClass, containerOffset } = useMemo(() => {
+    const len = fullName.length;
+    if (len > 30) {
+      return {
+        nameClass: "text-sm sm:text-[15px] leading-snug font-bold",
+        roleClass: "text-[11px] sm:text-xs font-semibold text-emerald-800 tracking-wide",
+        containerOffset: "-translate-y-4 sm:-translate-y-5",
+      };
     }
-    return `https://payungberkah.id/relawan/validasi/${volunteer.id}`;
-  }, [volunteer?.id]);
+    if (len > 20) {
+      return {
+        nameClass: "text-base sm:text-lg leading-snug font-semibold",
+        roleClass: "text-xs sm:text-[13px] font-medium text-emerald-800",
+        containerOffset: "-translate-y-4 sm:-translate-y-5",
+      };
+    }
+    if (len > 14) {
+      return {
+        nameClass: "text-lg sm:text-xl leading-snug font-semibold",
+        roleClass: "text-xs sm:text-sm font-medium text-emerald-800",
+        containerOffset: "-translate-y-5 sm:-translate-y-6",
+      };
+    }
+    return {
+      nameClass: "text-xl sm:text-[22px] leading-snug font-semibold",
+      roleClass: "text-sm sm:text-[15px] font-medium text-emerald-800",
+      containerOffset: "-translate-y-6 sm:-translate-y-8",
+    };
+  }, [fullName.length]);
 
   if (!volunteer) return null;
+
+  const userInitial = fullName.trim().charAt(0).toUpperCase() || "A";
 
   const joinDate = formatDate(volunteer.createdAt, {
     year: "numeric",
@@ -78,176 +156,197 @@ export function VolunteerIdCard({ volunteer, className = "" }) {
     day: "numeric",
   });
 
-  const regId = volunteer.volunteerId || formatVolunteerId(volunteer.id, volunteer.createdAt);
-  const badgeName = formatVolunteerBadgeName(volunteer.fullName, 12);
+  const rawInterest =
+    !volunteer.interest ||
+    volunteer.interest.toLowerCase().includes("relawan kebaikan") ||
+    volunteer.interest.trim().toLowerCase() === "anggota"
+      ? "Anggota Relawan"
+      : volunteer.interest;
+  const roleText = rawInterest.charAt(0).toUpperCase() + rawInterest.slice(1);
+
+  const showFront = mode === "both" || mode === "front";
+  const showBack = mode === "both" || mode === "back";
 
   return (
-    <div className={`flex flex-col items-center w-full max-w-[340px] mx-auto ${className}`}>
-      {/* Kontrol Sisi Kartu (Depan / Belakang) */}
-      <div className="inline-flex items-center gap-1.5 p-1 mb-3 rounded-xl bg-slate-100 border border-slate-200/80 shadow-2xs print:hidden">
-        <button
-          type="button"
-          onClick={() => setSide("front")}
-          className={`px-3 py-1 text-xs font-medium rounded-lg transition-all cursor-pointer ${
-            side === "front"
-              ? "bg-white text-slate-900 shadow-xs border border-slate-200/60"
-              : "text-slate-600 hover:text-slate-900"
-          }`}
-          aria-pressed={side === "front"}
-        >
-          Tampak depan
-        </button>
-        <button
-          type="button"
-          onClick={() => setSide("back")}
-          className={`px-3 py-1 text-xs font-medium rounded-lg transition-all cursor-pointer ${
-            side === "back"
-              ? "bg-white text-slate-900 shadow-xs border border-slate-200/60"
-              : "text-slate-600 hover:text-slate-900"
-          }`}
-          aria-pressed={side === "back"}
-        >
-          Tampak belakang (QR code)
-        </button>
-      </div>
-
-      {/* Container Kartu Cetak */}
+    <div className={`w-full ${mode === "both" ? "max-w-2xl mx-auto" : "max-w-[340px] sm:max-w-[360px] mx-auto"} ${className}`}>
       <div
         id="volunteer-id-card-print"
-        onClick={() => setSide((prev) => (prev === "front" ? "back" : "front"))}
-        style={{ fontFamily: 'var(--font-plus-jakarta-sans), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif' }}
-        className="group relative w-full aspect-[1/1.42] rounded-2xl overflow-hidden shadow-xl border border-slate-200/80 select-none cursor-pointer transition-transform duration-300 hover:shadow-2xl"
-        title="Klik kartu untuk membalik"
+        className={`grid gap-6 items-start justify-center print:grid-cols-2 print:gap-4 print:max-w-none ${
+          mode === "both" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 w-full mx-auto"
+        }`}
       >
-        {/* Tombol Flip Mengambang (Pojok Kanan Atas) */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setSide((prev) => (prev === "front" ? "back" : "front"));
-          }}
-          className="absolute top-3 right-3 z-30 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/70 hover:bg-slate-900/90 text-white text-sm font-medium backdrop-blur-md shadow-md border border-white/15 transition-colors cursor-pointer print:hidden"
-          aria-label="Balik kartu"
-        >
-          <RotateCw className="w-3 h-3 text-emerald-400 transition-transform group-hover:rotate-45" />
-          <span>Balik</span>
-        </button>
-
-        {side === "front" ? (
-          /* ==================== TAMPAK DEPAN (DESAIN BERUNDAK ASIMETRIS / ALEXANDER BETONOV) ==================== */
-          <div className="relative w-full h-full flex flex-col justify-between bg-slate-950 overflow-hidden">
-            {/* 1. Zona Atas: Foto Relawan Full-Bleed (PFP Akun Login / Fallback Studio) */}
-            <div className="relative w-full h-[64%] overflow-hidden bg-slate-900">
-              {pfp ? (
-                <Image
-                  src={pfp}
-                  alt={volunteer.fullName}
-                  fill
-                  className="object-cover object-top"
-                  unoptimized
-                  priority
-                />
-              ) : (
-                <StudioPortraitFallback />
-              )}
+        {/* ==================== SISI 1: TAMPAK DEPAN (CLEAN WHITE + FOOTER IJO) ==================== */}
+        {showFront && (
+        <div className="flex flex-col items-center w-full mx-auto">
+          <div
+            style={{
+              backgroundColor: "#FFFFFF",
+              fontFamily: 'var(--font-plus-jakarta-sans), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif',
+            }}
+            className={`relative w-full aspect-[54/85.6] overflow-hidden shadow-md border border-slate-200/90 bg-white select-none flex flex-col justify-between ${
+              rounded ? "rounded-2xl print:rounded-none" : "rounded-none"
+            }`}
+          >
+            {/* Layer 0: Pita Pattern Geometris Horizontal (Full Opacity) */}
+            <div
+              className="absolute left-0 right-0 top-[26%] h-[38%] z-0 pointer-events-none select-none overflow-hidden"
+              aria-hidden="true"
+            >
+              <Image
+                src={ASSET_PATHS.CARDS.PATTERN_HORIZONTAL}
+                alt=""
+                fill
+                sizes="(max-width: 768px) 320px, 400px"
+                className="object-contain object-center pointer-events-none select-none"
+                priority
+              />
             </div>
 
-            {/* 2. Zona Bawah: Panel Melengkung Organik Sesuai Referensi (Clean White) */}
-            <div className="relative w-full h-[40%] bg-white -mt-6 z-10 flex flex-col justify-between pt-3 pb-5 px-6 shadow-[0_-6px_20px_rgba(0,0,0,0.06)]">
-              {/* Lekukan Notch Kurva Halus SVG */}
-              <svg
-                viewBox="0 0 340 36"
-                fill="none"
-                preserveAspectRatio="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="absolute -top-[35px] left-0 w-full h-[36px] text-white pointer-events-none"
-                aria-hidden="true"
+            {/* Layer 10: Konten Utama Tampak Depan */}
+            <div className="relative z-10 w-full flex-1 flex flex-col justify-between p-4.5 pb-2 select-none">
+              {/* 1. Header Atas: Spasi Lanyard & Logo Yayasan */}
+              <div className="flex flex-col items-center w-full">
+                {/* Spasi vertikal untuk lubang fisik tali tanpa visual penanda (agar konten tidak geser) */}
+                <div className="w-10 h-2 invisible pointer-events-none select-none" aria-hidden="true" />
+
+                {/* Aksen Dekorasi Geometris Kiri & Kanan */}
+                <div className="w-full flex items-center justify-between px-2 -mt-1 select-none pointer-events-none">
+                  <Image
+                    src={ASSET_PATHS.CARDS.DECORATION}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="w-5.5 h-5.5 sm:w-6 sm:h-6 object-contain"
+                    unoptimized
+                    priority
+                  />
+                  <Image
+                    src={ASSET_PATHS.CARDS.DECORATION}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="w-5.5 h-5.5 sm:w-6 sm:h-6 object-contain"
+                    unoptimized
+                    priority
+                  />
+                </div>
+
+                <div className="flex items-center justify-center pt-0.5">
+                  <Image
+                    src={ASSET_PATHS.BRANDING.LOGO}
+                    alt="Logo Yayasan Payung Berkah"
+                    width={130}
+                    height={36}
+                    className="h-7 w-auto object-contain drop-shadow-xs"
+                    priority
+                  />
+                </div>
+              </div>
+
+              {/* 2. Tengah: Circular Avatar Terkunci di Tengah Pattern */}
+              <div className="relative mx-auto my-auto flex items-center justify-center">
+                <div className="relative w-24 h-24 sm:w-26 sm:h-26 rounded-full ring-6 ring-white shadow-lg overflow-hidden bg-white flex items-center justify-center">
+                  {pfp && !imgError ? (
+                    <Image
+                      src={pfp}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      onError={() => setImgError(true)}
+                      unoptimized
+                      priority
+                    />
+                  ) : (
+                    <span className="text-emerald-800 font-bold text-3xl sm:text-4xl select-none">
+                      {userInitial}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* 3. Bawah: Nama Anggota & Peran (Hierarki Berpasangan, Bebas Elipsis) */}
+              <div
+                className={`w-full text-center pb-2 px-2 ${containerOffset}`}
               >
-                <path
-                  d="M0 0 L185 0 C210 0 220 28 250 28 L340 28 L340 36 L0 36 Z"
-                  fill="currentColor"
-                />
-              </svg>
-
-              {/* Teks Nama: Biasa (Tanpa Box), Rata Kiri, Semibold, Hitam Pekat */}
-              <div className="relative -mt-3 pr-4 text-left">
-                <p
-                  className={`${
-                    badgeName.line2
-                      ? "text-[21px] sm:text-[23px] leading-[1.14]"
-                      : "text-[26px] sm:text-[28px] leading-tight"
-                  } font-semibold text-black tracking-tight`}
+                <h3
+                  className={`${nameClass} text-slate-900 break-words`}
                 >
-                  {badgeName.line1}
+                  {fullName}
+                </h3>
+                <p
+                  className={`${roleClass} mt-1 truncate`}
+                >
+                  {roleText}
                 </p>
-                {badgeName.line2 && (
-                  <p className="text-[21px] sm:text-[23px] font-semibold text-black tracking-tight leading-[1.14] mt-0.5">
-                    {badgeName.line2}
-                  </p>
-                )}
               </div>
+            </div>
 
-              {/* Baris Informasi Bawah: Teks Hitam Pekat Minimalis Sesuai Referensi */}
-              <div className="flex items-center justify-between text-sm font-medium text-black mt-auto pt-2">
-                <span className="tracking-tight font-medium">
-                  Relawan Kebaikan
-                </span>
-                <span className="tracking-tight shrink-0 font-medium">
-                  ID {regId}
-                </span>
-              </div>
+            {/* Footer Bar Hijau Pekat: Khusus Tampak Depan dengan Padding Lebih Lapang */}
+            <div className="relative z-10 w-full bg-[#0D3B2E] py-2 px-3 text-center text-white text-[11px] font-medium select-none shrink-0 border-t border-emerald-900/40">
+              Yayasan Payung Berkah
             </div>
           </div>
-        ) : (
-          /* ==================== TAMPAK BELAKANG (QR CODE VERIFIKASI RESMI) ==================== */
-          <div className="relative w-full h-full bg-gradient-to-b from-slate-900 via-slate-950 to-emerald-950 p-6 flex flex-col justify-between text-white border border-emerald-500/25">
-            {/* Header: Logo Yayasan & Label KTA */}
-            <div className="text-center space-y-1 pt-1">
-              <div className="flex justify-center">
-                <Image
-                  src={ASSET_PATHS.BRANDING.LOGO}
-                  alt="Logo Yayasan"
-                  width={130}
-                  height={38}
-                  className="h-7 sm:h-8 w-auto object-contain brightness-0 invert"
-                />
-              </div>
-              <p className="text-sm font-semibold text-emerald-300 tracking-[0.15em] uppercase pt-1">
-                Kartu Tanda Anggota Resmi
-              </p>
-              <div className="w-20 h-0.5 bg-amber-400/40 mx-auto rounded-full mt-1.5" />
+        </div>
+        )}
+
+        {/* ==================== SISI 2: TAMPAK BELAKANG (HIJAU SOLID #0D3B2E DENGAN QR PUTIH MINIMALIS) ==================== */}
+        {showBack && (
+        <div className="flex flex-col items-center w-full mx-auto">
+          <div
+            style={{
+              fontFamily: 'var(--font-plus-jakarta-sans), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif',
+            }}
+            className={`relative w-full aspect-[54/85.6] overflow-hidden shadow-md border border-[#092B21] bg-[#0D3B2E] select-none flex flex-col justify-between p-5 ${
+              rounded ? "rounded-2xl print:rounded-none" : "rounded-none"
+            }`}
+          >
+            {/* Layer 0: Pattern Belakang Vertikal Penuh Menyatu dengan Warna Hijau Solid */}
+            <div
+              className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden opacity-[0.10] mix-blend-overlay"
+              aria-hidden="true"
+            >
+              <Image
+                src={ASSET_PATHS.CARDS.PATTERN_BACKFACE}
+                alt=""
+                fill
+                sizes="(max-width: 768px) 320px, 400px"
+                className="object-cover object-center pointer-events-none select-none"
+                priority
+              />
             </div>
 
-            {/* Tengah: Kotak QR Code Besar untuk Scan Lapangan */}
-            <div className="flex flex-col items-center justify-center my-auto space-y-2.5">
-              <div className="p-3 bg-white rounded-2xl shadow-xl border border-white/20">
-                <QRCodeSVG
-                  value={validationUrl}
-                  size={135}
-                  level="M"
-                  includeMargin={false}
-                />
-              </div>
-              <p className="text-sm text-slate-300 text-center font-medium">
-                Pindai untuk verifikasi keaslian anggota
+            {/* Layer 10: Konten Tampak Belakang */}
+            {/* Header: Spasi Lanyard & Label Kartu Resmi Relawan Putih (Maksimal Font-Medium) */}
+            <div className="relative z-10 flex flex-col items-center w-full pt-0.5">
+              {/* Spasi vertikal untuk lubang fisik tali tanpa visual penanda (agar konten tidak geser) */}
+              <div className="w-10 h-2 invisible pointer-events-none select-none" aria-hidden="true" />
+              <p className="mt-3 text-xs font-medium text-white">
+                Kartu Resmi Relawan
               </p>
             </div>
 
-            {/* Info Tanggal & Legalitas SK Kemenkumham RI */}
-            <div className="space-y-2 pt-2 border-t border-slate-800 text-sm text-slate-300">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-400">Tgl terdaftar</span>
-                <span className="text-white font-medium">{joinDate}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-400">Masa berlaku</span>
-                <span className="text-emerald-400 font-medium">Aktif (1 Tahun)</span>
-              </div>
-              <div className="text-sm text-slate-400 text-center pt-2 border-t border-slate-800/80 font-normal">
-                SK Kemenkumham RI: AHU-0012345.AH.01.04.Tahun 2023
-              </div>
+            {/* Tengah: QR Code Putih Bersih Tanpa Background & Teks Instruksi Ringkas Berjarak Lapang */}
+            <div className="relative z-10 flex flex-col items-center justify-center my-auto space-y-6">
+              <QRCodeSVG
+                value={validationUrl}
+                size={132}
+                level="M"
+                fgColor="#FFFFFF"
+                bgColor="transparent"
+                includeMargin={false}
+              />
+              <p className="text-xs text-white/90 font-medium text-center">
+                Scan untuk verifikasi
+              </p>
+            </div>
+
+            {/* Bawah: Info Tanggal Terdaftar Riil (Maksimal Font-Medium, Sesuai Data Database) */}
+            <div className="relative z-10 w-full pt-3 pb-0.5 border-t border-white/20 text-xs flex justify-between items-center select-none">
+              <span className="text-white/80 font-medium">Terdaftar sejak:</span>
+              <span className="text-white font-medium">{joinDate}</span>
             </div>
           </div>
+        </div>
         )}
       </div>
     </div>

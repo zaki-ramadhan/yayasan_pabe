@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getVolunteerByEmail } from "@/services/volunteerVerificationService";
 import { checkRateLimit } from "@/lib/rateLimit";
+import { requireAuth } from "@/lib/serverAuth";
 
 export async function GET(request) {
   try {
@@ -11,17 +12,22 @@ export async function GET(request) {
     });
     if (rateLimitBlocked) return rateLimitBlocked;
 
-    const { searchParams } = new URL(request.url);
-    const email = searchParams.get("email");
+    const { user, errorResponse } = await requireAuth(request);
+    if (errorResponse) return errorResponse;
 
-    if (!email) {
+    const { searchParams } = new URL(request.url);
+    const requestedEmail = searchParams.get("email")?.trim().toLowerCase();
+    const isStaff = Boolean(user.role && user.role !== "DONOR");
+
+    if (requestedEmail && !isStaff && requestedEmail !== user.email.trim().toLowerCase()) {
       return NextResponse.json(
-        { success: false, message: "Email pengguna wajib disertakan." },
-        { status: 400 }
+        { success: false, message: "Anda tidak memiliki izin untuk melihat data relawan pengguna lain." },
+        { status: 403 }
       );
     }
 
-    const volunteer = await getVolunteerByEmail(email);
+    const targetEmail = (isStaff && requestedEmail) ? requestedEmail : user.email;
+    const volunteer = await getVolunteerByEmail(targetEmail);
 
     return NextResponse.json({
       success: true,
@@ -45,35 +51,18 @@ export async function DELETE(request) {
     });
     if (rateLimitBlocked) return rateLimitBlocked;
 
-    const { prisma } = await import("@/lib/prisma");
-    const sessionId = request.cookies.get("pabe_session")?.value;
-    let targetEmail = "";
+    const { user, errorResponse } = await requireAuth(request);
+    if (errorResponse) return errorResponse;
 
-    if (sessionId) {
-      const user = await prisma.user.findUnique({
-        where: { id: sessionId },
-        select: { email: true },
-      });
-      if (user?.email) {
-        targetEmail = user.email.trim().toLowerCase();
-      }
-    }
-
-    // Fallback baca email dari JSON body jika sesi cookie tidak terpasang
-    if (!targetEmail) {
-      const body = await request.json().catch(() => ({}));
-      if (body?.email) {
-        targetEmail = String(body.email).trim().toLowerCase();
-      }
-    }
-
+    const targetEmail = (user?.email || "").trim().toLowerCase();
     if (!targetEmail) {
       return NextResponse.json(
-        { success: false, message: "Sesi otentikasi atau email wajib disertakan." },
+        { success: false, message: "Sesi otentikasi tidak memiliki email yang valid." },
         { status: 401 }
       );
     }
 
+    const { prisma } = await import("@/lib/prisma");
     const result = await prisma.volunteer.deleteMany({
       where: {
         email: { equals: targetEmail, mode: "insensitive" },

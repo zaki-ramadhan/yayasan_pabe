@@ -1,16 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { UserCheck, Printer, Copy, Check, ExternalLink, LogOut } from "lucide-react";
-import { VolunteerCardSwitcher } from "./VolunteerCardSwitcher";
+import { Download, Copy, Check, ExternalLink, LogOut } from "lucide-react";
+import { VolunteerIdCard } from "./VolunteerIdCard";
 import { Button } from "@/components/ui/Button";
 import { copyToClipboard } from "@/lib/clipboard";
 import { toast } from "@/hooks/useToast";
+import { downloadVolunteerCardImage } from "@/lib/ktaDownloadHelper";
 
 /**
  * Komponen sub-widget untuk relawan aktif yang telah disetujui (APPROVED).
- * Menampilkan KTA interaktif, aksi cetak, dan opsi pengunduran diri secara mandiri.
+ * Menggunakan format banner atmosferik yang selaras dengan status pendaftaran (VolunteerPendingCard),
+ * menyajikan kartu relawan 2 sisi (CR80), aksi unduh kartu & salin tautan, serta tautan validasi dan pengunduran diri.
  */
 export function VolunteerApprovedCard({
   volunteer,
@@ -18,20 +21,29 @@ export function VolunteerApprovedCard({
   className = "",
 }) {
   const [copied, setCopied] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   if (!volunteer) return null;
 
-  const handlePrint = () => {
-    if (typeof window !== "undefined") {
-      window.print();
+  const handleDownloadImage = async () => {
+    if (!volunteer) return;
+    setIsDownloading(true);
+    try {
+      await downloadVolunteerCardImage("volunteer-approved-card-export", {
+        volunteerName: volunteer.fullName,
+        volunteerId: volunteer.volunteerId,
+      });
+    } finally {
+      setIsDownloading(false);
     }
   };
 
   const handleCopyLink = async () => {
     if (!volunteer?.id) return;
-    const url = typeof window !== "undefined"
-      ? `${window.location.origin}/relawan/validasi/${volunteer.id}`
-      : `https://payungberkah.id/relawan/validasi/${volunteer.id}`;
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/relawan/validasi/${volunteer.id}`
+        : `https://payungberkah.id/relawan/validasi/${volunteer.id}`;
 
     const ok = await copyToClipboard(url);
     if (ok) {
@@ -45,50 +57,82 @@ export function VolunteerApprovedCard({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Banner Identitas Anggota Aktif */}
-      <div className="p-4 sm:p-5 bg-emerald-50 border border-emerald-200 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3 text-center sm:text-left">
-          <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mx-auto sm:mx-0">
-            <UserCheck className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-emerald-950 text-sm sm:text-base">
-              Relawan Resmi Aktif
+      {/* Banner Identitas Relawan Aktif (Atmosferik Senada dengan VolunteerPendingCard) */}
+      <div className="relative w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950 text-white p-5 sm:p-6 shadow-md print:hidden">
+        {/* Atmospheric Background Image & Overlay */}
+        <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+          <Image
+            src="/img/banners/covers/volunteer-cover.webp"
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 800px"
+            className="object-cover opacity-30 pointer-events-none select-none"
+            draggable={false}
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(5,150,105,0.45)_0%,_rgba(15,23,42,0.85)_55%,_rgba(2,6,23,0.96)_100%)]" />
+        </div>
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+          {/* Konten Kiri: Status, Judul & Penjelasan */}
+          <div className="space-y-1.5">
+            <div className="text-xs font-medium text-emerald-400">
+              Status: Relawan Aktif
+            </div>
+            <h3 className="font-semibold text-white text-base sm:text-lg">
+              Relawan Resmi Terverifikasi
             </h3>
-            <p className="text-xs sm:text-sm text-emerald-800">
+            <p className="text-xs sm:text-sm text-slate-200 max-w-xl font-normal leading-relaxed">
               Anda telah terdaftar sebagai relawan resmi Yayasan Payung Berkah.
             </p>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCopyLink}
-            className="h-9 px-3 text-xs sm:text-sm font-normal gap-1.5 cursor-pointer bg-white flex-1 sm:flex-initial"
-          >
-            {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-slate-600" />}
-            <span>{copied ? "Tersalin" : "Salin tautan"}</span>
-          </Button>
-          <Button
-            type="button"
-            onClick={handlePrint}
-            className="h-9 px-3.5 text-xs sm:text-sm font-medium gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white cursor-pointer flex-1 sm:flex-initial"
-          >
-            <Printer className="w-4 h-4" />
-            <span>Cetak KTA</span>
-          </Button>
+          {/* Konten Kanan: Aksi Salin Tautan & Unduh Kartu */}
+          <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto flex-wrap">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCopyLink}
+              className="h-9 px-3.5 text-xs sm:text-sm font-medium rounded-md bg-white/10 hover:bg-white/15 text-white border border-white/20 hover:border-white/30 backdrop-blur-xs gap-1.5 cursor-pointer transition-all"
+            >
+              {copied ? (
+                <Check className="w-4 h-4 text-emerald-400" />
+              ) : (
+                <Copy className="w-4 h-4 text-slate-300" />
+              )}
+              <span>{copied ? "Tersalin" : "Salin tautan"}</span>
+            </Button>
+            <Button
+              type="button"
+              onClick={handleDownloadImage}
+              disabled={isDownloading}
+              isLoading={isDownloading}
+              loadingText="Mengunduh..."
+              className="relative inline-flex items-center justify-center h-9 px-3.5 text-xs sm:text-sm font-medium rounded-md bg-emerald-700 hover:bg-emerald-600 text-white border-t border-white/25 shadow-[0_3px_0_0_#064e3b] active:shadow-[0_1px_0_0_#064e3b] active:translate-y-[2px] transition-all cursor-pointer shrink-0 whitespace-nowrap select-none gap-1.5"
+            >
+              <Download className="w-4 h-4" />
+              <span>Unduh kartu</span>
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Visualisasi Kartu Tanda Anggota (3D & 2D) */}
-      <div className="py-2">
-        <VolunteerCardSwitcher volunteer={volunteer} defaultMode="3d" />
+      {/* Node Render Khusus Unduh Kartu (Kotak Rapi Tanpa Sudut Melengkung) */}
+      <div
+        id="volunteer-approved-card-export"
+        className="fixed -left-[9999px] top-0 pointer-events-none p-6 bg-transparent"
+        aria-hidden="true"
+      >
+        <VolunteerIdCard volunteer={volunteer} mode="both" rounded={false} />
+      </div>
+
+      {/* Visualisasi Kartu Relawan 2 Sisi (CR80) */}
+      <div className="py-2 p-2 bg-transparent">
+        <VolunteerIdCard volunteer={volunteer} />
       </div>
 
       {/* Link Validasi Publik & Opsi Pengunduran Diri */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs print:hidden">
         <Link
           href={`/relawan/validasi/${volunteer.id}`}
           target="_blank"

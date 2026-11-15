@@ -44,10 +44,100 @@ export async function registerVolunteer({
     email: cleanEmail,
     phone: phoneVal.sanitized,
     city: cleanCity,
-    interest: sanitizeInput(interest) || "Relawan Kebaikan",
+    interest: sanitizeInput(interest) || "Anggota Relawan",
     motivation: sanitizeInput(motivation).slice(0, FIELD_LIMITS.MOTIVATION.max) || "",
     status: "PENDING",
   };
+
+  // 1. Cegah pendaftaran ganda (berdasarkan email atau nomor WhatsApp)
+  const duplicateConditions = [];
+  if (cleanEmail) {
+    duplicateConditions.push({ email: { equals: cleanEmail, mode: "insensitive" } });
+  }
+  if (cleanData.phone) {
+    duplicateConditions.push({ phone: cleanData.phone });
+  }
+
+  if (duplicateConditions.length > 0) {
+    const existing = await prisma.volunteer.findFirst({
+      where: {
+        OR: duplicateConditions,
+      },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        status: true,
+      },
+    });
+
+    if (existing) {
+      if (existing.status === "APPROVED") {
+        throw new Error(
+          "Email atau nomor WhatsApp ini sudah terdaftar sebagai relawan aktif Yayasan Payung Berkah."
+        );
+      }
+      if (existing.status === "PENDING" || existing.status === "CONTACTED") {
+        throw new Error(
+          "Pendaftaran relawan dengan email atau nomor WhatsApp ini sudah diajukan dan sedang dalam proses pemeriksaan."
+        );
+      }
+      // Jika sebelumnya pernah ditolak (REJECTED), perbarui data pengajuan lama alih-alih membuat baris duplikat
+      if (existing.status === "REJECTED") {
+        const updated = await prisma.volunteer.update({
+          where: { id: existing.id },
+          data: {
+            ...cleanData,
+            status: "PENDING",
+            createdAt: new Date(),
+          },
+        });
+
+        if (cleanEmail) {
+          try {
+            await sendVolunteerRegistrationEmail({
+              to: cleanEmail,
+              name: updated.fullName,
+              city: updated.city,
+              interest: updated.interest,
+            });
+          } catch (emailErr) {
+            console.warn("Gagal mengirim email konfirmasi pendaftaran relawan:", emailErr?.message);
+          }
+        }
+
+        try {
+          broadcastAdminEvent("VOLUNTEER_CHECKIN", {
+            id: updated.id,
+            name: updated.fullName,
+            fullName: updated.fullName,
+            email: updated.email || "",
+            phone: updated.phone || "",
+            city: updated.city,
+            interest: updated.interest || "Anggota Relawan",
+            motivation: updated.motivation || "",
+            status: "PENDING",
+            activity: `Pendaftaran Relawan Baru (${updated.city})`,
+            timestamp: new Date().toISOString(),
+          });
+        } catch (sseErr) {
+          console.warn("Peringatan: Gagal broadcast SSE volunteer:", sseErr?.message);
+        }
+
+        return {
+          success: true,
+          data: {
+            id: updated.id,
+            fullName: updated.fullName,
+            city: updated.city,
+            status: updated.status,
+          },
+          message: "Pendaftaran relawan berhasil dikirim kembali untuk diperiksa.",
+        };
+      }
+    }
+  }
 
   try {
     const created = await prisma.volunteer.create({
@@ -100,7 +190,7 @@ export async function registerVolunteer({
         email: created.email || "",
         phone: created.phone || "",
         city: created.city,
-        interest: created.interest || "Relawan Kebaikan",
+        interest: created.interest || "Anggota Relawan",
         motivation: created.motivation || "",
         status: created.status || "PENDING",
         activity: `Pendaftaran Relawan Baru (${created.city})`,
@@ -122,7 +212,7 @@ export async function registerVolunteer({
     };
   } catch (error) {
     console.error("Prisma registerVolunteer error:", error.message);
-    throw new Error("Gagal mendaftarkan relawan ke sistem. Silakan coba kembali.");
+    throw new Error(error.message || "Gagal mendaftarkan relawan ke sistem. Silakan coba kembali.");
   }
 }
 

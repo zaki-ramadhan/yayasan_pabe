@@ -30,7 +30,7 @@ export function formatVolunteerId(id = "", dateInput = null) {
 }
 
 /**
- * Memformat nama relawan agar pas dan simetris di dalam kotak rasio 1:1 KTA.
+ * Memformat nama relawan agar pas dan simetris di dalam layout kartu relawan.
  * Jika nama terlalu panjang, nama disingkat secara cerdas (inisial di tengah atau di awal/akhir)
  * dan dipecah menjadi maksimal 2 baris terpusat.
  *
@@ -40,12 +40,12 @@ export function formatVolunteerId(id = "", dateInput = null) {
  */
 export function formatVolunteerBadgeName(fullName = "", maxLineChars = 13) {
   if (!fullName || typeof fullName !== "string") {
-    return { line1: "Relawan", line2: "Kebaikan", displayName: "Relawan Kebaikan" };
+    return { line1: "Anggota", line2: "Relawan", displayName: "Anggota Relawan" };
   }
 
   const clean = fullName.trim().replace(/\s+/g, " ");
   if (!clean) {
-    return { line1: "Relawan", line2: "Kebaikan", displayName: "Relawan Kebaikan" };
+    return { line1: "Anggota", line2: "Relawan", displayName: "Anggota Relawan" };
   }
 
   const words = clean.split(" ");

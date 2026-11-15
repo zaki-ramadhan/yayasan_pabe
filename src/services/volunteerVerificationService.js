@@ -24,9 +24,9 @@ export async function getVolunteerPublicProfile(id) {
     if (v.email) {
       const u = await prisma.user.findFirst({
         where: { email: { equals: v.email.trim().toLowerCase(), mode: "insensitive" } },
-        select: { avatar: true },
+        select: { avatar: true, customAvatar: true, providerAvatar: true },
       });
-      userAvatar = u?.avatar || null;
+      userAvatar = u?.avatar || u?.customAvatar || u?.providerAvatar || null;
     }
 
     return mapToPublicVolunteer(v, userAvatar);
@@ -50,17 +50,27 @@ export async function getVolunteerByEmail(email) {
       }),
       prisma.user.findFirst({
         where: { email: { equals: cleanEmail, mode: "insensitive" } },
-        select: { avatar: true },
+        select: { avatar: true, customAvatar: true, providerAvatar: true },
       }),
     ]);
 
-    if (v) return mapToPublicVolunteer(v, u?.avatar || null);
+    if (v) {
+      const userAvatar = u?.avatar || u?.customAvatar || u?.providerAvatar || null;
+      return mapToPublicVolunteer(v, userAvatar);
+    }
 
     return null;
   } catch (error) {
     console.error("Prisma getVolunteerByEmail error:", error);
     return null;
   }
+}
+
+function maskEmail(email) {
+  if (!email || !email.includes("@")) return "";
+  const [local, domain] = email.split("@");
+  if (local.length <= 2) return `${local}***@${domain}`;
+  return `${local.slice(0, 2)}***${local.slice(-1)}@${domain}`;
 }
 
 function mapToPublicVolunteer(v, avatarUrl = null) {
@@ -72,6 +82,7 @@ function mapToPublicVolunteer(v, avatarUrl = null) {
     id: v.id,
     volunteerId: formatVolunteerId(v.id, createdDate),
     fullName: v.fullName,
+    maskedEmail: v.email ? maskEmail(v.email) : null,
     city: v.city,
     interest: v.interest,
     status: v.status,

@@ -129,7 +129,7 @@ export function VolunteerRegistrationFields({
           hint={
             isEmailLocked
               ? "Email disinkronkan otomatis dari akun Anda."
-              : "Notifikasi KTA akan dikirim ke email ini."
+              : "Notifikasi kartu relawan akan dikirim ke email ini."
           }
         >
           <Input
@@ -218,10 +218,15 @@ export function VolunteerRegistrationFields({
       {/* Submit Button */}
       <Button
         type="submit"
+        isLoading={loading || !turnstileToken}
         disabled={loading || !turnstileToken}
         className="w-full h-11 text-sm font-semibold bg-emerald-700 hover:bg-emerald-800 text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? "Mengirim pendaftaran..." : "Kirim pendaftaran relawan"}
+        {loading
+          ? "Mengirim pendaftaran..."
+          : !turnstileToken
+          ? "Mohon tunggu..."
+          : "Kirim pendaftaran relawan"}
       </Button>
 
       <p className="text-sm text-slate-400 text-center leading-relaxed">

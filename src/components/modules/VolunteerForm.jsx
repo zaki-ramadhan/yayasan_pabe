@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getStoredUser, loginUser } from "@/services/authService";
+import { getStoredUser, updateStoredUser } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { toast } from "@/hooks/useToast";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -46,7 +46,6 @@ export function VolunteerForm() {
   const router = useRouter();
   const { currentUser } = useCurrentUser();
   const activeUser = currentUser || (typeof window !== "undefined" ? getStoredUser() : null);
-  const userEmail = activeUser?.email || "";
 
   // 1. Initial State Derived Lazily (Zero Cascading setState in Effect)
   const [fullName, setFullName] = useState(() => {
@@ -95,9 +94,9 @@ export function VolunteerForm() {
   });
   const [motivation, setMotivation] = useState(() => getInitialDraft().motivation || "");
 
-  // Status Relawan Terdaftar
+  // Status Relawan Terdaftar: Selalu mulai dengan true pada SSR dan initial client render untuk mencegah hydration mismatch
   const [volunteer, setVolunteer] = useState(null);
-  const [checkingStatus, setCheckingStatus] = useState(() => Boolean(userEmail));
+  const [checkingStatus, setCheckingStatus] = useState(true);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [turnstileToken, setTurnstileToken] = useState("");
@@ -107,16 +106,22 @@ export function VolunteerForm() {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
 
-  // 2. Cek status keanggotaan relawan saat userEmail tersedia
+  // 2. Verifikasi status relawan secara asynchronous setelah mount
   useEffect(() => {
     let isMounted = true;
 
-    if (!userEmail) {
-      return;
-    }
-
     async function checkStatus() {
-      const res = await fetchVolunteerStatus(userEmail);
+      const active = currentUser || getStoredUser();
+      const targetEmail = active?.email;
+
+      if (!targetEmail) {
+        if (isMounted) {
+          setCheckingStatus(false);
+        }
+        return;
+      }
+
+      const res = await fetchVolunteerStatus(targetEmail);
       if (isMounted) {
         setVolunteer(res.success && res.data ? res.data : null);
         setCheckingStatus(false);
@@ -128,7 +133,7 @@ export function VolunteerForm() {
     return () => {
       isMounted = false;
     };
-  }, [userEmail]);
+  }, [currentUser]);
 
   // 3. Draft Auto-save
   useEffect(() => {
@@ -202,7 +207,7 @@ export function VolunteerForm() {
 
       // Sinkronisasi sesi lokal jika sebelumnya nomor WhatsApp di profil masih kosong
       if (activeUser && (!activeUser.phone || activeUser.phone === "-") && phone.trim()) {
-        loginUser({ ...activeUser, phone: phone.trim() });
+        updateStoredUser({ phone: phone.trim() });
       }
 
       // Refresh status relawan
@@ -219,6 +224,14 @@ export function VolunteerForm() {
       turnstileRef.current?.reset();
       setTurnstileToken("");
       toast.error(err.message || "Gagal mengirim pendaftaran relawan.");
+      // Jika ternyata sudah terdaftar, refresh status agar form langsung beralih ke tampilan kartu status
+      if (email && email.trim()) {
+        fetchVolunteerStatus(email.trim().toLowerCase()).then((statusRes) => {
+          if (statusRes.success && statusRes.data) {
+            setVolunteer(statusRes.data);
+          }
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -249,19 +262,45 @@ export function VolunteerForm() {
   // State A: Sedang Memeriksa Status Relawan (Skeleton Loader)
   if (checkingStatus) {
     return (
-      <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/90 shadow-sm space-y-4 animate-pulse">
-        <Skeleton className="h-6 w-48 rounded" />
-        <Skeleton className="h-11 w-full rounded-md" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Skeleton className="h-11 w-full rounded-md" />
-          <Skeleton className="h-11 w-full rounded-md" />
+      <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/90 shadow-sm space-y-5 animate-pulse">
+        <div className="space-y-1.5">
+          <Skeleton className="h-6 sm:h-7 w-64 rounded-md" />
+          <Skeleton className="h-4 w-96 max-w-full rounded" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Skeleton className="h-11 w-full rounded-md" />
-          <Skeleton className="h-11 w-full rounded-md" />
+
+        <div className="space-y-1.5">
+          <Skeleton className="h-4 w-28 rounded" />
+          <Skeleton className="h-11 w-full rounded-lg" />
         </div>
-        <Skeleton className="h-20 w-full rounded-md" />
-        <Skeleton className="h-11 w-full rounded-md" />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Skeleton className="h-4 w-36 rounded" />
+            <Skeleton className="h-11 w-full rounded-lg" />
+          </div>
+          <div className="space-y-1.5">
+            <Skeleton className="h-4 w-24 rounded" />
+            <Skeleton className="h-11 w-full rounded-lg" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Skeleton className="h-4 w-32 rounded" />
+            <Skeleton className="h-11 w-full rounded-lg" />
+          </div>
+          <div className="space-y-1.5">
+            <Skeleton className="h-4 w-44 rounded" />
+            <Skeleton className="h-11 w-full rounded-lg" />
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Skeleton className="h-4 w-52 rounded" />
+          <Skeleton className="h-20 w-full rounded-lg" />
+        </div>
+
+        <Skeleton className="h-11 w-full rounded-lg" />
       </div>
     );
   }
