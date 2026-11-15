@@ -11,7 +11,9 @@
  */
 export const ASSET_PATHS = {
   BRANDING: {
-    LOGO: "/img/branding/logo-ypabe.webp",
+    LOGO: "/img/branding/logo-ypabe.png",
+    LOGO_PNG: "/img/branding/logo-ypabe.png",
+    LOGO_WEBP: "/img/branding/logo-ypabe.webp",
     ICON: "/img/branding/icon.webp",
     FAVICON: "/img/branding/favicon.ico",
     PARTNER_MAIN: "/img/branding/partners/logo-partner-main.webp",
@@ -36,6 +38,13 @@ export const ASSET_PATHS = {
     GOPAY: "/img/branding/payments/gopay.webp",
     SHOPEEPAY: "/img/branding/payments/shopeepay.webp",
     PERMATA: "/img/branding/payments/permata.webp",
+  },
+  CARDS: {
+    PATTERN: "/img/cards/card-pattern.svg",
+    PATTERN_HORIZONTAL: "/img/cards/card-pattern-horizontal.png",
+    PATTERN_BACKFACE: "/img/cards/card-pattern-backface.png",
+    DECORATION: "/img/cards/decoration.svg?v=2",
+    BASE_BG: "#E3ECBF",
   },
   FRAMES: {
     FOLDER_ADMIN: "/img/frames/folder-admin.svg",
@@ -75,6 +84,7 @@ export const ASSET_PATHS = {
     HERO_SLIDE_3: "/img/banners/hero/hero-slide-3.webp",
     CTA_MAIN: "/img/banners/cta/cta-banner.webp",
     ABOUT_COVER: "/img/banners/covers/about-cover.webp",
+    VOLUNTEER_COVER: "/img/banners/covers/volunteer-cover.webp",
     AUTH_SLIDE_1: "/img/banners/auth/auth-slide-1.webp",
     AUTH_SLIDE_2: "/img/banners/auth/auth-slide-2.webp",
     AUTH_SLIDE_3: "/img/banners/auth/auth-slide-3.webp",

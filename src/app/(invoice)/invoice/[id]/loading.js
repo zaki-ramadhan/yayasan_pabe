@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Clock, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { DashedDivider } from "@/components/ui/DashedDivider";
@@ -98,11 +98,8 @@ export default function InvoiceLoading() {
             {/* Section Atas Tiket: Header Tagihan & Batas Waktu */}
             <div className="bg-white rounded-t-xl border-t border-x border-slate-300 p-5 sm:p-6 sm:py-4 pb-4 space-y-2.5">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm text-slate-600 block">Tagihan Donasi</span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium">
-                  <Clock className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-                  Menunggu Pembayaran
-                </span>
+                <Skeleton className="h-4 w-28 rounded" />
+                <Skeleton className="h-6 w-36 rounded-md bg-slate-200" />
               </div>
 
               <div className="flex items-center justify-between gap-2 text-sm pt-0.5">

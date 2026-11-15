@@ -13,6 +13,7 @@ import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
 export function PostDonationPrayerForm({
   invoiceId,
+  accessToken = "",
   campaignSlug = "",
   donorName = "Donatur",
   defaultAnonymous = false,
@@ -50,6 +51,7 @@ export function PostDonationPrayerForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           invoiceId,
+          accessToken: accessToken || undefined,
           prayer: cleanPrayer,
           isAnonymous,
         }),

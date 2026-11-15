@@ -40,7 +40,7 @@ export function DonorRecentTransactionsCard({
                   {formatRupiah(item.amount)}
                 </p>
                 <Link
-                  href={`/invoice/${item.invoiceId}`}
+                  href={`/invoice/${item.invoiceId}${item.accessToken ? `?token=${encodeURIComponent(item.accessToken)}` : ""}`}
                   target="_blank"
                   className="text-xs font-medium text-primary hover:underline block"
                 >

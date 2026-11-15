@@ -21,10 +21,6 @@ export function DonorProfileSkeleton() {
                 </div>
                 <Skeleton className="h-4 w-52 rounded-sm mx-auto sm:mx-0" />
                 <Skeleton className="h-4 w-40 rounded-sm mx-auto sm:mx-0" />
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-1">
-                  <Skeleton className="h-4 w-28 rounded-sm" />
-                  <Skeleton className="h-4 w-36 rounded-sm" />
-                </div>
               </div>
             </div>
           </div>

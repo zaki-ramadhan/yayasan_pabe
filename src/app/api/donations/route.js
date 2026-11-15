@@ -13,9 +13,18 @@ import {
 } from "@/lib/security";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { verifyTurnstileToken } from "@/lib/turnstile";
+import { getAuthenticatedUser } from "@/lib/serverAuth";
+import { extractInvoiceTokenFromRequest } from "@/lib/requestOwnership";
 
 export async function GET(request) {
   try {
+    const rateLimitBlocked = checkRateLimit(request, {
+      action: "donations_query",
+      limit: 60,
+      windowMs: 60000,
+    });
+    if (rateLimitBlocked) return rateLimitBlocked;
+
     const { searchParams } = new URL(request.url);
     const invoiceId = searchParams.get("invoiceId");
     const campaignSlug = searchParams.get("campaignSlug");
@@ -27,7 +36,13 @@ export async function GET(request) {
       : 0;
 
     if (invoiceId) {
-      const donation = await getDonationByInvoiceId(invoiceId);
+      const token = extractInvoiceTokenFromRequest(request, invoiceId);
+      const authState = await getAuthenticatedUser(request);
+      const donation = await getDonationByInvoiceId(
+        invoiceId,
+        token,
+        authState?.user || null
+      );
       if (!donation) {
         return NextResponse.json(
           { success: false, message: "Data donasi tidak ditemukan." },
@@ -42,8 +57,8 @@ export async function GET(request) {
           status: donation.status,
           paidAt: donation.paidAt,
           expiredAt: donation.expiredAt,
-          qrCodeUrl: donation.qrCodeUrl || "",
-          qrString: donation.qrString || "",
+          qrCodeUrl: donation.isAuthorized ? donation.qrCodeUrl || "" : "",
+          qrString: donation.isAuthorized ? donation.qrString || "" : "",
         },
       });
     }
@@ -119,15 +134,31 @@ export async function POST(request) {
       }
     }
 
-    const donation = await createDonation(body);
+    // 4. Sanitize internal-only fields (prevent external clients forging routine idempotency or arbitrary avatar URLs)
+    const authState = await getAuthenticatedUser(request);
+    const sessionUser = authState?.user || null;
+    const rawIdempotencyKey =
+      typeof body.idempotencyKey === "string" ? body.idempotencyKey.trim() : "";
+    const safeIdempotencyKey = rawIdempotencyKey.startsWith("ROUTINE_EXEC_")
+      ? ""
+      : rawIdempotencyKey;
+    const safeDonorAvatar =
+      sessionUser?.customAvatar || sessionUser?.avatar || sessionUser?.providerAvatar || null;
+
+    const donation = await createDonation({
+      ...body,
+      idempotencyKey: safeIdempotencyKey,
+      donorAvatar: safeDonorAvatar,
+    });
     const response = NextResponse.json({ success: true, data: donation }, { status: 201 });
 
     if (donation.accessToken && donation.invoiceId) {
       const invOpts = {
         path: "/",
-        maxAge: 24 * 60 * 60,
+        maxAge: 90 * 24 * 60 * 60, // 90 hari agar donatur tamu tetap bisa mengakses kuitansi di perangkat yang sama
         sameSite: "lax",
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
       };
       response.cookies.set(`pabe_inv_${donation.invoiceId}`, donation.accessToken, invOpts);
     }
@@ -143,20 +174,35 @@ export async function POST(request) {
 
 export async function PATCH(request) {
   try {
+    const rateLimitBlocked = checkRateLimit(request, {
+      action: "donation_prayer_update",
+      limit: 15,
+      windowMs: 60000,
+    });
+    if (rateLimitBlocked) return rateLimitBlocked;
+
     const body = await request.json();
-    const { invoiceId, prayer, isAnonymous } = body;
+    const { invoiceId, prayer, isAnonymous, accessToken, token } = body || {};
     if (!invoiceId) {
       return NextResponse.json(
         { success: false, message: "Nomor invoice diperlukan." },
         { status: 400 }
       );
     }
-    const updated = await updateDonationPrayer({ invoiceId, prayer, isAnonymous });
+    const updated = await updateDonationPrayer({
+      invoiceId,
+      prayer,
+      isAnonymous,
+      request,
+      accessToken: accessToken || token || null,
+      requireOwnership: true,
+    });
     return NextResponse.json({ success: true, data: updated });
   } catch (error) {
+    const status = error.statusCode || 400;
     return NextResponse.json(
       { success: false, message: error.message || "Gagal memperbarui doa." },
-      { status: 400 }
+      { status }
     );
   }
 }

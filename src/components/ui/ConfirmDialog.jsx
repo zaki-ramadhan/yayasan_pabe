@@ -24,10 +24,19 @@ export function ConfirmDialog({
   confirmLabel = "Ya, lanjutkan",
   confirmVariant = "destructive",
   cancelLabel = "Batal",
+  loadingLabel,
+  loadingText,
   children,
   isLoading = false,
   className = "",
 }) {
+  const activeLoadingText =
+    loadingLabel ||
+    loadingText ||
+    (typeof confirmLabel === "string" && confirmLabel.toLowerCase().includes("hapus")
+      ? "Menghapus..."
+      : "Memproses...");
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
@@ -67,6 +76,7 @@ export function ConfirmDialog({
             variant={confirmVariant}
             disabled={isLoading}
             isLoading={isLoading}
+            loadingText={activeLoadingText}
             onClick={onConfirm}
             className="w-full sm:w-auto min-w-[96px] h-9 whitespace-nowrap cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
           >

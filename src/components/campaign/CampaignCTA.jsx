@@ -71,7 +71,7 @@ export function CampaignCTA({
   const effectiveHref =
     buttonHref ||
     (isZakat
-      ? "/zakat/bayar"
+      ? `/zakat/bayar${campaign?.slug ? `?campaign=${encodeURIComponent(campaign.slug)}` : ""}`
       : campaign?.slug
       ? getCampaignDonateHref(campaign)
       : "/program");

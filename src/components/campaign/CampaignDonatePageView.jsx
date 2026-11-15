@@ -89,7 +89,10 @@ export async function CampaignDonatePageView({ slug, searchParams, enforceMode =
 
   if (isZakat) {
     const qParams = new URLSearchParams();
-    if (initialAmount) qParams.set("amount", String(initialAmount));
+    if (rawAmount && !isNaN(rawAmount) && rawAmount > 0) {
+      qParams.set("amount", String(rawAmount));
+    }
+    if (campaign?.slug) qParams.set("campaign", campaign.slug);
     if (sParams?.type && sParams.type !== "ZAKAT") qParams.set("type", sParams.type);
     const zakatQs = qParams.toString();
     redirect(`/zakat/bayar${zakatQs ? `?${zakatQs}` : ""}`);

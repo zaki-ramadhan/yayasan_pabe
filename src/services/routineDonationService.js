@@ -237,12 +237,12 @@ export async function updateDonorRoutineDonationStatus({ id, status, userEmail }
   }
 
   if (
-    userEmail &&
-    existing.donorEmail &&
-    existing.donorEmail.toLowerCase() !== userEmail.toLowerCase()
+    !userEmail ||
+    !existing.donorEmail ||
+    existing.donorEmail.trim().toLowerCase() !== String(userEmail).trim().toLowerCase()
   ) {
     const error = new Error("Akses tidak sah untuk mengubah data ini.");
-    error.statusCode = 403;
+    error.statusCode = userEmail ? 403 : 401;
     throw error;
   }
 

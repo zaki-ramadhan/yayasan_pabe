@@ -83,6 +83,7 @@ export async function getPendingInvoicesForUser({
   userName = "",
   userPhone = "",
   campaignId = null,
+  donationType = null,
   limit = 5,
 }) {
   const identityFilter = buildUserWhereClause(userEmail, userName, userPhone);
@@ -95,6 +96,7 @@ export async function getPendingInvoicesForUser({
     status: DONATION_STATUS.PENDING,
     ...identityFilter,
     ...(campaignId ? { campaignId } : {}),
+    ...(donationType ? { donationType } : {}),
   };
 
   try {

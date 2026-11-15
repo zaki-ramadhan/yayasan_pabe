@@ -5,8 +5,14 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/useToast";
 import { getStoredUser } from "@/services/authService";
-import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
 import { ZAKAT_TYPES } from "@/constants/zakatTypes";
+import { formatRupiah } from "@/lib/formatters";
+import { saveDonorInvoice } from "@/lib/donorStorage";
+import { safeFetch } from "@/lib/safeFetch";
+import {
+  useNominalSelection,
+  NOMINAL_PRESETS,
+} from "@/components/donation/useNominalSelection";
 import {
   generateIdempotencyKey,
   validateName,
@@ -15,10 +21,13 @@ import {
   sanitizePrayer,
 } from "@/lib/security";
 
+export { NOMINAL_PRESETS };
+
 export function useZakatCheckout({
   initialType = "ZAKAT_PENGHASILAN",
-  initialAmount = 250000,
+  initialAmount = 50000,
   targetCampaign = null,
+  isFromCalculator = false,
 } = {}) {
   const router = useRouter();
 
@@ -27,45 +36,55 @@ export function useZakatCheckout({
     return valid ? initialType : "ZAKAT_PENGHASILAN";
   });
 
-  const [amount, setAmount] = useState(() => {
-    const n = Number(initialAmount);
-    return !isNaN(n) && n >= 10000 ? n : 250000;
+  const [errors, setErrors] = useState({});
+
+  const normalizedInitialAmount =
+    !isNaN(Number(initialAmount)) && Number(initialAmount) >= 10000
+      ? Number(initialAmount)
+      : 50000;
+
+  const {
+    amount,
+    setAmount,
+    isCustomMode,
+    customAmountInput,
+    selectedChannelId,
+    setSelectedChannelId,
+    channelLimits,
+    selectedChannel,
+    adminFee,
+    totalPayment,
+    liveAmountError,
+    handlePresetClick,
+    handleCustomModeClick,
+    handleCustomInputChange,
+    handleCustomInputBlur,
+  } = useNominalSelection({
+    initialAmount: normalizedInitialAmount,
+    presets: NOMINAL_PRESETS,
+    isZakat: true,
+    isFromCalculator,
+    onClearAmountError: () => {
+      setErrors((prev) => {
+        if (!prev.amount) return prev;
+        const { amount: _stale, ...rest } = prev;
+        return rest;
+      });
+    },
   });
 
-  const [selectedChannelId, setSelectedChannelId] = useState("qris");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
-  const [muzakkiName, setMuzakkiName] = useState(() => {
-    if (typeof window !== "undefined") {
-      const u = getStoredUser();
-      return (u?.name && u.name !== "Pengguna Google" && u.name !== "Pengguna Facebook") ? u.name : "";
-    }
-    return "";
-  });
-  const [muzakkiPhone, setMuzakkiPhone] = useState(() => {
-    if (typeof window !== "undefined") {
-      const u = getStoredUser();
-      return (u?.phone && u.phone !== "-") ? u.phone : "";
-    }
-    return "";
-  });
-  const [muzakkiEmail, setMuzakkiEmail] = useState(() => {
-    if (typeof window !== "undefined") {
-      const u = getStoredUser();
-      return (u?.email && !u.email.endsWith("@google.user") && !u.email.endsWith("@facebook.user")) ? u.email : "";
-    }
-    return "";
-  });
-  const [isEmailLocked, setIsEmailLocked] = useState(() => {
-    if (typeof window !== "undefined") {
-      const u = getStoredUser();
-      return Boolean(u?.email && !u.email.endsWith("@google.user") && !u.email.endsWith("@facebook.user"));
-    }
-    return false;
-  });
+  const [muzakkiName, setMuzakkiName] = useState("");
+  const [muzakkiPhone, setMuzakkiPhone] = useState("");
+  const [muzakkiEmail, setMuzakkiEmail] = useState("");
+  const [isEmailLocked, setIsEmailLocked] = useState(false);
   const [muzakkiNpwp, setMuzakkiNpwp] = useState("");
   const [prayer, setPrayer] = useState("");
-  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [isCancellingOldInvoice, setIsCancellingOldInvoice] = useState(false);
   const [pendingInvoiceModal, setPendingInvoiceModal] = useState({
     isOpen: false,
     invoice: null,
@@ -73,13 +92,13 @@ export function useZakatCheckout({
 
   const isSubmittingRef = useRef(false);
 
-  // Verifikasi sesi login & sinkronisasi data profil muzakki
   useEffect(() => {
     const user = getStoredUser();
     if (!user) {
-      const currentUrl = typeof window !== "undefined"
-        ? window.location.pathname + window.location.search
-        : "/zakat/bayar";
+      const currentUrl =
+        typeof window !== "undefined"
+          ? window.location.pathname + window.location.search
+          : "/zakat/bayar";
       router.replace(
         `/login?redirect=${encodeURIComponent(currentUrl)}&reason=donation_requires_login`
       );
@@ -98,17 +117,18 @@ export function useZakatCheckout({
     }
   }, [router]);
 
-  const selectedChannel =
-    PAYMENT_CHANNELS.find((c) => c.id === selectedChannelId) || PAYMENT_CHANNELS[0];
-
   const currentZakat =
     ZAKAT_TYPES.find((t) => t.id === selectedTypeId) || ZAKAT_TYPES[0];
+
+  const amountError = liveAmountError || errors.amount || null;
 
   const validate = () => {
     const newErrors = {};
 
-    if (!amount || amount < 10000) {
-      newErrors.amount = "Nominal zakat minimal Rp 10.000.";
+    if (!amount || amount < channelLimits.minAmount) {
+      newErrors.amount = `Nominal zakat minimal ${formatRupiah(channelLimits.minAmount)}.`;
+    } else if (amount > channelLimits.maxAmount) {
+      newErrors.amount = `Nominal zakat maksimal ${channelLimits.label} adalah ${formatRupiah(channelLimits.maxAmount)}.`;
     }
 
     const nameVal = validateName(muzakkiName, false);
@@ -116,13 +136,11 @@ export function useZakatCheckout({
       newErrors.muzakkiName = nameVal.message || "Nama lengkap wajib diisi.";
     }
 
-    // Email wajib untuk pengiriman bukti setor zakat & invoice digital
     const emailVal = validateEmail(muzakkiEmail, true);
     if (!emailVal.isValid) {
       newErrors.muzakkiEmail = emailVal.message || "Alamat email aktif wajib diisi.";
     }
 
-    // Nomor telepon opsional
     if (muzakkiPhone && muzakkiPhone.trim()) {
       const phoneVal = validatePhone(muzakkiPhone, { isRequired: false });
       if (!phoneVal.isValid) {
@@ -131,7 +149,10 @@ export function useZakatCheckout({
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return {
+      isValid: Object.keys(newErrors).length === 0,
+      firstError: Object.values(newErrors)[0] || null,
+    };
   };
 
   const executePayment = async () => {
@@ -142,7 +163,6 @@ export function useZakatCheckout({
       const idempotencyKey = generateIdempotencyKey();
       const rawName = muzakkiName.trim();
 
-      // Susun catatan doa & NPWP jika ada
       let finalPrayer = sanitizePrayer(prayer || "");
       if (muzakkiNpwp && muzakkiNpwp.trim()) {
         const npwpNote = `[NPWP/NIK: ${muzakkiNpwp.trim()}]`;
@@ -151,7 +171,9 @@ export function useZakatCheckout({
 
       const payload = {
         campaignId: targetCampaign?.id || null,
-        campaignTitle: currentZakat.label,
+        campaignTitle: isFromCalculator
+          ? currentZakat.label
+          : targetCampaign?.title || currentZakat.label,
         campaignSlug: targetCampaign?.slug || "zakat",
         donationType: "ZAKAT",
         amount: Number(amount),
@@ -162,9 +184,10 @@ export function useZakatCheckout({
         isAnonymous: Boolean(isAnonymous),
         prayer: finalPrayer,
         idempotencyKey,
+        turnstileToken,
       };
 
-      const res = await fetch("/api/donations", {
+      const res = await safeFetch("/api/donations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -173,15 +196,33 @@ export function useZakatCheckout({
       const json = await res.json();
 
       if (!res.ok || !json.success) {
+        turnstileRef.current?.reset();
+        setTurnstileToken("");
         throw new Error(json.message || "Gagal membuat tagihan zakat.");
       }
 
+      const donation = json.data;
+      saveDonorInvoice({
+        invoiceId: donation.invoiceId,
+        token: donation.accessToken || "",
+        campaignSlug: targetCampaign?.slug || "zakat",
+        donorName: donation.donorName,
+        isAnonymous: Boolean(isAnonymous),
+        hasPrayer: Boolean(finalPrayer),
+      });
+
       toast.success("Tagihan zakat berhasil diterbitkan.");
-      router.push(`/invoice/${json.data.invoiceId}`);
+      const targetUrl = donation.accessToken
+        ? `/invoice/${donation.invoiceId}?token=${donation.accessToken}`
+        : `/invoice/${donation.invoiceId}`;
+      setIsRedirecting(true);
+      router.push(targetUrl);
     } catch (err) {
+      turnstileRef.current?.reset();
+      setTurnstileToken("");
       toast.error(err.message || "Terjadi kesalahan saat memproses zakat.");
-    } finally {
       setIsSubmitting(false);
+      setIsRedirecting(false);
       isSubmittingRef.current = false;
     }
   };
@@ -190,32 +231,52 @@ export function useZakatCheckout({
     if (e && typeof e.preventDefault === "function") {
       e.preventDefault();
     }
-    if (isSubmitting || isSubmittingRef.current) return;
+    if (isSubmitting || isRedirecting || isSubmittingRef.current) return;
 
-    if (!validate()) {
-      toast.error("Harap lengkapi formulir zakat dengan benar.");
+    const { isValid, firstError } = validate();
+    if (!isValid) {
+      toast.error(firstError || "Harap lengkapi formulir zakat dengan benar.");
       return;
     }
 
-    // Cek apakah ada invoice aktif yang belum dibayar
+    if (!turnstileToken) {
+      toast.error("Verifikasi keamanan Turnstile wajib diselesaikan.");
+      return;
+    }
+
     try {
+      isSubmittingRef.current = true;
+      setIsSubmitting(true);
       const emailQuery = muzakkiEmail.trim();
       const phoneQuery = muzakkiPhone.trim();
       if (emailQuery || phoneQuery) {
-        const checkRes = await fetch(
-          `/api/user/donations?mode=pending&email=${encodeURIComponent(emailQuery)}&phone=${encodeURIComponent(phoneQuery)}`
+        const campaignParam = targetCampaign?.id
+          ? `&campaignId=${encodeURIComponent(targetCampaign.id)}`
+          : "";
+        const checkRes = await safeFetch(
+          `/api/user/donations?mode=pending&type=ZAKAT&email=${encodeURIComponent(emailQuery)}&phone=${encodeURIComponent(phoneQuery)}${campaignParam}`
         );
         const checkJson = await checkRes.json();
-        if (checkRes.ok && checkJson.success && Array.isArray(checkJson.data) && checkJson.data.length > 0) {
+        if (
+          checkRes.ok &&
+          checkJson.success &&
+          Array.isArray(checkJson.data) &&
+          checkJson.data.length > 0
+        ) {
           setPendingInvoiceModal({
             isOpen: true,
             invoice: checkJson.data[0],
           });
+          isSubmittingRef.current = false;
+          setIsSubmitting(false);
           return;
         }
       }
     } catch {
       // Jika cek tagihan gagal, lanjutkan transaksi baru
+    } finally {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
     }
 
     await executePayment();
@@ -225,13 +286,19 @@ export function useZakatCheckout({
     if (!pendingInvoiceModal.invoice) return;
     const inv = pendingInvoiceModal.invoice;
     setPendingInvoiceModal({ isOpen: false, invoice: null });
-    router.push(`/invoice/${inv.invoiceId}`);
+    setIsRedirecting(true);
+    setIsSubmitting(true);
+    const targetUrl = inv.accessToken
+      ? `/invoice/${inv.invoiceId}?token=${inv.accessToken}`
+      : `/invoice/${inv.invoiceId}`;
+    router.push(targetUrl);
   };
 
   const handleCreateNewAfterCancel = async () => {
-    if (!pendingInvoiceModal.invoice) return;
+    if (!pendingInvoiceModal.invoice || isCancellingOldInvoice) return;
     try {
-      await fetch("/api/user/donations", {
+      setIsCancellingOldInvoice(true);
+      await safeFetch("/api/user/donations", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -239,11 +306,13 @@ export function useZakatCheckout({
           action: "cancel",
         }),
       });
+      setPendingInvoiceModal({ isOpen: false, invoice: null });
+      await executePayment();
     } catch {
-      // Abaikan jika pembatalan invoice lama gagal
+      toast.error("Gagal membatalkan tagihan lama. Silakan coba lagi.");
+    } finally {
+      setIsCancellingOldInvoice(false);
     }
-    setPendingInvoiceModal({ isOpen: false, invoice: null });
-    await executePayment();
   };
 
   return {
@@ -251,9 +320,19 @@ export function useZakatCheckout({
     setSelectedTypeId,
     amount,
     setAmount,
+    isCustomMode,
+    customAmountInput,
+    channelLimits,
+    amountError,
+    handlePresetClick,
+    handleCustomModeClick,
+    handleCustomInputChange,
+    handleCustomInputBlur,
     selectedChannelId,
     setSelectedChannelId,
     selectedChannel,
+    adminFee,
+    totalPayment,
     isAnonymous,
     setIsAnonymous,
     muzakkiName,
@@ -270,11 +349,15 @@ export function useZakatCheckout({
     errors,
     setErrors,
     isSubmitting,
+    isRedirecting,
+    isCancellingOldInvoice,
     handleSubmit,
     pendingInvoiceModal,
     setPendingInvoiceModal,
     handleContinueExisting,
     handleCreateNewAfterCancel,
+    turnstileToken,
+    setTurnstileToken,
+    turnstileRef,
   };
 }
-

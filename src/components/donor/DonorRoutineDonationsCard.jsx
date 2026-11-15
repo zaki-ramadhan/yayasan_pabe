@@ -115,6 +115,7 @@ export function DonorRoutineDonationsCard({
                         onClick={() => handleUpdateStatus(item.id, "PAUSED")}
                         disabled={isProcessing}
                         isLoading={isProcessing}
+                        loadingText="Menjeda..."
                         className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:via-amber-500 hover:to-amber-600 border-t border-t-amber-300 border-x border-x-amber-600 border-b-2 border-b-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(217,119,6,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
                       >
                         {!isProcessing && <Pause className="w-3 h-3 text-white fill-current" />}
@@ -127,6 +128,7 @@ export function DonorRoutineDonationsCard({
                         onClick={() => handleUpdateStatus(item.id, "ACTIVE")}
                         disabled={isProcessing}
                         isLoading={isProcessing}
+                        loadingText="Mengaktifkan..."
                         className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-emerald-600 via-emerald-700 to-emerald-800 hover:from-emerald-500 hover:via-emerald-600 hover:to-emerald-700 border-t border-t-emerald-400 border-x border-x-emerald-600 border-b-2 border-b-emerald-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(5,150,105,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
                       >
                         {!isProcessing && <Play className="w-3 h-3 text-white fill-current" />}

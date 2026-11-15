@@ -20,12 +20,12 @@ export default function KetentuanTransaksiLoading() {
           <Skeleton className="h-6 w-64 rounded" />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
-            {/* Card 0: Blue Themed */}
-            <div className="p-4 sm:p-5 rounded-lg border border-blue-900/60 bg-blue-950/80 space-y-2 shadow-xs">
-              <Skeleton className="h-5 w-40 bg-blue-800/80 rounded" />
+            {/* Card 0: Dark Slate Card */}
+            <div className="p-4 sm:p-5 rounded-lg border border-slate-800 bg-slate-900 space-y-2 shadow-xs">
+              <Skeleton className="h-5 w-40 bg-slate-700/80 rounded" />
               <div className="space-y-1.5 pt-0.5">
-                <Skeleton className="h-3.5 w-full bg-blue-900/60 rounded" />
-                <Skeleton className="h-3.5 w-5/6 bg-blue-900/60 rounded" />
+                <Skeleton className="h-3.5 w-full bg-slate-800/80 rounded" />
+                <Skeleton className="h-3.5 w-5/6 bg-slate-800/80 rounded" />
               </div>
             </div>
 

@@ -144,6 +144,7 @@ export async function getDonorDashboardOverview({ userEmail, userName, userPhone
         select: {
           id: true,
           invoiceId: true,
+          accessToken: true,
           amount: true,
           paidAt: true,
           createdAt: true,

@@ -95,6 +95,7 @@ export function FinancialCategoryBarChart({ data = [], categories = [] }) {
                     width={70}
                   />
                   <Tooltip
+                    wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
                     cursor={{ fill: "rgba(241, 245, 249, 0.5)" }}
                     content={<ChartTooltipCard formatter={formatRupiah} />}
                   />

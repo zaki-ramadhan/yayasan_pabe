@@ -42,8 +42,8 @@ export function PartnerLogo({ partner }) {
         <Image
           src={partner.logo}
           alt={partner.name}
-          width={240}
-          height={56}
+          width={280}
+          height={112}
           sizes="(max-width: 640px) 140px, 240px"
           style={{ width: "auto" }}
           className={`${getLogoSizeClass(partner.id)} object-contain select-none pointer-events-none`}

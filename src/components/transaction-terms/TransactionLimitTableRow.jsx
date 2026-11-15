@@ -23,9 +23,9 @@ export function TransactionLimitTableRow({ item }) {
               <Image
                 src={item.logo}
                 alt={item.name}
-                width={64}
-                height={24}
-                className="max-h-6 w-auto max-w-full object-contain select-none pointer-events-none"
+                width={128}
+                height={48}
+                className="h-auto w-auto max-h-6 max-w-full object-contain select-none pointer-events-none"
               />
             </div>
           )}

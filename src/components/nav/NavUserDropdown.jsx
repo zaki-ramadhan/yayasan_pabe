@@ -12,15 +12,16 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
 import { Button } from "@/components/ui/Button";
+import { NavLoginButton } from "./NavLoginButton";
 import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
 import { cn } from "@/lib/utils";
 
-export function NavUserDropdown({ currentUser, onLogout }) {
+export function NavUserDropdown({ currentUser, onLogout, pathname }) {
   const [isOpen, setIsOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
 
   const avatarUrl = !imgError
-    ? (currentUser?.customAvatar || currentUser?.avatar || currentUser?.providerAvatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
+    ? (currentUser?.avatar || currentUser?.customAvatar || currentUser?.providerAvatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
     : null;
 
   const fallbackInitial =
@@ -28,18 +29,7 @@ export function NavUserDropdown({ currentUser, onLogout }) {
     (currentUser?.name ? currentUser.name.trim().charAt(0).toUpperCase() : "U");
 
   if (!currentUser) {
-    return (
-      <Link href="/login">
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-8.5 px-3 py-1 rounded-lg text-xs sm:text-sm font-medium border-slate-300 text-slate-800 bg-white hover:bg-slate-50 hover:border-slate-400 cursor-pointer flex items-center gap-1.5 shadow-2xs"
-        >
-          <User className="w-3.5 h-3.5 text-slate-600" />
-          <span>Masuk / Login</span>
-        </Button>
-      </Link>
-    );
+    return <NavLoginButton pathname={pathname} />;
   }
 
   const isDonor = currentUser.role === USER_ROLES.DONOR;

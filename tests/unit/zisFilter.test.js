@@ -23,15 +23,7 @@ describe("zisFilter SSOT helpers", () => {
 
     const campaignWhere = buildDonationTypeWhere(TRANSACTION_TABS.CAMPAIGN);
     expect(campaignWhere).toEqual({
-      AND: [
-        { donationType: { notIn: ["ZAKAT", "INFAK_SUBUH"] } },
-        {
-          OR: [
-            { campaignId: null },
-            { campaign: { NOT: ZIS_CAMPAIGN_WHERE } },
-          ],
-        },
-      ],
+      NOT: ZIS_DONATION_WHERE,
     });
   });
 

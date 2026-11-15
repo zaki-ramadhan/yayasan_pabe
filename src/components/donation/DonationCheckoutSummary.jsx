@@ -95,7 +95,7 @@ export function DonationCheckoutSummary({
 
           <Button
             type="submit"
-            isLoading={isSubmitting || isRedirecting}
+            isLoading={isSubmitting || isRedirecting || !turnstileToken}
             disabled={
               isSubmitting ||
               isRedirecting ||
@@ -110,7 +110,9 @@ export function DonationCheckoutSummary({
             {isRedirecting
               ? "Mengalihkan ke pembayaran..."
               : isSubmitting
-              ? (isZakat ? "Memproses pembayaran..." : "Memproses pembayaran...")
+              ? "Memproses pembayaran..."
+              : !turnstileToken
+              ? "Mohon tunggu..."
               : "Lanjutkan Pembayaran"}
           </Button>
         </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Camera, MapPin, Phone } from "lucide-react";
+import { Camera } from "lucide-react";
 import { formatDate, getInitials } from "@/lib/formatters";
 import { DonorProfileBannerCanvas } from "@/components/donor/DonorProfileBannerCanvas";
 import { DonorAvatarDialog } from "@/components/donor/DonorAvatarDialog";
@@ -60,7 +60,7 @@ export function DonorProfileCover({
               </button>
             </div>
 
-            <div className="text-center sm:text-left space-y-1.5 pt-1 sm:pt-2">
+            <div className="text-center sm:text-left space-y-1.5 pt-3 sm:pt-4">
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                 <h2 className="text-lg sm:text-xl font-medium text-slate-950 tracking-tight">
                   {displayName}
@@ -76,23 +76,6 @@ export function DonorProfileCover({
               <p className="text-sm font-normal text-slate-500">
                 Bergabung {formatDate(profile?.createdAt, { month: "long" })}
               </p>
-
-              {(profile?.phone || profile?.city) && (
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 pt-1 text-sm font-normal text-slate-500">
-                  {profile?.phone && (
-                    <div className="flex items-center gap-1.5">
-                      <Phone className="w-4 h-4 text-slate-400" />
-                      <span>{profile.phone}</span>
-                    </div>
-                  )}
-                  {profile?.city && (
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="w-4 h-4 text-slate-400" />
-                      <span>{profile.city}</span>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -110,6 +93,8 @@ export function DonorProfileCover({
           onOpenChange={setIsAvatarModalOpen}
           currentAvatar={profile?.avatar || ""}
           customAvatar={profile?.customAvatar || ""}
+          provider={profile?.provider || ""}
+          providerAvatar={profile?.providerAvatar || ""}
           onSaveAvatar={({ avatar, customAvatar }) =>
             onUpdateImage({ avatar, customAvatar })
           }

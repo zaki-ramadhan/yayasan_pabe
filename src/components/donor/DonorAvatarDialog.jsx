@@ -28,6 +28,8 @@ export function DonorAvatarDialog({
   onOpenChange,
   currentAvatar = "",
   customAvatar = "",
+  provider = "",
+  providerAvatar = "",
   onSaveAvatar,
   isUpdating = false,
 }) {
@@ -37,7 +39,9 @@ export function DonorAvatarDialog({
     url === ASSET_PATHS.AVATARS.FEMALE;
 
   const initialCustomAvatar =
-    customAvatar || (currentAvatar && !isPreset(currentAvatar) ? currentAvatar : "");
+    customAvatar ||
+    providerAvatar ||
+    (currentAvatar && !isPreset(currentAvatar) ? currentAvatar : "");
 
   const [selectedAvatar, setSelectedAvatar] = useState(
     currentAvatar || initialCustomAvatar || USER_AVATAR_PRESETS[0] || ""
@@ -139,10 +143,11 @@ export function DonorAvatarDialog({
             </span>
           </div>
 
-          {/* 4. Unggah Foto dari Perangkat */}
+          {/* 4. Unggah Foto dari Perangkat / Akun */}
           <DonorAvatarCustomSlot
             customAvatar={stagedCustomAvatar}
             isActive={Boolean(stagedCustomAvatar && selectedAvatar === stagedCustomAvatar)}
+            provider={provider}
             onSelect={handleCustomSelect}
             onUploadSuccess={handleCustomUploadSuccess}
             onRemove={handleCustomRemove}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { LogOut, LayoutGrid, Globe } from "lucide-react";
 import { logoutUser } from "@/services/authService";
 import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
@@ -64,10 +64,20 @@ export function DonorSidebarNav({
     },
   ];
 
+  const mainActiveIndex = mainNavItems.findIndex(
+    (item) =>
+      pathname === item.href ||
+      (item.href === "/donatur/dashboard" && pathname === "/donatur")
+  );
+
+  const publicActiveIndex = publicNavItems.findIndex((item) =>
+    item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
+  );
+
   return (
     <div className="h-full flex flex-col justify-between bg-sidebar border-r border-slate-200 overflow-hidden transition-all duration-200 select-none">
       {/* Top Section */}
-      <div className={cn("space-y-6", isCollapsed ? "p-2.5" : "p-4")}>
+      <div className={cn("space-y-3", isCollapsed ? "p-2.5" : "p-3")}>
         {/* Brand Header */}
         <div className="flex items-center pb-3 border-b border-slate-200">
           <Link
@@ -102,77 +112,141 @@ export function DonorSidebarNav({
         </div>
 
         {/* Main Navigation */}
-        <div className="space-y-1.5">
-          {!isCollapsed && (
-            <p className="px-3 text-xs font-normal text-slate-500 uppercase tracking-wider truncate">
-              Menu utama
-            </p>
-          )}
-          <nav className="space-y-0.5">
-            {mainNavItems.map((item) => {
-              const isActive =
-                pathname === item.href ||
-                (item.href === "/donatur/dashboard" && pathname === "/donatur");
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onCloseMobile}
+        <div>
+          {isCollapsed ? (
+            <>
+              <div className="flex justify-center py-1 text-slate-400" title="Menu utama">
+                <LayoutGrid className="w-4 h-4 shrink-0" />
+              </div>
+              <nav className="space-y-0.5 mt-1">
+                {mainNavItems.map((item) => {
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href === "/donatur/dashboard" && pathname === "/donatur");
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={onCloseMobile}
+                      className={cn(
+                        "flex items-center rounded-md text-sm transition-all font-normal justify-center p-2 text-xs",
+                        isActive
+                          ? "text-slate-950 bg-slate-200/80 shadow-2xs"
+                          : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                      )}
+                    >
+                      <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 px-3 py-1.5 text-sm select-none">
+                <LayoutGrid
                   className={cn(
-                    "flex items-center rounded-md text-sm transition-all font-normal",
-                    isCollapsed ? "justify-center p-2 text-xs" : "px-3 py-2",
-                    isActive
-                      ? "text-slate-950 bg-slate-200/80 shadow-2xs"
-                      : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                    "w-4 h-4 shrink-0 transition-colors",
+                    mainActiveIndex !== -1 ? "text-slate-950" : "text-slate-500"
                   )}
-                >
-                  {isCollapsed ? (
-                    <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
-                  ) : (
-                    <span className="flex-1 truncate whitespace-nowrap font-normal">
-                      {item.label}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
+                />
+                <span className="truncate font-normal text-slate-900">
+                  Menu utama
+                </span>
+              </div>
+              <nav className="space-y-0.5 mt-0.5">
+                {mainNavItems.map((item) => {
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href === "/donatur/dashboard" && pathname === "/donatur");
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={onCloseMobile}
+                      className={cn(
+                        "flex items-center rounded-md text-sm transition-all font-normal px-3 py-2",
+                        isActive
+                          ? "text-slate-950 bg-slate-200/80 shadow-2xs"
+                          : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                      )}
+                    >
+                      <span className="flex-1 truncate whitespace-nowrap">
+                        {item.label}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </>
+          )}
         </div>
 
         {/* Website Utama Navigation */}
-        <div className="space-y-1.5">
-          {!isCollapsed && (
-            <p className="px-3 text-xs font-normal text-slate-500 uppercase tracking-wider truncate">
-              Website utama
-            </p>
-          )}
-          <nav className="space-y-0.5">
-            {publicNavItems.map((item) => {
-              const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={onCloseMobile}
+        <div className="pt-3 border-t border-dashed border-slate-200">
+          {isCollapsed ? (
+            <>
+              <div className="flex justify-center py-1 text-slate-400" title="Website utama">
+                <Globe className="w-4 h-4 shrink-0" />
+              </div>
+              <nav className="space-y-0.5 mt-1">
+                {publicNavItems.map((item) => {
+                  const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={onCloseMobile}
+                      className={cn(
+                        "flex items-center rounded-md text-sm transition-all font-normal justify-center p-2 text-xs",
+                        isActive
+                          ? "text-slate-950 bg-slate-200/80 shadow-2xs"
+                          : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                      )}
+                    >
+                      <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 px-3 py-1.5 text-sm select-none">
+                <Globe
                   className={cn(
-                    "flex items-center rounded-md text-sm transition-all font-normal",
-                    isCollapsed ? "justify-center p-2 text-xs" : "px-3 py-2",
-                    isActive
-                      ? "text-slate-950 bg-slate-200/80 shadow-2xs"
-                      : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                    "w-4 h-4 shrink-0 transition-colors",
+                    publicActiveIndex !== -1 ? "text-slate-950" : "text-slate-500"
                   )}
-                >
-                  {isCollapsed ? (
-                    <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
-                  ) : (
-                    <span className="flex-1 truncate whitespace-nowrap font-normal">
-                      {item.label}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
+                />
+                <span className="truncate font-normal text-slate-900">
+                  Website utama
+                </span>
+              </div>
+              <nav className="space-y-0.5 mt-0.5">
+                {publicNavItems.map((item) => {
+                  const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={onCloseMobile}
+                      className={cn(
+                        "flex items-center rounded-md text-sm transition-all font-normal px-3 py-2",
+                        isActive
+                          ? "text-slate-950 bg-slate-200/80 shadow-2xs"
+                          : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                      )}
+                    >
+                      <span className="flex-1 truncate whitespace-nowrap">
+                        {item.label}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </>
+          )}
         </div>
       </div>
 

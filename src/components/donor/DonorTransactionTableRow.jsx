@@ -7,14 +7,12 @@ import { TableRow, TableCell } from "@/components/ui/Table";
 import { StatusBadge } from "@/components/ui/Badge";
 import {
   isZisTransaction,
-  getTransactionTypeLabel,
   getCampaignDetailHref,
   getCampaignDonateHref,
 } from "@/lib/zisFilter";
 
-export function DonorTransactionTableRow({ item }) {
+export function DonorTransactionTableRow({ item, showTypeColumn = false }) {
   const isZis = isZisTransaction(item);
-  const badgeLabel = getTransactionTypeLabel(item);
   const isRetryableStatus =
     item.status === "EXPIRED" ||
     item.status === "CANCELLED" ||
@@ -41,35 +39,38 @@ export function DonorTransactionTableRow({ item }) {
       <TableCell className="font-normal text-slate-800 align-middle max-w-[180px]">
         <span className="truncate block">{item.donorName}</span>
       </TableCell>
+      {showTypeColumn && (
+        <TableCell className="text-center whitespace-nowrap align-middle">
+          <span
+            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${
+              isZis
+                ? "bg-slate-100 text-slate-700 border-slate-200"
+                : "bg-slate-50 text-slate-600 border-slate-200"
+            }`}
+          >
+            {isZis ? "Zakat" : "Donasi"}
+          </span>
+        </TableCell>
+      )}
       <TableCell className="text-right font-medium text-sm text-emerald-800 align-middle tabular-nums whitespace-nowrap min-w-[125px]">
         {formatRupiah(item.amount)}
       </TableCell>
       <TableCell className="text-slate-900 min-w-[210px] max-w-xs align-middle">
-        <div className="flex items-center gap-2 min-w-0">
-          {isZis && (
-            <span
-              title={badgeLabel}
-              className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/80 shrink-0 whitespace-nowrap"
-            >
-              {badgeLabel}
-            </span>
-          )}
-          {item.campaignSlug ? (
-            <Link
-              href={getCampaignDetailHref({
-                slug: item.campaignSlug,
-                categorySlug: item.categorySlug,
-                categoryName: item.categoryName,
-                category: item.campaign?.category || (isZis ? "ZIS" : ""),
-              })}
-              className="font-medium text-slate-900 hover:text-primary transition-colors line-clamp-1"
-            >
-              {item.programTitle}
-            </Link>
-          ) : (
-            <span className="font-medium text-slate-900 line-clamp-1">{item.programTitle}</span>
-          )}
-        </div>
+        {item.campaignSlug ? (
+          <Link
+            href={getCampaignDetailHref({
+              slug: item.campaignSlug,
+              categorySlug: item.categorySlug,
+              categoryName: item.categoryName,
+              category: item.campaign?.category || (isZis ? "ZIS" : ""),
+            })}
+            className="font-medium text-slate-900 hover:text-primary transition-colors line-clamp-1"
+          >
+            {item.programTitle}
+          </Link>
+        ) : (
+          <span className="font-medium text-slate-900 line-clamp-1">{item.programTitle}</span>
+        )}
       </TableCell>
       <TableCell className="text-center whitespace-nowrap align-middle min-w-[160px]">
         <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 whitespace-nowrap">
@@ -109,14 +110,14 @@ export function DonorTransactionTableRow({ item }) {
           )
         ) : item.status === "PENDING" ? (
           <Link
-            href={`/invoice/${item.invoiceId}`}
+            href={`/invoice/${item.invoiceId}${item.accessToken ? `?token=${encodeURIComponent(item.accessToken)}` : ""}`}
             className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
           >
             Bayar
           </Link>
         ) : (
           <Link
-            href={`/invoice/${item.invoiceId}`}
+            href={`/invoice/${item.invoiceId}${item.accessToken ? `?token=${encodeURIComponent(item.accessToken)}` : ""}`}
             target="_blank"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
             aria-label="Cek kuitansi pembayaran resmi"

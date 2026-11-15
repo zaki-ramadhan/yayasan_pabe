@@ -147,4 +147,102 @@ describe("Donor History Service - Chronological Sorting Audit", () => {
     expect(result.items[2].canDonateAgain).toBe(true);
     expect(result.items[2].isCampaignClosed).toBe(false);
   });
+
+  it("menerapkan query status in [EXPIRED, CANCELLED, FAILED] saat filter status FAILED dipilih", async () => {
+    prisma.donation.aggregate.mockResolvedValue({
+      _sum: { amount: 0 },
+      _count: { id: 0 },
+    });
+
+    let capturedWhere = null;
+    prisma.donation.findMany.mockImplementation(async (query) => {
+      if (query.distinct) return [];
+      capturedWhere = query.where;
+      return [];
+    });
+
+    prisma.donation.count.mockResolvedValueOnce(0);
+
+    await getDonorHistory({
+      userEmail: "budi@example.com",
+      userName: "Budi",
+      status: "FAILED",
+    });
+
+    expect(capturedWhere.AND).toContainEqual({
+      status: {
+        in: ["EXPIRED", "CANCELLED", "FAILED"],
+      },
+    });
+  });
+
+  it("menjaga kondisi identitas donatur pada zakatAggregates dan campaignAggregates tanpa collision object spread", async () => {
+    const aggregateCalls = [];
+    prisma.donation.aggregate.mockImplementation(async (query) => {
+      aggregateCalls.push(query);
+      if (aggregateCalls.length === 1) {
+        // aggregates (ALL)
+        return { _sum: { amount: 7175000 }, _count: { id: 5 } };
+      }
+      if (aggregateCalls.length === 2) {
+        // zakatAggregates
+        return { _sum: { amount: 250000 }, _count: { id: 1 } };
+      }
+      // campaignAggregates
+      return { _sum: { amount: 6925000 }, _count: { id: 4 } };
+    });
+
+    prisma.donation.findMany.mockImplementation(async (query) => {
+      if (query.distinct) {
+        return [
+          { campaignId: "camp-zakat", donationType: "CAMPAIGN", campaign: { slug: "zakat-maal", category: { slug: "zakat" } } },
+          { campaignId: "camp-1", donationType: "CAMPAIGN", campaign: { slug: "camp-1", category: { slug: "pendidikan" } } },
+          { campaignId: "camp-2", donationType: "CAMPAIGN", campaign: { slug: "camp-2", category: { slug: "yatim" } } },
+          { campaignId: "camp-3", donationType: "CAMPAIGN", campaign: { slug: "camp-3", category: { slug: "bencana" } } },
+          { campaignId: "camp-4", donationType: "CAMPAIGN", campaign: { slug: "camp-4", category: { slug: "kesehatan" } } },
+        ];
+      }
+      return [];
+    });
+
+    prisma.donation.count.mockResolvedValueOnce(0);
+
+    const result = await getDonorHistory({
+      userEmail: "zaki@example.com",
+      userName: "Zaki Ramadhan",
+    });
+
+    expect(aggregateCalls.length).toBe(3);
+
+    // Call 1: basePaidWhere harus membungkus userCondition dalam AND
+    expect(aggregateCalls[0].where.status).toBe("PAID");
+    expect(aggregateCalls[0].where.AND).toEqual([{ donorEmail: "zaki@example.com" }]);
+
+    // Call 2: zakatAggregates harus menggunakan AND agar OR userCondition tidak ter-overwrite
+    expect(aggregateCalls[1].where.AND).toBeDefined();
+    expect(aggregateCalls[1].where.AND[0]).toEqual({
+      status: "PAID",
+      AND: [{ donorEmail: "zaki@example.com" }],
+    });
+
+    // Call 3: campaignAggregates harus menggunakan AND
+    expect(aggregateCalls[2].where.AND).toBeDefined();
+    expect(aggregateCalls[2].where.AND[0]).toEqual({
+      status: "PAID",
+      AND: [{ donorEmail: "zaki@example.com" }],
+    });
+
+    // Validasi metrik mode ALL, ZIS, dan CAMPAIGN
+    expect(result.metrics.totalNominal).toBe(7175000);
+    expect(result.metrics.totalTransactions).toBe(5);
+    expect(result.metrics.totalPrograms).toBe(5);
+
+    expect(result.metrics.totalZakatNominal).toBe(250000);
+    expect(result.metrics.totalZakatTransactions).toBe(1);
+    expect(result.metrics.totalZakatPrograms).toBe(1);
+
+    expect(result.metrics.totalCampaignNominal).toBe(6925000);
+    expect(result.metrics.totalCampaignTransactions).toBe(4);
+    expect(result.metrics.totalCampaignPrograms).toBe(4);
+  });
 });

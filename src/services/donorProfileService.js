@@ -445,6 +445,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
 
   return {
     success: true,
-    message: "Permohonan hak penghapusan data pribadi (UU PDP) berhasil diproses. Seluruh data identitas Anda telah disamarkan secara permanen.",
+    message: "Akun Anda berhasil dihapus.",
   };
 }

@@ -3,18 +3,28 @@
 import { Button } from "@/components/ui/Button";
 import { formatRupiah } from "@/lib/formatters";
 import { ZAKAT_TYPES } from "@/constants/zakatTypes";
-import { Loader2 } from "lucide-react";
+import { TurnstileWidget } from "@/components/shared/TurnstileWidget";
 
 export function ZakatPaymentSummaryCard({
   selectedTypeId,
   amount,
   selectedChannel,
   isSubmitting,
+  isRedirecting = false,
   onSubmit,
+  turnstileToken,
+  setTurnstileToken,
+  turnstileRef,
 }) {
   const currentZakat = ZAKAT_TYPES.find((t) => t.id === selectedTypeId) || ZAKAT_TYPES[0];
   const safeAmount = Number(amount) || 0;
-  const isReady = safeAmount >= 10000 && !isSubmitting;
+  const requiresTurnstile = typeof setTurnstileToken === "function";
+  const isVerifyingTurnstile = requiresTurnstile && !turnstileToken;
+  const isReady =
+    safeAmount >= 10000 &&
+    !isSubmitting &&
+    !isRedirecting &&
+    !isVerifyingTurnstile;
 
   return (
     <div className="bg-white p-5 sm:p-6 rounded-xl space-y-4 shadow-xs border border-slate-300">
@@ -57,25 +67,35 @@ export function ZakatPaymentSummaryCard({
         </div>
       </div>
 
-      <div className="pt-1">
+      <div className="space-y-2.5 pt-1">
+        {requiresTurnstile && (
+          <TurnstileWidget
+            ref={turnstileRef}
+            action="donation"
+            invisible
+            onSuccess={(t) => setTurnstileToken?.(t)}
+            onError={() => setTurnstileToken?.("")}
+            onExpire={() => setTurnstileToken?.("")}
+          />
+        )}
+
         <Button
           type="button"
           onClick={onSubmit}
+          isLoading={isSubmitting || isRedirecting || isVerifyingTurnstile}
           disabled={!isReady}
           variant="primary3d"
           className="w-full h-12 rounded-lg text-base disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
         >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Memproses pembayaran...
-            </span>
-          ) : (
-            "Lanjutkan Pembayaran"
-          )}
+          {isRedirecting
+            ? "Mengalihkan ke pembayaran..."
+            : isSubmitting
+            ? "Memproses pembayaran..."
+            : isVerifyingTurnstile
+            ? "Mohon tunggu..."
+            : "Lanjutkan Pembayaran"}
         </Button>
       </div>
     </div>
   );
 }
-

@@ -69,6 +69,7 @@ export function formatRecentDonations(recentDonationsData) {
       id: d.id,
       no: index + 1,
       invoiceId: d.invoiceId,
+      accessToken: d.accessToken || "",
       donorName: d.isAnonymous ? "Hamba Allah" : d.donorName,
       amount: d.amount,
       programTitle: effectiveProgramTitle,

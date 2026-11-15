@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
 import { usePersistentCooldown } from "@/hooks/usePersistentCooldown";
@@ -81,13 +82,16 @@ export function AccountNotActivatedAlert({ email, onClear }) {
           type="button"
           onClick={handleResend}
           disabled={isResending || cooldown > 0}
-          className="text-xs font-semibold text-primary hover:text-primary-hover hover:underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary-hover hover:underline cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isResending
-            ? "Mengirimkan ulang..."
-            : cooldown > 0
-            ? `Kirim ulang aktivasi (${cooldown}s)`
-            : "Kirim ulang email aktivasi"}
+          {isResending && <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />}
+          <span>
+            {isResending
+              ? "Mengirimkan ulang..."
+              : cooldown > 0
+              ? `Kirim ulang aktivasi (${cooldown}s)`
+              : "Kirim ulang email aktivasi"}
+          </span>
         </button>
       </div>
     </div>

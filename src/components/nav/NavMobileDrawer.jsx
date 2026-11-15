@@ -117,6 +117,7 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 
       {/* Mobile Auth Button & Profile */}
       <NavMobileUserSection
+        pathname={pathname}
         currentUser={currentUser}
         onClose={onClose}
         onLogout={onLogout}

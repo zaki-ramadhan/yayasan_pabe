@@ -12,7 +12,9 @@ export function CampaignStickyMobileBar({ campaign }) {
     campaign?.category?.slug === "zakat" ||
     campaign?.categoryName?.toLowerCase().includes("zakat") ||
     campaign?.categoryName?.toLowerCase().includes("ziswaf");
-  const donateHref = isZakat ? "/zakat/bayar" : getCampaignDonateHref(campaign);
+  const donateHref = isZakat
+    ? `/zakat/bayar${campaign?.slug ? `?campaign=${encodeURIComponent(campaign.slug)}` : ""}`
+    : getCampaignDonateHref(campaign);
   const ctaLabel = isZakat ? "Tunaikan Zakat" : "Donasi Sekarang";
 
   return (

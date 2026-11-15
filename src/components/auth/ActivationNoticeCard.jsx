@@ -107,6 +107,7 @@ export function ActivationNoticeCard() {
           type="button"
           variant="outline"
           onClick={handleResend}
+          isLoading={isResending}
           disabled={!email || isResending || cooldown > 0}
           className="w-full h-10 text-sm font-medium border-slate-300 text-slate-700 hover:bg-slate-50 cursor-pointer disabled:opacity-50"
         >

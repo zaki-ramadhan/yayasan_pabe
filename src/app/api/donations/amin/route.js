@@ -21,13 +21,29 @@ export async function POST(request) {
       );
     }
 
-    const delta = action === "decrement" ? -1 : 1;
+    const isDecrement = action === "decrement";
 
     try {
+      const existing = await prisma.donation.findUnique({
+        where: { id: donationId },
+        select: { id: true, aminCount: true },
+      });
+
+      if (!existing) {
+        return NextResponse.json(
+          { success: false, message: "Doa donasi tidak ditemukan." },
+          { status: 404 }
+        );
+      }
+
+      const nextCount = isDecrement
+        ? Math.max(0, Number(existing.aminCount || 0) - 1)
+        : Math.max(0, Number(existing.aminCount || 0) + 1);
+
       const updated = await prisma.donation.update({
         where: { id: donationId },
         data: {
-          aminCount: { increment: delta },
+          aminCount: nextCount,
         },
         select: {
           id: true,

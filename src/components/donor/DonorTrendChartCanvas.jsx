@@ -109,6 +109,7 @@ export function DonorTrendChartCanvas({ data = [], isChartEmpty = false }) {
           {!isEmpty && (
             <RechartsTooltip
               formatter={(value) => [formatRupiah(value), "Nominal Donasi"]}
+              wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
               contentStyle={{
                 backgroundColor: "#ffffff",
                 borderColor: "#cbd5e1",

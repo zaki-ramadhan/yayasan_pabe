@@ -43,6 +43,7 @@ const Button = React.forwardRef(
       variant,
       size,
       isLoading = false,
+      loadingText,
       disabled,
       children,
       asChild = false,
@@ -78,7 +79,7 @@ const Button = React.forwardRef(
         {...props}
       >
         {isLoading && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
-        {children}
+        {isLoading && loadingText ? <span>{loadingText}</span> : children}
       </button>
     );
   }

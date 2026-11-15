@@ -19,6 +19,7 @@ export function DistributionAuditDonutChart({ allocations = [] }) {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Tooltip
+              wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;
@@ -60,7 +61,7 @@ export function DistributionAuditDonutChart({ allocations = [] }) {
         </ResponsiveContainer>
 
         {/* Center Donut Label */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0">
           <span className="text-sm font-medium text-slate-600">Alokasi</span>
           <span className="text-lg font-medium text-slate-900">100%</span>
         </div>

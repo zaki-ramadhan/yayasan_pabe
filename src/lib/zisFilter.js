@@ -60,15 +60,7 @@ export function buildDonationTypeWhere(type) {
 
   if (normalized === "CAMPAIGN") {
     return {
-      AND: [
-        { donationType: { notIn: ["ZAKAT", "INFAK_SUBUH"] } },
-        {
-          OR: [
-            { campaignId: null },
-            { campaign: { NOT: ZIS_CAMPAIGN_WHERE } },
-          ],
-        },
-      ],
+      NOT: ZIS_DONATION_WHERE,
     };
   }
 

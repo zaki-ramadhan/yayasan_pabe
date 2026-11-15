@@ -1,10 +1,20 @@
 import prisma from "@/lib/prisma";
 import { sanitizePrayer } from "@/lib/security";
+import { verifyDonationOwnership } from "@/lib/requestOwnership";
 
 /**
- * Memperbarui doa atau pesan donatur setelah pembayaran invoice terverifikasi
+ * Memperbarui doa atau pesan donatur setelah pembayaran invoice terverifikasi.
+ * Wajib memverifikasi kepemilikan (token invoice, sesi pemilik, atau staf) jika request/token disertakan.
  */
-export async function updateDonationPrayer({ invoiceId, prayer, isAnonymous }) {
+export async function updateDonationPrayer({
+  invoiceId,
+  prayer,
+  isAnonymous,
+  request = null,
+  accessToken = null,
+  sessionUser = null,
+  requireOwnership = false,
+}) {
   if (!invoiceId) {
     throw new Error("Nomor invoice diperlukan.");
   }
@@ -21,7 +31,30 @@ export async function updateDonationPrayer({ invoiceId, prayer, isAnonymous }) {
     });
 
     if (!existingDb) {
-      throw new Error("Transaksi donasi tidak ditemukan.");
+      const notFoundErr = new Error("Transaksi donasi tidak ditemukan.");
+      notFoundErr.statusCode = 404;
+      throw notFoundErr;
+    }
+
+    if (requireOwnership || request || accessToken || sessionUser) {
+      const ownership = await verifyDonationOwnership({
+        request,
+        donation: existingDb,
+        providedToken: accessToken,
+        sessionUser,
+      });
+
+      if (!ownership.authorized) {
+        const forbiddenErr = new Error("Akses tidak sah untuk mengubah doa pada invoice ini.");
+        forbiddenErr.statusCode = 403;
+        throw forbiddenErr;
+      }
+    }
+
+    if (existingDb.status !== "PAID") {
+      const statusErr = new Error("Doa hanya dapat diperbarui setelah pembayaran donasi berstatus lunas.");
+      statusErr.statusCode = 400;
+      throw statusErr;
     }
 
     const updatePayload = {
@@ -30,9 +63,6 @@ export async function updateDonationPrayer({ invoiceId, prayer, isAnonymous }) {
 
     if (typeof isAnonymous === "boolean") {
       updatePayload.isAnonymous = isAnonymous;
-      if (isAnonymous) {
-        updatePayload.donorName = "Hamba Allah";
-      }
     }
 
     const updatedDb = await prisma.donation.update({
@@ -48,7 +78,7 @@ export async function updateDonationPrayer({ invoiceId, prayer, isAnonymous }) {
       campaignTitle: updatedDb.campaign?.title || "Sedekah Umum PABE",
       campaignSlug: updatedDb.campaign?.slug || "",
       amount: updatedDb.amount,
-      donorName: updatedDb.donorName,
+      donorName: updatedDb.isAnonymous ? "Hamba Allah" : updatedDb.donorName,
       isAnonymous: updatedDb.isAnonymous,
       prayer: updatedDb.prayer,
       status: updatedDb.status,
@@ -60,11 +90,12 @@ export async function updateDonationPrayer({ invoiceId, prayer, isAnonymous }) {
 }
 
 /**
- * Mengambil daftar transaksi donasi terkini untuk widget publik
+ * Mengambil daftar transaksi donasi terkini untuk widget publik (tanpa membocorkan invoiceId).
  */
 export async function getRecentDonations(limit = 10) {
   try {
     const dbDonations = await prisma.donation.findMany({
+      where: { status: "PAID" },
       orderBy: { createdAt: "desc" },
       take: limit,
       include: {
@@ -78,7 +109,7 @@ export async function getRecentDonations(limit = 10) {
     });
 
     return dbDonations.map((d) => ({
-      id: d.invoiceId,
+      id: d.id,
       donor: d.isAnonymous ? "Hamba Allah" : d.donorName,
       amount: d.amount,
       channel: (d.paymentChannel || "qris").toUpperCase(),

@@ -52,6 +52,7 @@ export function DistributionAreaChart({ data = [] }) {
               width={56}
             />
             <Tooltip
+              wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   const item = payload[0].payload;

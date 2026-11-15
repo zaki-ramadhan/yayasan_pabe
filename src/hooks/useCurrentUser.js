@@ -50,7 +50,7 @@ export function useCurrentUser() {
   const updateLocalUser = (updatedData) => {
     if (!currentUser) return;
     const merged = { ...currentUser, ...updatedData };
-    loginUser(merged);
+    loginUser(merged, { notifyLogin: false });
   };
 
   return {

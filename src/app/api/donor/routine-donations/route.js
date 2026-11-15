@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAuthenticatedUser } from "@/lib/serverAuth";
+import { requireAuth } from "@/lib/serverAuth";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { updateDonorRoutineDonationStatus } from "@/services/routineDonationService";
 
@@ -14,14 +14,16 @@ export async function PATCH(request) {
     });
     if (rateLimitBlocked) return rateLimitBlocked;
 
-    const { user } = await getAuthenticatedUser(request);
+    const { user, errorResponse } = await requireAuth(request);
+    if (errorResponse) return errorResponse;
+
     const body = await request.json();
     const { id, status } = body || {};
 
     const result = await updateDonorRoutineDonationStatus({
       id,
       status,
-      userEmail: user?.email,
+      userEmail: user.email,
     });
 
     return NextResponse.json(result, { status: 200 });

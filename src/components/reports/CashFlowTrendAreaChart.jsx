@@ -89,6 +89,7 @@ export function CashFlowTrendAreaChart({ data = [] }) {
                   />
                   <Tooltip
                     cursor={{ stroke: "#cbd5e1", strokeWidth: 1 }}
+                    wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
                     content={<ChartTooltipCard formatter={formatRupiah} />}
                   />
                   <Area

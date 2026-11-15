@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, User } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { LayoutDashboard } from "lucide-react";
+import { NavLoginButton } from "./NavLoginButton";
 
-export function NavMobileUserSection({ currentUser, onClose, onLogout }) {
+export function NavMobileUserSection({ pathname, currentUser, onClose, onLogout }) {
   return (
     <div className="pt-3 border-t border-slate-200">
       {currentUser ? (
@@ -63,12 +63,7 @@ export function NavMobileUserSection({ currentUser, onClose, onLogout }) {
           </button>
         </div>
       ) : (
-        <Link href="/login" onClick={onClose} className="w-full block">
-          <Button className="w-full h-10 rounded-lg font-medium bg-slate-900 hover:bg-slate-800 text-white justify-center text-sm shadow-2xs cursor-pointer flex items-center gap-2">
-            <User className="w-4 h-4 text-white" />
-            <span>Masuk / Login Akun</span>
-          </Button>
-        </Link>
+        <NavLoginButton pathname={pathname} isMobile onClick={onClose} />
       )}
     </div>
   );

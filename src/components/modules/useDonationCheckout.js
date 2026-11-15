@@ -3,11 +3,12 @@
 
 import { useState, useEffect, useSyncExternalStore, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { PAYMENT_CHANNELS } from "@/data/paymentChannels";
-import { getPaymentChannelLimits } from "@/data/transactionLimits";
 import { formatRupiah } from "@/lib/formatters";
 import {
-  DONATION_LIMITS,
+  useNominalSelection,
+  NOMINAL_PRESETS,
+} from "@/components/donation/useNominalSelection";
+import {
   generateIdempotencyKey,
   validateName,
   validatePhone,
@@ -23,7 +24,7 @@ import { toast } from "@/hooks/useToast";
 import { getCampaignDonateHref } from "@/lib/zisFilter";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
-export const NOMINAL_PRESETS = [25000, 50000, 100000, 250000, 500000];
+export { NOMINAL_PRESETS };
 
 function subscribePrayers(callback) {
   window.addEventListener("storage", callback);
@@ -57,12 +58,6 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     );
   }, [campaign]);
 
-  const isPresetInitial = NOMINAL_PRESETS.includes(initialAmount);
-  const [isCustomMode, setIsCustomMode] = useState(!isPresetInitial);
-  const [amount, setAmount] = useState(initialAmount);
-  const [customAmountInput, setCustomAmountInput] = useState(
-    isPresetInitial ? "" : initialAmount.toString()
-  );
   const [turnstileToken, setTurnstileToken] = useState("");
   const turnstileRef = useRef(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -72,6 +67,38 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
   const [isEmailLocked, setIsEmailLocked] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [errors, setErrors] = useState({});
+
+  const {
+    amount,
+    setAmount,
+    isCustomMode,
+    setIsCustomMode,
+    customAmountInput,
+    setCustomAmountInput,
+    selectedChannelId,
+    setSelectedChannelId: handleSelectChannel,
+    rawSetSelectedChannelId,
+    channelLimits,
+    selectedChannel,
+    adminFee,
+    totalPayment,
+    liveAmountError,
+    handlePresetClick,
+    handleCustomModeClick,
+    handleCustomInputChange,
+    handleCustomInputBlur,
+  } = useNominalSelection({
+    initialAmount,
+    isZakat,
+    onClearAmountError: () => {
+      setErrors((prev) => {
+        if (!prev.amount) return prev;
+        const { amount: _stale, ...rest } = prev;
+        return rest;
+      });
+    },
+  });
+
   const [prayer, setPrayer] = useState(() => {
     if (typeof window !== "undefined") {
       const sp = new URLSearchParams(window.location.search);
@@ -80,7 +107,6 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     }
     return initialPrayer ? sanitizePrayer(initialPrayer.trim()).slice(0, FIELD_LIMITS.PRAYER.max) : "";
   });
-  const [selectedChannelId, setSelectedChannelId] = useState("qris");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [pendingInvoiceModal, setPendingInvoiceModal] = useState({
@@ -147,7 +173,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
         if (draft.prayer && !hasFreshPrayer) {
           setPrayer(draft.prayer);
         }
-        if (draft.selectedChannelId) setSelectedChannelId(draft.selectedChannelId);
+        if (draft.selectedChannelId) rawSetSelectedChannelId(draft.selectedChannelId);
         if (draft.donorPhone) setDonorPhone(draft.donorPhone);
         clearDonationDraft();
       }
@@ -181,75 +207,6 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     hasExistingPrayer = false;
   }
 
-  const handlePresetClick = (val) => {
-    setIsCustomMode(false);
-    setAmount(val);
-    setCustomAmountInput("");
-    if (errors.amount) {
-      setErrors(({ amount: _stale, ...rest }) => rest);
-    }
-  };
-
-  const channelLimits = useMemo(() => {
-    return getPaymentChannelLimits(selectedChannelId);
-  }, [selectedChannelId]);
-
-  const handleSelectChannel = (channelId) => {
-    setSelectedChannelId(channelId);
-    const newLimits = getPaymentChannelLimits(channelId);
-    if (amount > newLimits.maxAmount) {
-      setAmount(newLimits.maxAmount);
-      if (isCustomMode) {
-        setCustomAmountInput(String(newLimits.maxAmount));
-      }
-      toast.info(`Nominal donasi disesuaikan ke ${formatRupiah(newLimits.maxAmount)} (batas maksimal ${newLimits.label})`);
-    }
-  };
-
-  const handleCustomModeClick = () => {
-    setIsCustomMode(true);
-    const num = Number(customAmountInput);
-    setAmount(num || 0);
-  };
-
-  const handleCustomInputChange = (e) => {
-    const rawVal = e.target.value.replace(/\D/g, "").slice(0, 9);
-    const num = Number(rawVal);
-    const clamped = Math.min(num, channelLimits.maxAmount);
-    const finalRaw = clamped > 0 ? String(clamped) : (rawVal === "" ? "" : "0");
-    setCustomAmountInput(finalRaw);
-    setAmount(clamped);
-    if (errors.amount) {
-      setErrors(({ amount: _stale, ...rest }) => rest);
-    }
-  };
-
-  const handleCustomInputBlur = () => {
-    if (isCustomMode && customAmountInput.trim() !== "") {
-      const num = Number(customAmountInput);
-      if (num > 0 && num < channelLimits.minAmount) {
-        setAmount(channelLimits.minAmount);
-        setCustomAmountInput(String(channelLimits.minAmount));
-        if (errors.amount) {
-          setErrors(({ amount: _stale, ...rest }) => rest);
-        }
-      } else if (num > channelLimits.maxAmount) {
-        setAmount(channelLimits.maxAmount);
-        setCustomAmountInput(String(channelLimits.maxAmount));
-        if (errors.amount) {
-          setErrors(({ amount: _stale, ...rest }) => rest);
-        }
-      }
-    }
-  };
-
-  // Real-time feedback: kosong tidak dianggap error agar tidak "berteriak" sebelum user mengetik
-  const liveAmountError =
-    isCustomMode && customAmountInput !== "" && amount < channelLimits.minAmount
-      ? `Nominal donasi minimal ${formatRupiah(channelLimits.minAmount)}`
-      : isCustomMode && amount > channelLimits.maxAmount
-      ? `Batas maksimal transaksi ${channelLimits.label} adalah ${formatRupiah(channelLimits.maxAmount)}`
-      : null;
   const amountError = liveAmountError || errors.amount || null;
 
   const handlePrayerChange = (e) => {
@@ -258,10 +215,6 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       setPrayer(clean);
     }
   };
-
-  const selectedChannel = PAYMENT_CHANNELS.find((c) => c.id === selectedChannelId) || PAYMENT_CHANNELS[0];
-  const adminFee = selectedChannel.fee || 0;
-  const totalPayment = amount + adminFee;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -380,7 +333,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
 
       // Sinkronisasi sesi lokal donatur jika sebelumnya belum memiliki nomor WhatsApp di profil
       if (currentUser && (!currentUser.phone || currentUser.phone === "-") && donorPhone.trim()) {
-        loginUser({ ...currentUser, phone: donorPhone.trim() });
+        loginUser({ ...currentUser, phone: donorPhone.trim() }, { notifyLogin: false });
       }
 
       toast.info("Mengalihkan ke instruksi pembayaran, mohon tunggu sebentar...", {

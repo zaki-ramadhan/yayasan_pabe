@@ -12,6 +12,7 @@ import { InvoiceReceiptCard } from "@/components/invoice/InvoiceReceiptCard";
 import { InvoiceActions } from "@/components/invoice/InvoiceActions";
 import { DevInvoiceSandboxBar } from "@/components/invoice/DevInvoiceSandboxBar";
 import { useDonationStatusPolling } from "@/hooks/useDonationStatusPolling";
+import { isZisTransaction } from "@/lib/zisFilter";
 
 export {
   InvoicePaymentMethod,
@@ -212,6 +213,7 @@ export function InvoiceDisplay({ donation: initialDonation }) {
         {!activePrayer && donation.status === "PAID" && (
           <PostDonationPrayerForm
             invoiceId={donation.invoiceId}
+            accessToken={donation.accessToken || ""}
             campaignSlug={donation.campaignSlug || ""}
             donorName={donation.donorName}
             defaultAnonymous={donation.isAnonymous}
@@ -223,7 +225,10 @@ export function InvoiceDisplay({ donation: initialDonation }) {
         )}
 
         {/* Actions */}
-        <InvoiceActions shareText={shareText} />
+        <InvoiceActions
+          shareText={shareText}
+          catalogHref={isZisTransaction(donation) ? "/zis" : "/program"}
+        />
       </div>
     </div>
   );

@@ -131,10 +131,10 @@ export function DonorSecurityFormCard({
       setIsDeleteDialogOpen(false);
       logoutUser();
       toast({
-        title: "Akun Dihapus",
+        title: "Akun Berhasil Dihapus",
         description:
           json.message ||
-          "Akun Anda berhasil dianonimkan sesuai ketentuan UU PDP.",
+          "Akun Anda berhasil dihapus.",
         variant: "success",
       });
       router.replace("/");
@@ -203,33 +203,33 @@ export function DonorSecurityFormCard({
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-medium text-slate-900">
-                    {isGoogle ? "Akun Terhubung via Google" : `Akun Terhubung via ${provider}`}
+                    {isGoogle ? "Masuk dengan Akun Google" : `Masuk dengan Akun ${provider}`}
                   </h3>
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                     <CheckCircle2 className="w-3 h-3" />
-                    Terverifikasi
+                    Terhubung
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Akun Anda diamankan menggunakan autentikasi Single Sign-On (SSO). Seluruh pengelolaan kata sandi, verifikasi 2 langkah, dan pemulihan akun dikelola langsung oleh pihak {isGoogle ? "Google" : provider} demi perlindungan data maksimal.
+                  Akun Anda terhubung dengan {isGoogle ? "Google" : provider}. Kata sandi dan keamanan dikelola langsung lewat akun {isGoogle ? "Google" : provider} Anda.
                 </p>
               </div>
             </div>
 
             <div className="pt-3.5 border-t border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm">
               <div>
-                <span className="text-slate-500 block font-normal text-xs sm:text-sm">Email Akun:</span>
+                <span className="text-slate-500 block font-normal text-xs sm:text-sm">Alamat email:</span>
                 <span className="text-slate-900 font-medium text-sm break-all">{profile?.email || "-"}</span>
               </div>
               <div>
-                <span className="text-slate-500 block font-normal text-xs sm:text-sm">Metode Autentikasi:</span>
-                <span className="text-slate-900 font-medium text-sm">SSO OAuth 2.0 ({isGoogle ? "Google" : provider})</span>
+                <span className="text-slate-500 block font-normal text-xs sm:text-sm">Metode masuk:</span>
+                <span className="text-slate-900 font-medium text-sm">{isGoogle ? "Akun Google" : provider}</span>
               </div>
             </div>
           </div>
 
-          <p className="text-sm text-slate-500 leading-relaxed">
-            Untuk memperbarui kata sandi atau setelan privasi, silakan kunjungi pengaturan akun {isGoogle ? "Google" : provider} Anda secara langsung.
+          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+            Untuk ubah kata sandi, silakan atur lewat akun {isGoogle ? "Google" : provider} Anda.
           </p>
         </div>
       ) : (
@@ -250,14 +250,14 @@ export function DonorSecurityFormCard({
               </div>
               <div className="space-y-0.5 text-sm">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-slate-900">Tertaut dengan {isGoogle ? "Google SSO" : provider}</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="font-medium text-slate-900">Tertaut dengan {isGoogle ? "Akun Google" : provider}</span>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                     <CheckCircle2 className="w-3 h-3" />
                     Aktif
                   </span>
                 </div>
-                <p className="text-slate-500 font-normal leading-relaxed text-sm">
-                  Akun Anda dapat diakses menggunakan Google maupun kata sandi manual. Anda tetap dapat memperbarui kata sandi manual Anda di bawah ini.
+                <p className="text-slate-500 font-normal leading-relaxed text-xs sm:text-sm">
+                  Anda dapat masuk menggunakan {isGoogle ? "Google" : provider} atau kata sandi. Anda juga dapat memperbarui kata sandi Anda di bawah ini.
                 </p>
               </div>
             </div>
@@ -337,24 +337,24 @@ export function DonorSecurityFormCard({
       )}
 
 
-      {/* 2. Zona Penghapusan Akun & Privasi (UU PDP No. 27/2022) */}
+      {/* 2. Zona Penghapusan Akun */}
       <div className="pt-6 border-t border-slate-200 mt-8 space-y-3">
         <div className="space-y-1">
           <h3 className="text-sm font-medium text-red-600">
-            Hak Privasi & Penghapusan Akun
+            Hapus Akun
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-xl">
-            Sesuai ketentuan UU Perlindungan Data Pribadi (UU PDP No. 27/2022), Anda berhak mengajukan penghapusan akun. Seluruh komitmen donasi rutin akan dibatalkan, foto profil di R2 dihapus, dan data transaksi disamarkan menjadi Hamba Allah demi integritas laporan audit keuangan yayasan.
+            Jika akun ini dihapus, semua data pribadi Anda akan dibersihkan, donasi rutin dihentikan, dan nama pada riwayat donasi diubah menjadi &quot;Hamba Allah&quot;.
           </p>
         </div>
 
         <Button
           type="button"
-          variant="outline"
+          variant="destructive"
           onClick={() => setIsDeleteDialogOpen(true)}
-          className="h-9 px-3.5 text-xs sm:text-sm font-medium text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 cursor-pointer"
+          className="h-9 px-4 rounded-md text-xs sm:text-sm font-medium bg-red-600 text-white hover:bg-red-700 cursor-pointer shadow-2xs"
         >
-          Hapus dan anonimkan akun saya
+          Hapus akun saya
         </Button>
       </div>
 
@@ -362,8 +362,8 @@ export function DonorSecurityFormCard({
         isOpen={isDeleteDialogOpen}
         onClose={() => !isDeletingAccount && setIsDeleteDialogOpen(false)}
         onConfirm={handleDeleteAccount}
-        title="Hapus dan anonimkan akun Anda?"
-        description="Tindakan ini permanen sesuai UU PDP No. 27/2022. Komitmen donasi rutin Anda akan dibatalkan, data pribadi Anda akan dihapus, dan seluruh riwayat donasi akan dianonimkan menjadi Hamba Allah. Apakah Anda yakin?"
+        title="Hapus akun Anda?"
+        description="Semua data pribadi akan dihapus, donasi rutin dihentikan, dan riwayat donasi diubah menjadi Hamba Allah. Tindakan ini tidak bisa dibatalkan. Lanjutkan?"
         confirmLabel="Ya, hapus akun"
         confirmVariant="destructive"
         isLoading={isDeletingAccount}

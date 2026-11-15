@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { DonorSummaryCardsSkeleton } from "@/components/donor/DonorSummaryCards";
 import { DonorTransactionTableSkeleton } from "@/components/donor/DonorTransactionTable";
 
-export function DonorHistorySkeleton() {
+export function DonorHistorySkeleton({ typeFilter = "ALL" }) {
   return (
     <div className="space-y-2.5">
       {/* Segmented Tabs Skeleton */}
@@ -12,7 +12,7 @@ export function DonorHistorySkeleton() {
       <DonorSummaryCardsSkeleton />
 
       {/* Transaction Table Skeleton */}
-      <DonorTransactionTableSkeleton />
+      <DonorTransactionTableSkeleton typeFilter={typeFilter} />
     </div>
   );
 }

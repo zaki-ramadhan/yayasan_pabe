@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { getDonationByInvoiceId } from "@/services/donationService";
 import { getAuthenticatedUser } from "@/lib/serverAuth";
+import { isZisTransaction } from "@/lib/zisFilter";
 import { InvoiceDisplay } from "@/components/modules/InvoiceDisplay";
 import { InvoiceHeader } from "@/components/invoice/InvoiceHeader";
 
@@ -35,6 +36,8 @@ export default async function InvoicePage({ params, searchParams }) {
     notFound();
   }
 
+  const isZis = isZisTransaction(donation);
+
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-4">
       {/* Brand Header & User Profile Navigation */}
@@ -43,7 +46,7 @@ export default async function InvoicePage({ params, searchParams }) {
       <Breadcrumb
         items={[
           { label: "Beranda", href: "/" },
-          { label: "Program", href: "/program" },
+          { label: "Program", href: isZis ? "/zis" : "/program" },
           { label: "Instruksi Pembayaran" },
         ]}
       />

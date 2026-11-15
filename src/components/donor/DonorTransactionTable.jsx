@@ -22,7 +22,18 @@ import {
 } from "@/components/ui/Select";
 import { DonorTransactionTableRow } from "./DonorTransactionTableRow";
 
-const SKELETON_CELL_ALIGNMENTS = [
+const SKELETON_ALIGNMENTS_ALL = [
+  "left",
+  "center",
+  "right",
+  "left",
+  "center",
+  "center",
+  "center",
+  "center",
+];
+
+const SKELETON_ALIGNMENTS_SPECIFIC = [
   "left",
   "right",
   "left",
@@ -32,13 +43,16 @@ const SKELETON_CELL_ALIGNMENTS = [
   "center",
 ];
 
-function DonorTransactionTableHeader() {
+function DonorTransactionTableHeader({ showTypeColumn = false }) {
   return (
     <TableHeader>
       <TableRow>
         <TableHead className="whitespace-nowrap">Atas nama</TableHead>
+        {showTypeColumn && (
+          <TableHead className="text-center whitespace-nowrap min-w-[90px]">Jenis</TableHead>
+        )}
         <TableHead className="text-right whitespace-nowrap min-w-[125px]">Nominal</TableHead>
-        <TableHead className="whitespace-nowrap min-w-[210px]">Program / Peruntukan</TableHead>
+        <TableHead className="whitespace-nowrap min-w-[210px]">Program</TableHead>
         <TableHead className="text-center whitespace-nowrap min-w-[160px]">Metode bayar</TableHead>
         <TableHead className="text-center whitespace-nowrap w-28">Status</TableHead>
         <TableHead className="text-center whitespace-nowrap">Waktu transaksi</TableHead>
@@ -62,6 +76,10 @@ export function DonorTransactionTable({
   onPageChange,
   onRefresh,
 }) {
+  const isAllTab = typeFilter === "ALL" || !typeFilter;
+  const columnCount = isAllTab ? 8 : 7;
+  const skeletonAlignments = isAllTab ? SKELETON_ALIGNMENTS_ALL : SKELETON_ALIGNMENTS_SPECIFIC;
+
   return (
     <TableContainer className="bg-sidebar">
       {/* Table Header Toolbar via Shared TableToolbar */}
@@ -85,14 +103,8 @@ export function DonorTransactionTable({
                 <SelectItem value="PAID" className="cursor-pointer text-sm font-normal py-2">
                   Berhasil
                 </SelectItem>
-                <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
-                  Menunggu
-                </SelectItem>
-                <SelectItem value="EXPIRED" className="cursor-pointer text-sm font-normal py-2">
-                  Kedaluwarsa
-                </SelectItem>
-                <SelectItem value="CANCELLED" className="cursor-pointer text-sm font-normal py-2">
-                  Dibatalkan
+                <SelectItem value="FAILED" className="cursor-pointer text-sm font-normal py-2">
+                  Kedaluwarsa / Batal
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -105,19 +117,19 @@ export function DonorTransactionTable({
 
       {/* Standar Reusable Table Primitives */}
       <Table>
-        <DonorTransactionTableHeader />
+        <DonorTransactionTableHeader showTypeColumn={isAllTab} />
 
         <TableBody>
           {isLoading ? (
             <TableSkeletonRows
               rows={5}
-              columns={7}
-              cellAlignments={SKELETON_CELL_ALIGNMENTS}
+              columns={columnCount}
+              cellAlignments={skeletonAlignments}
               height="h-4"
             />
           ) : items.length === 0 ? (
             <TableEmptyRow
-              colSpan={7}
+              colSpan={columnCount}
               isFiltered={Boolean(
                 (search && search.trim().length > 0) ||
                 (statusFilter && statusFilter !== "ALL") ||
@@ -126,7 +138,11 @@ export function DonorTransactionTable({
             />
           ) : (
             items.map((item) => (
-              <DonorTransactionTableRow key={item.id} item={item} />
+              <DonorTransactionTableRow
+                key={item.id}
+                item={item}
+                showTypeColumn={isAllTab}
+              />
             ))
           )}
         </TableBody>
@@ -141,7 +157,11 @@ export function DonorTransactionTable({
   );
 }
 
-export function DonorTransactionTableSkeleton() {
+export function DonorTransactionTableSkeleton({ typeFilter = "ALL" }) {
+  const isAllTab = typeFilter === "ALL" || !typeFilter;
+  const columnCount = isAllTab ? 8 : 7;
+  const skeletonAlignments = isAllTab ? SKELETON_ALIGNMENTS_ALL : SKELETON_ALIGNMENTS_SPECIFIC;
+
   return (
     <TableContainer className="bg-sidebar animate-pulse">
       <div className="p-4 sm:p-5 border-b border-slate-200 space-y-3">
@@ -161,12 +181,12 @@ export function DonorTransactionTableSkeleton() {
       </div>
 
       <Table>
-        <DonorTransactionTableHeader />
+        <DonorTransactionTableHeader showTypeColumn={isAllTab} />
         <TableBody>
           <TableSkeletonRows
             rows={5}
-            columns={7}
-            cellAlignments={SKELETON_CELL_ALIGNMENTS}
+            columns={columnCount}
+            cellAlignments={skeletonAlignments}
             height="h-4"
           />
         </TableBody>

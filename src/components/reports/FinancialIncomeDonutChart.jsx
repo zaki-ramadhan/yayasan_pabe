@@ -53,6 +53,7 @@ export function FinancialIncomeDonutChart({ data = [] }) {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Tooltip
+                    wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
                     content={({ active, payload }) => {
                       if (!active || !payload || payload.length === 0) return null;
                       const item = payload[0];

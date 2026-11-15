@@ -17,6 +17,7 @@ export function NominalPresetsPicker({
   channelLimits,
   error,
   isZakat = false,
+  step = 1,
 }) {
   const minLimit = channelLimits?.minAmount || DONATION_LIMITS.MIN_AMOUNT;
   const maxLimit = channelLimits?.maxAmount || DONATION_LIMITS.MAX_AMOUNT;
@@ -24,7 +25,7 @@ export function NominalPresetsPicker({
   return (
     <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
       <CheckoutStepHeader
-        step={1}
+        step={step}
         title={isZakat ? "Zakat terbaik Anda" : "Pilih nominal donasi"}
       />
 

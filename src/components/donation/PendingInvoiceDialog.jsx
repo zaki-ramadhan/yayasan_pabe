@@ -47,37 +47,30 @@ export function PendingInvoiceDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isCancelling && onClose()}>
-      <DialogContent className="max-w-md" hideCloseButton={false}>
+      <DialogContent className="sm:max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200" hideCloseButton={false}>
         <DialogHeader hideCloseButton={false}>
-          <div className="flex items-center gap-2.5">
-            <div className="rounded-lg bg-amber-100 p-2 text-amber-800">
-              <AlertTriangle className="w-5 h-5" />
-            </div>
-            <div>
-              <DialogTitle className="text-base font-semibold text-slate-900">
-                {isZakatContext ? "Tagihan Zakat Masih Aktif" : "Tagihan Donasi Masih Aktif"}
-              </DialogTitle>
-              <DialogDescription className="text-xs text-slate-500 mt-0.5">
-                Anda memiliki tagihan yang belum diselesaikan
-              </DialogDescription>
-            </div>
-          </div>
+          <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
+            {isZakatContext ? "Tagihan zakat masih aktif" : "Tagihan donasi masih aktif"}
+          </DialogTitle>
         </DialogHeader>
 
-        <div className="p-5 sm:p-6 space-y-4 text-sm">
-          <p className="text-slate-600 leading-relaxed">
-            {isZakatContext ? (
-              <>
-                Anda masih memiliki tagihan zakat aktif untuk{" "}
-                <span className="font-semibold text-slate-900">{invoice.campaignTitle}</span>. Apakah Anda ingin melanjutkan pembayaran tagihan ini atau membuat tagihan baru?
-              </>
-            ) : (
-              <>
-                Anda masih memiliki tagihan donasi aktif untuk program{" "}
-                <span className="font-semibold text-slate-900">{invoice.campaignTitle}</span>. Apakah Anda ingin melanjutkan pembayaran tagihan ini atau membuat tagihan baru?
-              </>
-            )}
-          </p>
+        <div className="flex-1 min-h-0 overflow-y-auto p-5 sm:p-6 space-y-4 text-sm">
+          <div className="flex items-start gap-2.5 p-3 rounded-lg bg-amber-50 border border-amber-200/80 text-amber-900 text-xs sm:text-sm">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              {isZakatContext ? (
+                <>
+                  Anda masih memiliki tagihan zakat aktif untuk{" "}
+                  <span className="font-semibold text-slate-900">{invoice.campaignTitle}</span>. Apakah Anda ingin melanjutkan pembayaran tagihan ini atau membuat tagihan baru?
+                </>
+              ) : (
+                <>
+                  Anda masih memiliki tagihan donasi aktif untuk program{" "}
+                  <span className="font-semibold text-slate-900">{invoice.campaignTitle}</span>. Apakah Anda ingin melanjutkan pembayaran tagihan ini atau membuat tagihan baru?
+                </>
+              )}
+            </p>
+          </div>
 
           {/* Kartu Ringkasan Tagihan Aktif */}
           <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 space-y-2 text-xs sm:text-sm">
@@ -113,18 +106,18 @@ export function PendingInvoiceDialog({
           </p>
         </div>
 
-        <DialogFooter className="flex-col sm:flex-row gap-2 bg-slate-50 p-4 sm:p-5 border-t border-slate-200">
+        <DialogFooter className="flex-col sm:flex-row gap-2.5 sm:gap-3 bg-white border-t border-slate-100">
           <Button
             type="button"
             variant="outline"
             onClick={onCreateNew}
             disabled={isCancelling}
-            className="w-full sm:w-auto h-10 text-xs sm:text-sm font-medium border-slate-300 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+            className="w-full sm:w-auto min-w-[84px] h-9 px-4 text-xs sm:text-sm font-medium border-slate-300 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
           >
             {isCancelling ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
-                Membatalkan tagihan lama...
+                Membatalkan...
               </>
             ) : (
               <>
@@ -139,7 +132,7 @@ export function PendingInvoiceDialog({
             variant="warning"
             onClick={handleContinue}
             disabled={isCancelling}
-            className="w-full sm:w-auto h-10 text-xs sm:text-sm font-medium cursor-pointer"
+            className="w-full sm:w-auto min-w-[96px] h-9 px-4 text-xs sm:text-sm font-medium cursor-pointer"
           >
             <span>Lanjutkan tagihan lama</span>
             <ArrowRight className="w-3.5 h-3.5 ml-1.5" />

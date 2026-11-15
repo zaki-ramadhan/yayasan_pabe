@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Edit3, Trash2, Eye } from "lucide-react";
+import { Edit3, Trash2, Eye, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -15,6 +15,7 @@ export function TableRowActions({
 	editTooltip = "Edit",
 	deleteTooltip = "Hapus",
 	disabled = false,
+	isDeleting = false,
 	className = "",
 	children,
 }) {
@@ -72,14 +73,18 @@ export function TableRowActions({
 						onDelete
 					}
 					disabled={
-						disabled
+						disabled || isDeleting
 					}
 					aria-label={
 						deleteTooltip
 					}
 					className="p-1.5 rounded-md text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
 				>
-					<Trash2 className="w-4 h-4" />
+					{isDeleting ? (
+						<Loader2 className="w-4 h-4 animate-spin text-rose-600" />
+					) : (
+						<Trash2 className="w-4 h-4" />
+					)}
 				</button>
 			)}
 		</div>

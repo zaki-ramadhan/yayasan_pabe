@@ -16,13 +16,45 @@ import { toast } from "@/hooks/useToast";
 export function DonorAvatarCustomSlot({
   customAvatar = "",
   isActive = false,
+  provider = "",
   onSelect,
   onUploadSuccess,
   onRemove,
   disabled = false,
 }) {
   const [isUploading, setIsUploading] = useState(false);
+  const [thumbError, setThumbError] = useState(false);
   const fileInputRef = useRef(null);
+
+  const isGoogle =
+    customAvatar.includes("googleusercontent.com") ||
+    provider === "GOOGLE";
+  const isFacebook =
+    customAvatar.includes("facebook.com") ||
+    customAvatar.includes("fbcdn.net") ||
+    provider === "FACEBOOK";
+
+  const slotTitle = isGoogle
+    ? "Foto akun Google"
+    : isFacebook
+    ? "Foto akun Facebook"
+    : customAvatar
+    ? "Foto profil kustom"
+    : "Unggah foto dari perangkat";
+
+  const slotDescription = isGoogle
+    ? isActive
+      ? "Sedang digunakan sebagai foto profil aktif Anda."
+      : "Foto profil dari akun Google Anda saat mendaftar/masuk."
+    : isFacebook
+    ? isActive
+      ? "Sedang digunakan sebagai foto profil aktif Anda."
+      : "Foto profil dari akun Facebook Anda saat mendaftar/masuk."
+    : customAvatar
+    ? isActive
+      ? "Sedang digunakan sebagai foto profil aktif Anda."
+      : "Foto yang Anda unggah dari perangkat."
+    : "Mendukung format JPG, PNG, atau WebP (Maksimal 2MB).";
 
   const processFile = async (file) => {
     if (!file) return;
@@ -76,7 +108,7 @@ export function DonorAvatarCustomSlot({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-lg bg-slate-50/80 border border-slate-200/80">
+    <div className="flex flex-col gap-2.5 p-3 sm:p-3.5 rounded-xl bg-slate-50 border border-slate-200/80">
       <input
         type="file"
         ref={fileInputRef}
@@ -85,87 +117,94 @@ export function DonorAvatarCustomSlot({
         className="hidden"
       />
 
-      <div className="flex items-center gap-2.5 min-w-0 text-center sm:text-left">
-        {customAvatar && (
-          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-slate-200 shrink-0 hidden sm:block">
-            <Image
-              src={customAvatar}
-              alt="Foto Anda"
-              fill
-              sizes="36px"
-              unoptimized={
-                !customAvatar.startsWith("/") &&
-                !customAvatar.includes("unsplash.com") &&
-                !customAvatar.includes("lh3.googleusercontent.com")
-              }
-              className="object-cover"
-            />
+      <div className="flex items-center justify-between gap-3">
+        {/* Kiri: Avatar & Judul Sumber Foto */}
+        <div className="flex items-center gap-2.5 min-w-0">
+          {customAvatar && (
+            <div className="relative w-9 h-9 rounded-full overflow-hidden border border-slate-200 shrink-0 bg-slate-100 flex items-center justify-center">
+              {!thumbError ? (
+                <Image
+                  src={customAvatar}
+                  alt="Foto Akun"
+                  fill
+                  sizes="36px"
+                  onError={() => setThumbError(true)}
+                  unoptimized={
+                    !customAvatar.startsWith("/") &&
+                    !customAvatar.includes("unsplash.com") &&
+                    !customAvatar.includes("lh3.googleusercontent.com")
+                  }
+                  className="object-cover"
+                />
+              ) : (
+                <span className="text-slate-600 font-bold text-xs">U</span>
+              )}
+            </div>
+          )}
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-slate-900 truncate">
+              {slotTitle}
+            </p>
           </div>
-        )}
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-slate-800 truncate">
-            {customAvatar ? "Foto profil dari perangkat Anda" : "Pilih foto profil dari perangkat"}
-          </p>
-          <p className="text-sm text-slate-500">
-            {customAvatar
-              ? isActive
-                ? "Sedang digunakan sebagai avatar aktif di atas"
-                : "Tersimpan • Anda dapat beralih kembali kapan saja"
-              : "Mendukung format JPG, PNG, atau WebP (Maks. 2MB)"}
-          </p>
+        </div>
+
+        {/* Kanan: Tombol Aksi */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {customAvatar && !isActive && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onSelect}
+              disabled={disabled || isUploading}
+              className="h-8 px-2.5 text-xs text-slate-700 hover:bg-white gap-1.5 cursor-pointer rounded-md border-slate-200"
+            >
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Gunakan</span>
+            </Button>
+          )}
+
+          <Button
+            type="button"
+            variant={customAvatar ? "outline" : "default"}
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={disabled || isUploading}
+            className={`h-8 px-2.5 text-xs gap-1.5 cursor-pointer rounded-md ${
+              !customAvatar
+                ? "bg-slate-900 hover:bg-slate-800 text-white font-medium"
+                : "border-slate-200 text-slate-700 hover:bg-white"
+            }`}
+          >
+            {isUploading ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Upload className="w-3.5 h-3.5" />
+            )}
+            <span>{isUploading ? "Mengunggah..." : customAvatar ? "Ganti foto" : "Unggah foto"}</span>
+          </Button>
+
+          {customAvatar && !isGoogle && !isFacebook && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={onRemove}
+              disabled={disabled || isUploading}
+              className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 cursor-pointer rounded-md"
+              aria-label="Hapus foto dari perangkat"
+              title="Hapus foto dari perangkat"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </Button>
+          )}
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 shrink-0">
-        {customAvatar && !isActive && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onSelect}
-            disabled={disabled || isUploading}
-            className="h-8 px-2.5 text-xs text-slate-700 hover:bg-white gap-1.5 cursor-pointer rounded-md border-slate-200"
-          >
-            <Check className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Gunakan foto</span>
-          </Button>
-        )}
-
-        <Button
-          type="button"
-          variant={customAvatar ? "outline" : "default"}
-          size="sm"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={disabled || isUploading}
-          className={`h-8 px-3 text-xs gap-1.5 cursor-pointer rounded-md ${
-            !customAvatar
-              ? "bg-slate-900 hover:bg-slate-800 text-white font-medium"
-              : "border-slate-200 text-slate-700 hover:bg-white"
-          }`}
-        >
-          {isUploading ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <Upload className="w-3.5 h-3.5" />
-          )}
-          <span>{isUploading ? "Mengunggah..." : customAvatar ? "Ganti foto" : "Unggah foto"}</span>
-        </Button>
-
-        {customAvatar && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={onRemove}
-            disabled={disabled || isUploading}
-            className="h-8 w-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 cursor-pointer rounded-md"
-            aria-label="Hapus foto dari perangkat"
-            title="Hapus foto dari perangkat"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </Button>
-        )}
-      </div>
+      {/* Baris Bawah: Deskripsi Kontekstual Membentang Penuh */}
+      <p className="text-xs text-slate-500 font-normal leading-relaxed border-t border-slate-200/60 pt-2">
+        {slotDescription}
+      </p>
     </div>
   );
 }

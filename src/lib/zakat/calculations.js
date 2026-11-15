@@ -192,3 +192,48 @@ export function calculateZakatEmas({
     breakdown,
   };
 }
+
+/**
+ * 6. Resolver Flow Checkout Zakat (Server & Client Safe)
+ * Menentukan apakah halaman pembayaran zakat diakses dari kalkulator zakat
+ * (tanpa section pilih nominal) atau dari card program ZIS / akses langsung
+ * (dengan section pilih nominal preset & custom).
+ *
+ * @param {Record<string, string | string[] | undefined>} sParams
+ */
+export function resolveZakatCheckoutFlow(sParams = {}) {
+  const sourceParam =
+    typeof sParams?.source === "string" ? sParams.source.toLowerCase() : "";
+  const hasExplicitAmount = Boolean(
+    sParams?.amount && String(sParams.amount).replace(/\D/g, "").length > 0
+  );
+  const hasExplicitType = Boolean(
+    typeof sParams?.type === "string" && sParams.type.trim().length > 0
+  );
+
+  const isFromCalculator =
+    sourceParam === "calculator" ||
+    (hasExplicitAmount && hasExplicitType && sourceParam !== "zis");
+
+  const defaultAmount = 50000;
+  const rawSanitized = hasExplicitAmount
+    ? Number(String(sParams.amount).replace(/\D/g, ""))
+    : NaN;
+  const initialAmount =
+    !isNaN(rawSanitized) && rawSanitized >= 10000 ? rawSanitized : defaultAmount;
+
+  const initialType = hasExplicitType
+    ? sParams.type.trim()
+    : "ZAKAT_PENGHASILAN";
+  const campaignSlug =
+    typeof sParams?.campaign === "string" && sParams.campaign.trim().length > 0
+      ? sParams.campaign.trim()
+      : null;
+
+  return {
+    isFromCalculator,
+    initialAmount,
+    initialType,
+    campaignSlug,
+  };
+}

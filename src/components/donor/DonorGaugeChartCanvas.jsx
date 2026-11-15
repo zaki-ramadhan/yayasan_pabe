@@ -43,17 +43,19 @@ export function DonorGaugeChartCanvas({
           {!data[0]?.isPlaceholder && (
             <RechartsTooltip
               formatter={(val) => formatRupiah(val)}
+              wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
               contentStyle={{
                 backgroundColor: "#ffffff",
                 borderColor: "#cbd5e1",
                 borderRadius: "8px",
                 fontSize: "13px",
+                boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
               }}
             />
           )}
         </PieChart>
       </ResponsiveContainer>
-      <div className="absolute top-[58%] text-center">
+      <div className="absolute top-[58%] text-center pointer-events-none z-0">
         <span className="text-sm font-medium text-slate-500 block">
           Total Donasi
         </span>

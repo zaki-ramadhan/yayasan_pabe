@@ -32,7 +32,7 @@ export function DonorSummaryCards({ metrics, typeFilter = "ALL", isLoading = fal
           isCurrency: true,
         },
         {
-          title: "Frekuensi Transaksi",
+          title: "Frekuensi Transaksi Berhasil",
           value: `${(metrics?.totalZakatTransactions ?? 0).toLocaleString("id-ID")}x`,
         },
         {
@@ -48,7 +48,7 @@ export function DonorSummaryCards({ metrics, typeFilter = "ALL", isLoading = fal
           isCurrency: true,
         },
         {
-          title: "Frekuensi Transaksi",
+          title: "Frekuensi Transaksi Berhasil",
           value: `${(metrics?.totalCampaignTransactions ?? 0).toLocaleString("id-ID")}x`,
         },
         {
@@ -63,7 +63,7 @@ export function DonorSummaryCards({ metrics, typeFilter = "ALL", isLoading = fal
           isCurrency: true,
         },
         {
-          title: "Frekuensi Transaksi",
+          title: "Frekuensi Transaksi Berhasil",
           value: `${(metrics?.totalTransactions || 0).toLocaleString("id-ID")}x`,
         },
         {

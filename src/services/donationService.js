@@ -1,6 +1,12 @@
 import crypto from "crypto";
 import prisma from "@/lib/prisma";
 import {
+  generateInvoiceId,
+  generateInvoiceToken,
+  isWeakDeterministicToken,
+  verifyInvoiceToken,
+} from "@/lib/invoiceAccess";
+import {
   validateDonationAmount,
   validateName,
   validatePhone,
@@ -97,21 +103,43 @@ export async function createDonation({
   const channel =
     PAYMENT_CHANNELS.find((p) => p.id === paymentChannelId) || PAYMENT_CHANNELS[0];
 
+  const VALID_DONATION_TYPES = new Set(["CAMPAIGN", "ZAKAT", "INFAQ", "SEDEKAH", "WAKAF"]);
+  const resolvedDonationType = VALID_DONATION_TYPES.has(String(donationType || "").toUpperCase())
+    ? String(donationType).toUpperCase()
+    : "CAMPAIGN";
+
+  let resolvedCampaignId = campaignId || null;
+  let resolvedCampaignTitle = sanitizeInput(campaignTitle || "Sedekah Umum PABE") || "Sedekah Umum PABE";
+  let resolvedCampaignSlug = sanitizeInput(campaignSlug || "");
+
+  if (resolvedCampaignId && typeof prisma?.campaign?.findUnique === "function") {
+    try {
+      const dbCampaign = await prisma.campaign.findUnique({
+        where: { id: String(resolvedCampaignId) },
+        select: { id: true, title: true, slug: true, status: true },
+      });
+      if (dbCampaign) {
+        if (dbCampaign.status && dbCampaign.status !== "ACTIVE") {
+          throw new Error("Program donasi ini sedang tidak aktif atau telah selesai.");
+        }
+        resolvedCampaignId = dbCampaign.id;
+        resolvedCampaignTitle = dbCampaign.title || resolvedCampaignTitle;
+        resolvedCampaignSlug = dbCampaign.slug || resolvedCampaignSlug;
+      }
+    } catch (campErr) {
+      if (campErr.message?.includes("tidak aktif")) {
+        throw campErr;
+      }
+    }
+  }
+
   const now = new Date();
-  const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
-  const microTime = Date.now().toString().slice(-4);
-  const randomSuffix = Math.floor(100000 + Math.random() * 900000);
-  const invoiceId = `INV-${dateStr}-${microTime}-${randomSuffix}`;
+  const invoiceId = generateInvoiceId(now);
 
   const uniqueCode = 0;
   const totalAmount = Number(amount) + (channel.fee || 0);
 
-  const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "pabe_inv_secure_salt_key";
-  const accessToken = crypto
-    .createHash("sha256")
-    .update(`${invoiceId}_${secretSalt}`)
-    .digest("hex")
-    .slice(0, 32);
+  const accessToken = generateInvoiceToken();
 
   const isRoutine = Boolean(idempotencyKey && String(idempotencyKey).startsWith("ROUTINE_EXEC_"));
   const expiredAtDate = calculateDonationExpiryDate(channel.id, channel.type, now, { isRoutine });
@@ -148,11 +176,16 @@ export async function createDonation({
       }
     } catch (err) {
       console.warn("Midtrans Core API charge fallback:", err.message);
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(
+          "Layanan gerbang pembayaran sedang mengalami gangguan sementara. Silakan coba beberapa saat lagi."
+        );
+      }
     }
   }
 
-  // Fallback lokal jika sandbox offline
-  if (!virtualAccountNumber && channel.type === "VA") {
+  // Fallback lokal hanya untuk mode development/test jika sandbox offline
+  if (!virtualAccountNumber && channel.type === "VA" && process.env.NODE_ENV !== "production") {
     const bankPrefix = {
       bri_va: "04240",
       bca_va: "70001",
@@ -181,17 +214,17 @@ export async function createDonation({
   }
 
   const effectiveCampaignTitle =
-    donationType === "ZAKAT" && campaignTitle === "Sedekah Umum PABE"
+    resolvedDonationType === "ZAKAT" && resolvedCampaignTitle === "Sedekah Umum PABE"
       ? "Tunaikan Zakat Yayasan PABE"
-      : campaignTitle;
+      : resolvedCampaignTitle;
 
   const donationData = {
     invoiceId,
     accessToken,
-    campaignId,
+    campaignId: resolvedCampaignId,
     campaignTitle: effectiveCampaignTitle,
-    campaignSlug,
-    donationType,
+    campaignSlug: resolvedCampaignSlug,
+    donationType: resolvedDonationType,
     amount: Number(amount),
     uniqueCode,
     adminFee: channel.fee || 0,
@@ -219,8 +252,8 @@ export async function createDonation({
       data: {
         invoiceId,
         accessToken,
-        campaignId: campaignId || undefined,
-        donationType,
+        campaignId: resolvedCampaignId || undefined,
+        donationType: resolvedDonationType,
         amount: Number(amount),
         uniqueCode,
         totalAmount,
@@ -281,7 +314,11 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
     const dbDonation = await prisma.donation.findUnique({
       where: { invoiceId },
       include: {
-        campaign: true,
+        campaign: {
+          include: {
+            category: true,
+          },
+        },
       },
     });
 
@@ -349,13 +386,11 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
         PAYMENT_CHANNELS.find((p) => p.id === dbDonation.paymentChannel) || PAYMENT_CHANNELS[0];
 
       let effectiveAccessToken = dbDonation.accessToken;
-      if (!effectiveAccessToken) {
-        const secretSalt = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "pabe_inv_secure_salt_key";
-        effectiveAccessToken = crypto
-          .createHash("sha256")
-          .update(`${dbDonation.invoiceId}_${secretSalt}`)
-          .digest("hex")
-          .slice(0, 32);
+      if (
+        !effectiveAccessToken ||
+        isWeakDeterministicToken(dbDonation.invoiceId, effectiveAccessToken)
+      ) {
+        effectiveAccessToken = generateInvoiceToken();
 
         try {
           await prisma.donation.update({
@@ -367,13 +402,35 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
         }
       }
 
-      const isOwner = Boolean(
-        sessionUser?.email &&
-        dbDonation.donorEmail &&
-        sessionUser.email.toLowerCase() === dbDonation.donorEmail.toLowerCase()
-      );
+      const userEmail = sessionUser?.email ? sessionUser.email.trim().toLowerCase() : "";
+      const donationEmail = dbDonation.donorEmail ? dbDonation.donorEmail.trim().toLowerCase() : "";
+      const emailMatches = Boolean(userEmail && donationEmail && userEmail === donationEmail);
+
+      const userPhone = sessionUser?.phone ? sessionUser.phone.trim().replace(/[^0-9]/g, "") : "";
+      const donationPhone = dbDonation.donorPhone ? dbDonation.donorPhone.trim().replace(/[^0-9]/g, "") : "";
+      let phoneMatches = false;
+      if (userPhone && donationPhone && userPhone.length >= 9 && donationPhone.length >= 9) {
+        const normUser = userPhone.startsWith("62") ? "0" + userPhone.slice(2) : userPhone;
+        const normDonation = donationPhone.startsWith("62") ? "0" + donationPhone.slice(2) : donationPhone;
+        phoneMatches = normUser === normDonation;
+      }
+
+      const isOwner = Boolean(emailMatches || phoneMatches);
       const isStaff = Boolean(sessionUser?.role && sessionUser.role !== "DONOR");
-      const isAuthorized = Boolean((token && token === effectiveAccessToken) || isOwner || isStaff);
+      const isAuthorized = Boolean(
+        verifyInvoiceToken(token, effectiveAccessToken) || isOwner || isStaff
+      );
+
+      if (!isAuthorized) {
+        return {
+          id: dbDonation.id,
+          invoiceId: dbDonation.invoiceId,
+          isAuthorized: false,
+          status: dbDonation.status,
+          paidAt: dbDonation.paidAt ? dbDonation.paidAt.toISOString() : null,
+          expiredAt: dbDonation.expiredAt ? dbDonation.expiredAt.toISOString() : null,
+        };
+      }
 
       let billerCode = "";
       let billKey = "";
@@ -444,6 +501,9 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
         campaignTitle: dbDonation.campaign?.title || "Sedekah Umum PABE",
         campaignSlug: dbDonation.campaign?.slug || "",
         campaignImage: dbDonation.campaign?.bannerUrl || null,
+        categoryId: dbDonation.campaign?.categoryId || "",
+        categorySlug: dbDonation.campaign?.category?.slug || "",
+        categoryName: dbDonation.campaign?.category?.name || "",
         donationType: dbDonation.donationType,
         amount: dbDonation.amount,
         uniqueCode: dbDonation.uniqueCode,
@@ -463,8 +523,8 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
         isAnonymous: dbDonation.isAnonymous,
         prayer: dbDonation.prayer || "",
         status: dbDonation.status,
-        createdAt: dbDonation.createdAt.toISOString(),
-        expiredAt: dbDonation.expiredAt.toISOString(),
+        createdAt: dbDonation.createdAt ? dbDonation.createdAt.toISOString() : new Date().toISOString(),
+        expiredAt: dbDonation.expiredAt ? dbDonation.expiredAt.toISOString() : null,
       };
     }
   } catch (error) {
@@ -479,8 +539,8 @@ import {
   getRecentDonations,
 } from "./donationPrayerService";
 
-export async function updateDonationPrayer({ invoiceId, prayer, isAnonymous }) {
-  return updateDonationPrayerImpl({ invoiceId, prayer, isAnonymous });
+export async function updateDonationPrayer(params) {
+  return updateDonationPrayerImpl(params);
 }
 
 /**

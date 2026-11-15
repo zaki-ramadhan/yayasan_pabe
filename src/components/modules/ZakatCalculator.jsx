@@ -169,7 +169,7 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
 
   const handlePay = () => {
     if (!currentResult || currentResult.zakatAmount <= 0) return;
-    const targetUrl = `/zakat/bayar?amount=${currentResult.zakatAmount}&type=${currentResult.categoryKey}`;
+    const targetUrl = `/zakat/bayar?amount=${currentResult.zakatAmount}&type=${currentResult.categoryKey}&source=calculator`;
     const user = getStoredUser();
 
     if (!user) {

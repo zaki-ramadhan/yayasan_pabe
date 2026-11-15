@@ -46,7 +46,7 @@ export function DonorLayoutClient({ children, initialUser }) {
 
     // Sinkronkan initialUser dari server ke client storage jika storage masih kosong
     if (initialUser && !getStoredUser()) {
-      loginUser(initialUser);
+      loginUser(initialUser, { notifyLogin: false });
     }
 
     // 1. Fast preliminary check on client storage via getStoredUser (with expiration verification)
@@ -90,7 +90,7 @@ export function DonorLayoutClient({ children, initialUser }) {
               current.name !== data.data.name ||
               current.customAvatar !== data.data.customAvatar)
           ) {
-            loginUser({ ...current, ...data.data });
+            loginUser({ ...current, ...data.data }, { notifyLogin: false });
           }
         }
       } catch {

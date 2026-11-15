@@ -78,7 +78,14 @@ ${colorConfig
   );
 };
 
-const ChartTooltip = RechartsPrimitive.Tooltip;
+const ChartTooltip = React.forwardRef(({ wrapperStyle, ...props }, ref) => (
+  <RechartsPrimitive.Tooltip
+    ref={ref}
+    wrapperStyle={{ zIndex: 50, pointerEvents: "none", ...wrapperStyle }}
+    {...props}
+  />
+));
+ChartTooltip.displayName = "ChartTooltip";
 
 const ChartTooltipContent = React.forwardRef(
   (

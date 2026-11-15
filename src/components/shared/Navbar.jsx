@@ -105,7 +105,11 @@ export function Navbar() {
           {/* Right Action & User Profile */}
           <div className="flex items-center gap-2.5">
             <div className="hidden lg:block">
-              <NavUserDropdown currentUser={currentUser} onLogout={handleLogout} />
+              <NavUserDropdown
+                currentUser={currentUser}
+                onLogout={handleLogout}
+                pathname={pathname}
+              />
             </div>
 
             {/* Mobile Hamburger Toggle */}

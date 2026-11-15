@@ -32,6 +32,12 @@ export async function getDonorHistory({
         totalNominal: 0,
         totalTransactions: 0,
         totalPrograms: 0,
+        totalZakatNominal: 0,
+        totalZakatTransactions: 0,
+        totalZakatPrograms: 0,
+        totalCampaignNominal: 0,
+        totalCampaignTransactions: 0,
+        totalCampaignPrograms: 0,
       },
       items: [],
       pendingInvoices: [],
@@ -46,7 +52,7 @@ export async function getDonorHistory({
 
   const basePaidWhere = {
     status: "PAID",
-    ...userCondition,
+    AND: [userCondition],
   };
 
   try {
@@ -72,12 +78,16 @@ export async function getDonorHistory({
         distinct: ["campaignId", "donationType"],
       }),
       prisma.donation.aggregate({
-        where: { ...basePaidWhere, ...ZIS_DONATION_WHERE },
+        where: {
+          AND: [basePaidWhere, ZIS_DONATION_WHERE],
+        },
         _sum: { amount: true },
         _count: { id: true },
       }),
       prisma.donation.aggregate({
-        where: { ...basePaidWhere, ...campaignOnlyWhere },
+        where: {
+          AND: [basePaidWhere, campaignOnlyWhere],
+        },
         _sum: { amount: true },
         _count: { id: true },
       }),
@@ -91,7 +101,12 @@ export async function getDonorHistory({
 
     const filterConditions = [userCondition];
     if (status && status.toUpperCase() !== "ALL") {
-      filterConditions.push({ status: status.toUpperCase() });
+      const s = status.toUpperCase();
+      if (s === "FAILED" || s === "UNSUCCESSFUL") {
+        filterConditions.push({ status: { in: ["EXPIRED", "CANCELLED", "FAILED"] } });
+      } else {
+        filterConditions.push({ status: s });
+      }
     }
 
     if (type && type.toUpperCase() !== "ALL") {
@@ -180,6 +195,7 @@ export async function getDonorHistory({
         id: d.id,
         no: skip + index + 1,
         invoiceId: d.invoiceId,
+        accessToken: d.accessToken || "",
         donorName: d.isAnonymous ? "Hamba Allah" : d.donorName,
         amount: d.amount,
         programTitle: effectiveProgramTitle,

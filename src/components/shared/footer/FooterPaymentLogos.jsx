@@ -36,9 +36,9 @@ export function FooterPaymentLogos({ logos = DEFAULT_PAYMENT_LOGOS }) {
             <Image
               src={m.src}
               alt={m.alt}
-              width={72}
-              height={24}
-              className="max-h-5 sm:max-h-6 w-auto max-w-full object-contain select-none pointer-events-none"
+              width={144}
+              height={48}
+              className="h-auto w-auto max-h-5 sm:max-h-6 max-w-full object-contain select-none pointer-events-none"
             />
           </div>
         ))}
