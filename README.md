@@ -72,7 +72,7 @@ A full-stack web application designed for a charitable foundation to manage fund
 | Category | Tools & Libraries |
 | :--- | :--- |
 | **Frontend Framework** | Next.js 16 (App Router), React 19 |
-| **Styling & Components** | Tailwind CSS v4, Radix UI Primitives, Lucide React (Icons), Sonner (Toasts) |
+| **Styling & Components** | Tailwind CSS v4, Radix UI Primitives, Solar Icons (@solar-icons/react), Sonner (Toasts) |
 | **3D & Charts** | Three.js (3D badge), Recharts (financial graphs), QRCode.react |
 | **Backend & API** | Next.js Route Handlers (Server Components & modular service layer) |
 | **Database & ORM** | PostgreSQL, Prisma ORM 7 |
