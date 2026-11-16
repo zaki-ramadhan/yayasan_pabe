@@ -21,6 +21,8 @@ const buttonVariants = cva(
           "text-white font-medium bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 hover:from-blue-400 hover:via-blue-500 hover:to-blue-600 border-t border-t-blue-300 border-x border-x-blue-500 border-b-2 border-b-blue-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_3px_8px_rgba(37,99,235,0.3)] active:translate-y-0.5 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]",
         secondary3d:
           "text-slate-900 font-medium bg-gradient-to-b from-white via-slate-50 to-slate-100 hover:from-slate-50 hover:to-slate-200 border-t border-t-white border-x border-x-slate-200 border-b-2 border-b-slate-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_3px_6px_rgba(0,0,0,0.06)] active:translate-y-0.5 active:shadow-none",
+        dark3d:
+          "text-white font-medium bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 hover:from-slate-600 hover:via-slate-700 hover:to-slate-800 border-t border-t-slate-500 border-x border-x-slate-700 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_3px_8px_rgba(15,23,42,0.35)] active:translate-y-0.5 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]",
       },
       size: {
         default: "h-11 px-5 py-2",

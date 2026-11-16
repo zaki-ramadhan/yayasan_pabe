@@ -92,7 +92,7 @@ export function HomeHero({ defaultCampaignSlug }) {
               <Link href="/program">
                 <Button
                   size="lg"
-                  variant="primary3d"
+                  variant="dark3d"
                   className="h-12 px-6 rounded-lg"
                 >
                   Lihat Program Donasi
