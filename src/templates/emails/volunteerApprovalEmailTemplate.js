@@ -1,5 +1,10 @@
 import { buildBaseEmailHtml } from "./baseEmailTemplate";
-import { buildEmailCtaButton } from "./emailComponents";
+import {
+  buildEmailHeading,
+  buildEmailCtaButton,
+  buildEmailKeyValueTable,
+  EMAIL_FONT_STACK,
+} from "./emailComponents";
 
 export const VOLUNTEER_APPROVAL_EMAIL_SUBJECT =
   "Selamat! Pendaftaran Relawan Anda Telah Disetujui - Yayasan Payung Berkah";
@@ -26,45 +31,43 @@ export function buildVolunteerApprovalEmailHtml({
     text: "Buka Kartu Relawan Digital",
     url: validationUrl,
     variant: "primary3d",
+    showFallbackUrl: true,
+    confidentialityNotice: "Catatan: Kartu identitas relawan digital ini memuat identitas resmi Anda. Jangan bagikan tautan ini kepada pihak yang tidak berwenang.",
   });
 
+  const approvalItems = [
+    { label: "Nomor ID Relawan", value: `#${safeId}`, isHighlight: true },
+    { label: "Status Keanggotaan", value: "RESMI TERVERIFIKASI" },
+    { label: "Masa Berlaku", value: "1 Tahun (Aktif)" },
+  ];
+
   const contentHtml = `
+    <!-- Judul Konteks Eye-Catching -->
+    ${buildEmailHeading("Pendaftaran Relawan Disetujui")}
+
     <!-- Sapaan Hangat -->
-    <p style="margin: 0 0 16px 0; font-size: 15px; color: #111827; line-height: 1.5;">
-      Halo <strong>${safeName}</strong>,
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Halo <span style="text-transform: uppercase;">${safeName}</span>,
     </p>
 
     <!-- Berita Utama -->
-    <p style="margin: 0 0 20px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Alhamdulillah, pendaftaran Anda sebagai <strong>Relawan</strong> Yayasan Payung Berkah telah <strong>disetujui</strong> oleh pengurus yayasan.
+    <p style="margin: 0 0 18px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Alhamdulillah, pendaftaran Anda sebagai <strong>Relawan</strong> Yayasan Payung Berkah telah disetujui:
     </p>
 
-    <!-- Kotak Sertifikasi & Nomor Anggota -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 24px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 16px 20px;">
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #166534; width: 140px;">Nomor ID Relawan</td>
-        <td style="padding: 5px 0; font-size: 14px; color: #15803d; font-weight: 700;">: #${safeId}</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #166534;">Status Keanggotaan</td>
-        <td style="padding: 5px 0; font-size: 13px; color: #15803d; font-weight: 600;">: RESMI TERVERIFIKASI</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #166534;">Masa Berlaku</td>
-        <td style="padding: 5px 0; font-size: 13px; color: #15803d; font-weight: 600;">: 1 Tahun (Aktif)</td>
-      </tr>
-    </table>
+    <!-- Rincian Sertifikasi (Clean Raw Text Table) -->
+    ${buildEmailKeyValueTable(approvalItems)}
 
-    <p style="margin: 0 0 24px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Kartu identitas resmi relawan Anda telah aktif. Silakan buka kartu Anda melalui tombol di bawah ini:
+    <p style="margin: 0 0 20px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Kartu identitas relawan digital Anda kini telah aktif dan dapat diakses melalui tautan di bawah ini:
     </p>
 
-    <!-- Tombol CTA -->
+    <!-- Tombol CTA (Centered 3D) -->
     ${buttonHtml}
 
     <!-- Catatan Penutup -->
-    <p style="margin: 0; font-size: 13px; color: #4b5563; line-height: 1.6;">
-      Gunakan kartu identitas resmi ini dalam kegiatan sosial dan agenda lapangan Yayasan Payung Berkah. Semoga ikhtiar ini membawa keberkahan bagi umat.
+    <p style="margin: 20px 0 0 0; font-size: 14px; color: #374151; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Gunakan kartu identitas ini saat bertugas di agenda lapangan yayasan. Jazakumullah khairan katsiran atas dedikasi dan kesediaan Anda berbagi manfaat bagi sesama.
     </p>
   `.trim();
 

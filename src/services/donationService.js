@@ -565,7 +565,14 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
     const donation = await tx.donation.findUnique({
       where: { invoiceId },
       include: {
-        campaign: { select: { id: true, title: true, slug: true } },
+        campaign: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            category: { select: { id: true, name: true, slug: true } },
+          },
+        },
       },
     });
 
@@ -650,6 +657,9 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
       campaignId: donation.campaignId || null,
       campaignTitle: donation.campaign?.title || "Donasi Umum",
       campaignSlug: donation.campaign?.slug || "",
+      donationType: donation.donationType || updated.donationType || "CAMPAIGN",
+      categoryName: donation.campaign?.category?.name || "",
+      categorySlug: donation.campaign?.category?.slug || "",
       prayer: updated.prayer || null,
       isPrayerHidden: Boolean(updated.isPrayerHidden),
       isPrayerPinned: Boolean(updated.isPrayerPinned),
@@ -679,7 +689,7 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
       ).replace(/\/+$/, "");
       const receiptUrl = `${appUrl}/invoice/${settled.invoiceId}?token=${settled.accessToken || ""}`;
 
-      sendDonationReceiptEmail({
+      const receiptPayload = {
         to: settled.donorEmail,
         donorName: settled.isAnonymous ? "Hamba Allah" : settled.donorName,
         programTitle: broadcastPayload?.campaignTitle || "Program Donasi",
@@ -689,21 +699,19 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
         paymentChannelName: settled.paymentChannel || "Pembayaran Digital",
         prayer: settled.prayer || "",
         actionUrl: receiptUrl,
-      }).catch((emailErr) => {
+        donationType: broadcastPayload?.donationType || settled.donationType || "CAMPAIGN",
+        categoryName: broadcastPayload?.categoryName || "",
+        categorySlug: broadcastPayload?.categorySlug || "",
+      };
+
+      sendDonationReceiptEmail(receiptPayload).catch((emailErr) => {
         console.warn("[DonationReceipt] Pengiriman email langsung gagal, memasukkan ke antrean retry:", emailErr?.message);
         enqueueNotification({
           type: NOTIFICATION_TYPE.DONATION_RECEIPT,
           recipientPhone: settled.donorEmail,
           payload: {
             donorEmail: settled.donorEmail,
-            donorName: settled.isAnonymous ? "Hamba Allah" : settled.donorName,
-            programTitle: broadcastPayload?.campaignTitle || "Program Donasi",
-            amount: Number(settled.amount),
-            invoiceId: settled.invoiceId,
-            paidAt: settled.paidAt || new Date(),
-            paymentChannelName: settled.paymentChannel || "Pembayaran Digital",
-            prayer: settled.prayer || "",
-            actionUrl: receiptUrl,
+            ...receiptPayload,
           },
           idempotencyKey: `receipt_${settled.invoiceId}`,
         }).catch((qErr) => console.error("[DonationReceipt] Gagal memasukkan ke antrean notifikasi:", qErr?.message));

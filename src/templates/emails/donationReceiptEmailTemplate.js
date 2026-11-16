@@ -1,29 +1,45 @@
 import { buildBaseEmailHtml } from "./baseEmailTemplate";
-import { buildEmailCtaButton } from "./emailComponents";
+import {
+  buildEmailHeading,
+  buildEmailCtaButton,
+  buildEmailKeyValueTable,
+  formatPaymentChannelLabel,
+  formatGreetingName,
+  EMAIL_FONT_STACK,
+} from "./emailComponents";
 import { formatRupiah } from "@/lib/formatters";
+import { getTransactionVocabulary } from "@/lib/zisFilter";
 
 /**
- * Menyusun subjek email bukti donasi digital resmi
+ * Menyusun subjek email bukti transaksi resmi yang adaptif terhadap kategori (Zakat, Infaq, Sedekah, Wakaf, Donasi)
  * @param {string} programTitle
  * @param {string} invoiceId
+ * @param {object} [options]
  * @returns {string}
  */
-export function getDonationReceiptEmailSubject(programTitle, invoiceId) {
-  return `Bukti Donasi Sah: ${programTitle || "Yayasan Payung Berkah"} [${invoiceId}]`;
+export function getDonationReceiptEmailSubject(programTitle, invoiceId, options = {}) {
+  const vocab = getTransactionVocabulary({
+    programTitle,
+    ...options,
+  });
+  return `${vocab.subjectPrefix}: ${programTitle || "Yayasan Payung Berkah"} [${invoiceId}]`;
 }
 
 /**
- * Menyusun konten HTML email tanda terima / kuitansi donasi digital
+ * Menyusun konten HTML email tanda terima / kuitansi transaksi digital kontekstual
  * @param {object} params
- * @param {string} params.donorName - Nama donatur
- * @param {string} params.programTitle - Judul program donasi
- * @param {number} params.amount - Nominal donasi
+ * @param {string} params.donorName - Nama donatur / muzakki / munfiq
+ * @param {string} params.programTitle - Judul program (misal: Zakat Maal, Sedekah Subuh, dsb)
+ * @param {number} params.amount - Nominal transaksi
  * @param {string} params.invoiceId - Nomor invoice resmi
  * @param {Date|string} [params.paidAt] - Tanggal & waktu pelunasan
  * @param {string} [params.paymentChannelName] - Nama metode pembayaran
  * @param {string} [params.prayer] - Doa/titipan hajat donatur
  * @param {string} params.actionUrl - Tautan melihat invoice digital
  * @param {string} [params.logoUrl] - URL logo publik
+ * @param {string} [params.donationType] - Tipe transaksi ("ZAKAT", "INFAQ", "SEDEKAH", "WAKAF", "CAMPAIGN")
+ * @param {string} [params.categoryName] - Nama kategori program
+ * @param {string} [params.categorySlug] - Slug kategori program
  * @returns {string} Markup HTML email lengkap
  */
 export function buildDonationReceiptEmailHtml({
@@ -36,8 +52,20 @@ export function buildDonationReceiptEmailHtml({
   prayer = "",
   actionUrl,
   logoUrl,
+  donationType,
+  categoryName,
+  categorySlug,
 }) {
-  const safeName = donorName && donorName !== "Hamba Allah" ? donorName.trim() : "Sahabat Kebaikan";
+  const vocab = getTransactionVocabulary({
+    donationType,
+    categoryName,
+    categorySlug,
+    programTitle,
+  });
+
+  const safeFullName = donorName && donorName !== "Hamba Allah" ? donorName.trim() : "Sahabat Kebaikan";
+  const greetingName = formatGreetingName(safeFullName, "Sahabat Kebaikan");
+
   const dateObj = paidAt instanceof Date ? paidAt : new Date(paidAt);
   const formattedDate = dateObj.toLocaleDateString("id-ID", {
     day: "numeric",
@@ -49,105 +77,77 @@ export function buildDonationReceiptEmailHtml({
   });
 
   const buttonHtml = buildEmailCtaButton({
-    text: "Buka Bukti Donasi Digital",
+    text: vocab.buttonText,
     url: actionUrl,
     variant: "primary3d",
+    showFallbackUrl: true,
+    confidentialityNotice: `Catatan: Bukti transaksi ini sah dan bersifat pribadi. Simpan tautan ini dengan baik untuk ${vocab.archiveLabel} Anda.`,
   });
 
+  const receiptItems = [
+    { label: "Nomor Transaksi", value: invoiceId },
+  ];
+
+  if (safeFullName !== "Sahabat Kebaikan") {
+    receiptItems.push({ label: vocab.partyLabel, value: `<span style="text-transform: uppercase;">${safeFullName}</span>` });
+  }
+
+  receiptItems.push(
+    { label: vocab.programLabel, value: programTitle || vocab.programLabel },
+    { label: vocab.nominalLabel, value: formatRupiah(amount), isHighlight: true },
+    { label: "Waktu Pembayaran", value: `${formattedDate} WIB` },
+    { label: "Metode Pembayaran", value: formatPaymentChannelLabel(paymentChannelName) }
+  );
+
   const contentHtml = `
-    <!-- Sapaan -->
-    <p style="margin: 0 0 16px 0; font-size: 15px; color: #111827; line-height: 1.5;">
-      Assalamu’alaikum Warahmatullahi Wabarakatuh,<br />
-      Halo <strong>${safeName}</strong>,
+    <!-- Judul Konteks Eye-Catching -->
+    ${buildEmailHeading(vocab.heading)}
+
+    <!-- Sapaan Hangat -->
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Halo <span style="text-transform: uppercase;">${greetingName}</span>,
     </p>
 
-    <!-- Pembuka -->
-    <p style="margin: 0 0 24px 0; font-size: 14px; color: #374151; line-height: 1.6;">
-      Alhamdulillah, pembayaran donasi Anda telah kami terima dan terverifikasi secara sah ke dalam rekening amanah kas Yayasan Payung Berkah:
+    <!-- Pembuka Natural & Santun Sesuai Syariat -->
+    <p style="margin: 0 0 20px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      ${vocab.openingText}
     </p>
 
-    <!-- Kotak Ringkasan Rincian Donasi -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 28px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; border-collapse: separate; overflow: hidden;">
-      <tr>
-        <td style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0;">
-          <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; display: block; margin-bottom: 4px;">
-            Nomor Transaksi
-          </span>
-          <span style="font-size: 14px; font-family: monospace; font-weight: 700; color: #0f172a;">
-            ${invoiceId}
-          </span>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0;">
-          <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; display: block; margin-bottom: 4px;">
-            Program Donasi
-          </span>
-          <span style="font-size: 15px; font-weight: 600; color: #0f172a; line-height: 1.4;">
-            ${programTitle || "Donasi Program"}
-          </span>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; background-color: #f0fdf4;">
-          <span style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #166534; display: block; margin-bottom: 4px;">
-            Nominal Donasi Terverifikasi
-          </span>
-          <span style="font-size: 20px; font-weight: 700; color: #15803d; letter-spacing: -0.01em;">
-            ${formatRupiah(amount)}
-          </span>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 14px 20px; border-bottom: 1px solid #e2e8f0;">
-          <span style="font-size: 12px; color: #64748b; display: block; margin-bottom: 2px;">Waktu Pembayaran</span>
-          <span style="font-size: 13px; font-weight: 500; color: #1e293b;">${formattedDate} WIB</span>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 14px 20px; border-bottom: ${prayer ? "1px solid #e2e8f0" : "none"};">
-          <span style="font-size: 12px; color: #64748b; display: block; margin-bottom: 2px;">Metode Pembayaran</span>
-          <span style="font-size: 13px; font-weight: 500; color: #1e293b;">${paymentChannelName}</span>
-        </td>
-      </tr>
-      ${
-        prayer
-          ? `
-      <tr>
-        <td style="padding: 14px 20px; background-color: #fefce8;">
-          <span style="font-size: 12px; font-weight: 600; color: #854d0e; display: block; margin-bottom: 4px;">Doa & Harapan Donatur</span>
-          <span style="font-size: 13px; font-style: italic; color: #713f12; line-height: 1.5;">"${prayer}"</span>
-        </td>
-      </tr>
-      `
-          : ""
-      }
-    </table>
+    <!-- Rincian Transaksi (Clean Raw Text Table) -->
+    ${buildEmailKeyValueTable(receiptItems)}
 
-    <!-- Call to Action Button -->
+    ${
+      prayer
+        ? `
+    <!-- Titipan Doa (Simple Clean Block) -->
+    <div style="margin: 16px 0 24px 0; padding: 12px 16px; border-left: 2px solid #94a3b8; font-family: ${EMAIL_FONT_STACK};">
+      <span style="font-size: 14px; color: #374151; display: block; margin-bottom: 4px;">Titipan Doa & Hajat:</span>
+      <span style="font-size: 15px; color: #111827; font-style: italic; line-height: 1.5;">"${prayer}"</span>
+    </div>
+    `
+        : ""
+    }
+
+    <!-- Call to Action Button (Centered 3D) -->
     ${buttonHtml}
 
-    <!-- Penutup & Doa -->
-    <p style="margin: 0 0 16px 0; font-size: 14px; color: #374151; line-height: 1.6;">
-      Jazakumullah khairan katsiran atas sedekah dan kepercayaan Anda. Semoga Allah SWT menerima amal ibadah Anda, menggantinya dengan rezeki yang berkah dan melimpah, serta memberikan ketenangan lahir dan batin untuk Anda sekeluarga. Aamiin ya Rabbal 'Alamin.
+    <!-- Penutup & Doa Kontekstual -->
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      ${vocab.closingDoa}
     </p>
 
-    <!-- Tanda Tangan -->
-    <table role="presentation" cellspacing="0" cellpadding="0" style="margin-top: 24px;">
-      <tr>
-        <td>
-          <p style="margin: 0; font-size: 13px; color: #4b5563; line-height: 1.5;">
-            Salam hangat dan doa,<br />
-            <strong style="color: #111827;">Tim Pengurus Yayasan Payung Berkah</strong><br />
-            <span style="font-size: 12px; color: #6b7280;">Amanah, Transparan, dan Akuntabel</span>
-          </p>
-        </td>
-      </tr>
-    </table>
+    <!-- Tanda Tangan Resmi Yayasan -->
+    <div style="margin-top: 24px; font-family: ${EMAIL_FONT_STACK};">
+      <p style="margin: 0; font-size: 14px; color: #111827; line-height: 1.5;">
+        Salam takzim dan doa,<br />
+        <strong style="color: #111827;">Yayasan Payung Berkah</strong><br />
+        <span style="font-size: 13px; color: #374151;">Amanah, Transparan, dan Akuntabel</span>
+      </p>
+    </div>
   `.trim();
 
   return buildBaseEmailHtml({
-    title: `Bukti Donasi Sah: ${programTitle} [${invoiceId}]`,
+    title: `${vocab.subjectPrefix}: ${programTitle} [${invoiceId}]`,
     contentHtml,
     logoUrl,
   });

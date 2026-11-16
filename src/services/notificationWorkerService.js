@@ -131,6 +131,9 @@ export async function processNotificationQueue({
               paymentChannelName: payload.paymentChannelName,
               prayer: payload.prayer || "",
               actionUrl: payload.actionUrl,
+              donationType: payload.donationType,
+              categoryName: payload.categoryName,
+              categorySlug: payload.categorySlug,
             });
           } else if (item.type === NOTIFICATION_TYPE.ROUTINE_COMPLETION) {
             dispatchResult = await sendRoutineCompletionEmail({

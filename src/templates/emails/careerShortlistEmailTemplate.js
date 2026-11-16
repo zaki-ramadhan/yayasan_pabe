@@ -1,4 +1,5 @@
 import { buildBaseEmailHtml } from "./baseEmailTemplate";
+import { buildEmailHeading, buildEmailKeyValueTable, EMAIL_FONT_STACK } from "./emailComponents";
 
 /**
  * Membuat subjek email lolos seleksi berkas karier
@@ -28,49 +29,42 @@ export function buildCareerShortlistEmailHtml({
   const safePosition = position ? position.trim() : "Posisi Profesional";
   const safeDept = department ? department.trim() : "Yayasan Payung Berkah";
 
+  const shortlistItems = [
+    { label: "Nama Pelamar", value: `<span style="text-transform: uppercase;">${safeName}</span>` },
+    { label: "Posisi Dilamar", value: safePosition },
+    { label: "Departemen", value: safeDept },
+    { label: "Status Seleksi", value: "Lolos Seleksi Berkas (SHORTLISTED)", isHighlight: true },
+  ];
+
   const contentHtml = `
+    <!-- Judul Konteks Eye-Catching -->
+    ${buildEmailHeading("Kabar Baik: Seleksi Berkas Lamaran")}
+
     <!-- Sapaan Hangat -->
-    <p style="margin: 0 0 16px 0; font-size: 15px; color: #111827; line-height: 1.5;">
-      Halo <strong>${safeName}</strong>,
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Halo <span style="text-transform: uppercase;">${safeName}</span>,
     </p>
 
     <!-- Kabar Baik -->
-    <p style="margin: 0 0 20px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Alhamdulillah, kami memiliki kabar baik terkait berkas lamaran kerja yang Anda ajukan untuk posisi <strong>${safePosition}</strong> di <strong>Yayasan Payung Berkah</strong>.
+    <p style="margin: 0 0 18px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Alhamdulillah, berkas lamaran kerja yang Anda ajukan untuk posisi <strong>${safePosition}</strong> telah selesai kami tinjau:
     </p>
 
-    <!-- Kotak Rincian Status Lolos Seleksi -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 24px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 16px 20px;">
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #166534; width: 140px;">Nama Pelamar</td>
-        <td style="padding: 5px 0; font-size: 13px; color: #15803d; font-weight: 600;">: ${safeName}</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #166534;">Posisi Dilamar</td>
-        <td style="padding: 5px 0; font-size: 13px; color: #15803d; font-weight: 600;">: ${safePosition}</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #166534;">Departemen</td>
-        <td style="padding: 5px 0; font-size: 13px; color: #15803d; font-weight: 600;">: ${safeDept}</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #166534;">Status Seleksi</td>
-        <td style="padding: 5px 0; font-size: 13px; color: #15803d; font-weight: 700;">: LOLOS PENAPISAN AWAL (SHORTLISTED)</td>
-      </tr>
-    </table>
+    <!-- Rincian Status (Clean Raw Text Table) -->
+    ${buildEmailKeyValueTable(shortlistItems)}
 
     <!-- Langkah Selanjutnya -->
-    <p style="margin: 0 0 16px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Setelah melalui evaluasi dokumen dan portofolio, tim Human Capital kami mengapresiasi keselarasan latar belakang Anda dengan kriteria yang dibutuhkan. Anda dinyatakan berhak mengikuti <strong>tahapan seleksi berikutnya (wawancara kerja)</strong>.
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Profil dan pengalaman Anda dinilai selaras dengan kriteria posisi ini. Anda berhak mengikuti tahapan seleksi berikutnya (<strong>wawancara kerja</strong>).
     </p>
 
-    <p style="margin: 0 0 24px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Tim rekrutmen kami akan segera menghubungi Anda melalui nomor WhatsApp atau telepon resmi yayasan dalam beberapa hari kerja ke depan untuk mengonfirmasi jadwal dan teknis sesi wawancara. Mohon pastikan kontak Anda selalu dapat dihubungi.
+    <p style="margin: 0 0 20px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Tim rekrutmen kami akan segera menghubungi Anda dalam beberapa hari kerja ke depan untuk konfirmasi jadwal wawancara. Mohon pastikan kontak Anda selalu aktif.
     </p>
 
     <!-- Catatan Keamanan Rekrutmen -->
-    <p style="margin: 0; font-size: 13px; color: #4b5563; line-height: 1.6;">
-      Seluruh rangkaian rekrutmen dan seleksi di Yayasan Payung Berkah tidak dipungut biaya apa pun. Tetap waspada terhadap segala bentuk penipuan yang mengatasnamakan yayasan kami.
+    <p style="margin: 20px 0 0 0; font-size: 14px; color: #374151; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Seluruh tahapan rekrutmen di Yayasan Payung Berkah bebas biaya. Waspada terhadap pihak yang mengatasnamakan yayasan dengan memungut biaya apa pun.
     </p>
   `.trim();
 

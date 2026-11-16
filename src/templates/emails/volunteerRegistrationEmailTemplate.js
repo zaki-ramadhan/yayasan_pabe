@@ -1,5 +1,10 @@
 import { buildBaseEmailHtml } from "./baseEmailTemplate";
-import { buildEmailCtaButton } from "./emailComponents";
+import {
+  buildEmailHeading,
+  buildEmailCtaButton,
+  buildEmailKeyValueTable,
+  EMAIL_FONT_STACK,
+} from "./emailComponents";
 
 export const VOLUNTEER_REGISTRATION_EMAIL_SUBJECT =
   "Pendaftaran Relawan Diterima - Yayasan Payung Berkah";
@@ -31,45 +36,39 @@ export function buildVolunteerRegistrationEmailHtml({
     text: "Pantau Status Relawan",
     url: targetUrl,
     variant: "primary3d",
+    showFallbackUrl: true,
   });
 
+  const regItems = [
+    { label: "Nama Relawan", value: `<span style="text-transform: uppercase;">${safeName}</span>` },
+    { label: "Kota Domisili", value: safeCity },
+    { label: "Fokus Peminatan", value: safeInterest },
+    { label: "Status Pengajuan", value: "Sedang Ditinjau Tim (PENDING)", isHighlight: true },
+  ];
+
   const contentHtml = `
+    <!-- Judul Konteks Eye-Catching -->
+    ${buildEmailHeading("Pendaftaran Relawan Diterima")}
+
     <!-- Sapaan Hangat -->
-    <p style="margin: 0 0 16px 0; font-size: 15px; color: #111827; line-height: 1.5;">
-      Halo <strong>${safeName}</strong>,
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Halo <span style="text-transform: uppercase;">${safeName}</span>,
     </p>
 
     <!-- Pengantar -->
-    <p style="margin: 0 0 24px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Terima kasih atas niat mulia dan kesediaan Anda menjadi bagian dari <strong>Relawan</strong> Yayasan Payung Berkah. Berkas pendaftaran Anda telah berhasil kami terima dalam sistem.
+    <p style="margin: 0 0 18px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Terima kasih atas niat mulia Anda bergabung sebagai <strong>Relawan</strong> Yayasan Payung Berkah. Berkas pendaftaran Anda telah kami terima:
     </p>
 
-    <!-- Ringkasan Rincian Pendaftaran -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 28px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px 20px;">
-      <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #4b5563; width: 140px;">Nama Relawan</td>
-        <td style="padding: 6px 0; font-size: 13px; color: #111827; font-weight: 600;">: ${safeName}</td>
-      </tr>
-      <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #4b5563;">Kota Domisili</td>
-        <td style="padding: 6px 0; font-size: 13px; color: #111827; font-weight: 600;">: ${safeCity}</td>
-      </tr>
-      <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #4b5563;">Fokus Peminatan</td>
-        <td style="padding: 6px 0; font-size: 13px; color: #111827; font-weight: 600;">: ${safeInterest}</td>
-      </tr>
-      <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #4b5563;">Status Pengajuan</td>
-        <td style="padding: 6px 0; font-size: 13px; color: #b45309; font-weight: 600;">: Sedang Ditinjau Tim (PENDING)</td>
-      </tr>
-    </table>
+    <!-- Rincian Pendaftaran (Clean Raw Text Table) -->
+    ${buildEmailKeyValueTable(regItems)}
 
-    <!-- Tombol CTA -->
+    <!-- Tombol CTA (Centered 3D) -->
     ${buttonHtml}
 
     <!-- Catatan Lanjutan -->
-    <p style="margin: 0; font-size: 13px; color: #4b5563; line-height: 1.6;">
-      Tim pengelola program yayasan akan meninjau berkas pendaftaran Anda. Setelah disetujui, Anda akan menerima email notifikasi resmi beserta akses ke kartu anggota relawan digital.
+    <p style="margin: 20px 0 0 0; font-size: 14px; color: #374151; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Tim pengurus kami sedang meninjau berkas pendaftaran Anda. Pemberitahuan hasil verifikasi beserta akses kartu digital akan dikirimkan ke email ini setelah proses penelaahan selesai.
     </p>
   `.trim();
 

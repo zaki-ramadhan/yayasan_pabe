@@ -1,4 +1,5 @@
 import { buildBaseEmailHtml } from "./baseEmailTemplate";
+import { buildEmailHeading, buildEmailKeyValueTable, EMAIL_FONT_STACK } from "./emailComponents";
 
 /**
  * Membuat konten HTML email konfirmasi tanda terima berkas lamaran kerja
@@ -19,45 +20,38 @@ export function buildCareerApplicationEmailHtml({
   const safePosition = position ? position.trim() : "Posisi Profesional";
   const safeDept = department ? department.trim() : "Yayasan Payung Berkah";
 
+  const applicationItems = [
+    { label: "Nama Pelamar", value: `<span style="text-transform: uppercase;">${safeName}</span>` },
+    { label: "Posisi Dilamar", value: safePosition },
+    { label: "Departemen", value: safeDept },
+    { label: "Status Berkas", value: "Berkas Diterima (REVIEWING)", isHighlight: true },
+  ];
+
   const contentHtml = `
+    <!-- Judul Konteks Eye-Catching -->
+    ${buildEmailHeading("Berkas Lamaran Diterima")}
+
     <!-- Sapaan Hangat -->
-    <p style="margin: 0 0 16px 0; font-size: 15px; color: #111827; line-height: 1.5;">
-      Halo <strong>${safeName}</strong>,
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Halo <span style="text-transform: uppercase;">${safeName}</span>,
     </p>
 
     <!-- Pengantar -->
-    <p style="margin: 0 0 24px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Terima kasih atas ketertarikan dan niat baik Anda untuk berkarier serta bertumbuh bersama <strong>Yayasan Payung Berkah</strong>. Berkas lamaran dan portofolio Anda telah berhasil masuk ke dalam pangkalan data tim Human Capital kami.
+    <p style="margin: 0 0 18px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Terima kasih atas ketertarikan Anda untuk berkarier bersama <strong>Yayasan Payung Berkah</strong>. Berkas lamaran Anda telah berhasil kami terima dengan rincian pengajuan:
     </p>
 
-    <!-- Kotak Rincian Pengajuan Lowongan -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 28px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px 20px;">
-      <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #4b5563; width: 140px;">Nama Pelamar</td>
-        <td style="padding: 6px 0; font-size: 13px; color: #111827; font-weight: 600;">: ${safeName}</td>
-      </tr>
-      <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #4b5563;">Posisi Dilamar</td>
-        <td style="padding: 6px 0; font-size: 13px; color: #111827; font-weight: 600;">: ${safePosition}</td>
-      </tr>
-      <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #4b5563;">Departemen</td>
-        <td style="padding: 6px 0; font-size: 13px; color: #111827; font-weight: 600;">: ${safeDept}</td>
-      </tr>
-      <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #4b5563;">Status Berkas</td>
-        <td style="padding: 6px 0; font-size: 13px; color: #2563eb; font-weight: 600;">: Berkas Diterima (REVIEWING)</td>
-      </tr>
-    </table>
+    <!-- Rincian Lamaran (Clean Raw Text Table) -->
+    ${buildEmailKeyValueTable(applicationItems)}
 
     <!-- Penjelasan Alur Seleksi -->
-    <p style="margin: 0 0 16px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Tim rekrutmen kami akan meninjau keselarasan profil dan kompetensi Anda dengan kebutuhan organisasi. Pelamar yang lolos penapisan administrasi awal akan dihubungi lebih lanjut melalui WhatsApp atau email resmi yayasan untuk jadwal wawancara.
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Tim rekrutmen kami sedang menelaah profil dan kesesuaian berkas Anda. Kandidat yang terpilih akan kami hubungi secara langsung untuk tahapan wawancara selanjutnya.
     </p>
 
     <!-- Catatan Penutup -->
-    <p style="margin: 0; font-size: 13px; color: #4b5563; line-height: 1.6;">
-      Harap berhati-hati terhadap segala bentuk penipuan yang mengatasnamakan Yayasan Payung Berkah. Seluruh proses rekrutmen kami bebas dari pungutan biaya apa pun.
+    <p style="margin: 20px 0 0 0; font-size: 14px; color: #374151; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Perhatian: Seluruh tahapan rekrutmen di Yayasan Payung Berkah bebas biaya. Waspada terhadap pihak yang mengatasnamakan yayasan dengan memungut biaya apa pun.
     </p>
   `.trim();
 

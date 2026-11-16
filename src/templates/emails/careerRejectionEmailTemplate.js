@@ -1,4 +1,5 @@
 import { buildBaseEmailHtml } from "./baseEmailTemplate";
+import { buildEmailHeading, buildEmailKeyValueTable, EMAIL_FONT_STACK } from "./emailComponents";
 
 /**
  * Membuat subjek email penolakan berkas lamaran kerja
@@ -28,50 +29,43 @@ export function buildCareerRejectionEmailHtml({
   const safePosition = position ? position.trim() : "Posisi Profesional";
   const safeDept = department ? department.trim() : "Yayasan Payung Berkah";
 
+  const rejectionItems = [
+    { label: "Nama Pelamar", value: `<span style="text-transform: uppercase;">${safeName}</span>` },
+    { label: "Posisi Dilamar", value: safePosition },
+    { label: "Departemen", value: safeDept },
+    { label: "Status Lamaran", value: "Proses Seleksi Selesai" },
+  ];
+
   const contentHtml = `
+    <!-- Judul Konteks Eye-Catching -->
+    ${buildEmailHeading("Pembaruan Status Lamaran Kerja")}
+
     <!-- Sapaan Hangat -->
-    <p style="margin: 0 0 16px 0; font-size: 15px; color: #111827; line-height: 1.5;">
-      Halo <strong>${safeName}</strong>,
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Halo <span style="text-transform: uppercase;">${safeName}</span>,
     </p>
 
     <!-- Apresiasi Minat & Waktu Pelamar -->
-    <p style="margin: 0 0 20px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Terima kasih banyak atas waktu, ketertarikan, dan berkas lamaran kerja yang telah Anda ajukan untuk posisi <strong>${safePosition}</strong> di <strong>Yayasan Payung Berkah</strong>.
+    <p style="margin: 0 0 18px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Terima kasih atas minat dan berkas lamaran kerja yang telah Anda ajukan untuk posisi <strong>${safePosition}</strong> di Yayasan Payung Berkah:
     </p>
 
-    <!-- Kotak Rincian Lamaran -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 24px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px 20px;">
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #4b5563; width: 140px;">Nama Pelamar</td>
-        <td style="padding: 5px 0; font-size: 13px; color: #111827; font-weight: 600;">: ${safeName}</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #4b5563;">Posisi Dilamar</td>
-        <td style="padding: 5px 0; font-size: 13px; color: #111827; font-weight: 600;">: ${safePosition}</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #4b5563;">Departemen</td>
-        <td style="padding: 5px 0; font-size: 13px; color: #111827; font-weight: 600;">: ${safeDept}</td>
-      </tr>
-      <tr>
-        <td style="padding: 5px 0; font-size: 13px; color: #4b5563;">Status Lamaran</td>
-        <td style="padding: 5px 0; font-size: 13px; color: #6b7280; font-weight: 600;">: Proses Seleksi Selesai</td>
-      </tr>
-    </table>
+    <!-- Rincian Lamaran (Clean Raw Text Table) -->
+    ${buildEmailKeyValueTable(rejectionItems)}
 
     <!-- Penjelasan Santun & Objektif -->
-    <p style="margin: 0 0 16px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Setelah melalui peninjauan berkas yang menyeluruh, saat ini kami memutuskan untuk melanjutkan proses seleksi dengan kandidat lain yang kualifikasi dan pengalaman khususnya lebih selaras dengan kebutuhan formasi yang sedang dibuka.
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Setelah peninjauan berkas, saat ini kami memutuskan untuk melanjutkan proses dengan kandidat lain yang kualifikasinya lebih selaras dengan kebutuhan formasi yang sedang dibuka.
     </p>
 
     <!-- Talent Pool -->
-    <p style="margin: 0 0 24px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Profil dan resume Anda tetap tersimpan dalam basis data <em>talent pool</em> tim Human Capital kami. Jika di kemudian hari tersedia kesempatan atau lowongan baru yang sesuai dengan keahlian Anda, kami akan dengan senang hati menghubungi Anda kembali.
+    <p style="margin: 0 0 20px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Profil dan resume Anda tetap tersimpan dalam <em>talent pool</em> kami. Kami akan menghubungi Anda kembali apabila di masa mendatang tersedia kesempatan yang sesuai dengan keahlian Anda.
     </p>
 
     <!-- Doa & Penutup -->
-    <p style="margin: 0; font-size: 13px; color: #4b5563; line-height: 1.6;">
-      Kami menghargai antusiasme Anda dan mendoakan kesuksesan dalam setiap ikhtiar dan langkah perjalanan karier profesional Anda ke depan.
+    <p style="margin: 20px 0 0 0; font-size: 15px; color: #374151; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Kami mengapresiasi antusiasme Anda dan mendoakan kesuksesan dalam setiap ikhtiar perjalanan karier Anda ke depan.
     </p>
   `.trim();
 

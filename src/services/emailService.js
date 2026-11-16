@@ -57,8 +57,10 @@ export function getEmailConfig() {
     process.env.RESEND_FROM_EMAIL ||
     process.env.BREVO_FROM_EMAIL ||
     "Yayasan Payung Berkah <noreply@pabe.or.id>";
+  const resendFromEmail = process.env.RESEND_FROM_EMAIL || fromEmail;
+  const brevoFromEmail = process.env.BREVO_FROM_EMAIL || fromEmail;
 
-  return { resendApiKey, brevoApiKey, fromEmail };
+  return { resendApiKey, brevoApiKey, fromEmail, resendFromEmail, brevoFromEmail };
 }
 
 /**
@@ -254,7 +256,7 @@ export async function sendEmail({ to, subject, html, attachments }) {
     return { success: true, id: `test_email_${Date.now()}`, provider: "mock_test" };
   }
 
-  const { resendApiKey, brevoApiKey, fromEmail } = getEmailConfig();
+  const { resendApiKey, brevoApiKey, resendFromEmail, brevoFromEmail } = getEmailConfig();
 
   // Mode Fallback/Simulasi jika belum ada satupun API key yang dikonfigurasi di .env
   if (!resendApiKey && !brevoApiKey) {
@@ -278,7 +280,7 @@ export async function sendEmail({ to, subject, html, attachments }) {
     try {
       return await sendViaResend({
         apiKey: resendApiKey,
-        fromEmail,
+        fromEmail: resendFromEmail,
         to,
         subject,
         html,
@@ -293,7 +295,7 @@ export async function sendEmail({ to, subject, html, attachments }) {
         try {
           const brevoResult = await sendViaBrevo({
             apiKey: brevoApiKey,
-            fromEmail,
+            fromEmail: brevoFromEmail,
             to,
             subject,
             html,
@@ -316,7 +318,7 @@ export async function sendEmail({ to, subject, html, attachments }) {
   // 3. Jika hanya Brevo yang dikonfigurasi
   return sendViaBrevo({
     apiKey: brevoApiKey,
-    fromEmail,
+    fromEmail: brevoFromEmail,
     to,
     subject,
     html,
@@ -500,17 +502,20 @@ export async function sendRoutinePausedDueToUnpaidEmail({
 }
 
 /**
- * Mengirimkan email bukti donasi digital resmi kepada donatur setelah pelunasan
+ * Mengirimkan email bukti transaksi digital resmi kepada donatur/muzakki/munfiq setelah pelunasan
  * @param {object} params
- * @param {string} params.to - Alamat email donatur
- * @param {string} params.donorName - Nama donatur
- * @param {string} params.programTitle - Judul program donasi
+ * @param {string} params.to - Alamat email penerima
+ * @param {string} params.donorName - Nama donatur / muzakki / munfiq
+ * @param {string} params.programTitle - Judul program donasi / zakat / infaq
  * @param {number} params.amount - Nominal donasi
  * @param {string} params.invoiceId - Nomor invoice
  * @param {Date|string} [params.paidAt] - Waktu pembayaran
  * @param {string} [params.paymentChannelName] - Nama metode pembayaran
  * @param {string} [params.prayer] - Doa donatur
  * @param {string} params.actionUrl - Tautan melihat kuitansi digital
+ * @param {string} [params.donationType] - Tipe transaksi (ZAKAT, INFAQ, SEDEKAH, WAKAF, CAMPAIGN)
+ * @param {string} [params.categoryName] - Nama kategori campaign
+ * @param {string} [params.categorySlug] - Slug kategori campaign
  */
 export async function sendDonationReceiptEmail({
   to,
@@ -522,9 +527,16 @@ export async function sendDonationReceiptEmail({
   paymentChannelName,
   prayer,
   actionUrl,
+  donationType,
+  categoryName,
+  categorySlug,
 }) {
   const logoUrl = await getPublicEmailLogoUrl();
-  const subject = getDonationReceiptEmailSubject(programTitle, invoiceId);
+  const subject = getDonationReceiptEmailSubject(programTitle, invoiceId, {
+    donationType,
+    categoryName,
+    categorySlug,
+  });
   const html = buildDonationReceiptEmailHtml({
     donorName,
     programTitle,
@@ -535,6 +547,9 @@ export async function sendDonationReceiptEmail({
     prayer,
     actionUrl,
     logoUrl,
+    donationType,
+    categoryName,
+    categorySlug,
   });
 
   return sendEmail({

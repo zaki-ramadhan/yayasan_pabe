@@ -1,5 +1,10 @@
 import { buildBaseEmailHtml } from "./baseEmailTemplate";
-import { buildEmailCtaButton } from "./emailComponents";
+import {
+  buildEmailHeading,
+  buildEmailCtaButton,
+  buildEmailKeyValueTable,
+  EMAIL_FONT_STACK,
+} from "./emailComponents";
 
 /**
  * Membuat konten HTML email pemberitahuan pengalihan otomatis program donasi rutin
@@ -26,51 +31,45 @@ export function buildRoutineRolloverEmailHtml({
     text: "Lihat Program & Kelola Jadwal",
     url: actionUrl,
     variant: "primary3d",
+    showFallbackUrl: true,
   });
 
+  const rolloverItems = [
+    { label: "Program Sebelumnya", value: `${oldProgramTitle} (Selesai)` },
+    { label: "Dialihkan ke Program", value: newProgramTitle, isHighlight: true },
+  ];
+
   const contentHtml = `
+    <!-- Judul Konteks Eye-Catching -->
+    ${buildEmailHeading("Pengalihan Program Donasi Rutin")}
+
     <!-- Sapaan -->
-    <p style="margin: 0 0 16px 0; font-size: 15px; color: #111827; line-height: 1.5;">
-      Assalamu’alaikum Warahmatullahi Wabarakatuh,<br />
-      Halo <strong>${safeName}</strong>,
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Halo <span style="text-transform: uppercase;">${safeName}</span>,
     </p>
 
     <!-- Isi Pesan -->
-    <p style="margin: 0 0 18px 0; font-size: 14px; color: #374151; line-height: 1.6;">
-      Alhamdulillah, atas izin Allah SWT dan keistiqomahan Anda, program donasi <strong>${oldProgramTitle}</strong> kini telah resmi selesai dan target penyalurannya telah terpenuhi dengan baik.
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Program donasi <strong>${oldProgramTitle}</strong> telah selesai dan target penyalurannya telah terpenuhi. Agar kesinambungan sedekah rutin Anda terus berjalan tanpa terputus, komitmen kebaikan Anda dialihkan ke program aktif berikut:
     </p>
 
-    <!-- Kotak Pengumuman Pengalihan Jadwal -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 24px; background-color: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; border-collapse: separate;">
-      <tr>
-        <td style="padding: 16px 20px;">
-          <p style="margin: 0 0 6px 0; font-size: 14px; font-weight: 600; color: #15803d;">
-            Komitmen Donasi Rutin Anda Dialihkan ke Program Aktif
-          </p>
-          <p style="margin: 0 0 10px 0; font-size: 13px; color: #166534; line-height: 1.5;">
-            Agar aliran pahala sedekah rutin Anda terus terjaga tanpa terputus, komitmen donasi rutin Anda telah dialihkan secara otomatis ke program donasi:
-          </p>
-          <p style="margin: 0; font-size: 14px; font-weight: 700; color: #14532d;">
-            📌 ${newProgramTitle}
-          </p>
-        </td>
-      </tr>
-    </table>
+    <!-- Rincian Pengalihan (Clean Raw Text Table) -->
+    ${buildEmailKeyValueTable(rolloverItems)}
 
-    <p style="margin: 0 0 18px 0; font-size: 14px; color: #374151; line-height: 1.6;">
-      Nominal dan jadwal rutin Anda tetap sama persis seperti sebelumnya. Apabila Anda ingin memilih program lain, menjeda, atau mengubah jadwal donasi, Anda dapat mengaturnya kapan saja melalui Dashboard Donatur.
+    <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Nominal dan jadwal rutin Anda tetap sama seperti sebelumnya. Anda dapat mengubah pilihan program atau menjeda jadwal kapan saja melalui menu <a href="${actionUrl}">Dashboard Donatur</a>.
     </p>
 
-    <p style="margin: 0 0 24px 0; font-size: 14px; color: #374151; line-height: 1.6;">
-      Jazakumullah Khairan Katsiran atas kesetiaan Anda dalam menemani langkah dakwah dan sosial kami. Semoga Allah memberkahi rezeki dan keluarga Anda. Aamiin.
+    <p style="margin: 0 0 20px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Jazakumullah khairan katsiran atas keistiqomahan Anda. Semoga Allah SWT senantiasa memberkahi rezeki dan keluarga Anda. Aamiin ya Rabbal 'Alamin.
     </p>
 
     <!-- Tombol Aksi -->
     ${buttonHtml}
 
     <!-- Footer Catatan -->
-    <p style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.5; padding-top: 16px; border-top: 1px solid #f1f5f9;">
-      Pemberitahuan ini dikirimkan secara otomatis oleh Yayasan Payung Berkah sebagai bentuk transparansi dan tanggung jawab amanah program.
+    <p style="margin: 20px 0 0 0; font-size: 14px; color: #374151; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
+      Pemberitahuan ini dikirimkan otomatis oleh Yayasan Payung Berkah sebagai bentuk transparansi dan tanggung jawab amanah program.
     </p>
   `.trim();
 

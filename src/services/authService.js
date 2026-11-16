@@ -313,8 +313,8 @@ export function redirectToFacebookOAuth(callbackUrl = "/", mode = "login") {
   window.location.href = target;
 }
 
-export function logoutUser() {
-  if (typeof window === "undefined") return;
+export async function logoutUser() {
+  if (typeof window === "undefined") return { success: true };
   localStorage.removeItem(AUTH_STORAGE_KEY);
   localStorage.removeItem("pabe_auth_session");
   sessionStorage.removeItem("pabe_just_logged_in");
@@ -333,13 +333,20 @@ export function logoutUser() {
   document.cookie = "ygsm_session=; path=/; max-age=0; SameSite=Lax";
   document.cookie = "ygsm_role=; path=/; max-age=0; SameSite=Lax";
 
-  // Trigger server logout if available
+  // Await server logout to clear HttpOnly cookies via Set-Cookie headers
+  let serverSuccess = true;
   try {
-    safeFetch("/api/auth/logout", { method: "POST", timeoutMs: 5000 }).catch(() => {});
-  } catch {}
+    const res = await safeFetch("/api/auth/logout", { method: "POST", timeoutMs: 4000 });
+    if (!res || res.success === false) {
+      serverSuccess = false;
+    }
+  } catch {
+    serverSuccess = false;
+  }
 
   window.dispatchEvent(new Event("pabe_auth_change"));
   window.dispatchEvent(new Event("storage"));
+  return { success: serverSuccess };
 }
 
 export function getRememberedIdentifier() {
