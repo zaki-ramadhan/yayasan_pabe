@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Camera } from "lucide-react";
+import { CameraIcon as Camera } from "@solar-icons/react/line-duotone/camera";
 import { formatDate, getInitials } from "@/lib/formatters";
 import { DonorProfileBannerCanvas } from "@/components/donor/DonorProfileBannerCanvas";
 import { DonorAvatarDialog } from "@/components/donor/DonorAvatarDialog";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FileDown } from "lucide-react";
+import { FileDownloadIcon as FileDown } from "@solar-icons/react/line-duotone/file-download";
 import { DistributionAuditDonutChart } from "./DistributionAuditDonutChart";
 import { DistributionSectionHeader } from "./DistributionSectionHeader";
 import { DistributionYearFilter } from "./DistributionYearFilter";

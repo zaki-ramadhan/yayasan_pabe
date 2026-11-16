@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { isCampaignClosed } from "@/lib/formatters";
 import { TimeInput24Hour } from "@/components/ui/TimeInput24Hour";
 import { RoutineProgramPicker } from "./RoutineProgramPicker";

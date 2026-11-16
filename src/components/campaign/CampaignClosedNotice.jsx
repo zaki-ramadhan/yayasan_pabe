@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone/check-circle";
 import { getCampaignDetailHref, isZisCampaign } from "@/lib/zisFilter";
 
 /**

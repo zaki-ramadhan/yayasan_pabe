@@ -1,4 +1,5 @@
-import { Check, Copy } from "lucide-react";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
+import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
 
 /**
  * Komponen presentasi kanal Bank Virtual Account (BCA, BRI, BNI, Permata, dll)

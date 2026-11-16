@@ -3,7 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Download, Copy, Check, ExternalLink, LogOut } from "lucide-react";
+import { DownloadIcon as Download } from "@solar-icons/react/line-duotone/download";
+import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
+import { SquareArrowRightUpIcon as ExternalLink } from "@solar-icons/react/line-duotone/square-arrow-right-up";
+import { Logout2Icon as LogOut } from "@solar-icons/react/line-duotone/logout-2";
 import { VolunteerIdCard } from "./VolunteerIdCard";
 import { Button } from "@/components/ui/Button";
 import { copyToClipboard } from "@/lib/clipboard";

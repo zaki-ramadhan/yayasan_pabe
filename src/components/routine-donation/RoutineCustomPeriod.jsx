@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { AltArrowDownIcon as ChevronDown } from "@solar-icons/react/line-duotone/alt-arrow-down";
 import { cn } from "@/lib/utils";
 import { FormField } from "@/components/ui/FormField";
 import { DateRangePicker } from "@/components/ui/DateRangePicker";

@@ -2,7 +2,9 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { ShieldAlert, PhoneCall, ArrowLeft } from "lucide-react";
+import { ShieldWarningIcon as ShieldAlert } from "@solar-icons/react/line-duotone/shield-warning";
+import { PhoneCallingIcon as PhoneCall } from "@solar-icons/react/line-duotone/phone-calling";
+import { ArrowLeftIcon as ArrowLeft } from "@solar-icons/react/line-duotone/arrow-left";
 import { Button } from "@/components/ui/Button";
 import { toast } from "@/hooks/useToast";
 import { ORG_PROFILE } from "@/data/orgProfile";

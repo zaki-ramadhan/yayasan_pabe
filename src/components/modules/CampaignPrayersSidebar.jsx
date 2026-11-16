@@ -4,7 +4,9 @@
 
 import { useMemo, useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Lock, MessageCircle } from "lucide-react";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
+import { LockIcon as Lock } from "@solar-icons/react/line-duotone/lock";
+import { ChatRoundDotsIcon as MessageCircle } from "@solar-icons/react/line-duotone/chat-round-dots";
 import { PrayerChatBubble } from "@/components/modules/PrayerChatBubble";
 import { PrayerInputBar } from "@/components/modules/PrayerInputBar";
 import { usePrayersSync } from "@/hooks/usePrayersSync";

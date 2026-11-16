@@ -1,7 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { Clock, Copy, Check, CheckCircle2 } from "lucide-react";
+import { ClockCircleIcon as Clock } from "@solar-icons/react/line-duotone/clock-circle";
+import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
+import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone/check-circle";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { DashedDivider } from "@/components/ui/DashedDivider";
 import { ASSET_PATHS } from "@/lib/assetConstants";

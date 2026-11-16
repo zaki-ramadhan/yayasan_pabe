@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react";
+import { MapPointIcon as MapPin } from "@solar-icons/react/line-duotone/map-point";
 import { Progress } from "@/components/ui/Progress";
 import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
 import { FundedAmountDisplay } from "@/components/campaign/FundedAmountDisplay";

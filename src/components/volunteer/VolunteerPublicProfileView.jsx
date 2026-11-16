@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon as ArrowLeft } from "@solar-icons/react/line-duotone/arrow-left";
 import { VolunteerPublicProfileCover } from "./VolunteerPublicProfileCover";
 import { VolunteerPublicDataCard } from "./VolunteerPublicDataCard";
 import { ASSET_PATHS } from "@/lib/assetConstants";

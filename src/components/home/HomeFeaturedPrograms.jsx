@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRightIcon as ArrowRight } from "@solar-icons/react/line-duotone/arrow-right";
 import { Button } from "@/components/ui/Button";
 import { CampaignCardMinimal } from "@/components/home/CampaignCardMinimal";
 import { isCampaignClosed } from "@/lib/formatters";

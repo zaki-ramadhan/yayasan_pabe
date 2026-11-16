@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle } from "lucide-react";
+import { DangerCircleIcon as AlertCircle } from "@solar-icons/react/line-duotone/danger-circle";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 

@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, MessageSquareQuote, ExternalLink } from "lucide-react";
+import { HeartIcon as Heart } from "@solar-icons/react/line-duotone/heart";
+import { ChatSquareQuoteIcon as MessageSquareQuote } from "@solar-icons/react/line-duotone/chat-square-quote";
+import { SquareArrowRightUpIcon as ExternalLink } from "@solar-icons/react/line-duotone/square-arrow-right-up";
 import Link from "next/link";
 import {
   DonorCard,

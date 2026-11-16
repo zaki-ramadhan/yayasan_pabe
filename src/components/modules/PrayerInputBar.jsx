@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { SendHorizonal, Loader2 } from "lucide-react";
+import { Plane2Icon as SendHorizonal } from "@solar-icons/react/line-duotone/plane-2";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { cn } from "@/lib/utils";
 import { PRAYER_LIMITS, countGraphemes, hasMeaningfulText } from "@/lib/security";
 import { useAutoResizeTextarea } from "@/hooks/useAutoResizeTextarea";

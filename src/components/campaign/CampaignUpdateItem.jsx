@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Play, Video as VideoIcon } from "lucide-react";
+import { PlayIcon as Play } from "@solar-icons/react/line-duotone/play";
+import { VideoFrameIcon as VideoIcon } from "@solar-icons/react/line-duotone/video-frame";
 import { YouTubeIcon } from "@/components/icons/SocialIcons";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { SafeImage } from "@/components/ui/SafeImage";

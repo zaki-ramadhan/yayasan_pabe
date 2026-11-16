@@ -7,7 +7,7 @@ import {
   Cell,
   Tooltip,
 } from "recharts";
-import { PieChart as PieChartIcon } from "lucide-react";
+import { PieChart2Icon as PieChartIcon } from "@solar-icons/react/line-duotone/pie-chart-2";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ChartLegendGrid } from "./ChartLegendGrid";
 import { formatRupiah } from "@/lib/formatters";

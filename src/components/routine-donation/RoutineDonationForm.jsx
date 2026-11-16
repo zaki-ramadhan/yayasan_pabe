@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { AlertCircle } from "lucide-react";
+import { DangerCircleIcon as AlertCircle } from "@solar-icons/react/line-duotone/danger-circle";
 import { RoutineDonationHero } from "@/components/routine-donation/RoutineDonationHero";
 import { RoutineDonorIdentity } from "@/components/routine-donation/RoutineDonorIdentity";
 import { RoutineProgramItem } from "@/components/routine-donation/RoutineProgramItem";

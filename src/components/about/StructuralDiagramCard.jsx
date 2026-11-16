@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Maximize2, X, FileImage, ZoomIn } from "lucide-react";
+import { MaximizeSquareIcon as Maximize2 } from "@solar-icons/react/line-duotone/maximize-square";
+import { CloseIcon as X } from "@solar-icons/react/linear/close";
+import { GalleryIcon as FileImage } from "@solar-icons/react/line-duotone/gallery";
+import { MagnifierZoomInIcon as ZoomIn } from "@solar-icons/react/line-duotone/magnifier-zoom-in";
 import {
   Dialog,
   DialogContent,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";
 import { usePersistentCooldown } from "@/hooks/usePersistentCooldown";

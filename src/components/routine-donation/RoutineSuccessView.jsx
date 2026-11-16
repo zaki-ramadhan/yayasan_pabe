@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Check, Bell, Calendar } from "lucide-react";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
+import { BellIcon as Bell } from "@solar-icons/react/line-duotone/bell";
+import { CalendarIcon as Calendar } from "@solar-icons/react/line-duotone/calendar";
 import { Button } from "@/components/ui/Button";
 import { formatRupiah, formatDateRange } from "@/lib/formatters";
 import { getRoutineProgramAmount } from "@/lib/routineDonationConstants";

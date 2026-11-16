@@ -2,7 +2,10 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { Upload, Trash2, Loader2, Check } from "lucide-react";
+import { UploadIcon as Upload } from "@solar-icons/react/line-duotone/upload";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
 import { Button } from "@/components/ui/Button";
 import { uploadFileToServer } from "@/services/uploadService";
 import { toast } from "@/hooks/useToast";

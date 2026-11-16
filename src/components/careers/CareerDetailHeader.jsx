@@ -1,6 +1,10 @@
 "use client";
 
-import { MapPin, Briefcase, Calendar, GraduationCap, Laptop } from "lucide-react";
+import { MapPointIcon as MapPin } from "@solar-icons/react/line-duotone/map-point";
+import { CaseRoundIcon as Briefcase } from "@solar-icons/react/line-duotone/case-round";
+import { CalendarIcon as Calendar } from "@solar-icons/react/line-duotone/calendar";
+import { DiplomaIcon as GraduationCap } from "@solar-icons/react/line-duotone/diploma";
+import { LaptopIcon as Laptop } from "@solar-icons/react/line-duotone/laptop";
 import { CareerMetaItem } from "./CareerMetaItem";
 import { CareerNewBadge } from "./CareerNewBadge";
 import { CareerApplyButton } from "./CareerApplyButton";

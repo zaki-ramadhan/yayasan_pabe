@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Pause, Play, XCircle } from "lucide-react";
+import { PauseIcon as Pause } from "@solar-icons/react/line-duotone/pause";
+import { PlayIcon as Play } from "@solar-icons/react/line-duotone/play";
+import { CloseCircleIcon as XCircle } from "@solar-icons/react/line-duotone/close-circle";
 import { formatRupiah } from "@/lib/formatters";
 import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/ui/Badge";

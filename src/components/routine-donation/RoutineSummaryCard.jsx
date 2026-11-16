@@ -1,4 +1,4 @@
-import { HelpCircle } from "lucide-react";
+import { QuestionCircleIcon as HelpCircle } from "@solar-icons/react/line-duotone/question-circle";
 import { Button } from "@/components/ui/Button";
 import { formatRupiah } from "@/lib/formatters";
 import { RoutineSummaryItem } from "./RoutineSummaryItem";

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, ChevronRight } from "lucide-react";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
+import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
+import { AltArrowRightIcon as ChevronRight } from "@solar-icons/react/line-duotone/alt-arrow-right";
 import { copyToClipboard } from "@/lib/clipboard";
 import { toast } from "@/hooks/useToast";
 

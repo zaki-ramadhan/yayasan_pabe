@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { Loader2 } from "lucide-react";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";

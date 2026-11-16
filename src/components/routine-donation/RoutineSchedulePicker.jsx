@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronDown, Check } from "lucide-react";
+import { AltArrowDownIcon as ChevronDown } from "@solar-icons/react/line-duotone/alt-arrow-down";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
 import {
   DropdownMenu,
   DropdownMenuTrigger,

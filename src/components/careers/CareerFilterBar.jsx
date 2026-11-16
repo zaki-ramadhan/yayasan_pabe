@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { MagnifierIcon as Search } from "@solar-icons/react/line-duotone/magnifier";
 import { Input } from "@/components/ui/Input";
 import { CareerFilterSelect } from "./CareerFilterSelect";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";

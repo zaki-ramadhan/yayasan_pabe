@@ -1,6 +1,8 @@
 "use client";
 
-import { MapPin, Briefcase, Laptop } from "lucide-react";
+import { MapPointIcon as MapPin } from "@solar-icons/react/line-duotone/map-point";
+import { CaseRoundIcon as Briefcase } from "@solar-icons/react/line-duotone/case-round";
+import { LaptopIcon as Laptop } from "@solar-icons/react/line-duotone/laptop";
 import { Card } from "@/components/ui/Card";
 import { CareerMetaItem } from "./CareerMetaItem";
 import { CareerNewBadge } from "./CareerNewBadge";

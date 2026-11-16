@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon as ArrowLeft } from "@solar-icons/react/line-duotone/arrow-left";
 import { PageHeader } from "@/components/shared/PageHeader";
 
 export function RoutineDonationHero() {

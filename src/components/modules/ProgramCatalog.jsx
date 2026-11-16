@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
-import { Loader2 } from "lucide-react";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import {
   PROGRAM_SORT_OPTIONS,
   PROGRAM_STATUS_FILTER_OPTIONS,

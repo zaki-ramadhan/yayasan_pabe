@@ -1,6 +1,9 @@
 "use client";
 
-import { Download, Printer, Copy, Check } from "lucide-react";
+import { DownloadIcon as Download } from "@solar-icons/react/line-duotone/download";
+import { PrinterIcon as Printer } from "@solar-icons/react/line-duotone/printer";
+import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
 import { useState } from "react";
 import {
   Dialog,

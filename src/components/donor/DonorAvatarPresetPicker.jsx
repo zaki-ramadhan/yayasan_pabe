@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Check } from "lucide-react";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
 import { USER_AVATAR_PRESETS } from "@/lib/assetConstants";
 
 /**

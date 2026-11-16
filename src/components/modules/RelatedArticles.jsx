@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRightUpIcon as ArrowUpRight } from "@solar-icons/react/line-duotone/arrow-right-up";
 import { ArticleCard } from "@/components/shared/ArticleCard";
 import { getRelatedArticles } from "@/lib/articleRecommendation";
 

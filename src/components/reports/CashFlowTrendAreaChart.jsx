@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { TrendingUp } from "lucide-react";
+import { Chart2Icon as TrendingUp } from "@solar-icons/react/line-duotone/chart-2";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ChartTooltipCard } from "./ChartTooltipCard";
 import { formatCompactRupiah, formatRupiah } from "@/lib/formatters";

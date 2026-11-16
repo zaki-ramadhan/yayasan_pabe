@@ -1,4 +1,5 @@
-import { Bell, Calendar } from "lucide-react";
+import { BellIcon as Bell } from "@solar-icons/react/line-duotone/bell";
+import { CalendarIcon as Calendar } from "@solar-icons/react/line-duotone/calendar";
 import { formatRupiah, formatDateRange } from "@/lib/formatters";
 import { getRoutineProgramAmount } from "@/lib/routineDonationConstants";
 import { formatRoutineSchedule } from "./RoutineProgramItem";

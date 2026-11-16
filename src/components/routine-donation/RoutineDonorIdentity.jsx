@@ -1,4 +1,4 @@
-import { Lock } from "lucide-react";
+import { LockIcon as Lock } from "@solar-icons/react/line-duotone/lock";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";

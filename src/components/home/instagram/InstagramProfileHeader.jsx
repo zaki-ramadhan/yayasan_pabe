@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { BadgeCheck } from "lucide-react";
+import { VerifiedCheckIcon as BadgeCheck } from "@solar-icons/react/line-duotone/verified-check";
 
 /**
  * Header Profil Instagram (Avatar, Nama, Handle, Verified Badge)

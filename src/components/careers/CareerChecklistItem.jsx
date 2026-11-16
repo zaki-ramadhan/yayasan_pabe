@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
 
 /**
  * Atomic component: Single checklist line item

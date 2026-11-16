@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRightUpIcon as ArrowUpRight } from "@solar-icons/react/line-duotone/arrow-right-up";
 import { INSTAGRAM_ACCOUNT as DEFAULT_ACCOUNT } from "@/data/instagramPosts";
 import { InstagramProfileCard } from "@/components/home/InstagramProfileCard";
 import { InstagramIcon } from "@/components/icons/SocialIcons";

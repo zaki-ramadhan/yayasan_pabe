@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { Loader2 } from "lucide-react";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { GALLERY_SORT_OPTIONS, GALLERY_MEDIA_TYPE_OPTIONS } from "@/data/sortOptions";
 import { useCatalogState } from "@/hooks/useCatalogState";
 import { CategoryTabs } from "@/components/shared/CategoryTabs";

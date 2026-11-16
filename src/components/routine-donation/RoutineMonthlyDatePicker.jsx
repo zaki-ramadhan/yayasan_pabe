@@ -2,7 +2,8 @@
 
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { Calendar as CalendarIcon, ChevronDown } from "lucide-react";
+import { CalendarIcon as CalendarIcon } from "@solar-icons/react/line-duotone/calendar";
+import { AltArrowDownIcon as ChevronDown } from "@solar-icons/react/line-duotone/alt-arrow-down";
 import { Button } from "@/components/ui/Button";
 import { Calendar } from "@/components/ui/Calendar";
 import {

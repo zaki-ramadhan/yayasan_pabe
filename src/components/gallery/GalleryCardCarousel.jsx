@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { AltArrowLeftIcon as ChevronLeft } from "@solar-icons/react/line-duotone/alt-arrow-left";
+import { AltArrowRightIcon as ChevronRight } from "@solar-icons/react/line-duotone/alt-arrow-right";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { isVideoUrl, getVideoPosterUrl } from "@/lib/galleryGroupHelper";
 import { VideoPlayer } from "@/components/shared/VideoPlayer";

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Check, X } from "lucide-react";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
+import { CloseIcon as X } from "@solar-icons/react/linear/close";
 import { getCampaignDonateHref } from "@/lib/zisFilter";
 
 /**

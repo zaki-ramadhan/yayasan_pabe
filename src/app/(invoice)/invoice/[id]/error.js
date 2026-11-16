@@ -2,7 +2,10 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { AlertCircle, RotateCcw, Home, MessageCircle } from "lucide-react";
+import { DangerCircleIcon as AlertCircle } from "@solar-icons/react/line-duotone/danger-circle";
+import { RestartIcon as RotateCcw } from "@solar-icons/react/line-duotone/restart";
+import { Home2Icon as Home } from "@solar-icons/react/line-duotone/home-2";
+import { ChatRoundDotsIcon as MessageCircle } from "@solar-icons/react/line-duotone/chat-round-dots";
 import { getFoundationWhatsAppUrl } from "@/lib/whatsappUtils";
 
 export default function InvoiceSegmentError({ error, reset }) {

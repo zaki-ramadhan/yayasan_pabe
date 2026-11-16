@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
-import { Loader2 } from "lucide-react";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { DateStickyBadge } from "@/components/shared/DateStickyBadge";
 import { CampaignTransactionItem } from "@/components/campaign/CampaignTransactionItem";
 import { DataFetchErrorState } from "@/components/shared/DataFetchErrorState";

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { EyeIcon as Eye } from "@solar-icons/react/line-duotone/eye";
+import { EyeClosedIcon as EyeOff } from "@solar-icons/react/line-duotone/eye-closed";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";

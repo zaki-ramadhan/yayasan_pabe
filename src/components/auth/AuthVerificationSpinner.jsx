@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, AlertCircle } from "lucide-react";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
+import { DangerCircleIcon as AlertCircle } from "@solar-icons/react/line-duotone/danger-circle";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 

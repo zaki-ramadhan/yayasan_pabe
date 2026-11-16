@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Clock, ArrowRight, X, Loader2 } from "lucide-react";
+import { ClockCircleIcon as Clock } from "@solar-icons/react/line-duotone/clock-circle";
+import { ArrowRightIcon as ArrowRight } from "@solar-icons/react/line-duotone/arrow-right";
+import { CloseIcon as X } from "@solar-icons/react/linear/close";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { formatRupiah } from "@/lib/formatters";
 import { toast } from "@/hooks/useToast";
 import { safeFetch } from "@/lib/safeFetch";

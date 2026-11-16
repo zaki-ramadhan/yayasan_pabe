@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { safeFetch } from "@/lib/safeFetch";
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 import { ResetPasswordInvalidState } from "@/components/auth/ResetPasswordInvalidState";

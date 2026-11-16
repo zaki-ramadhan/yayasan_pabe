@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone/check-circle";
 import { Button } from "@/components/ui/Button";
 
 export function CareerApplySuccessState({ job, onClose }) {

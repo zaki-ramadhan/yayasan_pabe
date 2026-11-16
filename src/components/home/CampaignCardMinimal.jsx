@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+import { MapPointIcon as MapPin } from "@solar-icons/react/line-duotone/map-point";
 import { formatRupiah, calculateProgress, isCampaignClosed } from "@/lib/formatters";
 import { Button } from "@/components/ui/Button";
 import { Progress } from "@/components/ui/Progress";

@@ -1,6 +1,9 @@
 "use client";
 
-import { SearchX, AlertCircle, RotateCcw, Briefcase } from "lucide-react";
+import { MagnifierBugIcon as SearchX } from "@solar-icons/react/line-duotone/magnifier-bug";
+import { DangerCircleIcon as AlertCircle } from "@solar-icons/react/line-duotone/danger-circle";
+import { RestartIcon as RotateCcw } from "@solar-icons/react/line-duotone/restart";
+import { CaseRoundIcon as Briefcase } from "@solar-icons/react/line-duotone/case-round";
 import { CareerListItem } from "./CareerListItem";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/Button";

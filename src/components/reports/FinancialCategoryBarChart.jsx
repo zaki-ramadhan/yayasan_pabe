@@ -9,7 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { BarChart3 } from "lucide-react";
+import { ChartSquareIcon as BarChart3 } from "@solar-icons/react/line-duotone/chart-square";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ChartTooltipCard } from "./ChartTooltipCard";
 import { formatCompactRupiah, formatRupiah } from "@/lib/formatters";

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { FileText, Trash2 } from "lucide-react";
+import { DocumentTextIcon as FileText } from "@solar-icons/react/line-duotone/document-text";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { uploadFileToServer, deleteFileFromServer } from "@/services/uploadService";
 import { formatBytes } from "@/lib/formatters";
 import { toast } from "@/hooks/useToast";

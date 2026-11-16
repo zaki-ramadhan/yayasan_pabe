@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FileText } from "lucide-react";
+import { DocumentTextIcon as FileText } from "@solar-icons/react/line-duotone/document-text";
 import { formatRupiah, formatDate, formatTime, formatPaymentChannel } from "@/lib/formatters";
 import { TableRow, TableCell } from "@/components/ui/Table";
 import { StatusBadge } from "@/components/ui/Badge";

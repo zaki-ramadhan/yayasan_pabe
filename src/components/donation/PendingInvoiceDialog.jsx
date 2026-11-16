@@ -1,6 +1,10 @@
 "use client";
 
-import { Clock, AlertTriangle, ArrowRight, PlusCircle, Loader2 } from "lucide-react";
+import { ClockCircleIcon as Clock } from "@solar-icons/react/line-duotone/clock-circle";
+import { DangerTriangleIcon as AlertTriangle } from "@solar-icons/react/line-duotone/danger-triangle";
+import { ArrowRightIcon as ArrowRight } from "@solar-icons/react/line-duotone/arrow-right";
+import { AddCircleIcon as PlusCircle } from "@solar-icons/react/line-duotone/add-circle";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { formatRupiah, formatPaymentChannel } from "@/lib/formatters";
 import {
   Dialog,

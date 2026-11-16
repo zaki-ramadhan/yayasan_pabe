@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ChevronDown } from "lucide-react";
+import { AltArrowDownIcon as ChevronDown } from "@solar-icons/react/line-duotone/alt-arrow-down";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { DashedDivider } from "@/components/ui/DashedDivider";

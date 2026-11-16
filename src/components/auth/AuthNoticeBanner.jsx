@@ -1,4 +1,4 @@
-import { Info } from "lucide-react";
+import { InfoCircleIcon as Info } from "@solar-icons/react/line-duotone/info-circle";
 import { cn } from "@/lib/utils";
 
 /**

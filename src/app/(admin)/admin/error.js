@@ -2,7 +2,9 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { AlertTriangle, RotateCcw, LayoutDashboard } from "lucide-react";
+import { DangerTriangleIcon as AlertTriangle } from "@solar-icons/react/line-duotone/danger-triangle";
+import { RestartIcon as RotateCcw } from "@solar-icons/react/line-duotone/restart";
+import { Widget2Icon as LayoutDashboard } from "@solar-icons/react/line-duotone/widget-2";
 
 export default function AdminSegmentError({ error, reset }) {
   useEffect(() => {

@@ -2,7 +2,9 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { AlertCircle, RotateCcw, Home } from "lucide-react";
+import { DangerCircleIcon as AlertCircle } from "@solar-icons/react/line-duotone/danger-circle";
+import { RestartIcon as RotateCcw } from "@solar-icons/react/line-duotone/restart";
+import { Home2Icon as Home } from "@solar-icons/react/line-duotone/home-2";
 
 export default function DonorSegmentError({ error, reset }) {
   useEffect(() => {

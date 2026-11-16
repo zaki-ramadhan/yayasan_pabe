@@ -1,6 +1,6 @@
 "use client";
 
-import { HelpCircle } from "lucide-react";
+import { QuestionCircleIcon as HelpCircle } from "@solar-icons/react/line-duotone/question-circle";
 import { useCampaignDetailTour } from "@/hooks/useCampaignDetailTour";
 
 /**

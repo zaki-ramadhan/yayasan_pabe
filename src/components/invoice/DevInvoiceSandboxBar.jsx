@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Zap, Clock, RotateCcw, ExternalLink, Copy, Check, Terminal, XCircle } from "lucide-react";
+import { BoltIcon as Zap } from "@solar-icons/react/line-duotone/bolt";
+import { ClockCircleIcon as Clock } from "@solar-icons/react/line-duotone/clock-circle";
+import { RestartIcon as RotateCcw } from "@solar-icons/react/line-duotone/restart";
+import { SquareArrowRightUpIcon as ExternalLink } from "@solar-icons/react/line-duotone/square-arrow-right-up";
+import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
+import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
+import { CodeCircleIcon as Terminal } from "@solar-icons/react/line-duotone/code-circle";
+import { CloseCircleIcon as XCircle } from "@solar-icons/react/line-duotone/close-circle";
 import { Button } from "@/components/ui/Button";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";

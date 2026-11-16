@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart } from "lucide-react";
+import { HeartIcon as Heart } from "@solar-icons/react/line-duotone/heart";
 import { cn } from "@/lib/utils";
 
 export function PrayerAminButton({
