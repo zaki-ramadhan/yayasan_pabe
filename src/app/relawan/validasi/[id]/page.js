@@ -7,6 +7,7 @@ export async function generateMetadata({ params }) {
   const volunteer = await getVolunteerPublicProfile(id);
 
   if (volunteer && volunteer.isApproved) {
+    const ogImage = volunteer.photoUrl || "/img/branding/logo-ypabe.webp";
     return {
       title: `Kartu Relawan: ${volunteer.fullName} (#${volunteer.volunteerId})`,
       description: `Verifikasi resmi keabsahan kartu identitas relawan ${volunteer.fullName} di Yayasan Payung Berkah.`,
@@ -14,6 +15,20 @@ export async function generateMetadata({ params }) {
         title: `Kartu Relawan: ${volunteer.fullName} (#${volunteer.volunteerId})`,
         description: `Verifikasi resmi keabsahan kartu identitas relawan ${volunteer.fullName} di Yayasan Payung Berkah.`,
         type: "profile",
+        images: [
+          {
+            url: ogImage,
+            width: 800,
+            height: 800,
+            alt: `Foto Relawan ${volunteer.fullName}`,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary",
+        title: `Kartu Relawan: ${volunteer.fullName} (#${volunteer.volunteerId})`,
+        description: `Verifikasi resmi keabsahan kartu identitas relawan ${volunteer.fullName} di Yayasan Payung Berkah.`,
+        images: [ogImage],
       },
     };
   }

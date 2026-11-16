@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ShareIcon } from "@solar-icons/react/line-duotone/share";
 import { LinkRoundIcon } from "@solar-icons/react/line-duotone/link-round";
-import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CheckIcon } from "@solar-icons/react/linear/check";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -19,6 +19,9 @@ import { cn } from "@/lib/utils";
 export function ShareDropdown({
   url,
   title = "",
+  description = "",
+  customCta = "",
+  customMessage = "",
   variant = "button",
   align = "end",
   className,
@@ -54,9 +57,28 @@ export function ShareDropdown({
     e?.stopPropagation?.();
     if (typeof window === "undefined") return;
     const shareUrl = getTargetUrl();
-    const text = encodeURIComponent(
-      title ? `*${title}*\n\nBaca atau ikuti selengkapnya di:\n${shareUrl}` : shareUrl
-    );
+    if (!shareUrl) return;
+
+    let message = "";
+    if (customMessage) {
+      message = customMessage.replace("{url}", shareUrl);
+    } else {
+      const parts = [];
+      if (title) {
+        parts.push(`*${title.trim()}*`);
+      }
+      if (description) {
+        const cleanDesc = description.replace(/<[^>]*>/g, "").trim();
+        if (cleanDesc) {
+          parts.push(`"${cleanDesc}"`);
+        }
+      }
+      const cta = customCta || "Simak ulasan selengkapnya melalui tautan resmi Yayasan Payung Berkah:";
+      parts.push(`${cta}\n${shareUrl}`);
+      message = parts.join("\n\n");
+    }
+
+    const text = encodeURIComponent(message);
     window.open(
       `https://api.whatsapp.com/send?text=${text}`,
       "_blank",
@@ -106,7 +128,7 @@ export function ShareDropdown({
         >
           {copied ? (
             <>
-              <CheckCircleIcon className="w-4 h-4 text-emerald-600 shrink-0" />
+              <CheckIcon className="w-4 h-4 text-emerald-600 shrink-0" />
               <span className="text-emerald-700 font-normal">Tautan Tersalin!</span>
             </>
           ) : (

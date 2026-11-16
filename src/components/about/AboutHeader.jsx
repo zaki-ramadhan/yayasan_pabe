@@ -83,7 +83,9 @@ export function AboutHeader({
 							</Button>
 						</Link>
 						<ShareDropdown
-							title={orgName}
+							title={`Profil Resmi ${orgName} (PABE)`}
+							description="Mengenal lebih dekat legalitas resmi, visi misi, serta program pengayoman anak yatim dan pemberdayaan dhuafa bersama Yayasan Payung Berkah."
+							customCta="Kunjungi profil resmi kami di:"
 							align="end"
 							variant="icon"
 							className="h-9 sm:h-10 w-9 sm:w-10 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 flex items-center justify-center shadow-2xs shrink-0"

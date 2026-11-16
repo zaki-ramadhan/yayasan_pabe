@@ -8,6 +8,7 @@ import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { DashedDivider } from "@/components/ui/DashedDivider";
 import { ASSET_PATHS } from "@/lib/assetConstants";
+import { getTransactionVocabulary } from "@/lib/zisFilter";
 
 /**
  * Physical receipt / bill card presentation for donation invoices
@@ -27,13 +28,15 @@ export function InvoiceReceiptCard({
   activePrayer,
   campaignImage,
 }) {
+  const vocab = getTransactionVocabulary(donation);
+
   return (
     <div className="relative">
       {/* Section Atas: Header Tagihan & Batas Waktu */}
       <div className="bg-white rounded-t-xl border-t border-x border-slate-300 p-5 sm:p-6 sm:py-4 pb-4 space-y-2.5">
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-slate-600 block">
-            {donation.donationType === "ZAKAT" ? "Tagihan Zakat" : "Tagihan Donasi"}
+            {vocab.billLabel}
           </span>
           {donation.status === "PAID" ? (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium">
@@ -130,7 +133,7 @@ export function InvoiceReceiptCard({
         {/* Total Transfer Row */}
         <div className="space-y-1">
           <span className="text-sm text-slate-600 block">
-            {donation.status === "PAID" ? "Total Donasi Terbayar" : "Total yang Harus Ditransfer"}
+            {donation.status === "PAID" ? vocab.totalPaidLabel : "Total yang Harus Ditransfer"}
           </span>
           <span className="text-xl sm:text-2xl font-semibold text-slate-900 tracking-tight block">
             {formatRupiah(donation.totalAmount)}
@@ -139,7 +142,7 @@ export function InvoiceReceiptCard({
 
         {/* Rincian Transaksi */}
         <div className="space-y-3 pb-1">
-          <span className="text-sm text-slate-600 block">Rincian Donasi</span>
+          <span className="text-sm text-slate-600 block">{vocab.detailsLabel}</span>
           <div className="space-y-2.5 text-sm">
             <div className="space-y-1.5 pt-0.5">
               <div className="flex items-center gap-3">
@@ -170,7 +173,7 @@ export function InvoiceReceiptCard({
             </div>
 
             <div className="flex justify-between gap-3 text-slate-600 pt-1">
-              <span className="shrink-0">Donatur</span>
+              <span className="shrink-0">{vocab.partyLabel}</span>
               <span className="font-medium text-slate-900 text-right">
                 {donation.donorName}
                 {donation.isAnonymous && (
@@ -185,13 +188,13 @@ export function InvoiceReceiptCard({
               </span>
             </div>
             <div className="flex justify-between gap-3 text-slate-600">
-              <span className="shrink-0">Saluran Donasi</span>
+              <span className="shrink-0">{vocab.channelLabel}</span>
               <span className="font-medium text-slate-900 text-right">
                 {donation.paymentChannelName}
               </span>
             </div>
             <div className="flex justify-between gap-3 text-slate-600">
-              <span className="shrink-0">Donasi Pokok</span>
+              <span className="shrink-0">{vocab.coreAmountLabel}</span>
               <span className="font-medium text-slate-900">{formatRupiah(donation.amount)}</span>
             </div>
             <div className="flex justify-between gap-3 text-slate-600">

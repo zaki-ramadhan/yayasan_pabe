@@ -113,5 +113,95 @@ describe("zisFilter SSOT helpers", () => {
     expect(getCampaignDonateHref({ slug: "beasiswa-yatim", categorySlug: "pendidikan" })).toBe("/program/beasiswa-yatim/donasi");
     expect(getCampaignDonateHref(null)).toBe("/program");
   });
+
+  it("menghasilkan kosakata Islam dan filantropi yang tepat untuk Zakat, Infaq, Sedekah, Wakaf, dan Donasi", async () => {
+    const { getTransactionVocabulary } = await import("@/lib/zisFilter");
+
+    // 1. Zakat
+    const zakatVocab = getTransactionVocabulary({
+      donationType: "ZAKAT",
+      programTitle: "Zakat Penghasilan",
+    });
+    expect(zakatVocab.kind).toBe("ZAKAT");
+    expect(zakatVocab.actionVerb).toBe("menunaikan zakat");
+    expect(zakatVocab.subjectPrefix).toBe("Bukti Pembayaran Zakat Sah");
+    expect(zakatVocab.partyLabel).toBe("Nama Muzakki");
+    expect(zakatVocab.programLabel).toBe("Program Zakat");
+    expect(zakatVocab.nominalLabel).toBe("Nominal Zakat");
+    expect(zakatVocab.buttonText).toBe("Buka Bukti Setor Zakat");
+    expect(zakatVocab.closingDoa).toContain("penyuci lahir dan batin");
+
+    // 2. Infaq
+    const infaqVocab = getTransactionVocabulary({
+      donationType: "INFAQ",
+      programTitle: "Infaq Pendidikan Santri",
+    });
+    expect(infaqVocab.kind).toBe("INFAQ");
+    expect(infaqVocab.actionVerb).toBe("berinfaq");
+    expect(infaqVocab.subjectPrefix).toBe("Bukti Infaq Sah");
+    expect(infaqVocab.partyLabel).toBe("Nama Munfiq");
+    expect(infaqVocab.programLabel).toBe("Program Infaq");
+
+    // 3. Sedekah
+    const sedekahVocab = getTransactionVocabulary({
+      donationType: "INFAK_SUBUH",
+      programTitle: "Sedekah Subuh Berkah",
+    });
+    expect(sedekahVocab.kind).toBe("SEDEKAH");
+    expect(sedekahVocab.actionVerb).toBe("bersedekah");
+    expect(sedekahVocab.subjectPrefix).toBe("Bukti Sedekah Sah");
+    expect(sedekahVocab.nominalLabel).toBe("Nominal Sedekah");
+
+    // 4. Wakaf
+    const wakafVocab = getTransactionVocabulary({
+      donationType: "WAKAF",
+      programTitle: "Wakaf Sumur Bor",
+    });
+    expect(wakafVocab.kind).toBe("WAKAF");
+    expect(wakafVocab.actionVerb).toBe("menunaikan wakaf");
+    expect(wakafVocab.subjectPrefix).toBe("Bukti Wakaf Sah");
+    expect(wakafVocab.partyLabel).toBe("Nama Wakif");
+    expect(wakafVocab.closingDoa).toContain("amal jariyah");
+
+    // 5. Donasi Umum
+    const donasiVocab = getTransactionVocabulary({
+      donationType: "CAMPAIGN",
+      programTitle: "Bantuan Kemanusiaan Gempa",
+    });
+    expect(donasiVocab.kind).toBe("DONASI");
+    expect(donasiVocab.actionVerb).toBe("berdonasi");
+    expect(donasiVocab.subjectPrefix).toBe("Bukti Donasi Sah");
+    expect(donasiVocab.partyLabel).toBe("Nama Donatur");
+  });
+
+  it("membangun teks share WhatsApp resmi yang kaya, memuat tautan program dan ajakan kebaikan", async () => {
+    const { buildDonationShareText } = await import("@/lib/zisFilter");
+
+    // Share zakat
+    const zakatShare = buildDonationShareText(
+      {
+        donationType: "ZAKAT",
+        campaignSlug: "zakat-maal",
+        campaignTitle: "Zakat Maal Peduli Dhuafa",
+      },
+      "https://yayasanpayungberkah.org"
+    );
+    expect(zakatShare).toContain("menunaikan zakat");
+    expect(zakatShare).toContain('untuk "Zakat Maal Peduli Dhuafa"');
+    expect(zakatShare).toContain("https://yayasanpayungberkah.org/zis/zakat-maal");
+
+    // Share program umum
+    const donasiShare = buildDonationShareText(
+      {
+        donationType: "CAMPAIGN",
+        campaignSlug: "beasiswa-santri",
+        campaignTitle: "Beasiswa Santri Penghafal Qur'an",
+      },
+      "https://yayasanpayungberkah.org"
+    );
+    expect(donasiShare).toContain("berdonasi");
+    expect(donasiShare).toContain('untuk "Beasiswa Santri Penghafal Qur\'an"');
+    expect(donasiShare).toContain("https://yayasanpayungberkah.org/program/beasiswa-santri");
+  });
 });
 

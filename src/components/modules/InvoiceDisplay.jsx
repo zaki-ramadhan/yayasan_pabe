@@ -12,7 +12,7 @@ import { InvoiceReceiptCard } from "@/components/invoice/InvoiceReceiptCard";
 import { InvoiceActions } from "@/components/invoice/InvoiceActions";
 import { DevInvoiceSandboxBar } from "@/components/invoice/DevInvoiceSandboxBar";
 import { useDonationStatusPolling } from "@/hooks/useDonationStatusPolling";
-import { isZisTransaction } from "@/lib/zisFilter";
+import { isZisTransaction, buildDonationShareText } from "@/lib/zisFilter";
 
 export {
   InvoicePaymentMethod,
@@ -169,7 +169,10 @@ export function InvoiceDisplay({ donation: initialDonation }) {
   const campaignImage = donation.campaignImage || donation.campaign?.imageUrl || "";
 
   const shareText = encodeURIComponent(
-    `Saya baru saja berdonasi untuk "${donation.campaignTitle}" melalui Yayasan PABE. Mari bersama dukung generasi Qur'ani dan kaum dhuafa!`
+    buildDonationShareText(
+      donation,
+      typeof window !== "undefined" ? window.location.origin : "https://yayasanpayungberkah.org"
+    )
   );
 
   return (

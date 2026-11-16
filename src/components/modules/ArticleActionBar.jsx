@@ -14,6 +14,7 @@ export function ArticleActionBar({
 	initialLikes = 0,
 	initialDislikes = 0,
 	title = "",
+	description = "",
 	bordered = true,
 	className = "",
 }) {
@@ -93,6 +94,7 @@ export function ArticleActionBar({
 				<ShareDropdown
 					url={targetSlug ? `/artikel/${targetSlug}` : undefined}
 					title={title}
+					description={description}
 					variant="button"
 					align="start"
 				/>

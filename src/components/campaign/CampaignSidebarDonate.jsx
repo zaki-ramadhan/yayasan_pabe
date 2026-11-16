@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { ShieldCheckIcon as ShieldCheck } from "@solar-icons/react/line-duotone/shield-check";
+import { ShieldCheckIcon as ShieldCheck } from "@solar-icons/react/bold/shield-check";
 import { Progress } from "@/components/ui/Progress";
 import { Button } from "@/components/ui/Button";
 import { formatRupiah, isCampaignClosed } from "@/lib/formatters";
 import { CampaignPrayersSidebar } from "@/components/modules/CampaignPrayersSidebar";
 import { FundedAmountDisplay } from "@/components/campaign/FundedAmountDisplay";
 import { SidebarTourButton } from "@/components/campaign/SidebarTourButton";
-import { getCampaignDonateHref, isZisCampaign } from "@/lib/zisFilter";
+import { ShareDropdown } from "@/components/shared/ShareDropdown";
+import { getCampaignDonateHref, getCampaignDetailHref, isZisCampaign } from "@/lib/zisFilter";
 
 export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonations = false }) {
 	const hasTarget = Boolean(
@@ -106,13 +107,23 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 				{/* Donation CTA or Closed State */}
 				{isClosed ? (
 					<div className="space-y-2 pt-1">
-						<Button
-							size="lg"
-							disabled
-							className="w-full text-base font-normal h-10.5 rounded-lg bg-slate-200 text-slate-600 cursor-not-allowed shadow-none"
-						>
-							{isZakat ? "Penyaluran Zakat Ditutup" : "Penggalangan Dana Ditutup"}
-						</Button>
+						<div className="flex items-center gap-2">
+							<Button
+								size="lg"
+								disabled
+								className="flex-1 text-base font-normal h-10.5 rounded-lg bg-slate-200 text-slate-600 cursor-not-allowed shadow-none"
+							>
+								{isZakat ? "Penyaluran Zakat Ditutup" : "Penggalangan Dana Ditutup"}
+							</Button>
+							<ShareDropdown
+								url={getCampaignDetailHref(campaign)}
+								title={campaign.title}
+								description={campaign.excerpt}
+								variant="icon"
+								align="end"
+								className="h-10.5 w-10.5 rounded-lg border border-slate-300 flex items-center justify-center text-slate-700 hover:bg-slate-50 shrink-0"
+							/>
+						</div>
 						<p className="text-sm text-slate-700 text-center leading-relaxed px-1">
 							{isZakat
 								? "Program zakat telah disalurkan. Terima kasih atas kepedulian Anda."
@@ -133,18 +144,25 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 									{ctaLabel}
 								</Button>
 							</Link>
+							<ShareDropdown
+								url={getCampaignDetailHref(campaign)}
+								title={campaign.title}
+								description={campaign.excerpt}
+								customCta={
+									isZakat
+										? "Tunaikan kewajiban zakat Anda dengan tepat sasaran melalui lembaga resmi Yayasan Payung Berkah:"
+										: "Mari bersama alirkan kepedulian untuk mendukung program kebaikan ini melalui Yayasan Payung Berkah:"
+								}
+								variant="button"
+								align="end"
+								className="h-10.5 px-3 border-slate-300"
+							/>
 							<SidebarTourButton slug={campaign.slug} hasDonations={hasDonations} />
 						</div>
 
-						<div className="text-sm text-slate-700 text-center flex items-center justify-center gap-1.5">
-							<ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
-							<span>
-								Pembayaran
-								aman
-								&amp;
-								terverifikasi
-								otomatis
-							</span>
+						<div className="text-sm text-slate-700 text-center flex items-center justify-center gap-2">
+							<ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
+							<span>Pembayaran aman &amp; terverifikasi otomatis</span>
 						</div>
 					</>
 				)}

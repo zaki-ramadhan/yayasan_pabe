@@ -137,6 +137,7 @@ export default async function ArticleDetailPage({ params }) {
         initialLikes={article.likeCount || 0}
         initialDislikes={article.dislikeCount || 0}
         title={article.title}
+        description={article.excerpt}
       />
 
       {/* Related Articles Recommendation */}

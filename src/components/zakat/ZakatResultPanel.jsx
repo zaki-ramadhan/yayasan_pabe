@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/Button";
 import { formatRupiah, formatNumber } from "@/lib/formatters";
 import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
+import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { ZakatEmptyState } from "./ZakatEmptyState";
 
 export function ZakatResultPanel({
@@ -25,8 +26,26 @@ export function ZakatResultPanel({
     categoryKey = "ZAKAT",
   } = result;
 
+  const buildZakatShareText = () => {
+    const url = typeof window !== "undefined"
+      ? `${window.location.origin}/zakat`
+      : "https://yayasanpayungberkah.org/zakat";
+    return `*Kalkulator Zakat - Yayasan Payung Berkah*\n\n` +
+      `• Jenis: ${categoryKey}\n` +
+      `• Nilai Bersih: ${formatRupiah(netAmount)}\n` +
+      `• Batas Nisab: ${formatRupiah(nisabThreshold)}\n` +
+      `• Status Syariah: ${isNisabMet ? "Wajib Ditunaikan" : "Belum Wajib Zakat"}\n` +
+      `• Estimasi Zakat: ${formatRupiah(zakatAmount)} (${periodLabel})\n\n` +
+      `Hitung dan tunaikan zakat Anda dengan mudah dan tepat melalui kalkulator resmi:\n${url}`;
+  };
+
+  const handleShareWhatsApp = () => {
+    const text = encodeURIComponent(buildZakatShareText());
+    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank", "noopener,noreferrer");
+  };
+
   const handleSaveResult = async () => {
-    const summaryText = `Ringkasan Kalkulator Zakat (${categoryKey}):\n- Nilai Bersih: ${formatRupiah(netAmount)}\n- Batas Nisab: ${formatRupiah(nisabThreshold)}\n- Status: ${isNisabMet ? "Wajib Ditunaikan" : "Belum Wajib"}\n- Kewajiban Zakat: ${formatRupiah(zakatAmount)}`;
+    const summaryText = buildZakatShareText();
     const copied = await copyToClipboard(summaryText);
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2500);
@@ -137,14 +156,26 @@ export function ZakatResultPanel({
           Tunaikan Zakat Sekarang
         </Button>
 
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleSaveResult}
-          className="w-full h-10 text-sm font-medium rounded-md border-slate-300 text-slate-700 hover:text-slate-900 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
-        >
-          {isSaved ? "Rincian tersalin" : "Salin rincian perhitungan"}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleShareWhatsApp}
+            className="flex-1 h-10 text-xs sm:text-sm font-medium rounded-md border-slate-300 text-slate-800 hover:bg-slate-50 cursor-pointer gap-2"
+          >
+            <WhatsAppIcon className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Bagikan ke WhatsApp</span>
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleSaveResult}
+            className="h-10 px-3.5 text-xs sm:text-sm font-medium rounded-md border-slate-300 text-slate-700 hover:text-slate-900 cursor-pointer shrink-0"
+          >
+            {isSaved ? "Tersalin" : "Salin"}
+          </Button>
+        </div>
 
         {!isNisabMet && (
           <p className="text-sm text-slate-600 text-center mt-1 font-normal">

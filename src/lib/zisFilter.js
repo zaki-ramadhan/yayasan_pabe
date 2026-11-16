@@ -182,3 +182,229 @@ export function getCampaignDonateHref(campaignOrSlug) {
   }
   return `${baseHref}/donasi`;
 }
+
+/**
+ * SSOT Helper kosakata peribadatan dan filantropi Islam (Zakat, Infaq, Sedekah, Wakaf, Donasi).
+ * Menyesuaikan istilah subjek email, sapaan peran (Muzakki/Munfiq/Wakif/Donatur), rincian tagihan,
+ * tombol aksi, dan doa penerima agar sesuai syariat dan tidak merujuk "donasi" untuk seluruh transaksi.
+ *
+ * @param {object} txOrParams - Transaksi, donasi, atau objek parameter konteks
+ * @returns {object} Kamus kosakata kontekstual
+ */
+export function getTransactionVocabulary(txOrParams = {}) {
+  const donationType =
+    txOrParams.donationType ||
+    txOrParams.type ||
+    "";
+  const categorySlug =
+    txOrParams.categorySlug ||
+    txOrParams.category?.slug ||
+    txOrParams.campaign?.category?.slug ||
+    txOrParams.campaign?.categorySlug ||
+    "";
+  const categoryName =
+    txOrParams.categoryName ||
+    (typeof txOrParams.category === "string" ? txOrParams.category : txOrParams.category?.name) ||
+    txOrParams.campaign?.category?.name ||
+    txOrParams.campaign?.categoryName ||
+    "";
+  const programTitle =
+    txOrParams.programTitle ||
+    txOrParams.campaignTitle ||
+    txOrParams.campaign?.title ||
+    txOrParams.title ||
+    "";
+
+  const normType = String(donationType).toUpperCase().trim();
+  const normCatSlug = String(categorySlug).toLowerCase().trim();
+  const normCatName = String(categoryName).toLowerCase().trim();
+  const normTitle = String(programTitle).toLowerCase().trim();
+
+  // 1. ZAKAT
+  const isZakat =
+    normType === "ZAKAT" ||
+    normCatSlug === "zakat" ||
+    normCatName.includes("zakat") ||
+    normTitle.includes("zakat");
+
+  if (isZakat) {
+    return {
+      kind: "ZAKAT",
+      noun: "zakat",
+      capitalizedNoun: "Zakat",
+      actionVerb: "menunaikan zakat",
+      billLabel: "Tagihan Zakat",
+      totalPaidLabel: "Total Zakat Terbayar",
+      detailsLabel: "Rincian Zakat",
+      coreAmountLabel: "Zakat Pokok",
+      channelLabel: "Saluran Zakat",
+      subjectPrefix: "Bukti Pembayaran Zakat Sah",
+      heading: "Pembayaran Zakat Berhasil",
+      partyLabel: "Nama Muzakki",
+      programLabel: "Program Zakat",
+      nominalLabel: "Nominal Zakat",
+      buttonText: "Buka Bukti Setor Zakat",
+      archiveLabel: "arsip zakat",
+      statusBannerPaid:
+        "Alhamdulillah, amanah zakat Anda telah kami terima secara resmi melalui sistem perbankan.",
+      openingText:
+        "Alhamdulillah, zakat yang Anda tunaikan telah kami terima dengan rincian transaksi sebagai berikut:",
+      closingDoa:
+        "Jazakumullah khairan katsiran atas zakat yang Anda tunaikan. Semoga Allah SWT memberikan pahala atas apa yang telah Anda keluarkan, melimpahkan keberkahan atas harta yang masih tersimpan, serta menjadikannya penyuci lahir dan batin bagi Anda sekeluarga. Aamiin ya Rabbal 'Alamin.",
+    };
+  }
+
+  // 2. WAKAF
+  const isWakaf =
+    normType === "WAKAF" ||
+    normCatSlug === "wakaf" ||
+    normCatName.includes("wakaf") ||
+    normTitle.includes("wakaf");
+
+  if (isWakaf) {
+    return {
+      kind: "WAKAF",
+      noun: "wakaf",
+      capitalizedNoun: "Wakaf",
+      actionVerb: "menunaikan wakaf",
+      billLabel: "Tagihan Wakaf",
+      totalPaidLabel: "Total Wakaf Terbayar",
+      detailsLabel: "Rincian Wakaf",
+      coreAmountLabel: "Wakaf Pokok",
+      channelLabel: "Saluran Wakaf",
+      subjectPrefix: "Bukti Wakaf Sah",
+      heading: "Pembayaran Wakaf Berhasil",
+      partyLabel: "Nama Wakif",
+      programLabel: "Program Wakaf",
+      nominalLabel: "Nominal Wakaf",
+      buttonText: "Buka Bukti Wakaf Digital",
+      archiveLabel: "arsip wakaf",
+      statusBannerPaid:
+        "Alhamdulillah, amanah wakaf Anda telah kami terima secara resmi melalui sistem perbankan.",
+      openingText:
+        "Alhamdulillah, amanah wakaf yang Anda tunaikan telah kami terima dengan rincian transaksi sebagai berikut:",
+      closingDoa:
+        "Jazakumullah khairan katsiran atas wakaf yang Anda tunaikan. Semoga Allah SWT menerima amal jariyah ini, melipatgandakan pahala yang senantiasa mengalir tanpa putus, serta senantiasa memberkahi Anda sekeluarga. Aamiin ya Rabbal 'Alamin.",
+    };
+  }
+
+  // 3. INFAQ
+  const isInfaq =
+    normType === "INFAQ" ||
+    normCatSlug === "infaq" ||
+    normCatName.includes("infaq") ||
+    normTitle.includes("infaq") ||
+    normTitle.includes("infak");
+
+  if (isInfaq) {
+    return {
+      kind: "INFAQ",
+      noun: "infaq",
+      capitalizedNoun: "Infaq",
+      actionVerb: "berinfaq",
+      billLabel: "Tagihan Infaq",
+      totalPaidLabel: "Total Infaq Terbayar",
+      detailsLabel: "Rincian Infaq",
+      coreAmountLabel: "Infaq Pokok",
+      channelLabel: "Saluran Infaq",
+      subjectPrefix: "Bukti Infaq Sah",
+      heading: "Pembayaran Infaq Berhasil",
+      partyLabel: "Nama Munfiq",
+      programLabel: "Program Infaq",
+      nominalLabel: "Nominal Infaq",
+      buttonText: "Buka Bukti Infaq Digital",
+      archiveLabel: "arsip infaq",
+      statusBannerPaid:
+        "Alhamdulillah, amanah infaq Anda telah kami terima secara resmi melalui sistem perbankan.",
+      openingText:
+        "Alhamdulillah, infaq yang Anda tunaikan telah kami terima dengan rincian transaksi sebagai berikut:",
+      closingDoa:
+        "Jazakumullah khairan katsiran atas infaq yang Anda tunaikan. Semoga Allah SWT menerima amal ibadah ini, melipatgandakan rezeki, serta senantiasa memberkahi Anda sekeluarga. Aamiin ya Rabbal 'Alamin.",
+    };
+  }
+
+  // 4. SEDEKAH
+  const isSedekah =
+    normType === "SEDEKAH" ||
+    normType === "INFAK_SUBUH" ||
+    normCatSlug === "sedekah" ||
+    normCatName.includes("sedekah") ||
+    normTitle.includes("sedekah");
+
+  if (isSedekah) {
+    return {
+      kind: "SEDEKAH",
+      noun: "sedekah",
+      capitalizedNoun: "Sedekah",
+      actionVerb: "bersedekah",
+      billLabel: "Tagihan Sedekah",
+      totalPaidLabel: "Total Sedekah Terbayar",
+      detailsLabel: "Rincian Sedekah",
+      coreAmountLabel: "Sedekah Pokok",
+      channelLabel: "Saluran Sedekah",
+      subjectPrefix: "Bukti Sedekah Sah",
+      heading: "Pembayaran Sedekah Berhasil",
+      partyLabel: "Nama Pembayar",
+      programLabel: "Program Sedekah",
+      nominalLabel: "Nominal Sedekah",
+      buttonText: "Buka Bukti Sedekah Digital",
+      archiveLabel: "arsip sedekah",
+      statusBannerPaid:
+        "Alhamdulillah, amanah sedekah Anda telah kami terima secara resmi melalui sistem perbankan.",
+      openingText:
+        "Alhamdulillah, sedekah yang Anda tunaikan telah kami terima dengan rincian transaksi sebagai berikut:",
+      closingDoa:
+        "Jazakumullah khairan katsiran atas sedekah Anda. Semoga Allah SWT menerima amal ibadah ini, melipatgandakan rezeki, serta senantiasa memberkahi Anda sekeluarga. Aamiin ya Rabbal 'Alamin.",
+    };
+  }
+
+  // 5. DONASI (Default)
+  return {
+    kind: "DONASI",
+    noun: "donasi",
+    capitalizedNoun: "Donasi",
+    actionVerb: "berdonasi",
+    billLabel: "Tagihan Donasi",
+    totalPaidLabel: "Total Donasi Terbayar",
+    detailsLabel: "Rincian Donasi",
+    coreAmountLabel: "Donasi Pokok",
+    channelLabel: "Saluran Donasi",
+    subjectPrefix: "Bukti Donasi Sah",
+    heading: "Pembayaran Berhasil",
+    partyLabel: "Nama Donatur",
+    programLabel: "Program Donasi",
+    nominalLabel: "Nominal Donasi",
+    buttonText: "Buka Bukti Donasi Digital",
+    archiveLabel: "arsip donasi",
+    statusBannerPaid:
+      "Alhamdulillah, amanah donasi Anda telah kami terima secara resmi melalui sistem perbankan.",
+    openingText:
+      "Alhamdulillah, donasi yang Anda tunaikan telah kami terima dengan rincian transaksi sebagai berikut:",
+    closingDoa:
+      "Jazakumullah khairan katsiran atas donasi yang Anda tunaikan. Semoga Allah SWT menerima amal kebaikan ini, melipatgandakan rezeki, serta senantiasa memberkahi Anda sekeluarga. Aamiin ya Rabbal 'Alamin.",
+  };
+}
+
+/**
+ * Menghasilkan teks share WhatsApp resmi untuk invoice transaksi dengan tautan program & ajakan kebaikan.
+ * @param {object} donation
+ * @param {string} [origin=""]
+ * @returns {string}
+ */
+export function buildDonationShareText(donation = {}, origin = "") {
+  const vocab = getTransactionVocabulary({
+    donationType: donation.donationType,
+    categorySlug: donation.categorySlug || donation.campaign?.category?.slug || donation.campaign?.categorySlug,
+    categoryName: donation.categoryName || donation.campaign?.category?.name || donation.campaign?.categoryName,
+    campaignTitle: donation.campaignTitle || donation.campaign?.title,
+  });
+
+  const slug = donation.campaignSlug || donation.campaign?.slug;
+  const isZis = vocab.kind !== "DONASI";
+  const path = slug ? (isZis ? `/zis/${slug}` : `/program/${slug}`) : "/program";
+  const baseUrl = origin ? origin.replace(/\/+$/, "") : "";
+  const fullUrl = baseUrl ? `${baseUrl}${path}` : path;
+  const campaignTitle = donation.campaignTitle || donation.campaign?.title || "Program Kebaikan";
+
+  return `Alhamdulillah, saya telah ${vocab.actionVerb} untuk "${campaignTitle}" melalui Yayasan Payung Berkah.\n\nMari bersama alirkan kebaikan dan dukung saudara kita yang membutuhkan melalui tautan resmi berikut:\n${fullUrl}`;
+}

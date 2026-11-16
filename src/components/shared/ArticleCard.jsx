@@ -131,6 +131,7 @@ export function ArticleCard({
 					<ShareDropdown
 						url={`/artikel/${article.slug}`}
 						title={article.title}
+						description={article.excerpt}
 						variant="icon"
 						align="end"
 					/>
