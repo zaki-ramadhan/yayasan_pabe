@@ -20,7 +20,7 @@ import {
 } from "@/lib/security";
 
 // Sub-widgets modular
-import { VolunteerApprovedCard } from "@/components/volunteer/VolunteerApprovedCard";
+import { VolunteerApprovedBanner } from "@/components/volunteer/VolunteerApprovedBanner";
 import { VolunteerPendingCard } from "@/components/volunteer/VolunteerPendingCard";
 import { VolunteerRegistrationFields } from "@/components/volunteer/VolunteerRegistrationFields";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
@@ -307,21 +307,7 @@ export function VolunteerForm() {
 
   // State B: Sudah Terdaftar dan Disetujui (APPROVED)
   if (volunteer && volunteer.isApproved) {
-    return (
-      <>
-        <VolunteerApprovedCard
-          volunteer={volunteer}
-          onResignClick={() => setIsCancelModalOpen(true)}
-        />
-        <VolunteerCancellationDialog
-          isOpen={isCancelModalOpen}
-          onClose={() => setIsCancelModalOpen(false)}
-          onConfirm={handleConfirmCancel}
-          status="APPROVED"
-          isLoading={cancelling}
-        />
-      </>
-    );
+    return <VolunteerApprovedBanner volunteer={volunteer} />;
   }
 
   // State C: Sudah Mendaftar namun Masih Ditinjau (PENDING)

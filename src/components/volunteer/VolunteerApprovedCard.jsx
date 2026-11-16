@@ -2,29 +2,23 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { DownloadIcon as Download } from "@solar-icons/react/line-duotone/download";
-import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
-import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
-import { SquareArrowRightUpIcon as ExternalLink } from "@solar-icons/react/line-duotone/square-arrow-right-up";
 import { Logout2Icon as LogOut } from "@solar-icons/react/line-duotone/logout-2";
 import { VolunteerIdCard } from "./VolunteerIdCard";
 import { Button } from "@/components/ui/Button";
-import { copyToClipboard } from "@/lib/clipboard";
-import { toast } from "@/hooks/useToast";
+import { ShareDropdown } from "@/components/shared/ShareDropdown";
 import { downloadVolunteerCardImage } from "@/lib/ktaDownloadHelper";
 
 /**
  * Komponen sub-widget untuk relawan aktif yang telah disetujui (APPROVED).
  * Menggunakan format banner atmosferik yang selaras dengan status pendaftaran (VolunteerPendingCard),
- * menyajikan kartu relawan 2 sisi (CR80), aksi unduh kartu & salin tautan, serta tautan validasi dan pengunduran diri.
+ * menyajikan kartu relawan 2 sisi (CR80), aksi unduh kartu & bagikan tautan, serta tautan validasi dan pengunduran diri.
  */
 export function VolunteerApprovedCard({
   volunteer,
   onResignClick,
   className = "",
 }) {
-  const [copied, setCopied] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
   if (!volunteer) return null;
@@ -39,23 +33,6 @@ export function VolunteerApprovedCard({
       });
     } finally {
       setIsDownloading(false);
-    }
-  };
-
-  const handleCopyLink = async () => {
-    if (!volunteer?.id) return;
-    const url =
-      typeof window !== "undefined"
-        ? `${window.location.origin}/relawan/validasi/${volunteer.id}`
-        : `https://payungberkah.id/relawan/validasi/${volunteer.id}`;
-
-    const ok = await copyToClipboard(url);
-    if (ok) {
-      setCopied(true);
-      toast.success("Tautan validasi relawan berhasil disalin.");
-      setTimeout(() => setCopied(false), 2000);
-    } else {
-      toast.error("Gagal menyalin tautan.");
     }
   };
 
@@ -91,21 +68,17 @@ export function VolunteerApprovedCard({
             </p>
           </div>
 
-          {/* Konten Kanan: Aksi Salin Tautan & Unduh Kartu */}
+          {/* Konten Kanan: Aksi Bagikan Tautan & Unduh Kartu */}
           <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto flex-wrap">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCopyLink}
-              className="h-9 px-3.5 text-xs sm:text-sm font-medium rounded-md bg-white/10 hover:bg-white/15 text-white border border-white/20 hover:border-white/30 backdrop-blur-xs gap-1.5 cursor-pointer transition-all"
-            >
-              {copied ? (
-                <Check className="w-4 h-4 text-emerald-400" />
-              ) : (
-                <Copy className="w-4 h-4 text-slate-300" />
-              )}
-              <span>{copied ? "Tersalin" : "Salin tautan"}</span>
-            </Button>
+            <ShareDropdown
+              url={`/relawan/validasi/${volunteer.id}`}
+              title={`Mandat Resmi Relawan: ${volunteer.fullName}`}
+              description={`Verifikasi keabsahan identitas dan mandat tugas relawan resmi Yayasan Payung Berkah atas nama ${volunteer.fullName}.`}
+              customCta="Cek dan verifikasi keabsahan kartu relawan resmi melalui tautan:"
+              variant="button"
+              align="end"
+              className="h-9 px-3.5 text-xs sm:text-sm font-medium rounded-md bg-white/10 hover:bg-white/15 text-white border-white/20 hover:border-white/30 backdrop-blur-xs cursor-pointer"
+            />
             <Button
               type="button"
               onClick={handleDownloadImage}
@@ -135,18 +108,9 @@ export function VolunteerApprovedCard({
         <VolunteerIdCard volunteer={volunteer} />
       </div>
 
-      {/* Link Validasi Publik & Opsi Pengunduran Diri */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs print:hidden">
-        <Link
-          href={`/relawan/validasi/${volunteer.id}`}
-          target="_blank"
-          className="inline-flex items-center gap-1.5 text-emerald-700 hover:text-emerald-800 hover:underline font-medium"
-        >
-          <span>Uji coba tampilan scan QR publik</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </Link>
-
-        {onResignClick && (
+      {/* Opsi Pengunduran Diri */}
+      {onResignClick && (
+        <div className="flex items-center justify-end pt-2 border-t border-slate-100 text-xs print:hidden">
           <button
             type="button"
             onClick={onResignClick}
@@ -155,8 +119,8 @@ export function VolunteerApprovedCard({
             <LogOut className="w-3.5 h-3.5" />
             <span>Berhenti menjadi relawan</span>
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
