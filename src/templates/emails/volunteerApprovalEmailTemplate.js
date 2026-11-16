@@ -23,7 +23,7 @@ export function buildVolunteerApprovalEmailHtml({
   const safeId = volunteerId || "YPABE-VOLUNTEER";
 
   const buttonHtml = buildEmailCtaButton({
-    text: "Buka Kartu Relawan Resmi",
+    text: "Buka Kartu Relawan Digital",
     url: validationUrl,
     variant: "primary3d",
   });
@@ -35,28 +35,28 @@ export function buildVolunteerApprovalEmailHtml({
     </p>
 
     <!-- Berita Utama -->
-    <p style="margin: 0 0 24px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Alhamdulillah, pendaftaran Anda untuk bergabung menjadi bagian dari <strong>Relawan</strong> Yayasan Payung Berkah telah <strong>disetujui</strong> oleh tim pengurus yayasan.
+    <p style="margin: 0 0 20px 0; font-size: 14px; color: #111827; line-height: 1.6;">
+      Alhamdulillah, pendaftaran Anda sebagai <strong>Relawan</strong> Yayasan Payung Berkah telah <strong>disetujui</strong> oleh pengurus yayasan.
     </p>
 
     <!-- Kotak Sertifikasi & Nomor Anggota -->
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 28px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 18px 20px;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 24px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 16px 20px;">
       <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #166534; width: 140px;">Nomor ID Relawan</td>
-        <td style="padding: 6px 0; font-size: 14px; color: #15803d; font-weight: 700;">: #${safeId}</td>
+        <td style="padding: 5px 0; font-size: 13px; color: #166534; width: 140px;">Nomor ID Relawan</td>
+        <td style="padding: 5px 0; font-size: 14px; color: #15803d; font-weight: 700;">: #${safeId}</td>
       </tr>
       <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #166534;">Status Keanggotaan</td>
-        <td style="padding: 6px 0; font-size: 13px; color: #15803d; font-weight: 600;">: RESMI TERVERIFIKASI</td>
+        <td style="padding: 5px 0; font-size: 13px; color: #166534;">Status Keanggotaan</td>
+        <td style="padding: 5px 0; font-size: 13px; color: #15803d; font-weight: 600;">: RESMI TERVERIFIKASI</td>
       </tr>
       <tr>
-        <td style="padding: 6px 0; font-size: 13px; color: #166534;">Masa Berlaku</td>
-        <td style="padding: 6px 0; font-size: 13px; color: #15803d; font-weight: 600;">: 1 Tahun (Dapat Diperpanjang)</td>
+        <td style="padding: 5px 0; font-size: 13px; color: #166534;">Masa Berlaku</td>
+        <td style="padding: 5px 0; font-size: 13px; color: #15803d; font-weight: 600;">: 1 Tahun (Aktif)</td>
       </tr>
     </table>
 
-    <p style="margin: 0 0 28px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Kartu relawan resmi Anda telah aktif. Anda dapat melihat, mengunduh, atau mencetak kartu identitas relawan Anda melalui tautan di bawah ini:
+    <p style="margin: 0 0 24px 0; font-size: 14px; color: #111827; line-height: 1.6;">
+      Kartu identitas resmi relawan Anda telah aktif. Silakan buka kartu Anda melalui tombol di bawah ini:
     </p>
 
     <!-- Tombol CTA -->
@@ -64,7 +64,7 @@ export function buildVolunteerApprovalEmailHtml({
 
     <!-- Catatan Penutup -->
     <p style="margin: 0; font-size: 13px; color: #4b5563; line-height: 1.6;">
-      Gunakan kartu identitas resmi ini dalam setiap kegiatan aksi sosial, distribusi bantuan mustahik, dan agenda lapangan Yayasan Payung Berkah. Semoga langkah kebaikan ini membawa keberkahan bagi umat.
+      Gunakan kartu identitas resmi ini dalam kegiatan sosial dan agenda lapangan Yayasan Payung Berkah. Semoga ikhtiar ini membawa keberkahan bagi umat.
     </p>
   `.trim();
 

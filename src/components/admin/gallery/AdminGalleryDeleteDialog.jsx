@@ -47,7 +47,7 @@ export function AdminGalleryDeleteDialog({
       </div>
 
       <p className="text-xs text-slate-500 leading-relaxed">
-        Foto akan dihapus secara permanen dari sistem.
+        Foto akan dihapus secara <strong className="text-slate-700 font-semibold">permanen</strong> dari sistem.
       </p>
     </ConfirmDialog>
   );

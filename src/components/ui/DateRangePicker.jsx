@@ -3,7 +3,9 @@
 import * as React from "react";
 import { format, isValid, parseISO, parse } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
-import { Calendar as CalendarIcon, X, ChevronDown } from "lucide-react";
+import { CalendarDateIcon } from "@solar-icons/react/line-duotone/calendar-date";
+import { CloseIcon } from "@solar-icons/react/linear/close";
+import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Calendar } from "@/components/ui/Calendar";
@@ -163,7 +165,7 @@ export function DateRangePicker({
           )}
         >
           <span className="flex items-center gap-2.5 truncate">
-            <CalendarIcon
+            <CalendarDateIcon
               className={cn("h-4 w-4 shrink-0", hasError ? "text-rose-400" : "text-slate-400")}
             />
             <span className={cn("truncate font-normal", hasValue ? "text-slate-900" : "")}>
@@ -185,10 +187,10 @@ export function DateRangePicker({
                 className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
                 aria-label="Hapus rentang tanggal"
               >
-                <X className="h-3.5 w-3.5" />
+                <CloseIcon className="h-3.5 w-3.5" />
               </span>
             ) : null}
-            <ChevronDown className="h-4 w-4 text-slate-400 shrink-0 opacity-70" />
+            <AltArrowDownIcon className="h-4 w-4 text-slate-400 shrink-0 opacity-70" />
           </span>
         </button>
       </PopoverTrigger>

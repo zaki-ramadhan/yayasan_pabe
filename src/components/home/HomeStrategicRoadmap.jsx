@@ -1,7 +1,31 @@
 import Image from "next/image";
+import { HandHeartIcon } from "@solar-icons/react/bold-duotone/hand-heart";
+import { MoonStarsIcon } from "@solar-icons/react/bold-duotone/moon-stars";
+import { UmbrellaIcon } from "@solar-icons/react/bold-duotone/umbrella";
+import { DiplomaIcon } from "@solar-icons/react/bold-duotone/diploma";
+import { HealthIcon } from "@solar-icons/react/bold-duotone/health";
+import { Home2Icon } from "@solar-icons/react/bold-duotone/home-2";
+import { Buildings2Icon } from "@solar-icons/react/bold-duotone/buildings-2";
+import { BuildingsIcon } from "@solar-icons/react/bold-duotone/buildings";
+import { HandMoneyIcon } from "@solar-icons/react/bold-duotone/hand-money";
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { RoadmapStepItem } from "./strategic/RoadmapStepItem";
 import { StrategicGoalBanner } from "./strategic/StrategicGoalBanner";
+
+const SHORT_TERM_ICONS = {
+  "santunan-berkala": HandHeartIcon,
+  "phbi": MoonStarsIcon,
+  "payung-berkah-peduli": UmbrellaIcon,
+  "pusat-kegiatan-masyarakat": DiplomaIcon,
+  "pelayanan-kesehatan": HealthIcon,
+};
+
+const LONG_TERM_ICONS = {
+  "asrama-yatim": Home2Icon,
+  "pkbm": Buildings2Icon,
+  "sarana-ibadah": BuildingsIcon,
+  "wakaf-produktif": HandMoneyIcon,
+};
 
 const SHORT_TERM_STAGGERS = [
   "lg:pt-28", // Posisi 1
@@ -84,6 +108,7 @@ export function HomeStrategicRoadmap() {
                 key={item.id}
                 title={item.title}
                 desc={item.desc}
+                icon={SHORT_TERM_ICONS[item.id]}
                 staggerClass={SHORT_TERM_STAGGERS[idx] || "lg:pt-0"}
                 isFirst={idx === 0}
                 isLast={idx === shortTermPrograms.length - 1}
@@ -114,6 +139,7 @@ export function HomeStrategicRoadmap() {
                 key={item.id}
                 title={item.title}
                 desc={item.desc}
+                icon={LONG_TERM_ICONS[item.id]}
                 staggerClass={LONG_TERM_STAGGERS[idx] || "lg:pt-0"}
                 isFirst={idx === 0}
                 isLast={idx === longTermPrograms.length - 1}

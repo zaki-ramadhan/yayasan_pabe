@@ -196,7 +196,7 @@ export function ProgramCatalog({ initialCampaigns = [], categories = [] }) {
             {isLoadingMore && (
               <div className="flex items-center justify-center gap-2.5 py-8 text-sm text-slate-600">
                 <Loader2 className="w-5 h-5 text-primary animate-spin" />
-                <span className="font-medium">Memuat program kebaikan lainnya...</span>
+                <span className="font-medium">Memuat program donasi lainnya...</span>
               </div>
             )}
 

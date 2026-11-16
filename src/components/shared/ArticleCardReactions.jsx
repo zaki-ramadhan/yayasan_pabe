@@ -1,6 +1,9 @@
 "use client";
 
-import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { LikeIcon as LikeLine } from "@solar-icons/react/line-duotone/like";
+import { LikeIcon as LikeBold } from "@solar-icons/react/bold-duotone/like";
+import { DislikeIcon as DislikeLine } from "@solar-icons/react/line-duotone/dislike";
+import { DislikeIcon as DislikeBold } from "@solar-icons/react/bold-duotone/dislike";
 import { useArticleReaction } from "@/hooks/useArticleReaction";
 import { cn } from "@/lib/utils";
 
@@ -39,12 +42,11 @@ export function ArticleCardReactions({
         )}
         aria-label={`${likes} suka`}
       >
-        <ThumbsUp
-          className={cn(
-            "w-3.5 h-3.5 transition-transform",
-            hasLiked ? "text-blue-700 fill-blue-700" : "text-slate-500"
-          )}
-        />
+        {hasLiked ? (
+          <LikeBold className="w-3.5 h-3.5 text-blue-700" />
+        ) : (
+          <LikeLine className="w-3.5 h-3.5 text-slate-500" />
+        )}
         <span>{likes}</span>
       </button>
 
@@ -60,12 +62,11 @@ export function ArticleCardReactions({
         )}
         aria-label={`${dislikes} tidak suka`}
       >
-        <ThumbsDown
-          className={cn(
-            "w-3.5 h-3.5 transition-transform",
-            hasDisliked ? "text-rose-700 fill-rose-700" : "text-slate-500"
-          )}
-        />
+        {hasDisliked ? (
+          <DislikeBold className="w-3.5 h-3.5 text-rose-700" />
+        ) : (
+          <DislikeLine className="w-3.5 h-3.5 text-slate-500" />
+        )}
         <span>{dislikes}</span>
       </button>
     </div>

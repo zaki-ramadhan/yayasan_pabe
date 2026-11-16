@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { DownloadMinimalisticIcon } from "@solar-icons/react/line-duotone/download-minimalistic";
 import { TableToolbar } from "@/components/ui/Table";
 import {
   Select,
@@ -71,7 +71,7 @@ export function AdminTransactionToolbar({
         onExportCsv
           ? {
               label: "Ekspor CSV",
-              icon: Download,
+              icon: DownloadMinimalisticIcon,
               onClick: onExportCsv,
               className: "bg-white border border-slate-300 text-slate-700 hover:bg-slate-50",
             }

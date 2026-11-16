@@ -111,7 +111,7 @@ export function DonorVolunteerCardView() {
       {/* 1. Banner CTA (Hanya jika belum terdaftar relawan) */}
       {!volunteer && (
         <CampaignCTA
-          title="Tertarik Menjadi Relawan Kebaikan?"
+          title="Tertarik Bergabung Menjadi Relawan?"
           description="Salurkan keahlian dan waktu Anda dalam program sosial, pendidikan Al-Qur'an, dan aksi kemanusiaan bersama Yayasan Payung Berkah."
           buttonText="Daftar Jadi Relawan Sekarang"
           buttonHref="/relawan"

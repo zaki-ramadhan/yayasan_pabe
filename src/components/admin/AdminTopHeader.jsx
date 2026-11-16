@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { PanelLeft } from "lucide-react";
+import { SidebarMinimalisticIcon } from "@solar-icons/react/line-duotone/sidebar-minimalistic";
 import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
 import { SuperAdminNoticeBanner } from "@/components/admin/SuperAdminNoticeBanner";
 import { AdminSystemAlertBanner } from "@/components/admin/AdminSystemAlertBanner";
@@ -73,7 +73,7 @@ export function AdminTopHeader({
           aria-label={isSidebarExpanded ? "Kecilkan bilah menu" : "Perluas bilah menu"}
           className="lg:hidden p-1.5 -ml-1.5 rounded-md text-slate-500 hover:text-slate-950 hover:bg-slate-100/80 transition-colors cursor-pointer flex items-center justify-center shrink-0"
         >
-          <PanelLeft className="w-4.5 h-4.5" />
+          <SidebarMinimalisticIcon className="w-4.5 h-4.5" />
         </button>
 
         <h1 className="text-sm sm:text-base font-medium text-slate-900 leading-tight truncate">

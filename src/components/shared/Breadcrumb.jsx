@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { AltArrowRightIcon } from "@solar-icons/react/linear/alt-arrow-right";
 import { cn } from "@/lib/utils";
 
 /**
@@ -24,9 +24,8 @@ export function Breadcrumb({ items = [], className = "" }) {
         return (
           <div key={idx} className="flex items-center gap-1.5 sm:gap-2">
             {idx > 0 && (
-              <ChevronRight
+              <AltArrowRightIcon
                 className="w-3.5 h-3.5 text-slate-400 shrink-0"
-                strokeWidth={2}
                 aria-hidden="true"
               />
             )}

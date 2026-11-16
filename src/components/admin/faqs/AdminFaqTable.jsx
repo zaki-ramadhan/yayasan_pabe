@@ -282,8 +282,20 @@ export function AdminFaqTable({ initialFaqs = [] }) {
         onOpenChange={setIsBulkDeleteOpen}
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
-        title={`Hapus ${selection.selectedCount} FAQ`}
-        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} pertanyaan FAQ terpilih? Tindakan ini bersifat permanen dan tidak dapat dibatalkan.`}
+        title={`Hapus ${selection.selectedCount} pertanyaan FAQ`}
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus{" "}
+            <strong className="text-slate-900 font-semibold">
+              {selection.selectedCount} pertanyaan FAQ terpilih
+            </strong>
+            ? Tindakan ini bersifat{" "}
+            <strong className="text-slate-900 font-semibold">
+              permanen dan tidak dapat dibatalkan
+            </strong>
+            .
+          </>
+        }
         confirmText="Hapus FAQ"
         variant="destructive"
       />

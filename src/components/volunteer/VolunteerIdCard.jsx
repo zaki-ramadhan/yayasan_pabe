@@ -1,6 +1,7 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { formatDate } from "@/lib/formatters";
@@ -62,7 +63,7 @@ export function VolunteerIdCardSkeleton({ className = "", rounded = true }) {
 
             {/* QR Persegi Putih */}
             <div className="relative z-10 flex flex-col items-center justify-center my-auto space-y-3">
-              <div className="w-[132px] h-[132px] border-2 border-white/25 bg-transparent animate-pulse" />
+              <div className="w-[140px] h-[140px] rounded-xl border border-white/25 bg-white/10 animate-pulse" />
               <div className="h-3 w-44 bg-white/20 rounded animate-pulse" />
             </div>
 
@@ -91,29 +92,53 @@ export function VolunteerIdCard({
 }) {
   const { currentUser } = useCurrentUser();
   const [imgError, setImgError] = useState(false);
+  const [isClientMounted, setIsClientMounted] = useState(false);
 
-  // Resolve foto profil asli akun pengguna atau data relawan (Prioritaskan avatar aktif yang dipilih user)
+  useEffect(() => {
+    setIsClientMounted(true);
+  }, []);
+
+  // Periksa apakah pengguna yang login adalah pemilik akun sah kartu ini (bukan admin yang sedang menginspeksi)
+  const isCardOwner = Boolean(
+    currentUser?.email &&
+      volunteer?.email &&
+      currentUser.email.trim().toLowerCase() === volunteer.email.trim().toLowerCase()
+  );
+
+  // Prioritaskan foto profil milik entitas relawan; gunakan currentUser HANYA jika ia adalah pemilik kartu
   const pfp =
-    currentUser?.avatar ||
     volunteer?.avatarUrl ||
-    currentUser?.customAvatar ||
-    currentUser?.providerAvatar ||
-    currentUser?.avatarUrl ||
-    currentUser?.image ||
-    currentUser?.picture ||
+    volunteer?.avatar ||
+    volunteer?.photoUrl ||
+    (isCardOwner
+      ? (currentUser?.avatar ||
+         currentUser?.customAvatar ||
+         currentUser?.providerAvatar ||
+         currentUser?.avatarUrl ||
+         currentUser?.image ||
+         currentUser?.picture)
+      : null) ||
     null;
 
-  // Construct absolute validation URL deterministik untuk QR code (identik di SSR dan Client)
+  // Construct absolute validation URL deterministik untuk QR code (resolusi origin dinamis di client)
   const validationUrl = useMemo(() => {
     if (customValidationUrl) return customValidationUrl;
     if (!volunteer?.id) return "";
-    const baseUrl = (
-      process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.id"
-    ).replace(/\/+$/, "");
-    return `${baseUrl}/relawan/validasi/${volunteer.id}`;
-  }, [customValidationUrl, volunteer?.id]);
 
-  const fullName = volunteer?.fullName || currentUser?.name || "Anggota Relawan";
+    let origin = "";
+    if (isClientMounted && typeof window !== "undefined" && window.location?.origin) {
+      origin = window.location.origin;
+    } else {
+      origin = process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.org";
+    }
+    const baseUrl = origin.replace(/\/+$/, "");
+    return `${baseUrl}/relawan/validasi/${volunteer.id}`;
+  }, [customValidationUrl, volunteer?.id, isClientMounted]);
+
+  const fullName =
+    volunteer?.fullName ||
+    (isCardOwner ? currentUser?.name : "") ||
+    "Anggota Relawan";
 
   // Skala proporsional berpasangan: Nama & Peran selalu menjaga hierarki visual tanpa elipsis
   const { nameClass, roleClass, containerOffset } = useMemo(() => {
@@ -159,6 +184,7 @@ export function VolunteerIdCard({
   const rawInterest =
     !volunteer.interest ||
     volunteer.interest.toLowerCase().includes("relawan kebaikan") ||
+    volunteer.interest.trim().toLowerCase() === "relawan" ||
     volunteer.interest.trim().toLowerCase() === "anggota"
       ? "Anggota Relawan"
       : volunteer.interest;
@@ -325,18 +351,20 @@ export function VolunteerIdCard({
               </p>
             </div>
 
-            {/* Tengah: QR Code Putih Bersih Tanpa Background & Teks Instruksi Ringkas Berjarak Lapang */}
-            <div className="relative z-10 flex flex-col items-center justify-center my-auto space-y-6">
-              <QRCodeSVG
-                value={validationUrl}
-                size={132}
-                level="M"
-                fgColor="#FFFFFF"
-                bgColor="transparent"
-                includeMargin={false}
-              />
-              <p className="text-xs text-white/90 font-medium text-center">
-                Scan untuk verifikasi
+            {/* Tengah: QR Code Berstandar ISO/IEC (Kontras Tinggi Gelap di atas Putih + Quiet Zone Padat) */}
+            <div className="relative z-10 flex flex-col items-center justify-center my-auto space-y-3.5">
+              <div className="p-2.5 bg-white rounded-xl shadow-md border border-white/20 flex items-center justify-center">
+                <QRCodeSVG
+                  value={validationUrl}
+                  size={118}
+                  level="M"
+                  fgColor="#0D3B2E"
+                  bgColor="#FFFFFF"
+                  includeMargin={false}
+                />
+              </div>
+              <p className="text-xs text-white/90 font-medium text-center tracking-wide">
+                Scan untuk verifikasi resmi
               </p>
             </div>
 

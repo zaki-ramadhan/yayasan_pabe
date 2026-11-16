@@ -41,7 +41,7 @@ export function ConfirmDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className={cn(
-          "sm:max-w-md min-h-[170px] sm:min-h-[190px] max-h-[85vh] overflow-hidden p-0 gap-0 bg-white border border-slate-200 flex flex-col",
+          "sm:max-w-[420px] min-h-[210px] sm:min-h-[230px] max-h-[85vh] overflow-hidden p-0 gap-0 bg-white border border-slate-200 flex flex-col shadow-xl",
           className
         )}
       >
@@ -51,7 +51,7 @@ export function ConfirmDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6">
+        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 sm:py-5 flex flex-col justify-start">
           {children ? (
             children
           ) : description ? (

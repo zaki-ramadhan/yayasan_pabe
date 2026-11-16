@@ -1,6 +1,9 @@
 "use client";
 
-import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { LikeIcon as LikeLine } from "@solar-icons/react/line-duotone/like";
+import { LikeIcon as LikeBold } from "@solar-icons/react/bold-duotone/like";
+import { DislikeIcon as DislikeLine } from "@solar-icons/react/line-duotone/dislike";
+import { DislikeIcon as DislikeBold } from "@solar-icons/react/bold-duotone/dislike";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
 import { useArticleReaction } from "@/hooks/useArticleReaction";
 import { cn } from "@/lib/utils";
@@ -51,14 +54,11 @@ export function ArticleActionBar({
 					)}
 					aria-label={hasLiked ? "Batalkan suka" : "Sukai artikel"}
 				>
-					<ThumbsUp
-						className={cn(
-							"w-4 h-4 transition-transform active:scale-125",
-							hasLiked
-								? "text-blue-700 fill-blue-700"
-								: "text-slate-500",
-						)}
-					/>
+					{hasLiked ? (
+						<LikeBold className="w-4 h-4 text-blue-700 transition-transform active:scale-125" />
+					) : (
+						<LikeLine className="w-4 h-4 text-slate-500 transition-transform active:scale-125" />
+					)}
 					<span className={cn("font-semibold", hasLiked ? "text-blue-700" : "text-slate-800")}>
 						{likes}
 					</span>
@@ -80,14 +80,11 @@ export function ArticleActionBar({
 							: "Tidak sukai artikel"
 					}
 				>
-					<ThumbsDown
-						className={cn(
-							"w-4 h-4 transition-transform active:scale-125",
-							hasDisliked
-								? "text-rose-700 fill-rose-700"
-								: "text-slate-500",
-						)}
-					/>
+					{hasDisliked ? (
+						<DislikeBold className="w-4 h-4 text-rose-700 transition-transform active:scale-125" />
+					) : (
+						<DislikeLine className="w-4 h-4 text-slate-500 transition-transform active:scale-125" />
+					)}
 					<span className={cn("font-semibold", hasDisliked ? "text-rose-700" : "text-slate-800")}>
 						{dislikes}
 					</span>

@@ -3,7 +3,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { User, LogOut, ChevronDown } from "lucide-react";
+import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
+import { ShieldUserIcon } from "@solar-icons/react/line-duotone/shield-user";
+import { Widget2Icon } from "@solar-icons/react/line-duotone/widget-2";
+import { BillListIcon } from "@solar-icons/react/line-duotone/bill-list";
+import { UserIdIcon } from "@solar-icons/react/line-duotone/user-id";
+import { UserRoundedIcon } from "@solar-icons/react/line-duotone/user-rounded";
+import { Logout2Icon } from "@solar-icons/react/line-duotone/logout-2";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -11,7 +17,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
-import { Button } from "@/components/ui/Button";
 import { NavLoginButton } from "./NavLoginButton";
 import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
 import { cn } from "@/lib/utils";
@@ -79,19 +84,18 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
           </div>
 
           {/* Small chevron arrow with smooth rotation */}
-          <ChevronDown
+          <AltArrowDownIcon
             className={cn(
               "w-3.5 h-3.5 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180",
               isOpen
                 ? "rotate-180 text-primary"
                 : "text-slate-500 group-hover:text-slate-800"
             )}
-            strokeWidth={2}
           />
         </button>
       </DropdownMenuTrigger>
 
-      {/* Simple Popover Dropdown Menu */}
+      {/* Popover Dropdown Menu */}
       <DropdownMenuContent
         align="end"
         sideOffset={8}
@@ -100,13 +104,13 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
         {/* User Identity Header */}
         <div className="px-2.5 py-2 space-y-1">
           <div className="flex items-center gap-2.5">
-            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center">
+            <div className="relative w-8.5 h-8.5 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center">
               {currentUser.avatar ? (
                 <Image
                   src={currentUser.avatar}
                   alt={currentUser.name || "Avatar"}
                   fill
-                  sizes="32px"
+                  sizes="34px"
                   unoptimized={typeof currentUser.avatar === "string" && !currentUser.avatar.startsWith("/") && !currentUser.avatar.includes("lh3.googleusercontent.com")}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
@@ -121,87 +125,30 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
               <p className="font-medium text-sm text-slate-950 truncate leading-tight">
                 {currentUser.name}
               </p>
-              <p className="text-sm font-normal text-slate-500 truncate leading-tight">
-                {currentUser.email || roleLabel}
-              </p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="text-xs text-slate-500 truncate leading-tight">
+                  {currentUser.email || roleLabel}
+                </span>
+                <span className="text-[10px] font-medium px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 shrink-0">
+                  {roleLabel}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
         <DropdownMenuSeparator className="my-1 border-slate-100" />
 
-        {/* Navigation Links based on Role */}
+        {/* Navigation Links */}
         {isStaff ? (
           <>
             <DropdownMenuItem asChild>
               <Link
                 href="/admin"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-900 hover:bg-slate-100 cursor-pointer transition-colors"
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-normal text-slate-900 hover:bg-slate-100 cursor-pointer transition-colors"
               >
-                <span className="flex-1">Panel admin</span>
-              </Link>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem asChild>
-              <Link
-                href="/admin/program"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
-              >
-                <span className="flex-1">Kelola program</span>
-              </Link>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem asChild>
-              <Link
-                href="/admin/transaksi"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
-              >
-                <span className="flex-1">Mutasi transaksi</span>
-              </Link>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem asChild>
-              <Link
-                href="/admin/distribusi"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
-              >
-                <span className="flex-1">Penyaluran bantuan</span>
-              </Link>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem asChild>
-              <Link
-                href="/admin/artikel"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
-              >
-                <span className="flex-1">Berita & artikel</span>
-              </Link>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem asChild>
-              <Link
-                href="/admin/instagram"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
-              >
-                <span className="flex-1">Feed Instagram</span>
-              </Link>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem asChild>
-              <Link
-                href="/admin/galeri"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
-              >
-                <span className="flex-1">Dokumentasi galeri</span>
-              </Link>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem asChild>
-              <Link
-                href="/admin/relawan"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
-              >
-                <span className="flex-1">Pendaftar relawan</span>
+                <ShieldUserIcon className="w-4.5 h-4.5 text-slate-700 shrink-0" />
+                <span className="flex-1">Panel Admin</span>
               </Link>
             </DropdownMenuItem>
           </>
@@ -210,8 +157,9 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
             <DropdownMenuItem asChild>
               <Link
                 href="/donatur/dashboard"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-normal text-slate-900 hover:bg-slate-100 cursor-pointer transition-colors"
               >
+                <Widget2Icon className="w-4.5 h-4.5 text-slate-700 shrink-0" />
                 <span className="flex-1">Dashboard</span>
               </Link>
             </DropdownMenuItem>
@@ -219,27 +167,30 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
             <DropdownMenuItem asChild>
               <Link
                 href="/donatur/riwayat"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-normal text-slate-900 hover:bg-slate-100 cursor-pointer transition-colors"
               >
-                <span className="flex-1">Riwayat donasi</span>
+                <BillListIcon className="w-4.5 h-4.5 text-slate-700 shrink-0" />
+                <span className="flex-1">Riwayat Donasi</span>
               </Link>
             </DropdownMenuItem>
 
             <DropdownMenuItem asChild>
               <Link
                 href="/donatur/relawan"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-normal text-slate-900 hover:bg-slate-100 cursor-pointer transition-colors"
               >
-                <span className="flex-1">Kartu relawan</span>
+                <UserIdIcon className="w-4.5 h-4.5 text-slate-700 shrink-0" />
+                <span className="flex-1">Kartu Relawan</span>
               </Link>
             </DropdownMenuItem>
 
             <DropdownMenuItem asChild>
               <Link
                 href="/donatur/profil"
-                className="px-2.5 py-2 rounded-md text-sm font-normal text-slate-700 hover:text-slate-950 hover:bg-slate-100 cursor-pointer transition-colors"
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-normal text-slate-900 hover:bg-slate-100 cursor-pointer transition-colors"
               >
-                <span className="flex-1">Profil saya</span>
+                <UserRoundedIcon className="w-4.5 h-4.5 text-slate-700 shrink-0" />
+                <span className="flex-1">Profil Saya</span>
               </Link>
             </DropdownMenuItem>
           </>
@@ -250,13 +201,12 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
         {/* Logout Item */}
         <DropdownMenuItem
           onClick={onLogout}
-          className="flex items-center gap-2 px-2.5 py-2 rounded-md text-sm font-normal text-rose-600 hover:text-rose-700 hover:bg-rose-50 cursor-pointer focus:bg-rose-50 focus:text-rose-700 transition-colors"
+          className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-normal text-rose-600 hover:text-rose-700 hover:bg-rose-50 cursor-pointer focus:bg-rose-50 focus:text-rose-700 transition-colors"
         >
-          <LogOut className="w-4 h-4 text-rose-500 shrink-0" />
+          <Logout2Icon className="w-4.5 h-4.5 text-rose-500 shrink-0" />
           <span>Keluar dari akun</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
-

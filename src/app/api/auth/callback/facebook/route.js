@@ -293,41 +293,92 @@ export async function GET(request) {
 
     const responseHtml = `
       <!DOCTYPE html>
-      <html>
+      <html lang="id">
         <head>
-          <title>Autentikasi Berhasil...</title>
+          <title>Menghubungkan Akun Facebook...</title>
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; }
             body {
-              font-family: system-ui, -apple-system, sans-serif;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
               display: flex;
               align-items: center;
               justify-content: center;
               min-height: 100vh;
-              margin: 0;
-              background-color: #020617;
-              color: #f8fafc;
+              background-color: #fafaf9;
+              color: #0f172a;
+              -webkit-font-smoothing: antialiased;
             }
-            .loader {
+            .container {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
               text-align: center;
-              padding: 2rem;
+              padding: 1.5rem;
+              max-width: 400px;
+              width: 100%;
             }
-            .spinner {
-              width: 36px;
-              height: 36px;
-              border: 3px solid rgba(255,255,255,0.15);
-              border-top-color: #1877f2;
+            .spinner-wrapper {
+              position: relative;
+              width: 100px;
+              height: 100px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: 1.5rem;
+            }
+            .spinner-svg {
+              position: absolute;
+              inset: 0;
+              width: 100%;
+              height: 100%;
+              animation: spin 1.2s linear infinite;
+            }
+            .icon-badge {
+              position: relative;
+              z-index: 2;
+              width: 56px;
+              height: 56px;
               border-radius: 50%;
-              animation: spin 0.8s linear infinite;
-              margin: 0 auto 1rem;
+              background: #ffffff;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+              border: 1px solid rgba(226, 232, 240, 0.8);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .title {
+              font-size: 1.125rem;
+              font-weight: 500;
+              color: #0f172a;
+              letter-spacing: -0.015em;
+              margin-bottom: 0.375rem;
+              line-height: 1.35;
+            }
+            .subtitle {
+              font-size: 0.8125rem;
+              font-weight: 400;
+              color: #64748b;
+              line-height: 1.5;
             }
             @keyframes spin { to { transform: rotate(360deg); } }
           </style>
         </head>
         <body>
-          <div class="loader">
-            <div class="spinner"></div>
-            <p style="font-size: 14px; font-weight: 500;">Memverifikasi Akun Facebook...</p>
+          <div class="container">
+            <div class="spinner-wrapper">
+              <svg class="spinner-svg" viewBox="0 0 100 100" aria-hidden="true">
+                <circle cx="50" cy="50" r="44" fill="none" stroke="#E2E8F0" stroke-width="3.5" />
+                <circle cx="50" cy="50" r="44" fill="none" stroke="#1877F2" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="75 200" />
+              </svg>
+              <div class="icon-badge">
+                <svg width="28" height="28" fill="#1877F2" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </div>
+            </div>
+            <h1 class="title">Menghubungkan akun Facebook...</h1>
+            <p class="subtitle">Mohon tunggu sejenak, kami sedang menyiapkan sesi Anda.</p>
           </div>
           <script>
             try {

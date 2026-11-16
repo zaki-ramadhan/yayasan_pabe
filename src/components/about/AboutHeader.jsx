@@ -58,7 +58,7 @@ export function AboutHeader({
 					{/* Header Action Buttons */}
 					<div className="flex flex-wrap items-center gap-2 pt-1 sm:pt-0">
 						<Link href="/program">
-							<Button className="h-9 sm:h-10 px-4 sm:px-5 text-xs sm:text-sm font-medium text-white bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 hover:from-slate-700 hover:via-slate-800 hover:to-slate-950 border-t border-t-slate-600 border-x border-x-slate-700 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_6px_rgba(0,0,0,0.35)] active:translate-y-0.5 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] transition-all cursor-pointer">
+							<Button className="h-9 sm:h-10 px-4 sm:px-5 text-xs sm:text-sm font-medium text-white bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 hover:from-slate-600 hover:via-slate-700 hover:to-slate-800 border-t border-t-slate-500 border-x border-x-slate-600 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_3px_6px_rgba(15,23,42,0.3)] active:translate-y-0.5 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] transition-all cursor-pointer">
 								Salurkan Donasi
 							</Button>
 						</Link>

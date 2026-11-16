@@ -1,7 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Edit3, Trash2, Eye, Loader2 } from "lucide-react";
+import { EyeIcon } from "@solar-icons/react/line-duotone/eye";
+import { Pen2Icon } from "@solar-icons/react/line-duotone/pen-2";
+import { TrashBinTrashIcon } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { LoaderIcon } from "@solar-icons/react/linear/loader";
 import { cn } from "@/lib/utils";
 
 /**
@@ -44,7 +47,7 @@ export function TableRowActions({
 					}
 					className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
 				>
-					<Eye className="w-4 h-4" />
+					<EyeIcon className="w-4 h-4" />
 				</button>
 			)}
 
@@ -62,7 +65,7 @@ export function TableRowActions({
 					}
 					className="p-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
 				>
-					<Edit3 className="w-4 h-4" />
+					<Pen2Icon className="w-4 h-4" />
 				</button>
 			)}
 
@@ -81,9 +84,9 @@ export function TableRowActions({
 					className="p-1.5 rounded-md text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
 				>
 					{isDeleting ? (
-						<Loader2 className="w-4 h-4 animate-spin text-rose-600" />
+						<LoaderIcon className="w-4 h-4 animate-spin text-rose-600" />
 					) : (
-						<Trash2 className="w-4 h-4" />
+						<TrashBinTrashIcon className="w-4 h-4" />
 					)}
 				</button>
 			)}

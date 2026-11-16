@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Copy, Check, RefreshCw } from "lucide-react";
+import { ArrowRightIcon } from "@solar-icons/react/linear/arrow-right";
+import { CopyIcon } from "@solar-icons/react/linear/copy";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { RestartIcon } from "@solar-icons/react/linear/restart";
 import { formatRupiah, formatPaymentChannel } from "@/lib/formatters";
 import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
@@ -113,7 +116,7 @@ export function AdminRecentTransactionsCard({
             className="h-8 w-8 text-slate-600 hover:bg-slate-50 disabled:pointer-events-none disabled:cursor-not-allowed"
             aria-label="Segarkan transaksi terkini"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
+            <RestartIcon className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
           </Button>
 
           <Link
@@ -121,7 +124,7 @@ export function AdminRecentTransactionsCard({
             className="text-sm font-medium text-primary hover:underline flex items-center gap-1 shrink-0"
           >
             <span>Semua transaksi</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRightIcon className="w-4 h-4" />
           </Link>
         </div>
       </CardHeader>
@@ -158,9 +161,9 @@ export function AdminRecentTransactionsCard({
                         className="p-1 rounded text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
                       >
                         {copiedId === item.invoiceId ? (
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                          <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-600" />
                         ) : (
-                          <Copy className="w-3.5 h-3.5" />
+                          <CopyIcon className="w-3.5 h-3.5" />
                         )}
                       </button>
                     </div>
@@ -188,7 +191,8 @@ export function AdminRecentTransactionsCard({
                   </TableCell>
                   <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
                     <span
-                      className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap"
+                      title={formatPaymentChannel(item.paymentChannel)}
+                      className="inline-block text-center align-middle px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap"
                     >
                       {formatPaymentChannel(item.paymentChannel)}
                     </span>

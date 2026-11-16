@@ -48,7 +48,7 @@ export function AdminRoutineDonationDetailDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-xl md:max-w-2xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+      <DialogContent className="sm:min-w-[500px] sm:max-w-xl md:max-w-2xl min-h-[300px] sm:min-h-[360px] max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader className="border-b border-slate-100">
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
             Rincian komitmen donasi rutin

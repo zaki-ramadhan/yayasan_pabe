@@ -6,7 +6,7 @@ import { isCampaignClosed } from "@/lib/formatters";
  */
 export const DEFAULT_GENERAL_PROGRAM = Object.freeze({
   id: null,
-  title: "Program Kebaikan & Operasional Yayasan PABE",
+  title: "Program Donasi & Operasional Yayasan PABE",
   slug: "program-kebaikan-umum",
   isGeneral: true,
 });

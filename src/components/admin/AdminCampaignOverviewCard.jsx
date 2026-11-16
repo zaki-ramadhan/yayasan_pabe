@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRightIcon } from "@solar-icons/react/linear/arrow-right";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Progress } from "@/components/ui/Progress";
@@ -146,7 +146,7 @@ export function AdminCampaignOverviewCard({
         >
           <Link href="/admin/program">
             <span>Periksa semua program</span>
-            <ArrowRight className="w-4 h-4 text-slate-500 shrink-0" />
+            <ArrowRightIcon className="w-4 h-4 text-slate-500 shrink-0" />
           </Link>
         </Button>
       </CardContent>

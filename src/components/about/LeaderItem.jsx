@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ChevronRight } from "lucide-react";
+import { AltArrowRightIcon } from "@solar-icons/react/linear/alt-arrow-right";
 
 /**
  * Individual leadership team item
@@ -35,7 +35,7 @@ export function LeaderItem({ leader }) {
           </h3>
         </div>
         <div className="flex items-center gap-1.5 text-slate-600 min-w-0">
-          <ChevronRight className="w-3.5 h-3.5 text-primary shrink-0" />
+          <AltArrowRightIcon className="w-3.5 h-3.5 text-primary shrink-0" />
           <span
             className="text-xs sm:text-sm font-medium text-slate-700 truncate"
           >

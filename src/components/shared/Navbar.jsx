@@ -4,7 +4,8 @@ import { useState, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { HamburgerMenuIcon } from "@solar-icons/react/linear/hamburger-menu";
+import { CloseIcon } from "@solar-icons/react/linear/close";
 import { getStoredUser, logoutUser } from "@/services/authService";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
@@ -66,8 +67,11 @@ export function Navbar() {
 
   const handleLogout = () => {
     logoutUser();
-    toast.success("Berhasil keluar dari akun.");
-    router.push("/");
+    if (typeof window !== "undefined") {
+      window.location.replace("/login?loggedOut=true");
+    } else {
+      router.push("/login");
+    }
   };
 
   return (
@@ -119,7 +123,7 @@ export function Navbar() {
               className="lg:hidden p-2 rounded-md text-slate-900 hover:bg-slate-100 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
               aria-label="Toggle navigation menu"
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isMobileMenuOpen ? <CloseIcon className="w-5 h-5 text-slate-900" /> : <HamburgerMenuIcon className="w-5 h-5 text-slate-900" />}
             </button>
           </div>
         </div>

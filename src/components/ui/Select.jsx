@@ -2,7 +2,9 @@
 
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
+import { AltArrowUpIcon } from "@solar-icons/react/linear/alt-arrow-up";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
 import { cn } from "@/lib/utils";
 import { useFormField } from "@/components/ui/FormField";
 
@@ -36,7 +38,7 @@ const SelectTrigger = React.forwardRef(({ className, children, error, isInvalid,
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDown className={cn("h-4 w-4 shrink-0 ml-2 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180", hasError ? "text-rose-400" : "text-slate-500")} />
+        <AltArrowDownIcon className={cn("h-4 w-4 shrink-0 ml-2 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180", hasError ? "text-rose-400" : "text-slate-500")} />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -49,7 +51,7 @@ const SelectScrollUpButton = React.forwardRef(({ className, ...props }, ref) => 
     className={cn("flex cursor-default items-center justify-center py-1", className)}
     {...props}
   >
-    <ChevronUp className="h-4 w-4" />
+    <AltArrowUpIcon className="h-4 w-4" />
   </SelectPrimitive.ScrollUpButton>
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -60,7 +62,7 @@ const SelectScrollDownButton = React.forwardRef(({ className, ...props }, ref) =
     className={cn("flex cursor-default items-center justify-center py-1", className)}
     {...props}
   >
-    <ChevronDown className="h-4 w-4" />
+    <AltArrowDownIcon className="h-4 w-4" />
   </SelectPrimitive.ScrollDownButton>
 ));
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
@@ -129,7 +131,7 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   >
     <span className="absolute left-2.5 flex h-3.5 w-3.5 items-center justify-center shrink-0">
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4 text-primary" />
+        <CheckCircleIcon className="h-4 w-4 text-primary" />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText className="truncate block min-w-0 flex-1">

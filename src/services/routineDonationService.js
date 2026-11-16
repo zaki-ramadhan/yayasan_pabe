@@ -62,7 +62,7 @@ export async function createRoutineDonations({
   }
 
   if (targetPrograms.length > 1) {
-    throw new Error("Jadwal donasi rutin dibatasi untuk 1 program kebaikan.");
+    throw new Error("Jadwal donasi rutin dibatasi untuk 1 program donasi.");
   }
 
   // Guard: Hanya boleh memiliki 1 jadwal donasi rutin aktif
@@ -135,7 +135,7 @@ export async function createRoutineDonations({
 
   const cleanData = {
     campaignId: p.campaignId ? String(p.campaignId) : null,
-    programTitle: sanitizeInput(p.programTitle || "Program Kebaikan Rutin"),
+    programTitle: sanitizeInput(p.programTitle || "Program Donasi Rutin"),
     amount,
     frequency,
     routineType,

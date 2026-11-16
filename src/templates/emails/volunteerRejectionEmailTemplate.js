@@ -1,7 +1,7 @@
 import { buildBaseEmailHtml } from "./baseEmailTemplate";
 
 export const VOLUNTEER_REJECTION_EMAIL_SUBJECT =
-  "Informasi Pendaftaran Relawan Kebaikan - Yayasan Payung Berkah";
+  "Informasi Pendaftaran Relawan - Yayasan Payung Berkah";
 
 /**
  * Membuat konten HTML email pemberitahuan pendaftaran relawan yang belum dapat diterima
@@ -27,7 +27,7 @@ export function buildVolunteerRejectionEmailHtml({
 
     <!-- Apresiasi Niat Baik -->
     <p style="margin: 0 0 20px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Terima kasih banyak atas niat mulia dan ketulusan hati Anda untuk bergabung sebagai Relawan Kebaikan Yayasan Payung Berkah${interestText}. Kami sangat menghargai waktu dan kesediaan Anda untuk berbagi manfaat bersama umat.
+      Terima kasih banyak atas niat mulia dan ketulusan hati Anda untuk bergabung sebagai Relawan Yayasan Payung Berkah${interestText}. Kami sangat menghargai waktu dan kesediaan Anda untuk berbagi manfaat bersama umat.
     </p>
 
     <!-- Penjelasan Santun -->
@@ -48,7 +48,7 @@ export function buildVolunteerRejectionEmailHtml({
 
     <!-- Informasi Silaturahmi & Jejaring Relawan -->
     <p style="margin: 0 0 24px 0; font-size: 14px; color: #111827; line-height: 1.6;">
-      Meskipun demikian, data dan kontak Anda tetap tersimpan dalam pangkalan data relawan yayasan. Kami akan sangat senang menghubungi Anda kembali apabila terdapat agenda sosial, bakti masyarakat, atau program kebaikan baru yang sesuai dengan minat Anda di kemudian hari.
+      Meskipun demikian, data dan kontak Anda tetap tersimpan dalam pangkalan data relawan yayasan. Kami akan sangat senang menghubungi Anda kembali apabila terdapat agenda sosial, bakti masyarakat, atau kegiatan relawan baru yang sesuai dengan minat Anda di kemudian hari.
     </p>
 
     <!-- Catatan Doa & Penutup -->

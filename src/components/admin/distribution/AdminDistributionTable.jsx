@@ -308,8 +308,20 @@ export function AdminDistributionTable({
         onClose={() => setIsBulkDeleteDialogOpen(false)}
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
-        title={`Hapus ${selection.selectedCount} Data Penyaluran`}
-        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} data penyaluran bantuan terpilih? Berkas foto dokumentasi terkait juga akan dibersihkan.`}
+        title={`Hapus ${selection.selectedCount} data penyaluran`}
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus{" "}
+            <strong className="text-slate-900 font-semibold">
+              {selection.selectedCount} data penyaluran bantuan terpilih
+            </strong>
+            ? Berkas foto dokumentasi terkait juga akan{" "}
+            <strong className="text-slate-900 font-semibold">
+              dibersihkan permanen
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />

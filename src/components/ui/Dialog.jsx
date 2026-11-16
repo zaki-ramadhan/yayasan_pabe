@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X, Loader2 } from "lucide-react";
+import { CloseIcon } from "@solar-icons/react/linear/close";
+import { LoaderIcon } from "@solar-icons/react/linear/loader";
 import { cn } from "@/lib/utils";
 
 const Dialog = DialogPrimitive.Root;
@@ -29,7 +30,7 @@ const DialogContent = React.forwardRef(
 			<DialogPrimitive.Content
 				ref={ref}
 				className={cn(
-					"fixed left-[50%] top-[50%] z-50 flex flex-col w-[calc(100%-2rem)] min-w-[300px] sm:min-w-[400px] max-w-lg max-h-[85vh] translate-x-[-50%] translate-y-[-50%] overflow-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+					"fixed left-[50%] top-[50%] z-50 flex flex-col w-[calc(100%-2rem)] min-w-[300px] sm:min-w-[400px] min-h-[210px] sm:min-h-[240px] max-w-lg max-h-[85vh] translate-x-[-50%] translate-y-[-50%] overflow-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-xl duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
 					className,
 				)}
 				{...props}
@@ -37,7 +38,7 @@ const DialogContent = React.forwardRef(
 				{children}
 				{!hideCloseButton && (
 					<DialogPrimitive.Close className="absolute right-3.5 top-3.5 z-20 rounded-lg p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer">
-						<X className="h-4 w-4" />
+						<CloseIcon className="h-4 w-4" />
 						<span className="sr-only">Tutup</span>
 					</DialogPrimitive.Close>
 				)}
@@ -60,7 +61,7 @@ const DialogHeader = ({ className, children, hideCloseButton = false, ...props }
 		</div>
 		{!hideCloseButton && (
 			<DialogPrimitive.Close className="rounded-lg p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer shrink-0 -mr-1">
-				<X className="h-4 w-4" />
+				<CloseIcon className="h-4 w-4" />
 				<span className="sr-only">Tutup</span>
 			</DialogPrimitive.Close>
 		)}
@@ -160,7 +161,7 @@ function DialogFooterActions({
 						: "bg-primary text-white hover:bg-primary/90"
 				)}
 			>
-				{isSubmitting && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
+				{isSubmitting && <LoaderIcon className="w-4 h-4 animate-spin shrink-0" />}
 				<span>{isSubmitting ? activeSubmittingText : activeSubmitText}</span>
 			</button>
 		</DialogFooter>
@@ -196,7 +197,7 @@ function FormDialog({
 		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogContent
 				className={cn(
-					"min-h-[200px] sm:min-h-[220px] max-h-[85vh] overflow-hidden p-0 gap-0 bg-white border border-slate-200 flex flex-col",
+					"min-w-[300px] sm:min-w-[440px] min-h-[280px] sm:min-h-[340px] max-h-[85vh] overflow-hidden p-0 gap-0 bg-white border border-slate-200 flex flex-col",
 					maxWidth,
 					className
 				)}

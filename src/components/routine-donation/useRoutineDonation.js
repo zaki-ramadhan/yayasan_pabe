@@ -227,7 +227,7 @@ export function useRoutineDonation({ campaigns = [] }) {
 
       const payloadProgram = {
         campaignId: camp?.id || program.campaignId,
-        programTitle: camp?.title || "Program Kebaikan Rutin",
+        programTitle: camp?.title || "Program Donasi Rutin",
         amount: program.routineType === "REMINDER_ONLY" ? 0 : nominal,
         frequency: program.frequency,
         routineType: program.routineType,

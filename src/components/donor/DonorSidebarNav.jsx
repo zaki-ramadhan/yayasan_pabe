@@ -3,9 +3,27 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, LayoutGrid, Globe } from "lucide-react";
+
+// Solar Icons - Line Duotone (Inactive)
+import { Widget2Icon as Widget2Line } from "@solar-icons/react/line-duotone/widget-2";
+import { BillListIcon as BillListLine } from "@solar-icons/react/line-duotone/bill-list";
+import { UserIdIcon as UserIdLine } from "@solar-icons/react/line-duotone/user-id";
+import { UserRoundedIcon as UserRoundedLine } from "@solar-icons/react/line-duotone/user-rounded";
+import { Home2Icon as Home2Line } from "@solar-icons/react/line-duotone/home-2";
+import { HandHeartIcon as HandHeartLine } from "@solar-icons/react/line-duotone/hand-heart";
+import { DocumentTextIcon as DocumentTextLine } from "@solar-icons/react/line-duotone/document-text";
+import { Logout2Icon as Logout2Line } from "@solar-icons/react/line-duotone/logout-2";
+
+// Solar Icons - Bold Duotone (Active)
+import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold-duotone/widget-2";
+import { BillListIcon as BillListBold } from "@solar-icons/react/bold-duotone/bill-list";
+import { UserIdIcon as UserIdBold } from "@solar-icons/react/bold-duotone/user-id";
+import { UserRoundedIcon as UserRoundedBold } from "@solar-icons/react/bold-duotone/user-rounded";
+import { Home2Icon as Home2Bold } from "@solar-icons/react/bold-duotone/home-2";
+import { HandHeartIcon as HandHeartBold } from "@solar-icons/react/bold-duotone/hand-heart";
+import { DocumentTextIcon as DocumentTextBold } from "@solar-icons/react/bold-duotone/document-text";
+
 import { logoutUser } from "@/services/authService";
-import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 
 export function DonorSidebarNav({
@@ -19,30 +37,37 @@ export function DonorSidebarNav({
   const handleLogout = () => {
     logoutUser();
     if (onCloseMobile) onCloseMobile();
-    toast.success("Berhasil keluar dari akun.");
-    router.push("/");
+    if (typeof window !== "undefined") {
+      window.location.replace("/login?loggedOut=true");
+    } else {
+      router.push("/login");
+    }
   };
 
   const mainNavItems = [
     {
       label: "Dashboard",
       href: "/donatur/dashboard",
-      short: "DB",
+      icon: Widget2Line,
+      activeIcon: Widget2Bold,
     },
     {
       label: "Riwayat Donasi",
       href: "/donatur/riwayat",
-      short: "RD",
+      icon: BillListLine,
+      activeIcon: BillListBold,
     },
     {
       label: "Kartu Relawan",
       href: "/donatur/relawan",
-      short: "KR",
+      icon: UserIdLine,
+      activeIcon: UserIdBold,
     },
     {
       label: "Profil Saya",
       href: "/donatur/profil",
-      short: "PS",
+      icon: UserRoundedLine,
+      activeIcon: UserRoundedBold,
     },
   ];
 
@@ -50,36 +75,30 @@ export function DonorSidebarNav({
     {
       label: "Beranda Utama",
       href: "/",
-      short: "BU",
+      icon: Home2Line,
+      activeIcon: Home2Bold,
+      exact: true,
     },
     {
       label: "Program Donasi",
       href: "/program",
-      short: "PD",
+      icon: HandHeartLine,
+      activeIcon: HandHeartBold,
     },
     {
       label: "Berita & Artikel",
       href: "/artikel",
-      short: "BA",
+      icon: DocumentTextLine,
+      activeIcon: DocumentTextBold,
     },
   ];
 
-  const mainActiveIndex = mainNavItems.findIndex(
-    (item) =>
-      pathname === item.href ||
-      (item.href === "/donatur/dashboard" && pathname === "/donatur")
-  );
-
-  const publicActiveIndex = publicNavItems.findIndex((item) =>
-    item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
-  );
-
   return (
-    <div className="h-full flex flex-col justify-between bg-sidebar border-r border-slate-200 overflow-hidden transition-all duration-200 select-none">
+    <div className="h-full flex flex-col justify-between bg-sidebar border-r border-slate-200 overflow-hidden select-none">
       {/* Top Section */}
-      <div className={cn("space-y-3", isCollapsed ? "p-2.5" : "p-3")}>
+      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1 sidebar-scrollbar">
         {/* Brand Header */}
-        <div className="flex items-center pb-3 border-b border-slate-200">
+        <div className="pb-3 pt-1 border-b border-slate-300">
           <Link
             href="/"
             onClick={onCloseMobile}
@@ -100,7 +119,7 @@ export function DonorSidebarNav({
             </div>
             {!isCollapsed && (
               <div className="min-w-0 flex-1 truncate">
-                <span className="font-normal text-sm block text-slate-950 leading-tight group-hover:text-primary transition-colors truncate">
+                <span className="font-normal text-sm block text-slate-950 leading-tight truncate">
                   Yayasan PABE
                 </span>
                 <span className="text-sm font-normal text-slate-500 block truncate">
@@ -112,68 +131,68 @@ export function DonorSidebarNav({
         </div>
 
         {/* Main Navigation */}
-        <div>
+        <div className="space-y-0.5 pt-2">
           {isCollapsed ? (
-            <>
-              <div className="flex justify-center py-1 text-slate-400" title="Menu utama">
-                <LayoutGrid className="w-4 h-4 shrink-0" />
-              </div>
-              <nav className="space-y-0.5 mt-1">
-                {mainNavItems.map((item) => {
-                  const isActive =
-                    pathname === item.href ||
-                    (item.href === "/donatur/dashboard" && pathname === "/donatur");
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={onCloseMobile}
-                      className={cn(
-                        "flex items-center rounded-md text-sm transition-all font-normal justify-center p-2 text-xs",
-                        isActive
-                          ? "text-slate-950 bg-slate-200/80 shadow-2xs"
-                          : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
-                      )}
-                    >
-                      <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
-            </>
+            <nav className="space-y-0.5">
+              {mainNavItems.map((item) => {
+                const isActive =
+                  pathname === item.href ||
+                  (item.href === "/donatur/dashboard" && pathname === "/donatur");
+                const ItemIcon = isActive ? (item.activeIcon || item.icon) : item.icon;
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onCloseMobile}
+                    title={item.label}
+                    className={cn(
+                      "flex items-center rounded-md transition-all justify-center p-2 text-xs",
+                      isActive
+                        ? "text-black bg-slate-200/80 shadow-2xs"
+                        : "text-slate-900 hover:text-black hover:bg-slate-200/50"
+                    )}
+                  >
+                    {ItemIcon && <ItemIcon className="w-5 h-5 shrink-0" />}
+                  </Link>
+                );
+              })}
+            </nav>
           ) : (
             <>
-              <div className="flex items-center gap-2 px-3 py-1.5 text-sm select-none">
-                <LayoutGrid
-                  className={cn(
-                    "w-4 h-4 shrink-0 transition-colors",
-                    mainActiveIndex !== -1 ? "text-slate-950" : "text-slate-500"
-                  )}
-                />
-                <span className="truncate font-normal text-slate-900">
-                  Menu utama
+              <div className="px-3 pt-1 pb-1 select-none">
+                <span className="truncate text-sm font-normal text-slate-900 block">
+                  Menu Utama
                 </span>
               </div>
-              <nav className="space-y-0.5 mt-0.5">
+              <nav className="space-y-0.5">
                 {mainNavItems.map((item) => {
                   const isActive =
                     pathname === item.href ||
                     (item.href === "/donatur/dashboard" && pathname === "/donatur");
+                  const ItemIcon = isActive ? (item.activeIcon || item.icon) : item.icon;
+
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
                       onClick={onCloseMobile}
                       className={cn(
-                        "flex items-center rounded-md text-sm transition-all font-normal px-3 py-2",
+                        "flex items-center gap-2.5 rounded-md text-sm transition-all font-normal px-3 py-1.5 group",
                         isActive
-                          ? "text-slate-950 bg-slate-200/80 shadow-2xs"
-                          : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                          ? "text-black font-normal bg-slate-200/80 shadow-2xs"
+                          : "text-slate-900 hover:text-black hover:bg-slate-200/50"
                       )}
                     >
-                      <span className="flex-1 truncate whitespace-nowrap">
-                        {item.label}
-                      </span>
+                      {ItemIcon && (
+                        <ItemIcon
+                          className={cn(
+                            "w-4.5 h-4.5 shrink-0 transition-colors",
+                            isActive ? "text-slate-950" : "text-slate-700 group-hover:text-black"
+                          )}
+                        />
+                      )}
+                      <span className="truncate">{item.label}</span>
                     </Link>
                   );
                 })}
@@ -182,65 +201,72 @@ export function DonorSidebarNav({
           )}
         </div>
 
+        {/* Full-width Divider */}
+        <div className="-mx-3 my-2.5 border-t border-slate-300" />
+
         {/* Website Utama Navigation */}
-        <div className="pt-3 border-t border-dashed border-slate-200">
+        <div className="space-y-0.5">
           {isCollapsed ? (
-            <>
-              <div className="flex justify-center py-1 text-slate-400" title="Website utama">
-                <Globe className="w-4 h-4 shrink-0" />
-              </div>
-              <nav className="space-y-0.5 mt-1">
-                {publicNavItems.map((item) => {
-                  const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={onCloseMobile}
-                      className={cn(
-                        "flex items-center rounded-md text-sm transition-all font-normal justify-center p-2 text-xs",
-                        isActive
-                          ? "text-slate-950 bg-slate-200/80 shadow-2xs"
-                          : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
-                      )}
-                    >
-                      <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
-            </>
+            <nav className="space-y-0.5">
+              {publicNavItems.map((item) => {
+                const isActive = item.exact
+                  ? pathname === item.href
+                  : pathname.startsWith(item.href) && item.href !== "/";
+                const ItemIcon = isActive ? (item.activeIcon || item.icon) : item.icon;
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={onCloseMobile}
+                    title={item.label}
+                    className={cn(
+                      "flex items-center rounded-md transition-all justify-center p-2 text-xs",
+                      isActive
+                        ? "text-black bg-slate-200/80 shadow-2xs"
+                        : "text-slate-900 hover:text-black hover:bg-slate-200/50"
+                    )}
+                  >
+                    {ItemIcon && <ItemIcon className="w-5 h-5 shrink-0" />}
+                  </Link>
+                );
+              })}
+            </nav>
           ) : (
             <>
-              <div className="flex items-center gap-2 px-3 py-1.5 text-sm select-none">
-                <Globe
-                  className={cn(
-                    "w-4 h-4 shrink-0 transition-colors",
-                    publicActiveIndex !== -1 ? "text-slate-950" : "text-slate-500"
-                  )}
-                />
-                <span className="truncate font-normal text-slate-900">
-                  Website utama
+              <div className="px-3 pt-1 pb-1 select-none">
+                <span className="truncate text-sm font-normal text-slate-900 block">
+                  Website Utama
                 </span>
               </div>
-              <nav className="space-y-0.5 mt-0.5">
+              <nav className="space-y-0.5">
                 {publicNavItems.map((item) => {
-                  const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+                  const isActive = item.exact
+                    ? pathname === item.href
+                    : pathname.startsWith(item.href) && item.href !== "/";
+                  const ItemIcon = isActive ? (item.activeIcon || item.icon) : item.icon;
+
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
                       onClick={onCloseMobile}
                       className={cn(
-                        "flex items-center rounded-md text-sm transition-all font-normal px-3 py-2",
+                        "flex items-center gap-2.5 rounded-md text-sm transition-all font-normal px-3 py-1.5 group",
                         isActive
-                          ? "text-slate-950 bg-slate-200/80 shadow-2xs"
-                          : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                          ? "text-black font-normal bg-slate-200/80 shadow-2xs"
+                          : "text-slate-900 hover:text-black hover:bg-slate-200/50"
                       )}
                     >
-                      <span className="flex-1 truncate whitespace-nowrap">
-                        {item.label}
-                      </span>
+                      {ItemIcon && (
+                        <ItemIcon
+                          className={cn(
+                            "w-4.5 h-4.5 shrink-0 transition-colors",
+                            isActive ? "text-slate-950" : "text-slate-700 group-hover:text-black"
+                          )}
+                        />
+                      )}
+                      <span className="truncate">{item.label}</span>
                     </Link>
                   );
                 })}
@@ -251,32 +277,19 @@ export function DonorSidebarNav({
       </div>
 
       {/* Bottom Section: Dedicated Logout Button */}
-      <div
-        className={cn(
-          "border-t border-slate-200 bg-sidebar",
-          isCollapsed ? "p-2.5 flex justify-center" : "p-3"
-        )}
-      >
-        {isCollapsed ? (
-          <button
-            type="button"
-            onClick={handleLogout}
-            aria-label="Keluar dari akun"
-            className="w-10 h-10 rounded-md flex items-center justify-center text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-colors cursor-pointer text-xs font-normal"
-          >
-            <LogOut className="w-4.5 h-4.5 text-rose-600" />
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={handleLogout}
-            aria-label="Keluar dari akun"
-            className="w-full flex items-center px-3 py-2 rounded-md text-sm font-normal text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-colors cursor-pointer"
-          >
-            <LogOut className="w-4.5 h-4.5 shrink-0 mr-2.5 text-rose-600" />
-            <span className="truncate font-normal">Keluar dari akun</span>
-          </button>
-        )}
+      <div className="shrink-0 p-3 pt-3 border-t border-slate-300 mt-auto bg-sidebar">
+        <button
+          type="button"
+          onClick={handleLogout}
+          aria-label="Keluar dari akun"
+          className={cn(
+            "flex items-center rounded-md text-sm text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer w-full text-left font-normal group",
+            isCollapsed ? "justify-center p-2.5" : "px-3 py-2"
+          )}
+        >
+          <Logout2Line className={cn("w-4.5 h-4.5 shrink-0 text-rose-600 group-hover:text-rose-700", !isCollapsed && "mr-2.5")} />
+          {!isCollapsed && <span className="truncate font-normal">Keluar</span>}
+        </button>
       </div>
     </div>
   );

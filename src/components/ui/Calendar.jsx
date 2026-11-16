@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { AltArrowLeftIcon } from "@solar-icons/react/linear/alt-arrow-left";
+import { AltArrowRightIcon } from "@solar-icons/react/linear/alt-arrow-right";
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/Button";
@@ -88,9 +89,9 @@ function Calendar({
         },
         Chevron: ({ orientation, className: chevronClassName }) => {
           if (orientation === "left") {
-            return <ChevronLeft className={cn("h-4 w-4", chevronClassName)} />;
+            return <AltArrowLeftIcon className={cn("h-4 w-4", chevronClassName)} />;
           }
-          return <ChevronRight className={cn("h-4 w-4", chevronClassName)} />;
+          return <AltArrowRightIcon className={cn("h-4 w-4", chevronClassName)} />;
         },
       }}
       {...props}

@@ -180,7 +180,19 @@ export function AdminGalleryTable({
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
         title={`Hapus ${selection.selectedCount} dokumentasi kegiatan?`}
-        description="Seluruh foto dan video yang dipilih akan dihapus permanen. Tindakan ini tidak dapat dibatalkan."
+        description={
+          <>
+            Seluruh foto dan video yang dipilih (
+            <strong className="text-slate-900 font-semibold">
+              {selection.selectedCount} item
+            </strong>
+            ) akan{" "}
+            <strong className="text-slate-900 font-semibold">
+              dihapus permanen
+            </strong>
+            . Tindakan ini tidak dapat dibatalkan.
+          </>
+        }
         confirmLabel={`Hapus ${selection.selectedCount} foto`}
       />
     </div>

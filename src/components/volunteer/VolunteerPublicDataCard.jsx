@@ -20,7 +20,7 @@ export function VolunteerPublicDataCard({ volunteer }) {
     year: "numeric",
   });
 
-  const interestText = volunteer?.interest || "Relawan Kebaikan";
+  const interestText = volunteer?.interest || "Relawan";
 
   return (
     <section className="p-5 sm:p-7 md:p-8 bg-white border-t border-slate-200/80">

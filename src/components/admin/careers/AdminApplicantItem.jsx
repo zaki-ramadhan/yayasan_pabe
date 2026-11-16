@@ -14,7 +14,11 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatDate } from "@/lib/formatters";
 import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
-import { Mail, Phone, ExternalLink, FileText, Loader2 } from "lucide-react";
+import { LetterIcon } from "@solar-icons/react/line-duotone/letter";
+import { PhoneIcon } from "@solar-icons/react/line-duotone/phone";
+import { SquareArrowRightUpIcon } from "@solar-icons/react/linear/square-arrow-right-up";
+import { DocumentTextIcon } from "@solar-icons/react/line-duotone/document-text";
+import { LoaderIcon } from "@solar-icons/react/linear/loader";
 
 /**
  * Sub-widget item tunggal pelamar: data identitas, kontak, direct WhatsApp, resume, cover letter, dan status selector.
@@ -90,7 +94,7 @@ export function AdminApplicantItem({
             </SelectContent>
           </Select>
           {isUpdating && (
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400 shrink-0" />
+            <LoaderIcon className="w-3.5 h-3.5 animate-spin text-slate-400 shrink-0" />
           )}
         </div>
       </div>
@@ -98,7 +102,7 @@ export function AdminApplicantItem({
       {/* Baris Tengah: Kontak Email, WhatsApp / Telepon, & Resume CV */}
       <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600">
         <span className="flex items-center gap-1.5">
-          <Mail className="w-4 h-4 text-slate-400" />
+          <LetterIcon className="w-4 h-4 text-slate-400" />
           <span className="font-normal text-slate-700">
             {application.email || "-"}
           </span>
@@ -119,7 +123,7 @@ export function AdminApplicantItem({
             </a>
           ) : (
             <>
-              <Phone className="w-4 h-4 text-slate-400" />
+              <PhoneIcon className="w-4 h-4 text-slate-400" />
               <span className="font-normal text-slate-700">{application.phone || "-"}</span>
             </>
           )}
@@ -127,7 +131,7 @@ export function AdminApplicantItem({
 
         {application.resumeUrl && (
           <span className="flex items-center gap-1.5">
-            <FileText className="w-4 h-4 text-slate-400" />
+            <DocumentTextIcon className="w-4 h-4 text-slate-400" />
             <a
               href={application.resumeUrl}
               target="_blank"
@@ -135,7 +139,7 @@ export function AdminApplicantItem({
               className="text-primary hover:underline flex items-center gap-0.5 font-normal"
             >
               <span>Unduh Resume/CV</span>
-              <ExternalLink className="w-3.5 h-3.5 ml-0.5" />
+              <SquareArrowRightUpIcon className="w-3.5 h-3.5 ml-0.5" />
             </a>
           </span>
         )}
@@ -162,9 +166,32 @@ export function AdminApplicantItem({
             : "Tolak berkas lamaran kerja?"
         }
         description={
-          pendingStatus === "SHORTLISTED"
-            ? `Pelamar atas nama "${application.fullName}" akan ditandai lolos seleksi berkas, dan surat pemberitahuan wawancara akan dikirimkan ke email beliau.`
-            : `Pelamar atas nama "${application.fullName}" akan ditandai belum sesuai kriteria, dan surat pemberitahuan santun akan dikirimkan ke email beliau.`
+          pendingStatus === "SHORTLISTED" ? (
+            <>
+              Pelamar atas nama{" "}
+              <strong className="text-slate-900 font-semibold">
+                {application.fullName}
+              </strong>{" "}
+              akan ditandai{" "}
+              <strong className="text-emerald-700 font-semibold">
+                lolos seleksi berkas
+              </strong>
+              , dan surat pemberitahuan wawancara akan otomatis dikirimkan ke email
+              beliau.
+            </>
+          ) : (
+            <>
+              Pelamar atas nama{" "}
+              <strong className="text-slate-900 font-semibold">
+                {application.fullName}
+              </strong>{" "}
+              akan ditandai{" "}
+              <strong className="text-slate-900 font-semibold">
+                belum sesuai kriteria
+              </strong>
+              , dan surat pemberitahuan santun akan dikirimkan ke email beliau.
+            </>
+          )
         }
         confirmLabel={pendingStatus === "SHORTLISTED" ? "Ya, loloskan" : "Ya, tolak"}
         confirmVariant={pendingStatus === "SHORTLISTED" ? "default" : "destructive"}

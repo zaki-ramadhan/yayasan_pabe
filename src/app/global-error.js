@@ -31,7 +31,7 @@ export default function GlobalError({ reset }) {
           <button
             type="button"
             onClick={() => reset()}
-            className="text-white font-medium bg-gradient-to-b from-blue-600 via-blue-700 to-blue-800 hover:from-blue-500 hover:via-blue-600 hover:to-blue-700 border-t border-t-blue-400 border-x border-x-blue-600 border-b-2 border-b-blue-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_3px_6px_rgba(29,78,216,0.25)] active:translate-y-0.5 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] rounded-lg px-7 h-11 text-sm inline-flex items-center justify-center transition-all cursor-pointer select-none"
+            className="text-white font-medium bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 hover:from-blue-400 hover:via-blue-500 hover:to-blue-600 border-t border-t-blue-300 border-x border-x-blue-500 border-b-2 border-b-blue-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_3px_8px_rgba(37,99,235,0.3)] active:translate-y-0.5 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] rounded-lg px-7 h-11 text-sm inline-flex items-center justify-center transition-all cursor-pointer select-none"
           >
             Muat Ulang Halaman
           </button>

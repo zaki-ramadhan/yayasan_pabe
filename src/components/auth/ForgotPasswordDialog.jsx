@@ -138,7 +138,7 @@ export function ForgotPasswordDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+      <DialogContent className="max-w-[420px] min-h-[280px] sm:min-h-[320px] max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-950 leading-tight">
             Atur ulang kata sandi

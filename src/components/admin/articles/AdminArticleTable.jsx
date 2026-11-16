@@ -303,8 +303,20 @@ export function AdminArticleTable({
         onClose={() => setArticleToDelete(null)}
         onConfirm={handleConfirmDelete}
         isLoading={Boolean(deletingId)}
-        title="Hapus Artikel"
-        description={`Apakah Anda yakin ingin menghapus artikel "${articleToDelete?.title}"? Tindakan ini tidak dapat dibatalkan.`}
+        title="Hapus artikel"
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus artikel{" "}
+            <strong className="text-slate-900 font-semibold">
+              &ldquo;{articleToDelete?.title}&rdquo;
+            </strong>
+            ? Tindakan ini{" "}
+            <strong className="text-slate-900 font-semibold">
+              tidak dapat dibatalkan
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />
@@ -314,8 +326,20 @@ export function AdminArticleTable({
         onClose={() => setIsBulkDeleteOpen(false)}
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
-        title={`Hapus ${selection.selectedCount} Artikel`}
-        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} artikel berita terpilih? Banner dan konten artikel akan dihapus secara permanen.`}
+        title={`Hapus ${selection.selectedCount} artikel`}
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus{" "}
+            <strong className="text-slate-900 font-semibold">
+              {selection.selectedCount} artikel berita terpilih
+            </strong>
+            ? Banner dan konten artikel akan{" "}
+            <strong className="text-slate-900 font-semibold">
+              dihapus secara permanen
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />

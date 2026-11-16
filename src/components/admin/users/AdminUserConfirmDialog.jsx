@@ -69,11 +69,19 @@ export function AdminUserConfirmDialog({
         </div>
       )}
       <p className="text-xs text-slate-500 leading-relaxed">
-        {isDelete
-          ? "Tindakan ini permanen dan akan menghapus akses staf terkait dari sistem."
-          : isSuspend && isActive
-          ? "Akun pengurus akan dinonaktifkan sementara dan tidak dapat masuk ke sistem."
-          : "Akun pengurus akan diaktifkan kembali dan dapat masuk ke panel sistem."}
+        {isDelete ? (
+          <>
+            Tindakan ini <strong className="text-slate-700 font-semibold">permanen</strong> dan akan menghapus akses staf terkait dari sistem.
+          </>
+        ) : isSuspend && isActive ? (
+          <>
+            Akun pengurus akan <strong className="text-slate-700 font-semibold">dinonaktifkan sementara</strong> dan tidak dapat masuk ke sistem.
+          </>
+        ) : (
+          <>
+            Akun pengurus akan <strong className="text-slate-700 font-semibold">diaktifkan kembali</strong> dan dapat masuk ke panel sistem.
+          </>
+        )}
       </p>
     </ConfirmDialog>
   );

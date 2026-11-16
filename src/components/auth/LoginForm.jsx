@@ -45,10 +45,12 @@ export function LoginForm({ siteKey }) {
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
   const [unactivatedEmail, setUnactivatedEmail] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const turnstileRef = useRef(null);
   const handledErrorRef = useRef(false);
   const handledNoticeRef = useRef(false);
   const handledVerifiedRef = useRef(false);
+  const handledLoggedOutRef = useRef(false);
 
   // Safely restore remembered identifier on client mount without hydration mismatch
   useEffect(() => {
@@ -93,6 +95,19 @@ export function LoginForm({ siteKey }) {
     } else if (activationErr) {
       handledVerifiedRef.current = true;
       toast.error(activationErr);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (handledLoggedOutRef.current) return;
+    const loggedOutParam = searchParams.get("loggedOut");
+    if (loggedOutParam === "true") {
+      handledLoggedOutRef.current = true;
+      toast.success("Anda telah berhasil keluar dari akun.");
+      if (typeof window !== "undefined" && window.history?.replaceState) {
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, "", cleanUrl);
+      }
     }
   }, [searchParams]);
 
@@ -164,7 +179,7 @@ export function LoginForm({ siteKey }) {
         turnstileToken,
       });
 
-      setIsLoading(false);
+      setIsRedirecting(true);
       setUnactivatedEmail("");
       const isStaff = Boolean(user?.role && user.role !== USER_ROLES.DONOR);
 
@@ -180,9 +195,11 @@ export function LoginForm({ siteKey }) {
         finalTarget = (isAdminPath || !redirectUrl) ? "/donatur/dashboard" : redirectUrl;
       }
 
+      toast.success("Berhasil masuk! Mengalihkan ke dasbor...");
       router.push(finalTarget);
     } catch (err) {
       setIsLoading(false);
+      setIsRedirecting(false);
       turnstileRef.current?.reset();
       setTurnstileToken("");
       if (err.code === "ACCOUNT_NOT_ACTIVATED") {
@@ -327,7 +344,9 @@ export function LoginForm({ siteKey }) {
           variant="primary3d"
           className="w-full h-11 rounded-lg text-sm mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? "Memverifikasi Kredensial..." : "Masuk ke Akun"}
+          {isLoading
+            ? (isRedirecting ? "Mengalihkan ke dasbor..." : "Memverifikasi kredensial...")
+            : "Masuk ke akun"}
         </Button>
       </form>
 

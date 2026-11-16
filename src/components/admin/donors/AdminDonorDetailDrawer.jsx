@@ -257,7 +257,8 @@ export function AdminDonorDetailDrawer({
                         {formatRupiah(d.totalAmount)}
                       </span>
                       <span
-                        className="inline-flex items-center justify-center px-2 py-0.5 mt-0.5 rounded text-sm leading-tight font-medium bg-slate-100 border border-slate-200 text-slate-600 max-w-[140px] truncate"
+                        title={formatPaymentChannel(d.paymentChannel)}
+                        className="inline-block text-center align-middle px-2 py-0.5 mt-0.5 rounded text-sm leading-tight font-medium bg-slate-100 border border-slate-200 text-slate-600 max-w-[140px] truncate"
                       >
                         {formatPaymentChannel(d.paymentChannel)}
                       </span>

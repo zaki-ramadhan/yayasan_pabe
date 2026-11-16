@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheckIcon } from "@solar-icons/react/line-duotone/shield-check";
 
 /**
  * Thin differentiator banner exclusively shown for Super Admin users.
@@ -21,7 +21,7 @@ export function SuperAdminNoticeBanner({ isSuperAdmin = false }) {
         <span>
           Mode Super Admin
         </span>
-        <ShieldCheck className="w-4 h-4 text-white shrink-0" aria-hidden="true" />
+        <ShieldCheckIcon className="w-4 h-4 text-white shrink-0" aria-hidden="true" />
         <span>
           Akses penuh sistem aktif
         </span>

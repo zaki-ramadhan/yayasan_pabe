@@ -37,7 +37,7 @@ export function buildRoutineRolloverEmailHtml({
 
     <!-- Isi Pesan -->
     <p style="margin: 0 0 18px 0; font-size: 14px; color: #374151; line-height: 1.6;">
-      Alhamdulillah, atas izin Allah SWT dan keistiqomahan Anda, program kebaikan <strong>${oldProgramTitle}</strong> kini telah resmi selesai dan target penyalurannya telah terpenuhi dengan baik.
+      Alhamdulillah, atas izin Allah SWT dan keistiqomahan Anda, program donasi <strong>${oldProgramTitle}</strong> kini telah resmi selesai dan target penyalurannya telah terpenuhi dengan baik.
     </p>
 
     <!-- Kotak Pengumuman Pengalihan Jadwal -->
@@ -45,10 +45,10 @@ export function buildRoutineRolloverEmailHtml({
       <tr>
         <td style="padding: 16px 20px;">
           <p style="margin: 0 0 6px 0; font-size: 14px; font-weight: 600; color: #15803d;">
-            Komitmen Kebaikan Anda Dialihkan ke Program Aktif
+            Komitmen Donasi Rutin Anda Dialihkan ke Program Aktif
           </p>
           <p style="margin: 0 0 10px 0; font-size: 13px; color: #166534; line-height: 1.5;">
-            Agar aliran pahala sedekah rutin Anda terus terjaga tanpa terputus, komitmen donasi rutin Anda telah dialihkan secara otomatis ke program kebaikan:
+            Agar aliran pahala sedekah rutin Anda terus terjaga tanpa terputus, komitmen donasi rutin Anda telah dialihkan secara otomatis ke program donasi:
           </p>
           <p style="margin: 0; font-size: 14px; font-weight: 700; color: #14532d;">
             📌 ${newProgramTitle}

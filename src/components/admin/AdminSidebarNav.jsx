@@ -3,18 +3,56 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  LogOut,
-  ExternalLink,
-  HeartHandshake,
-  Newspaper,
-  ShieldCheck,
-  Server,
-} from "lucide-react";
+import { SquareArrowRightUpIcon } from "@solar-icons/react/linear/square-arrow-right-up";
+
+// Solar Icons - Line Duotone (Default / Inactive)
+import { Widget2Icon as Widget2Line } from "@solar-icons/react/line-duotone/widget-2";
+import { UsersGroupTwoRoundedIcon as UsersGroupTwoRoundedLine } from "@solar-icons/react/line-duotone/users-group-two-rounded";
+import { HandHeartIcon as HandHeartLine } from "@solar-icons/react/line-duotone/hand-heart";
+import { HandMoneyIcon as HandMoneyLine } from "@solar-icons/react/line-duotone/hand-money";
+import { DeliveryIcon as DeliveryLine } from "@solar-icons/react/line-duotone/delivery";
+import { CardTransferIcon as CardTransferLine } from "@solar-icons/react/line-duotone/card-transfer";
+import { CalendarDateIcon as CalendarDateLine } from "@solar-icons/react/line-duotone/calendar-date";
+import { ChatRoundDotsIcon as ChatRoundDotsLine } from "@solar-icons/react/line-duotone/chat-round-dots";
+import { DocumentTextIcon as DocumentTextLine } from "@solar-icons/react/line-duotone/document-text";
+import { GalleryWideIcon as GalleryWideLine } from "@solar-icons/react/line-duotone/gallery-wide";
+import { CameraMinimalisticIcon as CameraMinimalisticLine } from "@solar-icons/react/line-duotone/camera-minimalistic";
+import { ChartSquareIcon as ChartSquareLine } from "@solar-icons/react/line-duotone/chart-square";
+import { CaseRoundIcon as CaseRoundLine } from "@solar-icons/react/line-duotone/case-round";
+import { HandShakeIcon as HandShakeLine } from "@solar-icons/react/line-duotone/hand-shake";
+import { QuestionCircleIcon as QuestionCircleLine } from "@solar-icons/react/line-duotone/question-circle";
+import { ShieldUserIcon as ShieldUserLine } from "@solar-icons/react/line-duotone/shield-user";
+import { SettingsMinimalisticIcon as SettingsMinimalisticLine } from "@solar-icons/react/line-duotone/settings-minimalistic";
+import { ServerPathIcon as ServerPathLine } from "@solar-icons/react/line-duotone/server-path";
+import { ShieldKeyholeIcon as ShieldKeyholeLine } from "@solar-icons/react/line-duotone/shield-keyhole";
+import { CodeCircleIcon as CodeCircleLine } from "@solar-icons/react/line-duotone/code-circle";
+import { Logout2Icon as Logout2Line } from "@solar-icons/react/line-duotone/logout-2";
+
+// Solar Icons - Bold Duotone (Active State)
+import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold-duotone/widget-2";
+import { UsersGroupTwoRoundedIcon as UsersGroupTwoRoundedBold } from "@solar-icons/react/bold-duotone/users-group-two-rounded";
+import { HandHeartIcon as HandHeartBold } from "@solar-icons/react/bold-duotone/hand-heart";
+import { HandMoneyIcon as HandMoneyBold } from "@solar-icons/react/bold-duotone/hand-money";
+import { DeliveryIcon as DeliveryBold } from "@solar-icons/react/bold-duotone/delivery";
+import { CardTransferIcon as CardTransferBold } from "@solar-icons/react/bold-duotone/card-transfer";
+import { CalendarDateIcon as CalendarDateBold } from "@solar-icons/react/bold-duotone/calendar-date";
+import { ChatRoundDotsIcon as ChatRoundDotsBold } from "@solar-icons/react/bold-duotone/chat-round-dots";
+import { DocumentTextIcon as DocumentTextBold } from "@solar-icons/react/bold-duotone/document-text";
+import { GalleryWideIcon as GalleryWideBold } from "@solar-icons/react/bold-duotone/gallery-wide";
+import { CameraMinimalisticIcon as CameraMinimalisticBold } from "@solar-icons/react/bold-duotone/camera-minimalistic";
+import { ChartSquareIcon as ChartSquareBold } from "@solar-icons/react/bold-duotone/chart-square";
+import { CaseRoundIcon as CaseRoundBold } from "@solar-icons/react/bold-duotone/case-round";
+import { HandShakeIcon as HandShakeBold } from "@solar-icons/react/bold-duotone/hand-shake";
+import { QuestionCircleIcon as QuestionCircleBold } from "@solar-icons/react/bold-duotone/question-circle";
+import { ShieldUserIcon as ShieldUserBold } from "@solar-icons/react/bold-duotone/shield-user";
+import { SettingsMinimalisticIcon as SettingsMinimalisticBold } from "@solar-icons/react/bold-duotone/settings-minimalistic";
+import { ServerPathIcon as ServerPathBold } from "@solar-icons/react/bold-duotone/server-path";
+import { ShieldKeyholeIcon as ShieldKeyholeBold } from "@solar-icons/react/bold-duotone/shield-keyhole";
+import { CodeCircleIcon as CodeCircleBold } from "@solar-icons/react/bold-duotone/code-circle";
+
 import { logoutUser } from "@/services/authService";
 import { USER_ROLES } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import { isInfrastructureEmail } from "@/lib/infrastructureConstants";
 import { useStorageAlert } from "@/hooks/useStorageAlert";
@@ -22,29 +60,27 @@ import { useStorageAlert } from "@/hooks/useStorageAlert";
 const ADMIN_NAV_GROUPS = [
   {
     title: "Program & Donasi",
-    icon: HeartHandshake,
     items: [
-      { href: "/admin", label: "Dashboard Utama", short: "DB", exact: true },
-      { href: "/admin/donatur", label: "Daftar Donatur", short: "DD" },
-      { href: "/admin/program", label: "Kelola Program Donasi", short: "PD" },
-      { href: "/admin/zis", label: "Kelola Program ZIS", short: "PZ" },
-      { href: "/admin/distribusi", label: "Rekam Penyaluran", short: "RP" },
-      { href: "/admin/transaksi", label: "Mutasi Transaksi", short: "MT" },
-      { href: "/admin/donasi-rutin", label: "Donasi Rutin", short: "DR" },
-      { href: "/admin/doa", label: "Moderasi Doa", short: "MD" },
+      { href: "/admin", label: "Dashboard Utama", icon: Widget2Line, activeIcon: Widget2Bold, exact: true },
+      { href: "/admin/donatur", label: "Daftar Donatur", icon: UsersGroupTwoRoundedLine, activeIcon: UsersGroupTwoRoundedBold },
+      { href: "/admin/program", label: "Kelola Program Donasi", icon: HandHeartLine, activeIcon: HandHeartBold },
+      { href: "/admin/zis", label: "Kelola Program ZIS", icon: HandMoneyLine, activeIcon: HandMoneyBold },
+      { href: "/admin/distribusi", label: "Rekam Penyaluran", icon: DeliveryLine, activeIcon: DeliveryBold },
+      { href: "/admin/transaksi", label: "Mutasi Transaksi", icon: CardTransferLine, activeIcon: CardTransferBold },
+      { href: "/admin/donasi-rutin", label: "Donasi Rutin", icon: CalendarDateLine, activeIcon: CalendarDateBold },
+      { href: "/admin/doa", label: "Moderasi Doa", icon: ChatRoundDotsLine, activeIcon: ChatRoundDotsBold },
     ],
   },
   {
     title: "Konten & Informasi",
-    icon: Newspaper,
     items: [
-      { href: "/admin/artikel", label: "Berita & Artikel", short: "BA" },
-      { href: "/admin/galeri", label: "Galeri Dokumentasi", short: "GD" },
-      { href: "/admin/instagram", label: "Feed Instagram", short: "IG" },
-      { href: "/admin/laporan-audit", label: "Laporan Audit Keuangan", short: "LK" },
-      { href: "/admin/karier", label: "Lowongan Karier", short: "KA" },
-      { href: "/admin/relawan", label: "Kelola Relawan", short: "KR" },
-      { href: "/admin/faq", label: "Pusat FAQ", short: "FQ" },
+      { href: "/admin/artikel", label: "Berita & Artikel", icon: DocumentTextLine, activeIcon: DocumentTextBold },
+      { href: "/admin/galeri", label: "Galeri Dokumentasi", icon: GalleryWideLine, activeIcon: GalleryWideBold },
+      { href: "/admin/instagram", label: "Feed Instagram", icon: CameraMinimalisticLine, activeIcon: CameraMinimalisticBold },
+      { href: "/admin/laporan-audit", label: "Laporan Audit Keuangan", icon: ChartSquareLine, activeIcon: ChartSquareBold },
+      { href: "/admin/karier", label: "Lowongan Karier", icon: CaseRoundLine, activeIcon: CaseRoundBold },
+      { href: "/admin/relawan", label: "Kelola Relawan", icon: HandShakeLine, activeIcon: HandShakeBold },
+      { href: "/admin/faq", label: "Pusat FAQ", icon: QuestionCircleLine, activeIcon: QuestionCircleBold },
     ],
   },
 ];
@@ -68,10 +104,9 @@ export function AdminSidebarNav({
       ? [
           {
             title: "Hak Akses & Pengurus",
-            icon: ShieldCheck,
             items: [
-              { href: "/admin/pengguna", label: "Kelola Pengurus", short: "KP" },
-              { href: "/admin/pengaturan", label: "Pengaturan Yayasan", short: "PY" },
+              { href: "/admin/pengguna", label: "Kelola Pengurus", icon: ShieldUserLine, activeIcon: ShieldUserBold },
+              { href: "/admin/pengaturan", label: "Pengaturan Yayasan", icon: SettingsMinimalisticLine, activeIcon: SettingsMinimalisticBold },
             ],
           },
         ]
@@ -80,23 +115,25 @@ export function AdminSidebarNav({
       ? [
           {
             title: "Infrastruktur & Sistem",
-            icon: Server,
             items: [
               {
                 href: "/admin/penyimpanan",
                 label: "Penyimpanan Berkas",
-                short: "PB",
+                icon: ServerPathLine,
+                activeIcon: ServerPathBold,
               },
               {
                 href: "/api/admin/external/google-oauth",
                 label: "Console Google OAuth",
-                short: "GO",
+                icon: ShieldKeyholeLine,
+                activeIcon: ShieldKeyholeBold,
                 isExternal: true,
               },
               {
                 href: "/api/admin/external/facebook-oauth",
                 label: "Meta Developers OAuth",
-                short: "FB",
+                icon: CodeCircleLine,
+                activeIcon: CodeCircleBold,
                 isExternal: true,
               },
             ],
@@ -108,14 +145,17 @@ export function AdminSidebarNav({
   const handleLogout = () => {
     logoutUser();
     if (onCloseMobile) onCloseMobile();
-    toast.success("Berhasil keluar dari akun.");
-    router.push("/");
+    if (typeof window !== "undefined") {
+      window.location.replace("/login?loggedOut=true");
+    } else {
+      router.push("/login");
+    }
   };
 
   return (
     <div className="h-full flex flex-col bg-sidebar border-r border-slate-200 select-none overflow-hidden">
       {/* Brand Header (Fixed Top) */}
-      <div className="shrink-0 p-3 pb-3 border-b border-slate-200">
+      <div className="shrink-0 p-3 pb-3 border-b border-slate-300">
         <Link
           href="/"
           onClick={onCloseMobile}
@@ -146,71 +186,56 @@ export function AdminSidebarNav({
         </Link>
       </div>
 
-      {/* Main Navigation Groups (Scrollable if many items) */}
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 sidebar-scrollbar">
+      {/* Main Navigation Groups (Scrollable) */}
+      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1 sidebar-scrollbar">
         {navGroups.map((group, index) => {
-          const GroupIcon = group.icon;
-          const groupActiveIndex = group.items.findIndex((item) =>
-            item.exact
-              ? pathname === item.href
-              : pathname === item.href || pathname.startsWith(`${item.href}/`)
-          );
-
           return (
-            <div
-              key={group.title}
-              className={cn(index > 0 && "pt-3 border-t border-dashed border-slate-200")}
-            >
+            <div key={group.title} className="space-y-0.5">
+              {/* Full-width divider between groups */}
+              {index > 0 && <div className="-mx-3 my-2.5 border-t border-slate-300" />}
+
               {isCollapsed ? (
-                <>
-                  {GroupIcon && (
-                    <div className="flex justify-center py-1 text-slate-400" title={group.title}>
-                      <GroupIcon className="w-4 h-4 shrink-0" />
-                    </div>
-                  )}
-                  <nav className="space-y-0.5 mt-1">
-                    {group.items.map((item) => {
-                      const isActive = item.exact
-                        ? pathname === item.href
-                        : pathname === item.href || pathname.startsWith(`${item.href}/`);
-                      return (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          onClick={onCloseMobile}
-                          className={cn(
-                            "flex items-center rounded-md text-sm transition-all font-normal justify-center p-2 text-xs",
-                            isActive
-                              ? "text-slate-950 bg-slate-200/80 shadow-2xs"
-                              : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
-                          )}
-                        >
-                          <span className="text-xs uppercase tracking-wider font-normal">{item.short}</span>
-                        </Link>
-                      );
-                    })}
-                  </nav>
-                </>
+                <nav className="space-y-0.5">
+                  {group.items.map((item) => {
+                    const isActive = item.exact
+                      ? pathname === item.href
+                      : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                    const ItemIcon = isActive ? (item.activeIcon || item.icon) : item.icon;
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={onCloseMobile}
+                        title={item.label}
+                        className={cn(
+                          "flex items-center rounded-md transition-all justify-center p-2 text-xs",
+                          isActive
+                            ? "text-black bg-slate-200/80 shadow-2xs"
+                            : "text-slate-900 hover:text-black hover:bg-slate-200/50"
+                        )}
+                      >
+                        {ItemIcon && <ItemIcon className="w-5 h-5 shrink-0" />}
+                      </Link>
+                    );
+                  })}
+                </nav>
               ) : (
                 <>
-                  <div className="flex items-center gap-2 px-3 py-1.5 text-sm select-none">
-                    {GroupIcon && (
-                      <GroupIcon
-                        className={cn(
-                          "w-4 h-4 shrink-0 transition-colors",
-                          groupActiveIndex !== -1 ? "text-slate-950" : "text-slate-500"
-                        )}
-                      />
-                    )}
-                    <span className="truncate font-normal text-slate-900">
+                  {/* Group Header Label: Teks biasa tanpa ikon */}
+                  <div className="px-3 pt-1 pb-1 select-none">
+                    <span className="truncate text-sm font-normal text-slate-900 block">
                       {group.title}
                     </span>
                   </div>
-                  <nav className="space-y-0.5 mt-0.5">
+
+                  {/* Nav Item Links */}
+                  <nav className="space-y-0.5">
                     {group.items.map((item) => {
                       const isActive = item.exact
                         ? pathname === item.href
                         : pathname === item.href || pathname.startsWith(`${item.href}/`);
+                      const ItemIcon = isActive ? (item.activeIcon || item.icon) : item.icon;
 
                       if (item.isExternal) {
                         return (
@@ -220,10 +245,15 @@ export function AdminSidebarNav({
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={onCloseMobile}
-                            className="flex items-center rounded-md text-sm transition-all px-3 py-2 justify-between text-slate-600 hover:text-slate-950 hover:bg-slate-200/40 font-normal"
+                            className="flex items-center gap-2.5 rounded-md text-sm transition-all px-3 py-1.5 justify-between text-slate-900 hover:text-black hover:bg-slate-200/50 font-normal group"
                           >
-                            <span className="truncate">{item.label}</span>
-                            <ExternalLink className="w-3.5 h-3.5 text-slate-500 shrink-0 ml-1.5" />
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              {ItemIcon && (
+                                <ItemIcon className="w-4.5 h-4.5 text-slate-700 group-hover:text-black shrink-0 transition-colors" />
+                              )}
+                              <span className="truncate">{item.label}</span>
+                            </div>
+                            <SquareArrowRightUpIcon className="w-3.5 h-3.5 text-slate-500 shrink-0 ml-1.5" />
                           </a>
                         );
                       }
@@ -234,12 +264,20 @@ export function AdminSidebarNav({
                           href={item.href}
                           onClick={onCloseMobile}
                           className={cn(
-                            "flex items-center rounded-md text-sm transition-all font-normal px-3 py-2",
+                            "flex items-center gap-2.5 rounded-md text-sm transition-all font-normal px-3 py-1.5 group",
                             isActive
-                              ? "text-slate-950 bg-slate-200/80 shadow-2xs"
-                              : "text-slate-600 hover:text-slate-950 hover:bg-slate-200/40"
+                              ? "text-black font-normal bg-slate-200/80 shadow-2xs"
+                              : "text-slate-900 hover:text-black hover:bg-slate-200/50"
                           )}
                         >
+                          {ItemIcon && (
+                            <ItemIcon
+                              className={cn(
+                                "w-4.5 h-4.5 shrink-0 transition-colors",
+                                isActive ? "text-slate-950" : "text-slate-700 group-hover:text-black"
+                              )}
+                            />
+                          )}
                           <span className="truncate">{item.label}</span>
                           {item.href === "/admin/penyimpanan" && (health?.isCritical || health?.isWarning) && (
                             <span
@@ -266,16 +304,16 @@ export function AdminSidebarNav({
       </div>
 
       {/* Bottom Actions (Fixed Bottom, Never Overflown) */}
-      <div className="shrink-0 p-3 pt-3 border-t border-slate-200 mt-auto bg-sidebar">
+      <div className="shrink-0 p-3 pt-3 border-t border-slate-300 mt-auto bg-sidebar">
         <button
           type="button"
           onClick={handleLogout}
           className={cn(
-            "flex items-center rounded-md text-sm text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer w-full text-left font-normal",
+            "flex items-center rounded-md text-sm text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer w-full text-left font-normal group",
             isCollapsed ? "justify-center p-2.5" : "px-3 py-2"
           )}
         >
-          <LogOut className={cn("w-4.5 h-4.5 shrink-0", !isCollapsed && "mr-2.5")} />
+          <Logout2Line className={cn("w-4.5 h-4.5 shrink-0 text-rose-600 group-hover:text-rose-700", !isCollapsed && "mr-2.5")} />
           {!isCollapsed && <span className="truncate font-normal">Keluar</span>}
         </button>
       </div>

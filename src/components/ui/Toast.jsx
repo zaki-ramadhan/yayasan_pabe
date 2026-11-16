@@ -2,7 +2,11 @@
 
 import * as React from "react";
 import { cva } from "class-variance-authority";
-import { X, CheckCircle2, AlertTriangle, CircleX, Info } from "lucide-react";
+import { CloseIcon } from "@solar-icons/react/linear/close";
+import { CheckCircleIcon } from "@solar-icons/react/bold-duotone/check-circle";
+import { CloseCircleIcon } from "@solar-icons/react/bold-duotone/close-circle";
+import { DangerTriangleIcon } from "@solar-icons/react/bold-duotone/danger-triangle";
+import { InfoCircleIcon } from "@solar-icons/react/bold-duotone/info-circle";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/useToast";
 
@@ -74,7 +78,7 @@ const ToastClose = React.forwardRef(({ className, onClick, ...props }, ref) => (
     aria-label="Tutup notifikasi"
     {...props}
   >
-    <X className="h-4 w-4 text-white shrink-0" />
+    <CloseIcon className="h-4 w-4 text-white shrink-0" />
   </button>
 ));
 ToastClose.displayName = "ToastClose";
@@ -99,15 +103,15 @@ ToastDescription.displayName = "ToastDescription";
 
 function ToastIcon({ variant }) {
   if (variant === "success") {
-    return <CheckCircle2 className="h-5 w-5 shrink-0 text-white" />;
+    return <CheckCircleIcon className="h-5 w-5 shrink-0 text-white" />;
   }
   if (variant === "destructive" || variant === "error") {
-    return <CircleX className="h-5 w-5 shrink-0 text-white" />;
+    return <CloseCircleIcon className="h-5 w-5 shrink-0 text-white" />;
   }
   if (variant === "warning") {
-    return <AlertTriangle className="h-5 w-5 shrink-0 text-white" />;
+    return <DangerTriangleIcon className="h-5 w-5 shrink-0 text-white" />;
   }
-  return <Info className="h-5 w-5 shrink-0 text-white" />;
+  return <InfoCircleIcon className="h-5 w-5 shrink-0 text-white" />;
 }
 
 export function Toaster() {

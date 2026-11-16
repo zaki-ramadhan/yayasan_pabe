@@ -413,8 +413,20 @@ export function AdminProgramTable({
         onClose={() => setIsBulkDeleteOpen(false)}
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
-        title={`Hapus ${selection.selectedCount} Program Donasi`}
-        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} program terpilih? Program hanya dapat dihapus jika belum memiliki riwayat transaksi donasi masuk demi integritas audit keuangan.`}
+        title={`Hapus ${selection.selectedCount} program donasi`}
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus{" "}
+            <strong className="text-slate-900 font-semibold">
+              {selection.selectedCount} program terpilih
+            </strong>
+            ? Program hanya dapat dihapus jika{" "}
+            <strong className="text-slate-900 font-semibold">
+              belum memiliki riwayat transaksi donasi masuk
+            </strong>{" "}
+            demi integritas audit keuangan.
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />

@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { Clock, MapPin, Users } from "lucide-react";
+import { ClockCircleIcon } from "@solar-icons/react/line-duotone/clock-circle";
+import { MapPointIcon } from "@solar-icons/react/line-duotone/map-point";
+import { UsersGroupTwoRoundedIcon } from "@solar-icons/react/line-duotone/users-group-two-rounded";
 import { formatRupiah, calculateProgress, calculateDaysLeft, isCampaignClosed } from "@/lib/formatters";
 import { Button } from "@/components/ui/Button";
 import { Progress } from "@/components/ui/Progress";
@@ -59,7 +61,7 @@ export function CampaignCard({
 
           {/* Location */}
           <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-600 min-w-0 truncate">
-            <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+            <MapPointIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <span className="truncate">{campaign.location || "Wilayah Binaan PABE"}</span>
           </div>
         </div>
@@ -117,7 +119,7 @@ export function CampaignCard({
         <div className="flex items-center justify-between gap-3 text-xs sm:text-sm">
           {/* Donor Count */}
           <div className="flex items-center gap-1.5 min-w-0">
-            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
+            <UsersGroupTwoRoundedIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
             <span className="text-slate-600 font-normal truncate">
               <strong className="text-slate-900 font-medium">{totalDonors}</strong> {isZakat ? "muzakki" : "donatur"}
             </span>
@@ -125,7 +127,7 @@ export function CampaignCard({
 
           {/* Time Indicator */}
           <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0 stroke-[1.75]" />
+            <ClockCircleIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
             {isClosed ? (
               <span className="text-slate-500 font-normal">Selesai</span>
             ) : campaign.endDate && daysLeft !== null ? (

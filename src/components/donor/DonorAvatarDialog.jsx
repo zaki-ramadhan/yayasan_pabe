@@ -90,7 +90,7 @@ export function DonorAvatarDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+      <DialogContent className="sm:min-w-[460px] max-w-lg min-h-[320px] sm:min-h-[380px] max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
           <DialogTitle>
             Pengaturan foto profil

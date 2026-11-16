@@ -1,6 +1,7 @@
 "use client";
 
-import { Loader2, X } from "lucide-react";
+import { LoaderIcon } from "@solar-icons/react/linear/loader";
+import { CloseIcon } from "@solar-icons/react/linear/close";
 import { cn } from "@/lib/utils";
 
 /**
@@ -70,7 +71,7 @@ export function UploadProgressBar({
       aria-valuemax={100}
       aria-label={isProcessing ? processingText : currentLabel}
     >
-      <Loader2 className={cn("w-7 h-7 animate-spin mb-2.5", activeTheme.spinner)} />
+      <LoaderIcon className={cn("w-7 h-7 animate-spin mb-2.5", activeTheme.spinner)} />
 
       <div className="flex items-center justify-between w-full text-xs font-medium text-slate-700 mb-1.5">
         <span className="truncate pr-2">
@@ -102,7 +103,7 @@ export function UploadProgressBar({
           className="mt-2.5 inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-sm font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50/60 transition-colors cursor-pointer"
           aria-label="Batalkan proses unggah berkas"
         >
-          <X className="w-3.5 h-3.5" />
+          <CloseIcon className="w-3.5 h-3.5" />
           <span>Batalkan unggahan</span>
         </button>
       )}

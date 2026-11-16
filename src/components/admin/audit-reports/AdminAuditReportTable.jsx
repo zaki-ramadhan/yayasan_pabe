@@ -267,8 +267,20 @@ export function AdminAuditReportTable({ initialReports = [] }) {
         onClose={() => setReportToDelete(null)}
         onConfirm={handleConfirmDelete}
         isLoading={isDeleting}
-        title="Hapus Laporan Audit"
-        description={`Apakah Anda yakin ingin menghapus laporan audit tahun buku ${reportToDelete?.year}?`}
+        title="Hapus laporan audit"
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus laporan audit tahun buku{" "}
+            <strong className="text-slate-900 font-semibold">
+              {reportToDelete?.year}
+            </strong>
+            ? Tindakan ini{" "}
+            <strong className="text-slate-900 font-semibold">
+              tidak dapat dibatalkan
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />
@@ -278,8 +290,20 @@ export function AdminAuditReportTable({ initialReports = [] }) {
         onClose={() => setIsBulkDeleteOpen(false)}
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
-        title={`Hapus ${selection.selectedCount} Laporan Audit`}
-        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} laporan audit terpilih? Tindakan ini tidak dapat dibatalkan.`}
+        title={`Hapus ${selection.selectedCount} laporan audit`}
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus{" "}
+            <strong className="text-slate-900 font-semibold">
+              {selection.selectedCount} laporan audit terpilih
+            </strong>
+            ? Tindakan ini{" "}
+            <strong className="text-slate-900 font-semibold">
+              tidak dapat dibatalkan
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />

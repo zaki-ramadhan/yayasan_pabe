@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react";
-import { WifiOff, Wifi, RefreshCw } from "lucide-react";
+import { CloudOffIcon } from "@solar-icons/react/line-duotone/cloud-off";
+import { CloudCheckIcon } from "@solar-icons/react/line-duotone/cloud-check";
+import { RestartIcon } from "@solar-icons/react/linear/restart";
 import { cn } from "@/lib/utils";
 
 function subscribeNetwork(callback) {
@@ -57,9 +59,9 @@ export function OfflineStatusBanner() {
       <div className="flex items-center gap-2.5 max-w-7xl mx-auto w-full justify-between">
         <div className="flex items-center gap-2 min-w-0">
           {isOffline ? (
-            <WifiOff className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+            <CloudOffIcon className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
           ) : (
-            <Wifi className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
+            <CloudCheckIcon className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
           )}
           <span className="truncate">
             {isOffline
@@ -74,7 +76,7 @@ export function OfflineStatusBanner() {
             onClick={() => window.location.reload()}
             className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-medium transition-colors cursor-pointer"
           >
-            <RefreshCw className="w-3 h-3" />
+            <RestartIcon className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Coba Lagi</span>
           </button>
         )}

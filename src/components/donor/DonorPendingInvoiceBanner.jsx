@@ -208,9 +208,23 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleExecuteCancel}
         title="Batalkan tagihan donasi?"
-        description={`Apakah Anda yakin ingin membatalkan tagihan donasi sebesar ${formatRupiah(
-          activeInvoice?.amount || 0
-        )} untuk program "${activeInvoice?.campaignTitle || ""}"? Tagihan yang dibatalkan tidak dapat dilanjutkan kembali.`}
+        description={
+          <>
+            Apakah Anda yakin ingin membatalkan tagihan donasi sebesar{" "}
+            <strong className="text-slate-900 font-semibold">
+              {formatRupiah(activeInvoice?.amount || 0)}
+            </strong>{" "}
+            untuk program{" "}
+            <strong className="text-slate-900 font-semibold">
+              &ldquo;{activeInvoice?.campaignTitle || ""}&rdquo;
+            </strong>
+            ? Tagihan yang dibatalkan{" "}
+            <strong className="text-slate-900 font-semibold">
+              tidak dapat dilanjutkan kembali
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Ya, batalkan"
         confirmVariant="destructive"
         cancelLabel="Kembali"

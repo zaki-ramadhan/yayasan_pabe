@@ -33,7 +33,7 @@ export function buildRoutineCompletionEmailHtml({
 
     <!-- Isi Pesan -->
     <p style="margin: 0 0 18px 0; font-size: 14px; color: #374151; line-height: 1.6;">
-      Alhamdulillah, atas izin Allah SWT dan dukungan tulus dari para donatur, program kebaikan <strong>${programTitle}</strong> kini telah resmi selesai dan target penyalurannya telah terpenuhi dengan baik.
+      Alhamdulillah, atas izin Allah SWT dan dukungan tulus dari para donatur, program donasi <strong>${programTitle}</strong> kini telah resmi selesai dan target penyalurannya telah terpenuhi dengan baik.
     </p>
 
     <!-- Kotak Pengumuman Status Jadwal -->

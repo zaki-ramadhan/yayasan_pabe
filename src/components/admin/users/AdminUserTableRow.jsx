@@ -51,7 +51,7 @@ export function AdminUserTableRow({
               {isSelf && (
                 <span
                   title="Anda"
-                  className="text-sm font-medium text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 shrink-0 max-w-[80px] truncate whitespace-nowrap"
+                  className="inline-block text-center align-middle text-sm font-medium text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 shrink-0 max-w-[80px] truncate whitespace-nowrap"
                 >
                   Anda
                 </span>
@@ -59,7 +59,7 @@ export function AdminUserTableRow({
               {!user.isActive && (
                 <span
                   title="Ditangguhkan"
-                  className="text-sm font-medium text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded shrink-0 max-w-[130px] truncate whitespace-nowrap"
+                  className="inline-block text-center align-middle text-sm font-medium text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded shrink-0 max-w-[130px] truncate whitespace-nowrap"
                 >
                   Ditangguhkan
                 </span>
@@ -94,14 +94,14 @@ export function AdminUserTableRow({
           {user.role === USER_ROLES.SUPER_ADMIN ? (
             <span
               title="Super admin"
-              className="inline-flex items-center text-sm font-normal text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-md shrink-0 max-w-[140px] truncate whitespace-nowrap"
+              className="inline-block text-center align-middle text-sm font-normal text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-md shrink-0 max-w-[140px] truncate whitespace-nowrap"
             >
               Super admin
             </span>
           ) : user.hasLoginAccess ? (
             <span
               title="Admin"
-              className="inline-flex items-center text-sm font-normal text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-md shrink-0 max-w-[140px] truncate whitespace-nowrap"
+              className="inline-block text-center align-middle text-sm font-normal text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-md shrink-0 max-w-[140px] truncate whitespace-nowrap"
             >
               Admin
             </span>

@@ -141,7 +141,7 @@ test.describe("Master User Journey - Eksplorasi Penuh Seluruh Halaman Yayasan", 
     // TAHAP 3: ALUR NATURAL -> SEMUA PROGRAM (/program) - FUZZING & INJEKSI SEARCH
     // =========================================================================
     await page.goto("/program");
-    await expect(page).toHaveTitle(/Program Kebaikan/i);
+    await expect(page).toHaveTitle(/Program Donasi/i);
 
     const searchInput = page.getByPlaceholder(/Cari program donasi/i).first();
     if (await searchInput.isVisible()) {

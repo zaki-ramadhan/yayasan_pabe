@@ -48,7 +48,7 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
         )}
       </TableCell>
 
-      {/* Program Kebaikan */}
+      {/* Program Donasi */}
       <TableCell className="text-sm text-slate-800 py-3 align-middle min-w-[280px] max-w-[360px]">
         {item.campaignSlug ? (
           <Link

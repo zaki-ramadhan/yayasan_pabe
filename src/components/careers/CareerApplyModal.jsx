@@ -229,10 +229,10 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+      <DialogContent className="sm:min-w-[500px] max-w-2xl min-h-[320px] sm:min-h-[400px] max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
-            {isSuccess ? "Lamaran Berhasil Terkirim" : "Formulir Lamaran Kerja"}
+            {isSuccess ? "Lamaran berhasil terkirim" : "Formulir lamaran kerja"}
           </DialogTitle>
         </DialogHeader>
 

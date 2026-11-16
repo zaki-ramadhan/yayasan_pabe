@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { AlertTriangle, AlertOctagon, X } from "lucide-react";
+import { DangerTriangleIcon } from "@solar-icons/react/line-duotone/danger-triangle";
+import { DangerCircleIcon } from "@solar-icons/react/line-duotone/danger-circle";
+import { CloseCircleIcon } from "@solar-icons/react/line-duotone/close-circle";
 import { useStorageAlert } from "@/hooks/useStorageAlert";
 import { formatBytes } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
@@ -32,9 +34,9 @@ export function AdminSystemAlertBanner() {
     >
       <div className="flex items-center gap-2.5 min-w-0">
         {isCritical ? (
-          <AlertOctagon className="w-4 h-4 text-rose-600 shrink-0" aria-hidden="true" />
+          <DangerCircleIcon className="w-4.5 h-4.5 text-rose-600 shrink-0" aria-hidden="true" />
         ) : (
-          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" aria-hidden="true" />
+          <DangerTriangleIcon className="w-4.5 h-4.5 text-amber-600 shrink-0" aria-hidden="true" />
         )}
 
         <div className="flex flex-col justify-center min-w-0 leading-tight">
@@ -70,7 +72,7 @@ export function AdminSystemAlertBanner() {
           aria-label="Tutup peringatan kapasitas"
           className="p-1 rounded-md text-slate-500 hover:text-slate-900 hover:bg-black/5 transition-colors cursor-pointer"
         >
-          <X className="w-3.5 h-3.5" />
+          <CloseCircleIcon className="w-4 h-4" />
         </button>
       </div>
     </div>

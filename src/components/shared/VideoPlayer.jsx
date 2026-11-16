@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { SafeImage } from "@/components/ui/SafeImage";
-import { Play, Video as VideoIcon } from "lucide-react";
+import { PlayIcon } from "@solar-icons/react/bold/play";
+import { VideocameraIcon } from "@solar-icons/react/line-duotone/videocamera";
 import {
   isYouTubeUrl,
   getYouTubeVideoId,
@@ -141,7 +142,7 @@ export function VideoPlayer({
             {/* Tombol Play Khas YouTube */}
             <div className="absolute inset-0 bg-slate-950/25 group-hover/player:bg-slate-950/40 transition-colors flex items-center justify-center">
               <div className="w-12 h-8.5 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg group-hover/player:scale-110 transition-transform">
-                <Play className="w-4 h-4 fill-white text-white ml-0.5" />
+                <PlayIcon className="w-4 h-4 fill-white text-white ml-0.5" />
               </div>
             </div>
           </div>
@@ -184,13 +185,13 @@ export function VideoPlayer({
               <div className="absolute inset-0 z-10 bg-slate-950/15 group-hover/player:bg-slate-950/30 transition-colors flex items-center justify-center">
                 {/* Lencana Video Langsung */}
                 <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-950/80 text-white text-xs font-medium tracking-normal shadow-2xs backdrop-blur-xs border border-white/10 pointer-events-none">
-                  <VideoIcon className="w-3 h-3 text-slate-300" />
+                  <VideocameraIcon className="w-3.5 h-3.5 text-slate-300" />
                   Video
                 </span>
 
                 {/* Tombol Play Beranimasi Halus */}
                 <div className="w-12 h-12 rounded-full bg-slate-950/75 hover:bg-slate-950 text-white flex items-center justify-center shadow-lg group-hover/player:scale-110 transition-all border border-white/20 backdrop-blur-xs">
-                  <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+                  <PlayIcon className="w-5 h-5 fill-white text-white ml-0.5" />
                 </div>
               </div>
             </div>

@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/Button";
-import { Loader2 } from "lucide-react";
+import { LoaderIcon } from "@solar-icons/react/linear/loader";
 import { useAdminApplicants } from "./useAdminApplicants";
 import { AdminApplicantToolbar } from "./AdminApplicantToolbar";
 import { AdminApplicantItem } from "./AdminApplicantItem";
@@ -60,7 +60,7 @@ export function AdminApplicantDrawer({
         <div className="flex-1 min-h-0 overflow-y-auto px-5 sm:px-6 divide-y divide-slate-100">
           {isLoading ? (
             <div className="h-full min-h-[300px] flex flex-col items-center justify-center gap-2 text-sm text-slate-600">
-              <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
+              <LoaderIcon className="w-5 h-5 animate-spin text-slate-400" />
               <span>Memuat data pelamar...</span>
             </div>
           ) : applications.length > 0 ? (
@@ -93,7 +93,7 @@ export function AdminApplicantDrawer({
               >
                 {isLoadingMore ? (
                   <span className="inline-flex items-center gap-2 text-sm text-slate-600">
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <LoaderIcon className="w-4 h-4 animate-spin" />
                     Memuat berkas pelamar lainnya...
                   </span>
                 ) : (

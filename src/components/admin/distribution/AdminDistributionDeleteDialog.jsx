@@ -38,7 +38,7 @@ export function AdminDistributionDeleteDialog({
       </div>
 
       <p className="text-xs text-slate-500 leading-relaxed">
-        Tindakan ini permanen. Pastikan data alokasi dana dan dokumentasi kegiatan tidak lagi diperlukan untuk laporan audit.
+        <strong className="text-slate-700 font-semibold">Tindakan ini permanen.</strong> Pastikan data alokasi dana dan dokumentasi kegiatan tidak lagi diperlukan untuk laporan audit.
       </p>
     </ConfirmDialog>
   );

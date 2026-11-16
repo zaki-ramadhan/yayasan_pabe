@@ -16,7 +16,7 @@ export default function RelawanPage() {
           <div className="relative w-full h-36 sm:h-44 rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200 shadow-2xs bg-slate-100 pointer-events-none select-none">
             <Image
               src="/img/banners/covers/volunteer-cover.webp"
-              alt="Relawan Kebaikan Yayasan Payung Berkah"
+              alt="Relawan Yayasan Payung Berkah"
               fill
               sizes="(max-width: 1024px) 100vw, 40vw"
               className="object-cover pointer-events-none select-none"
@@ -26,7 +26,7 @@ export default function RelawanPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/25 via-transparent to-transparent pointer-events-none select-none" />
           </div>
 
-          <PageHeader title="Gabung Menjadi Relawan Kebaikan" />
+          <PageHeader title="Gabung Menjadi Relawan" />
 
           <VolunteerPerksList />
         </div>

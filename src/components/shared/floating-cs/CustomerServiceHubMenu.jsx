@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 
@@ -39,7 +39,7 @@ export function CustomerServiceHubMenu({
                   Utama
                 </span>
               )}
-              <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+              <ArrowRightUpIcon className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
             </div>
           </a>
         );

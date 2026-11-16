@@ -1,4 +1,5 @@
-import { WifiOff, RefreshCw } from "lucide-react";
+import { CloudOffIcon } from "@solar-icons/react/line-duotone/cloud-off";
+import { RestartIcon } from "@solar-icons/react/linear/restart";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +31,7 @@ export function DataFetchErrorState({
         )}
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <WifiOff className="w-4 h-4 text-rose-500 shrink-0" aria-hidden="true" />
+          <CloudOffIcon className="w-4 h-4 text-rose-500 shrink-0" aria-hidden="true" />
           <span className="font-medium text-slate-900">{description}</span>
         </div>
         {onRetry && (
@@ -41,7 +42,7 @@ export function DataFetchErrorState({
             onClick={onRetry}
             className="shrink-0 h-8 text-xs font-medium border-rose-300 hover:bg-rose-100/70 text-rose-700 cursor-pointer"
           >
-            <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+            <RestartIcon className="w-3.5 h-3.5 mr-1.5" />
             <span>Coba Lagi</span>
           </Button>
         )}
@@ -58,7 +59,7 @@ export function DataFetchErrorState({
       )}
     >
       <div className="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
-        <WifiOff className="w-5 h-5" aria-hidden="true" />
+        <CloudOffIcon className="w-5 h-5" aria-hidden="true" />
       </div>
 
       <div className="space-y-1 max-w-sm mx-auto">
@@ -75,7 +76,7 @@ export function DataFetchErrorState({
             onClick={onRetry}
             className="h-9 px-4 text-xs sm:text-sm font-medium border-slate-300 hover:bg-white text-slate-800 cursor-pointer"
           >
-            <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+            <RestartIcon className="w-3.5 h-3.5 mr-1.5" />
             <span>Muat Ulang Data</span>
           </Button>
         </div>

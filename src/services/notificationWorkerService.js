@@ -124,7 +124,7 @@ export async function processNotificationQueue({
             dispatchResult = await sendDonationReceiptEmail({
               to: targetEmail,
               donorName: payload.donorName || "Sahabat Kebaikan",
-              programTitle: payload.programTitle || "Program Kebaikan",
+              programTitle: payload.programTitle || "Program Donasi",
               amount: Number(payload.amount) || 0,
               invoiceId: payload.invoiceId,
               paidAt: payload.paidAt,

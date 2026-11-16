@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, Check, ArrowUpRight } from "lucide-react";
+import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
+import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
 import { isNavItemActive } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +28,7 @@ export function NavMobileAccordion({
         )}
       >
         <span>{label}</span>
-        <ChevronDown
+        <AltArrowDownIcon
           className={cn(
             "w-4 h-4 transition-transform",
             isParentActive ? "text-primary" : "text-slate-500",
@@ -54,9 +56,9 @@ export function NavMobileAccordion({
               >
                 <span>{item.label}</span>
                 {isItemActive ? (
-                  <Check className="w-3.5 h-3.5 text-white shrink-0" strokeWidth={2.5} />
+                  <CheckCircleIcon className="w-3.5 h-3.5 text-white shrink-0" />
                 ) : (
-                  <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" strokeWidth={2.5} />
+                  <ArrowRightUpIcon className="w-3.5 h-3.5 text-slate-400" />
                 )}
               </Link>
             );

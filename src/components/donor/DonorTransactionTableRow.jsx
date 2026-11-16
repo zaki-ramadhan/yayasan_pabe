@@ -73,7 +73,10 @@ export function DonorTransactionTableRow({ item, showTypeColumn = false }) {
         )}
       </TableCell>
       <TableCell className="text-center whitespace-nowrap align-middle min-w-[160px]">
-        <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 whitespace-nowrap">
+        <span
+          title={formatPaymentChannel(item.paymentChannel)}
+          className="inline-block text-center align-middle px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 max-w-[150px] truncate whitespace-nowrap"
+        >
           {formatPaymentChannel(item.paymentChannel)}
         </span>
       </TableCell>

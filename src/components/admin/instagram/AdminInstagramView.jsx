@@ -93,8 +93,20 @@ export function AdminInstagramView({
         onClose={() => setIsBulkDeleteModalOpen(false)}
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
-        title={`Hapus ${selection.selectedCount} Postingan Instagram`}
-        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} postingan feed Instagram terpilih? Tindakan ini tidak dapat dibatalkan.`}
+        title={`Hapus ${selection.selectedCount} postingan Instagram`}
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus{" "}
+            <strong className="text-slate-900 font-semibold">
+              {selection.selectedCount} postingan feed Instagram terpilih
+            </strong>
+            ? Tindakan ini{" "}
+            <strong className="text-slate-900 font-semibold">
+              tidak dapat dibatalkan
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />

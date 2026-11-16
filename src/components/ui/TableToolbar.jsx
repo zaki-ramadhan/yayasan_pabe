@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Search, RefreshCw, Plus } from "lucide-react";
+import { MagnifierIcon } from "@solar-icons/react/linear/magnifier";
+import { RestartIcon } from "@solar-icons/react/linear/restart";
+import { AddCircleIcon } from "@solar-icons/react/linear/add-circle";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import {
@@ -140,7 +142,7 @@ export function TableToolbar({
               className="h-10 w-10 rounded-md border-slate-300 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
               aria-label="Segarkan data tabel"
             >
-              <RefreshCw className={cn("w-4 h-4 text-slate-600", isLoading && "animate-spin text-primary")} />
+              <RestartIcon className={cn("w-4 h-4 text-slate-600", isLoading && "animate-spin text-primary")} />
             </Button>
           )}
 
@@ -159,7 +161,7 @@ export function TableToolbar({
                 primaryAction.icon ? (
                   <primaryAction.icon className="w-4 h-4" />
                 ) : (
-                  <Plus className="w-4 h-4" />
+                  <AddCircleIcon className="w-4 h-4" />
                 )
               )}
               <span>{primaryAction.label}</span>
@@ -191,7 +193,7 @@ export function TableToolbar({
             <div className={searchWidth}>
               <Input
                 type="text"
-                icon={Search}
+                icon={MagnifierIcon}
                 placeholder={searchPlaceholder}
                 value={search ?? ""}
                 minLength={FIELD_LIMITS.SEARCH_TOOLBAR.min}
@@ -243,7 +245,7 @@ export function TableToolbar({
               className="h-10 w-10 rounded-md border-slate-300 bg-white hover:bg-slate-50 cursor-pointer shrink-0 disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed"
               aria-label="Segarkan data tabel"
             >
-              <RefreshCw className={cn("w-4 h-4 text-slate-600", isLoading && "animate-spin text-primary")} />
+              <RestartIcon className={cn("w-4 h-4 text-slate-600", isLoading && "animate-spin text-primary")} />
             </Button>
           )}
 
@@ -262,7 +264,7 @@ export function TableToolbar({
                 primaryAction.icon ? (
                   <primaryAction.icon className="w-4 h-4" />
                 ) : (
-                  <Plus className="w-4 h-4" />
+                  <AddCircleIcon className="w-4 h-4" />
                 )
               )}
               <span>{primaryAction.label}</span>

@@ -1,4 +1,5 @@
-import { Filter, Search } from "lucide-react";
+import { MagnifierIcon } from "@solar-icons/react/linear/magnifier";
+import { FilterIcon } from "@solar-icons/react/linear/filter";
 import { Input } from "@/components/ui/Input";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
@@ -23,7 +24,7 @@ export function CatalogSearchBar({
       <div className="w-full sm:max-w-md">
         <Input
           type="text"
-          icon={Search}
+          icon={MagnifierIcon}
           placeholder={searchPlaceholder}
           value={searchQuery}
           onChange={onSearch}
@@ -42,7 +43,7 @@ export function CatalogSearchBar({
         {sortOptions && sortOptions.length > 0 && (
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-sm text-slate-700 flex items-center gap-1.5 shrink-0">
-              <Filter className="w-4 h-4 text-slate-500" />
+              <FilterIcon className="w-4 h-4 text-slate-500" />
               Urutkan:
             </span>
 

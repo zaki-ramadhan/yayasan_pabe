@@ -1,7 +1,12 @@
-import { CheckCircle2, Phone, Mail, Clock, MapPin, ExternalLink, ArrowUpRight } from "lucide-react";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { PhoneIcon } from "@solar-icons/react/line-duotone/phone";
+import { LetterIcon } from "@solar-icons/react/line-duotone/letter";
+import { ClockCircleIcon } from "@solar-icons/react/line-duotone/clock-circle";
+import { MapPointIcon } from "@solar-icons/react/line-duotone/map-point";
+import { SquareArrowRightUpIcon } from "@solar-icons/react/linear/square-arrow-right-up";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { ORG_PROFILE } from "@/data/orgProfile";
-import { buildWhatsAppUrl, buildTelUrl, getCustomerServices } from "@/lib/whatsappUtils";
+import { buildWhatsAppUrl, buildTelUrl } from "@/lib/whatsappUtils";
 
 export function AboutSidebarInfo({ orgSettings = null }) {
   const legal = {
@@ -12,7 +17,6 @@ export function AboutSidebarInfo({ orgSettings = null }) {
     ...ORG_PROFILE.contacts,
     ...(orgSettings?.contacts || {}),
   };
-  const customerServices = getCustomerServices();
 
   const whatsappUrl = buildWhatsAppUrl(
     contacts.whatsapp,
@@ -42,7 +46,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
                 className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors" aria-label="Buka salinan akta notaris di tab baru"
               >
                 <span>Lihat salinan</span>
-                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                <SquareArrowRightUpIcon className="w-3.5 h-3.5 shrink-0" />
               </a>
             </div>
             <p className="font-medium text-slate-900 mt-0.5">
@@ -71,7 +75,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
                 className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors" aria-label="Buka salinan izin LKS Dinas Sosial di tab baru"
               >
                 <span>Lihat salinan</span>
-                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                <SquareArrowRightUpIcon className="w-3.5 h-3.5 shrink-0" />
               </a>
             </div>
             <p className="font-medium text-slate-900 mt-0.5">
@@ -91,7 +95,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
                 className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors" aria-label="Buka salinan surat domisili di tab baru"
               >
                 <span>Lihat salinan</span>
-                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                <SquareArrowRightUpIcon className="w-3.5 h-3.5 shrink-0" />
               </a>
             </div>
             <p className="font-medium text-slate-900 mt-0.5">
@@ -113,11 +117,11 @@ export function AboutSidebarInfo({ orgSettings = null }) {
               Kepatuhan &amp; Akuntabilitas
             </span>
             <div className="flex items-center gap-2 text-emerald-800 text-sm font-medium">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <CheckCircleIcon className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>{legal.statusLks} ({legal.lingkupKerja})</span>
             </div>
             <div className="flex items-center gap-2 text-emerald-800 text-sm font-medium">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <CheckCircleIcon className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>Mitra: {legal.mitraAfiliasi}</span>
             </div>
           </div>
@@ -132,7 +136,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
 
         <div className="space-y-3 text-sm text-slate-700">
           <div className="flex items-start gap-2.5">
-            <MapPin className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+            <MapPointIcon className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
             <span className="leading-relaxed">{contacts.address}</span>
           </div>
 
@@ -142,25 +146,10 @@ export function AboutSidebarInfo({ orgSettings = null }) {
               className="group flex items-center gap-2.5 hover:text-emerald-800 transition-colors"
               aria-label={`Telepon kantor: ${contacts.phone}`}
             >
-              <Phone className="w-4 h-4 text-slate-500 shrink-0" />
+              <PhoneIcon className="w-4 h-4 text-slate-500 shrink-0" />
               <span className="group-hover:underline underline-offset-2">{contacts.phone}</span>
             </a>
           )}
-
-          {customerServices.map((cs) => (
-            <a
-              key={cs.id}
-              href={buildWhatsAppUrl(cs.phone, cs.defaultMessage)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center gap-2.5 hover:text-emerald-800 transition-colors"
-              aria-label={`WhatsApp: ${cs.phone}`}
-            >
-              <WhatsAppIcon className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span className="group-hover:underline underline-offset-2">{cs.phone}</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
-            </a>
-          ))}
 
           {contacts.email && (
             <a
@@ -168,13 +157,13 @@ export function AboutSidebarInfo({ orgSettings = null }) {
               className="group flex items-center gap-2.5 hover:text-emerald-800 transition-colors"
               aria-label={`Email: ${contacts.email}`}
             >
-              <Mail className="w-4 h-4 text-slate-500 shrink-0" />
+              <LetterIcon className="w-4 h-4 text-slate-500 shrink-0" />
               <span className="group-hover:underline underline-offset-2">{contacts.email}</span>
             </a>
           )}
 
           <div className="flex items-center gap-2.5">
-            <Clock className="w-4 h-4 text-slate-500 shrink-0" />
+            <ClockCircleIcon className="w-4 h-4 text-slate-500 shrink-0" />
             <span>{contacts.officeHours}</span>
           </div>
 

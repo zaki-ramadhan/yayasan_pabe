@@ -26,7 +26,7 @@ export function buildRoutineRolloverWhatsAppMessage({
   return (
     `*Assalamu’alaikum Warahmatullahi Wabarakatuh*\n\n` +
     `Halo ${greeting},\n` +
-    `Alhamdulillah, program kebaikan yang Anda dukung secara rutin:\n` +
+    `Alhamdulillah, program donasi yang Anda dukung secara rutin:\n` +
     `📌 *${oldProgramTitle}*\n` +
     `kini telah resmi selesai dan target penyalurannya telah terpenuhi dengan baik.\n\n` +
     `Agar aliran pahala sedekah rutin Anda terus terjaga tanpa terputus, komitmen donasi rutin Anda telah dialihkan secara otomatis ke program aktif:\n` +

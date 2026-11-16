@@ -239,6 +239,7 @@ Yayasan Payung Berkah bercita-cita mewujudkan interaksi antara masyarakat kurang
       { name: "Pelayanan Kesehatan Masyarakat", amount: 100500000, amountFormatted: "Rp 100.500.000,-" },
     ],
   },
+  structureImage: null,
   leadership: [
     {
       name: "Suko Pranoto",

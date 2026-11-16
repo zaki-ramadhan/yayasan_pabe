@@ -2,7 +2,9 @@
 
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { Check, ChevronRight, Circle } from "lucide-react";
+import { AltArrowRightIcon } from "@solar-icons/react/linear/alt-arrow-right";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CircleIcon } from "@solar-icons/react/linear/circle";
 import { cn } from "@/lib/utils";
 
 const DropdownMenu = ({ modal = false, ...props }) => (
@@ -26,7 +28,7 @@ const DropdownMenuSubTrigger = React.forwardRef(
       {...props}
     >
       {children}
-      <ChevronRight className="ml-auto h-4 w-4" />
+      <AltArrowRightIcon className="ml-auto h-4 w-4" />
     </DropdownMenuPrimitive.SubTrigger>
   )
 );
@@ -91,7 +93,7 @@ const DropdownMenuCheckboxItem = React.forwardRef(
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
-          <Check className="h-4 w-4" />
+          <CheckCircleIcon className="h-4 w-4" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -112,7 +114,7 @@ const DropdownMenuRadioItem = React.forwardRef(
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
-          <Circle className="h-2 w-2 fill-current" />
+          <CircleIcon className="h-2 w-2 fill-current" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}

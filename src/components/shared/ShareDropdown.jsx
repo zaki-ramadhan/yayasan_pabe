@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Share2, Link as LinkIcon, Check } from "lucide-react";
+import { ShareIcon } from "@solar-icons/react/line-duotone/share";
+import { LinkRoundIcon } from "@solar-icons/react/line-duotone/link-round";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -74,7 +76,7 @@ export function ShareDropdown({
             )}
             aria-label={`Bagikan ${title}`}
           >
-            <Share2 className="w-4 h-4" />
+            <ShareIcon className="w-4 h-4" />
           </button>
         ) : (
           <Button
@@ -85,7 +87,7 @@ export function ShareDropdown({
               className
             )}
           >
-            <Share2 className="w-3.5 h-3.5 text-slate-500" />
+            <ShareIcon className="w-3.5 h-3.5 text-slate-500" />
             <span>Bagikan</span>
           </Button>
         )}
@@ -104,12 +106,12 @@ export function ShareDropdown({
         >
           {copied ? (
             <>
-              <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+              <CheckCircleIcon className="w-4 h-4 text-emerald-600 shrink-0" />
               <span className="text-emerald-700 font-normal">Tautan Tersalin!</span>
             </>
           ) : (
             <>
-              <LinkIcon className="w-4 h-4 text-slate-500 shrink-0" />
+              <LinkRoundIcon className="w-4 h-4 text-slate-500 shrink-0" />
               <span>Salin Tautan</span>
             </>
           )}

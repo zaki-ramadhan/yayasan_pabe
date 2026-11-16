@@ -4,7 +4,7 @@ import { QrCode } from "lucide-react";
 import { formatDate } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { AdminVolunteerStatusBadge } from "./AdminVolunteerStatusBadge";
+import { AdminVolunteerStatusSelect } from "./AdminVolunteerStatusSelect";
 import { UserAvatar } from "@/components/ui/Avatar";
 import { maskEmail, maskPhone } from "@/lib/security";
 
@@ -13,7 +13,8 @@ export function AdminVolunteerTableRow({
   isSelected = false,
   onToggleSelect,
   onViewDetail,
-  onEditStatus,
+  onStatusChange,
+  isUpdatingStatus = false,
   onPrintCard,
   onDelete,
 }) {
@@ -84,19 +85,21 @@ export function AdminVolunteerTableRow({
         {formatDate(item.createdAt)}
       </TableCell>
 
-      {/* 6. Status */}
-      <TableCell className="w-32 text-center py-3 whitespace-nowrap align-middle">
-        <AdminVolunteerStatusBadge status={item.status} />
+      {/* 6. Status (Inline Notion-Style) */}
+      <TableCell className="w-32 text-center py-3 whitespace-nowrap align-middle" onClick={(e) => e.stopPropagation()}>
+        <AdminVolunteerStatusSelect
+          status={item.status}
+          onStatusChange={(newStatus) => onStatusChange?.(item, newStatus)}
+          isUpdating={isUpdatingStatus}
+        />
       </TableCell>
 
       {/* 7. Aksi */}
       <TableCell className="w-24 text-right py-3 whitespace-nowrap align-middle pr-4">
         <TableRowActions
           onView={() => onViewDetail(item)}
-          onEdit={() => onEditStatus(item)}
           onDelete={() => onDelete(item.id, item.fullName)}
           viewTooltip="Lihat rincian pendaftar"
-          editTooltip="Tindak lanjut / ubah status"
           deleteTooltip="Hapus berkas pendaftar"
         >
           {item.status === "APPROVED" && onPrintCard && (

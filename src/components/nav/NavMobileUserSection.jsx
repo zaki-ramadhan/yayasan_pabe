@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard } from "lucide-react";
+import { ShieldUserIcon } from "@solar-icons/react/bold-duotone/shield-user";
+import { Logout2Icon } from "@solar-icons/react/line-duotone/logout-2";
 import { NavLoginButton } from "./NavLoginButton";
 
 export function NavMobileUserSection({ pathname, currentUser, onClose, onLogout }) {
@@ -46,7 +47,7 @@ export function NavMobileUserSection({ pathname, currentUser, onClose, onLogout 
               onClick={onClose}
               className="flex items-center justify-center gap-2 w-full h-10 rounded-lg font-medium bg-slate-900 text-white text-sm"
             >
-              <LayoutDashboard className="w-4 h-4" />
+              <ShieldUserIcon className="w-4 h-4 text-white" />
               <span>Portal Administrator Yayasan</span>
             </Link>
           )}
@@ -59,6 +60,7 @@ export function NavMobileUserSection({ pathname, currentUser, onClose, onLogout 
             }}
             className="w-full h-10 rounded-lg font-medium border border-rose-200 text-rose-600 hover:bg-rose-50 text-sm cursor-pointer flex items-center justify-center gap-2 transition-colors"
           >
+            <Logout2Icon className="w-4 h-4 text-rose-600" />
             <span>Keluar (Logout)</span>
           </button>
         </div>

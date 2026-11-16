@@ -37,7 +37,7 @@ export function AdminUserResetDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+      <DialogContent className="sm:max-w-[420px] min-h-[280px] sm:min-h-[320px] max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
             Kata sandi baru dibuat
@@ -83,8 +83,8 @@ export function AdminUserResetDialog({
             </div>
           </FormField>
 
-          <p className="text-xs text-amber-700 bg-amber-50/80 border border-amber-200/60 rounded-md p-2.5 leading-relaxed">
-            Kata sandi sementara ini hanya ditampilkan satu kali demi keamanan. Harap minta pengurus mengganti kata sandi setelah berhasil login.
+          <p className="text-xs text-amber-800 bg-amber-50/80 border border-amber-200/60 rounded-md p-2.5 leading-relaxed">
+            Kata sandi sementara ini <strong className="text-amber-900 font-semibold">hanya ditampilkan satu kali</strong> demi keamanan. Harap minta pengurus untuk <strong className="text-amber-900 font-semibold">segera mengganti kata sandi</strong> setelah berhasil masuk.
           </p>
         </div>
 

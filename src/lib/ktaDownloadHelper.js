@@ -4,7 +4,7 @@ import { toPng } from "html-to-image";
 import { toast } from "@/hooks/useToast";
 
 /**
- * Utilitas untuk merender elemen kartu KTA (sisi depan & belakang) menjadi file gambar PNG.
+ * Utilitas untuk merender elemen kartu relawan (sisi depan & belakang) menjadi file gambar PNG.
  * Menghasilkan file gambar yang siap disimpan di galeri smartphone atau dicetak di percetakan kartu PVC.
  *
  * @param {HTMLElement|string} target - Elemen DOM atau string ID elemen
@@ -13,7 +13,16 @@ import { toast } from "@/hooks/useToast";
  * @param {string} [options.volunteerId=""] - ID resmi relawan
  * @returns {Promise<boolean>}
  */
+export {
+  formatSafeFileName,
+  renderCardElementToPng,
+  triggerFileDownload,
+  downloadSingleCardSidePng,
+  downloadSingleVolunteerZip,
+} from "./volunteerCardExportHelper";
+
 export async function downloadVolunteerCardImage(target, options = {}) {
+
   const { volunteerName = "Relawan", volunteerId = "" } = options;
 
   if (typeof window === "undefined" || typeof document === "undefined") {
@@ -64,7 +73,7 @@ export async function downloadVolunteerCardImage(target, options = {}) {
     toast.success("Kartu relawan berhasil diunduh.");
     return true;
   } catch (err) {
-    console.error("Gagal mengekspor kartu KTA ke gambar:", err);
+    console.error("Gagal mengekspor kartu relawan ke gambar:", err);
     toast.error("Gagal mengunduh kartu. Silakan coba lagi atau gunakan opsi cetak.");
     return false;
   }

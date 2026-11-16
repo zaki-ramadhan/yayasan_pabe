@@ -33,7 +33,7 @@ describe("Applicant Email Notifications (Approval, Shortlist & Rejection)", () =
         interest: "Relawan Kebaikan",
       });
 
-      expect(VOLUNTEER_REJECTION_EMAIL_SUBJECT).toContain("Pendaftaran Relawan Kebaikan");
+      expect(VOLUNTEER_REJECTION_EMAIL_SUBJECT).toContain("Pendaftaran Relawan");
       expect(html).toContain("Burhanuddin");
       expect(html).toContain("Relawan Kebaikan");
       expect(html).toContain("Belum Dapat Disetujui");

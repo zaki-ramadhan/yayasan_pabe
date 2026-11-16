@@ -39,6 +39,19 @@ export function shouldSendStatusEmail(email, status, cooldownMs = DEFAULT_EMAIL_
 }
 
 /**
+ * Membersihkan riwayat pengiriman untuk email dan status tertentu (misal saat pengiriman gagal).
+ *
+ * @param {string} email
+ * @param {string} status
+ */
+export function resetStatusEmailCooldown(email, status) {
+  if (!email || !status) return;
+  const normalizedEmail = email.toLowerCase().trim();
+  const normalizedStatus = status.toUpperCase().trim();
+  dispatchHistory.delete(`${normalizedEmail}:${normalizedStatus}`);
+}
+
+/**
  * Membersihkan riwayat pengiriman (digunakan untuk pengujian otomatis).
  */
 export function clearEmailDispatchHistory() {

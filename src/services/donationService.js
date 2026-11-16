@@ -682,7 +682,7 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
       sendDonationReceiptEmail({
         to: settled.donorEmail,
         donorName: settled.isAnonymous ? "Hamba Allah" : settled.donorName,
-        programTitle: broadcastPayload?.campaignTitle || "Program Kebaikan",
+        programTitle: broadcastPayload?.campaignTitle || "Program Donasi",
         amount: Number(settled.amount),
         invoiceId: settled.invoiceId,
         paidAt: settled.paidAt || new Date(),
@@ -697,7 +697,7 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
           payload: {
             donorEmail: settled.donorEmail,
             donorName: settled.isAnonymous ? "Hamba Allah" : settled.donorName,
-            programTitle: broadcastPayload?.campaignTitle || "Program Kebaikan",
+            programTitle: broadcastPayload?.campaignTitle || "Program Donasi",
             amount: Number(settled.amount),
             invoiceId: settled.invoiceId,
             paidAt: settled.paidAt || new Date(),

@@ -24,7 +24,7 @@ export function buildRoutineCompletionWhatsAppMessage({
   return (
     `*Assalamu’alaikum Warahmatullahi Wabarakatuh*\n\n` +
     `Halo ${greeting},\n` +
-    `Alhamdulillah, program kebaikan yang Anda dukung secara rutin:\n` +
+    `Alhamdulillah, program donasi yang Anda dukung secara rutin:\n` +
     `📌 *${programTitle}*\n\n` +
     `telah resmi ditutup/tercapai dan siap disalurkan kepada para penerima manfaat.\n\n` +
     `Sehubungan dengan hal tersebut, *jadwal komitmen donasi rutin Anda untuk program ini telah dihentikan secara otomatis* dan tidak akan ada penerbitan invoice atau pengingat lanjutan.\n\n` +

@@ -5,9 +5,9 @@ import {
 } from "@/services/emailService";
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
-import { shouldSendStatusEmail } from "@/lib/emailDispatchGuard";
+import { shouldSendStatusEmail, resetStatusEmailCooldown } from "@/lib/emailDispatchGuard";
 
-const VALID_STATUSES = ["PENDING", "APPROVED", "CONTACTED", "REJECTED"];
+const VALID_STATUSES = ["PENDING", "APPROVED", "REJECTED"];
 
 /**
  * Mengambil daftar pendaftar relawan dengan paginasi dan filter pencarian.
@@ -46,18 +46,46 @@ export async function getAdminVolunteers({
       }),
     ]);
 
+    // Batch query avatar akun relawan jika pengguna terdaftar di User
+    const rawEmails = items.map((v) => v.email?.trim().toLowerCase()).filter(Boolean);
+    const uniqueEmails = Array.from(new Set(rawEmails));
+    const userMap = new Map();
+
+    if (uniqueEmails.length > 0) {
+      try {
+        const users = await prisma.user.findMany({
+          where: { email: { in: uniqueEmails, mode: "insensitive" } },
+          select: { email: true, avatar: true, customAvatar: true, providerAvatar: true },
+        });
+        for (const u of users) {
+          if (u.email) {
+            userMap.set(
+              u.email.toLowerCase(),
+              u.avatar || u.customAvatar || u.providerAvatar || null
+            );
+          }
+        }
+      } catch (userErr) {
+        console.warn("Prisma user avatar lookup fallback:", userErr?.message);
+      }
+    }
+
     return {
-      items: items.map((v) => ({
-        id: v.id,
-        fullName: v.fullName,
-        email: v.email,
-        phone: v.phone,
-        city: v.city,
-        interest: v.interest,
-        motivation: v.motivation,
-        status: v.status,
-        createdAt: v.createdAt.toISOString(),
-      })),
+      items: items.map((v) => {
+        const cleanEmail = v.email?.trim().toLowerCase();
+        return {
+          id: v.id,
+          fullName: v.fullName,
+          email: v.email,
+          phone: v.phone,
+          city: v.city,
+          interest: v.interest,
+          motivation: v.motivation,
+          status: v.status,
+          avatarUrl: cleanEmail ? userMap.get(cleanEmail) || null : null,
+          createdAt: v.createdAt.toISOString(),
+        };
+      }),
       pagination: {
         page,
         limit,
@@ -115,6 +143,7 @@ export async function updateVolunteerStatus(id, newStatus) {
         validationUrl: `${appUrl}/relawan/validasi/${updated.id}`,
       });
     } catch (emailErr) {
+      resetStatusEmailCooldown(updated.email, "APPROVED");
       console.warn("Gagal mengirim email persetujuan relawan:", emailErr?.message);
     }
   } else if (status === "REJECTED" && updated?.email && shouldSendStatusEmail(updated.email, "REJECTED")) {
@@ -125,6 +154,7 @@ export async function updateVolunteerStatus(id, newStatus) {
         interest: updated.interest,
       });
     } catch (emailErr) {
+      resetStatusEmailCooldown(updated.email, "REJECTED");
       console.warn("Gagal mengirim email penolakan relawan:", emailErr?.message);
     }
   }
@@ -180,14 +210,19 @@ export async function updateVolunteersStatusBatch(ids, newStatus) {
       const eligible = volunteers.filter((v) => shouldSendStatusEmail(v.email, "APPROVED"));
       const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.org").replace(/\/+$/, "");
       await Promise.allSettled(
-        eligible.map((v) =>
-          sendVolunteerApprovedEmail({
-            to: v.email,
-            name: v.fullName,
-            volunteerId: formatVolunteerId(v.id, v.createdAt),
-            validationUrl: `${appUrl}/relawan/validasi/${v.id}`,
-          })
-        )
+        eligible.map(async (v) => {
+          try {
+            await sendVolunteerApprovedEmail({
+              to: v.email,
+              name: v.fullName,
+              volunteerId: formatVolunteerId(v.id, v.createdAt),
+              validationUrl: `${appUrl}/relawan/validasi/${v.id}`,
+            });
+          } catch (err) {
+            resetStatusEmailCooldown(v.email, "APPROVED");
+            throw err;
+          }
+        })
       );
     } catch (batchEmailErr) {
       console.warn("Gagal mengirim email persetujuan relawan batch:", batchEmailErr?.message);
@@ -200,13 +235,18 @@ export async function updateVolunteersStatusBatch(ids, newStatus) {
       });
       const eligible = volunteers.filter((v) => shouldSendStatusEmail(v.email, "REJECTED"));
       await Promise.allSettled(
-        eligible.map((v) =>
-          sendVolunteerRejectionEmail({
-            to: v.email,
-            name: v.fullName,
-            interest: v.interest,
-          })
-        )
+        eligible.map(async (v) => {
+          try {
+            await sendVolunteerRejectionEmail({
+              to: v.email,
+              name: v.fullName,
+              interest: v.interest,
+            });
+          } catch (err) {
+            resetStatusEmailCooldown(v.email, "REJECTED");
+            throw err;
+          }
+        })
       );
     } catch (batchEmailErr) {
       console.warn("Gagal mengirim email penolakan relawan batch:", batchEmailErr?.message);

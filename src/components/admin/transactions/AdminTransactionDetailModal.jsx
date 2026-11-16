@@ -1,7 +1,9 @@
 "use client";
 
-import { Copy, Check, Heart } from "lucide-react";
 import { useState } from "react";
+import { CopyIcon } from "@solar-icons/react/linear/copy";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { HeartIcon } from "@solar-icons/react/line-duotone/heart";
 import {
   Dialog,
   DialogContent,
@@ -35,7 +37,7 @@ export function AdminTransactionDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-xl md:max-w-2xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+      <DialogContent className="sm:min-w-[500px] sm:max-w-xl md:max-w-2xl min-h-[300px] sm:min-h-[360px] max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader className="border-b border-slate-100">
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
             Rincian mutasi donasi
@@ -81,7 +83,7 @@ export function AdminTransactionDetailModal({
                   onClick={handleCopyInvoice} aria-label="Salin invoice"
                   className="p-1 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-600" /> : <CopyIcon className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>
@@ -137,7 +139,7 @@ export function AdminTransactionDetailModal({
           {transaction.prayer && (
             <div className="pt-4 border-t border-slate-100 space-y-1.5">
               <div className="flex items-center gap-1.5 text-slate-600">
-                <Heart className="w-3.5 h-3.5 text-rose-500" />
+                <HeartIcon className="w-3.5 h-3.5 text-rose-500" />
                 <span className="text-xs font-medium uppercase tracking-wider">Doa &amp; pesan dari donatur</span>
               </div>
               <p className="text-sm text-slate-700 italic leading-relaxed bg-slate-50/70 p-3 rounded-lg border border-slate-100">

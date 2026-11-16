@@ -88,7 +88,7 @@ export function formatRecentReports(recentReportsData) {
     content: rep.content,
     disbursedAmount: rep.disbursedAmount,
     date: rep.date.toISOString(),
-    categoryName: rep.campaign?.category?.name || "Program Kebaikan",
+    categoryName: rep.campaign?.category?.name || "Program Donasi",
     campaignTitle: rep.campaign?.title || "",
     campaignSlug: rep.campaign?.slug || "",
   }));
@@ -97,7 +97,7 @@ export function formatRecentReports(recentReportsData) {
 export function formatRoutineDonations(routineDonationsData) {
   return (routineDonationsData || []).map((r) => ({
     id: r.id,
-    programTitle: r.campaign?.title || r.programTitle || "Program Kebaikan Rutin",
+    programTitle: r.campaign?.title || r.programTitle || "Program Donasi Rutin",
     amount: r.amount,
     frequency: r.frequency,
     routineType: r.routineType,

@@ -363,7 +363,21 @@ export function DonorSecurityFormCard({
         onClose={() => !isDeletingAccount && setIsDeleteDialogOpen(false)}
         onConfirm={handleDeleteAccount}
         title="Hapus akun Anda?"
-        description="Semua data pribadi akan dihapus, donasi rutin dihentikan, dan riwayat donasi diubah menjadi Hamba Allah. Tindakan ini tidak bisa dibatalkan. Lanjutkan?"
+        description={
+          <>
+            Semua data pribadi akan{" "}
+            <strong className="text-slate-900 font-semibold">dihapus</strong>, donasi
+            rutin{" "}
+            <strong className="text-slate-900 font-semibold">dihentikan</strong>, dan
+            riwayat donasi dialihkan menjadi{" "}
+            <strong className="text-slate-900 font-semibold">Hamba Allah</strong>.
+            Tindakan ini{" "}
+            <strong className="text-rose-700 font-semibold">
+              tidak dapat dibatalkan
+            </strong>
+            . Lanjutkan?
+          </>
+        }
         confirmLabel="Ya, hapus akun"
         confirmVariant="destructive"
         isLoading={isDeletingAccount}

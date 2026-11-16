@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Copy, Check } from "lucide-react";
+import { CopyIcon } from "@solar-icons/react/linear/copy";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
 import { formatRupiah, formatDate, decodeHtmlEntities, formatPaymentChannel } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { UserAvatar } from "@/components/ui/Avatar";
@@ -32,9 +33,9 @@ export function AdminTransactionTableRow({
             className="p-1 rounded text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
           >
             {copiedId === item.invoiceId ? (
-              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-600" />
             ) : (
-              <Copy className="w-3.5 h-3.5" />
+              <CopyIcon className="w-3.5 h-3.5" />
             )}
           </button>
         </div>
@@ -45,21 +46,21 @@ export function AdminTransactionTableRow({
         {txIsZis ? (
           <span
             title={typeLabel}
-            className="inline-flex items-center px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 border border-amber-200/80 text-sm font-medium max-w-[150px] truncate whitespace-nowrap"
+            className="inline-block text-center align-middle px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 border border-amber-200/80 text-sm font-medium max-w-[150px] truncate whitespace-nowrap"
           >
             {typeLabel}
           </span>
         ) : item.routineDonationId || item.isRoutine ? (
           <span
             title="Donasi Rutin"
-            className="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-900 border border-emerald-200/80 text-sm font-medium max-w-[150px] truncate whitespace-nowrap"
+            className="inline-block text-center align-middle px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-900 border border-emerald-200/80 text-sm font-medium max-w-[150px] truncate whitespace-nowrap"
           >
             Donasi Rutin
           </span>
         ) : (
           <span
             title="Donasi Program"
-            className="inline-flex items-center px-2.5 py-1 rounded-md bg-sky-50 text-sky-900 border border-sky-200/80 text-sm font-medium max-w-[150px] truncate whitespace-nowrap"
+            className="inline-block text-center align-middle px-2.5 py-1 rounded-md bg-sky-50 text-sky-900 border border-sky-200/80 text-sm font-medium max-w-[150px] truncate whitespace-nowrap"
           >
             Donasi Program
           </span>
@@ -134,7 +135,10 @@ export function AdminTransactionTableRow({
 
       {/* Metode */}
       <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
-        <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap">
+        <span
+          title={formatPaymentChannel(item.paymentChannel)}
+          className="inline-block text-center align-middle px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap"
+        >
           {formatPaymentChannel(item.paymentChannel)}
         </span>
       </TableCell>

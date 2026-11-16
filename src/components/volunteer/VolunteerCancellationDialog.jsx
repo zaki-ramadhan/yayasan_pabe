@@ -19,9 +19,15 @@ export function VolunteerCancellationDialog({
     ? "Berhenti menjadi relawan"
     : "Batalkan pendaftaran relawan";
 
-  const description = isApproved
-    ? "Apakah Anda yakin ingin mengundurkan diri sebagai relawan aktif Yayasan Payung Berkah? Kartu relawan dan hak penugasan Anda akan dinonaktifkan."
-    : "Apakah Anda ingin membatalkan pendaftaran relawan ini? Data yang sudah dikirim akan dihapus.";
+  const description = isApproved ? (
+    <>
+      Apakah Anda yakin ingin mengundurkan diri sebagai relawan aktif <strong className="text-slate-900 font-semibold">Yayasan Payung Berkah</strong>? <strong className="text-slate-900 font-semibold">Kartu relawan digital dan hak penugasan Anda akan dinonaktifkan</strong>.
+    </>
+  ) : (
+    <>
+      Apakah Anda ingin membatalkan pendaftaran relawan ini? <strong className="text-slate-900 font-semibold">Data pendaftaran yang sudah dikirim akan dihapus permanen</strong>.
+    </>
+  );
 
   const actionText = isApproved
     ? "Ya, berhenti sekarang"

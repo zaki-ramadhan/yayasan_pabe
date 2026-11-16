@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronDown, Check } from "lucide-react";
+import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -32,7 +33,7 @@ export function SortDropdown({
           <span className="truncate">
             {currentOption ? currentOption.label : label}
           </span>
-          <ChevronDown className="w-4 h-4 text-slate-500 shrink-0 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
+          <AltArrowDownIcon className="w-4 h-4 text-slate-500 shrink-0 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -53,7 +54,7 @@ export function SortDropdown({
               )}
             >
               <span className="whitespace-nowrap">{opt.label}</span>
-              {isSelected && <Check className="w-4 h-4 text-primary shrink-0 ml-1.5" />}
+              {isSelected && <CheckCircleIcon className="w-4 h-4 text-primary shrink-0 ml-1.5" />}
             </DropdownMenuItem>
           );
         })}

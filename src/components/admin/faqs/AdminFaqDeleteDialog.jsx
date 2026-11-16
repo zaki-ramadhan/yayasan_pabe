@@ -28,7 +28,7 @@ export function AdminFaqDeleteDialog({
         </div>
       )}
       <p className="text-xs text-slate-500 leading-relaxed">
-        Tindakan ini bersifat permanen dan tidak dapat dibatalkan.
+        Tindakan ini bersifat <strong className="text-slate-700 font-semibold">permanen dan tidak dapat dibatalkan</strong>.
       </p>
     </ConfirmDialog>
   );

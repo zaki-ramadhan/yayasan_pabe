@@ -101,7 +101,7 @@ export function AdminRoutineDonationTableSkeletonRows({ rows = 5 }) {
             <Skeleton className="h-4 w-28 mx-auto rounded" />
           </TableCell>
 
-          {/* Program Kebaikan */}
+          {/* Program Donasi */}
           <TableCell className="py-3 align-middle min-w-[280px] max-w-[360px]">
             <div className="space-y-1">
               <Skeleton className="h-4 w-48 max-w-full rounded" />

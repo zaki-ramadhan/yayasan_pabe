@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Check, Minus } from "lucide-react";
+import { CheckIcon } from "@solar-icons/react/linear/check";
+import { MinusIcon } from "@solar-icons/react/linear/minus";
 import { cn } from "@/lib/utils";
 
 export const Checkbox = React.forwardRef(
@@ -55,8 +56,8 @@ export const Checkbox = React.forwardRef(
           disabled && "opacity-50 cursor-not-allowed bg-slate-100 pointer-events-none"
         )}
       >
-        {isChecked && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
-        {isIndeterminate && <Minus className="w-3.5 h-3.5 stroke-[2.5]" />}
+        {isChecked && <CheckIcon className="w-3.5 h-3.5 stroke-[2.5]" />}
+        {isIndeterminate && <MinusIcon className="w-3.5 h-3.5 stroke-[2.5]" />}
       </div>
     );
 

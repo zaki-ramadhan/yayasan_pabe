@@ -7,7 +7,8 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/Select";
-import { ArrowUpDown, Filter } from "lucide-react";
+import { FilterIcon } from "@solar-icons/react/linear/filter";
+import { ChevronsUpDownIcon } from "@solar-icons/react/linear/chevrons-up-down";
 
 /**
  * Sub-widget Toolbar untuk filter status dan sortir pelamar.
@@ -23,7 +24,7 @@ export function AdminApplicantToolbar({
       {/* Filter Status */}
       <div className="flex items-center gap-1.5 shrink-0">
         <span className="text-sm font-normal text-slate-600 shrink-0 flex items-center gap-1">
-          <Filter className="w-3.5 h-3.5 text-slate-400" />
+          <FilterIcon className="w-3.5 h-3.5 text-slate-400" />
           Status:
         </span>
         <Select value={statusFilter} onValueChange={onStatusFilterChange}>
@@ -53,7 +54,7 @@ export function AdminApplicantToolbar({
       {/* Sorting Dropdown dengan lebar proporsional (w-44) tanpa text wrap */}
       <div className="flex items-center gap-1.5 shrink-0">
         <span className="text-sm font-normal text-slate-600 shrink-0 flex items-center gap-1">
-          <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
+          <ChevronsUpDownIcon className="w-3.5 h-3.5 text-slate-400" />
           Urutkan:
         </span>
         <Select value={sortBy} onValueChange={onSortChange}>

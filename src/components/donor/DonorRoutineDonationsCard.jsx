@@ -116,7 +116,7 @@ export function DonorRoutineDonationsCard({
                         disabled={isProcessing}
                         isLoading={isProcessing}
                         loadingText="Menjeda..."
-                        className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:via-amber-500 hover:to-amber-600 border-t border-t-amber-300 border-x border-x-amber-600 border-b-2 border-b-amber-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(217,119,6,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
+                        className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:via-amber-400 hover:to-amber-500 border-t border-t-amber-200 border-x border-x-amber-500 border-b-2 border-b-amber-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_2px_4px_rgba(217,119,6,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
                       >
                         {!isProcessing && <Pause className="w-3 h-3 text-white fill-current" />}
                         <span>Jeda</span>
@@ -129,7 +129,7 @@ export function DonorRoutineDonationsCard({
                         disabled={isProcessing}
                         isLoading={isProcessing}
                         loadingText="Mengaktifkan..."
-                        className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-emerald-600 via-emerald-700 to-emerald-800 hover:from-emerald-500 hover:via-emerald-600 hover:to-emerald-700 border-t border-t-emerald-400 border-x border-x-emerald-600 border-b-2 border-b-emerald-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(5,150,105,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
+                        className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-emerald-500 via-emerald-600 to-emerald-700 hover:from-emerald-400 hover:via-emerald-500 hover:to-emerald-600 border-t border-t-emerald-300 border-x border-x-emerald-500 border-b-2 border-b-emerald-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_2px_4px_rgba(5,150,105,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
                       >
                         {!isProcessing && <Play className="w-3 h-3 text-white fill-current" />}
                         <span>Lanjutkan</span>
@@ -142,7 +142,7 @@ export function DonorRoutineDonationsCard({
                       onClick={() => setCancelCommitmentItem(item)}
                       disabled={isProcessing}
                       isLoading={isProcessing}
-                      className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-rose-600 via-rose-700 to-rose-800 hover:from-rose-500 hover:via-rose-600 hover:to-rose-700 border-t border-t-rose-400 border-x border-x-rose-600 border-b-2 border-b-rose-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(225,29,72,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
+                      className="h-7 px-2.5 text-xs font-medium text-white bg-gradient-to-b from-rose-500 via-rose-600 to-rose-700 hover:from-rose-400 hover:via-rose-500 hover:to-rose-600 border-t border-t-rose-300 border-x border-x-rose-500 border-b-2 border-b-rose-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_2px_4px_rgba(225,29,72,0.25)] active:translate-y-0.5 active:shadow-none rounded-md gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-60"
                     >
                       {!isProcessing && <XCircle className="w-3 h-3 text-white" />}
                       <span>Batalkan</span>
@@ -177,8 +177,16 @@ export function DonorRoutineDonationsCard({
           await handleUpdateStatus(id, "CANCELLED");
         }}
         isLoading={updatingId === cancelCommitmentItem?.id}
-        title="Batalkan Donasi Rutin"
-        description="Apakah Anda yakin ingin membatalkan komitmen donasi rutin ini? Anda dapat mendaftar kembali kapan saja."
+        title="Batalkan donasi rutin"
+        description={
+          <>
+            Apakah Anda yakin ingin{" "}
+            <strong className="text-slate-900 font-semibold">
+              menghentikan komitmen donasi rutin
+            </strong>{" "}
+            ini? Anda dapat mendaftar kembali kapan saja.
+          </>
+        }
         confirmLabel="Ya, batalkan"
         confirmVariant="destructive"
       />

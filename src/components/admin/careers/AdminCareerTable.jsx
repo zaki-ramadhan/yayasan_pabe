@@ -314,8 +314,24 @@ export function AdminCareerTable({ initialVacancies = [] }) {
         onClose={() => setCareerToDelete(null)}
         onConfirm={handleConfirmDelete}
         isLoading={Boolean(deletingId)}
-        title="Hapus Lowongan"
-        description={`Apakah Anda yakin ingin menghapus lowongan "${careerToDelete?.title}" beserta seluruh data pelamarnya? Tindakan ini tidak dapat dibatalkan.`}
+        title="Hapus lowongan pekerjaan"
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus lowongan{" "}
+            <strong className="text-slate-900 font-semibold">
+              &ldquo;{careerToDelete?.title}&rdquo;
+            </strong>{" "}
+            beserta{" "}
+            <strong className="text-slate-900 font-semibold">
+              seluruh data pelamarnya
+            </strong>
+            ? Tindakan ini{" "}
+            <strong className="text-slate-900 font-semibold">
+              tidak dapat dibatalkan
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />
@@ -325,8 +341,24 @@ export function AdminCareerTable({ initialVacancies = [] }) {
         onClose={() => setIsBulkDeleteOpen(false)}
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
-        title={`Hapus ${selection.selectedCount} Lowongan`}
-        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} lowongan pekerjaan terpilih beserta seluruh data pelamarnya? Tindakan ini tidak dapat dibatalkan.`}
+        title={`Hapus ${selection.selectedCount} lowongan pekerjaan`}
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus{" "}
+            <strong className="text-slate-900 font-semibold">
+              {selection.selectedCount} lowongan pekerjaan terpilih
+            </strong>{" "}
+            beserta{" "}
+            <strong className="text-slate-900 font-semibold">
+              seluruh data pelamarnya
+            </strong>
+            ? Tindakan ini{" "}
+            <strong className="text-slate-900 font-semibold">
+              tidak dapat dibatalkan
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />

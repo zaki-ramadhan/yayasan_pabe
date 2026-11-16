@@ -52,6 +52,7 @@ export function HomeStrategicRoadmapSkeleton() {
                     !isFirst ? "lg:pl-6 xl:pl-8" : ""
                   } border-l-2 border-slate-200 pl-4 py-2 lg:border-l-0 lg:py-0 space-y-2.5`}
                 >
+                  <Skeleton className="w-10 h-10 rounded-xl shrink-0 mb-1" />
                   <Skeleton className="h-5 sm:h-6 w-3/4 rounded" />
                   <div className="space-y-1.5 pt-1">
                     <Skeleton className="h-4 w-full rounded" />
@@ -91,6 +92,7 @@ export function HomeStrategicRoadmapSkeleton() {
                   !isFirst ? "lg:pl-6 xl:pl-8" : ""
                 } border-l-2 border-slate-200 pl-4 py-2 lg:border-l-0 lg:py-0 space-y-2.5`}
               >
+                <Skeleton className="w-10 h-10 rounded-xl shrink-0 mb-1" />
                 <Skeleton className="h-5 sm:h-6 w-3/4 rounded" />
                 <div className="space-y-1.5 pt-1">
                   <Skeleton className="h-4 w-full rounded" />

@@ -44,7 +44,7 @@ export function AdminInstagramDeleteDialog({
       </div>
 
       <p className="text-xs text-slate-500 leading-relaxed">
-        Postingan akan dihapus permanen dan tidak lagi ditampilkan di situs web.
+        Postingan akan dihapus <strong className="text-slate-700 font-semibold">permanen</strong> dan tidak lagi ditampilkan di situs web.
       </p>
     </ConfirmDialog>
   );

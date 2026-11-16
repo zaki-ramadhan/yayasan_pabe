@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown, Plus, Search, Loader2 } from "lucide-react";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { ChevronsUpDownIcon } from "@solar-icons/react/linear/chevrons-up-down";
+import { AddCircleIcon } from "@solar-icons/react/linear/add-circle";
+import { MagnifierIcon } from "@solar-icons/react/linear/magnifier";
+import { LoaderIcon } from "@solar-icons/react/linear/loader";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/Popover";
 import { Input } from "@/components/ui/Input";
@@ -222,7 +226,7 @@ export function CreatableCombobox({
           <span className={cn("block truncate flex-1", !selectedItem && "text-slate-400 font-normal")}>
             {selectedItem ? selectedItem.label : value || placeholder}
           </span>
-          <ChevronsUpDown className="w-4 h-4 text-slate-400 shrink-0 ml-2" />
+          <ChevronsUpDownIcon className="w-4 h-4 text-slate-400 shrink-0 ml-2" />
         </button>
       </PopoverTrigger>
 
@@ -237,7 +241,7 @@ export function CreatableCombobox({
         <div className="space-y-2">
           {/* Search Input with Debounce */}
           <Input
-            leftIcon={Search}
+            leftIcon={MagnifierIcon}
             placeholder={searchPlaceholder}
             value={searchTerm}
             minLength={FIELD_LIMITS.COMBOBOX_SEARCH.min}
@@ -280,7 +284,7 @@ export function CreatableCombobox({
                     )}
                   >
                     <span className="truncate mr-2">{opt.label}</span>
-                    {isSelected && <Check className="w-4 h-4 text-primary shrink-0" />}
+                    {isSelected && <CheckCircleIcon className="w-4 h-4 text-primary shrink-0" />}
                   </button>
                 );
               })
@@ -306,9 +310,9 @@ export function CreatableCombobox({
                 )}
               >
                 {isCreating ? (
-                  <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                  <LoaderIcon className="w-4 h-4 animate-spin shrink-0" />
                 ) : (
-                  <Plus className="w-4 h-4 shrink-0 text-primary" />
+                  <AddCircleIcon className="w-4 h-4 shrink-0 text-primary" />
                 )}
                 <span className="truncate">
                   {createPrefix} &ldquo;{trimmedSearch}&rdquo; baru

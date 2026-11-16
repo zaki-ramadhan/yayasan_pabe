@@ -312,6 +312,7 @@ CREATE TABLE "OrgSetting" (
     "bankAccounts" JSONB,
     "vision" TEXT,
     "missions" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "structureImage" TEXT,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "OrgSetting_pkey" PRIMARY KEY ("id")

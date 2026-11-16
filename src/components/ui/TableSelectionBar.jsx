@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckSquare, X } from "lucide-react";
+import { CheckSquareIcon } from "@solar-icons/react/line-duotone/check-square";
+import { CloseIcon } from "@solar-icons/react/linear/close";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
@@ -100,7 +101,7 @@ export function TableSelectionBar({
       >
         {/* Sisi Kiri: Indikator Jumlah Terpilih */}
         <div className="flex items-center gap-2 pl-0.5 sm:pr-1 text-xs sm:text-sm font-medium text-slate-700 shrink-0 select-none">
-          <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0" />
+          <CheckSquareIcon className="w-4 h-4 text-emerald-600 shrink-0" />
           <span className="truncate">
             <strong className="text-slate-950 font-semibold">{activeCountDisplay}</strong>{" "}
             {activeLabel} terpilih
@@ -143,7 +144,7 @@ export function TableSelectionBar({
                 aria-label={clearLabel}
                 className="h-8 w-8 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer shrink-0"
               >
-                <X className="w-4 h-4" />
+                <CloseIcon className="w-4 h-4" />
               </Button>
             </div>
           )}

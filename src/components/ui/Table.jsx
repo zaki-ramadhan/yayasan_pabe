@@ -1,5 +1,7 @@
 import * as React from "react";
-import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { AltArrowUpIcon } from "@solar-icons/react/linear/alt-arrow-up";
+import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
+import { ChevronsUpDownIcon } from "@solar-icons/react/linear/chevrons-up-down";
 import { cn } from "@/lib/utils";
 import { Pagination } from "@/components/ui/Pagination";
 
@@ -106,7 +108,7 @@ export function TableSortIcon({
 }) {
   if (!isSorted) {
     return (
-      <ChevronsUpDown
+      <ChevronsUpDownIcon
         className={cn("w-4 h-4 shrink-0 transition-colors", inactiveClassName, className)}
       />
     );
@@ -114,14 +116,14 @@ export function TableSortIcon({
 
   if (sortOrder === "asc") {
     return (
-      <ChevronUp
+      <AltArrowUpIcon
         className={cn("w-4 h-4 shrink-0 transition-colors", activeClassName, className)}
       />
     );
   }
 
   return (
-    <ChevronDown
+    <AltArrowDownIcon
       className={cn("w-4 h-4 shrink-0 transition-colors", activeClassName, className)}
     />
   );

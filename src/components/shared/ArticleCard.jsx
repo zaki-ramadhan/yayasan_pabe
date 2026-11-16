@@ -85,7 +85,8 @@ export function ArticleCard({
 								{article.tags.slice(0, 3).map((tag) => (
 									<span
 										key={tag}
-										className="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium"
+										title={`#${tag}`}
+										className="inline-block text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium max-w-[120px] truncate align-middle"
 									>
 										#{tag}
 									</span>

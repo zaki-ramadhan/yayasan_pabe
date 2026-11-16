@@ -24,11 +24,14 @@ const badgeVariants = cva(
 );
 
 function Badge({ className, variant, children, title, ...props }) {
+  const isTextContent =
+    typeof children === "string" || typeof children === "number";
+
   const resolvedTitle =
     title !== undefined
       ? title
-      : typeof children === "string"
-      ? children
+      : isTextContent
+      ? String(children)
       : undefined;
 
   return (
@@ -37,7 +40,11 @@ function Badge({ className, variant, children, title, ...props }) {
       title={resolvedTitle}
       {...props}
     >
-      {children}
+      {isTextContent ? (
+        <span className="truncate block w-full min-w-0">{children}</span>
+      ) : (
+        children
+      )}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon } from "@solar-icons/react/linear/arrow-left";
 import { cn } from "@/lib/utils";
 
 /**
@@ -17,7 +17,7 @@ export function BackLink({ href, label, className = "" }) {
         className
       )}
     >
-      <ArrowLeft className="w-4 h-4 shrink-0 transition-transform group-hover:-translate-x-0.5" />
+      <ArrowLeftIcon className="w-4 h-4 shrink-0 transition-transform group-hover:-translate-x-0.5" />
       <span>{label}</span>
     </Link>
   );

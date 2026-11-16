@@ -92,26 +92,30 @@ export function FileUploadZone({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-slate-900 select-none">
-          {label}
-          {required && <span className="text-rose-500 ml-1">*</span>}
-        </label>
-        {!multiple && showManualUrl && (
-          <button
-            type="button"
-            onClick={() => setIsManualUrl(!isManualUrl)}
-            className="text-xs text-emerald-700 hover:text-emerald-800 font-medium flex items-center gap-1 transition-colors cursor-pointer"
-          >
-            <Link2 className="w-3.5 h-3.5" />
-            {isManualUrl
-              ? "Unggah berkas"
-              : isPdf
-              ? "Gunakan tautan dokumen"
-              : "Gunakan tautan gambar"}
-          </button>
-        )}
-      </div>
+      {(label || (!multiple && showManualUrl)) ? (
+        <div className="flex items-center justify-between">
+          {label ? (
+            <label className="text-sm font-medium text-slate-900 select-none">
+              {label}
+              {required && <span className="text-rose-500 ml-1">*</span>}
+            </label>
+          ) : <div />}
+          {!multiple && showManualUrl && (
+            <button
+              type="button"
+              onClick={() => setIsManualUrl(!isManualUrl)}
+              className="text-xs text-emerald-700 hover:text-emerald-800 font-medium flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              <Link2 className="w-3.5 h-3.5" />
+              {isManualUrl
+                ? "Unggah berkas"
+                : isPdf
+                ? "Gunakan tautan dokumen"
+                : "Gunakan tautan gambar"}
+            </button>
+          )}
+        </div>
+      ) : null}
 
       <div className={error ? "rounded-lg ring-1 ring-rose-500/80 p-0.5" : ""}>
         {isManualUrl && !multiple ? (

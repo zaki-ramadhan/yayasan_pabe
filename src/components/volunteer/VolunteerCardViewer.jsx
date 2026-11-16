@@ -7,7 +7,7 @@ import { toast } from "@/hooks/useToast";
 
 /**
  * Penampil Kartu Relawan Mandiri (Minimalist Slide & Flip Viewer).
- * Fokus murni 100% pada kartu tanda anggota (KTA) relawan.
+ * Fokus murni 100% pada kartu identitas relawan.
  *
  * Fitur:
  * - Ukuran kartu proporsional pasti (w-[290px] xs:w-[325px] sm:w-[355px]) anti-shrink/ciut.

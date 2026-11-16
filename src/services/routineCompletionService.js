@@ -52,7 +52,7 @@ export async function rolloverOrCompleteRoutineDonationsForCampaign(
   }
 
   const oldCampaign = activeRoutines[0]?.campaign;
-  const oldTitle = activeRoutines[0]?.programTitle || oldCampaign?.title || "Program Kebaikan";
+  const oldTitle = activeRoutines[0]?.programTitle || oldCampaign?.title || "Program Donasi";
 
   // 2. Evaluasi target program pengganti melalui Selector Engine (Smart Rollover)
   const targetCampaign = await selectRolloverCampaign({
@@ -171,7 +171,7 @@ export async function rolloverOrCompleteSingleRoutineDonation(
     return { action: "NONE", routine };
   }
 
-  const oldTitle = routine.programTitle || routine.campaign?.title || "Program Kebaikan";
+  const oldTitle = routine.programTitle || routine.campaign?.title || "Program Donasi";
 
   // Evaluasi kandidat pengalihan
   const targetCampaign = await selectRolloverCampaign({
@@ -305,7 +305,7 @@ export async function completeRoutineDonationsForCampaign(
 
   if (notifyDonors) {
     for (const routine of activeRoutines) {
-      const progTitle = routine.programTitle || routine.campaign?.title || "Program Kebaikan";
+      const progTitle = routine.programTitle || routine.campaign?.title || "Program Donasi";
       try {
         if (routine.donorEmail) {
           await sendRoutineCompletionEmail({
@@ -376,7 +376,7 @@ export async function completeSingleRoutineDonation(
   if (notifyDonor) {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yayasanpabe.org";
-      const progTitle = routine.programTitle || routine.campaign?.title || "Program Kebaikan";
+      const progTitle = routine.programTitle || routine.campaign?.title || "Program Donasi";
       if (routine.donorEmail) {
         await sendRoutineCompletionEmail({
           to: routine.donorEmail,

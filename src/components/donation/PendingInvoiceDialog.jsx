@@ -47,7 +47,7 @@ export function PendingInvoiceDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isCancelling && onClose()}>
-      <DialogContent className="sm:max-w-md max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200" hideCloseButton={false}>
+      <DialogContent className="sm:max-w-[440px] min-h-[320px] sm:min-h-[380px] max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200" hideCloseButton={false}>
         <DialogHeader hideCloseButton={false}>
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
             {isZakatContext ? "Tagihan zakat masih aktif" : "Tagihan donasi masih aktif"}
@@ -101,8 +101,8 @@ export function PendingInvoiceDialog({
             </div>
           </div>
 
-          <p className="text-xs text-slate-500 italic">
-            *Catatan: Memilih &ldquo;Buat tagihan baru&rdquo; akan otomatis membatalkan tagihan lama di atas.
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Catatan: Memilih <strong className="font-semibold text-slate-900">&ldquo;Buat tagihan baru&rdquo;</strong> akan <strong className="font-semibold text-rose-700">otomatis membatalkan</strong> tagihan lama di atas.
           </p>
         </div>
 

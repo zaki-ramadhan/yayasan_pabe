@@ -9,10 +9,10 @@ export async function generateMetadata({ params }) {
   if (volunteer && volunteer.isApproved) {
     return {
       title: `Kartu Relawan: ${volunteer.fullName} (#${volunteer.volunteerId})`,
-      description: `Verifikasi resmi keabsahan Kartu Tanda Anggota (KTA) relawan ${volunteer.fullName} di Yayasan Payung Berkah.`,
+      description: `Verifikasi resmi keabsahan kartu identitas relawan ${volunteer.fullName} di Yayasan Payung Berkah.`,
       openGraph: {
         title: `Kartu Relawan: ${volunteer.fullName} (#${volunteer.volunteerId})`,
-        description: `Verifikasi resmi keabsahan Kartu Tanda Anggota (KTA) relawan ${volunteer.fullName} di Yayasan Payung Berkah.`,
+        description: `Verifikasi resmi keabsahan kartu identitas relawan ${volunteer.fullName} di Yayasan Payung Berkah.`,
         type: "profile",
       },
     };

@@ -111,7 +111,7 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
             onClick={() => handleSimulate("PAID")}
             disabled={isLoading}
             isLoading={isLoading}
-            className="h-8 px-3 text-xs font-semibold text-white bg-gradient-to-b from-emerald-600 via-emerald-700 to-emerald-800 hover:from-emerald-500 hover:via-emerald-600 hover:to-emerald-700 border-t border-t-emerald-400 border-x border-x-emerald-600 border-b-2 border-b-emerald-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(5,150,105,0.25)] active:translate-y-0.5 active:shadow-none rounded-lg gap-1.5 cursor-pointer disabled:opacity-60"
+            className="h-8 px-3 text-xs font-semibold text-white bg-gradient-to-b from-emerald-500 via-emerald-600 to-emerald-700 hover:from-emerald-400 hover:via-emerald-500 hover:to-emerald-600 border-t border-t-emerald-300 border-x border-x-emerald-500 border-b-2 border-b-emerald-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_2px_4px_rgba(5,150,105,0.25)] active:translate-y-0.5 active:shadow-none rounded-lg gap-1.5 cursor-pointer disabled:opacity-60"
           >
             {!isLoading && <Zap className="w-3.5 h-3.5 fill-current text-white" />}
             <span>Simulasi Bayar Lunas</span>
@@ -126,7 +126,7 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
             onClick={() => handleSimulate("EXPIRED")}
             disabled={isLoading}
             isLoading={isLoading}
-            className="h-8 px-3 text-xs font-semibold text-white bg-gradient-to-b from-rose-600 via-rose-700 to-rose-800 hover:from-rose-500 hover:via-rose-600 hover:to-rose-700 border-t border-t-rose-400 border-x border-x-rose-600 border-b-2 border-b-rose-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(225,29,72,0.25)] active:translate-y-0.5 active:shadow-none rounded-lg gap-1.5 cursor-pointer disabled:opacity-60"
+            className="h-8 px-3 text-xs font-semibold text-white bg-gradient-to-b from-rose-500 via-rose-600 to-rose-700 hover:from-rose-400 hover:via-rose-500 hover:to-rose-600 border-t border-t-rose-300 border-x border-x-rose-500 border-b-2 border-b-rose-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_2px_4px_rgba(225,29,72,0.25)] active:translate-y-0.5 active:shadow-none rounded-lg gap-1.5 cursor-pointer disabled:opacity-60"
           >
             {!isLoading && <Clock className="w-3.5 h-3.5 text-white" />}
             <span>Simulasi Waktu Habis</span>
@@ -141,7 +141,7 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
             onClick={() => handleSimulate("CANCELLED")}
             disabled={isLoading}
             isLoading={isLoading}
-            className="h-8 px-3 text-xs font-semibold text-white bg-gradient-to-b from-slate-600 via-slate-700 to-slate-800 hover:from-slate-500 hover:via-slate-600 hover:to-slate-700 border-t border-t-slate-400 border-x border-x-slate-600 border-b-2 border-b-slate-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_2px_4px_rgba(71,85,105,0.25)] active:translate-y-0.5 active:shadow-none rounded-lg gap-1.5 cursor-pointer disabled:opacity-60"
+            className="h-8 px-3 text-xs font-semibold text-white bg-gradient-to-b from-slate-500 via-slate-600 to-slate-700 hover:from-slate-400 hover:via-slate-500 hover:to-slate-600 border-t border-t-slate-300 border-x border-x-slate-500 border-b-2 border-b-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_2px_4px_rgba(71,85,105,0.25)] active:translate-y-0.5 active:shadow-none rounded-lg gap-1.5 cursor-pointer disabled:opacity-60"
           >
             {!isLoading && <XCircle className="w-3.5 h-3.5 text-white" />}
             <span>Simulasi Batal</span>

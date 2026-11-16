@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Trash2, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Trash2, CheckCircle2, XCircle, Loader2, FileArchive } from "lucide-react";
 import {
   Table,
   TableContainer,
@@ -16,11 +16,11 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { Button } from "@/components/ui/Button";
 import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import { AdminVolunteerDetailDialog } from "./AdminVolunteerDetailDialog";
-import { AdminVolunteerStatusDialog } from "./AdminVolunteerStatusDialog";
 import { AdminVolunteerToolbar } from "./AdminVolunteerToolbar";
 import { AdminVolunteerTableRow } from "./AdminVolunteerTableRow";
 import { AdminVolunteerTableSkeletonRows } from "./AdminVolunteerSkeleton";
 import { VolunteerPrintDialog } from "@/components/volunteer/VolunteerPrintDialog";
+import { AdminVolunteerBulkDownloadDialog } from "./AdminVolunteerBulkDownloadDialog";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useTableSelection } from "@/hooks/useTableSelection";
 import { usePagination } from "@/hooks/usePagination";
@@ -37,11 +37,12 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [selectedVolunteer, setSelectedVolunteer] = useState(null);
-  const [volunteerToEditStatus, setVolunteerToEditStatus] = useState(null);
+  const [statusChangeToConfirm, setStatusChangeToConfirm] = useState(null);
+  const [updatingVolunteerId, setUpdatingVolunteerId] = useState(null);
   const [cardVolunteer, setCardVolunteer] = useState(null);
+  const [isBulkDownloadOpen, setIsBulkDownloadOpen] = useState(false);
   const [volunteerToDelete, setVolunteerToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const [isBulkStatusUpdating, setIsBulkStatusUpdating] = useState(false);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
@@ -133,8 +134,8 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
     }
   };
 
-  const handleUpdateStatus = async (id, newStatus) => {
-    setIsUpdatingStatus(true);
+  const handleExecuteStatusChange = async (id, newStatus) => {
+    setUpdatingVolunteerId(id);
     try {
       const res = await safeFetch("/api/admin/volunteers", {
         method: "PATCH",
@@ -143,7 +144,13 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success("Status relawan berhasil diperbarui.");
+        const label =
+          newStatus === "APPROVED"
+            ? "Disetujui"
+            : newStatus === "REJECTED"
+            ? "Ditolak"
+            : "Menunggu";
+        toast.success(`Status relawan berhasil diubah menjadi ${label}.`);
         setVolunteers((prev) =>
           prev.map((v) => (v.id === id ? { ...v, status: newStatus } : v))
         );
@@ -156,7 +163,22 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
     } catch {
       toast.error("Terjadi kendala jaringan saat memperbarui status.");
     } finally {
-      setIsUpdatingStatus(false);
+      setUpdatingVolunteerId(null);
+    }
+  };
+
+  const handleInlineStatusChange = (volunteer, targetStatus) => {
+    if (!volunteer || volunteer.status === targetStatus) return;
+
+    if (targetStatus === "APPROVED" || targetStatus === "REJECTED") {
+      setStatusChangeToConfirm({
+        id: volunteer.id,
+        name: volunteer.fullName,
+        email: volunteer.email,
+        targetStatus,
+      });
+    } else {
+      handleExecuteStatusChange(volunteer.id, targetStatus);
     }
   };
 
@@ -300,6 +322,17 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         </Button>
         <Button
           type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setIsBulkDownloadOpen(true)}
+          className="bg-white border-slate-300 text-slate-800 hover:bg-slate-50 font-medium h-8 text-xs gap-1.5 cursor-pointer"
+          title="Unduh kartu relawan yang dipilih dalam format ZIP siap cetak"
+        >
+          <FileArchive className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Unduh kartu (ZIP)</span>
+        </Button>
+        <Button
+          type="button"
           variant="destructive"
           size="sm"
           onClick={() => setIsBulkDeleteOpen(true)}
@@ -357,7 +390,8 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
                     isSelected={selection.isSelected(item.id)}
                     onToggleSelect={selection.toggleSelect}
                     onViewDetail={setSelectedVolunteer}
-                    onEditStatus={setVolunteerToEditStatus}
+                    onStatusChange={handleInlineStatusChange}
+                    isUpdatingStatus={updatingVolunteerId === item.id}
                     onPrintCard={setCardVolunteer}
                     onDelete={handleDelete}
                   />
@@ -396,13 +430,64 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         }}
       />
 
-      <AdminVolunteerStatusDialog
-        key={volunteerToEditStatus?.id || "status-dialog"}
-        isOpen={Boolean(volunteerToEditStatus)}
-        onClose={() => setVolunteerToEditStatus(null)}
-        volunteer={volunteerToEditStatus}
-        onStatusChange={handleUpdateStatus}
-        isUpdating={isUpdatingStatus}
+      <ConfirmDialog
+        isOpen={Boolean(statusChangeToConfirm)}
+        onClose={() => setStatusChangeToConfirm(null)}
+        onConfirm={async () => {
+          if (!statusChangeToConfirm) return;
+          const { id, targetStatus } = statusChangeToConfirm;
+          setStatusChangeToConfirm(null);
+          await handleExecuteStatusChange(id, targetStatus);
+        }}
+        isLoading={updatingVolunteerId === statusChangeToConfirm?.id}
+        title={
+          statusChangeToConfirm?.targetStatus === "APPROVED"
+            ? "Setujui pendaftaran relawan?"
+            : "Tolak pendaftaran relawan?"
+        }
+        description={
+          statusChangeToConfirm?.targetStatus === "APPROVED" ? (
+            <>
+              Setujui pendaftaran{" "}
+              <strong className="text-slate-900 font-semibold">
+                {statusChangeToConfirm?.name}
+              </strong>
+              ?{" "}
+              <strong className="text-emerald-700 font-semibold">
+                Kartu relawan resmi akan langsung aktif
+              </strong>{" "}
+              dan email pemberitahuan otomatis dikirimkan ke{" "}
+              <strong className="text-slate-900 font-semibold">
+                {statusChangeToConfirm?.email || "email relawan"}
+              </strong>
+              .
+            </>
+          ) : (
+            <>
+              Tandai berkas{" "}
+              <strong className="text-slate-900 font-semibold">
+                {statusChangeToConfirm?.name}
+              </strong>{" "}
+              <strong className="text-slate-900 font-semibold">
+                belum dapat diterima
+              </strong>
+              ? Surat pemberitahuan santun akan dikirimkan ke{" "}
+              <strong className="text-slate-900 font-semibold">
+                {statusChangeToConfirm?.email || "email relawan"}
+              </strong>
+              .
+            </>
+          )
+        }
+        confirmLabel={
+          statusChangeToConfirm?.targetStatus === "APPROVED"
+            ? "Ya, setujui & aktifkan kartu"
+            : "Ya, tolak berkas"
+        }
+        confirmVariant={
+          statusChangeToConfirm?.targetStatus === "APPROVED" ? "default" : "destructive"
+        }
+        cancelLabel="Batal"
       />
 
       <VolunteerPrintDialog
@@ -411,13 +496,32 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         volunteer={cardVolunteer}
       />
 
+      <AdminVolunteerBulkDownloadDialog
+        isOpen={isBulkDownloadOpen}
+        onClose={() => setIsBulkDownloadOpen(false)}
+        selectedVolunteers={selection.selectedItems}
+        onComplete={() => selection.clearSelection()}
+      />
+
       <ConfirmDialog
         isOpen={Boolean(volunteerToDelete)}
         onClose={() => setVolunteerToDelete(null)}
         onConfirm={handleConfirmDelete}
         isLoading={isDeleting}
-        title="Hapus Data Relawan"
-        description={`Hapus berkas pendaftaran relawan atas nama "${volunteerToDelete?.name}"? Tindakan ini tidak dapat dibatalkan.`}
+        title="Hapus data relawan"
+        description={
+          <>
+            Hapus berkas pendaftaran relawan atas nama{" "}
+            <strong className="text-slate-900 font-semibold">
+              &ldquo;{volunteerToDelete?.name}&rdquo;
+            </strong>
+            ? Tindakan ini{" "}
+            <strong className="text-slate-900 font-semibold">
+              tidak dapat dibatalkan
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />
@@ -427,8 +531,20 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         onClose={() => setIsBulkDeleteOpen(false)}
         onConfirm={handleConfirmBulkDelete}
         isLoading={isBulkDeleting}
-        title={`Hapus ${selection.selectedCount} Data Relawan`}
-        description={`Apakah Anda yakin ingin menghapus ${selection.selectedCount} data pendaftar relawan terpilih? Tindakan ini tidak dapat dibatalkan.`}
+        title={`Hapus ${selection.selectedCount} data relawan`}
+        description={
+          <>
+            Apakah Anda yakin ingin menghapus{" "}
+            <strong className="text-slate-900 font-semibold">
+              {selection.selectedCount} data pendaftar relawan terpilih
+            </strong>
+            ? Tindakan ini{" "}
+            <strong className="text-slate-900 font-semibold">
+              tidak dapat dibatalkan
+            </strong>
+            .
+          </>
+        }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
       />
@@ -448,9 +564,29 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
             : `Tolak ${selection.selectedCount} relawan terpilih?`
         }
         description={
-          bulkStatusToConfirm === "APPROVED"
-            ? `Apakah Anda yakin ingin menyetujui ${selection.selectedCount} pendaftar relawan terpilih? Surat resmi tanda anggota akan dikirimkan ke email masing-masing pendaftar.`
-            : `Apakah Anda yakin ingin menandai belum disetujui untuk ${selection.selectedCount} pendaftar relawan terpilih? Surat pemberitahuan santun akan dikirimkan ke email masing-masing pendaftar.`
+          bulkStatusToConfirm === "APPROVED" ? (
+            <>
+              Apakah Anda yakin ingin menyetujui{" "}
+              <strong className="text-emerald-700 font-semibold">
+                {selection.selectedCount} pendaftar relawan terpilih
+              </strong>
+              ? Surat resmi tanda anggota akan otomatis dikirimkan ke email
+              masing-masing pendaftar.
+            </>
+          ) : (
+            <>
+              Apakah Anda yakin ingin menandai{" "}
+              <strong className="text-slate-900 font-semibold">
+                belum disetujui
+              </strong>{" "}
+              untuk{" "}
+              <strong className="text-slate-900 font-semibold">
+                {selection.selectedCount} pendaftar relawan terpilih
+              </strong>
+              ? Surat pemberitahuan santun akan dikirimkan ke email
+              masing-masing pendaftar.
+            </>
+          )
         }
         confirmLabel={bulkStatusToConfirm === "APPROVED" ? "Ya, setujui semua" : "Ya, tolak semua"}
         confirmVariant={bulkStatusToConfirm === "APPROVED" ? "default" : "destructive"}

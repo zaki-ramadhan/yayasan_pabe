@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import { AltArrowLeftIcon } from "@solar-icons/react/linear/alt-arrow-left";
+import { AltArrowRightIcon } from "@solar-icons/react/linear/alt-arrow-right";
+import { MenuDotsIcon } from "@solar-icons/react/linear/menu-dots";
 import { cn } from "@/lib/utils";
 
 /**
@@ -77,7 +79,7 @@ export function Pagination({
             : "border-slate-300 text-slate-700 bg-white hover:bg-slate-100 hover:border-slate-400 cursor-pointer"
         )}
       >
-        <ChevronLeft className="w-4 h-4 shrink-0" />
+        <AltArrowLeftIcon className="w-4 h-4 shrink-0" />
       </button>
 
       {/* Page Numbers */}
@@ -90,7 +92,7 @@ export function Pagination({
                 className="w-7 h-9 flex items-center justify-center text-slate-400 select-none"
                 aria-hidden="true"
               >
-                <MoreHorizontal className="w-4 h-4" />
+                <MenuDotsIcon className="w-4 h-4" />
               </span>
             );
           }
@@ -129,7 +131,7 @@ export function Pagination({
             : "border-slate-300 text-slate-700 bg-white hover:bg-slate-100 hover:border-slate-400 cursor-pointer"
         )}
       >
-        <ChevronRight className="w-4 h-4 shrink-0" />
+        <AltArrowRightIcon className="w-4 h-4 shrink-0" />
       </button>
     </nav>
   );

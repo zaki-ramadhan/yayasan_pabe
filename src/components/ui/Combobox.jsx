@@ -1,7 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronDown, Search, X } from "lucide-react";
+import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
+import { MagnifierIcon } from "@solar-icons/react/linear/magnifier";
+import { CloseIcon } from "@solar-icons/react/linear/close";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/Popover";
 import { useFormField } from "@/components/ui/FormField";
@@ -220,7 +223,7 @@ export function Combobox({
                 : selectedItem.label
               : placeholder}
           </span>
-          <ChevronDown
+          <AltArrowDownIcon
             className={cn(
               "h-4 w-4 shrink-0 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180",
               hasError ? "text-rose-400" : "text-slate-500"
@@ -249,7 +252,7 @@ export function Combobox({
           {/* Input Pencarian Filter Lookup */}
           {showSearch && (
             <div className="relative px-1 pt-1 pb-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+              <MagnifierIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
               <input
                 ref={searchInputRef}
                 type="text"
@@ -278,7 +281,7 @@ export function Combobox({
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded text-slate-400 hover:text-slate-600 cursor-pointer"
                   aria-label="Bersihkan pencarian"
                 >
-                  <X className="h-3 w-3" />
+                  <CloseIcon className="h-3 w-3" />
                 </button>
               )}
             </div>
@@ -325,7 +328,7 @@ export function Combobox({
                       </span>
                     )}
                     {isSelected && (
-                      <Check className="w-4 h-4 text-primary shrink-0 ml-2" />
+                      <CheckCircleIcon className="w-4 h-4 text-primary shrink-0 ml-2" />
                     )}
                   </button>
                 );

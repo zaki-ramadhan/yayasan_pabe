@@ -13,10 +13,10 @@ import {
 export function RegisterTermsDialog({ isOpen, onOpenChange, onAccept }) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl md:max-w-2xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
+      <DialogContent className="sm:min-w-[480px] sm:max-w-xl md:max-w-2xl min-h-[320px] sm:min-h-[380px] max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader>
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-950 leading-tight">
-            Ketentuan Akad &amp; Kebijakan Privasi
+            Ketentuan akad &amp; kebijakan privasi
           </DialogTitle>
         </DialogHeader>
 

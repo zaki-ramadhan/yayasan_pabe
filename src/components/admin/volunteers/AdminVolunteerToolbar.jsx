@@ -35,10 +35,7 @@ export function AdminVolunteerToolbar({
               Semua status
             </SelectItem>
             <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
-              Menunggu (PENDING)
-            </SelectItem>
-            <SelectItem value="CONTACTED" className="cursor-pointer text-sm font-normal py-2">
-              Sudah dihubungi
+              Menunggu
             </SelectItem>
             <SelectItem value="APPROVED" className="cursor-pointer text-sm font-normal py-2">
               Disetujui

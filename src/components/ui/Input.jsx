@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { X, Loader2 } from "lucide-react";
+import { CloseIcon } from "@solar-icons/react/linear/close";
+import { LoaderIcon } from "@solar-icons/react/linear/loader";
 import { cn } from "@/lib/utils";
 import { useFormField } from "@/components/ui/FormField";
 
@@ -73,7 +74,7 @@ const Input = React.forwardRef(
         {/* Right Loading Spinner or Clear X Button */}
         {isLoading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <LoaderIcon className="w-4 h-4 animate-spin" />
           </div>
         )}
 
@@ -84,7 +85,7 @@ const Input = React.forwardRef(
             className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
             aria-label="Hapus input"
           >
-            <X className="w-4 h-4" />
+            <CloseIcon className="w-4 h-4" />
           </button>
         )}
       </div>
