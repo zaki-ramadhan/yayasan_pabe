@@ -66,10 +66,7 @@ export default async function TentangKamiPage() {
           <DashedDivider className="px-4 sm:px-5" />
           <AboutPillars />
           <DashedDivider className="px-4 sm:px-5" />
-          <AboutLeadership
-            leaders={leaders}
-            structureImage={orgSettings?.structureImage}
-          />
+          <AboutLeadership leaders={leaders} />
           <DashedDivider className="px-4 sm:px-5" />
           <AboutBankAccounts orgSettings={orgSettings} />
         </div>

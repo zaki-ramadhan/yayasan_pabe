@@ -334,7 +334,6 @@ model OrgSetting {
   bankAccounts Json?
   vision       String?
   missions     String[] @default([])
-  structureImage String?
   updatedAt    DateTime @updatedAt
 }
 

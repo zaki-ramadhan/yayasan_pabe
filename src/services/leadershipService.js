@@ -62,83 +62,57 @@ export function sanitizePublicLeadershipTitle(title, name = "") {
   return trimmed;
 }
 
+const KNOWN_STAFF_ACCOUNTS = {
+  "Yuni Marlina, S.Pd.I.": { email: "admin@yayasanpayungberkah.org", role: "ADMIN" },
+  "Shofi Hidayatullah Akbar, S.Ag.": { email: "relawan@yayasanpayungberkah.org", role: "ADMIN" },
+  "Sarini": { email: "finance@yayasanpayungberkah.org", role: "FINANCE" },
+  "Suko Pranoto": { email: "suko.pranoto@internal.yayasanpayungberkah.org", role: "ADMIN" },
+  "Katino": { email: "katino@internal.yayasanpayungberkah.org", role: "ADMIN" },
+  "Paimin": { email: "paimin@internal.yayasanpayungberkah.org", role: "ADMIN" },
+};
+
+function slugifyStaffEmail(name) {
+  const cleanName = String(name || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]/g, ".")
+    .replace(/\.+/g, ".")
+    .replace(/^\.|\.$/g, "");
+  return `${cleanName || "pengurus"}@internal.yayasanpayungberkah.org`;
+}
+
 /**
- * Memastikan 6 pengurus struktural yayasan default tersimpan di PostgreSQL
- * jika database belum terisi pengurus (misal saat inisialisasi awal production).
+ * Memastikan pengurus struktural yayasan dari konfigurasi orgProfile tersimpan di PostgreSQL
+ * jika personil tersebut belum terdaftar di database.
+ * Perubahan manual berikutnya lewat Admin Panel tetap terlindungi dan tidak akan ditimpa.
  */
 export async function ensureDefaultLeadersSeeded() {
   try {
-    const excludedEmails = getExcludedLeadershipEmails();
-    const existingCount = await prisma.user.count({
-      where: {
-        role: { in: STAFF_ROLES },
-        ...(excludedEmails.length > 0
-          ? {
-              email: { notIn: excludedEmails },
-            }
-          : {}),
-      },
-    });
-
-    if (existingCount > 0) return;
-
-    const defaultLeaders = [
-      {
-        name: "Suko Pranoto",
-        email: "suko.pranoto@internal.yayasanpayungberkah.org",
-        role: "ADMIN",
-        title: "Ketua Dewan Pembina",
-        gender: "MALE",
-        avatar: "/img/avatars/avatar-male.svg",
-      },
-      {
-        name: "Katino",
-        email: "katino@internal.yayasanpayungberkah.org",
-        role: "ADMIN",
-        title: "Anggota Dewan Pembina",
-        gender: "MALE",
-        avatar: "/img/avatars/avatar-male.svg",
-      },
-      {
-        name: "Paimin",
-        email: "paimin@internal.yayasanpayungberkah.org",
-        role: "ADMIN",
-        title: "Dewan Pengawas",
-        gender: "MALE",
-        avatar: "/img/avatars/avatar-male.svg",
-      },
-      {
-        name: "Yuni Marlina, S.Pd.I.",
-        email: "admin@yayasanpayungberkah.org",
-        role: "ADMIN",
-        title: "Ketua Yayasan",
-        gender: "FEMALE",
-        avatar: "/img/avatars/avatar-female.svg",
-      },
-      {
-        name: "Shofi Hidayatullah Akbar, S.Ag.",
-        email: "relawan@yayasanpayungberkah.org",
-        role: "ADMIN",
-        title: "Sekretaris",
-        gender: "MALE",
-        avatar: "/img/avatars/avatar-male.svg",
-      },
-      {
-        name: "Sarini",
-        email: "finance@yayasanpayungberkah.org",
-        role: "FINANCE",
-        title: "Bendahara",
-        gender: "FEMALE",
-        avatar: "/img/avatars/avatar-female.svg",
-      },
-    ];
+    const leaders = ORG_PROFILE.leadership || [];
+    if (!Array.isArray(leaders) || leaders.length === 0) return;
 
     const hasGenderField = Boolean(Prisma?.UserScalarFieldEnum?.gender);
+    const OLD_TO_NEW_TITLES = {
+      "Dewan Pengawas": "Pengawas",
+      "Ketua Yayasan": "Ketua Umum",
+      "Sekretaris": "Sekretaris Umum",
+      "Bendahara": "Bendahara Umum",
+    };
 
-    for (const leader of defaultLeaders) {
+    for (const leader of leaders) {
+      if (!leader.name) continue;
+
+      const known = KNOWN_STAFF_ACCOUNTS[leader.name];
+      const email = known?.email || slugifyStaffEmail(leader.name);
+      const isFinance = known?.role === "FINANCE" || leader.role?.toLowerCase().includes("bendahara");
+      const role = known?.role || (isFinance ? "FINANCE" : "ADMIN");
+      const isFemale = leader.gender === "P" || leader.gender === "FEMALE";
+      const avatar = leader.image || (isFemale ? "/img/avatars/avatar-female.svg" : "/img/avatars/avatar-male.svg");
+
       const exists = await prisma.user.findFirst({
         where: {
-          OR: [{ email: leader.email }, { name: leader.name }],
+          OR: [{ email }, { name: leader.name }],
         },
       });
 
@@ -146,13 +120,19 @@ export async function ensureDefaultLeadersSeeded() {
         await prisma.user.create({
           data: {
             name: leader.name,
-            email: leader.email,
-            role: leader.role,
-            title: leader.title,
-            avatar: leader.avatar,
+            email,
+            role,
+            title: leader.role,
+            avatar,
             isActive: true,
-            ...(hasGenderField ? { gender: leader.gender } : {}),
+            ...(hasGenderField ? { gender: isFemale ? "FEMALE" : "MALE" } : {}),
           },
+        }).catch(() => null);
+      } else if (exists && OLD_TO_NEW_TITLES[exists.title] && leader.role === OLD_TO_NEW_TITLES[exists.title]) {
+        // Pembaruan aman untuk nama jabatan default awal yang diperbarui di orgProfile
+        await prisma.user.update({
+          where: { id: exists.id },
+          data: { title: leader.role },
         }).catch(() => null);
       }
     }
@@ -166,7 +146,7 @@ export async function ensureDefaultLeadersSeeded() {
  * Memiliki fallback aman ke data statis orgProfile.js jika database belum terisi.
  * Mengecualikan akun vendor / developer teknis eksternal agar tidak tercantum di publik.
  *
- * @returns {Promise<Array<{ name: string, role: string, division?: string, gender: string, image: string }>>}
+ * @returns {Promise<Array<{ name: string, role: string, gender: string, image: string }>>}
  */
 export async function getPublicLeadership() {
   try {

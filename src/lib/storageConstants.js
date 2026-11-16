@@ -162,16 +162,6 @@ export const STORAGE_CONTEXTS = {
     maxBytes: 10 * 1024 * 1024, // 10MB
     allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN],
   },
-  ORGANIZATION_STRUCTURE: {
-    folder: "organization/structure",
-    prefix: "org-structure",
-    maxWidth: 2400,
-    quality: 90,
-    optimize: true,
-    allowedTypes: ["image/jpeg", "image/png", "image/webp"],
-    maxBytes: 10 * 1024 * 1024, // 10MB
-    allowedRoles: [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN],
-  },
 };
 
 /**

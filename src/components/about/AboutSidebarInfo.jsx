@@ -1,9 +1,9 @@
-import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CheckCircleIcon } from "@solar-icons/react/bold/check-circle";
 import { PhoneIcon } from "@solar-icons/react/line-duotone/phone";
 import { LetterIcon } from "@solar-icons/react/line-duotone/letter";
 import { ClockCircleIcon } from "@solar-icons/react/line-duotone/clock-circle";
 import { MapPointIcon } from "@solar-icons/react/line-duotone/map-point";
-import { SquareArrowRightUpIcon } from "@solar-icons/react/linear/square-arrow-right-up";
+import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { buildWhatsAppUrl, buildTelUrl } from "@/lib/whatsappUtils";
@@ -46,7 +46,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
                 className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors" aria-label="Buka salinan akta notaris di tab baru"
               >
                 <span>Lihat salinan</span>
-                <SquareArrowRightUpIcon className="w-3.5 h-3.5 shrink-0" />
+                <ArrowRightUpIcon className="w-3.5 h-3.5 shrink-0" />
               </a>
             </div>
             <p className="font-medium text-slate-900 mt-0.5">
@@ -75,7 +75,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
                 className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors" aria-label="Buka salinan izin LKS Dinas Sosial di tab baru"
               >
                 <span>Lihat salinan</span>
-                <SquareArrowRightUpIcon className="w-3.5 h-3.5 shrink-0" />
+                <ArrowRightUpIcon className="w-3.5 h-3.5 shrink-0" />
               </a>
             </div>
             <p className="font-medium text-slate-900 mt-0.5">
@@ -95,7 +95,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
                 className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800 hover:underline transition-colors" aria-label="Buka salinan surat domisili di tab baru"
               >
                 <span>Lihat salinan</span>
-                <SquareArrowRightUpIcon className="w-3.5 h-3.5 shrink-0" />
+                <ArrowRightUpIcon className="w-3.5 h-3.5 shrink-0" />
               </a>
             </div>
             <p className="font-medium text-slate-900 mt-0.5">

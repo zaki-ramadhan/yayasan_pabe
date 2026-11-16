@@ -239,47 +239,106 @@ Yayasan Payung Berkah bercita-cita mewujudkan interaksi antara masyarakat kurang
       { name: "Pelayanan Kesehatan Masyarakat", amount: 100500000, amountFormatted: "Rp 100.500.000,-" },
     ],
   },
-  structureImage: null,
+  structureImage: "/img/about/struktur-organisasi.webp",
   leadership: [
     {
       name: "Suko Pranoto",
       role: "Ketua Dewan Pembina",
-      division: "Dewan Pembina",
       gender: "L",
       image: "/img/avatars/avatar-male.svg",
     },
     {
       name: "Katino",
       role: "Anggota Dewan Pembina",
-      division: "Dewan Pembina",
       gender: "L",
       image: "/img/avatars/avatar-male.svg",
     },
     {
       name: "Paimin",
-      role: "Dewan Pengawas",
-      division: "Dewan Pengawas",
+      role: "Pengawas",
       gender: "L",
       image: "/img/avatars/avatar-male.svg",
     },
     {
       name: "Yuni Marlina, S.Pd.I.",
-      role: "Ketua Yayasan",
-      division: "Pengurus Yayasan",
+      role: "Ketua Umum",
       gender: "P",
       image: "/img/avatars/avatar-female.svg",
     },
     {
       name: "Shofi Hidayatullah Akbar, S.Ag.",
-      role: "Sekretaris",
-      division: "Pengurus Yayasan",
+      role: "Sekretaris Umum",
       gender: "L",
       image: "/img/avatars/avatar-male.svg",
     },
     {
       name: "Sarini",
-      role: "Bendahara",
-      division: "Pengurus Yayasan",
+      role: "Bendahara Umum",
+      gender: "P",
+      image: "/img/avatars/avatar-female.svg",
+    },
+    // divisi humas
+    {
+      name: "Sabar",
+      role: "Divisi Humas",
+      gender: "L",
+      image: "/img/avatars/avatar-male.svg",
+    },
+    {
+      name: "Karni",
+      role: "Divisi Humas",
+      gender: "P",
+      image: "/img/avatars/avatar-female.svg",
+    },
+    // divisi keagamaan
+    {
+      name: "Ahmad Turmudzi",
+      role: "Divisi Keagamaan",
+      gender: "L",
+      image: "/img/avatars/avatar-male.svg",
+    },
+    {
+      name: "Een Noseva",
+      role: "Divisi Keagamaan",
+      gender: "P",
+      image: "/img/avatars/avatar-female.svg",
+    },
+    // divisi sosial
+    {
+      name: "Bandini",
+      role: "Divisi Sosial",
+      gender: "L",
+      image: "/img/avatars/avatar-male.svg",
+    },
+    {
+      name: "Erlinda Samsi",
+      role: "Divisi Sosial",
+      gender: "P",
+      image: "/img/avatars/avatar-female.svg",
+    },
+    // divisi pendidikan
+    {
+      name: "Syahrialdi",
+      role: "Divisi Pendidikan",
+      gender: "L",
+      image: "/img/avatars/avatar-male.svg",
+    },
+    {
+      name: "Khasan Abidin",
+      role: "Divisi Pendidikan",
+      gender: "L",
+      image: "/img/avatars/avatar-male.svg",
+    },
+    // divisi kesehatan
+    {
+      name: "Heri Sulistyowati, S.Apt.",
+      role: "Divisi Kesehatan",
+      gender: "P",
+      image: "/img/avatars/avatar-female.svg",
+    },
+    {
+      name: "Sri Mulyani",
+      role: "Divisi Kesehatan",
       gender: "P",
       image: "/img/avatars/avatar-female.svg",
     },

@@ -37,10 +37,6 @@ export async function getOrgSettings() {
         missions: Array.isArray(dbSetting.missions) && dbSetting.missions.length > 0
           ? dbSetting.missions
           : ORG_PROFILE.missions,
-        structureImage:
-          dbSetting.structureImage !== null && dbSetting.structureImage !== undefined
-            ? dbSetting.structureImage
-            : ORG_PROFILE.structureImage,
       };
     }
   } catch (error) {
@@ -56,7 +52,6 @@ export async function getOrgSettings() {
     officialBankAccounts: [...ORG_PROFILE.officialBankAccounts],
     vision: ORG_PROFILE.vision,
     missions: [...ORG_PROFILE.missions],
-    structureImage: ORG_PROFILE.structureImage,
   };
 }
 
@@ -203,56 +198,4 @@ export async function updateOrgSettings(payload, authUser = null) {
   }
 
   return getOrgSettings();
-}
-
-/**
- * Memperbarui URL gambar bagan struktural organisasi secara persisten.
- *
- * @param {string|null} imageUrl
- * @param {object|null} authUser
- * @returns {Promise<{ structureImage: string|null }>}
- */
-export async function updateStructureImage(imageUrl, authUser = null) {
-  const sanitizedUrl =
-    typeof imageUrl === "string" && imageUrl.trim() ? imageUrl.trim() : null;
-
-  await prisma.orgSetting.upsert({
-    where: { id: "org_profile" },
-    update: {
-      structureImage: sanitizedUrl,
-    },
-    create: {
-      id: "org_profile",
-      name: ORG_PROFILE.name,
-      shortName: ORG_PROFILE.shortName,
-      structureImage: sanitizedUrl,
-    },
-  });
-
-  if (authUser && prisma.activityLog) {
-    try {
-      await prisma.activityLog.create({
-        data: {
-          userId: authUser.id || null,
-          userName: authUser.name || "Admin",
-          userRole: authUser.role || "ADMIN",
-          action: sanitizedUrl
-            ? "UPDATE_STRUCTURE_IMAGE"
-            : "DELETE_STRUCTURE_IMAGE",
-          targetType: "ORG_SETTING",
-          targetId: "org_profile",
-          description: sanitizedUrl
-            ? "Memperbarui foto bagan struktur organisasi yayasan."
-            : "Menghapus foto bagan struktur organisasi yayasan (kembali ke default).",
-        },
-      });
-    } catch (logErr) {
-      console.warn(
-        "Gagal mencatat log aktivitas updateStructureImage:",
-        logErr.message
-      );
-    }
-  }
-
-  return { structureImage: sanitizedUrl };
 }
