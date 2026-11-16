@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { AltArrowRightIcon } from "@solar-icons/react/linear/alt-arrow-right";
-import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CheckIcon } from "@solar-icons/react/linear/check";
 import { CircleIcon } from "@solar-icons/react/linear/circle";
 import { cn } from "@/lib/utils";
 
@@ -93,7 +93,7 @@ const DropdownMenuCheckboxItem = React.forwardRef(
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
-          <CheckCircleIcon className="h-4 w-4" />
+          <CheckIcon className="h-4 w-4" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}

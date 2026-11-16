@@ -1,6 +1,6 @@
 "use client";
 
-import { AddCircleIcon as Plus } from "@solar-icons/react/line-duotone/add-circle";
+import { AddIcon as Plus } from "@solar-icons/react/line-duotone/add";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";

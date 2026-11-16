@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
-import { ShieldCheckIcon as ShieldCheck } from "@solar-icons/react/line-duotone/shield-check";
+import { ShieldCheckIcon as ShieldCheck } from "@solar-icons/react/bold/shield-check";
 import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone/check-circle";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";

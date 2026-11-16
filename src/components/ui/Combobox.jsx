@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CheckIcon } from "@solar-icons/react/linear/check";
 import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
 import { MagnifierIcon } from "@solar-icons/react/linear/magnifier";
 import { CloseIcon } from "@solar-icons/react/linear/close";
@@ -328,7 +328,7 @@ export function Combobox({
                       </span>
                     )}
                     {isSelected && (
-                      <CheckCircleIcon className="w-4 h-4 text-primary shrink-0 ml-2" />
+                      <CheckIcon className="w-4 h-4 text-primary shrink-0 ml-2" />
                     )}
                   </button>
                 );

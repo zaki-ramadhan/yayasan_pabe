@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { NavUserDropdown } from "@/components/nav/NavUserDropdown";
 import { logoutUser } from "@/services/authService";
+import { toast } from "@/hooks/useToast";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 
 export function InvoiceHeader({ initialUser = null }) {
@@ -15,12 +16,19 @@ export function InvoiceHeader({ initialUser = null }) {
   // Utamakan state client reaktif, dengan fallback ke sesi server awal
   const activeUser = currentUser || initialUser;
 
-  const handleLogout = () => {
-    logoutUser();
+  const handleLogout = async () => {
+    try {
+      const res = await logoutUser();
+      if (!res?.success) {
+        toast.error("Gagal mengakhiri sesi server, sesi lokal telah dibersihkan.");
+      }
+    } catch {
+      toast.error("Terjadi kendala saat keluar.");
+    }
     if (typeof window !== "undefined") {
       window.location.replace("/login?loggedOut=true");
     } else {
-      router.push("/login");
+      router.push("/login?loggedOut=true");
     }
   };
 

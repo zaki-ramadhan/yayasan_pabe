@@ -33,6 +33,7 @@
   --background: #f8fafc;
   --foreground: #0f172a;
   --solar-stroke-width: 1.8;
+  --solar-secondary-opacity: 0.65;
 }
 
 /* Standarisasi ketebalan garis Solar Icons secara global */

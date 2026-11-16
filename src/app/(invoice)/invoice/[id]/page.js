@@ -10,7 +10,7 @@ import { InvoiceHeader } from "@/components/invoice/InvoiceHeader";
 export async function generateMetadata({ params }) {
   const { id } = await params;
   return {
-    title: `Instruksi Pembayaran #${id}`,
+    title: `Invoice Pembayaran #${id}`,
     description: "Selesaikan pembayaran donasi Anda melalui QRIS atau Virtual Account Yayasan Payung Berkah.",
   };
 }
@@ -47,7 +47,7 @@ export default async function InvoicePage({ params, searchParams }) {
         items={[
           { label: "Beranda", href: "/" },
           { label: "Program", href: isZis ? "/zis" : "/program" },
-          { label: "Instruksi Pembayaran" },
+          { label: "Invoice Pembayaran" },
         ]}
       />
 

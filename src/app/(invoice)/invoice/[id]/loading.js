@@ -37,7 +37,7 @@ export default function InvoiceLoading() {
         items={[
           { label: "Beranda", href: "/" },
           { label: "Program", href: "/program" },
-          { label: "Instruksi Pembayaran" },
+          { label: "Invoice Pembayaran" },
         ]}
       />
 

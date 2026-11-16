@@ -89,7 +89,7 @@ export function AuthVerificationSpinner({
     <div className="min-h-screen bg-slate-50/70 flex items-center justify-center p-4 sm:p-6 select-none">
       <div className="w-full max-w-sm sm:max-w-md mx-auto text-center space-y-6 animate-in fade-in zoom-in-95 duration-200">
         {/* Ikon Provider Dikelilingi Loading Ring Muter */}
-        <div className="relative flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 mx-auto">
+        <div className="relative flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 mx-auto">
           {status === "processing" ? (
             <>
               {/* Outer Circular Track & Rotating Arc */}
@@ -120,31 +120,31 @@ export function AuthVerificationSpinner({
                 />
               </svg>
 
-              {/* Badge Ikon Provider di Tengah */}
-              <div className="relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-xs border border-slate-200/70 flex items-center justify-center">
+              {/* Ikon Provider Langsung di Dalam Ring Loading (Tanpa Parent Circle Tambahan) */}
+              <div className="relative z-10 flex items-center justify-center">
                 {isGoogle ? (
-                  <GoogleSvgIcon className="w-7 h-7 sm:w-8 sm:h-8" />
+                  <GoogleSvgIcon className="w-10 h-10 sm:w-11 sm:h-11" />
                 ) : isFacebook ? (
-                  <FacebookSvgIcon className="w-7 h-7 sm:w-8 sm:h-8" />
+                  <FacebookSvgIcon className="w-10 h-10 sm:w-11 sm:h-11" />
                 ) : (
-                  <div className="w-4 h-4 rounded-full bg-emerald-600" />
+                  <div className="w-5 h-5 rounded-full bg-emerald-600" />
                 )}
               </div>
             </>
           ) : status === "success" ? (
-            /* State Berhasil: Lingkaran Hijau Lengkap & Checkmark */
-            <div className="relative flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 mx-auto">
-              <div className="absolute inset-0 rounded-full border-[3.5px] border-emerald-500 bg-emerald-50/40 animate-in zoom-in-95 duration-200" />
-              <div className="relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-xs border border-emerald-200 flex items-center justify-center text-emerald-600">
-                <Check className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.5]" />
+            /* State Berhasil: Checkmark Langsung */
+            <div className="relative flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 mx-auto">
+              <div className="absolute inset-0 rounded-full border-[3px] border-emerald-500 bg-emerald-50/40 animate-in zoom-in-95 duration-200" />
+              <div className="relative z-10 flex items-center justify-center text-emerald-600">
+                <Check className="w-9 h-9 sm:w-10 sm:h-10 stroke-[2.5]" />
               </div>
             </div>
           ) : (
-            /* State Error: Lingkaran Merah & Alert Icon */
-            <div className="relative flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 mx-auto">
-              <div className="absolute inset-0 rounded-full border-[3.5px] border-rose-300 bg-rose-50/50 animate-in zoom-in-95 duration-200" />
-              <div className="relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white shadow-xs border border-rose-200 flex items-center justify-center text-rose-600">
-                <AlertCircle className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2]" />
+            /* State Error: Alert Icon Langsung */
+            <div className="relative flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 mx-auto">
+              <div className="absolute inset-0 rounded-full border-[3px] border-rose-300 bg-rose-50/50 animate-in zoom-in-95 duration-200" />
+              <div className="relative z-10 flex items-center justify-center text-rose-600">
+                <AlertCircle className="w-9 h-9 sm:w-10 sm:h-10 stroke-[2]" />
               </div>
             </div>
           )}

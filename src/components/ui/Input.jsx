@@ -39,7 +39,7 @@ const Input = React.forwardRef(
       const IconComponent = ResolvedIcon;
       return (
         <IconComponent
-          className={cn("w-4 h-4 transition-colors", hasError ? "text-rose-400" : "text-slate-500")}
+          className={cn("w-4 h-4 transition-colors", hasError ? "text-rose-500" : "text-slate-600")}
         />
       );
     };
@@ -82,7 +82,7 @@ const Input = React.forwardRef(
           <button
             type="button"
             onClick={onClear}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
             aria-label="Hapus input"
           >
             <CloseIcon className="w-4 h-4" />

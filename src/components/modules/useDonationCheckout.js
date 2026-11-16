@@ -336,8 +336,8 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
         loginUser({ ...currentUser, phone: donorPhone.trim() }, { notifyLogin: false });
       }
 
-      toast.info("Mengalihkan ke instruksi pembayaran, mohon tunggu sebentar...", {
-        title: "Tagihan Berhasil Dibuat",
+      toast.info("Menyiapkan invoice pembayaran, mohon tunggu sebentar...", {
+        title: "Invoice Berhasil Dibuat",
         duration: 8000,
       });
 
@@ -361,8 +361,8 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     if (!pendingInvoiceModal.invoice) return;
     const inv = pendingInvoiceModal.invoice;
     setPendingInvoiceModal({ isOpen: false, invoice: null });
-    toast.info("Memuat instruksi pembayaran tagihan aktif...", {
-      title: "Mengalihkan Tagihan",
+    toast.info("Memuat invoice pembayaran tagihan aktif...", {
+      title: "Membuka Invoice",
       duration: 6000,
     });
     setIsRedirecting(true);

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CopyIcon } from "@solar-icons/react/linear/copy";
-import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CheckIcon } from "@solar-icons/react/linear/check";
 import { HeartIcon } from "@solar-icons/react/line-duotone/heart";
 import {
   Dialog,
@@ -83,7 +83,7 @@ export function AdminTransactionDetailModal({
                   onClick={handleCopyInvoice} aria-label="Salin invoice"
                   className="p-1 rounded text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
                 >
-                  {copied ? <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-600" /> : <CopyIcon className="w-3.5 h-3.5" />}
+                  {copied ? <CheckIcon className="w-3.5 h-3.5 text-emerald-600" /> : <CopyIcon className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>

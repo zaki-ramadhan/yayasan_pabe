@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { SquareArrowRightUpIcon } from "@solar-icons/react/linear/square-arrow-right-up";
+import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
 
 // Solar Icons - Line Duotone (Default / Inactive)
 import { Widget2Icon as Widget2Line } from "@solar-icons/react/line-duotone/widget-2";
@@ -28,29 +28,30 @@ import { ShieldKeyholeIcon as ShieldKeyholeLine } from "@solar-icons/react/line-
 import { CodeCircleIcon as CodeCircleLine } from "@solar-icons/react/line-duotone/code-circle";
 import { Logout2Icon as Logout2Line } from "@solar-icons/react/line-duotone/logout-2";
 
-// Solar Icons - Bold Duotone (Active State)
-import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold-duotone/widget-2";
-import { UsersGroupTwoRoundedIcon as UsersGroupTwoRoundedBold } from "@solar-icons/react/bold-duotone/users-group-two-rounded";
-import { HandHeartIcon as HandHeartBold } from "@solar-icons/react/bold-duotone/hand-heart";
-import { HandMoneyIcon as HandMoneyBold } from "@solar-icons/react/bold-duotone/hand-money";
-import { DeliveryIcon as DeliveryBold } from "@solar-icons/react/bold-duotone/delivery";
-import { CardTransferIcon as CardTransferBold } from "@solar-icons/react/bold-duotone/card-transfer";
-import { CalendarDateIcon as CalendarDateBold } from "@solar-icons/react/bold-duotone/calendar-date";
-import { ChatRoundDotsIcon as ChatRoundDotsBold } from "@solar-icons/react/bold-duotone/chat-round-dots";
-import { DocumentTextIcon as DocumentTextBold } from "@solar-icons/react/bold-duotone/document-text";
-import { GalleryWideIcon as GalleryWideBold } from "@solar-icons/react/bold-duotone/gallery-wide";
-import { CameraMinimalisticIcon as CameraMinimalisticBold } from "@solar-icons/react/bold-duotone/camera-minimalistic";
-import { ChartSquareIcon as ChartSquareBold } from "@solar-icons/react/bold-duotone/chart-square";
-import { CaseRoundIcon as CaseRoundBold } from "@solar-icons/react/bold-duotone/case-round";
-import { HandShakeIcon as HandShakeBold } from "@solar-icons/react/bold-duotone/hand-shake";
-import { QuestionCircleIcon as QuestionCircleBold } from "@solar-icons/react/bold-duotone/question-circle";
-import { ShieldUserIcon as ShieldUserBold } from "@solar-icons/react/bold-duotone/shield-user";
-import { SettingsMinimalisticIcon as SettingsMinimalisticBold } from "@solar-icons/react/bold-duotone/settings-minimalistic";
-import { ServerPathIcon as ServerPathBold } from "@solar-icons/react/bold-duotone/server-path";
-import { ShieldKeyholeIcon as ShieldKeyholeBold } from "@solar-icons/react/bold-duotone/shield-keyhole";
-import { CodeCircleIcon as CodeCircleBold } from "@solar-icons/react/bold-duotone/code-circle";
+// Solar Icons - Bold (Active State, High Contrast Cutout)
+import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold/widget-2";
+import { UsersGroupTwoRoundedIcon as UsersGroupTwoRoundedBold } from "@solar-icons/react/bold/users-group-two-rounded";
+import { HandHeartIcon as HandHeartBold } from "@solar-icons/react/bold/hand-heart";
+import { HandMoneyIcon as HandMoneyBold } from "@solar-icons/react/bold/hand-money";
+import { DeliveryIcon as DeliveryBold } from "@solar-icons/react/bold/delivery";
+import { CardTransferIcon as CardTransferBold } from "@solar-icons/react/bold/card-transfer";
+import { CalendarDateIcon as CalendarDateBold } from "@solar-icons/react/bold/calendar-date";
+import { ChatRoundDotsIcon as ChatRoundDotsBold } from "@solar-icons/react/bold/chat-round-dots";
+import { DocumentTextIcon as DocumentTextBold } from "@solar-icons/react/bold/document-text";
+import { GalleryWideIcon as GalleryWideBold } from "@solar-icons/react/bold/gallery-wide";
+import { CameraMinimalisticIcon as CameraMinimalisticBold } from "@solar-icons/react/bold/camera-minimalistic";
+import { ChartSquareIcon as ChartSquareBold } from "@solar-icons/react/bold/chart-square";
+import { CaseRoundIcon as CaseRoundBold } from "@solar-icons/react/bold/case-round";
+import { HandShakeIcon as HandShakeBold } from "@solar-icons/react/bold/hand-shake";
+import { QuestionCircleIcon as QuestionCircleBold } from "@solar-icons/react/bold/question-circle";
+import { ShieldUserIcon as ShieldUserBold } from "@solar-icons/react/bold/shield-user";
+import { SettingsMinimalisticIcon as SettingsMinimalisticBold } from "@solar-icons/react/bold/settings-minimalistic";
+import { ServerPathIcon as ServerPathBold } from "@solar-icons/react/bold/server-path";
+import { ShieldKeyholeIcon as ShieldKeyholeBold } from "@solar-icons/react/bold/shield-keyhole";
+import { CodeCircleIcon as CodeCircleBold } from "@solar-icons/react/bold/code-circle";
 
 import { logoutUser } from "@/services/authService";
+import { toast } from "@/hooks/useToast";
 import { USER_ROLES } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { cn } from "@/lib/utils";
@@ -142,13 +143,20 @@ export function AdminSidebarNav({
       : []),
   ];
 
-  const handleLogout = () => {
-    logoutUser();
+  const handleLogout = async () => {
+    try {
+      const res = await logoutUser();
+      if (!res?.success) {
+        toast.error("Gagal mengakhiri sesi server, sesi lokal telah dibersihkan.");
+      }
+    } catch {
+      toast.error("Terjadi kendala saat keluar.");
+    }
     if (onCloseMobile) onCloseMobile();
     if (typeof window !== "undefined") {
       window.location.replace("/login?loggedOut=true");
     } else {
-      router.push("/login");
+      router.push("/login?loggedOut=true");
     }
   };
 
@@ -253,7 +261,7 @@ export function AdminSidebarNav({
                               )}
                               <span className="truncate">{item.label}</span>
                             </div>
-                            <SquareArrowRightUpIcon className="w-3.5 h-3.5 text-slate-500 shrink-0 ml-1.5" />
+                            <ArrowRightUpIcon className="w-3.5 h-3.5 text-slate-500 shrink-0 ml-1.5" />
                           </a>
                         );
                       }

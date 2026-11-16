@@ -14,16 +14,17 @@ import { HandHeartIcon as HandHeartLine } from "@solar-icons/react/line-duotone/
 import { DocumentTextIcon as DocumentTextLine } from "@solar-icons/react/line-duotone/document-text";
 import { Logout2Icon as Logout2Line } from "@solar-icons/react/line-duotone/logout-2";
 
-// Solar Icons - Bold Duotone (Active)
-import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold-duotone/widget-2";
-import { BillListIcon as BillListBold } from "@solar-icons/react/bold-duotone/bill-list";
-import { UserIdIcon as UserIdBold } from "@solar-icons/react/bold-duotone/user-id";
-import { UserRoundedIcon as UserRoundedBold } from "@solar-icons/react/bold-duotone/user-rounded";
-import { Home2Icon as Home2Bold } from "@solar-icons/react/bold-duotone/home-2";
-import { HandHeartIcon as HandHeartBold } from "@solar-icons/react/bold-duotone/hand-heart";
-import { DocumentTextIcon as DocumentTextBold } from "@solar-icons/react/bold-duotone/document-text";
+// Solar Icons - Bold (Active, High Contrast Cutout)
+import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold/widget-2";
+import { BillListIcon as BillListBold } from "@solar-icons/react/bold/bill-list";
+import { UserIdIcon as UserIdBold } from "@solar-icons/react/bold/user-id";
+import { UserRoundedIcon as UserRoundedBold } from "@solar-icons/react/bold/user-rounded";
+import { Home2Icon as Home2Bold } from "@solar-icons/react/bold/home-2";
+import { HandHeartIcon as HandHeartBold } from "@solar-icons/react/bold/hand-heart";
+import { DocumentTextIcon as DocumentTextBold } from "@solar-icons/react/bold/document-text";
 
 import { logoutUser } from "@/services/authService";
+import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 
 export function DonorSidebarNav({
@@ -34,13 +35,20 @@ export function DonorSidebarNav({
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = () => {
-    logoutUser();
+  const handleLogout = async () => {
+    try {
+      const res = await logoutUser();
+      if (!res?.success) {
+        toast.error("Gagal mengakhiri sesi server, sesi lokal telah dibersihkan.");
+      }
+    } catch {
+      toast.error("Terjadi kendala saat keluar.");
+    }
     if (onCloseMobile) onCloseMobile();
     if (typeof window !== "undefined") {
       window.location.replace("/login?loggedOut=true");
     } else {
-      router.push("/login");
+      router.push("/login?loggedOut=true");
     }
   };
 

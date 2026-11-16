@@ -16,7 +16,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { LetterIcon } from "@solar-icons/react/line-duotone/letter";
 import { PhoneIcon } from "@solar-icons/react/line-duotone/phone";
-import { SquareArrowRightUpIcon } from "@solar-icons/react/linear/square-arrow-right-up";
+import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
 import { DocumentTextIcon } from "@solar-icons/react/line-duotone/document-text";
 import { LoaderIcon } from "@solar-icons/react/linear/loader";
 
@@ -139,7 +139,7 @@ export function AdminApplicantItem({
               className="text-primary hover:underline flex items-center gap-0.5 font-normal"
             >
               <span>Unduh Resume/CV</span>
-              <SquareArrowRightUpIcon className="w-3.5 h-3.5 ml-0.5" />
+              <ArrowRightUpIcon className="w-3.5 h-3.5 ml-0.5" />
             </a>
           </span>
         )}

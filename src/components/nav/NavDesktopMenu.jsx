@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
 import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
-import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CheckIcon } from "@solar-icons/react/linear/check";
 import {
 	DropdownMenu,
 	DropdownMenuTrigger,
@@ -108,7 +108,7 @@ export function NavDesktopMenu({ pathname }) {
 								>
 									<span>{item.label}</span>
 									{isActive ? (
-										<CheckCircleIcon className="w-4 h-4 text-white shrink-0" />
+										<CheckIcon className="w-4 h-4 text-white shrink-0" />
 									) : (
 										<ArrowRightUpIcon className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" strokeWidth={2.5} />
 									)}
@@ -189,7 +189,7 @@ export function NavDesktopMenu({ pathname }) {
 								>
 									<span>{item.label}</span>
 									{isActive ? (
-										<CheckCircleIcon className="w-4 h-4 text-white shrink-0" />
+										<CheckIcon className="w-4 h-4 text-white shrink-0" />
 									) : (
 										<ArrowRightUpIcon className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" strokeWidth={2.5} />
 									)}

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { BoltIcon as Zap } from "@solar-icons/react/line-duotone/bolt";
 import { ClockCircleIcon as Clock } from "@solar-icons/react/line-duotone/clock-circle";
 import { RestartIcon as RotateCcw } from "@solar-icons/react/line-duotone/restart";
-import { SquareArrowRightUpIcon as ExternalLink } from "@solar-icons/react/line-duotone/square-arrow-right-up";
+import { ArrowRightUpIcon as ExternalLink } from "@solar-icons/react/linear/arrow-right-up";
 import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
 import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
 import { CodeCircleIcon as Terminal } from "@solar-icons/react/line-duotone/code-circle";
@@ -103,8 +103,8 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
             </span>
           </div>
         </div>
-        <span className="text-sm font-mono px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-bold shrink-0">
-          DEV ONLY
+        <span className="text-xs px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-semibold capitalize shrink-0">
+          Dev Only
         </span>
       </div>
 

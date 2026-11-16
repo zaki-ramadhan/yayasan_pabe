@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { SquareArrowRightUpIcon as ExternalLink } from "@solar-icons/react/line-duotone/square-arrow-right-up";
+import { ArrowRightUpIcon as ExternalLink } from "@solar-icons/react/linear/arrow-right-up";
 import { DangerTriangleIcon as AlertTriangle } from "@solar-icons/react/line-duotone/danger-triangle";
 import { DangerIcon as AlertOctagon } from "@solar-icons/react/line-duotone/danger";
 import { Progress } from "@/components/ui/Progress";

@@ -1,6 +1,6 @@
 "use client";
 
-import { AddCircleIcon as Plus } from "@solar-icons/react/line-duotone/add-circle";
+import { AddIcon as Plus } from "@solar-icons/react/line-duotone/add";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { FormField } from "@/components/ui/FormField";

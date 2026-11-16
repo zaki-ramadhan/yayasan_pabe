@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRightIcon } from "@solar-icons/react/linear/arrow-right";
+import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
 import { CopyIcon } from "@solar-icons/react/linear/copy";
 import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
 import { RestartIcon } from "@solar-icons/react/linear/restart";
@@ -107,24 +107,13 @@ export function AdminRecentTransactionsCard({
           </CardTitle>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={refreshList}
-            disabled={isLoading}
-            className="h-8 w-8 text-slate-600 hover:bg-slate-50 disabled:pointer-events-none disabled:cursor-not-allowed"
-            aria-label="Segarkan transaksi terkini"
-          >
-            <RestartIcon className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? "animate-spin" : ""}`} />
-          </Button>
 
           <Link
             href="/admin/transaksi"
             className="text-sm font-medium text-primary hover:underline flex items-center gap-1 shrink-0"
           >
             <span>Semua transaksi</span>
-            <ArrowRightIcon className="w-4 h-4" />
+            <ArrowRightUpIcon className="w-4 h-4" />
           </Link>
         </div>
       </CardHeader>

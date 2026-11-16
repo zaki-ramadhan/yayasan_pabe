@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CheckIcon } from "@solar-icons/react/linear/check";
 import { ChevronsUpDownIcon } from "@solar-icons/react/linear/chevrons-up-down";
-import { AddCircleIcon } from "@solar-icons/react/linear/add-circle";
+import { AddIcon } from "@solar-icons/react/linear/add";
 import { MagnifierIcon } from "@solar-icons/react/linear/magnifier";
 import { LoaderIcon } from "@solar-icons/react/linear/loader";
 import { cn } from "@/lib/utils";
@@ -284,7 +284,7 @@ export function CreatableCombobox({
                     )}
                   >
                     <span className="truncate mr-2">{opt.label}</span>
-                    {isSelected && <CheckCircleIcon className="w-4 h-4 text-primary shrink-0" />}
+                    {isSelected && <CheckIcon className="w-4 h-4 text-primary shrink-0" />}
                   </button>
                 );
               })
@@ -312,7 +312,7 @@ export function CreatableCombobox({
                 {isCreating ? (
                   <LoaderIcon className="w-4 h-4 animate-spin shrink-0" />
                 ) : (
-                  <AddCircleIcon className="w-4 h-4 shrink-0 text-primary" />
+                  <AddIcon className="w-4 h-4 shrink-0 text-primary" />
                 )}
                 <span className="truncate">
                   {createPrefix} &ldquo;{trimmedSearch}&rdquo; baru

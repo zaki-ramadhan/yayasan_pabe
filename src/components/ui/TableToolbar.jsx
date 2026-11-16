@@ -3,7 +3,7 @@
 import * as React from "react";
 import { MagnifierIcon } from "@solar-icons/react/linear/magnifier";
 import { RestartIcon } from "@solar-icons/react/linear/restart";
-import { AddCircleIcon } from "@solar-icons/react/linear/add-circle";
+import { AddIcon } from "@solar-icons/react/linear/add";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import {
@@ -161,7 +161,7 @@ export function TableToolbar({
                 primaryAction.icon ? (
                   <primaryAction.icon className="w-4 h-4" />
                 ) : (
-                  <AddCircleIcon className="w-4 h-4" />
+                  <AddIcon className="w-4 h-4" />
                 )
               )}
               <span>{primaryAction.label}</span>
@@ -264,7 +264,7 @@ export function TableToolbar({
                 primaryAction.icon ? (
                   <primaryAction.icon className="w-4 h-4" />
                 ) : (
-                  <AddCircleIcon className="w-4 h-4" />
+                  <AddIcon className="w-4 h-4" />
                 )
               )}
               <span>{primaryAction.label}</span>

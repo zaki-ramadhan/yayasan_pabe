@@ -4,7 +4,7 @@ import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
 import { AltArrowUpIcon } from "@solar-icons/react/linear/alt-arrow-up";
-import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CheckIcon } from "@solar-icons/react/linear/check";
 import { cn } from "@/lib/utils";
 import { useFormField } from "@/components/ui/FormField";
 
@@ -131,7 +131,7 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   >
     <span className="absolute left-2.5 flex h-3.5 w-3.5 items-center justify-center shrink-0">
       <SelectPrimitive.ItemIndicator>
-        <CheckCircleIcon className="h-4 w-4 text-primary" />
+        <CheckIcon className="h-4 w-4 text-primary" />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText className="truncate block min-w-0 flex-1">

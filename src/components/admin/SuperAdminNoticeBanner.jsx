@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldCheckIcon } from "@solar-icons/react/line-duotone/shield-check";
+import { ShieldCheckIcon } from "@solar-icons/react/bold/shield-check";
 
 /**
  * Thin differentiator banner exclusively shown for Super Admin users.

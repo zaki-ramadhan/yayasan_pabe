@@ -3,10 +3,10 @@
 import * as React from "react";
 import { cva } from "class-variance-authority";
 import { CloseIcon } from "@solar-icons/react/linear/close";
-import { CheckCircleIcon } from "@solar-icons/react/bold-duotone/check-circle";
-import { CloseCircleIcon } from "@solar-icons/react/bold-duotone/close-circle";
-import { DangerTriangleIcon } from "@solar-icons/react/bold-duotone/danger-triangle";
-import { InfoCircleIcon } from "@solar-icons/react/bold-duotone/info-circle";
+import { CheckCircleIcon } from "@solar-icons/react/bold/check-circle";
+import { CloseCircleIcon } from "@solar-icons/react/bold/close-circle";
+import { DangerTriangleIcon } from "@solar-icons/react/bold/danger-triangle";
+import { InfoCircleIcon } from "@solar-icons/react/bold/info-circle";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/useToast";
 

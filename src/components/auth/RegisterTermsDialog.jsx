@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SquareArrowRightUpIcon as ExternalLink } from "@solar-icons/react/line-duotone/square-arrow-right-up";
+import { ArrowRightUpIcon as ExternalLink } from "@solar-icons/react/linear/arrow-right-up";
 import { Button } from "@/components/ui/Button";
 import {
   Dialog,

@@ -1,7 +1,7 @@
 "use client";
 
 import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
-import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CheckIcon } from "@solar-icons/react/linear/check";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -54,7 +54,7 @@ export function SortDropdown({
               )}
             >
               <span className="whitespace-nowrap">{opt.label}</span>
-              {isSelected && <CheckCircleIcon className="w-4 h-4 text-primary shrink-0 ml-1.5" />}
+              {isSelected && <CheckIcon className="w-4 h-4 text-primary shrink-0 ml-1.5" />}
             </DropdownMenuItem>
           );
         })}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SquareArrowRightUpIcon as ExternalLink } from "@solar-icons/react/line-duotone/square-arrow-right-up";
+import { ArrowRightUpIcon as ExternalLink } from "@solar-icons/react/linear/arrow-right-up";
 import { MenuDotsIcon as MoreVertical } from "@solar-icons/react/line-duotone/menu-dots";
 import { Pen2Icon as Edit2 } from "@solar-icons/react/line-duotone/pen-2";
 import { PlayIcon as Play } from "@solar-icons/react/line-duotone/play";

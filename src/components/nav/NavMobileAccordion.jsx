@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
 import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
-import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
+import { CheckIcon } from "@solar-icons/react/linear/check";
 import { isNavItemActive } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 
@@ -56,7 +56,7 @@ export function NavMobileAccordion({
               >
                 <span>{item.label}</span>
                 {isItemActive ? (
-                  <CheckCircleIcon className="w-3.5 h-3.5 text-white shrink-0" />
+                  <CheckIcon className="w-3.5 h-3.5 text-white shrink-0" />
                 ) : (
                   <ArrowRightUpIcon className="w-3.5 h-3.5 text-slate-400" />
                 )}
