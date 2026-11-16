@@ -32,6 +32,13 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
+  --solar-stroke-width: 1.8;
+}
+
+/* Standarisasi ketebalan garis Solar Icons secara global */
+.solar,
+svg.solar {
+  stroke-width: var(--solar-stroke-width, 1.8);
 }
 
 body {
