@@ -1,6 +1,7 @@
 "use client";
 
-import { QrCode, MessageCircle } from "lucide-react";
+import { QrCodeIcon as QrCode } from "@solar-icons/react/line-duotone/qr-code";
+import { ChatRoundDotsIcon as MessageCircle } from "@solar-icons/react/line-duotone/chat-round-dots";
 import {
   Dialog,
   DialogContent,

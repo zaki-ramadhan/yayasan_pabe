@@ -1,6 +1,7 @@
 "use client";
 
-import { Trash2, Video } from "lucide-react";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
 import { Button } from "@/components/ui/Button";
 import { formatBytes } from "@/lib/formatters";
 

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { Trash2, FileQuestion } from "lucide-react";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { FileCorruptedIcon as FileQuestion } from "@solar-icons/react/line-duotone/file-corrupted";
 import {
   Table,
   TableContainer,

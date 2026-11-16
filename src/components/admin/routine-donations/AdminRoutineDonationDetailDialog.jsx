@@ -19,7 +19,8 @@ import {
 import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
 import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
-import { ArrowUpRight, Loader2 } from "lucide-react";
+import { ArrowRightUpIcon as ArrowUpRight } from "@solar-icons/react/line-duotone/arrow-right-up";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 
 export function AdminRoutineDonationDetailDialog({
   donation,

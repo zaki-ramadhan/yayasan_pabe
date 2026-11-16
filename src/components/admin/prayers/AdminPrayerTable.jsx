@@ -1,6 +1,8 @@
 "use client";
 
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { EyeIcon as Eye } from "@solar-icons/react/line-duotone/eye";
+import { EyeClosedIcon as EyeOff } from "@solar-icons/react/line-duotone/eye-closed";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import {
   Table,
   TableContainer,

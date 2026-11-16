@@ -1,6 +1,11 @@
 "use client";
 
-import { MoreVertical, Edit3, KeyRound, UserX, UserCheck, Trash2 } from "lucide-react";
+import { MenuDotsIcon as MoreVertical } from "@solar-icons/react/line-duotone/menu-dots";
+import { PenNewSquareIcon as Edit3 } from "@solar-icons/react/line-duotone/pen-new-square";
+import { KeyIcon as KeyRound } from "@solar-icons/react/line-duotone/key";
+import { UserCrossIcon as UserX } from "@solar-icons/react/line-duotone/user-cross";
+import { UserCheckIcon as UserCheck } from "@solar-icons/react/line-duotone/user-check";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import {
   DropdownMenu,
   DropdownMenuTrigger,

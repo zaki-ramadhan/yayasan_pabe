@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { CheckReadIcon as Check } from "@solar-icons/react/line-duotone/check-read";
+import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
 import {
   Dialog,
   DialogContent,

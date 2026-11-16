@@ -1,6 +1,6 @@
 "use client";
 
-import { Link2 } from "lucide-react";
+import { LinkRoundIcon as Link2 } from "@solar-icons/react/line-duotone/link-round";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { FileUploadPreview } from "./FileUploadPreview";

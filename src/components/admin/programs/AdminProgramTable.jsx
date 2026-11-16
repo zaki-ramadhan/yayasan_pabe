@@ -21,7 +21,7 @@ const AdminProgramModal = dynamic(
     ),
   { ssr: false }
 );
-import { Trash2 } from "lucide-react";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { Button } from "@/components/ui/Button";
 import { AdminProgramToolbar } from "./AdminProgramToolbar";
 import { AdminProgramTableRow } from "./AdminProgramTableRow";

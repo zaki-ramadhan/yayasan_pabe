@@ -1,6 +1,6 @@
 "use client";
 
-import { QrCode } from "lucide-react";
+import { QrCodeIcon as QrCode } from "@solar-icons/react/line-duotone/qr-code";
 import { formatDate } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";

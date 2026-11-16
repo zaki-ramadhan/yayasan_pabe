@@ -4,7 +4,8 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Camera, Loader2 } from "lucide-react";
+import { CameraIcon as Camera } from "@solar-icons/react/line-duotone/camera";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";

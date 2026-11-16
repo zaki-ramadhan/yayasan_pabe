@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, Heart, Copy, Check, Loader2 } from "lucide-react";
+import { EyeIcon as Eye } from "@solar-icons/react/line-duotone/eye";
+import { EyeClosedIcon as EyeOff } from "@solar-icons/react/line-duotone/eye-closed";
+import { HeartIcon as Heart } from "@solar-icons/react/line-duotone/heart";
+import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
+import { CheckReadIcon as Check } from "@solar-icons/react/line-duotone/check-read";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { TableCell, TableRow } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { UserAvatar } from "@/components/ui/Avatar";

@@ -1,6 +1,8 @@
 "use client";
 
-import { UploadCloud, FileCheck, AlertOctagon } from "lucide-react";
+import { CloudUploadIcon as UploadCloud } from "@solar-icons/react/line-duotone/cloud-upload";
+import { DocumentAddIcon as FileCheck } from "@solar-icons/react/line-duotone/document-add";
+import { DangerIcon as AlertOctagon } from "@solar-icons/react/line-duotone/danger";
 import { cn } from "@/lib/utils";
 import { UploadProgressBar } from "@/components/ui/UploadProgressBar";
 

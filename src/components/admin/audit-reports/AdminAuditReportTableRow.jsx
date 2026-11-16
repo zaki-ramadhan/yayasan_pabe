@@ -1,6 +1,6 @@
 "use client";
 
-import { Download } from "lucide-react";
+import { DownloadIcon as Download } from "@solar-icons/react/line-duotone/download";
 import { formatRupiah, formatNumber, formatCompactRupiah } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";

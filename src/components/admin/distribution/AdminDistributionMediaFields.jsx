@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, Video } from "lucide-react";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
 import { ImageFallback } from "@/components/ui/ImageFallback";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { YouTubeIcon } from "@/components/icons/SocialIcons";

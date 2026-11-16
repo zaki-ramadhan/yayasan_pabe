@@ -1,6 +1,6 @@
 "use client";
 
-import { Users } from "lucide-react";
+import { UsersGroupTwoRoundedIcon as Users } from "@solar-icons/react/line-duotone/users-group-two-rounded";
 import { Button } from "@/components/ui/Button";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";

@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { SafeImage } from "@/components/ui/SafeImage";
-import { Camera, Video, MapPin } from "lucide-react";
+import { CameraIcon as Camera } from "@solar-icons/react/line-duotone/camera";
+import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
+import { MapPointIcon as MapPin } from "@solar-icons/react/line-duotone/map-point";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";

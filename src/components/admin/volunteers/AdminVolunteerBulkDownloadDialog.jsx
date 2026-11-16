@@ -2,7 +2,11 @@
 
 import { useState, useRef, useMemo } from "react";
 import JSZip from "jszip";
-import { Download, FileArchive, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { DownloadIcon as Download } from "@solar-icons/react/line-duotone/download";
+import { ArchiveIcon as FileArchive } from "@solar-icons/react/line-duotone/archive";
+import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone/check-circle";
+import { DangerCircleIcon as AlertCircle } from "@solar-icons/react/line-duotone/danger-circle";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import {
   Dialog,
   DialogContent,

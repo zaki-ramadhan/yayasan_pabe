@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { CheckCircle2, AlertTriangle, AlertOctagon } from "lucide-react";
+import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone/check-circle";
+import { DangerTriangleIcon as AlertTriangle } from "@solar-icons/react/line-duotone/danger-triangle";
+import { DangerIcon as AlertOctagon } from "@solar-icons/react/line-duotone/danger";
 import { formatRupiah } from "@/lib/formatters";
 import { calculateCampaignDisbursementBudget } from "@/lib/distributionConstants";
 import { cn } from "@/lib/utils";

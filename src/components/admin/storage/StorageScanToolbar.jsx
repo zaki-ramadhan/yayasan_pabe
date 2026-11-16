@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { ScanSearch } from "lucide-react";
+import { MinimalisticMagnifierIcon as ScanSearch } from "@solar-icons/react/line-duotone/minimalistic-magnifier";
 import { TableToolbar } from "@/components/ui/Table";
 import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import {

@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import {
-	ExternalLink,
-	MoreVertical,
-	Edit2,
-	Play,
-	Pause,
-	CheckCircle,
-} from "lucide-react";
+import { SquareArrowRightUpIcon as ExternalLink } from "@solar-icons/react/line-duotone/square-arrow-right-up";
+import { MenuDotsIcon as MoreVertical } from "@solar-icons/react/line-duotone/menu-dots";
+import { Pen2Icon as Edit2 } from "@solar-icons/react/line-duotone/pen-2";
+import { PlayIcon as Play } from "@solar-icons/react/line-duotone/play";
+import { PauseIcon as Pause } from "@solar-icons/react/line-duotone/pause";
+import { CheckCircleIcon as CheckCircle } from "@solar-icons/react/line-duotone/check-circle";
 import { formatRupiah, calculateDaysLeft } from "@/lib/formatters";
 import { getCampaignDetailHref } from "@/lib/zisFilter";
 import { Progress } from "@/components/ui/Progress";

@@ -1,6 +1,8 @@
 "use client";
 
-import { ChevronDown, Check, Loader2 } from "lucide-react";
+import { AltArrowDownIcon as ChevronDown } from "@solar-icons/react/line-duotone/alt-arrow-down";
+import { CheckReadIcon as Check } from "@solar-icons/react/line-duotone/check-read";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import {
   DropdownMenu,
   DropdownMenuTrigger,

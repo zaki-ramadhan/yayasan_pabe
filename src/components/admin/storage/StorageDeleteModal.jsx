@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { AlertTriangle, Trash2 } from "lucide-react";
+import { DangerTriangleIcon as AlertTriangle } from "@solar-icons/react/line-duotone/danger-triangle";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatBytes, formatDate } from "@/lib/formatters";
 

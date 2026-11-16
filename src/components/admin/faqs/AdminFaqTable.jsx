@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Trash2, Loader2 } from "lucide-react";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import {
   Table,
   TableContainer,

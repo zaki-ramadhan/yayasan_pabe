@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { FileCheck, Trash2, Edit2, Video } from "lucide-react";
+import { DocumentAddIcon as FileCheck } from "@solar-icons/react/line-duotone/document-add";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { Pen2Icon as Edit2 } from "@solar-icons/react/line-duotone/pen-2";
+import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
 import { ImageFallback } from "@/components/ui/ImageFallback";
 import { Button } from "@/components/ui/Button";
 import { isVideoUrl } from "@/lib/galleryGroupHelper";

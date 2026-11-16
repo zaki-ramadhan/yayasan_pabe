@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, AlertTriangle, AlertOctagon } from "lucide-react";
+import { SquareArrowRightUpIcon as ExternalLink } from "@solar-icons/react/line-duotone/square-arrow-right-up";
+import { DangerTriangleIcon as AlertTriangle } from "@solar-icons/react/line-duotone/danger-triangle";
+import { DangerIcon as AlertOctagon } from "@solar-icons/react/line-duotone/danger";
 import { Progress } from "@/components/ui/Progress";
 import { formatBytes } from "@/lib/formatters";
 import { R2_FREE_TIER_BYTES, calculateStorageHealth } from "@/lib/storageConstants";

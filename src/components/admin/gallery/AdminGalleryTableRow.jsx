@@ -1,6 +1,7 @@
 "use client";
 
-import { Video, Play } from "lucide-react";
+import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
+import { PlayIcon as Play } from "@solar-icons/react/line-duotone/play";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";

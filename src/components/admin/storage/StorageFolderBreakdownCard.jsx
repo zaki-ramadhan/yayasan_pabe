@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, Fragment } from "react";
-import { Folder, FolderOpen, ChevronRight, FileImage } from "lucide-react";
+import { FolderIcon as Folder } from "@solar-icons/react/line-duotone/folder";
+import { FolderOpenIcon as FolderOpen } from "@solar-icons/react/line-duotone/folder-open";
+import { AltArrowRightIcon as ChevronRight } from "@solar-icons/react/line-duotone/alt-arrow-right";
+import { GalleryIcon as FileImage } from "@solar-icons/react/line-duotone/gallery";
 import { formatBytes } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 

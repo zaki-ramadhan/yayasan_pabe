@@ -1,6 +1,7 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { AddCircleIcon as Plus } from "@solar-icons/react/line-duotone/add-circle";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { TableSelectionBar } from "@/components/ui/TableSelectionBar";

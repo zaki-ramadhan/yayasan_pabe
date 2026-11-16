@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Trash2, CheckCircle2, XCircle, Loader2, FileArchive } from "lucide-react";
+import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone/check-circle";
+import { CloseCircleIcon as XCircle } from "@solar-icons/react/line-duotone/close-circle";
+import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
+import { ArchiveIcon as FileArchive } from "@solar-icons/react/line-duotone/archive";
 import {
   Table,
   TableContainer,
