@@ -153,9 +153,9 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 										? "Tunaikan kewajiban zakat Anda dengan tepat sasaran melalui lembaga resmi Yayasan Payung Berkah:"
 										: "Mari bersama alirkan kepedulian untuk mendukung program kebaikan ini melalui Yayasan Payung Berkah:"
 								}
-								variant="button"
+								variant="icon"
 								align="end"
-								className="h-10.5 px-3 border-slate-300"
+								className="h-10.5 w-10.5 rounded-lg border border-slate-300 flex items-center justify-center text-slate-700 hover:bg-slate-50 shrink-0"
 							/>
 							<SidebarTourButton slug={campaign.slug} hasDonations={hasDonations} />
 						</div>

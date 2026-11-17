@@ -3,10 +3,7 @@ import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { getCampaignBySlug, getCampaignDonationStats } from "@/services/campaignService";
 import { calculateProgress, calculateDaysLeft } from "@/lib/formatters";
 import { getCampaignDetailHref, isZisCampaign } from "@/lib/zisFilter";
-import { CampaignMedia } from "@/components/campaign/CampaignMedia";
-import { CampaignDetailWrapper } from "@/components/campaign/CampaignDetailWrapper";
-import { CampaignSidebarDonate } from "@/components/campaign/CampaignSidebarDonate";
-import { CampaignStickyMobileBar } from "@/components/campaign/CampaignStickyMobileBar";
+import { CampaignDetailCoordinator } from "@/components/campaign/CampaignDetailCoordinator";
 
 /**
  * Membangun metadata OpenGraph/Twitter untuk halaman detail program donasi & ZIS.
@@ -90,28 +87,14 @@ export async function CampaignDetailPageView({ slug, enforceMode = null }) {
         ]}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-        <div className="lg:col-span-8 space-y-4">
-          <CampaignMedia bannerUrl={campaign.bannerUrl} title={campaign.title} />
-          <CampaignDetailWrapper
-            campaign={campaign}
-            progress={progress}
-            daysLeft={daysLeft}
-            donationStats={donationStats}
-            prayersCount={prayersCount}
-            hasDonations={hasDonations}
-          />
-        </div>
-
-        <CampaignSidebarDonate
-          campaign={campaign}
-          progress={progress}
-          daysLeft={daysLeft}
-          hasDonations={hasDonations}
-        />
-      </div>
-
-      <CampaignStickyMobileBar campaign={campaign} />
+      <CampaignDetailCoordinator
+        campaign={campaign}
+        progress={progress}
+        daysLeft={daysLeft}
+        donationStats={donationStats}
+        prayersCount={prayersCount}
+        hasDonations={hasDonations}
+      />
     </main>
   );
 }

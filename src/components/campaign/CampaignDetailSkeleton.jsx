@@ -124,7 +124,10 @@ export function CampaignDetailSkeleton() {
               </div>
             </div>
 
-            <Skeleton className="h-11 w-full rounded-lg" />
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-10.5 flex-1 rounded-lg" />
+              <Skeleton className="h-10.5 w-10.5 rounded-lg shrink-0" />
+            </div>
             <Skeleton className="h-3.5 w-44 mx-auto rounded" />
           </div>
 
