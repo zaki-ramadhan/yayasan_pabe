@@ -24,6 +24,7 @@ export const ORG_PROFILE = {
     whatsappAlt: "+62 812-8510-9476",
     email: "yayasanpayungberkah@gmail.com",
     officeHours: "Senin - Jumat, 08.00 - 17.00 WIB",
+    mapsUrl: "https://maps.app.goo.gl/Qk73gn71SdQXYs6f8",
   },
   customerServices: [
     {

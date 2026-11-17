@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
 import { NavLoginButton } from "./NavLoginButton";
-import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
+import { USER_ROLES } from "@/services/authService";
 import { cn } from "@/lib/utils";
 
 export function NavUserDropdown({ currentUser, onLogout, pathname }) {
@@ -39,7 +39,6 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
 
   const isDonor = currentUser.role === USER_ROLES.DONOR;
   const isStaff = !isDonor;
-  const roleLabel = ROLE_LABELS[currentUser.role] || currentUser.role || "Donatur";
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -125,14 +124,11 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
               <p className="font-medium text-sm text-slate-950 truncate leading-tight">
                 {currentUser.name}
               </p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-xs text-slate-500 truncate leading-tight">
-                  {currentUser.email || roleLabel}
-                </span>
-                <span className="text-[10px] font-medium px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 shrink-0">
-                  {roleLabel}
-                </span>
-              </div>
+              {currentUser.email && (
+                <p className="text-xs text-slate-500 truncate leading-tight mt-0.5">
+                  {currentUser.email}
+                </p>
+              )}
             </div>
           </div>
         </div>

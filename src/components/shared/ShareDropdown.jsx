@@ -98,7 +98,7 @@ export function ShareDropdown({
             )}
             aria-label={`Bagikan ${title}`}
           >
-            <ShareIcon className="w-4 h-4" />
+            <ShareIcon className="w-5 h-5 shrink-0" />
           </button>
         ) : (
           <Button
@@ -109,7 +109,7 @@ export function ShareDropdown({
               className
             )}
           >
-            <ShareIcon className="w-3.5 h-3.5 text-slate-500" />
+            <ShareIcon className="w-[18px] h-[18px] text-slate-500 shrink-0" />
             <span>Bagikan</span>
           </Button>
         )}

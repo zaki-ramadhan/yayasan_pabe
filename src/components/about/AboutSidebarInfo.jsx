@@ -135,10 +135,16 @@ export function AboutSidebarInfo({ orgSettings = null }) {
         </h3>
 
         <div className="space-y-3 text-sm text-slate-700">
-          <div className="flex items-start gap-2.5">
-            <MapPointIcon className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
-            <span className="leading-relaxed">{contacts.address}</span>
-          </div>
+          <a
+            href={contacts.mapsUrl || "https://maps.app.goo.gl/Qk73gn71SdQXYs6f8"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-start gap-2.5 text-slate-700 hover:text-emerald-800 transition-colors cursor-pointer"
+            aria-label="Buka lokasi di Google Maps"
+          >
+            <MapPointIcon className="w-4 h-4 text-slate-500 shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+            <span className="leading-relaxed group-hover:underline underline-offset-2">{contacts.address}</span>
+          </a>
 
           {contacts.phone && (
             <a

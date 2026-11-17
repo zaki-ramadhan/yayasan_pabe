@@ -8,6 +8,7 @@ import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
 import { SuperAdminNoticeBanner } from "@/components/admin/SuperAdminNoticeBanner";
 import { AdminSystemAlertBanner } from "@/components/admin/AdminSystemAlertBanner";
 import { getInitials } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 
 const ADMIN_PAGE_TITLES = {
   "/admin": "Dashboard Utama",
@@ -35,6 +36,7 @@ export function AdminTopHeader({
   currentUser,
   onToggleSidebar,
   isSidebarExpanded = false,
+  isLiveConnected = false,
 }) {
   const pathname = usePathname();
   const userRole = currentUser?.role || USER_ROLES.SUPER_ADMIN;
@@ -81,8 +83,33 @@ export function AdminTopHeader({
         </h1>
       </div>
 
-      {/* Right: Clean User Info & Avatar */}
-      <div className="flex items-center gap-2.5 shrink-0">
+      {/* Right: Live Status, Clean User Info & Avatar */}
+      <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+        <div
+          className={cn(
+            "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border select-none transition-colors",
+            isLiveConnected
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200/70"
+              : "bg-amber-50 text-amber-700 border-amber-200/70"
+          )}
+          title={isLiveConnected ? "Terhubung ke Live Feed Server Yayasan" : "Menyambungkan ulang ke server..."}
+        >
+          <span className="relative flex h-2 w-2">
+            {isLiveConnected && (
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            )}
+            <span
+              className={cn(
+                "relative inline-flex rounded-full h-2 w-2",
+                isLiveConnected ? "bg-emerald-500" : "bg-amber-400 animate-pulse"
+              )}
+            />
+          </span>
+          <span className="text-[11px] leading-none">
+            {isLiveConnected ? "Live" : "Menyambung..."}
+          </span>
+        </div>
+
         <div className="text-right hidden sm:block">
           <span className="text-sm font-medium text-slate-900 block leading-tight">
             {currentUser?.name || "Administrator"}

@@ -16,8 +16,13 @@ export function AdminLayoutClient({ children, initialUser }) {
   const [currentUser, setCurrentUser] = useState(initialUser || null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Background SSE listener (headless, tanpa elemen visual pill di UI)
-  useAdminLiveFeed({ enabled: Boolean(currentUser) });
+  // Background SSE listener live feed dengan auto-refresh router untuk server component
+  const { isConnected } = useAdminLiveFeed({
+    enabled: Boolean(currentUser),
+    onEvent: () => {
+      router.refresh();
+    },
+  });
 
   // Tampilkan toast notifikasi sambutan setelah login berhasil
   useEffect(() => {
@@ -190,6 +195,7 @@ export function AdminLayoutClient({ children, initialUser }) {
           currentUser={currentUser}
           onToggleSidebar={handleToggleSidebar}
           isSidebarExpanded={true}
+          isLiveConnected={isConnected}
         />
         <main className="px-4 sm:px-6 lg:px-8 pt-3.5 sm:pt-4.5 lg:pt-5 pb-6 sm:pb-8 flex-1 w-full max-w-7xl mx-auto space-y-5">
           {children}

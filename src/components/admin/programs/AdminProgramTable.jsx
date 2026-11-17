@@ -119,6 +119,19 @@ export function AdminProgramTable({
     }
   });
 
+  // Live SSE: Sinkronisasi data saat ada program dibuat, diubah, atau dihapus oleh sesama pengurus
+  useAdminLiveEvent("PROGRAM_MUTATED", () => {
+    safeFetch(`/api/admin/programs?limit=100&mode=${encodeURIComponent(mode)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data) {
+          setCampaigns(data.data);
+          setError(null);
+        }
+      })
+      .catch(() => {});
+  });
+
   const filterCategoryOptions = useMemo(() => {
     if (mode === "zis") {
       return [

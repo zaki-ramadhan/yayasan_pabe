@@ -26,7 +26,7 @@ export function FooterContactInfo({
       </h4>
       <div className="space-y-2.5 text-sm text-slate-200">
         <a
-          href={`https://maps.google.com/?q=${encodeURIComponent(contacts.address)}`}
+          href={contacts.mapsUrl || "https://maps.app.goo.gl/Qk73gn71SdQXYs6f8"}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-start gap-2 text-slate-200 hover:text-white transition-colors group cursor-pointer"
