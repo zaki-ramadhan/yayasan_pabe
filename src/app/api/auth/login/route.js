@@ -74,7 +74,7 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Akun pengurus ini tidak memiliki hak akses login ke sistem.",
+          message: "Akun Anda belum memiliki izin untuk mengakses halaman pengurus.",
         },
         { status: 403 }
       );
@@ -227,7 +227,7 @@ export async function POST(request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Terjadi kesalahan pada server saat memproses login.",
+        message: "Gagal memproses masuk ke akun. Silakan coba beberapa saat lagi.",
       },
       { status: 500 }
     );

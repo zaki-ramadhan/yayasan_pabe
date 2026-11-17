@@ -203,7 +203,7 @@ export async function POST(request) {
     return NextResponse.json(
       {
         success: false,
-        message: "Terjadi kesalahan pada server saat memproses pendaftaran.",
+        message: "Gagal memproses pendaftaran akun. Silakan coba beberapa saat lagi.",
       },
       { status: 500 }
     );

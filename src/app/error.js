@@ -16,8 +16,8 @@ export default function GlobalRouteError({ error, reset }) {
     <ErrorStandaloneLayout>
       <ErrorView
         statusCode={500}
-        title="Terjadi Kendala Sistem"
-        description="Layanan kami sedang mengalami gangguan teknis sementara. Silakan coba muat ulang halaman ini untuk memulihkan sesi Anda."
+        title="Halaman Sedang Mengalami Kendala"
+        description="Terjadi gangguan sementara saat memuat halaman ini. Silakan coba muat ulang atau kembali beberapa saat lagi."
         primaryAction={
           <Button
             type="button"

@@ -10,7 +10,7 @@ export default function GlobalError({ reset }) {
           <div className="relative w-full max-w-[460px] sm:max-w-[540px] mb-3 sm:mb-4 flex justify-center">
             <Image
               src="/img/illustrations/error-500.svg?v=2"
-              alt="Ilustrasi kendala sistem fatal"
+              alt="Ilustrasi halaman mengalami kendala"
               width={540}
               height={215}
               className="w-full h-auto object-contain select-none"
@@ -20,11 +20,11 @@ export default function GlobalError({ reset }) {
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight mb-2 sm:mb-3">
-            Terjadi Kendala Sistem
+            Halaman Tidak Dapat Dimuat
           </h1>
 
           <p className="text-sm sm:text-base text-slate-600 max-w-md mx-auto mb-6 sm:mb-7 leading-relaxed">
-            Aplikasi mengalami kendala mendasar saat memuat tata letak. Silakan coba muat ulang halaman.
+            Terjadi kendala saat memuat tampilan halaman. Silakan coba muat ulang peramban Anda.
           </p>
 
           <button

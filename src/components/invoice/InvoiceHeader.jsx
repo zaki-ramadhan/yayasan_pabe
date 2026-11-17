@@ -19,10 +19,10 @@ export function InvoiceHeader({ initialUser = null }) {
     try {
       const res = await logoutUser();
       if (!res?.success) {
-        toast.error("Gagal mengakhiri sesi server, sesi lokal telah dibersihkan.");
+        toast.info("Sesi pada perangkat ini telah dibersihkan.");
       }
     } catch {
-      toast.error("Terjadi kendala saat keluar.");
+      toast.info("Sesi pada perangkat ini telah dibersihkan.");
     }
     if (typeof window !== "undefined") {
       window.location.replace("/login?loggedOut=true");

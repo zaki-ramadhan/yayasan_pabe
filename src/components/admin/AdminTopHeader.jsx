@@ -2,11 +2,20 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { SidebarMinimalisticIcon } from "@solar-icons/react/line-duotone/sidebar-minimalistic";
-import { ROLE_LABELS, USER_ROLES } from "@/services/authService";
+import { Logout2Icon } from "@solar-icons/react/line-duotone/logout-2";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/DropdownMenu";
+import { ROLE_LABELS, USER_ROLES, logoutUser } from "@/services/authService";
 import { SuperAdminNoticeBanner } from "@/components/admin/SuperAdminNoticeBanner";
 import { AdminSystemAlertBanner } from "@/components/admin/AdminSystemAlertBanner";
+import { toast } from "@/hooks/useToast";
 import { getInitials } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 
@@ -39,9 +48,27 @@ export function AdminTopHeader({
   isLiveConnected = false,
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const userRole = currentUser?.role || USER_ROLES.SUPER_ADMIN;
   const isSuperAdmin = userRole === USER_ROLES.SUPER_ADMIN;
   const [imgError, setImgError] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      const res = await logoutUser();
+      if (!res?.success) {
+        toast.info("Sesi pada perangkat ini telah dibersihkan.");
+      }
+    } catch {
+      toast.info("Sesi pada perangkat ini telah dibersihkan.");
+    }
+    if (typeof window !== "undefined") {
+      window.location.replace("/login?loggedOut=true");
+    } else {
+      router.push("/login?loggedOut=true");
+    }
+  };
 
   const pageTitle = useMemo(() => {
     if (!pathname) return "Panel Admin";
@@ -90,7 +117,7 @@ export function AdminTopHeader({
               ? "bg-emerald-50 text-emerald-700 border-emerald-200/70"
               : "bg-amber-50 text-amber-700 border-amber-200/70"
           )}
-          title={isLiveConnected ? "Terhubung ke Live Feed Server Yayasan" : "Menyambungkan ulang ke server..."}
+          title={isLiveConnected ? "Terhubung ke pembaruan data langsung" : "Menghubungkan ulang..."}
         >
           <span className="relative flex h-2 w-2">
             {isLiveConnected && (
@@ -119,24 +146,55 @@ export function AdminTopHeader({
           </span>
         </div>
 
-        <div
-          className="relative w-9 h-9 rounded-full overflow-hidden bg-slate-100 border border-slate-200 text-xs font-medium text-slate-800 flex items-center justify-center shadow-2xs shrink-0 select-none"
-        >
-          {avatarUrl ? (
-            <Image
-              src={avatarUrl}
-              alt={currentUser?.name || "Avatar"}
-              fill
-              sizes="36px"
-              unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <span>{fallbackInitial}</span>
-          )}
-        </div>
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className={cn(
+                "relative w-9 h-9 rounded-full overflow-hidden bg-slate-100 border border-slate-200 text-xs font-medium text-slate-800 flex items-center justify-center shadow-2xs shrink-0 select-none cursor-pointer transition-all hover:ring-2 hover:ring-slate-300/60 focus:outline-none",
+                isDropdownOpen && "ring-2 ring-primary/20 border-primary/40"
+              )}
+              aria-label="Menu akun pengurus"
+            >
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt={currentUser?.name || "Avatar"}
+                  fill
+                  sizes="36px"
+                  unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <span>{fallbackInitial}</span>
+              )}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-lg">
+            <div className="px-2.5 py-2">
+              <p className="text-sm font-semibold text-slate-900 truncate leading-tight">
+                {currentUser?.name || "Administrator"}
+              </p>
+              {currentUser?.email && (
+                <p className="text-xs text-slate-500 truncate leading-tight mt-0.5">
+                  {currentUser.email}
+                </p>
+              )}
+            </div>
+
+            <DropdownMenuSeparator className="my-1 border-slate-100" />
+
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-normal text-rose-600 hover:text-rose-700 hover:bg-rose-50 cursor-pointer focus:bg-rose-50 focus:text-rose-700 transition-colors"
+            >
+              <Logout2Icon className="w-4.5 h-4.5 text-rose-500 shrink-0" />
+              <span className="flex-1 font-normal">Keluar</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
     </div>

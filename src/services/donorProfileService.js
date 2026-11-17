@@ -72,7 +72,7 @@ export async function getDonorProfile({ userEmail, userId }) {
     }
 
     if (!user) {
-      throw new Error("Pengguna tidak ditemukan di database.");
+      throw new Error("Akun pengguna tidak ditemukan.");
     }
 
     return {
