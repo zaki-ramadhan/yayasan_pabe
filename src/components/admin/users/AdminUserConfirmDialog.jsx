@@ -71,15 +71,15 @@ export function AdminUserConfirmDialog({
       <p className="text-xs text-slate-500 leading-relaxed">
         {isDelete ? (
           <>
-            Tindakan ini <strong className="text-slate-700 font-semibold">permanen</strong> dan akan menghapus akses staf terkait dari sistem.
+            Tindakan ini <strong className="text-slate-700 font-semibold">permanen</strong> dan akan menghapus akun pengurus ini.
           </>
         ) : isSuspend && isActive ? (
           <>
-            Akun pengurus akan <strong className="text-slate-700 font-semibold">dinonaktifkan sementara</strong> dan tidak dapat masuk ke sistem.
+            Akun pengurus akan <strong className="text-slate-700 font-semibold">dinonaktifkan sementara</strong> dan tidak dapat masuk ke panel pengurus.
           </>
         ) : (
           <>
-            Akun pengurus akan <strong className="text-slate-700 font-semibold">diaktifkan kembali</strong> dan dapat masuk ke panel sistem.
+            Akun pengurus akan <strong className="text-slate-700 font-semibold">diaktifkan kembali</strong> dan dapat masuk kembali ke panel pengurus.
           </>
         )}
       </p>

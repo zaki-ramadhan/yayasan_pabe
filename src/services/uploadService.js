@@ -120,14 +120,14 @@ export async function uploadFileToServer({
           } else {
             reject(
               new Error(
-                result.message || `Gagal mengunggah berkas ke server (Kode: ${xhr.status}).`
+                result.message || "Gagal mengunggah berkas. Silakan coba beberapa saat lagi."
               )
             );
           }
         } catch {
           reject(
             new Error(
-              `Respon server tidak valid saat mengunggah berkas (Kode: ${xhr.status}).`
+              "Gagal memproses unggahan berkas. Silakan coba beberapa saat lagi."
             )
           );
         }
@@ -164,7 +164,7 @@ export async function uploadFileToServer({
   const result = await response.json();
 
   if (!response.ok || !result.success) {
-    throw new Error(result.message || "Gagal mengunggah berkas ke server.");
+    throw new Error(result.message || "Gagal mengunggah berkas. Silakan coba beberapa saat lagi.");
   }
 
   if (typeof onProgress === "function") {

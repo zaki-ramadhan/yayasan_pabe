@@ -139,8 +139,8 @@ export function useAdminStorage({ initialOverview = null }) {
     } catch {
       toast({
         variant: "destructive",
-        title: "Koneksi gagal",
-        description: "Gagal menghubungkan ke server untuk memindai berkas.",
+        title: "Koneksi terganggu",
+        description: "Gagal memindai berkas penyimpanan. Silakan coba beberapa saat lagi.",
       });
     } finally {
       setIsScanning(false);
@@ -217,8 +217,8 @@ export function useAdminStorage({ initialOverview = null }) {
     } catch {
       toast({
         variant: "destructive",
-        title: "Koneksi gagal",
-        description: "Gagal mengirim permintaan pembersihan ke server.",
+        title: "Koneksi terganggu",
+        description: "Gagal memproses pembersihan berkas. Silakan coba kembali.",
       });
     } finally {
       setIsDeleting(false);

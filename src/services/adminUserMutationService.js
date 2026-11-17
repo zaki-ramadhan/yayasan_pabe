@@ -78,7 +78,7 @@ export async function createAdminUser({
 
   if (hasLoginAccess && role === USER_ROLES.SUPER_ADMIN) {
     if (!actorUser?.email || !isInfrastructureEmail(actorUser.email)) {
-      throw new Error("Hanya Developer / Pemilik Sistem yang berwenang memberikan hak akses Super Admin.");
+      throw new Error("Hanya Super Admin utama yayasan yang berwenang memberikan hak akses Super Admin.");
     }
   }
 
@@ -105,7 +105,7 @@ export async function createAdminUser({
   });
 
   if (existing) {
-    throw new Error("Alamat email sudah terdaftar di sistem.");
+    throw new Error("Alamat email sudah terdaftar.");
   }
 
   const newUser = await prisma.user.create({
@@ -187,7 +187,7 @@ export async function updateAdminUser(id, payload, actorUser) {
 
   if (nextRole === USER_ROLES.SUPER_ADMIN && target.role !== USER_ROLES.SUPER_ADMIN) {
     if (!actorUser?.email || !isInfrastructureEmail(actorUser.email)) {
-      throw new Error("Hanya Developer / Pemilik Sistem yang berwenang menaikkan hak akses menjadi Super Admin.");
+      throw new Error("Hanya Super Admin utama yayasan yang berwenang menaikkan hak akses menjadi Super Admin.");
     }
   }
 

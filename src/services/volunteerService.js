@@ -210,7 +210,7 @@ export async function registerVolunteer({
     };
   } catch (error) {
     console.error("Prisma registerVolunteer error:", error.message);
-    throw new Error(error.message || "Gagal mendaftarkan relawan ke sistem. Silakan coba kembali.");
+    throw new Error(error.message || "Pendaftaran relawan belum berhasil dikirim. Silakan coba beberapa saat lagi.");
   }
 }
 

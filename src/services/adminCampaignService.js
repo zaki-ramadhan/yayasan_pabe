@@ -93,7 +93,7 @@ export async function getAdminCampaigns({
     console.error("Prisma getAdminCampaigns error:", error);
     return {
       items: [],
-      error: error.message || "Gagal memuat data program kampanye dari database.",
+      error: error.message || "Gagal memuat daftar program donasi.",
       pagination: {
         page,
         limit,

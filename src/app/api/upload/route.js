@@ -12,7 +12,7 @@ export async function POST(request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Layanan penyimpanan Cloudflare R2 belum dikonfigurasi di server.",
+          message: "Layanan penyimpanan berkas sedang dalam pemeliharaan.",
         },
         { status: 503 }
       );
@@ -175,7 +175,7 @@ export async function POST(request) {
             return NextResponse.json(
               {
                 success: false,
-                message: `Gagal mengunduh gambar dari tautan tersebut (Server merespons HTTP ${fetchRes.status} ${fetchRes.statusText}). Tautan mungkin kedaluwarsa atau diblokir oleh pemilik situs. Silakan unduh gambar ke komputer dan unggah langsung.`,
+                message: "Gagal mengambil gambar dari tautan tersebut. Tautan mungkin telah kedaluwarsa atau dibatasi oleh pemilik situs. Silakan simpan gambar ke perangkat Anda lalu unggah langsung.",
               },
               { status: 400 }
             );
@@ -276,7 +276,7 @@ export async function POST(request) {
     return NextResponse.json(
       {
         success: false,
-        message: error.message || "Gagal mengunggah berkas ke Cloudflare R2.",
+        message: error.message || "Gagal mengunggah berkas. Silakan coba beberapa saat lagi.",
       },
       { status: 400 }
     );
@@ -295,7 +295,7 @@ export async function DELETE(request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Layanan penyimpanan Cloudflare R2 belum dikonfigurasi di server.",
+          message: "Layanan penyimpanan berkas sedang dalam pemeliharaan.",
         },
         { status: 503 }
       );
@@ -359,7 +359,7 @@ export async function DELETE(request) {
     return NextResponse.json(
       {
         success: true,
-        message: `${validUrls.length} berkas berhasil dihapus dari Cloudflare R2.`,
+        message: `${validUrls.length} berkas berhasil dihapus dari penyimpanan.`,
         deletedCount: validUrls.length,
       },
       { status: 200 }
@@ -369,7 +369,7 @@ export async function DELETE(request) {
     return NextResponse.json(
       {
         success: false,
-        message: error.message || "Gagal menghapus berkas dari Cloudflare R2.",
+        message: error.message || "Gagal menghapus berkas. Silakan coba kembali.",
       },
       { status: 500 }
     );

@@ -6,6 +6,29 @@ import { DangerIcon as AlertOctagon } from "@solar-icons/react/line-duotone/dang
 import { cn } from "@/lib/utils";
 import { UploadProgressBar } from "@/components/ui/UploadProgressBar";
 
+function renderResponsiveHelperText(text) {
+  if (typeof text !== "string") return text;
+  const regex = /([•,]\s*Bisa\s+(?:tempel\s+via\s+)?Ctrl\s*\+\s*V(?:\s+untuk\s+paste)?)/gi;
+  if (!regex.test(text)) {
+    return text;
+  }
+  const parts = text.split(regex);
+  return (
+    <>
+      {parts.map((part, idx) => {
+        if (/Bisa\s+(?:tempel\s+via\s+)?Ctrl\s*\+\s*V/i.test(part)) {
+          return (
+            <span key={idx} className="hidden sm:inline">
+              {part}
+            </span>
+          );
+        }
+        return part;
+      })}
+    </>
+  );
+}
+
 /**
  * Sub-komponen visual kotak unggah seret & lepas (Drag and Drop) terstandarisasi.
  * Menjamin konsistensi tinggi, proporsi, radius sudut, dan token warna di seluruh modal admin.
@@ -40,7 +63,7 @@ export function FileUploadDropzone({
           Ruang penyimpanan hampir penuh (≥ 95%)
         </p>
         <p className="text-xs text-rose-600 mt-1 max-w-sm">
-          Unggah berkas baru ditangguhkan sementara demi keamanan sistem. Silakan hubungi pengelola penyimpanan untuk membersihkan berkas sampah.
+          Kapasitas penyimpanan hampir penuh. Pengunggahan berkas ditunda sementara hingga ruang penyimpanan dirapikan.
         </p>
       </div>
     );
@@ -90,7 +113,7 @@ export function FileUploadDropzone({
 
           {helperText && (
             <p className="text-xs text-slate-500 mt-1 max-w-sm leading-relaxed">
-              {helperText}
+              {renderResponsiveHelperText(helperText)}
             </p>
           )}
         </div>

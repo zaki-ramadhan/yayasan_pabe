@@ -265,7 +265,7 @@ export async function submitJobApplication(payload) {
 
   return {
     success: true,
-    message: "Lamaran pekerjaan berhasil dikirim ke sistem HRD yayasan.",
+    message: "Lamaran Anda berhasil dikirim. Tim kami akan segera meninjaunya.",
     data: {
       id: application.id,
       position: targetVacancy.title,

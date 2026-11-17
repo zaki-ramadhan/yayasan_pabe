@@ -266,7 +266,7 @@ export async function cleanupOrphanFiles(targetKeys = [], adminMeta = {}) {
     return {
       success: true,
       deletedCount: 0,
-      message: "Tidak ada berkas yang aman dihapus (seluruh berkas masih dirujuk oleh database).",
+      message: "Semua berkas masih digunakan aktif di aplikasi sehingga tidak dapat dihapus.",
     };
   }
 
