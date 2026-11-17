@@ -67,7 +67,14 @@ export function CampaignDonateSkeleton() {
               <Skeleton className="w-6 h-6 rounded-full" />
               <Skeleton className="h-5 w-56 rounded" />
             </div>
-            <Skeleton className="h-11 w-full rounded-lg" />
+            {/* Checkbox Hamba Allah */}
+            <div className="flex items-start gap-3 p-3.5 rounded-lg border border-slate-200 bg-slate-50">
+              <Skeleton className="w-4 h-4 rounded mt-0.5 shrink-0" />
+              <div className="space-y-1.5 flex-1">
+                <Skeleton className="h-4 w-48 rounded" />
+                <Skeleton className="h-3 w-40 rounded" />
+              </div>
+            </div>
             <Skeleton className="h-11 w-full rounded-lg" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Skeleton className="h-11 w-full rounded-lg" />

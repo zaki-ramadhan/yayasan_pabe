@@ -27,7 +27,7 @@ export function RoutineProgramPicker({
 
   return (
     <div id={isFirstIndex ? "tour-program-picker" : undefined} className="space-y-1.5">
-      <label className="text-sm font-semibold text-slate-800 block">
+      <label className="text-sm font-medium text-slate-800 block">
         Pilih program donasi
       </label>
       <Combobox

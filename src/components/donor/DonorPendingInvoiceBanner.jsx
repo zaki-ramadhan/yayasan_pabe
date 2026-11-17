@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ClockCircleIcon as Clock } from "@solar-icons/react/line-duotone/clock-circle";
-import { ArrowRightIcon as ArrowRight } from "@solar-icons/react/line-duotone/arrow-right";
+import { ArrowRightUpIcon as ArrowRightUp } from "@solar-icons/react/line-duotone/arrow-right-up";
 import { CloseIcon as X } from "@solar-icons/react/linear/close";
 import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { formatRupiah } from "@/lib/formatters";
@@ -142,7 +142,7 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
 
             <div className="space-y-1.5 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-md bg-white/15 border border-white/20 px-2.5 py-0.5 text-xs font-bold text-amber-200 shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 rounded-md bg-white/15 border border-white/20 px-2.5 py-0.5 text-xs font-semibold text-amber-200 shadow-2xs">
                   <Clock className="w-3.5 h-3.5 text-amber-300 shrink-0" />
                   <span>Sisa waktu: {timeLeft}</span>
                 </span>
@@ -153,7 +153,7 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
                 )}
               </div>
 
-              <p className="text-sm font-medium text-stone-200 leading-snug">
+              <p className="text-sm font-medium text-stone-200 leading-relaxed">
                 Ada donasi menunggu pembayaran sebesar{" "}
                 <span className="font-bold text-amber-300 underline decoration-amber-400/50 decoration-2 underline-offset-2">
                   {formatRupiah(activeInvoice.amount)}
@@ -195,10 +195,10 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
             <Link href={`/invoice/${activeInvoice.invoiceId}`}>
               <button
                 type="button"
-                className="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg text-xs font-bold text-stone-950 bg-gradient-to-b from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:brightness-95 transition-all shadow-xs cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg text-xs font-semibold text-stone-950 bg-gradient-to-b from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:brightness-95 transition-all shadow-xs cursor-pointer"
               >
                 <span>Lanjutkan pembayaran</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRightUp className="w-3.5 h-3.5" />
               </button>
             </Link>
           </div>

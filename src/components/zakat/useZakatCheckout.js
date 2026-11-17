@@ -176,6 +176,7 @@ export function useZakatCheckout({
           : targetCampaign?.title || currentZakat.label,
         campaignSlug: targetCampaign?.slug || "zakat",
         donationType: "ZAKAT",
+        zakatType: selectedTypeId,
         amount: Number(amount),
         paymentChannelId: selectedChannelId,
         donorName: rawName,
@@ -298,7 +299,7 @@ export function useZakatCheckout({
     if (!pendingInvoiceModal.invoice || isCancellingOldInvoice) return;
     try {
       setIsCancellingOldInvoice(true);
-      await safeFetch("/api/user/donations", {
+      const res = await safeFetch("/api/user/donations", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -306,10 +307,24 @@ export function useZakatCheckout({
           action: "cancel",
         }),
       });
+      const json = await res.json().catch(() => ({}));
+
+      // Jika donasi lama ternyata baru saja dibayar (PAID), arahkan ke invoice pembayarannya
+      if (!res.ok && json.message?.toLowerCase().includes("sudah terbayar")) {
+        toast.error("Tagihan lama ini telah terbayar. Mengalihkan ke kuitansi...");
+        setPendingInvoiceModal({ isOpen: false, invoice: null });
+        router.push(`/invoice/${pendingInvoiceModal.invoice.invoiceId}`);
+        return;
+      }
+
+      // Dalam semua skenario lain (batal berhasil, atau tagihan lama sudah otomatis kedaluwarsa):
+      // Tutup dialog konfirmasi dan langsung buat tagihan baru
       setPendingInvoiceModal({ isOpen: false, invoice: null });
       await executePayment();
     } catch {
-      toast.error("Gagal membatalkan tagihan lama. Silakan coba lagi.");
+      // Fallback defensif: tetap izinkan pembuatan tagihan baru agar muzakki tidak terjebak
+      setPendingInvoiceModal({ isOpen: false, invoice: null });
+      await executePayment();
     } finally {
       setIsCancellingOldInvoice(false);
     }

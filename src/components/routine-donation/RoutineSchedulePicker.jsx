@@ -38,7 +38,7 @@ export function RoutineSchedulePicker({ item, onChange, isFirstIndex = false }) 
   return (
     <div id={isFirstIndex ? "tour-schedule-frequency" : undefined} className="space-y-2">
       <div className="space-y-1.5">
-        <label className="text-sm font-semibold text-slate-800 block">
+        <label className="text-sm font-medium text-slate-800 block">
           Jadwal donasi rutin
         </label>
         <DropdownMenu modal={false}>

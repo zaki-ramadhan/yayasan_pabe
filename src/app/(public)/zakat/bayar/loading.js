@@ -14,16 +14,66 @@ export default function ZakatBayarLoading() {
 
       {/* Grid 2 Kolom Skeleton (7 Kolom Kiri & 5 Kolom Kanan) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        {/* Kolom Kiri: Input Muzakki & Kanal Bayar (7 Kolom) */}
+        {/* Kolom Kiri: Pemilih Jenis, Preset Nominal, Input Muzakki & Kanal Bayar (7 Kolom) */}
         <div className="lg:col-span-7 space-y-4">
-          {/* 1. Data Identitas Muzakki */}
+          {/* 1. Pemilih Jenis Zakat Skeleton */}
+          <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 pb-2 border-b border-slate-200">
+              <div className="space-y-1">
+                <Skeleton className="h-5 w-40 rounded" />
+                <Skeleton className="h-4 w-72 max-w-full rounded" />
+              </div>
+              <Skeleton className="h-4 w-32 rounded self-start sm:self-auto shrink-0" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                  key={`type-skel-${i}`}
+                  className="p-3.5 sm:p-4 rounded-lg border border-slate-200 flex flex-col justify-between min-h-[96px] space-y-2"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <Skeleton className="h-4.5 w-28 rounded" />
+                    <Skeleton className="w-4 h-4 rounded-full shrink-0" />
+                  </div>
+                  <div className="space-y-1.5 pt-0.5">
+                    <Skeleton className="h-3.5 w-full rounded" />
+                    <Skeleton className="h-3.5 w-4/5 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 2. Nominal Presets & Custom Input Skeleton */}
+          <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
+            <div className="space-y-1 pb-2 border-b border-slate-200">
+              <Skeleton className="h-5 w-36 rounded" />
+              <Skeleton className="h-4 w-60 rounded" />
+            </div>
+            {/* Grid 6 Tombol Preset */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Skeleton key={`preset-skel-${i}`} className="h-11 w-full rounded-lg" />
+              ))}
+            </div>
+            {/* Input Nominal Kustom */}
+            <Skeleton className="h-12 w-full rounded-lg" />
+          </div>
+
+          {/* 3. Data Identitas Muzakki Skeleton */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
             <div className="space-y-1 pb-2 border-b border-slate-200">
               <Skeleton className="h-5 w-44 rounded" />
               <Skeleton className="h-4 w-72 rounded" />
             </div>
             {/* Checkbox Hamba Allah */}
-            <Skeleton className="h-11 w-full rounded-lg" />
+            <div className="flex items-start gap-3 p-3.5 rounded-lg border border-slate-200 bg-slate-50">
+              <Skeleton className="w-4 h-4 rounded mt-0.5 shrink-0" />
+              <div className="space-y-1.5 flex-1">
+                <Skeleton className="h-4 w-48 rounded" />
+                <Skeleton className="h-3 w-40 rounded" />
+              </div>
+            </div>
             {/* Nama Lengkap */}
             <Skeleton className="h-11 w-full rounded-lg" />
             {/* Email & Kontak Telepon Grid */}
@@ -37,7 +87,7 @@ export default function ZakatBayarLoading() {
             <Skeleton className="h-20 w-full rounded-lg" />
           </div>
 
-          {/* 2. Kanal Pembayaran */}
+          {/* 4. Kanal Pembayaran Skeleton */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
             <div className="space-y-1">
               <Skeleton className="h-5 w-48 rounded" />

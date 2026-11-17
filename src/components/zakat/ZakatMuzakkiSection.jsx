@@ -3,7 +3,8 @@
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { Textarea } from "@/components/ui/Textarea";
-import { Checkbox } from "@/components/ui/Checkbox";
+import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
+import { LockIcon as Lock } from "@solar-icons/react/line-duotone/lock";
 import { cn } from "@/lib/utils";
 import { sanitizeName, sanitizePhone, sanitizeEmail, sanitizePrayer } from "@/lib/security";
 
@@ -41,39 +42,18 @@ export function ZakatMuzakkiSection({
         </p>
       </div>
 
-      {/* Opsi Hamba Allah */}
-      <div className="flex items-start gap-2.5 p-3 rounded-lg border border-slate-300 bg-slate-50">
-        <Checkbox
-          id="muzakki-anonymous"
-          checked={isAnonymous}
-          onCheckedChange={(checked) => {
-            setIsAnonymous(Boolean(checked));
-          }}
-          className="mt-0.5"
-        />
-        <div className="space-y-0.5">
-          <label
-            htmlFor="muzakki-anonymous"
-            className="text-sm font-medium text-slate-800 cursor-pointer select-none block"
-          >
-            Tunaikan sebagai Hamba Allah
-          </label>
-          <p className="text-xs text-slate-500">
-            Nama disamarkan pada rekap publik, nama asli tetap tercatat di kuitansi resmi.
-          </p>
-        </div>
-      </div>
+      {/* Checkbox Hamba Allah */}
+      <AnonymousCheckbox
+        id="muzakki-anonymous"
+        checked={isAnonymous}
+        onChange={setIsAnonymous}
+      />
 
-      {/* Nama Lengkap (Selalu diisi untuk kuitansi resmi) */}
+      {/* Nama lengkap */}
       <FormField
         label="Nama lengkap muzakki"
         required
         error={errors.muzakkiName}
-        hint={
-          isAnonymous
-            ? "Nama disamarkan pada rekap publik."
-            : "Nama lengkap sesuai KTP untuk penerbitan kuitansi zakat resmi."
-        }
       >
         <Input
           value={muzakkiName}
@@ -92,13 +72,8 @@ export function ZakatMuzakkiSection({
           label="Alamat email aktif"
           required
           error={errors.muzakkiEmail}
-          hint={
-            isEmailLocked
-              ? "Email terkunci sesuai akun login Anda. Kuitansi zakat & invoice dikirim ke sini."
-              : "Kuitansi zakat resmi dan invoice akan dikirim ke email ini."
-          }
         >
-          <div className={isEmailLocked ? "cursor-not-allowed" : ""}>
+          <div className={cn("relative", isEmailLocked && "cursor-not-allowed")}>
             <Input
               type="email"
               readOnly={isEmailLocked}
@@ -113,16 +88,23 @@ export function ZakatMuzakkiSection({
               placeholder="nama@email.com"
               className={cn(
                 "h-11 text-sm font-normal",
-                isEmailLocked && "bg-slate-100 text-slate-500 border-slate-300 focus:border-slate-300 focus:ring-0 hover:border-slate-300 pointer-events-none select-none shadow-none"
+                isEmailLocked && "bg-slate-100 text-slate-600 border-slate-300 pr-10 focus:border-slate-300 focus:ring-0 hover:border-slate-300 pointer-events-none select-none shadow-none"
               )}
             />
+            {isEmailLocked && (
+              <div
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                title="Email terkunci dari akun profil Anda"
+              >
+                <Lock className="w-4 h-4 text-slate-500" />
+              </div>
+            )}
           </div>
         </FormField>
 
         <FormField
-          label="Nomor telepon / kontak (opsional)"
+          label="Nomor telepon / WhatsApp (opsional)"
           error={errors.muzakkiPhone}
-          hint="Opsional, untuk koordinasi & konfirmasi darurat jika diperlukan."
         >
           <Input
             type="tel"
@@ -138,10 +120,10 @@ export function ZakatMuzakkiSection({
         </FormField>
       </div>
 
-      {/* NPWP / NIK untuk Pengurang Pajak */}
+      {/* NPWP / NIK */}
       <FormField
-        label="Nomor Pokok Wajib Pajak (NPWP / NIK)"
-        hint="Opsional. Diperlukan jika Anda memerlukan kuitansi zakat untuk pengurang pajak penghasilan pada SPT tahunan."
+        label="NPWP / NIK (opsional)"
+        hint="Untuk bukti pengurang pajak penghasilan SPT tahunan."
       >
         <Input
           value={muzakkiNpwp}
@@ -151,15 +133,12 @@ export function ZakatMuzakkiSection({
         />
       </FormField>
 
-      {/* Doa / Catatan Khusus */}
-      <FormField
-        label="Doa atau hajat kebaikan"
-        hint="Doa Anda akan diamini oleh pengurus yayasan dan para mustahik binaan."
-      >
+      {/* Doa muzakki */}
+      <FormField label="Doa atau pesan kebaikan (opsional)">
         <Textarea
           value={prayer}
           onChange={(e) => setPrayer(sanitizePrayer(e.target.value))}
-          placeholder="Tuliskan doa atau permohonan kebaikan (opsional)..."
+          placeholder="Tuliskan doa atau permohonan kebaikan Anda..."
           rows={3}
           className="text-sm font-normal resize-none"
         />
@@ -167,4 +146,3 @@ export function ZakatMuzakkiSection({
     </div>
   );
 }
-

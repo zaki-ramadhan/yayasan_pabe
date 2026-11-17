@@ -22,7 +22,7 @@ export function RoutineAutoDonationConfig({ item, onChange }) {
   return (
     <div className="space-y-4 pt-2 border-t border-slate-100 animate-in fade-in slide-in-from-top-1 duration-150">
       <div className="space-y-2">
-        <label className="text-sm font-semibold text-slate-800 block">
+        <label className="text-sm font-medium text-slate-800 block">
           Nominal donasi
         </label>
         <NominalGridPicker

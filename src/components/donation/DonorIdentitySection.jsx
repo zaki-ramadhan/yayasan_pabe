@@ -6,6 +6,7 @@ import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { CheckoutStepHeader } from "@/components/donation/CheckoutStepHeader";
+import { LockIcon as Lock } from "@solar-icons/react/line-duotone/lock";
 
 export function DonorIdentitySection({
   isAnonymous,
@@ -38,7 +39,7 @@ export function DonorIdentitySection({
         title={isZakat ? "Data muzakki & niat kebaikan" : "Data donatur & doa kebaikan"}
       />
 
-      {/* Anonim checkbox */}
+      {/* Checkbox Hamba Allah */}
       <AnonymousCheckbox
         checked={isAnonymous}
         onChange={(val) => {
@@ -46,18 +47,11 @@ export function DonorIdentitySection({
         }}
       />
 
-      {/* Nama Lengkap (Selalu diisi untuk keperluan kuitansi & audit resmi) */}
+      {/* Nama Lengkap */}
       <FormField
         label={isZakat ? "Nama lengkap muzakki" : "Nama lengkap"}
         required
         error={errors.donorName}
-        hint={
-          isAnonymous
-            ? "Nama disamarkan pada rekap publik & feed doa."
-            : isZakat
-            ? "Nama lengkap sesuai KTP untuk penerbitan kuitansi zakat resmi."
-            : "Nama lengkap Anda untuk penerbitan kuitansi resmi yayasan."
-        }
       >
         <Input
           type="text"
@@ -80,17 +74,8 @@ export function DonorIdentitySection({
           label="Alamat email aktif"
           required
           error={errors.donorEmail}
-          hint={
-            isEmailLocked
-              ? isZakat
-                ? "Email terkunci sesuai akun login Anda. Kuitansi zakat & invoice dikirim ke sini."
-                : "Email terkunci sesuai akun login Anda. Kuitansi donasi & invoice dikirim ke sini."
-              : isZakat
-              ? "Kuitansi zakat resmi dan invoice akan dikirim ke email ini."
-              : "Invoice dan kuitansi donasi digital resmi akan dikirim ke email ini."
-          }
         >
-          <div className={isEmailLocked ? "cursor-not-allowed" : ""}>
+          <div className={cn("relative", isEmailLocked && "cursor-not-allowed")}>
             <Input
               type="email"
               inputMode="email"
@@ -108,19 +93,26 @@ export function DonorIdentitySection({
                 }
               }}
               onBlur={() => setDonorEmail((prev) => prev.trim())}
-              placeholder="email@domain.com"
+              placeholder="nama@email.com"
               className={cn(
                 "h-11 text-sm font-normal",
-                isEmailLocked && "bg-slate-100 text-slate-500 border-slate-300 focus:border-slate-300 focus:ring-0 hover:border-slate-300 pointer-events-none select-none shadow-none"
+                isEmailLocked && "bg-slate-100 text-slate-600 border-slate-300 pr-10 focus:border-slate-300 focus:ring-0 hover:border-slate-300 pointer-events-none select-none shadow-none"
               )}
             />
+            {isEmailLocked && (
+              <div
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                title="Email terkunci dari akun profil Anda"
+              >
+                <Lock className="w-4 h-4 text-slate-500" />
+              </div>
+            )}
           </div>
         </FormField>
 
         <FormField
-          label="Nomor telepon / kontak (opsional)"
+          label="Nomor telepon / WhatsApp (opsional)"
           error={errors.donorPhone}
-          hint="Opsional, untuk koordinasi & konfirmasi darurat jika diperlukan."
         >
           <Input
             type="tel"
@@ -152,7 +144,7 @@ export function DonorIdentitySection({
           value={prayer}
           onChange={onPrayerChange}
           onBlur={() => setPrayer((prev) => prev.trim().replace(/\s+/g, " "))}
-          showInfo
+          showInfo={false}
         />
       </div>
     </div>

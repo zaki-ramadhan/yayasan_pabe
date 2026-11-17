@@ -20,7 +20,7 @@ export function PrayerTextarea({
   return (
     <div className="space-y-1.5 w-full">
       <div className="flex items-center justify-between">
-        <label htmlFor={id} className="text-sm font-semibold text-slate-800 block">
+        <label htmlFor={id} className="text-sm font-medium text-slate-800 block">
           Doa atau titipan harapan (opsional)
         </label>
         <span

@@ -16,7 +16,7 @@ export function RoutineWeeklyDayPicker({ item, onChange }) {
 
   return (
     <div className="space-y-2 pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
-      <label className="text-sm font-semibold text-slate-800 block">
+      <label className="text-sm font-medium text-slate-800 block">
         Pilih hari donasi rutin
       </label>
       <div className="grid grid-cols-3 gap-2 sm:gap-2.5">

@@ -21,9 +21,13 @@ export default function DonasiRutinLoading() {
           {/* Card: Data Donatur */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
             <Skeleton className="h-6 w-28 rounded" />
-            <div className="flex items-center gap-2">
-              <Skeleton className="w-4 h-4 rounded" />
-              <Skeleton className="h-4 w-48 rounded" />
+            {/* Checkbox Hamba Allah */}
+            <div className="flex items-start gap-3 p-3.5 rounded-lg border border-slate-200 bg-slate-50">
+              <Skeleton className="w-4 h-4 rounded mt-0.5 shrink-0" />
+              <div className="space-y-1.5 flex-1">
+                <Skeleton className="h-4 w-48 rounded" />
+                <Skeleton className="h-3 w-40 rounded" />
+              </div>
             </div>
             <div className="space-y-1.5">
               <Skeleton className="h-4 w-28 rounded" />

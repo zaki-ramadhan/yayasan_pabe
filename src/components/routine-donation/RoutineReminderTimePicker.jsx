@@ -15,7 +15,7 @@ export function RoutineReminderTimePicker({ item, onChange, isFirstIndex = false
       id={isFirstIndex ? "tour-schedule-time" : undefined}
       className="space-y-1.5 pt-2 border-t border-slate-100"
     >
-      <label className="text-sm font-semibold text-slate-800 block">
+      <label className="text-sm font-medium text-slate-800 block">
         Jam pengingat (WIB)
       </label>
       <TimeInput24Hour

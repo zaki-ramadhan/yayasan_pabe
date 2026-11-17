@@ -1,6 +1,7 @@
 "use client";
 
 import { useZakatCheckout, NOMINAL_PRESETS } from "./useZakatCheckout";
+import { ZakatTypeSelector } from "./ZakatTypeSelector";
 import { ZakatNiatCard } from "./ZakatNiatCard";
 import { ZakatMuzakkiSection } from "./ZakatMuzakkiSection";
 import { ZakatPaymentSummaryCard } from "./ZakatPaymentSummaryCard";
@@ -17,6 +18,7 @@ export function ZakatCheckoutForm({
 }) {
   const {
     selectedTypeId,
+    setSelectedTypeId,
     amount,
     isCustomMode,
     customAmountInput,
@@ -67,20 +69,26 @@ export function ZakatCheckoutForm({
       {/* Kolom Kiri: Pilihan Nominal (Non-Kalkulator), Form Input Muzakki & Kanal Bayar (7 Kolom) */}
       <div className="lg:col-span-7 space-y-4">
         {!isFromCalculator && (
-          <NominalPresetsPicker
-            presets={NOMINAL_PRESETS}
-            amount={amount}
-            isCustomMode={isCustomMode}
-            customAmountInput={customAmountInput}
-            onPresetClick={handlePresetClick}
-            onCustomModeClick={handleCustomModeClick}
-            onCustomInputChange={handleCustomInputChange}
-            onCustomInputBlur={handleCustomInputBlur}
-            channelLimits={channelLimits}
-            error={amountError}
-            isZakat={true}
-            step={null}
-          />
+          <>
+            <ZakatTypeSelector
+              selectedTypeId={selectedTypeId}
+              onSelectType={setSelectedTypeId}
+            />
+            <NominalPresetsPicker
+              presets={NOMINAL_PRESETS}
+              amount={amount}
+              isCustomMode={isCustomMode}
+              customAmountInput={customAmountInput}
+              onPresetClick={handlePresetClick}
+              onCustomModeClick={handleCustomModeClick}
+              onCustomInputChange={handleCustomInputChange}
+              onCustomInputBlur={handleCustomInputBlur}
+              channelLimits={channelLimits}
+              error={amountError}
+              isZakat={true}
+              step={null}
+            />
+          </>
         )}
 
         {/* 1. Data Identitas Muzakki */}

@@ -46,7 +46,7 @@ export function DonationCheckoutSummary({
                     {campaign.categoryName}
                   </RibbonBadge>
                 )}
-                <h3 className="text-sm sm:text-base font-semibold text-slate-950 line-clamp-2 leading-snug">
+                <h3 className="text-sm sm:text-base font-medium text-slate-950 line-clamp-2 leading-snug">
                   {campaign.title}
                 </h3>
               </div>

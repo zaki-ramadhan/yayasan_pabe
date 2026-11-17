@@ -26,7 +26,7 @@ export function RoutineMonthlyDatePicker({ item, onChange }) {
 
   return (
     <div className="space-y-2 pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
-      <label className="text-sm font-semibold text-slate-800 block">
+      <label className="text-sm font-medium text-slate-800 block">
         Pilih tanggal donasi rutin
       </label>
       <Popover>

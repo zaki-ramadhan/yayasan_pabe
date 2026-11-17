@@ -9,6 +9,7 @@ import { formatRupiah, formatDate } from "@/lib/formatters";
 import { DashedDivider } from "@/components/ui/DashedDivider";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 import { getTransactionVocabulary } from "@/lib/zisFilter";
+import { getZakatTypeLabel } from "@/constants/zakatTypes";
 
 /**
  * Physical receipt / bill card presentation for donation invoices
@@ -171,6 +172,15 @@ export function InvoiceReceiptCard({
                 </p>
               </div>
             </div>
+
+            {vocab.kind === "ZAKAT" && donation.zakatType && (
+              <div className="flex justify-between gap-3 text-slate-600 pt-1">
+                <span className="shrink-0">Jenis Zakat</span>
+                <span className="font-semibold text-slate-900 text-right">
+                  {getZakatTypeLabel(donation.zakatType)}
+                </span>
+              </div>
+            )}
 
             <div className="flex justify-between gap-3 text-slate-600 pt-1">
               <span className="shrink-0">{vocab.partyLabel}</span>

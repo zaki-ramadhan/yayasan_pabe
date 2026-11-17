@@ -82,3 +82,15 @@ export const ZAKAT_NOMINAL_PRESETS = [
   5000000,
 ];
 
+/**
+ * Mengambil nama label resmi dari ID tipe zakat
+ * @param {string} typeId
+ * @returns {string}
+ */
+export function getZakatTypeLabel(typeId) {
+  if (!typeId) return "Zakat";
+  const found = ZAKAT_TYPES.find((t) => t.id === typeId);
+  return found?.label || "Zakat";
+}
+
+
