@@ -3,14 +3,12 @@ import prisma from "@/lib/prisma";
 import { cleanupStaleRejectedResumes } from "@/services/adminStorageService";
 import { deleteMultipleFromR2, isR2Configured } from "@/lib/r2Storage";
 
-// Mock R2 Storage
 vi.mock("@/lib/r2Storage", () => ({
   listR2Objects: vi.fn(),
   deleteMultipleFromR2: vi.fn().mockResolvedValue({ success: true, deletedCount: 2, errors: [] }),
   isR2Configured: vi.fn().mockReturnValue(true),
 }));
 
-// Mock Prisma
 vi.mock("@/lib/prisma", () => {
   return {
     default: {

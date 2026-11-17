@@ -90,7 +90,6 @@ describe("Invoice & Kuitansi Security & Ownership Verification", () => {
         donorPhone: "081214772370",
       });
 
-      // User login menggunakan nomor format internasional 62812...
       const loggedInOwnerByPhone = {
         id: "usr-002",
         email: "burhan.personal@example.com",
@@ -145,7 +144,6 @@ describe("Invoice & Kuitansi Security & Ownership Verification", () => {
 
       expect(result).not.toBeNull();
       expect(result.isAuthorized).toBe(false);
-      // Data sensitif donasi tidak boleh diekspos jika tidak terotorisasi
       expect(result.amount).toBeUndefined();
       expect(result.campaign).toBeUndefined();
     });

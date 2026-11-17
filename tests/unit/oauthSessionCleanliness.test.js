@@ -71,7 +71,6 @@ describe("OAuth Session Cleanliness and Client-Side Cookie Guards", () => {
     const stored = getStoredUser();
     expect(stored).not.toBeNull();
     expect(stored.email).toBe("zakiram4dhan.2@gmail.com");
-    // Ensure getStoredUser did NOT tamper with document.cookie
     expect(globalThis.document.cookie).toBe("");
   });
   it("synchronously sets both pabe_session and pabe_role cookies during loginUser for Incognito resilience", () => {
@@ -99,15 +98,12 @@ describe("OAuth Session Cleanliness and Client-Side Cookie Guards", () => {
       expiresAt: Date.now() + 86400000,
     };
 
-    // 1. Initial login sets pabe_just_logged_in
     loginUser(dummyUser);
     expect(globalThis.sessionStorage.getItem("pabe_just_logged_in")).toBe("Zaki Ramadhan");
 
-    // Clear after banner displayed
     globalThis.sessionStorage.removeItem("pabe_just_logged_in");
     expect(globalThis.sessionStorage.getItem("pabe_just_logged_in")).toBeNull();
 
-    // 2. Profile update (e.g. syncing phone during volunteer registration) must NOT re-trigger login banner
     updateStoredUser({ phone: "081234567890" });
     expect(globalThis.sessionStorage.getItem("pabe_just_logged_in")).toBeNull();
 

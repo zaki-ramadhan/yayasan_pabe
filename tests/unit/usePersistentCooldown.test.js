@@ -43,11 +43,9 @@ describe("usePersistentCooldown Storage Helpers Unit Tests", () => {
 
     expect(getRemainingCooldownSeconds(TEST_KEY)).toBe(60);
 
-    // Maju 15 detik
     vi.advanceTimersByTime(15000);
     expect(getRemainingCooldownSeconds(TEST_KEY)).toBe(45);
 
-    // Maju 45 detik lagi (total 60 detik)
     vi.advanceTimersByTime(45000);
     expect(getRemainingCooldownSeconds(TEST_KEY)).toBe(0);
   });

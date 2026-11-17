@@ -135,7 +135,6 @@ describe("Applicant Email Notifications (Approval, Shortlist & Rejection)", () =
         .spyOn(emailService, "sendVolunteerApprovedEmail")
         .mockResolvedValue({ success: true });
 
-      // Transisi 1: PENDING -> APPROVED
       vi.spyOn(prisma.volunteer, "findUnique").mockResolvedValueOnce({
         id: "vol-flip-1",
         fullName: "Burhanuddin",
@@ -154,7 +153,6 @@ describe("Applicant Email Notifications (Approval, Shortlist & Rejection)", () =
       await updateVolunteerStatus("vol-flip-1", "APPROVED");
       expect(sendApprovalSpy).toHaveBeenCalledTimes(1);
 
-      // Transisi 2: PENDING -> APPROVED lagi (admin bolak-balik ubah status)
       vi.spyOn(prisma.volunteer, "findUnique").mockResolvedValueOnce({
         id: "vol-flip-1",
         fullName: "Burhanuddin",
@@ -171,7 +169,6 @@ describe("Applicant Email Notifications (Approval, Shortlist & Rejection)", () =
       });
 
       await updateVolunteerStatus("vol-flip-1", "APPROVED");
-      // Harus tetap 1 kali saja, email kedua di-suppress oleh cooldown guard
       expect(sendApprovalSpy).toHaveBeenCalledTimes(1);
     });
 

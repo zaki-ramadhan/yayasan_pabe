@@ -47,7 +47,6 @@ describe("Cryptographic Session Token Security (HMAC-SHA256)", () => {
     });
 
     const [payloadB64, signature] = token.split(".");
-    // Manipulasi payload agar menjadi SUPER_ADMIN
     const tamperedPayload = Buffer.from(
       JSON.stringify({
         id: "usr_donor_1",
@@ -75,7 +74,6 @@ describe("Cryptographic Session Token Security (HMAC-SHA256)", () => {
   });
 
   it("menolak token yang telah kedaluwarsa", () => {
-    // Buat token dengan waktu kedaluwarsa di masa lalu (-10 detik)
     vi.useFakeTimers();
     const token = createSignedSessionToken(
       {
@@ -85,7 +83,6 @@ describe("Cryptographic Session Token Security (HMAC-SHA256)", () => {
       10 // 10 detik
     );
 
-    // Majukan waktu 15 detik
     vi.advanceTimersByTime(15000);
 
     const result = verifySessionToken(token);

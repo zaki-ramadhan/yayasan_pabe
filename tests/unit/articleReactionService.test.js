@@ -83,27 +83,22 @@ describe("Article Reaction Service (updateArticleReaction - Atomic Transitions)"
   });
 
   it("mencegah penggelembungan angka saat like dan dislike ditukar bolak-balik berulang kali", async () => {
-    // Pengguna mulai dengan Like (10 -> 11)
     let res = await updateArticleReaction(mockArticle.slug, "like");
     expect(res.likeCount).toBe(11);
     expect(res.dislikeCount).toBe(2);
 
-    // Pengguna ganti ke Dislike di halaman detail (11 -> 10, 2 -> 3)
     res = await updateArticleReaction(mockArticle.slug, "like_to_dislike");
     expect(res.likeCount).toBe(10);
     expect(res.dislikeCount).toBe(3);
 
-    // Pengguna kembali ke katalog dan klik Like lagi (10 -> 11, 3 -> 2)
     res = await updateArticleReaction(mockArticle.slug, "dislike_to_like");
     expect(res.likeCount).toBe(11);
     expect(res.dislikeCount).toBe(2);
 
-    // Pengguna masuk lagi ke detail dan klik Dislike lagi (11 -> 10, 2 -> 3)
     res = await updateArticleReaction(mockArticle.slug, "like_to_dislike");
     expect(res.likeCount).toBe(10);
     expect(res.dislikeCount).toBe(3);
 
-    // Setelah 2 kali bolak-balik, nilainya tetap konsisten dan tidak menggelembung
     expect(res.likeCount).toBe(10);
     expect(res.dislikeCount).toBe(3);
   });

@@ -117,7 +117,6 @@ describe("zisFilter SSOT helpers", () => {
   it("menghasilkan kosakata Islam dan filantropi yang tepat untuk Zakat, Infaq, Sedekah, Wakaf, dan Donasi", async () => {
     const { getTransactionVocabulary } = await import("@/lib/zisFilter");
 
-    // 1. Zakat
     const zakatVocab = getTransactionVocabulary({
       donationType: "ZAKAT",
       programTitle: "Zakat Penghasilan",
@@ -131,7 +130,6 @@ describe("zisFilter SSOT helpers", () => {
     expect(zakatVocab.buttonText).toBe("Buka Bukti Setor Zakat");
     expect(zakatVocab.closingDoa).toContain("penyuci lahir dan batin");
 
-    // 2. Infaq
     const infaqVocab = getTransactionVocabulary({
       donationType: "INFAQ",
       programTitle: "Infaq Pendidikan Santri",
@@ -142,7 +140,6 @@ describe("zisFilter SSOT helpers", () => {
     expect(infaqVocab.partyLabel).toBe("Nama Munfiq");
     expect(infaqVocab.programLabel).toBe("Program Infaq");
 
-    // 3. Sedekah
     const sedekahVocab = getTransactionVocabulary({
       donationType: "INFAK_SUBUH",
       programTitle: "Sedekah Subuh Berkah",
@@ -152,7 +149,6 @@ describe("zisFilter SSOT helpers", () => {
     expect(sedekahVocab.subjectPrefix).toBe("Bukti Sedekah Sah");
     expect(sedekahVocab.nominalLabel).toBe("Nominal Sedekah");
 
-    // 4. Wakaf
     const wakafVocab = getTransactionVocabulary({
       donationType: "WAKAF",
       programTitle: "Wakaf Sumur Bor",
@@ -163,7 +159,6 @@ describe("zisFilter SSOT helpers", () => {
     expect(wakafVocab.partyLabel).toBe("Nama Wakif");
     expect(wakafVocab.closingDoa).toContain("amal jariyah");
 
-    // 5. Donasi Umum
     const donasiVocab = getTransactionVocabulary({
       donationType: "CAMPAIGN",
       programTitle: "Bantuan Kemanusiaan Gempa",
@@ -177,7 +172,6 @@ describe("zisFilter SSOT helpers", () => {
   it("membangun teks share WhatsApp resmi yang kaya, memuat tautan program dan ajakan kebaikan", async () => {
     const { buildDonationShareText } = await import("@/lib/zisFilter");
 
-    // Share zakat
     const zakatShare = buildDonationShareText(
       {
         donationType: "ZAKAT",
@@ -190,7 +184,6 @@ describe("zisFilter SSOT helpers", () => {
     expect(zakatShare).toContain('untuk "Zakat Maal Peduli Dhuafa"');
     expect(zakatShare).toContain("https://yayasanpayungberkah.org/zis/zakat-maal");
 
-    // Share program umum
     const donasiShare = buildDonationShareText(
       {
         donationType: "CAMPAIGN",

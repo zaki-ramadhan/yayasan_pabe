@@ -24,7 +24,6 @@ function createMockRequest({
     body: body ? JSON.stringify(body) : null,
   });
 
-  // Mock cookies getter
   req.cookies = {
     get: (name) => (cookies[name] ? { value: cookies[name] } : undefined),
   };
@@ -51,7 +50,6 @@ describe("Strict Security Audit: Rate Limiting & Abuse Prevention", () => {
     const ip = "192.168.1.50";
     const attackPayload = { identifier: "target_user", password: "wrong_password_123" };
 
-    // Kirim 10 request (kuota maksimum per menit)
     for (let i = 0; i < 10; i++) {
       const req = createMockRequest({
         url: "http://localhost:3000/api/auth/login",
@@ -63,7 +61,6 @@ describe("Strict Security Audit: Rate Limiting & Abuse Prevention", () => {
       expect(res.status).not.toBe(429);
     }
 
-    // Request ke-11 harus diblokir dengan HTTP 429 Too Many Requests
     const blockedReq = createMockRequest({
       url: "http://localhost:3000/api/auth/login",
       method: "POST",
@@ -100,7 +97,6 @@ describe("Strict Security Audit: Rate Limiting & Abuse Prevention", () => {
       expect(res.status).not.toBe(429);
     }
 
-    // Request ke-21 harus diblokir
     const blockedReq = createMockRequest({
       url: "http://localhost:3000/api/donations",
       method: "POST",
@@ -196,6 +192,5 @@ describe("Strict Security Audit: Validasi Anomali Payload & SQL Injection Probe"
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.success).toBe(true);
-    // Tidak boleh mengembalikan seluruh donasi lintas campaign karena query terlindungi parameterized Prisma/fallback
   });
 });

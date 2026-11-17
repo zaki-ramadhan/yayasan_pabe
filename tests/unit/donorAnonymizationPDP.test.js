@@ -3,7 +3,6 @@ import prisma from "@/lib/prisma";
 import { anonymizeDonorAccount } from "@/services/donorProfileService";
 import * as r2Storage from "@/lib/r2Storage";
 
-// Mock Prisma
 vi.mock("@/lib/prisma", () => {
   const mockUser = {
     findFirst: vi.fn(),
@@ -64,7 +63,6 @@ vi.mock("@/lib/prisma", () => {
   };
 });
 
-// Mock r2Storage
 vi.mock("@/lib/r2Storage", () => ({
   deleteFromR2: vi.fn().mockResolvedValue(true),
 }));
@@ -92,10 +90,8 @@ describe("UU Pelindungan Data Pribadi (UU PDP No. 27/2022) - Donor Account Anony
 
     expect(result.success).toBe(true);
 
-    // Memverifikasi penghapusan avatar dari Cloudflare R2
     expect(r2Storage.deleteFromR2).toHaveBeenCalledWith("/api/media/users/avatars/budi.webp");
 
-    // Memverifikasi pembatalan donasi rutin aktif
     expect(prisma.routineDonation.updateMany).toHaveBeenCalledWith({
       where: {
         OR: [
@@ -107,7 +103,6 @@ describe("UU Pelindungan Data Pribadi (UU PDP No. 27/2022) - Donor Account Anony
       data: { status: "CANCELLED" },
     });
 
-    // Memverifikasi penyamaran data pada riwayat donasi finansial & penyembunyian doa publik
     expect(prisma.donation.updateMany).toHaveBeenCalledWith({
       where: { donorEmail: "budi.santoso@example.com" },
       data: expect.objectContaining({
@@ -119,7 +114,6 @@ describe("UU Pelindungan Data Pribadi (UU PDP No. 27/2022) - Donor Account Anony
       }),
     });
 
-    // Memverifikasi pembersihan token reset password & aktivasi
     expect(prisma.passwordResetToken.deleteMany).toHaveBeenCalledWith({
       where: { email: "budi.santoso@example.com" },
     });
@@ -127,7 +121,6 @@ describe("UU Pelindungan Data Pribadi (UU PDP No. 27/2022) - Donor Account Anony
       where: { email: "budi.santoso@example.com" },
     });
 
-    // Memverifikasi penyamaran data pada tabel User
     expect(prisma.user.update).toHaveBeenCalledWith({
       where: { id: "usr_donor_pdp_1" },
       data: expect.objectContaining({
@@ -137,7 +130,6 @@ describe("UU Pelindungan Data Pribadi (UU PDP No. 27/2022) - Donor Account Anony
       }),
     });
 
-    // Memverifikasi pencatatan audit log PDP
     expect(prisma.activityLog.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         action: "PDP_ACCOUNT_ANONYMIZED",

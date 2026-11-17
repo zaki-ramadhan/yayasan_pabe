@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { buildRoutineCompletionWhatsAppMessage } from "@/services/whatsapp/completionTemplate";
 import { ROUTINE_STATUS, VALID_ROUTINE_STATUSES } from "@/lib/routineDonationConstants";
 
-// Mock Prisma
 vi.mock("@/lib/prisma", () => {
   return {
     default: {
@@ -33,7 +32,6 @@ vi.mock("@/lib/prisma", () => {
   };
 });
 
-// Mock WhatsApp Driver
 vi.mock("@/services/whatsapp", () => {
   return {
     sendWhatsAppNotification: vi.fn().mockResolvedValue({ success: true, provider: "mock" }),
@@ -120,13 +118,11 @@ describe("Donasi Rutin Penutupan Program (Opsi A)", () => {
       expect(result.notifiedCount).toBe(2);
       expect(result.errors).toHaveLength(0);
 
-      // Verifikasi query update status ke COMPLETED
       expect(prisma.routineDonation.updateMany).toHaveBeenCalledWith({
         where: { id: { in: ["routine-1", "routine-2"] } },
         data: { status: "COMPLETED" },
       });
 
-      // Verifikasi pengiriman pesan WA penutupan
       expect(sendWhatsAppCompletionNotification).toHaveBeenCalledTimes(2);
       expect(sendWhatsAppCompletionNotification).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -186,7 +182,6 @@ describe("Donasi Rutin Penutupan Program (Opsi A)", () => {
         forceRoutineId: "routine-inactive-1",
       });
 
-      // Harus di-skip dan diubah jadi COMPLETED, bukan diproses membuat invoice!
       expect(summary.skipped).toBe(1);
       expect(summary.succeeded).toBe(0);
       expect(summary.details[0].status).toBe("AUTO_COMPLETED");

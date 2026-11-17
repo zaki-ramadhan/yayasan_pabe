@@ -4,7 +4,6 @@ import { settleDonationStatus } from "@/services/donationService";
 import { cancelAndExpirePendingDonation } from "@/services/donationExpiryService";
 import { DONATION_STATUS } from "@/lib/donationExpiryConstants";
 
-// Mock Prisma
 vi.mock("@/lib/prisma", () => {
   const mockDonation = {
     findUnique: vi.fn(),
@@ -35,7 +34,6 @@ vi.mock("@/lib/prisma", () => {
   };
 });
 
-// Mock Midtrans Service
 vi.mock("@/services/midtransService", () => ({
   expireMidtransOrder: vi.fn().mockResolvedValue({ status_code: "200" }),
   checkMidtransOrderStatus: vi.fn().mockResolvedValue({ isPaid: false }),

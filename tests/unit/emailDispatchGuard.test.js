@@ -46,7 +46,6 @@ describe("Email Dispatch Guard (Anti-Spam & Quota Protector)", () => {
 
     shouldSendStatusEmail("budi@example.com", "APPROVED", shortCooldownMs);
 
-    // Majukan waktu melewati cooldown
     vi.spyOn(Date, "now").mockReturnValue(now + shortCooldownMs + 10);
     const afterCooldown = shouldSendStatusEmail("budi@example.com", "APPROVED", shortCooldownMs);
     expect(afterCooldown).toBe(true);

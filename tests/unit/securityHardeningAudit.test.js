@@ -30,7 +30,6 @@ describe("Security Hardening: Invoice Access & Token Entropy (Anti-Enumeration)"
 
   it("mendeteksi token deterministik lama yang berasal dari salt rentan hardcoded", () => {
     const invoiceId = "INV-20261112-1234-567890";
-    // Token yang dibuat dengan sha256(invoiceId + "_pabe_inv_secure_salt_key").slice(0, 32)
     const crypto = require("crypto");
     const weakToken = crypto
       .createHash("sha256")
@@ -100,7 +99,6 @@ describe("Security Hardening: Resource Ownership Verification (Anti-IDOR)", () =
       providedToken: weakToken,
     });
 
-    // Harus ditolak demi memaksa regenerasi ke token acak
     expect(result.authorized).toBe(false);
   });
 

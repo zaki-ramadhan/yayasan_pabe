@@ -124,12 +124,10 @@ describe("Storage Health & Alert System (Unit & Boundary Analysis)", () => {
       const firstCall = await getStorageOverview();
       expect(firstCall.health.usagePercent).toBe(85);
 
-      // Ubah env mock, pemanggilan kedua harus tetap membaca cache
       process.env.MOCK_STORAGE_PERCENT = "97";
       const cachedCall = await getStorageOverview();
       expect(cachedCall.health.usagePercent).toBe(85);
 
-      // Setelah cache di-invalidate, pemanggilan harus merefleksikan nilai baru
       invalidateStorageCache();
       const freshCall = await getStorageOverview();
       expect(freshCall.health.usagePercent).toBe(97);

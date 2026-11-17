@@ -65,7 +65,6 @@ describe("Account Activation & Anti-Ghost User Security", () => {
       const testEmail = "donor.activation.daily.limit@example.com";
       globalRateLimiter.reset(`auth_resend_activation_daily:${testEmail}`);
 
-      // Percobaan 1, 2, 3 diizinkan
       const res1 = checkDailyActivationResendLimit(testEmail);
       expect(res1.success).toBe(true);
       expect(res1.remaining).toBe(2);
@@ -78,13 +77,11 @@ describe("Account Activation & Anti-Ghost User Security", () => {
       expect(res3.success).toBe(true);
       expect(res3.remaining).toBe(0);
 
-      // Percobaan 4 ditolak
       const res4 = checkDailyActivationResendLimit(testEmail);
       expect(res4.success).toBe(false);
       expect(res4.remaining).toBe(0);
       expect(res4.resetMs).toBeGreaterThan(0);
 
-      // Rollback satu kuota
       rollbackDailyActivationResendLimit(testEmail);
       const resAfterRollback = checkDailyActivationResendLimit(testEmail);
       expect(resAfterRollback.success).toBe(true);

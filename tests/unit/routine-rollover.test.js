@@ -13,7 +13,6 @@ import { buildRoutineRolloverWhatsAppMessage } from "@/services/whatsapp/rollove
 import { isRoutineScheduledForNow } from "@/lib/routineSchedulerHelper";
 import { calculateDonationExpiryDate } from "@/lib/donationExpiryConstants";
 
-// Mock dependencies
 vi.mock("@/services/whatsapp", () => ({
   sendWhatsAppNotification: vi.fn().mockResolvedValue({ success: true, provider: "mock" }),
   sendWhatsAppCompletionNotification: vi.fn().mockResolvedValue({ success: true, provider: "mock" }),
@@ -35,9 +34,7 @@ describe("Smart Rollover Donasi Rutin (Selector & Service)", () => {
 
   describe("Selector Engine Logic", () => {
     it("menghitung rasio pendanaan dengan benar", () => {
-      // 20jt dari 100jt = 0.2
       expect(calculateFundingRatio({ collectedAmount: 20000000, targetAmount: 100000000 })).toBeCloseTo(0.2);
-      // Tanpa target (evergreen) = baseline 0.5
       expect(calculateFundingRatio({ collectedAmount: 50000000, targetAmount: null })).toBe(0.5);
     });
 
@@ -45,7 +42,6 @@ describe("Smart Rollover Donasi Rutin (Selector & Service)", () => {
       const campA = { id: "a", collectedAmount: 80000000, targetAmount: 100000000 }; // 0.8
       const campB = { id: "b", collectedAmount: 15000000, targetAmount: 100000000 }; // 0.15
 
-      // campB harus lebih diprioritaskan daripada campA (return negatif jika b di depan a)
       expect(compareCampaignUrgency(campB, campA)).toBeLessThan(0);
       expect(compareCampaignUrgency(campA, campB)).toBeGreaterThan(0);
     });
@@ -163,7 +159,6 @@ describe("Smart Rollover Donasi Rutin (Selector & Service)", () => {
 
   describe("End-of-Month Clamp (isRoutineScheduledForNow)", () => {
     it("mengeksekusi donasi rutin tanggal 31 di tanggal 28 Februari (bulan non-kabisat)", () => {
-      // Donatur memilih tanggal 31
       const routine = {
         status: "ACTIVE",
         frequency: "MONTHLY",
@@ -171,11 +166,9 @@ describe("Smart Rollover Donasi Rutin (Selector & Service)", () => {
         reminderTime: "05:00",
       };
 
-      // Waktu saat ini: 28 Februari 2026 jam 05:00 WIB (UTC+7)
       const feb28Date = new Date("2026-02-28T05:00:00+07:00");
       expect(isRoutineScheduledForNow(routine, feb28Date)).toBe(true);
 
-      // Waktu saat ini: 27 Februari 2026 jam 05:00 WIB -> Tidak boleh dieksekusi
       const feb27Date = new Date("2026-02-27T05:00:00+07:00");
       expect(isRoutineScheduledForNow(routine, feb27Date)).toBe(false);
     });
@@ -188,7 +181,6 @@ describe("Smart Rollover Donasi Rutin (Selector & Service)", () => {
         reminderTime: "05:00",
       };
 
-      // 30 April jam 05:00 WIB
       const apr30Date = new Date("2026-04-30T05:00:00+07:00");
       expect(isRoutineScheduledForNow(routine, apr30Date)).toBe(true);
     });
@@ -261,7 +253,6 @@ describe("Smart Rollover Donasi Rutin (Selector & Service)", () => {
       expect(result.updatedCount).toBe(1);
       expect(result.notifiedCount).toBe(1);
 
-      // Verifikasi update komitmen ke target campaign baru
       expect(mockPrisma.routineDonation.updateMany).toHaveBeenCalledWith({
         where: { id: { in: ["routine-1"] } },
         data: {
@@ -270,7 +261,6 @@ describe("Smart Rollover Donasi Rutin (Selector & Service)", () => {
         },
       });
 
-      // Verifikasi pencatatan log audit
       expect(mockPrisma.activityLog.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           action: "ROUTINE_AUTO_ROLLOVER",
@@ -279,7 +269,6 @@ describe("Smart Rollover Donasi Rutin (Selector & Service)", () => {
         }),
       });
 
-      // Verifikasi pengiriman email transparansi
       expect(sendRoutineRolloverEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: "budi@example.com",
@@ -321,7 +310,6 @@ describe("Smart Rollover Donasi Rutin (Selector & Service)", () => {
         prismaClient: mockPrisma,
       });
 
-      // Default: selesai aman (COMPLETED) jika tidak ada program pengganti
       expect(result.action).toBe("COMPLETED");
       expect(mockPrisma.routineDonation.updateMany).toHaveBeenCalledWith({
         where: { id: { in: ["routine-isolated"] } },
@@ -423,14 +411,12 @@ describe("Smart Rollover Donasi Rutin (Selector & Service)", () => {
 
       const mockPrisma = (await import("@/lib/prisma")).default;
 
-      // Mock routine data
       mockPrisma.routineDonation.findMany = vi.fn().mockResolvedValue([mockRoutine]);
       mockPrisma.routineDonation.update = vi.fn().mockResolvedValue({
         ...mockRoutine,
         status: "PAUSED",
       });
 
-      // Mock 3 tagihan sebelumnya berstatus EXPIRED
       mockPrisma.donation.findMany = vi.fn().mockResolvedValue([
         { id: "don-1", invoiceId: "INV-001", status: "EXPIRED" },
         { id: "don-2", invoiceId: "INV-002", status: "EXPIRED" },

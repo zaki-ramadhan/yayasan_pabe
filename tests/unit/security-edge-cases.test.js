@@ -140,7 +140,6 @@ describe("Security & Anomaly Defense: Kalkulasi Zakat Terhadap Nilai Ekstrem & N
 
 describe("Security & Form Input Hardening: Sanitizer Standar Terpusat", () => {
   it("sanitizeSlug membersihkan spasi, karakter non-URL, kompresi strip, dan leading dash", () => {
-    // Mempertahankan trailing dash agar pengguna tetap bisa mengetik tanda strip antar kata saat onChange
     expect(sanitizeSlug("  Pendidikan & Dakwah 2026!  ")).toBe("pendidikan-dakwah-2026-");
     expect(sanitizeSlug("---kategori---baru---")).toBe("kategori-baru-");
     expect(sanitizeSlug("Berita🎉 Yayasan")).toBe("berita-yayasan");
@@ -182,11 +181,9 @@ describe("Session Security & Durations Architecture (SSOT)", () => {
   });
 
   it("durasi OAuth (Google / Facebook): Donatur otomatis 30 hari, Staf tetap ketat 12 jam", () => {
-    // Donatur mendapatkan 30 hari otomatis untuk kenyamanan UX di perangkat pribadi
     expect(getOAuthSessionDuration(USER_ROLES.DONOR)).toBe(SESSION_DURATIONS.DONOR_OAUTH);
     expect(getOAuthSessionDuration(USER_ROLES.DONOR)).toBe(30 * 24 * 60 * 60);
 
-    // Staf/Admin tetap 12 jam demi kepatuhan keamanan data & keuangan yayasan
     expect(getOAuthSessionDuration(USER_ROLES.ADMIN)).toBe(SESSION_DURATIONS.ADMIN_DEFAULT);
     expect(getOAuthSessionDuration(USER_ROLES.SUPER_ADMIN)).toBe(12 * 60 * 60);
     expect(getOAuthSessionDuration(USER_ROLES.FINANCE)).toBe(12 * 60 * 60);

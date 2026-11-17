@@ -14,7 +14,6 @@ import {
   QUEUE_CONFIG,
 } from "@/lib/notificationConstants";
 
-// Mock Prisma Client
 vi.mock("@/lib/prisma", () => {
   return {
     default: {
@@ -36,7 +35,6 @@ vi.mock("@/lib/prisma", () => {
   };
 });
 
-// Mock WhatsApp Driver
 vi.mock("@/services/whatsapp", () => {
   return {
     sendWhatsAppNotification: vi.fn().mockResolvedValue({
@@ -52,7 +50,6 @@ vi.mock("@/services/whatsapp", () => {
   };
 });
 
-// Mock Email Service
 vi.mock("@/services/emailService", () => {
   return {
     sendRoutineDonationEmail: vi.fn().mockResolvedValue({
@@ -182,13 +179,11 @@ describe("Notification Queue & Worker Architecture", () => {
       expect(summary.succeeded).toBe(1);
       expect(summary.failed).toBe(0);
 
-      // Verifikasi penguncian atomik
       expect(prisma.notificationQueue.updateMany).toHaveBeenCalledWith({
         where: { id: "queue-task-1", status: QUEUE_STATUS.PENDING },
         data: { status: QUEUE_STATUS.PROCESSING },
       });
 
-      // Verifikasi pengiriman WA
       expect(sendWhatsAppNotification).toHaveBeenCalledWith(
         expect.objectContaining({
           to: "081234567890",
@@ -196,7 +191,6 @@ describe("Notification Queue & Worker Architecture", () => {
         })
       );
 
-      // Verifikasi update ke SENT
       expect(prisma.notificationQueue.update).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: "queue-task-1" },
@@ -204,7 +198,6 @@ describe("Notification Queue & Worker Architecture", () => {
         })
       );
 
-      // Verifikasi pencatatan log
       expect(prisma.notificationLog.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
@@ -245,7 +238,6 @@ describe("Notification Queue & Worker Architecture", () => {
       expect(summary.retried).toBe(1);
       expect(summary.failed).toBe(0);
 
-      // Status harus dikembalikan ke PENDING dengan attempts = 1 untuk di-retry nanti
       expect(prisma.notificationQueue.update).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: "queue-fail-1" },
@@ -257,7 +249,6 @@ describe("Notification Queue & Worker Architecture", () => {
         })
       );
 
-      // Log FAILED harus tetap dicatat
       expect(prisma.notificationLog.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
@@ -299,7 +290,6 @@ describe("Notification Queue & Worker Architecture", () => {
       expect(summary.retried).toBe(0);
       expect(summary.failed).toBe(1);
 
-      // Status harus menjadi FAILED permanen karena sudah mencapai maxAttempts
       expect(prisma.notificationQueue.update).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: "queue-max-attempts" },

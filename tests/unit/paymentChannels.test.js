@@ -4,11 +4,9 @@ import { PAYMENT_CHANNELS, PAYMENT_CATEGORIES } from "@/data/paymentChannels";
 describe("PAYMENT_CHANNELS Configuration", () => {
   it("memiliki saluran pembayaran lintas sektor lengkap", () => {
     const ids = PAYMENT_CHANNELS.map((c) => c.id);
-    // E-Wallet & QRIS
     expect(ids).toContain("qris");
     expect(ids).toContain("gopay");
     expect(ids).toContain("shopeepay");
-    // Virtual Account
     expect(ids).toContain("bca_va");
     expect(ids).toContain("mandiri_va");
     expect(ids).toContain("bri_va");

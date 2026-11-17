@@ -7,7 +7,6 @@ import {
 import prisma from "@/lib/prisma";
 import { settleDonationStatus } from "@/services/donationService";
 
-// Mock Prisma
 vi.mock("@/lib/prisma", () => {
   const mockDonation = {
     findUnique: vi.fn(),
@@ -59,7 +58,6 @@ describe("Real-Time Event Architecture & SSE Broadcast", () => {
       unregisterAdminSSEClient(mockController);
       broadcastAdminEvent("TEST_EVENT", { message: "after_unregister" });
 
-      // Tetap 1 kali karena sudah di-unregister
       expect(mockController.enqueue).toHaveBeenCalledTimes(1);
     });
 
@@ -76,11 +74,9 @@ describe("Real-Time Event Architecture & SSE Broadcast", () => {
       registerAdminSSEClient(brokenController);
       registerAdminSSEClient(healthyController);
 
-      // Pertama kali: keduanya dipanggil, broken melempar error dan dihapus dari set
       broadcastAdminEvent("FIRST_PING", { id: 1 });
       expect(healthyController.enqueue).toHaveBeenCalledTimes(1);
 
-      // Kedua kali: brokenController tidak boleh lagi dipanggil karena sudah dibersihkan
       broadcastAdminEvent("SECOND_PING", { id: 2 });
       expect(brokenController.enqueue).toHaveBeenCalledTimes(1);
       expect(healthyController.enqueue).toHaveBeenCalledTimes(2);
@@ -134,7 +130,6 @@ describe("Real-Time Event Architecture & SSE Broadcast", () => {
       expect(result).toBeDefined();
       expect(result.status).toBe("PAID");
 
-      // Controller SSE harus menerima event DONATION_PAID
       expect(mockController.enqueue).toHaveBeenCalledTimes(1);
 
       const decoder = new TextDecoder();

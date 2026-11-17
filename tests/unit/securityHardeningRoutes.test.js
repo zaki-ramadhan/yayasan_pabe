@@ -35,7 +35,6 @@ describe("Security Hardening: Route Handlers Endpoint Protection", () => {
         status: "PAID",
       });
 
-      // Request tanpa token dan tanpa login
       const req = new Request("http://localhost:3000/api/donations", {
         method: "PATCH",
         body: JSON.stringify({
@@ -100,7 +99,6 @@ describe("Security Hardening: Route Handlers Endpoint Protection", () => {
       const json = await res.json();
       expect(json.success).toBe(true);
       expect(json.hasActive).toBe(true);
-      // PII dan ID internal dilarang bocor ke publik
       expect(json.routine.id).toBeUndefined();
       expect(json.routine.donorPhone).toBeUndefined();
       expect(json.routine.donorEmail).toBeUndefined();
@@ -195,7 +193,6 @@ describe("Security Hardening: Route Handlers Endpoint Protection", () => {
       const json = await res.json();
       expect(json.data.aminCount).toBe(0);
 
-      // Verifikasi data yang dikirim ke update adalah 0 (tidak minus)
       expect(updateSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           data: { aminCount: 0 },

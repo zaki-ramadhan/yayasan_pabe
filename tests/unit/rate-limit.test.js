@@ -34,7 +34,6 @@ describe("Rate Limiter Engine (Token Bucket / Sliding Window)", () => {
     limiter.check(key, 2, 60000);
     limiter.check(key, 2, 60000);
 
-    // Request ke-3 harus ditolak
     const blockedRes = limiter.check(key, 2, 60000);
     expect(blockedRes.success).toBe(false);
     expect(blockedRes.remaining).toBe(0);
@@ -53,14 +52,11 @@ describe("Rate Limiter Engine (Token Bucket / Sliding Window)", () => {
   it("mengurangi kuota (decrement/rollback) saat operasi downstream gagal", () => {
     const key = "test:rollback-key";
     limiter.check(key, 1, 60000);
-    // Sekarang kuota habis
     expect(limiter.check(key, 1, 60000).success).toBe(false);
 
-    // Rollback karena error
     limiter.decrement(key);
     limiter.decrement(key); // decrement kelebihan request sebelumnya
 
-    // Pengguna harus bisa mencoba kembali
     expect(limiter.check(key, 1, 60000).success).toBe(true);
   });
 });
@@ -109,11 +105,9 @@ describe("Next.js Route Handler checkRateLimit Helper", () => {
       headers: new Headers({ "x-real-ip": "10.0.0.2" }),
     };
 
-    // Penuhi kuota limit 2 request
     checkRateLimit(mockReq, { action: "login_test", limit: 2 });
     checkRateLimit(mockReq, { action: "login_test", limit: 2 });
 
-    // Request ke-3 harus memicu 429
     const response = checkRateLimit(mockReq, { action: "login_test", limit: 2 });
     expect(response).not.toBeNull();
     expect(response.status).toBe(429);

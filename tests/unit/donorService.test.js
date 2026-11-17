@@ -48,7 +48,6 @@ describe("Admin Donor Service - CRM & Real Donor Aggregation", () => {
 
     const result = await getAdminDonors({ page: 1, limit: 10 });
 
-    // Harus hanya 1 donatur yang masuk, user yang belum pernah donasi harus dieliminasi
     expect(result.items.length).toBe(1);
     expect(result.totalCount).toBe(1);
 

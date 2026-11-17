@@ -109,8 +109,6 @@ describe("EmailService - Dual Provider (Resend + Brevo Fallback)", () => {
       process.env.RESEND_API_KEY = "re_valid_key";
       process.env.BREVO_API_KEY = "xkeysib_valid_key";
 
-      // Panggilan pertama: Resend gagal (429 Rate Limit)
-      // Panggilan kedua: Brevo berhasil (201 Created)
       global.fetch = vi
         .fn()
         .mockResolvedValueOnce({

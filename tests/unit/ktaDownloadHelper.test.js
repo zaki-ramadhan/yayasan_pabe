@@ -19,7 +19,6 @@ describe("ktaDownloadHelper - High-Resolution PNG Generator", () => {
   });
 
   it("mengembalikan false secara aman jika dijalankan di luar browser (SSR / Node)", async () => {
-    // Di lingkungan Node default tanpa window/document
     const originalWindow = global.window;
     delete global.window;
 

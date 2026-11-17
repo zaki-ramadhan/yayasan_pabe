@@ -83,15 +83,12 @@ describe("Volunteer ID Card Avatar, QR, & Admin Flow", () => {
         status: "APPROVED",
       });
 
-      // Simulasi error email service
       vi.spyOn(emailService, "sendVolunteerApprovedEmail").mockRejectedValueOnce(
         new Error("Resend rate limit exceeded")
       );
 
-      // Eksekusi update status (shouldSendStatusEmail akan dipanggil di dalam)
       await updateVolunteerStatus("vol-err-1", "APPROVED");
 
-      // Karena pengiriman gagal, cooldown harus sudah direset sehingga boleh dicoba ulang
       const canRetry = shouldSendStatusEmail("budi.santoso@example.com", "APPROVED");
       expect(canRetry).toBe(true);
     });

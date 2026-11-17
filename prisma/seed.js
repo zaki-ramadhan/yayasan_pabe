@@ -260,7 +260,6 @@ const PAYMENT_CHANNELS_POOL = ["QRIS", "BCA_VA", "MANDIRI_VA", "BRI_VA", "BSI_VA
 async function main() {
   console.log("🚀 Memulai Master Database Seeding (PostgreSQL)...");
 
-  // 1. Seed OrgSetting
   console.log("🏢 1. Menyimpan Profil & Legalitas Resmi Yayasan (OrgSetting)...");
   await prisma.orgSetting.upsert({
     where: { id: "org_profile" },
@@ -299,7 +298,6 @@ async function main() {
     },
   });
 
-  // 2. Seed Users (Admins, Staff, and Registered Donors)
   console.log("👥 2. Menanam Akun Pengguna & Donatur Terdaftar (User)...");
   const defaultPassword = "AdminPABE2026!";
   const salt = crypto.randomBytes(16).toString("hex");
@@ -510,8 +508,6 @@ async function main() {
     }
   }
 
-
-  // 3. Seed Beneficiaries (132 Real Binaan)
   console.log("🧒 3. Menanam 132 Penerima Manfaat Riil Binaan Cakung (Beneficiary)...");
   for (const item of YATIM_BENEFICIARIES) {
     await prisma.beneficiary.upsert({
@@ -555,7 +551,6 @@ async function main() {
     });
   }
 
-  // 4. Seed Categories
   console.log("📁 4. Menanam Kategori Master (Category)...");
   const validCategories = CATEGORIES.filter((c) => c.id !== "all");
   for (const cat of validCategories) {
@@ -570,10 +565,8 @@ async function main() {
     });
   }
 
-  // 5. Seed Campaigns, Updates & Dynamic Real Donations
   console.log("🎯 5. Menanam Program Campaign, Update Distribusi & Ratusan Mutasi Donasi...");
   
-  // Clean existing dependent tables to re-seed fresh relational data
   await prisma.donation.deleteMany({});
   await prisma.campaignUpdate.deleteMany({});
   await prisma.routineDonation.deleteMany({});
@@ -605,8 +598,6 @@ async function main() {
       },
     });
 
-
-    // Seed updates
     for (const upd of prog.updates) {
       await prisma.campaignUpdate.create({
         data: {
@@ -624,7 +615,6 @@ async function main() {
       });
     }
 
-    // Generate 35 - 65 realistic donations per campaign
     const numDonations = 35 + Math.floor(Math.random() * 30);
     const donationsToCreate = [];
     let campaignCollected = 0;
@@ -640,13 +630,11 @@ async function main() {
       const donorEmail = isAnon ? null : donorProfile.email;
       const donorPhone = isAnon ? "081234567890" : donorProfile.phone;
 
-      // Realistic amounts
       const amounts = [25000, 50000, 50000, 100000, 100000, 150000, 200000, 250000, 500000, 1000000];
       const amount = amounts[Math.floor(Math.random() * amounts.length)];
       const uniqueCode = Math.floor(Math.random() * 499) + 1;
       const channel = PAYMENT_CHANNELS_POOL[i % PAYMENT_CHANNELS_POOL.length];
 
-      // Time spread across timeline
       const tRatio = (i + 1) / numDonations;
       const donationTime = new Date(timelineStart + tRatio * timeSpan);
       const expiredAt = new Date(donationTime.getTime() + 24 * 3600 * 1000);
@@ -684,10 +672,8 @@ async function main() {
       });
     }
 
-    // Insert donations
     await prisma.donation.createMany({ data: donationsToCreate });
 
-    // Update campaign with actual aggregated figures
     await prisma.campaign.update({
       where: { id: createdCampaign.id },
       data: {
@@ -697,7 +683,6 @@ async function main() {
     });
   }
 
-  // 6. Seed Routine Donations
   console.log("⏰ 6. Menanam Jadwal Komitmen Donasi Rutin (RoutineDonation)...");
   await prisma.routineDonation.deleteMany({});
   const routinePresets = [
@@ -764,7 +749,6 @@ async function main() {
     await prisma.routineDonation.create({ data: rout });
   }
 
-  // 7. Seed Volunteers
   console.log("🤝 7. Menanam Data Pendaftar Relawan (Volunteer)...");
   await prisma.volunteer.deleteMany({});
   const volunteerSeeds = [
@@ -834,7 +818,6 @@ async function main() {
     await prisma.volunteer.create({ data: vol });
   }
 
-  // 8. Seed Job Vacancies & Applications
   console.log("💼 8. Menanam Lowongan Kerja & Pelamar (JobVacancy & JobApplication)...");
   await prisma.jobApplication.deleteMany({});
   await prisma.jobVacancy.deleteMany({});
@@ -860,7 +843,6 @@ async function main() {
       },
     });
 
-    // Seed realistic applicants for the first vacancy
     if (vac.id === "JOB-01") {
       await prisma.jobApplication.createMany({
         data: [
@@ -887,7 +869,6 @@ async function main() {
     }
   }
 
-  // 9. Seed FAQs
   console.log("❓ 9. Menanam Tanya Jawab Resmi (Faq)...");
   await prisma.faq.deleteMany({});
   for (const faq of FAQS) {
@@ -902,7 +883,6 @@ async function main() {
     });
   }
 
-  // 10. Seed Audit Reports (Realistic Proportionate Scale)
   console.log("📑 10. Menanam Laporan Audit Keuangan Proporsional (AuditReport)...");
   await prisma.auditReport.deleteMany({});
   const auditSeeds = [
@@ -938,7 +918,6 @@ async function main() {
     await prisma.auditReport.create({ data: rep });
   }
 
-  // 11. Seed Articles
   console.log("📰 11. Menanam Artikel & Edukasi Literasi (Article)...");
   await prisma.article.deleteMany({});
   for (const art of ARTICLES) {

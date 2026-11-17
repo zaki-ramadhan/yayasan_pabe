@@ -22,7 +22,6 @@ describe("useTableSelection Pure Logic Unit Tests", () => {
       expect(next.has("item-1")).toBe(true);
       expect(next.has("item-2")).toBe(true);
       expect(next.size).toBe(2);
-      // Memastikan immutability (Set baru dibuat)
       expect(next).not.toBe(initial);
     });
 

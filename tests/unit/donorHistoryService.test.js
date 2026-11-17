@@ -32,15 +32,12 @@ describe("Donor History Service - Chronological Sorting Audit", () => {
     });
 
     prisma.donation.findMany.mockImplementation(async (query) => {
-      // Distinct campaigns call
       if (query.distinct) {
         return [{ campaignId: "camp-1", donationType: "CAMPAIGN" }];
       }
 
-      // Pastikan orderBy menggunakan createdAt desc murni (bukan paidAt nullable yang memicu NULLS FIRST di PostgreSQL)
       expect(query.orderBy).toEqual({ createdAt: "desc" });
 
-      // Return mock data: 1 transaksi PAID hari ini, 1 transaksi EXPIRED kemarin
       return [
         {
           id: "don-newest",
@@ -78,12 +75,10 @@ describe("Donor History Service - Chronological Sorting Audit", () => {
     });
 
     expect(result.items.length).toBe(2);
-    // Transaksi paling baru (5 Nov 2026) WAJIB berada di urutan pertama (indeks 0)
     expect(result.items[0].id).toBe("don-newest");
     expect(result.items[0].status).toBe("PAID");
     expect(result.items[0].amount).toBe(6000000);
 
-    // Transaksi lama (3 Nov 2026 - EXPIRED) berada di bawahnya
     expect(result.items[1].id).toBe("don-older-expired");
     expect(result.items[1].status).toBe("EXPIRED");
   });
@@ -181,14 +176,11 @@ describe("Donor History Service - Chronological Sorting Audit", () => {
     prisma.donation.aggregate.mockImplementation(async (query) => {
       aggregateCalls.push(query);
       if (aggregateCalls.length === 1) {
-        // aggregates (ALL)
         return { _sum: { amount: 7175000 }, _count: { id: 5 } };
       }
       if (aggregateCalls.length === 2) {
-        // zakatAggregates
         return { _sum: { amount: 250000 }, _count: { id: 1 } };
       }
-      // campaignAggregates
       return { _sum: { amount: 6925000 }, _count: { id: 4 } };
     });
 
@@ -214,25 +206,21 @@ describe("Donor History Service - Chronological Sorting Audit", () => {
 
     expect(aggregateCalls.length).toBe(3);
 
-    // Call 1: basePaidWhere harus membungkus userCondition dalam AND
     expect(aggregateCalls[0].where.status).toBe("PAID");
     expect(aggregateCalls[0].where.AND).toEqual([{ donorEmail: "zaki@example.com" }]);
 
-    // Call 2: zakatAggregates harus menggunakan AND agar OR userCondition tidak ter-overwrite
     expect(aggregateCalls[1].where.AND).toBeDefined();
     expect(aggregateCalls[1].where.AND[0]).toEqual({
       status: "PAID",
       AND: [{ donorEmail: "zaki@example.com" }],
     });
 
-    // Call 3: campaignAggregates harus menggunakan AND
     expect(aggregateCalls[2].where.AND).toBeDefined();
     expect(aggregateCalls[2].where.AND[0]).toEqual({
       status: "PAID",
       AND: [{ donorEmail: "zaki@example.com" }],
     });
 
-    // Validasi metrik mode ALL, ZIS, dan CAMPAIGN
     expect(result.metrics.totalNominal).toBe(7175000);
     expect(result.metrics.totalTransactions).toBe(5);
     expect(result.metrics.totalPrograms).toBe(5);

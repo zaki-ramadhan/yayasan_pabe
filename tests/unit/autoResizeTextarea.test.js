@@ -20,17 +20,14 @@ describe("AutoResizeTextarea - Perhitungan Dimensi & Resizing", () => {
     const minHeight = 78;
     const maxHeight = 178;
 
-    // Saat teks pendek (scrollHeight < minHeight)
     const shortContent = 50;
     const heightShort = Math.max(minHeight, Math.min(shortContent, maxHeight));
     expect(heightShort).toBe(minHeight);
 
-    // Saat teks sedang (minHeight <= scrollHeight <= maxHeight)
     const mediumContent = 120;
     const heightMedium = Math.max(minHeight, Math.min(mediumContent, maxHeight));
     expect(heightMedium).toBe(120);
 
-    // Saat teks sangat panjang (scrollHeight > maxHeight)
     const longContent = 300;
     const heightLong = Math.max(minHeight, Math.min(longContent, maxHeight));
     expect(heightLong).toBe(maxHeight);

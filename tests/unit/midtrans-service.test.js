@@ -44,7 +44,6 @@ describe("Midtrans SHA-512 Signature & Notification Verification", () => {
   const statusCode = "200";
   const grossAmount = "100000.00";
 
-  // Hitung signature resmi: SHA512(order_id + status_code + gross_amount + ServerKey)
   const validSignature = crypto
     .createHash("sha512")
     .update(`${orderId}${statusCode}${grossAmount}${serverKey}`)
@@ -105,24 +104,20 @@ describe("Midtrans SHA-512 Signature & Notification Verification", () => {
         }),
       });
 
-      // Panggilan pertama: harus fetch ke Midtrans API
       const first = await checkMidtransOrderStatus("INV-CACHE-001");
       expect(first.isFound).toBe(true);
       expect(first.status).toBe("PENDING");
       expect(fetchSpy).toHaveBeenCalledTimes(1);
 
-      // Panggilan kedua dalam selang waktu < 15 detik: harus dari cache (tidak ada fetch baru)
       const second = await checkMidtransOrderStatus("INV-CACHE-001");
       expect(second.isFound).toBe(true);
       expect(second.status).toBe("PENDING");
       expect(fetchSpy).toHaveBeenCalledTimes(1);
 
-      // Panggilan ketiga dengan forceRefresh: true harus bypass cache
       const third = await checkMidtransOrderStatus("INV-CACHE-001", { forceRefresh: true });
       expect(third.isFound).toBe(true);
       expect(fetchSpy).toHaveBeenCalledTimes(2);
 
-      // Invalidate cache kemudian panggil lagi: harus fetch ulang
       invalidateMidtransStatusCache("INV-CACHE-001");
       const fourth = await checkMidtransOrderStatus("INV-CACHE-001");
       expect(fourth.isFound).toBe(true);

@@ -20,7 +20,6 @@ export async function setupE2EContext(page) {
   try {
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
   } catch {
-    // Abaikan jika browser tidak mendukung API permission grant langsung
   }
   await page.addInitScript(() => {
     window.localStorage.setItem("pabe_tour_campaign_seen", "1");
@@ -40,6 +39,4 @@ export async function setupE2EContext(page) {
     }
   });
 }
-
-
 

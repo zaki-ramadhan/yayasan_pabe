@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Mock prisma
 vi.mock("@/lib/prisma", () => {
   const mockDonations = new Map();
   const mockCampaigns = new Map();
@@ -108,13 +107,11 @@ describe("Dev Simulator Status & Anti-Inflation Guard", () => {
       paidAt: null,
     });
 
-    // 1. Bayar Lunas pertama kali
     await settleDonationStatus(invoiceId, new Date());
     let camp = prisma.__mockCampaigns.get(campaignId);
     expect(camp.collectedAmount).toBe(50000);
     expect(camp.donorCount).toBe(1);
 
-    // 2. Simulasi Expired / Cancel (Rollback)
     await prisma.$transaction(async (tx) => {
       await tx.donation.update({
         where: { invoiceId },
@@ -138,14 +135,11 @@ describe("Dev Simulator Status & Anti-Inflation Guard", () => {
     expect(camp.collectedAmount).toBe(0);
     expect(camp.donorCount).toBe(0);
 
-    // 3. Bayar Lunas kedua kali
     await settleDonationStatus(invoiceId, new Date());
     camp = prisma.__mockCampaigns.get(campaignId);
-    // Tidak boleh bertambah jadi 100.000! Harus tetap 50.000!
     expect(camp.collectedAmount).toBe(50000);
     expect(camp.donorCount).toBe(1);
 
-    // 4. Simulasi Reset ke Pending (Rollback)
     await prisma.$transaction(async (tx) => {
       await tx.donation.update({
         where: { invoiceId },
@@ -169,10 +163,8 @@ describe("Dev Simulator Status & Anti-Inflation Guard", () => {
     expect(camp.collectedAmount).toBe(0);
     expect(camp.donorCount).toBe(0);
 
-    // 5. Bayar Lunas ketiga kali
     await settleDonationStatus(invoiceId, new Date());
     camp = prisma.__mockCampaigns.get(campaignId);
-    // Harus tetap 50.000!
     expect(camp.collectedAmount).toBe(50000);
     expect(camp.donorCount).toBe(1);
   });

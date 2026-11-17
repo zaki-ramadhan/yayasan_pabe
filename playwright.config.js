@@ -1,7 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 import fs from "fs";
 
-// Deteksi otomatis lokasi instalasi Brave Browser di sistem
 const BRAVE_PATHS = [
   "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
   "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",

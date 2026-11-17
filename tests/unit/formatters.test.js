@@ -17,7 +17,6 @@ describe("formatters - formatRupiah", () => {
   });
 
   it("memformat angka valid menjadi format mata uang IDR", () => {
-    // Memastikan pemisah ribuan titik khas id-ID
     const formatted = formatRupiah(50000);
     expect(formatted).toMatch(/^Rp\s50\.000$/);
   });

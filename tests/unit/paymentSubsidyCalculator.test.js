@@ -9,14 +9,11 @@ import {
 describe("Payment Subsidy Calculator", () => {
   describe("calculatePaymentSubsidy", () => {
     it("menghitung beban MDR QRIS sebesar 0.7%", () => {
-      // 0.7% dari Rp 100.000 = Rp 700
       expect(calculatePaymentSubsidy("qris", 100000)).toBe(700);
-      // 0.7% dari Rp 50.000 = Rp 350
       expect(calculatePaymentSubsidy("qris", 50000)).toBe(350);
     });
 
     it("menghitung beban MDR E-Wallet (GoPay, ShopeePay) sebesar 2.0%", () => {
-      // 2.0% dari Rp 100.000 = Rp 2.000
       expect(calculatePaymentSubsidy("gopay", 100000)).toBe(2000);
       expect(calculatePaymentSubsidy("shopeepay", 50000)).toBe(1000);
     });
@@ -40,18 +37,14 @@ describe("Payment Subsidy Calculator", () => {
 
   describe("calculateNetSettlement", () => {
     it("menghitung penerimaan bersih riil kas yayasan setelah dipotong subsidi", () => {
-      // Donasi Rp 100.000 via QRIS (beban Rp 700) -> Diterima Rp 99.300
       expect(calculateNetSettlement("qris", 100000)).toBe(99300);
 
-      // Donasi Rp 100.000 via BCA VA (beban Rp 4.000) -> Diterima Rp 96.000
       expect(calculateNetSettlement("bca_va", 100000)).toBe(96000);
 
-      // Donasi Rp 50.000 via GoPay (beban Rp 1.000) -> Diterima Rp 49.000
       expect(calculateNetSettlement("gopay", 50000)).toBe(49000);
     });
 
     it("tidak pernah mengembalikan angka negatif (clamped to 0)", () => {
-      // Donasi Rp 2.000 via VA (beban Rp 4.000) -> Net minimal 0
       expect(calculateNetSettlement("bca_va", 2000)).toBe(0);
     });
   });

@@ -55,7 +55,6 @@ describe("volunteerVerificationService - Security & Data Protection (UU PDP)", (
     expect(result.city).toBe("Jakarta Timur");
     expect(result.avatarUrl).toBe("/img/avatars/avatar-1.webp");
 
-    // Pastikan privasi terjamin: field email dan nomor telepon TIDAK ADA di output publik
     expect(result.email).toBeUndefined();
     expect(result.phone).toBeUndefined();
   });

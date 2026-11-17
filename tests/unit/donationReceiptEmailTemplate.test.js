@@ -60,7 +60,6 @@ describe("donationReceiptEmailTemplate Contextual Terminology", () => {
         donationType: "ZAKAT",
       });
 
-      // Validasi kosakata Zakat
       expect(html).toContain("Pembayaran Zakat Berhasil");
       expect(html).toContain("Nama Muzakki");
       expect(html).toContain("Program Zakat");
@@ -70,7 +69,6 @@ describe("donationReceiptEmailTemplate Contextual Terminology", () => {
       expect(html).toContain("Alhamdulillah, zakat yang Anda tunaikan telah kami terima");
       expect(html).toContain("penyuci lahir dan batin");
 
-      // Larangan kata donasi umum pada konteks zakat
       expect(html).not.toContain("Nama Donatur");
       expect(html).not.toContain("Program Donasi");
       expect(html).not.toContain("Nominal Donasi");

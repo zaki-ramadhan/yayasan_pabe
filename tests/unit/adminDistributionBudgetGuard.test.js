@@ -41,9 +41,6 @@ describe("Campaign Disbursement Budget Guard & Validation", () => {
     });
 
     it("menghitung anggaran saat mode edit (mengembalikan alokasi lama ke sisa saldo)", () => {
-      // Program punya Rp 10.000.000 terkumpul, Rp 5.000.000 total tersalurkan.
-      // Record yang sedang diedit bernilai Rp 2.000.000.
-      // Sisa saldo efektif yang tersedia untuk diedit seharusnya (10.000.000 - (5.000.000 - 2.000.000)) = 7.000.000.
       const budget = calculateCampaignDisbursementBudget({
         collectedAmount: 10000000,
         totalDisbursed: 5000000,

@@ -66,7 +66,6 @@ describe("Article Recommendation Algorithm (Relevance Waterfall)", () => {
     expect(result.label).toBe("Artikel Terbaru Lainnya");
     expect(result.hasCategoryMatch).toBe(false);
     expect(result.hasTagMatch).toBe(false);
-    // Diurutkan berdasarkan tanggal rilis terbaru
     expect(result.articles[0].publishedAt >= result.articles[1].publishedAt).toBe(true);
   });
 

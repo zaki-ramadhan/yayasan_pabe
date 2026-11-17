@@ -65,7 +65,6 @@ describe("Media Proxy Security & Path Isolation (R2 Gateway)", () => {
       role: USER_ROLES.ADMIN,
     });
 
-    // Mock response S3 GetObjectCommand
     const mockSend = vi.fn().mockResolvedValue({
       ContentType: "application/pdf",
       ContentLength: 1024,
@@ -74,7 +73,6 @@ describe("Media Proxy Security & Path Isolation (R2 Gateway)", () => {
       },
     });
 
-    // Mock S3Client
     process.env.R2_ACCOUNT_ID = "mock-acc";
     process.env.R2_ACCESS_KEY_ID = "mock-key";
     process.env.R2_SECRET_ACCESS_KEY = "mock-secret";

@@ -21,7 +21,6 @@ describe("Routine Scheduler Helper", () => {
   });
 
   it("correctly identifies active daily routines matching target hour", () => {
-    // 05:00 WIB is 22:00 UTC previous day (UTC+7)
     const mockWib0500 = new Date("2026-10-25T22:00:00Z");
 
     const dailyRoutine = {
@@ -33,7 +32,6 @@ describe("Routine Scheduler Helper", () => {
 
     expect(isRoutineScheduledForNow(dailyRoutine, mockWib0500)).toBe(true);
 
-    // Mismatched hour (e.g. 06:00 WIB)
     const mockWib0600 = new Date("2026-10-25T23:00:00Z");
     expect(isRoutineScheduledForNow(dailyRoutine, mockWib0600)).toBe(false);
   });
