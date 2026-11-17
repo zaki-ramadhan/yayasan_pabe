@@ -37,7 +37,7 @@ export async function downloadVolunteerCardImage(target, options = {}) {
   }
 
   if (!node) {
-    toast.error("Gagal menemukan elemen kartu untuk diunduh.");
+    toast.error("Kartu belum siap diunduh. Silakan muat ulang halaman dan coba kembali.");
     return false;
   }
 

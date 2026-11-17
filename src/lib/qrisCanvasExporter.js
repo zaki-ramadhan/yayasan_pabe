@@ -47,14 +47,14 @@ export async function downloadQrisImage({ donation, effectiveSimulatorUrl = "" }
             resolve(true);
           } else {
             URLObj.revokeObjectURL(blobUrl);
-            toast.error("Gagal memproses kanvas QRIS.");
+            toast.error("Gagal menyiapkan gambar QRIS. Silakan gunakan tangkapan layar (screenshot).");
             resolve(false);
           }
         };
 
         img.onerror = () => {
           URLObj.revokeObjectURL(blobUrl);
-          toast.error("Gagal memproses gambar QRIS.");
+          toast.error("Gagal menyiapkan gambar QRIS. Silakan gunakan tangkapan layar (screenshot).");
           resolve(false);
         };
 

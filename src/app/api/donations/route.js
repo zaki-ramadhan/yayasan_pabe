@@ -160,6 +160,7 @@ export async function POST(request) {
 
     return response;
   } catch (error) {
+    console.error("[DonationAPI] POST /api/donations caught error:", error);
     return NextResponse.json(
       { success: false, message: error.message || "Gagal memproses donasi." },
       { status: 400 }

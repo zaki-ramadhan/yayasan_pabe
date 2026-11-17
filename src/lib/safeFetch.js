@@ -36,7 +36,7 @@ export async function safeFetch(url, options = {}, timeoutMs = 12000) {
     return res;
   } catch (err) {
     if (err.name === "AbortError") {
-      throw new Error("Waktu permintaan habis (timeout). Periksa kestabilan koneksi internet Anda.");
+      throw new Error("Koneksi membutuhkan waktu terlalu lama. Periksa internet Anda dan coba lagi.");
     }
     if (err instanceof TypeError && err.message.includes("fetch")) {
       throw new Error("Koneksi terputus. Pastikan perangkat Anda terhubung ke internet.");

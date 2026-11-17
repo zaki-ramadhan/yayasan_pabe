@@ -359,7 +359,7 @@ export async function createDonation({
     throw new Error(
       error?.message?.includes("tidak aktif")
         ? error.message
-        : `Gagal memproses pembuatan transaksi donasi ke sistem database: ${error?.message || error}`
+        : "Gagal membuat transaksi donasi. Silakan periksa koneksi Anda atau coba beberapa saat lagi."
     );
   }
 

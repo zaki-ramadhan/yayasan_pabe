@@ -69,7 +69,7 @@ export function useDonationStatusPolling({
             if (timerRef.current) clearTimeout(timerRef.current);
             onStatusChangeRef.current?.(newStatus, json.data.paidAt || null);
           } else if (newStatus === "PENDING" && isManual) {
-            toast.info("Menunggu konfirmasi pembayaran dari sistem bank/e-wallet. Silakan periksa kembali setelah transfer.");
+            toast.info("Menunggu verifikasi pembayaran dari bank atau dompet digital Anda. Mohon tunggu sebentar.");
           }
         }
       } else {
