@@ -58,6 +58,7 @@ CREATE TABLE "Donation" (
     "accessToken" TEXT,
     "campaignId" TEXT,
     "donationType" TEXT NOT NULL DEFAULT 'CAMPAIGN',
+    "zakatType" TEXT,
     "amount" DOUBLE PRECISION NOT NULL,
     "uniqueCode" INTEGER NOT NULL DEFAULT 0,
     "totalAmount" DOUBLE PRECISION NOT NULL,

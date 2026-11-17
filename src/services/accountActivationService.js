@@ -151,6 +151,10 @@ export async function sendActivationEmailWorkflow({ email, name, originUrl }) {
 
   const activationUrl = `${baseUrl}/api/auth/verify-email?token=${rawToken}`;
 
+  if (process.env.NODE_ENV === "development") {
+    console.info(`[Auth Activation Link] Tautan aktivasi untuk ${cleanEmail}: ${activationUrl}`);
+  }
+
   // Kirim email via Resend dengan fallback antrean retry jika terjadi gangguan jaringan/rate limit
   try {
     return await sendAccountActivationEmail({
@@ -170,6 +174,12 @@ export async function sendActivationEmailWorkflow({ email, name, originUrl }) {
       },
       idempotencyKey: `activation_${cleanEmail}_${Date.now()}`,
     }).catch((qErr) => console.error("[AccountActivation] Gagal memasukkan ke antrean notifikasi:", qErr?.message));
+
+    import("@/services/notificationWorkerService")
+      .then(({ processNotificationQueue }) => {
+        setTimeout(() => processNotificationQueue().catch(() => {}), 1000);
+      })
+      .catch(() => {});
 
     return { success: true, queued: true };
   }

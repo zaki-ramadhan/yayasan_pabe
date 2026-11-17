@@ -8,6 +8,7 @@ import {
   completeRoutineDonationsForCampaign,
   rolloverOrCompleteRoutineDonationsForCampaign,
 } from "./routineCompletionService";
+import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 
 /**
  * Mengambil daftar program kampanye untuk tabel manajemen admin.
@@ -206,7 +207,7 @@ export async function createAdminCampaign(payload) {
     });
   }
 
-  return prisma.campaign.create({
+  const created = await prisma.campaign.create({
     data: {
       title,
       slug: uniqueSlug,
@@ -224,6 +225,17 @@ export async function createAdminCampaign(payload) {
     },
     include: { category: true },
   });
+
+  try {
+    broadcastAdminEvent("PROGRAM_MUTATED", {
+      action: "CREATE",
+      id: created.id,
+      slug: created.slug,
+      title: created.title,
+    });
+  } catch {}
+
+  return created;
 }
 
 /**
@@ -306,6 +318,15 @@ export async function updateAdminCampaign(id, payload) {
     await cleanupOrphanCategories(prisma);
   }
 
+  try {
+    broadcastAdminEvent("PROGRAM_MUTATED", {
+      action: "UPDATE",
+      id: updated.id,
+      slug: updated.slug,
+      title: updated.title,
+    });
+  } catch {}
+
   return updated;
 }
 
@@ -349,6 +370,13 @@ export async function deleteAdminCampaign(id) {
   if (existing?.categoryId) {
     await cleanupOrphanCategories(prisma);
   }
+
+  try {
+    broadcastAdminEvent("PROGRAM_MUTATED", {
+      action: "DELETE",
+      id,
+    });
+  } catch {}
 
   return deleted;
 }
@@ -411,6 +439,13 @@ export async function deleteAdminCampaignsBulk(ids) {
 
   // 4. Bersihkan kategori yang menjadi kosong
   await cleanupOrphanCategories(prisma);
+
+  try {
+    broadcastAdminEvent("PROGRAM_MUTATED", {
+      action: "BULK_DELETE",
+      ids: validIds,
+    });
+  } catch {}
 
   return result;
 }

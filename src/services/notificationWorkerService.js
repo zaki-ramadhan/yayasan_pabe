@@ -132,6 +132,7 @@ export async function processNotificationQueue({
               prayer: payload.prayer || "",
               actionUrl: payload.actionUrl,
               donationType: payload.donationType,
+              zakatType: payload.zakatType,
               categoryName: payload.categoryName,
               categorySlug: payload.categorySlug,
             });

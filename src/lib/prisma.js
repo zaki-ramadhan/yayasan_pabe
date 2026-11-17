@@ -28,6 +28,8 @@ if (
     !globalForPrisma.prisma.instagramPost ||
     !globalForPrisma.prisma._runtimeDataModel?.models?.User?.fields?.some?.((f) => f.name === "customAvatar") ||
     !globalForPrisma.prisma._runtimeDataModel?.models?.User?.fields?.some?.((f) => f.name === "providerAvatar") ||
+    !globalForPrisma.prisma._runtimeDataModel?.models?.Donation?.fields?.some?.((f) => f.name === "zakatType") ||
+    !Prisma?.DonationScalarFieldEnum?.zakatType ||
     !Prisma?.UserScalarFieldEnum?.customAvatar ||
     !Prisma?.UserScalarFieldEnum?.providerAvatar)
 ) {

@@ -67,6 +67,7 @@ model Donation {
   campaignId     String?
   campaign       Campaign? @relation(fields: [campaignId], references: [id])
   donationType   String    @default("CAMPAIGN") // CAMPAIGN, ZAKAT, INFAK_SUBUH, WAKAF
+  zakatType      String?
   amount         Float
   uniqueCode     Int       @default(0)
   totalAmount    Float

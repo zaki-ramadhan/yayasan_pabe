@@ -228,6 +228,25 @@ export async function cancelAndExpirePendingDonation(invoiceId, authUser) {
       return { success: false, message: "Donasi yang sudah terbayar tidak dapat dibatalkan." };
     }
 
+    // Jika tagihan sudah kedaluwarsa atau dibatalkan, tagihan lama sudah tidak aktif lagi
+    const isPastExpiry = donation.expiredAt && new Date(donation.expiredAt) <= new Date();
+    if (donation.status === DONATION_STATUS.EXPIRED || donation.status === DONATION_STATUS.CANCELLED || isPastExpiry) {
+      if (donation.status === DONATION_STATUS.PENDING && isPastExpiry) {
+        await prisma.donation.updateMany({
+          where: { invoiceId, status: DONATION_STATUS.PENDING },
+          data: { status: DONATION_STATUS.EXPIRED },
+        });
+      }
+      return {
+        success: true,
+        message: "Tagihan lama sudah tidak aktif. Anda dapat membuat tagihan baru.",
+        data: {
+          invoiceId,
+          status: donation.status === DONATION_STATUS.PENDING && isPastExpiry ? DONATION_STATUS.EXPIRED : donation.status,
+        },
+      };
+    }
+
     // Mutasi atomik status PENDING -> CANCELLED (mencegah menimpa transaksi yang baru saja dibayar)
     const result = await prisma.donation.updateMany({
       where: { invoiceId, status: DONATION_STATUS.PENDING },
@@ -235,9 +254,23 @@ export async function cancelAndExpirePendingDonation(invoiceId, authUser) {
     });
 
     if (result.count === 0) {
+      const fresh = await prisma.donation.findUnique({
+        where: { invoiceId },
+        select: { status: true },
+      });
+      if (fresh?.status === DONATION_STATUS.PAID) {
+        return {
+          success: false,
+          message: "Donasi yang sudah terbayar tidak dapat dibatalkan.",
+        };
+      }
       return {
-        success: false,
-        message: "Tagihan tidak dapat dibatalkan (sudah terbayar atau status telah berubah).",
+        success: true,
+        message: "Tagihan lama sudah tidak aktif. Anda dapat membuat tagihan baru.",
+        data: {
+          invoiceId,
+          status: fresh?.status || DONATION_STATUS.CANCELLED,
+        },
       };
     }
 

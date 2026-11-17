@@ -9,6 +9,7 @@ import {
 } from "./emailComponents";
 import { formatRupiah } from "@/lib/formatters";
 import { getTransactionVocabulary } from "@/lib/zisFilter";
+import { getZakatTypeLabel } from "@/constants/zakatTypes";
 
 /**
  * Menyusun subjek email bukti transaksi resmi yang adaptif terhadap kategori (Zakat, Infaq, Sedekah, Wakaf, Donasi)
@@ -22,7 +23,11 @@ export function getDonationReceiptEmailSubject(programTitle, invoiceId, options 
     programTitle,
     ...options,
   });
-  return `${vocab.subjectPrefix}: ${programTitle || "Yayasan Payung Berkah"} [${invoiceId}]`;
+  const specificZakat = options.zakatType ? getZakatTypeLabel(options.zakatType) : null;
+  const titleDisplay = specificZakat
+    ? `${specificZakat}`
+    : programTitle || "Yayasan Payung Berkah";
+  return `${vocab.subjectPrefix}: ${titleDisplay} [${invoiceId}]`;
 }
 
 /**
@@ -53,6 +58,7 @@ export function buildDonationReceiptEmailHtml({
   actionUrl,
   logoUrl,
   donationType,
+  zakatType,
   categoryName,
   categorySlug,
 }) {
@@ -93,7 +99,18 @@ export function buildDonationReceiptEmailHtml({
   }
 
   receiptItems.push(
-    { label: vocab.programLabel, value: programTitle || vocab.programLabel },
+    { label: vocab.programLabel, value: programTitle || vocab.programLabel }
+  );
+
+  if (vocab.kind === "ZAKAT" && zakatType) {
+    const zakatLabel = getZakatTypeLabel(zakatType);
+    receiptItems.push({
+      label: "Jenis Zakat",
+      value: `<strong style="color: #0f172a;">${zakatLabel}</strong>`,
+    });
+  }
+
+  receiptItems.push(
     { label: vocab.nominalLabel, value: formatRupiah(amount), isHighlight: true },
     { label: "Waktu Pembayaran", value: `${formattedDate} WIB` },
     { label: "Metode Pembayaran", value: formatPaymentChannelLabel(paymentChannelName) }

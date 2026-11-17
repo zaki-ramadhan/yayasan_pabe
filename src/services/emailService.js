@@ -514,6 +514,7 @@ export async function sendRoutinePausedDueToUnpaidEmail({
  * @param {string} [params.prayer] - Doa donatur
  * @param {string} params.actionUrl - Tautan melihat kuitansi digital
  * @param {string} [params.donationType] - Tipe transaksi (ZAKAT, INFAQ, SEDEKAH, WAKAF, CAMPAIGN)
+ * @param {string} [params.zakatType] - Sub-tipe spesifik zakat (ZAKAT_PENGHASILAN, ZAKAT_MAAL, dll)
  * @param {string} [params.categoryName] - Nama kategori campaign
  * @param {string} [params.categorySlug] - Slug kategori campaign
  */
@@ -528,12 +529,14 @@ export async function sendDonationReceiptEmail({
   prayer,
   actionUrl,
   donationType,
+  zakatType,
   categoryName,
   categorySlug,
 }) {
   const logoUrl = await getPublicEmailLogoUrl();
   const subject = getDonationReceiptEmailSubject(programTitle, invoiceId, {
     donationType,
+    zakatType,
     categoryName,
     categorySlug,
   });
@@ -548,6 +551,7 @@ export async function sendDonationReceiptEmail({
     actionUrl,
     logoUrl,
     donationType,
+    zakatType,
     categoryName,
     categorySlug,
   });

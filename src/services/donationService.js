@@ -71,6 +71,7 @@ export async function createDonation({
   isAnonymous = false,
   prayer = "",
   idempotencyKey = "",
+  zakatType = null,
 }) {
   const validation = validateDonationAmount(amount, paymentChannelId);
   if (!validation.isValid) {
@@ -108,16 +109,41 @@ export async function createDonation({
     ? String(donationType).toUpperCase()
     : "CAMPAIGN";
 
-  let resolvedCampaignId = campaignId || null;
+  let resolvedCampaignId = campaignId ? String(campaignId).trim() : null;
   let resolvedCampaignTitle = sanitizeInput(campaignTitle || "Sedekah Umum PABE") || "Sedekah Umum PABE";
   let resolvedCampaignSlug = sanitizeInput(campaignSlug || "");
 
-  if (resolvedCampaignId && typeof prisma?.campaign?.findUnique === "function") {
+  if (typeof prisma?.campaign?.findUnique === "function") {
     try {
-      const dbCampaign = await prisma.campaign.findUnique({
-        where: { id: String(resolvedCampaignId) },
-        select: { id: true, title: true, slug: true, status: true },
-      });
+      let dbCampaign = null;
+
+      if (resolvedCampaignId) {
+        dbCampaign = await prisma.campaign.findUnique({
+          where: { id: resolvedCampaignId },
+          select: { id: true, title: true, slug: true, status: true },
+        });
+      }
+
+      if (!dbCampaign && resolvedCampaignSlug && resolvedCampaignSlug !== "zakat") {
+        dbCampaign = await prisma.campaign.findUnique({
+          where: { slug: resolvedCampaignSlug },
+          select: { id: true, title: true, slug: true, status: true },
+        });
+      }
+
+      if (!dbCampaign && resolvedDonationType === "ZAKAT" && typeof prisma?.campaign?.findFirst === "function") {
+        dbCampaign = await prisma.campaign.findFirst({
+          where: {
+            status: "ACTIVE",
+            OR: [
+              { category: { slug: { contains: "zakat", mode: "insensitive" } } },
+              { slug: { contains: "zakat", mode: "insensitive" } },
+            ],
+          },
+          select: { id: true, title: true, slug: true, status: true },
+        });
+      }
+
       if (dbCampaign) {
         if (dbCampaign.status && dbCampaign.status !== "ACTIVE") {
           throw new Error("Program donasi ini sedang tidak aktif atau telah selesai.");
@@ -125,11 +151,14 @@ export async function createDonation({
         resolvedCampaignId = dbCampaign.id;
         resolvedCampaignTitle = dbCampaign.title || resolvedCampaignTitle;
         resolvedCampaignSlug = dbCampaign.slug || resolvedCampaignSlug;
+      } else {
+        resolvedCampaignId = null;
       }
     } catch (campErr) {
       if (campErr.message?.includes("tidak aktif")) {
         throw campErr;
       }
+      resolvedCampaignId = null;
     }
   }
 
@@ -225,6 +254,7 @@ export async function createDonation({
     campaignTitle: effectiveCampaignTitle,
     campaignSlug: resolvedCampaignSlug,
     donationType: resolvedDonationType,
+    zakatType: resolvedDonationType === "ZAKAT" ? (zakatType || "ZAKAT_PENGHASILAN") : null,
     amount: Number(amount),
     uniqueCode,
     adminFee: channel.fee || 0,
@@ -247,13 +277,20 @@ export async function createDonation({
     expiredAt: expiredAtDate.toISOString(),
   };
 
+  const supportsZakatTypeInClient = Boolean(
+    prisma?._runtimeDataModel?.models?.Donation?.fields?.some((f) => f.name === "zakatType")
+  );
+
   try {
     const createdDb = await prisma.donation.create({
       data: {
         invoiceId,
         accessToken,
-        campaignId: resolvedCampaignId || undefined,
+        ...(resolvedCampaignId ? { campaign: { connect: { id: resolvedCampaignId } } } : {}),
         donationType: resolvedDonationType,
+        ...(resolvedDonationType === "ZAKAT" && supportsZakatTypeInClient
+          ? { zakatType: zakatType || "ZAKAT_PENGHASILAN" }
+          : {}),
         amount: Number(amount),
         uniqueCode,
         totalAmount,
@@ -276,6 +313,19 @@ export async function createDonation({
 
     if (createdDb) {
       donationData.id = createdDb.id;
+
+      if (resolvedDonationType === "ZAKAT" && !supportsZakatTypeInClient) {
+        try {
+          await prisma.$executeRawUnsafe(
+            `UPDATE "Donation" SET "zakatType" = $1 WHERE "id" = $2`,
+            zakatType || "ZAKAT_PENGHASILAN",
+            createdDb.id
+          );
+        } catch (rawErr) {
+          console.warn("Raw update zakatType fallback warning:", rawErr?.message);
+        }
+      }
+
       try {
         broadcastAdminEvent("DONATION_UPDATED", buildAdminDonationEventPayload(createdDb));
       } catch (sseErr) {
@@ -300,8 +350,18 @@ export async function createDonation({
       }
     }
   } catch (error) {
-    console.error("Prisma createDonation error:", error);
-    throw new Error("Gagal memproses pembuatan transaksi donasi ke sistem database.");
+    console.error("Prisma createDonation error:", error?.message || error);
+    if (error?.code === "P2002") {
+      throw new Error("Nomor invoice atau kunci transaksi sudah terdaftar. Silakan coba kembali.");
+    }
+    if (error?.code === "P2003") {
+      throw new Error("Program rujukan donasi tidak valid atau telah dihapus.");
+    }
+    throw new Error(
+      error?.message?.includes("tidak aktif")
+        ? error.message
+        : `Gagal memproses pembuatan transaksi donasi ke sistem database: ${error?.message || error}`
+    );
   }
 
   return donationData;
@@ -505,6 +565,7 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
         categorySlug: dbDonation.campaign?.category?.slug || "",
         categoryName: dbDonation.campaign?.category?.name || "",
         donationType: dbDonation.donationType,
+        zakatType: dbDonation.zakatType || (dbDonation.donationType === "ZAKAT" ? "ZAKAT_PENGHASILAN" : null),
         amount: dbDonation.amount,
         uniqueCode: dbDonation.uniqueCode,
         adminFee: Math.max(0, dbDonation.totalAmount - dbDonation.amount - (dbDonation.uniqueCode || 0)),
@@ -658,6 +719,7 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
       campaignTitle: donation.campaign?.title || "Donasi Umum",
       campaignSlug: donation.campaign?.slug || "",
       donationType: donation.donationType || updated.donationType || "CAMPAIGN",
+      zakatType: donation.zakatType || updated.zakatType || null,
       categoryName: donation.campaign?.category?.name || "",
       categorySlug: donation.campaign?.category?.slug || "",
       prayer: updated.prayer || null,
@@ -700,6 +762,7 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
         prayer: settled.prayer || "",
         actionUrl: receiptUrl,
         donationType: broadcastPayload?.donationType || settled.donationType || "CAMPAIGN",
+        zakatType: broadcastPayload?.zakatType || settled.zakatType || null,
         categoryName: broadcastPayload?.categoryName || "",
         categorySlug: broadcastPayload?.categorySlug || "",
       };
@@ -714,7 +777,15 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
             ...receiptPayload,
           },
           idempotencyKey: `receipt_${settled.invoiceId}`,
-        }).catch((qErr) => console.error("[DonationReceipt] Gagal memasukkan ke antrean notifikasi:", qErr?.message));
+        })
+          .then(() => {
+            import("@/services/notificationWorkerService")
+              .then(({ processNotificationQueue }) => {
+                setTimeout(() => processNotificationQueue().catch(() => {}), 1000);
+              })
+              .catch(() => {});
+          })
+          .catch((qErr) => console.error("[DonationReceipt] Gagal memasukkan ke antrean notifikasi:", qErr?.message));
       });
     }
   }

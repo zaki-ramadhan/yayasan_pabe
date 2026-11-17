@@ -4,9 +4,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 
-const DEFAULT_POLL_INTERVAL_MS = 3000;
+const DEFAULT_POLL_INTERVAL_MS = 2000;
 const MAX_POLL_DURATION_MS = 300000; // 5 menit
-const MAX_BACKOFF_INTERVAL_MS = 10000;
+const MAX_BACKOFF_INTERVAL_MS = 6000;
 
 export function useDonationStatusPolling({
   invoiceId,

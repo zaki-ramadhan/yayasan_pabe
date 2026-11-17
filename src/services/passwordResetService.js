@@ -181,6 +181,10 @@ export async function requestPasswordReset(email, baseUrl = "http://localhost:30
   const sanitizedBaseUrl = baseUrl.replace(/\/+$/, "");
   const resetUrl = `${sanitizedBaseUrl}/reset-password?token=${rawToken}`;
 
+  if (process.env.NODE_ENV === "development") {
+    console.info(`[Password Reset Link] Tautan reset kata sandi untuk ${cleanEmail}: ${resetUrl}`);
+  }
+
   // 5. Kirim email via Resend dengan fallback antrean retry
   try {
     await sendPasswordResetEmail({
@@ -200,6 +204,12 @@ export async function requestPasswordReset(email, baseUrl = "http://localhost:30
       },
       idempotencyKey: `pwd_reset_${cleanEmail}_${Date.now()}`,
     }).catch((qErr) => console.error("[PasswordReset] Gagal memasukkan ke antrean notifikasi:", qErr?.message));
+
+    import("@/services/notificationWorkerService")
+      .then(({ processNotificationQueue }) => {
+        setTimeout(() => processNotificationQueue().catch(() => {}), 1000);
+      })
+      .catch(() => {});
   }
 
   return {

@@ -9,13 +9,33 @@ import { formatRupiah } from "@/lib/formatters";
  * Hook untuk mendengarkan Server-Sent Events (SSE) live feed dashboard admin.
  * Membuka koneksi real-time untuk mendeteksi donasi baru masuk & aktivitas operasional.
  */
-export function useAdminLiveFeed({ enabled = true } = {}) {
+export function useAdminLiveFeed({ enabled = true, onEvent } = {}) {
   const [isConnected, setIsConnected] = useState(false);
   const [lastEvent, setLastEvent] = useState(null);
   const eventSourceRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const retryCountRef = useRef(0);
   const connectRef = useRef(null);
+  const onEventRef = useRef(onEvent);
+
+  useEffect(() => {
+    onEventRef.current = onEvent;
+  }, [onEvent]);
+
+  const notifyLiveEvent = useCallback((type, data) => {
+    const detail = { type, data, timestamp: new Date() };
+    setLastEvent(detail);
+
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("pabe:admin-live-event", { detail })
+      );
+    }
+
+    try {
+      onEventRef.current?.(detail);
+    } catch {}
+  }, []);
 
   const connect = useCallback(() => {
     if (typeof window === "undefined" || !enabled) return;
@@ -36,7 +56,7 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
       es.addEventListener("DONATION_PAID", (event) => {
         try {
           const data = JSON.parse(event.data);
-          setLastEvent({ type: "DONATION_PAID", data, timestamp: new Date() });
+          notifyLiveEvent("DONATION_PAID", data);
 
           const formattedAmount = data.amount ? `Rp${formatRupiah(data.amount)}` : "Donasi";
           toast.success(
@@ -46,36 +66,20 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
               duration: 6000,
             }
           );
-
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(
-              new CustomEvent("pabe:admin-live-event", {
-                detail: { type: "DONATION_PAID", data, timestamp: new Date() },
-              })
-            );
-          }
         } catch {}
       });
 
       es.addEventListener("DONATION_UPDATED", (event) => {
         try {
           const data = JSON.parse(event.data);
-          setLastEvent({ type: "DONATION_UPDATED", data, timestamp: new Date() });
-
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(
-              new CustomEvent("pabe:admin-live-event", {
-                detail: { type: "DONATION_UPDATED", data, timestamp: new Date() },
-              })
-            );
-          }
+          notifyLiveEvent("DONATION_UPDATED", data);
         } catch {}
       });
 
       es.addEventListener("VOLUNTEER_CHECKIN", (event) => {
         try {
           const data = JSON.parse(event.data);
-          setLastEvent({ type: "VOLUNTEER_CHECKIN", data, timestamp: new Date() });
+          notifyLiveEvent("VOLUNTEER_CHECKIN", data);
 
           toast.info(
             `Telah mendaftar dari "${data.city || "Kota Domisili"}"`,
@@ -84,21 +88,13 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
               duration: 5000,
             }
           );
-
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(
-              new CustomEvent("pabe:admin-live-event", {
-                detail: { type: "VOLUNTEER_CHECKIN", data, timestamp: new Date() },
-              })
-            );
-          }
         } catch {}
       });
 
       es.addEventListener("DISTRIBUTION_CREATED", (event) => {
         try {
           const data = JSON.parse(event.data);
-          setLastEvent({ type: "DISTRIBUTION_CREATED", data, timestamp: new Date() });
+          notifyLiveEvent("DISTRIBUTION_CREATED", data);
 
           const formattedAmount = data.disbursedAmount ? `Rp${formatRupiah(data.disbursedAmount)}` : "";
           toast.success(
@@ -108,21 +104,13 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
               duration: 5000,
             }
           );
-
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(
-              new CustomEvent("pabe:admin-live-event", {
-                detail: { type: "DISTRIBUTION_CREATED", data, timestamp: new Date() },
-              })
-            );
-          }
         } catch {}
       });
 
       es.addEventListener("CAREER_APPLICATION", (event) => {
         try {
           const data = JSON.parse(event.data);
-          setLastEvent({ type: "CAREER_APPLICATION", data, timestamp: new Date() });
+          notifyLiveEvent("CAREER_APPLICATION", data);
 
           toast.info(
             `${data.fullName || "Pelamar"} melamar posisi "${data.position || "Lowongan"}"`,
@@ -131,14 +119,13 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
               duration: 5000,
             }
           );
+        } catch {}
+      });
 
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(
-              new CustomEvent("pabe:admin-live-event", {
-                detail: { type: "CAREER_APPLICATION", data, timestamp: new Date() },
-              })
-            );
-          }
+      es.addEventListener("PROGRAM_MUTATED", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          notifyLiveEvent("PROGRAM_MUTATED", data);
         } catch {}
       });
 
@@ -160,7 +147,7 @@ export function useAdminLiveFeed({ enabled = true } = {}) {
     } catch {
       setIsConnected(false);
     }
-  }, [enabled]);
+  }, [enabled, notifyLiveEvent]);
 
   useEffect(() => {
     connectRef.current = connect;
