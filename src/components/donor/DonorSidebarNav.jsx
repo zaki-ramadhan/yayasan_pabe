@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { Widget2Icon as Widget2Line } from "@solar-icons/react/line-duotone/widget-2";
 import { BillListIcon as BillListLine } from "@solar-icons/react/line-duotone/bill-list";
@@ -11,7 +11,6 @@ import { UserRoundedIcon as UserRoundedLine } from "@solar-icons/react/line-duot
 import { Home2Icon as Home2Line } from "@solar-icons/react/line-duotone/home-2";
 import { HandHeartIcon as HandHeartLine } from "@solar-icons/react/line-duotone/hand-heart";
 import { DocumentTextIcon as DocumentTextLine } from "@solar-icons/react/line-duotone/document-text";
-import { Logout2Icon as Logout2Line } from "@solar-icons/react/line-duotone/logout-2";
 
 import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold/widget-2";
 import { BillListIcon as BillListBold } from "@solar-icons/react/bold/bill-list";
@@ -21,8 +20,6 @@ import { Home2Icon as Home2Bold } from "@solar-icons/react/bold/home-2";
 import { HandHeartIcon as HandHeartBold } from "@solar-icons/react/bold/hand-heart";
 import { DocumentTextIcon as DocumentTextBold } from "@solar-icons/react/bold/document-text";
 
-import { logoutUser } from "@/services/authService";
-import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 
 export function DonorSidebarNav({
@@ -31,24 +28,6 @@ export function DonorSidebarNav({
   onCloseMobile,
 }) {
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    try {
-      const res = await logoutUser();
-      if (!res?.success) {
-        toast.error("Gagal mengakhiri sesi server, sesi lokal telah dibersihkan.");
-      }
-    } catch {
-      toast.error("Terjadi kendala saat keluar.");
-    }
-    if (onCloseMobile) onCloseMobile();
-    if (typeof window !== "undefined") {
-      window.location.replace("/login?loggedOut=true");
-    } else {
-      router.push("/login?loggedOut=true");
-    }
-  };
 
   const mainNavItems = [
     {
@@ -275,21 +254,6 @@ export function DonorSidebarNav({
             </>
           )}
         </div>
-      </div>
-
-      <div className="shrink-0 p-3 pt-3 border-t border-slate-300 mt-auto bg-sidebar">
-        <button
-          type="button"
-          onClick={handleLogout}
-          aria-label="Keluar dari akun"
-          className={cn(
-            "flex items-center rounded-md text-sm text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer w-full text-left font-normal group",
-            isCollapsed ? "justify-center p-2.5" : "px-3 py-2"
-          )}
-        >
-          <Logout2Line className={cn("w-4.5 h-4.5 shrink-0 text-rose-600 group-hover:text-rose-700", !isCollapsed && "mr-2.5")} />
-          {!isCollapsed && <span className="truncate font-normal">Keluar</span>}
-        </button>
       </div>
     </div>
   );

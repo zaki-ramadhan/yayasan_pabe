@@ -25,7 +25,6 @@ import { SettingsMinimalisticIcon as SettingsMinimalisticLine } from "@solar-ico
 import { ServerPathIcon as ServerPathLine } from "@solar-icons/react/line-duotone/server-path";
 import { ShieldKeyholeIcon as ShieldKeyholeLine } from "@solar-icons/react/line-duotone/shield-keyhole";
 import { CodeCircleIcon as CodeCircleLine } from "@solar-icons/react/line-duotone/code-circle";
-import { Logout2Icon as Logout2Line } from "@solar-icons/react/line-duotone/logout-2";
 
 import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold/widget-2";
 import { UsersGroupTwoRoundedIcon as UsersGroupTwoRoundedBold } from "@solar-icons/react/bold/users-group-two-rounded";
@@ -48,8 +47,6 @@ import { ServerPathIcon as ServerPathBold } from "@solar-icons/react/bold/server
 import { ShieldKeyholeIcon as ShieldKeyholeBold } from "@solar-icons/react/bold/shield-keyhole";
 import { CodeCircleIcon as CodeCircleBold } from "@solar-icons/react/bold/code-circle";
 
-import { logoutUser } from "@/services/authService";
-import { toast } from "@/hooks/useToast";
 import { USER_ROLES } from "@/services/authService";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { cn } from "@/lib/utils";
@@ -140,23 +137,6 @@ export function AdminSidebarNav({
         ]
       : []),
   ];
-
-  const handleLogout = async () => {
-    try {
-      const res = await logoutUser();
-      if (!res?.success) {
-        toast.error("Gagal mengakhiri sesi server, sesi lokal telah dibersihkan.");
-      }
-    } catch {
-      toast.error("Terjadi kendala saat keluar.");
-    }
-    if (onCloseMobile) onCloseMobile();
-    if (typeof window !== "undefined") {
-      window.location.replace("/login?loggedOut=true");
-    } else {
-      router.push("/login?loggedOut=true");
-    }
-  };
 
   return (
     <div className="h-full flex flex-col bg-sidebar border-r border-slate-200 select-none overflow-hidden">
@@ -302,20 +282,6 @@ export function AdminSidebarNav({
             </div>
           );
         })}
-      </div>
-
-      <div className="shrink-0 p-3 pt-3 border-t border-slate-300 mt-auto bg-sidebar">
-        <button
-          type="button"
-          onClick={handleLogout}
-          className={cn(
-            "flex items-center rounded-md text-sm text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer w-full text-left font-normal group",
-            isCollapsed ? "justify-center p-2.5" : "px-3 py-2"
-          )}
-        >
-          <Logout2Line className={cn("w-4.5 h-4.5 shrink-0 text-rose-600 group-hover:text-rose-700", !isCollapsed && "mr-2.5")} />
-          {!isCollapsed && <span className="truncate font-normal">Keluar</span>}
-        </button>
       </div>
     </div>
   );

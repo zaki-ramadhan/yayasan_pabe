@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
 import { FloatingActionDock } from "@/components/shared/FloatingActionDock";
+import { LiveDonationPopup } from "@/components/modules/LiveDonationPopup";
 
 export default function PublicLayout({ children }) {
   return (
@@ -8,6 +9,7 @@ export default function PublicLayout({ children }) {
       <Navbar />
       <div className="flex-1">{children}</div>
       <FloatingActionDock />
+      <LiveDonationPopup />
       <Footer />
     </div>
   );
