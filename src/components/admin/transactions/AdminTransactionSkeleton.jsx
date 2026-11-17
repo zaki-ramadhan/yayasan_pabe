@@ -11,10 +11,8 @@ import {
 export function AdminTransactionSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
-      {/* Segmented Tabs Skeleton */}
       <Skeleton className="h-10 w-80 sm:w-96 rounded-lg" />
 
-      {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex flex-1 flex-wrap items-center gap-2.5 max-w-2xl">
           <Skeleton className="h-10 flex-1 min-w-[200px] rounded-lg" />
@@ -26,7 +24,6 @@ export function AdminTransactionSkeleton() {
         </div>
       </div>
 
-      {/* Table Container */}
       <div className="rounded-lg border border-slate-200 bg-white shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
@@ -67,7 +64,6 @@ export function AdminTransactionSkeleton() {
           </Table>
         </div>
 
-        {/* Pagination Footer */}
         <div className="px-4 py-3 border-t border-slate-200/90 flex items-center justify-between">
           <Skeleton className="h-4 w-36 rounded" />
           <div className="flex items-center gap-1">
@@ -86,7 +82,6 @@ export function AdminTransactionTableSkeletonRows({ rows = 5 }) {
     <>
       {Array.from({ length: rows }).map((_, i) => (
         <TableRow key={i} className="hover:bg-transparent">
-          {/* Invoice */}
           <TableCell className="w-[170px] py-3 whitespace-nowrap align-middle">
             <div className="flex items-center gap-1.5">
               <Skeleton className="h-4 w-28 rounded" />
@@ -94,12 +89,10 @@ export function AdminTransactionTableSkeletonRows({ rows = 5 }) {
             </div>
           </TableCell>
 
-          {/* Jenis Transaksi */}
           <TableCell className="w-px py-3 whitespace-nowrap align-middle">
             <Skeleton className="h-6 w-24 rounded-md" />
           </TableCell>
 
-          {/* Donor */}
           <TableCell className="w-px py-3 whitespace-nowrap align-middle">
             <div className="flex items-center gap-2.5">
               <Skeleton className="h-8 w-8 rounded-full shrink-0" />
@@ -110,7 +103,6 @@ export function AdminTransactionTableSkeletonRows({ rows = 5 }) {
             </div>
           </TableCell>
 
-          {/* Campaign Target */}
           <TableCell className="py-3 align-middle min-w-[240px] max-w-[340px]">
             <div className="space-y-1 max-w-[320px]">
               <Skeleton className="h-4 w-full rounded" />
@@ -118,27 +110,22 @@ export function AdminTransactionTableSkeletonRows({ rows = 5 }) {
             </div>
           </TableCell>
 
-          {/* Amount */}
           <TableCell className="w-px py-3 text-right whitespace-nowrap align-middle">
             <Skeleton className="h-4 w-24 ml-auto rounded" />
           </TableCell>
 
-          {/* Payment Method */}
           <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
             <Skeleton className="h-5 w-20 rounded mx-auto" />
           </TableCell>
 
-          {/* Date */}
           <TableCell className="w-px py-3 whitespace-nowrap align-middle text-center">
             <Skeleton className="h-4 w-24 rounded mx-auto" />
           </TableCell>
 
-          {/* Status */}
           <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
             <Skeleton className="h-5 w-16 rounded mx-auto" />
           </TableCell>
 
-          {/* Actions */}
           <TableCell className="w-24 py-3 text-right whitespace-nowrap align-middle pr-4">
             <div className="flex items-center justify-end gap-1">
               <Skeleton className="h-7 w-7 rounded" />

@@ -15,13 +15,11 @@ export function useAdminStorage({ initialOverview = null }) {
   const [overview, setOverview] = useState(initialOverview);
   const [prevInitial, setPrevInitial] = useState(initialOverview);
 
-  // Pola resmi React: sinkronisasi state saat prop berubah tanpa useEffect cascading renders
   if (initialOverview !== prevInitial) {
     setPrevInitial(initialOverview);
     setOverview(initialOverview);
   }
 
-  // Fungsi untuk memuat ulang status penyimpanan & rincian berkas R2 secara segar dari API
   const refreshOverview = useCallback(async () => {
     try {
       const res = await safeFetch("/api/admin/storage/overview");
@@ -34,7 +32,6 @@ export function useAdminStorage({ initialOverview = null }) {
     }
   }, []);
 
-  // Validasi otomatis: jika overview belum memiliki array files per folder, ambil dari API secara asinkron
   useEffect(() => {
     let isSubscribed = true;
     const hasFiles = overview?.folders?.some((f) => Array.isArray(f.files) && f.files.length > 0);
@@ -86,7 +83,6 @@ export function useAdminStorage({ initialOverview = null }) {
     return Array.from(set).filter((f) => f && f !== "ALL");
   }, [overview, orphans]);
 
-  // Filter daftar orphan berdasarkan debounced search dan folder
   const filteredOrphans = useMemo(() => {
     return orphans.filter((item) => {
       if (folderFilter !== "ALL" && item.folder.toLowerCase() !== folderFilter.toLowerCase()) {
@@ -102,13 +98,11 @@ export function useAdminStorage({ initialOverview = null }) {
     });
   }, [orphans, debouncedSearch, folderFilter]);
 
-  // Hook seleksi tabel massal terpusat (SSOT)
   const selection = useTableSelection(filteredOrphans, {
     keyExtractor: (item) => item.key,
   });
   const { clearSelection } = selection;
 
-  // Pemindaian berkas tak terpakai (Dry-Run Audit)
   const handleScan = useCallback(async (customAge) => {
     const ageParam = customAge !== undefined ? customAge : ageFilter;
     setIsScanning(true);
@@ -160,20 +154,17 @@ export function useAdminStorage({ initialOverview = null }) {
     }
   }, [isScanned, handleScan]);
 
-  // Buka modal hapus satuan
   const handleOpenDeleteSingle = useCallback((item) => {
     setItemsToDelete([item]);
     setDeleteModalOpen(true);
   }, []);
 
-  // Buka modal hapus banyak berkas terpilih
   const handleOpenDeleteSelected = useCallback(() => {
     if (selection.selectedItems.length === 0) return;
     setItemsToDelete(selection.selectedItems);
     setDeleteModalOpen(true);
   }, [selection.selectedItems]);
 
-  // Eksekusi penghapusan permanen dari R2
   const handleConfirmDelete = useCallback(async () => {
     if (itemsToDelete.length === 0) return;
 
@@ -192,7 +183,6 @@ export function useAdminStorage({ initialOverview = null }) {
         setOrphans((prev) => prev.filter((item) => !deletedSet.has(item.key)));
         clearSelection();
 
-        // Perbarui total overview secara instan di UI
         const freedBytes = itemsToDelete.reduce((sum, item) => sum + (item.size || 0), 0);
         setOverview((prev) => {
           if (!prev) return prev;
@@ -207,7 +197,6 @@ export function useAdminStorage({ initialOverview = null }) {
           };
         });
 
-        // Muat ulang ringkasan penyimpanan agar berkas di tabel rincian folder ikut terupdate
         refreshOverview();
 
         toast({

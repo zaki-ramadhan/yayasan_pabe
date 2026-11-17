@@ -30,7 +30,6 @@ export function ArticleCardReactions({
 
   return (
     <div className={cn("flex items-center gap-2 sm:gap-2.5", className)}>
-      {/* Tombol Suka */}
       <button
         type="button"
         onClick={handleToggleLike}
@@ -50,7 +49,6 @@ export function ArticleCardReactions({
         <span>{likes}</span>
       </button>
 
-      {/* Tombol Tidak Suka */}
       <button
         type="button"
         onClick={handleToggleDislike}

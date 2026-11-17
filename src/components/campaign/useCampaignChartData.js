@@ -9,9 +9,7 @@ function toDateKey(date) {
 }
 
 export function useCampaignChartData({ initialData = [], campaign = {}, timeRange = "30d", viewMode = "all" }) {
-  // Generate continuous daily date series (without gaps) for selected time range
   const chartData = useMemo(() => {
-    // 1. Map real transactions per date
     const transactionMap = new Map();
     if (Array.isArray(initialData)) {
       initialData.forEach((item) => {
@@ -24,7 +22,6 @@ export function useCampaignChartData({ initialData = [], campaign = {}, timeRang
       });
     }
 
-    // 2. Determine date range (startDate to today)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -34,11 +31,9 @@ export function useCampaignChartData({ initialData = [], campaign = {}, timeRang
     } else if (timeRange === "90d") {
       startDate.setDate(today.getDate() - 89);
     } else {
-      // Default: '30d'
       startDate.setDate(today.getDate() - 29);
     }
 
-    // 3. Calculate accumulated funds collected BEFORE startDate
     const startKey = toDateKey(startDate);
     let totalBeforeStart = 0;
     if (Array.isArray(initialData)) {
@@ -49,7 +44,6 @@ export function useCampaignChartData({ initialData = [], campaign = {}, timeRang
       });
     }
 
-    // 4. Generate sequential continuous daily records
     const continuousSeries = [];
     let runningCumulative = totalBeforeStart;
     const cursor = new Date(startDate);
@@ -72,7 +66,6 @@ export function useCampaignChartData({ initialData = [], campaign = {}, timeRang
       cursor.setDate(cursor.getDate() + 1);
     }
 
-    // Fallback if no transactions yet in DB but campaign already has collectedAmount
     if (
       transactionMap.size === 0 &&
       Number(campaign?.collectedAmount || 0) > 0 &&
@@ -88,7 +81,6 @@ export function useCampaignChartData({ initialData = [], campaign = {}, timeRang
     return continuousSeries;
   }, [initialData, campaign, timeRange]);
 
-  // Summary metrics calculation
   const summaryMetrics = useMemo(() => {
     const totalPeriod = chartData.reduce((acc, curr) => acc + (curr.dailyAmount || 0), 0);
     const totalTransactions = chartData.reduce((acc, curr) => acc + (curr.donationsCount || 0), 0);

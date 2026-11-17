@@ -58,7 +58,6 @@ export function ZakatPerusahaanForm({
         </p>
       </div>
 
-      {/* Submode Switcher */}
       <div className="inline-flex p-1 bg-slate-100 rounded-md gap-1 border border-slate-200">
         <button
           type="button"
@@ -86,7 +85,6 @@ export function ZakatPerusahaanForm({
         </button>
       </div>
 
-      {/* Fields */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {isJasa ? (
           <>

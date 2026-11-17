@@ -20,7 +20,6 @@ export function VolunteerApprovedBanner({
     <div
       className={`relative w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950 text-white p-5 sm:p-6 shadow-md ${className}`}
     >
-      {/* Atmospheric Background Image & Overlay */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         <Image
           src="/img/banners/covers/volunteer-cover.webp"
@@ -35,7 +34,6 @@ export function VolunteerApprovedBanner({
       </div>
 
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        {/* Konten Kiri: Status, Judul & Penjelasan */}
         <div className="space-y-1.5">
           <div className="text-xs font-medium text-emerald-400">
             Status: Relawan Aktif
@@ -48,7 +46,6 @@ export function VolunteerApprovedBanner({
           </p>
         </div>
 
-        {/* Konten Kanan: Tombol Tunggal ke Halaman Kartu Relawan (Teks Murni Tanpa Ikon) */}
         <div className="shrink-0 self-start sm:self-auto">
           <Button
             asChild

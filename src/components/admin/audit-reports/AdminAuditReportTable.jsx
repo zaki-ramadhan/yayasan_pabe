@@ -180,7 +180,6 @@ export function AdminAuditReportTable({ initialReports = [] }) {
         onOpenCreate={handleOpenCreate}
       />
 
-      {/* Reusable Bulk Action Bar */}
       <TableSelectionBar
         selectedCount={selection.selectedCount}
         totalCount={reports.length}

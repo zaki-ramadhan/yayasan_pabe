@@ -61,7 +61,6 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* 1. Track Sliding Horizontal Mulus (Efek Slide-In & Slide-Out Tanpa Kedip) */}
       <div
         className="flex w-full h-full transition-transform duration-300 ease-out will-change-transform"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -94,7 +93,6 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
         })}
       </div>
 
-      {/* 2. Floating Indicator Urutan Foto di Kanan Atas (Gaya Instagram) */}
       {total > 1 && (
         <div
           className="absolute top-2.5 right-2.5 z-10 px-2 py-0.5 rounded-md bg-white/95 text-slate-800 border border-slate-200/90 shadow-2xs backdrop-blur-xs text-xs font-medium select-none pointer-events-none"
@@ -103,7 +101,6 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
         </div>
       )}
 
-      {/* 3. Tombol Panah Navigasi Kiri (Desktop) */}
       {total > 1 && currentIndex > 0 && (
         <button
           type="button"
@@ -115,7 +112,6 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
         </button>
       )}
 
-      {/* 4. Tombol Panah Navigasi Kanan (Desktop) */}
       {total > 1 && currentIndex < total - 1 && (
         <button
           type="button"
@@ -127,7 +123,6 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
         </button>
       )}
 
-      {/* 5. Overlay Gradasi Gelap ke Transparan di Bawah Foto (Agar slider & dots terlihat kontras dan jelas) */}
       {total > 1 && (
         <div
           aria-hidden="true"
@@ -135,7 +130,6 @@ export function GalleryCardCarousel({ images = [], title = "Dokumentasi Kegiatan
         />
       )}
 
-      {/* 6. Indikator Titik (Dots) di Bawah Foto ala Instagram Carousel */}
       {total > 1 && (
         <div
           aria-hidden="true"

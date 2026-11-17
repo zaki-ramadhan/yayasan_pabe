@@ -16,10 +16,8 @@ export function AboutBankAccounts({ orgSettings = null }) {
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center">
-        {/* Left: Reusable Bank Card 3D Showcase */}
         <BankCardShowcase />
 
-        {/* Right: Clean Plain Text Bank Account List (Right-Aligned & Matched Text Size) */}
         <div className="md:col-span-6 space-y-4 md:text-right md:mr-2">
           {accounts.map((acc, idx) => (
             <BankAccountItem

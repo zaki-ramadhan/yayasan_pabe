@@ -20,12 +20,10 @@ export function DonorProfileView() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
 
-  // Tab aktif: "personal" | "security"
   const [activeTab, setActiveTab] = useState("personal");
 
   const fetchedEmailRef = useRef(null);
 
-  // Redirect guest to login
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!isAuthenticated && typeof window !== "undefined") {
@@ -38,7 +36,6 @@ export function DonorProfileView() {
     return () => clearTimeout(timer);
   }, [isAuthenticated, router]);
 
-  // Load database profile
   const fetchProfile = useCallback(async (targetEmail) => {
     const emailToFetch = targetEmail || currentUser?.email;
     if (!emailToFetch) return;
@@ -90,7 +87,6 @@ export function DonorProfileView() {
 
     setProfile((prev) => ({ ...prev, ...json.data }));
 
-    // Sync with navbar & session
     updateLocalUser({
       name: json.data.name,
       avatar: json.data.avatar,
@@ -160,15 +156,12 @@ export function DonorProfileView() {
 
   return (
     <div className="space-y-6">
-      {/* Unified Parent Profile Console (Identitas Avatar & Split Form dalam 1 Background Menyatu) */}
       <DonorProfileCover
         profile={profile}
         onUpdateImage={handleUpdateImage}
         isUpdating={isUpdatingImage}
       >
-        {/* Split Kiri & Kanan di Bawah Avatar */}
         <div className="flex flex-col md:flex-row min-h-[460px]">
-          {/* Kolom Kiri: Navigasi Teks Murni */}
           <aside className="w-full md:w-52 lg:w-60 shrink-0 border-b md:border-b-0 md:border-r border-slate-200/80 p-3 sm:p-4 bg-slate-100/50">
             <DonorProfileNav
               activeTab={activeTab}
@@ -176,7 +169,6 @@ export function DonorProfileView() {
             />
           </aside>
 
-          {/* Kolom Kanan: Form Konten Aktif */}
           <main className="flex-1 p-5 sm:p-7 md:p-8 bg-sidebar min-w-0">
             {activeTab === "personal" && (
               <DonorPersonalFormCard

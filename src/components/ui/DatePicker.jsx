@@ -56,7 +56,6 @@ export function DatePicker({
       : formContext?.isInvalid || false;
   const resolvedId = id || formContext?.id;
 
-  // Parsing value secara aman ke Date object
   const selectedDate = React.useMemo(() => {
     if (!value) return undefined;
     if (value instanceof Date) {
@@ -65,7 +64,6 @@ export function DatePicker({
     if (typeof value === "string") {
       const trimmed = value.trim();
       if (!trimmed) return undefined;
-      // Tangani format YYYY-MM-DD atau ISO
       const parsed = trimmed.includes("T") ? parseISO(trimmed) : parseISO(`${trimmed}T00:00:00`);
       if (isValid(parsed)) return parsed;
 
@@ -108,7 +106,6 @@ export function DatePicker({
       setOpen(false);
       return;
     }
-    // Format ke string standar YYYY-MM-DD
     const formattedStr = format(date, "yyyy-MM-dd");
     onChange?.(formattedStr);
     setOpen(false);

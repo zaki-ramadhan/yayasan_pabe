@@ -60,7 +60,6 @@ export function ResetPasswordCard({ token, siteKey }) {
     };
   }, [token]);
 
-  // 1. Tampilan Validasi Token Awal (Loading)
   if (status === "validating") {
     return (
       <div className="py-12 text-center space-y-4">
@@ -72,17 +71,14 @@ export function ResetPasswordCard({ token, siteKey }) {
     );
   }
 
-  // 2. Tampilan Token Tidak Valid / Kedaluwarsa
   if (status === "invalid") {
     return <ResetPasswordInvalidState message={errorMessage} />;
   }
 
-  // 3. Tampilan Sukses Setelah Mengubah Sandi
   if (status === "success") {
     return <ResetPasswordSuccessState />;
   }
 
-  // 4. Form Pengisian Kata Sandi Baru
   return (
     <ResetPasswordForm
       token={token}

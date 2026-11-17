@@ -42,7 +42,6 @@ export function TableSelectionBar({
     Boolean(isAllSelected) ||
     (typeof totalCount === "number" && totalCount > 0 && selectedCount >= totalCount);
 
-  // Menyimpan cache teks agar saat animasi keluar (exit), angka terpilih tidak mendadak nol
   const [cachedDisplay, setCachedDisplay] = useState({
     countDisplay: currentCountDisplay,
     label: effectiveLabel,
@@ -99,7 +98,6 @@ export function TableSelectionBar({
           isVisible ? "dock-enter" : "dock-exit pointer-events-none"
         )}
       >
-        {/* Sisi Kiri: Indikator Jumlah Terpilih */}
         <div className="flex items-center gap-2 pl-0.5 sm:pr-1 text-xs sm:text-sm font-medium text-slate-700 shrink-0 select-none">
           <CheckSquareIcon className="w-4 h-4 text-emerald-600 shrink-0" />
           <span className="truncate">
@@ -113,10 +111,8 @@ export function TableSelectionBar({
           </span>
         </div>
 
-        {/* Pembatas Vertikal Ringkas di Desktop */}
         <div className="hidden sm:block h-5 w-px bg-slate-200 shrink-0" />
 
-        {/* Sisi Kanan: Kontainer Tombol Aksi Massal & Tombol Batal Silang */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {onSelectAll && !effectiveIsAllSelected && (
             <Button

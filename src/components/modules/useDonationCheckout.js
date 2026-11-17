@@ -252,7 +252,6 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
     }
     setErrors({});
 
-    // Cek apakah ada invoice aktif yang belum diselesaikan untuk program ini
     if (campaign?.id && donorEmail) {
       try {
         isSubmittingRef.current = true;
@@ -271,7 +270,6 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
           return;
         }
       } catch {
-        // Fallback lanjutkan jika pengecekan gagal
       } finally {
         isSubmittingRef.current = false;
         setIsSubmitting(false);
@@ -331,7 +329,6 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
 
       clearDonationDraft();
 
-      // Sinkronisasi sesi lokal donatur jika sebelumnya belum memiliki nomor WhatsApp di profil
       if (currentUser && (!currentUser.phone || currentUser.phone === "-") && donorPhone.trim()) {
         loginUser({ ...currentUser, phone: donorPhone.trim() }, { notifyLogin: false });
       }
@@ -387,7 +384,6 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
       });
       const json = await res.json().catch(() => ({}));
 
-      // Jika donasi lama ternyata baru saja dibayar (PAID), arahkan ke invoice pembayarannya
       if (!res.ok && json.message?.toLowerCase().includes("sudah terbayar")) {
         toast.error("Tagihan lama ini telah terbayar. Mengalihkan ke kuitansi...");
         setPendingInvoiceModal({ isOpen: false, invoice: null });
@@ -395,12 +391,9 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
         return;
       }
 
-      // Dalam semua skenario lain (batal berhasil, atau tagihan lama sudah otomatis kedaluwarsa):
-      // Tutup dialog konfirmasi dan langsung buat tagihan baru
       setPendingInvoiceModal({ isOpen: false, invoice: null });
       await executeDonationCreation();
     } catch {
-      // Fallback defensif: tetap izinkan pembuatan tagihan baru agar donatur tidak terjebak
       setPendingInvoiceModal({ isOpen: false, invoice: null });
       await executeDonationCreation();
     } finally {

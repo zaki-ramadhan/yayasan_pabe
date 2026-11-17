@@ -26,7 +26,6 @@ export function AdminGalleryMetadataFields({
 }) {
   return (
     <div className="space-y-4">
-      {/* Judul Kegiatan */}
       <FormField label={isBatch ? "Judul kegiatan bersama" : "Judul kegiatan / foto"}>
         <Input
           type="text"
@@ -46,7 +45,6 @@ export function AdminGalleryMetadataFields({
       </FormField>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-        {/* Kategori Kegiatan */}
         <FormField label="Kategori kegiatan" required>
           <CreatableCombobox
             options={categoryList}
@@ -60,7 +58,6 @@ export function AdminGalleryMetadataFields({
           />
         </FormField>
 
-        {/* Tanggal Kegiatan */}
         <FormField label="Tanggal kegiatan">
           <DatePicker
             value={activityDate}
@@ -70,7 +67,6 @@ export function AdminGalleryMetadataFields({
         </FormField>
       </div>
 
-      {/* Tautan Video YouTube Opsional */}
       {setYoutubeUrl && (
         <FormField label="Tautan video YouTube (opsional)">
           <Input

@@ -373,7 +373,6 @@ export function AdminAuditReportModal({
 				/>
 			</FormField>
 
-			{/* Angka Keuangan dengan Thousand Separator */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
 				<FormField
 					label="Total penghimpunan dana (Rp)"
@@ -461,13 +460,11 @@ export function AdminAuditReportModal({
 							inputMode="decimal"
 							value={operationalRatio}
 							onChange={(e) => {
-								// Hanya izinkan angka dan satu titik desimal
 								let val = e.target.value.replace(/,/g, ".").replace(/[^0-9.]/g, "");
 								const parts = val.split(".");
 								if (parts.length > 2) {
 									val = `${parts[0]}.${parts.slice(1).join("")}`;
 								}
-								// Batasi maksimal 100% dan maksimal 2 desimal
 								const num = parseFloat(val);
 								if (!isNaN(num) && num > 100) return;
 								setOperationalRatio(val);
@@ -491,7 +488,6 @@ export function AdminAuditReportModal({
 				</FormField>
 			</div>
 
-			{/* Berkas PDF Laporan Resmi */}
 			<FileUploadZone
 				value={pdfUrl}
 				onChange={setPdfUrl}

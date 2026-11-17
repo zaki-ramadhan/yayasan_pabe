@@ -16,7 +16,6 @@ const buttonVariants = cva(
         secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200",
         ghost: "hover:bg-slate-100 text-slate-800",
         link: "text-primary underline-offset-4 hover:underline",
-        // 3D embossed variants: use className to override gradient colors
         primary3d:
           "text-white font-medium bg-gradient-to-b from-blue-500 via-blue-600 to-blue-700 hover:from-blue-400 hover:via-blue-500 hover:to-blue-600 border-t border-t-blue-300 border-x border-x-blue-500 border-b-2 border-b-blue-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_3px_8px_rgba(37,99,235,0.3)] active:translate-y-0.5 active:shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]",
         secondary3d:

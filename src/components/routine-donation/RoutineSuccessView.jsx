@@ -23,7 +23,6 @@ export function RoutineSuccessView({
 
   return (
     <div className="fixed inset-0 z-[60] bg-surface overflow-y-auto flex flex-col justify-between animate-in fade-in duration-300">
-      {/* Header Brand Sederhana (Clean & Minimalist) */}
       <header className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
         <Link
           href="/"
@@ -46,9 +45,7 @@ export function RoutineSuccessView({
         </Link>
       </header>
 
-      {/* Konten Utama Sukses */}
       <main className="w-full max-w-xl mx-auto px-4 py-4 sm:py-6 text-center space-y-6 my-auto">
-        {/* 3D Success Checkmark Badge */}
         <div className="relative inline-flex items-center justify-center mx-auto">
           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-50/80 border border-emerald-100/90 flex items-center justify-center shadow-xs">
             <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-emerald-500 via-emerald-600 to-emerald-700 border-t border-t-emerald-300/80 border-x border-x-emerald-600 border-b-4 border-b-emerald-800 text-white flex items-center justify-center shadow-[inset_0_2px_2px_rgba(255,255,255,0.45),0_6px_12px_rgba(5,150,105,0.3)]">
@@ -88,27 +85,22 @@ export function RoutineSuccessView({
                   key={p.id}
                   className="pb-3.5 border-b border-slate-100 last:border-0 last:pb-0 text-sm space-y-1"
                 >
-                  {/* Program Title */}
                   <div className="flex items-start gap-2 min-w-0">
                     <span className="text-sm font-medium text-slate-950 line-clamp-2 leading-snug">
                       {camp.title}
                     </span>
                   </div>
 
-                  {/* Parameter Chips */}
                   <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
-                    {/* Chip 1: Jadwal */}
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
                       <Bell className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                       <span>{formatRoutineSchedule(p)} • {p.reminderTime || "05:00"} WIB</span>
                     </span>
 
-                    {/* Chip 2: Nominal */}
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
                       <span>Nominal {formatRupiah(nominal)}</span>
                     </span>
 
-                    {/* Chip 3 (Opsional): Periode Kustom */}
                     {p.hasCustomPeriod && p.startDate && (
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
                         <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
@@ -135,7 +127,6 @@ export function RoutineSuccessView({
         </div>
       </main>
 
-      {/* Micro-Footer Sederhana */}
       <footer className="w-full max-w-5xl mx-auto px-4 py-5 text-center text-xs text-slate-500">
         <p>© 2026 Yayasan Payung Berkah • Amanah &amp; Transparan</p>
       </footer>

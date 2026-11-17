@@ -32,7 +32,6 @@ export function AdminGalleryTableRow({
         isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-slate-50/70"
       }`}
     >
-      {/* Checkbox Seleksi */}
       <TableCell className="w-12 text-center py-2.5 align-middle">
         {onToggleSelect && (
           <Checkbox
@@ -42,7 +41,6 @@ export function AdminGalleryTableRow({
           />
         )}
       </TableCell>
-      {/* Thumbnail Foto / Video */}
       <TableCell className="w-20 py-2.5 align-middle">
         <div
           className="w-14 h-10 rounded-md bg-slate-900 overflow-hidden relative border border-slate-200 shrink-0 select-none"
@@ -79,7 +77,6 @@ export function AdminGalleryTableRow({
         </div>
       </TableCell>
 
-      {/* Judul & Keterangan */}
       <TableCell className="min-w-[220px] py-2.5 align-middle">
         <div className="space-y-0.5">
           <span
@@ -95,19 +92,16 @@ export function AdminGalleryTableRow({
         </div>
       </TableCell>
 
-      {/* Kategori */}
       <TableCell className="w-40 py-2.5 text-center align-middle whitespace-nowrap">
         <Badge variant="secondary" className="max-w-[140px] truncate">
           {item.category || "Umum"}
         </Badge>
       </TableCell>
 
-      {/* Tanggal Kegiatan */}
       <TableCell className="w-36 py-2.5 text-slate-600 text-sm align-middle text-center whitespace-nowrap tabular-nums">
         {formatDate(displayDate)}
       </TableCell>
 
-      {/* Aksi */}
       <TableCell className="w-24 text-right py-2.5 align-middle whitespace-nowrap pr-4">
         <TableRowActions
           onEdit={() => onEdit && onEdit(item)}

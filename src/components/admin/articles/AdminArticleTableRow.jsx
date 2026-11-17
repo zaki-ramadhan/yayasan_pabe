@@ -23,7 +23,6 @@ export function AdminArticleTableRow({
 				isSelected ? "bg-primary/5 hover:bg-primary/10" : ""
 			}`}
 		>
-			{/* 0. Selection Checkbox */}
 			<TableCell className="w-12 text-center py-2.5 px-3 align-middle" onClick={(e) => e.stopPropagation()}>
 				<Checkbox
 					checked={isSelected}

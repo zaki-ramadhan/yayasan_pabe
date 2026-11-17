@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
-// POV-aware: messages from the current logged-in user render as outgoing bubbles
 
 import { useMemo, useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -19,8 +18,6 @@ import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 5;
-
-
 
 export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis = false, isClosed = false }) {
   const { donors, aminedSet, handleToggleAmin } = usePrayersSync(initialDonors, campaignSlug);
@@ -60,12 +57,10 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
     (donor) => {
       if (!donor) return false;
 
-      // 1. Cek dari tagihan lokal browser berdasarkan invoiceId
       if (donor.invoiceId && userInvoices.some((inv) => inv.invoiceId === donor.invoiceId)) {
         return true;
       }
 
-      // 2. Cek user yang sedang login
       if (currentUser) {
         if (donor.userId && donor.userId === currentUser.id) return true;
         if (donor.id && donor.id === currentUser.id) return true;
@@ -88,7 +83,6 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
         }
       }
 
-      // 3. Cek nama dari riwayat tagihan lokal browser bila bukan anonim
       if (!donor.isAnonymous && donor.name && userInvoices.length > 0) {
         if (
           userInvoices.some(
@@ -107,7 +101,6 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
     [currentUser, userInvoices]
   );
 
-  // Urutan kronologis percakapan (terbaru di indeks 0)
   const allPrayers = useMemo(() => {
     const list = donors.filter((d) => Boolean(d.prayer && d.prayer.trim()));
     return [...list].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
@@ -115,12 +108,10 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
 
   const hasMore = visibleCount < allPrayers.length;
 
-  // For chat display: take most-recent visibleCount items, then reverse so oldest is on top
   const displayPrayers = useMemo(() => {
     return allPrayers.slice(0, visibleCount).reverse();
   }, [allPrayers, visibleCount]);
 
-  // Sisipkan pemisah tanggal ala WhatsApp saat terjadi pergantian hari
   const prayersWithSeparators = useMemo(() => {
     const items = [];
     let lastDateKey = null;
@@ -145,7 +136,6 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
     return items;
   }, [displayPrayers]);
 
-  // Scroll to bottom on initial render (and after initial load)
   useLayoutEffect(() => {
     if (initialScrollDone.current) return;
     const el = scrollRef.current;
@@ -154,7 +144,6 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
     initialScrollDone.current = true;
   }, [prayersWithSeparators]);
 
-  // After loading more, preserve scroll position to prevent jump
   useLayoutEffect(() => {
     const el = scrollRef.current;
     if (!el || !prevScrollHeightRef.current) return;
@@ -173,7 +162,6 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
     }, 600);
   }, [isLoadingMore, hasMore, allPrayers.length]);
 
-  // Attach scroll listener
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -232,34 +220,26 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
 
   return (
     <div className="space-y-3">
-      {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <h3 className="font-semibold text-slate-950 text-base">
           Doa-Doa Orang Baik
         </h3>
       </div>
 
-
-
-      {/* Chat Room Container ala Telegram / WhatsApp */}
       <div className="relative rounded-2xl border border-slate-300 overflow-hidden shadow-xs bg-slate-900 flex flex-col">
-        {/* Authentic Wallpaper Background (Original image without direct filter) */}
         <div
           className="absolute inset-0 pointer-events-none bg-cover bg-center"
           style={{
             backgroundImage: "url('/img/textures/wallpaper-chat.webp')",
           }}
         />
-        {/* Dark overlay layer to dim wallpaper smoothly */}
         <div className="absolute inset-0 pointer-events-none bg-slate-950/40" />
 
-        {/* Scrollable chat container (increased height for more forum room) */}
         <div
           ref={scrollRef}
           className="relative z-10 min-h-[440px] max-h-[580px] sm:max-h-[620px] overflow-y-auto px-3.5 py-4 space-y-4"
           style={{ scrollbarWidth: "thin", scrollbarColor: "#94a3b8 transparent" }}
         >
-          {/* Loader di dalam scroll container, paling atas, persis seperti WhatsApp */}
           {isLoadingMore && (
             <div className="flex justify-center py-3">
               <Loader2 className="w-[18px] h-[18px] text-primary animate-spin" />
@@ -284,7 +264,6 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
           </div>
         </div>
 
-        {/* Footer input / Closed state lock banner */}
         {isClosed ? (
           <div className="relative z-10 p-2 sm:px-2.5 sm:pb-2.5 sm:pt-1">
             <div className="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900/90 border border-slate-700/80 backdrop-blur-md rounded-full text-slate-300 text-xs sm:text-sm shadow-sm select-none text-center">

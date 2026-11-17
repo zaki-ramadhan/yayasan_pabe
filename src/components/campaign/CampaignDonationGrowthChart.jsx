@@ -39,7 +39,6 @@ export function CampaignDonationGrowthChart({
 
   return (
     <div className="space-y-5">
-      {/* Header & Filter Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="space-y-0.5">
           <h3 className="text-base sm:text-lg font-semibold text-slate-950">
@@ -52,7 +51,6 @@ export function CampaignDonationGrowthChart({
           </p>
         </div>
 
-        {/* Controls: View Mode Selector + Range Selector */}
         <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto flex-wrap">
           <SortDropdown
             options={VIEW_MODE_OPTIONS}
@@ -73,13 +71,11 @@ export function CampaignDonationGrowthChart({
         </div>
       </div>
 
-      {/* KPI Highlight Summary Cards */}
       <CampaignChartSummaryCards
         summaryMetrics={summaryMetrics}
         campaign={campaign}
       />
 
-      {/* Interactive Dual-Axis Area Chart */}
       <div className="pt-2">
         <ChartContainer
           config={currentChartConfig}
@@ -123,7 +119,6 @@ export function CampaignDonationGrowthChart({
               }}
             />
 
-            {/* Sumbu Y Kiri: Akumulasi Total */}
             {viewMode !== "daily" && (
               <YAxis
                 yAxisId="cumulative"
@@ -136,7 +131,6 @@ export function CampaignDonationGrowthChart({
               />
             )}
 
-            {/* Sumbu Y Kanan (atau Kiri jika single mode): Donasi Harian */}
             {viewMode !== "cumulative" && (
               <YAxis
                 yAxisId="daily"
@@ -174,7 +168,6 @@ export function CampaignDonationGrowthChart({
               }
             />
 
-            {/* Area Donasi Harian (Sumbu Y Independen 'daily') */}
             {viewMode !== "cumulative" && (
               <Area
                 yAxisId="daily"
@@ -187,7 +180,6 @@ export function CampaignDonationGrowthChart({
               />
             )}
 
-            {/* Area Total Akumulasi (Sumbu Y Independen 'cumulative') */}
             {viewMode !== "daily" && (
               <Area
                 yAxisId="cumulative"

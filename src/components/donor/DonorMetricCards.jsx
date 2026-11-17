@@ -89,7 +89,6 @@ export function DonorMetricCards({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-      {/* Card 1: Total Donasi Anda */}
       <Card className="sm:col-span-3 border-slate-200/90 bg-sidebar pt-3.5 sm:pt-4 px-3 sm:px-3.5 pb-2.5 sm:pb-3 space-y-2.5 shadow-2xs">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pb-2.5 border-slate-200/80">
           <div>
@@ -113,7 +112,6 @@ export function DonorMetricCards({
           )}
         </div>
 
-        {/* 4 Quick Actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {QUICK_ACTIONS.map((action) =>
             action.onClick ? (
@@ -140,7 +138,6 @@ export function DonorMetricCards({
         </div>
       </Card>
 
-      {/* Cards 2, 3, 4 via mapped DonorStatCard */}
       {STAT_CARDS.map((card) => (
         <DonorStatCard
           key={card.title}

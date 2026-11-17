@@ -51,17 +51,14 @@ const INITIAL_EMAS = {
 export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
   const router = useRouter();
 
-  // State mode aktif
   const [activeMode, setActiveMode] = useState("penghasilan");
 
-  // State form tiap mode
   const [penghasilan, setPenghasilan] = useState(INITIAL_PENGHASILAN);
   const [maal, setMaal] = useState(INITIAL_MAAL);
   const [perusahaan, setPerusahaan] = useState(INITIAL_PERUSAHAAN);
   const [perdagangan, setPerdagangan] = useState(INITIAL_PERDAGANGAN);
   const [emas, setEmas] = useState(INITIAL_EMAS);
 
-  // Status perhitungan tiap mode
   const [calculatedState, setCalculatedState] = useState({
     penghasilan: false,
     maal: false,
@@ -70,10 +67,8 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
     emas: false,
   });
 
-  // Flag reaktif agar tidak menimpa storage saat pertama kali mount sebelum restorasi selesai
   const [isRestored, setIsRestored] = useState(false);
 
-  // Hidrasi sesi dari localStorage / sessionStorage saat pertama kali dibuka
   useEffect(() => {
     try {
       const saved =
@@ -91,13 +86,11 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
         if (parsed.calculatedState) setCalculatedState(parsed.calculatedState);
       }
     } catch {
-      // Abaikan jika parsing gagal
     } finally {
       setIsRestored(true);
     }
   }, []);
 
-  // Simpan sinkronisasi sesi ke localStorage & sessionStorage (hanya setelah restorasi selesai)
   useEffect(() => {
     if (!isRestored) return;
 
@@ -115,7 +108,6 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
       localStorage.setItem("zakat_calculator_state", serialized);
       sessionStorage.setItem("zakat_calculator_state", serialized);
     } catch {
-      // Abaikan jika kuota storage penuh
     }
   }, [isRestored, activeMode, penghasilan, maal, perusahaan, perdagangan, emas, calculatedState]);
 
@@ -184,7 +176,6 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
 
   return (
     <div className="space-y-4">
-      {/* 1. Kategori Tab Navigasi (5 Mode) */}
       <div className="flex justify-center">
         <ZakatModeSelector
           activeMode={activeMode}
@@ -192,9 +183,7 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
         />
       </div>
 
-      {/* 2. Grid Finansial 2 Kolom ala Earnest */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
-        {/* Kolom Kiri: Form Input Aktif */}
         <div className="lg:col-span-7 bg-white p-6 sm:p-7 rounded-lg border border-slate-200 shadow-xs">
           {activeMode === "penghasilan" && (
             <ZakatPenghasilanForm
@@ -242,7 +231,6 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
           )}
         </div>
 
-        {/* Kolom Kanan: Panel Metrik & Ledger Hasil ala Earnest */}
         <div className="lg:col-span-5 sticky top-24">
           <ZakatResultPanel
             result={currentResult}

@@ -59,7 +59,6 @@ export function HomeStrategicRoadmap() {
 
   return (
     <section className="relative bg-white border-y border-slate-200/90 py-16 sm:py-20 lg:py-24 overflow-hidden">
-      {/* Texture Overlay Decoration - Kanan Atas */}
       <div className="absolute top-0 right-0 w-1/2 aspect-square pointer-events-none select-none mix-blend-multiply opacity-20 z-0 overflow-hidden">
         <Image
           src="/img/textures/texture-overlay-5.webp"
@@ -72,7 +71,6 @@ export function HomeStrategicRoadmap() {
         />
       </div>
 
-      {/* Texture Overlay Decoration - Kiri Bawah (Rotate 180 Terbalik) */}
       <div className="absolute bottom-0 left-0 w-1/2 aspect-square pointer-events-none select-none mix-blend-multiply opacity-20 rotate-180 z-0 overflow-hidden">
         <Image
           src="/img/textures/texture-overlay-5.webp"
@@ -86,7 +84,6 @@ export function HomeStrategicRoadmap() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-        {/* 1. Program Kerja Jangka Pendek (Hal 8 Proposal) */}
         <div className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-end pb-4 border-b border-slate-100">
             <div className="lg:col-span-6">
@@ -101,7 +98,6 @@ export function HomeStrategicRoadmap() {
             </div>
           </div>
 
-          {/* Grid 5 Kolom Jangka Pendek (Tangga Menaik) */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-0">
             {shortTermPrograms.map((item, idx) => (
               <RoadmapStepItem
@@ -117,7 +113,6 @@ export function HomeStrategicRoadmap() {
           </div>
         </div>
 
-        {/* 2. Program Kerja Jangka Panjang (Hal 9 Proposal - Mirrored) */}
         <div className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-end pb-4 border-b border-slate-100">
             <div className="lg:col-span-6 lg:order-2 lg:text-right">
@@ -132,7 +127,6 @@ export function HomeStrategicRoadmap() {
             </div>
           </div>
 
-          {/* Grid 4 Kolom Jangka Panjang */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0">
             {longTermPrograms.map((item, idx) => (
               <RoadmapStepItem
@@ -147,7 +141,6 @@ export function HomeStrategicRoadmap() {
             ))}
           </div>
 
-          {/* Narasi Penutup Resmi Proposal */}
           <StrategicGoalBanner text={goalText} />
         </div>
       </div>

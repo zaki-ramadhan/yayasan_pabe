@@ -16,7 +16,6 @@ export function ZakatNiatCard({ selectedTypeId }) {
         </p>
       </div>
 
-      {/* Teks Arab Niat (Lega tanpa nested background & padding) */}
       <div className="space-y-2 pt-0.5">
         <p className="text-right text-xl sm:text-2xl font-normal text-slate-900 leading-relaxed font-serif" dir="rtl">
           {currentZakat.niat.arab}

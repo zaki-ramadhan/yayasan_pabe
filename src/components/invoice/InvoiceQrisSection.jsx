@@ -49,7 +49,6 @@ export function InvoiceQrisSection({
 
   return (
     <div className="flex flex-col items-center justify-center py-2 space-y-3.5 text-center">
-      {/* Kotak Barcode QRIS Resmi */}
       <div className="p-4 bg-white rounded-xl border border-slate-300 shadow-2xs flex flex-col items-center">
         <div className="relative w-[210px] h-[210px] sm:w-[230px] sm:h-[230px] overflow-hidden rounded-lg bg-white flex items-center justify-center">
           {donation.qrString ? (
@@ -91,7 +90,6 @@ export function InvoiceQrisSection({
         </p>
       </div>
 
-      {/* Tombol Unduh QRIS & Tombol Simulator */}
       <div
         className={`flex flex-col sm:flex-row items-center justify-center gap-2 w-full ${
           showSimulatorTools ? "max-w-sm" : "max-w-xs"

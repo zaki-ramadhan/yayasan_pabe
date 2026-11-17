@@ -37,7 +37,6 @@ export function DonorMonthlyTargetCard({
         </span>
       </div>
 
-      {/* Progress Bar */}
       <div className="w-full bg-white border border-slate-300/80 h-2.5 rounded-full overflow-hidden">
         <div
           className="bg-emerald-600 h-full rounded-full transition-all duration-500"

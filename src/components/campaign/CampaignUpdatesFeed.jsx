@@ -50,7 +50,6 @@ export function CampaignUpdatesFeed({ updates = [] }) {
         ))}
       </div>
 
-      {/* Loading Indicator saat infinite scroll */}
       {isLoadingMore && (
         <div className="flex items-center justify-center gap-2 py-4 text-xs sm:text-sm text-slate-500">
           <Loader2 className="w-4 h-4 text-primary animate-spin" />
@@ -58,7 +57,6 @@ export function CampaignUpdatesFeed({ updates = [] }) {
         </div>
       )}
 
-      {/* Keterangan saat semua kabar telah dimuat */}
       {!hasMore && updates.length > PAGE_SIZE && (
         <div className="text-center py-4 text-xs text-slate-600 select-none">
           Semua kabar penyaluran telah ditampilkan

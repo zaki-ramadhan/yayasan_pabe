@@ -249,7 +249,6 @@ export function AdminUserModal({
         </div>
       )}
 
-      {/* Bagian 1: Identitas & Struktur Organisasi */}
       <div className="space-y-3.5">
         <FormField label="Nama lengkap" required error={errors.name}>
           <Input
@@ -363,9 +362,7 @@ export function AdminUserModal({
         </div>
       </div>
 
-      {/* Bagian 2: Pengaturan Hak Akses Login Dashboard */}
       <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-3">
-        {/* Checkbox 1: Akses Admin Operasional */}
         <div className="flex items-start gap-3">
           <Checkbox
             id="hasLoginAccess"
@@ -403,7 +400,6 @@ export function AdminUserModal({
           </div>
         </div>
 
-        {/* Checkbox 2: Akses Super Admin (Hanya tampil bagi Developer) */}
         {canAssignSuperAdmin && (
           <div className="flex items-start gap-3 pt-2.5 border-t border-slate-200/80">
             <Checkbox

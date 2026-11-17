@@ -19,7 +19,6 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
 
   return (
     <section className="relative overflow-hidden bg-slate-100/80 border-y border-slate-200 py-12 sm:py-16">
-      {/* Background Line Decoration Overlay (Full Lebar & Tinggi, Opacity 20%) */}
       <div className="absolute inset-0 pointer-events-none select-none scale-130 overflow-hidden z-0">
         <Image
           src="/img/decorations/line-accent.svg"
@@ -34,7 +33,6 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Kolom Kiri: Sticky Header & Navigasi Program */}
           <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
             <div className="space-y-2 sm:space-y-2.5">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-slate-950 tracking-tight leading-tight">
@@ -45,7 +43,6 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
               </p>
             </div>
 
-            {/* Tombol Aksi di Kolom Kiri */}
             <div className="pt-1">
               <Link href="/program" className="inline-block">
                 <Button
@@ -62,7 +59,6 @@ export function HomeFeaturedPrograms({ campaigns = [], totalCount = 0 }) {
             </div>
           </div>
 
-          {/* Kolom Kanan: Grid Kartu Program Minimalis (2 Kolom, Tepat 4 Kartu 2x2) */}
           <div className="lg:col-span-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
               {displayedCampaigns.map((camp, index) => (

@@ -29,7 +29,6 @@ export function AdminGalleryModal({
 }) {
   const isEditing = Boolean(itemToEdit);
 
-  // Form State
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState(DEFAULT_GALLERY_CATEGORY);
   const [createdCategories, setCreatedCategories] = useState([]);
@@ -39,7 +38,6 @@ export function AdminGalleryModal({
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
 
-  // Progress & Error State
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgressText, setUploadProgressText] = useState("");
@@ -98,7 +96,6 @@ export function AdminGalleryModal({
     return { id: formatted, label: formatted, name: formatted };
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -137,7 +134,6 @@ export function AdminGalleryModal({
       const resolvedDesc = description.trim() || null;
 
       if (isEditing) {
-        // Mode Edit Tunggal
         const finalUrl = hasYoutube ? cleanYt : singleImageUrl;
         const payload = {
           title: resolvedTitle,
@@ -162,7 +158,6 @@ export function AdminGalleryModal({
           toast.error(data.message || "Gagal memperbarui dokumentasi kegiatan.");
         }
       } else {
-        // Mode Tambah Banyak Media (Batch Upload)
         const uploadedUrls = [];
         const total = selectedFiles.length;
 
@@ -191,7 +186,6 @@ export function AdminGalleryModal({
           uploadedUrls.push(uploadResult.url);
         }
 
-        // Sertakan video YouTube jika diisi
         if (hasYoutube && isYouTubeUrl(cleanYt)) {
           uploadedUrls.push(cleanYt);
         }
@@ -302,7 +296,6 @@ export function AdminGalleryModal({
         isBatch={!isEditing}
       />
 
-      {/* Zona Unggah Berkas Foto & Video Sorotan Terpadu */}
       <FileUploadZone
         multiple={!isEditing}
         value={isEditing ? singleImageUrl : ""}

@@ -33,7 +33,6 @@ export function BeneficiaryStatsBar({ stats }) {
           key={idx}
           className="relative w-full aspect-[363/224]"
         >
-          {/* Background Folder Frame - Putih Polos */}
           <Image
             src="/img/frames/folder-admin.svg"
             alt=""
@@ -45,7 +44,6 @@ export function BeneficiaryStatsBar({ stats }) {
             className="object-fill pointer-events-none select-none"
           />
 
-          {/* Konten Metrik di Dalam Folder (2 Baris Tanpa Icon & Tanpa Baris ke-3) */}
           <div className="relative z-10 h-full flex flex-col justify-end pb-3.5 sm:pb-4 md:pb-4.5 px-3.5 sm:px-4 md:px-5 space-y-1">
             <span className="text-xs sm:text-sm font-medium text-slate-600 block leading-tight truncate">
               {card.label}

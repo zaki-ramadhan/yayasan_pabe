@@ -315,7 +315,6 @@ export function TablePaginationFooter({
       ? Math.ceil(resolvedTotal / resolvedLimit)
       : 1;
 
-  // Hanya tampilkan jika jumlah data memicu 2 halaman atau lebih (kecuali alwaysShow)
   if (!alwaysShow && calculatedTotalPages <= 1 && resolvedTotal <= resolvedLimit) {
     return null;
   }
@@ -382,5 +381,4 @@ export { TableRowActions } from "./TableActions";
 export { TableToolbar } from "./TableToolbar";
 export { useTableSort } from "@/hooks/useTableSort";
 export { usePagination } from "@/hooks/usePagination";
-
 

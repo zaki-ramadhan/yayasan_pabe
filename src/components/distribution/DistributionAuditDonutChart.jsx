@@ -14,7 +14,6 @@ export function DistributionAuditDonutChart({ allocations = [] }) {
 
   return (
     <div className="flex flex-col md:flex-row items-center justify-center gap-6 lg:gap-12 w-full py-1">
-      {/* Donut Chart Canvas */}
       <div className="relative w-48 h-48 sm:w-52 sm:h-52 shrink-0">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -60,14 +59,12 @@ export function DistributionAuditDonutChart({ allocations = [] }) {
           </PieChart>
         </ResponsiveContainer>
 
-        {/* Center Donut Label */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0">
           <span className="text-sm font-medium text-slate-600">Alokasi</span>
           <span className="text-lg font-medium text-slate-900">100%</span>
         </div>
       </div>
 
-      {/* Clean Legend: Compact 4-item list without dot separators */}
       <div className="w-full md:max-w-md divide-y divide-slate-100">
         {allocations.map((item) => (
           <div

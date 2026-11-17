@@ -16,7 +16,6 @@ export function AdminLayoutClient({ children, initialUser }) {
   const [currentUser, setCurrentUser] = useState(initialUser || null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Background SSE listener live feed dengan auto-refresh router untuk server component
   const { isConnected } = useAdminLiveFeed({
     enabled: Boolean(currentUser),
     onEvent: () => {
@@ -24,7 +23,6 @@ export function AdminLayoutClient({ children, initialUser }) {
     },
   });
 
-  // Tampilkan toast notifikasi sambutan setelah login berhasil
   useEffect(() => {
     if (typeof window !== "undefined") {
       const justLoggedIn = sessionStorage.getItem("pabe_just_logged_in");
@@ -35,15 +33,13 @@ export function AdminLayoutClient({ children, initialUser }) {
     }
   }, []);
 
-  // Tutup drawer saat navigasi rute berubah
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Pantau sesi, batas kedaluwarsa, dan idle timeout (2 jam untuk admin)
   useEffect(() => {
     let isMounted = true;
-    const IDLE_TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 jam tanpa aktivitas
+    const IDLE_TIMEOUT_MS = 2 * 60 * 60 * 1000;
 
     const checkSession = () => {
       const user = getStoredUser();
@@ -59,11 +55,9 @@ export function AdminLayoutClient({ children, initialUser }) {
       }
       setCurrentUser(user);
 
-      // Cek batas waktu idle
       const storedLastActivity = sessionStorage.getItem("pabe_last_activity");
       const justLoggedIn = sessionStorage.getItem("pabe_just_logged_in");
 
-      // Jika baru login atau belum ada rekam aktivitas, inisialisasi ulang tanpa memicu timeout
       if (justLoggedIn || !storedLastActivity) {
         sessionStorage.setItem("pabe_last_activity", String(Date.now()));
         return true;
@@ -82,7 +76,6 @@ export function AdminLayoutClient({ children, initialUser }) {
 
     if (!checkSession()) return;
 
-    // Pastikan aktivitas saat ini tercatat
     sessionStorage.setItem("pabe_last_activity", String(Date.now()));
 
     let lastRecorded = Date.now();
@@ -99,7 +92,6 @@ export function AdminLayoutClient({ children, initialUser }) {
     window.addEventListener("scroll", handleUserInteraction, { passive: true });
     window.addEventListener("focus", checkSession);
 
-    // Verifikasi berkala ke server dan cek kedaluwarsa setiap 60 detik
     const intervalId = setInterval(async () => {
       if (!isMounted) return;
       const valid = checkSession();
@@ -119,11 +111,9 @@ export function AdminLayoutClient({ children, initialUser }) {
           return;
         }
       } catch {
-        // Abaikan gangguan jaringan sementara
       }
     }, 60000);
 
-    // Verifikasi server saat pertama kali mount
     safeFetch("/api/auth/me", {}, 5000)
       .then(async (res) => {
         if (!isMounted) return;
@@ -169,7 +159,6 @@ export function AdminLayoutClient({ children, initialUser }) {
 
   return (
     <div className="min-h-screen bg-slate-50/60 flex flex-col lg:flex-row">
-      {/* Mobile Drawer Backdrop */}
       {isMobileMenuOpen && (
         <div
           className="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-xs lg:hidden"
@@ -178,7 +167,6 @@ export function AdminLayoutClient({ children, initialUser }) {
         />
       )}
 
-      {/* Permanently Open Sidebar on Desktop (w-52), Mobile Slide Drawer */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 bg-sidebar transform transition-all duration-200 ease-in-out lg:translate-x-0 lg:static lg:h-screen lg:sticky lg:top-0 lg:z-30 shrink-0 w-52 ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"

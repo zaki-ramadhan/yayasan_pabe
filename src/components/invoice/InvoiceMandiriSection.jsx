@@ -31,9 +31,7 @@ export function InvoiceMandiriSection({ billerCode = "70012", billKey = "" }) {
 
   return (
     <div className="space-y-3.5 py-1">
-      {/* Kartu Rincian Mandiri Multipayment */}
       <div className="rounded-xl border border-slate-300 bg-slate-50/70 divide-y divide-slate-200 overflow-hidden shadow-2xs">
-        {/* Baris 1: Kode Perusahaan */}
         <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3">
           <div>
             <span className="text-xs text-slate-500 block font-normal">
@@ -62,7 +60,6 @@ export function InvoiceMandiriSection({ billerCode = "70012", billKey = "" }) {
           </button>
         </div>
 
-        {/* Baris 2: Nomor Pelanggan / Kode Bayar */}
         <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 bg-white">
           <div>
             <span className="text-xs text-slate-500 block font-normal">

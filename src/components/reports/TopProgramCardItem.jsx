@@ -37,14 +37,11 @@ export function TopProgramCardItem({ rank, program, maxAmount = 1 }) {
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-      {/* Left section: Rank, Thumbnail Photo, Clickable Title & Category */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        {/* Rank Number */}
         <span className="w-6 text-center text-sm font-semibold text-slate-700 shrink-0">
           #{rank}
         </span>
 
-        {/* Photo Thumbnail (Clickable) */}
         <Link
           href={campaignHref}
           className="relative w-12 h-12 rounded-md overflow-hidden shrink-0 border border-slate-200 bg-white hover:opacity-90 transition-opacity"
@@ -56,7 +53,6 @@ export function TopProgramCardItem({ rank, program, maxAmount = 1 }) {
           />
         </Link>
 
-        {/* Program Title (Clickable) & Category */}
         <div className="min-w-0 flex-1 space-y-0.5">
           <Link
             href={campaignHref}
@@ -70,7 +66,6 @@ export function TopProgramCardItem({ rank, program, maxAmount = 1 }) {
         </div>
       </div>
 
-      {/* Right Section: Single Nominal & Proportional Progress Bar */}
       <div className="flex flex-col sm:items-end justify-between sm:w-60 md:w-64 shrink-0 space-y-1.5">
         <div className="flex items-baseline justify-between sm:justify-end gap-3 w-full">
           <span className="text-sm font-normal text-slate-500">
@@ -81,7 +76,6 @@ export function TopProgramCardItem({ rank, program, maxAmount = 1 }) {
           </span>
         </div>
 
-        {/* Horizontal Progress Bar */}
         <div className="w-full h-1.5 rounded-md bg-slate-100 overflow-hidden">
           <div
             className={cn(

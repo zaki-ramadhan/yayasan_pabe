@@ -78,7 +78,6 @@ export function DonorRoutineDonationsCard({
 
             return (
               <DonorListItem key={item.id} className="flex-col items-start gap-2.5 p-3 sm:p-3.5">
-                {/* 1. Header: Frekuensi, Status, dan Nominal */}
                 <div className="w-full flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-xs font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
@@ -97,7 +96,6 @@ export function DonorRoutineDonationsCard({
                   </div>
                 </div>
 
-                {/* 2. Body: Judul Program Lebar Penuh (Line Clamp 2) */}
                 <div className="w-full space-y-1">
                   <p className="text-sm font-semibold text-slate-900 leading-snug line-clamp-2">
                     {item.programTitle}
@@ -107,7 +105,6 @@ export function DonorRoutineDonationsCard({
                   </p>
                 </div>
 
-                {/* 3. Footer: Tombol Aksi Mandiri Donatur (Gaya 3D Embossed) */}
                 {!isCancelled && (
                   <div className="w-full pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
                     {isActive ? (

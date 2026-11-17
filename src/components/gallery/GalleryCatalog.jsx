@@ -186,7 +186,6 @@ export function GalleryCatalog({
           }
         />
 
-        {/* Content State: Grid vs Empty */}
         {visibleItems.length > 0 ? (
           <div className="space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -195,7 +194,6 @@ export function GalleryCatalog({
               ))}
             </div>
 
-            {/* Load More Button */}
             {hasMore && (
               <div className="flex justify-center pt-4">
                 <Button

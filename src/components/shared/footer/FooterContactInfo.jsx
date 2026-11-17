@@ -59,7 +59,6 @@ export function FooterContactInfo({
         )}
       </div>
 
-      {/* WhatsApp Consultation Button */}
       <div className="pt-1.5">
         <a
           href={wa}

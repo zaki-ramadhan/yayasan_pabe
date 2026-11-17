@@ -78,7 +78,6 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 					</div>
 				)}
 
-				{/* Metrics row */}
 				<div className="grid grid-cols-2 divide-x divide-slate-200 py-3.5 border-y border-slate-200 text-center">
 					<div className="pr-3">
 						<span className="block font-semibold text-slate-950 text-xl sm:text-2xl">
@@ -104,7 +103,6 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 					</div>
 				</div>
 
-				{/* Donation CTA or Closed State */}
 				{isClosed ? (
 					<div className="space-y-2 pt-1">
 						<div className="flex items-center gap-2">
@@ -168,7 +166,6 @@ export function CampaignSidebarDonate({ campaign, progress, daysLeft, hasDonatio
 				)}
 			</div>
 
-			{/* 3-5 Titipan Doa Terbaru / Terpopuler Sidebar Widget */}
 			<CampaignPrayersSidebar
 				initialDonors={
 					campaign.recentDonors ||

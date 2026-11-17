@@ -62,7 +62,6 @@ export function AuthVerificationSpinner({
   const isGoogle = normProvider === "google";
   const isFacebook = normProvider === "facebook" || normProvider === "fb";
 
-  // Teks Utama (maksimal font-medium)
   const defaultTitle =
     status === "success"
       ? "Autentikasi berhasil"
@@ -74,7 +73,6 @@ export function AuthVerificationSpinner({
       ? "Menghubungkan akun Facebook..."
       : "Menghubungkan akun Anda...";
 
-  // Sub-teks (simpel dan lugas)
   const defaultSubtitle =
     status === "success"
       ? "Mengalihkan Anda ke portal yayasan..."
@@ -88,17 +86,14 @@ export function AuthVerificationSpinner({
   return (
     <div className="min-h-screen bg-slate-50/70 flex items-center justify-center p-4 sm:p-6 select-none">
       <div className="w-full max-w-sm sm:max-w-md mx-auto text-center space-y-6 animate-in fade-in zoom-in-95 duration-200">
-        {/* Ikon Provider Dikelilingi Loading Ring Muter */}
         <div className="relative flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 mx-auto">
           {status === "processing" ? (
             <>
-              {/* Outer Circular Track & Rotating Arc */}
               <svg
                 className="absolute inset-0 w-full h-full animate-spin [animation-duration:1.2s]"
                 viewBox="0 0 100 100"
                 aria-hidden="true"
               >
-                {/* Track Lingkaran Statis Halus */}
                 <circle
                   cx="50"
                   cy="50"
@@ -107,7 +102,6 @@ export function AuthVerificationSpinner({
                   stroke="#E2E8F0"
                   strokeWidth="3.5"
                 />
-                {/* Arc Loading Muter */}
                 <circle
                   cx="50"
                   cy="50"
@@ -120,7 +114,6 @@ export function AuthVerificationSpinner({
                 />
               </svg>
 
-              {/* Ikon Provider Langsung di Dalam Ring Loading (Tanpa Parent Circle Tambahan) */}
               <div className="relative z-10 flex items-center justify-center">
                 {isGoogle ? (
                   <GoogleSvgIcon className="w-10 h-10 sm:w-11 sm:h-11" />
@@ -132,7 +125,6 @@ export function AuthVerificationSpinner({
               </div>
             </>
           ) : status === "success" ? (
-            /* State Berhasil: Checkmark Langsung */
             <div className="relative flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 mx-auto">
               <div className="absolute inset-0 rounded-full border-[3px] border-emerald-500 bg-emerald-50/40 animate-in zoom-in-95 duration-200" />
               <div className="relative z-10 flex items-center justify-center text-emerald-600">
@@ -140,7 +132,6 @@ export function AuthVerificationSpinner({
               </div>
             </div>
           ) : (
-            /* State Error: Alert Icon Langsung */
             <div className="relative flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 mx-auto">
               <div className="absolute inset-0 rounded-full border-[3px] border-rose-300 bg-rose-50/50 animate-in zoom-in-95 duration-200" />
               <div className="relative z-10 flex items-center justify-center text-rose-600">
@@ -150,7 +141,6 @@ export function AuthVerificationSpinner({
           )}
         </div>
 
-        {/* Teks Utama & Sub-Teks */}
         <div className="space-y-1.5 px-2">
           <h1 className="text-lg sm:text-xl font-medium text-slate-900 tracking-tight leading-snug">
             {displayTitle}
@@ -160,7 +150,6 @@ export function AuthVerificationSpinner({
           </p>
         </div>
 
-        {/* Tombol Aksi saat Gagal */}
         {status === "error" && (
           <div className="pt-2 max-w-xs mx-auto animate-in fade-in duration-200">
             <Link href="/login" className="block">

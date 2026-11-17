@@ -20,7 +20,6 @@ export function AdminTransactionTableRow({
   const typeLabel = getTransactionTypeLabel(item);
   return (
     <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
-      {/* Invoice */}
       <TableCell className="w-[170px] text-sm py-3 align-middle">
         <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
           <span className="font-normal font-mono text-slate-700 truncate block select-all">
@@ -41,7 +40,6 @@ export function AdminTransactionTableRow({
         </div>
       </TableCell>
 
-      {/* Jenis Transaksi */}
       <TableCell className="w-px py-3 whitespace-nowrap align-middle">
         {txIsZis ? (
           <span
@@ -67,7 +65,6 @@ export function AdminTransactionTableRow({
         )}
       </TableCell>
 
-      {/* Donatur */}
       <TableCell className="w-px py-3 whitespace-nowrap align-middle">
         <div className="flex items-center gap-2.5">
           <UserAvatar
@@ -89,7 +86,6 @@ export function AdminTransactionTableRow({
         </div>
       </TableCell>
 
-      {/* Program */}
       <TableCell className="text-sm text-slate-700 py-3 align-middle min-w-[240px] max-w-[340px]">
         <div className="max-w-[320px]">
           {item.campaignSlug ? (
@@ -128,12 +124,10 @@ export function AdminTransactionTableRow({
         </div>
       </TableCell>
 
-      {/* Nominal */}
       <TableCell className="w-px text-right font-medium text-sm text-slate-900 py-3 whitespace-nowrap align-middle tabular-nums">
         {formatRupiah(item.amount)}
       </TableCell>
 
-      {/* Metode */}
       <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
         <span
           title={formatPaymentChannel(item.paymentChannel)}
@@ -143,17 +137,14 @@ export function AdminTransactionTableRow({
         </span>
       </TableCell>
 
-      {/* Tanggal */}
       <TableCell className="w-px text-sm text-slate-500 py-3 whitespace-nowrap align-middle text-center tabular-nums">
         {formatDate(item.paidAt || item.createdAt)}
       </TableCell>
 
-      {/* Status */}
       <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
         <StatusBadge status={item.status} />
       </TableCell>
 
-      {/* Aksi: Rincian */}
       <TableCell className="w-24 text-right py-3 whitespace-nowrap align-middle pr-4">
         <TableRowActions
           onView={() => onOpenDetail(item)}

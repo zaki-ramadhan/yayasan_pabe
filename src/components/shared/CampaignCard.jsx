@@ -33,7 +33,6 @@ export function CampaignCard({
 
   return (
     <div className={cn("flex flex-col h-full w-full rounded-xl border border-slate-300 bg-white overflow-hidden", className)}>
-      {/* Visual Header / Thumbnail with SafeImage & Category RibbonBadge */}
       <div className="relative aspect-video w-full bg-slate-100 overflow-hidden border-b border-slate-200">
         <SafeImage
           src={campaign.bannerUrl}
@@ -50,23 +49,18 @@ export function CampaignCard({
         )}
       </div>
 
-      {/* Content Area (Upper Body) */}
       <div className="flex flex-col flex-1 px-4 sm:px-5 pt-4 sm:pt-5 pb-3 justify-between gap-3">
-        {/* Title & Location Header Group */}
         <div className="space-y-1.5">
-          {/* Title (Uniform 2-line height) */}
           <h3 className="text-base sm:text-lg font-semibold text-slate-950 leading-snug line-clamp-2 min-h-[2.75rem] sm:min-h-[3.1rem] flex items-start">
             <HighlightText text={campaign.title} highlight={highlightQuery} />
           </h3>
 
-          {/* Location */}
           <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-600 min-w-0 truncate">
             <MapPointIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <span className="truncate">{campaign.location || "Wilayah Binaan PABE"}</span>
           </div>
         </div>
 
-        {/* Progress Bar & Amounts */}
         <div className="space-y-1.5 pt-1">
           {hasTarget ? (
             <>
@@ -89,7 +83,6 @@ export function CampaignCard({
             </>
           ) : (
             <div className="space-y-1.5">
-              {/* Program tanpa target: terisi penuh (100%) jika sudah ada donasi (> 0), kosong (0%) jika belum ada donasi */}
               <Progress
                 value={Number(campaign.collectedAmount || 0) > 0 ? 100 : 0}
                 className="h-2"
@@ -113,11 +106,8 @@ export function CampaignCard({
         </div>
       </div>
 
-      {/* Footer Area: Tightened side & bottom margins for balanced full-width button */}
       <div className="px-3.5 sm:px-4 pb-3 sm:pb-3.5 pt-2.5 border-t border-slate-200/80 space-y-2.5">
-        {/* Symmetrical Meta Row: Identical font size, no wrap */}
         <div className="flex items-center justify-between gap-3 text-xs sm:text-sm">
-          {/* Donor Count */}
           <div className="flex items-center gap-1.5 min-w-0">
             <UsersGroupTwoRoundedIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
             <span className="text-slate-600 font-normal truncate">
@@ -125,7 +115,6 @@ export function CampaignCard({
             </span>
           </div>
 
-          {/* Time Indicator */}
           <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
             <ClockCircleIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 shrink-0" />
             {isClosed ? (
@@ -140,7 +129,6 @@ export function CampaignCard({
           </div>
         </div>
 
-        {/* Full-Width CTA Button: Static colors without hover transitions */}
         <Link href={getCampaignDetailHref(campaign)} className="block w-full">
           {isClosed ? (
             <Button

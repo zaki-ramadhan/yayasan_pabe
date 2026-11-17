@@ -73,14 +73,12 @@ export function AdminCampaignOverviewCard({
 
   return (
     <Card className={cn("shadow-2xs overflow-hidden flex flex-col", stretch ? "h-full" : "h-auto")}>
-      {/* Card Header */}
       <CardHeader className="p-3.5 sm:p-4 border-b border-slate-200/90">
         <CardTitle className="text-base font-medium text-slate-900 leading-tight">
           Capaian Program Prioritas
         </CardTitle>
       </CardHeader>
 
-      {/* Flat List Items */}
       <CardContent className={cn("p-3.5 sm:p-4 flex-1 flex flex-col gap-3", stretch ? "justify-between" : "")}>
         <div className="space-y-3">
           {displayCampaigns.length > 0 ? (
@@ -96,7 +94,6 @@ export function AdminCampaignOverviewCard({
                   className="group block transition-colors"
                 >
                   <div className="flex flex-row items-start gap-2.5">
-                    {/* Left: Compact Image Preview Thumbnail */}
                     <div className="relative w-11 h-11 sm:w-12 sm:h-12 shrink-0 rounded-md overflow-hidden bg-slate-100 border border-slate-200 aspect-square">
                       <SafeImage
                         src={campaign.bannerUrl}
@@ -107,13 +104,11 @@ export function AdminCampaignOverviewCard({
                       />
                     </div>
 
-                    {/* Right: Info, Progress & Metrics */}
                     <div className="flex-1 min-w-0">
                       <p className="text-xs sm:text-sm font-medium text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                         {campaign.title}
                       </p>
 
-                      {/* Progress Bar & Metrics */}
                       <div className="mt-1 space-y-1">
                         <Progress
                           value={percent ?? 100}
@@ -138,7 +133,6 @@ export function AdminCampaignOverviewCard({
           )}
         </div>
 
-        {/* Check All Donation Programs Button */}
         <Button
           variant="secondary"
           asChild

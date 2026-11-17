@@ -52,7 +52,6 @@ export function StorageOrphanTable({
 
   return (
     <div className="space-y-3">
-      {/* Bilah Aksi Massal Terstandarisasi */}
       <TableSelectionBar
         selectedCount={selectedCount}
         totalCount={items.length}
@@ -74,7 +73,6 @@ export function StorageOrphanTable({
         </Button>
       </TableSelectionBar>
 
-      {/* Table Container */}
       <TableContainer>
         <Table>
           <TableHeader>
@@ -119,7 +117,6 @@ export function StorageOrphanTable({
                       isChecked ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-slate-50/75"
                     }`}
                   >
-                    {/* Checkbox */}
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={isChecked}
@@ -128,7 +125,6 @@ export function StorageOrphanTable({
                       />
                     </TableCell>
 
-                    {/* Thumbnail */}
                     <TableCell>
                       <div className="w-12 h-12 rounded-md bg-slate-100 overflow-hidden relative border border-slate-200 shrink-0">
                         {item.url ? (
@@ -148,7 +144,6 @@ export function StorageOrphanTable({
                       </div>
                     </TableCell>
 
-                    {/* Nama Berkas */}
                     <TableCell className="max-w-[260px] sm:max-w-xs md:max-w-md">
                       <p className="text-sm font-medium text-slate-900 truncate">
                         {filename}
@@ -158,19 +153,16 @@ export function StorageOrphanTable({
                       </p>
                     </TableCell>
 
-                    {/* Folder Badge */}
                     <TableCell className="text-center">
                       <Badge variant="secondary" className="capitalize text-sm font-normal max-w-[120px] truncate">
                         {item.folder}
                       </Badge>
                     </TableCell>
 
-                    {/* Ukuran Berkas */}
                     <TableCell className="text-right font-normal text-sm text-slate-700 tabular-nums">
                       {formatBytes(item.size)}
                     </TableCell>
 
-                    {/* Waktu Unggah */}
                     <TableCell className="text-center whitespace-nowrap align-middle">
                       <div className="flex flex-col items-center leading-tight">
                         <span className="text-sm font-normal text-slate-700 tabular-nums">
@@ -182,7 +174,6 @@ export function StorageOrphanTable({
                       </div>
                     </TableCell>
 
-                    {/* Tombol Hapus Satuan */}
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       <Button
                         type="button"

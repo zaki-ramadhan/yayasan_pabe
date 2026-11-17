@@ -52,17 +52,14 @@ export function PrayerInputBar({
   };
 
   const handleKeyDown = (e) => {
-    // Enter tanpa Shift = Kirim pesan
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
-    // Shift + Enter = Baris baru
   };
 
   return (
     <div className={cn("flex items-end gap-2 w-full", className)}>
-      {/* Container Input: rounded-full jika masih 1 baris, rounded-2xl jika sudah lebih dari 1 baris */}
       <div
         className={cn(
           "flex-1 flex flex-col bg-white border border-slate-400 focus-within:border-primary transition-all duration-150 shadow-2xs",
@@ -86,7 +83,6 @@ export function PrayerInputBar({
             className="w-full bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none resize-none leading-relaxed overflow-hidden p-0 disabled:cursor-not-allowed"
           />
 
-          {/* Indikator saat 1 baris (inline) */}
           {!isMultiLine && isTooShort && (
             <span className="text-sm text-amber-600 font-medium select-none shrink-0">
               min. {minLength}
@@ -99,7 +95,6 @@ export function PrayerInputBar({
           )}
         </div>
 
-        {/* Posisi teks keterangan x/y di pojok kanan bawah seperti waktu/timestamp bubble chat */}
         {(isNearMax || isOnlyEmojis || (isMultiLine && isTooShort)) && (
           <div className="flex items-center justify-end gap-1.5 mt-0.5 select-none leading-none">
             {isMultiLine && isTooShort && (

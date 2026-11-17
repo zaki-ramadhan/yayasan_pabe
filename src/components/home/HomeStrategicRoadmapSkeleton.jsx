@@ -25,9 +25,7 @@ export function HomeStrategicRoadmapSkeleton() {
   return (
     <section className="bg-white border-y border-slate-200/90 py-16 sm:py-20 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-        {/* 1. Skeleton Program Kerja Jangka Pendek */}
         <div className="space-y-8">
-          {/* Header 2 Kolom */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-end pb-4 border-b border-slate-100">
             <div className="lg:col-span-6 space-y-2">
               <Skeleton className="h-8 sm:h-9 lg:h-10 w-72 max-w-full rounded-lg" />
@@ -38,7 +36,6 @@ export function HomeStrategicRoadmapSkeleton() {
             </div>
           </div>
 
-          {/* Grid 5 Kolom Bertingkat */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-0">
             {[0, 1, 2, 3, 4].map((idx) => {
               const isFirst = idx === 0;
@@ -65,9 +62,7 @@ export function HomeStrategicRoadmapSkeleton() {
           </div>
         </div>
 
-      {/* 2. Skeleton Program Kerja Jangka Panjang */}
       <div className="space-y-8">
-        {/* Header 2 Kolom (Mirrored: Judul di Kanan) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-end pb-4 border-b border-slate-100">
           <div className="lg:col-span-6 lg:order-2 flex flex-col lg:items-end space-y-2">
             <Skeleton className="h-8 sm:h-9 lg:h-10 w-72 max-w-full rounded-lg" />
@@ -78,7 +73,6 @@ export function HomeStrategicRoadmapSkeleton() {
           </div>
         </div>
 
-        {/* Grid 4 Kolom Bertingkat */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0">
           {[0, 1, 2, 3].map((idx) => {
             const isFirst = idx === 0;
@@ -104,7 +98,6 @@ export function HomeStrategicRoadmapSkeleton() {
           })}
         </div>
 
-        {/* Skeleton Banner Narasi Penutup */}
         <div className="p-4 sm:p-6 rounded-xl bg-slate-50 border border-slate-200/90 space-y-2">
           <Skeleton className="h-4 sm:h-4.5 w-full rounded" />
           <Skeleton className="h-4 sm:h-4.5 w-5/6 rounded" />

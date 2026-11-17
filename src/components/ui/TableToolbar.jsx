@@ -97,8 +97,6 @@ export function TableToolbar({
   const hasHeaderInfo = Boolean(title || description);
   const hasLeftSlots = Boolean(onSearchChange || filters || children);
 
-  // Jika terdapat header info (title/description) dan tidak ada slot pencarian/filter di sisi kiri,
-  // sejajarkan header info di sisi kiri dan tombol aksi/filter di sisi kanan dalam satu baris responsif.
   if (hasHeaderInfo && !hasLeftSlots) {
     return (
       <div className={cn("flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3", className)}>
@@ -187,7 +185,6 @@ export function TableToolbar({
       )}
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        {/* Left Side: Search & Filter Slots */}
         <div className="flex flex-1 flex-wrap items-center gap-2.5">
           {onSearchChange && (
             <div className={searchWidth}>
@@ -211,7 +208,6 @@ export function TableToolbar({
           {children}
         </div>
 
-        {/* Right Side: Limit Selector, Refresh Button, Primary CTA */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           {extraActions}
           {onLimitChange && limit !== undefined && (

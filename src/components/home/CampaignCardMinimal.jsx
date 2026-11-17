@@ -33,7 +33,6 @@ export function CampaignCardMinimal({
         className
       )}
     >
-      {/* 1. Cover Image dengan Judul & Lokasi Terintegrasi di Atas Gradasi Bawah */}
       <div className="relative aspect-[16/11] w-full bg-slate-900 overflow-hidden">
         <SafeImage
           src={campaign.bannerUrl}
@@ -42,7 +41,6 @@ export function CampaignCardMinimal({
           priority={priority}
         />
 
-        {/* Flag Kategori Asli (RibbonBadge) */}
         {campaign.categoryName && (
           <div className="absolute top-2.5 left-0 z-20 drop-shadow-xs">
             <RibbonBadge variant="dark" size="card" className="!font-normal tracking-normal">
@@ -51,13 +49,11 @@ export function CampaignCardMinimal({
           </div>
         )}
 
-        {/* Gradasi Overlay dari Bawah (Gelap pekat ke transparan) */}
         <div className="absolute inset-0 bg-linear-to-t from-slate-950/95 via-slate-950/50 to-transparent flex flex-col justify-end p-4 sm:p-4.5 z-10 pointer-events-none space-y-1.5">
           <h3 className="text-base sm:text-lg font-semibold text-white leading-snug line-clamp-2 drop-shadow-xs">
             {campaign.title}
           </h3>
 
-          {/* Keterangan Lokasi di Bawah Judul (Teks Putih Bersih dengan Ikon Pin Putih, Bobot Normal) */}
           {campaign.location && (
             <div className="flex items-center gap-1.5 text-xs sm:text-sm font-normal text-white drop-shadow-sm min-w-0">
               <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" />
@@ -67,16 +63,13 @@ export function CampaignCardMinimal({
         </div>
       </div>
 
-      {/* 2. Body Minimalis (Progress Bar, Nominal Terkumpul, CTA) */}
       <div className="flex flex-col flex-1 justify-between px-3 sm:px-3.5 pt-3.5 sm:pt-4 pb-2.5 sm:pb-3 space-y-3">
         <div className="space-y-2">
-          {/* Progress Bar Tipis */}
           <Progress
             value={hasTarget ? progress : (Number(campaign.collectedAmount || 0) > 0 ? 100 : 0)}
             className="h-1.5"
           />
 
-          {/* Deret Nominal Terkumpul & Persentase Ringkas */}
           <div className="flex items-baseline justify-between gap-2">
             <span className="text-sm sm:text-base text-slate-700 font-medium shrink-0">
               {hasTarget ? "Terkumpul" : "Total Terkumpul"}
@@ -98,7 +91,6 @@ export function CampaignCardMinimal({
           </div>
         </div>
 
-        {/* Tombol Donasi Ramping */}
         <Link href={getCampaignDetailHref(campaign)} className="block w-full mt-auto">
           {isClosed ? (
             <Button

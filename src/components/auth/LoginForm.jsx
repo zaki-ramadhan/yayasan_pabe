@@ -52,7 +52,6 @@ export function LoginForm({ siteKey }) {
   const handledVerifiedRef = useRef(false);
   const handledLoggedOutRef = useRef(false);
 
-  // Safely restore remembered identifier on client mount without hydration mismatch
   useEffect(() => {
     const remembered = getRememberedIdentifier();
     if (remembered) {
@@ -61,7 +60,6 @@ export function LoginForm({ siteKey }) {
     }
   }, []);
 
-  // Submit button is disabled if required fields are incomplete, invalid, or turnstile pending
   const isSubmitDisabled =
     !identifier.trim() ||
     identifier.trim().length < 3 ||
@@ -185,12 +183,9 @@ export function LoginForm({ siteKey }) {
 
       let finalTarget = "/donatur/dashboard";
       if (isStaff) {
-        // Akun staf/admin: Selalu arahkan ke admin panel.
-        // Jika ada tujuan spesifik ke sub-halaman admin (misal /admin/transaksi), hormati rute tersebut.
         const isAdminSubpath = redirectUrl && (redirectUrl === "/admin" || redirectUrl.startsWith("/admin/"));
         finalTarget = isAdminSubpath ? redirectUrl : "/admin";
       } else {
-        // Akun donatur: Jika query redirect menuju rute admin, arahkan ke dasbor donatur
         const isAdminPath = redirectUrl && (redirectUrl === "/admin" || redirectUrl.startsWith("/admin/"));
         finalTarget = (isAdminPath || !redirectUrl) ? "/donatur/dashboard" : redirectUrl;
       }
@@ -223,13 +218,11 @@ export function LoginForm({ siteKey }) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <AuthFormHeader
         title="Masuk ke Akun"
         subtitle="Masuk untuk melanjutkan ke akun Anda."
       />
 
-      {/* Unactivated Account Warning Alert */}
       {unactivatedEmail && (
         <AccountNotActivatedAlert
           email={unactivatedEmail}
@@ -237,7 +230,6 @@ export function LoginForm({ siteKey }) {
         />
       )}
 
-      {/* Donation Auth Notice Banner */}
       {isDonationRedirect && (
         <AuthNoticeBanner
           title="Perlu Masuk Akun Terlebih Dahulu"
@@ -246,7 +238,6 @@ export function LoginForm({ siteKey }) {
         />
       )}
 
-      {/* Social Login Options (Google & Facebook) */}
       <SocialAuthGroup
         onGoogleClick={handleGoogleLogin}
         onFacebookClick={handleFacebookLogin}
@@ -255,12 +246,9 @@ export function LoginForm({ siteKey }) {
         disabled={isLoading}
       />
 
-      {/* Centered Divider */}
       <AuthDivider />
 
-      {/* Form Fields */}
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-        {/* Username or Email Input */}
         <FormField
           label="Email atau nama pengguna"
           htmlFor="identifier"
@@ -284,7 +272,6 @@ export function LoginForm({ siteKey }) {
           />
         </FormField>
 
-        {/* Password Input with Visibility Toggle */}
         <AuthPasswordInput
           id="password"
           label="Kata sandi"
@@ -308,7 +295,6 @@ export function LoginForm({ siteKey }) {
           }
         />
 
-        {/* Remember Me Checkbox */}
         <div className="flex items-center justify-between pt-1">
           <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer select-none">
             <input
@@ -321,7 +307,6 @@ export function LoginForm({ siteKey }) {
           </label>
         </div>
 
-        {/* Cloudflare Turnstile Anti-Bot Verification */}
         <FormField label="Verifikasi keamanan" htmlFor="cf-turnstile-login">
           <TurnstileWidget
             id="cf-turnstile-login"
@@ -336,7 +321,6 @@ export function LoginForm({ siteKey }) {
           />
         </FormField>
 
-        {/* Submit Button */}
         <Button
           type="submit"
           isLoading={isLoading}
@@ -350,7 +334,6 @@ export function LoginForm({ siteKey }) {
         </Button>
       </form>
 
-      {/* Switch to Register */}
       <div className="pt-2 text-center text-sm text-slate-600">
         <span>Belum memiliki akun? </span>
         <Link
@@ -367,7 +350,6 @@ export function LoginForm({ siteKey }) {
         </Link>
       </div>
 
-      {/* Forgot Password Modal */}
       <ForgotPasswordDialog
         isOpen={isForgotModalOpen}
         onOpenChange={setIsForgotModalOpen}

@@ -40,7 +40,6 @@ export function AdminVolunteerBulkDownloadDialog({
   const [currentVolunteer, setCurrentVolunteer] = useState(null);
   const cancelRef = useRef(false);
 
-  // Hanya relawan yang telah disetujui (APPROVED) yang memiliki kartu aktif
   const approvedList = useMemo(() => {
     return (selectedVolunteers || []).filter((v) => v.status === "APPROVED");
   }, [selectedVolunteers]);
@@ -71,7 +70,6 @@ export function AdminVolunteerBulkDownloadDialog({
         setCurrentVolunteer(vol);
         setCurrentIndex(i + 1);
 
-        // Tunggu siklus render DOM agar elemen kartu ter-update dengan data relawan saat ini
         await new Promise((resolve) => setTimeout(resolve, 150));
 
         const frontEl = document.getElementById("bulk-render-front")?.firstElementChild;
@@ -86,7 +84,6 @@ export function AdminVolunteerBulkDownloadDialog({
           renderCardElementToPng(backEl),
         ]);
 
-        // Buat folder teratur per relawan: "01_Budi-Santoso"
         const indexPrefix = String(i + 1).padStart(2, "0");
         const safeName = formatSafeFileName(vol.fullName);
         const folderName = `${indexPrefix}_${safeName}`;
@@ -137,7 +134,6 @@ export function AdminVolunteerBulkDownloadDialog({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Node Render Tersembunyi (Sequential Buffer) */}
         <div
           className="fixed -left-[9999px] top-0 pointer-events-none p-6 bg-transparent w-[360px]"
           aria-hidden="true"

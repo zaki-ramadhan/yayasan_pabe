@@ -19,7 +19,6 @@ import {
   sanitizePhone,
 } from "@/lib/security";
 
-// Sub-widgets modular
 import { VolunteerApprovedBanner } from "@/components/volunteer/VolunteerApprovedBanner";
 import { VolunteerPendingCard } from "@/components/volunteer/VolunteerPendingCard";
 import { VolunteerRegistrationFields } from "@/components/volunteer/VolunteerRegistrationFields";
@@ -47,7 +46,6 @@ export function VolunteerForm() {
   const { currentUser } = useCurrentUser();
   const activeUser = currentUser || (typeof window !== "undefined" ? getStoredUser() : null);
 
-  // 1. Initial State Derived Lazily (Zero Cascading setState in Effect)
   const [fullName, setFullName] = useState(() => {
     if (activeUser?.name && activeUser.name !== "Pengguna Google" && activeUser.name !== "Pengguna Facebook") {
       return activeUser.name;
@@ -94,7 +92,6 @@ export function VolunteerForm() {
   });
   const [motivation, setMotivation] = useState(() => getInitialDraft().motivation || "");
 
-  // Status Relawan Terdaftar: Selalu mulai dengan true pada SSR dan initial client render untuk mencegah hydration mismatch
   const [volunteer, setVolunteer] = useState(null);
   const [checkingStatus, setCheckingStatus] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -102,11 +99,9 @@ export function VolunteerForm() {
   const [turnstileToken, setTurnstileToken] = useState("");
   const turnstileRef = useRef(null);
 
-  // Cancellation Modal State
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
 
-  // 2. Verifikasi status relawan secara asynchronous setelah mount
   useEffect(() => {
     let isMounted = true;
 
@@ -135,7 +130,6 @@ export function VolunteerForm() {
     };
   }, [currentUser]);
 
-  // 3. Draft Auto-save
   useEffect(() => {
     if (volunteer) return;
     try {
@@ -146,11 +140,9 @@ export function VolunteerForm() {
         );
       }
     } catch {
-      // ignore
     }
   }, [fullName, phone, email, city, motivation, volunteer]);
 
-  // Validasi Form (Derived State)
   const cleanCity = stripEmojis(city)
     .replace(/[^a-zA-ZÀ-ÿ\s.,'-]/g, "")
     .trim();
@@ -161,7 +153,6 @@ export function VolunteerForm() {
     cleanCity.length >= 2
   );
 
-  // Handle Form Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -205,12 +196,10 @@ export function VolunteerForm() {
       sessionStorage.removeItem(DRAFT_STORAGE_KEY);
       toast.success(res.message);
 
-      // Sinkronisasi sesi lokal jika sebelumnya nomor WhatsApp di profil masih kosong
       if (activeUser && (!activeUser.phone || activeUser.phone === "-") && phone.trim()) {
         updateStoredUser({ phone: phone.trim() });
       }
 
-      // Refresh status relawan
       const statusRes = await fetchVolunteerStatus(email.trim().toLowerCase());
       if (statusRes.success && statusRes.data) {
         setVolunteer(statusRes.data);
@@ -224,7 +213,6 @@ export function VolunteerForm() {
       turnstileRef.current?.reset();
       setTurnstileToken("");
       toast.error(err.message || "Gagal mengirim pendaftaran relawan.");
-      // Jika ternyata sudah terdaftar, refresh status agar form langsung beralih ke tampilan kartu status
       if (email && email.trim()) {
         fetchVolunteerStatus(email.trim().toLowerCase()).then((statusRes) => {
           if (statusRes.success && statusRes.data) {
@@ -237,7 +225,6 @@ export function VolunteerForm() {
     }
   };
 
-  // Handle Cancel / Resign Volunteer Action
   const handleConfirmCancel = async () => {
     const targetEmail = volunteer?.email || email;
     if (!targetEmail) return;
@@ -259,7 +246,6 @@ export function VolunteerForm() {
     }
   };
 
-  // State A: Sedang Memeriksa Status Relawan (Skeleton Loader)
   if (checkingStatus) {
     return (
       <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/90 shadow-sm space-y-5 animate-pulse">
@@ -305,12 +291,10 @@ export function VolunteerForm() {
     );
   }
 
-  // State B: Sudah Terdaftar dan Disetujui (APPROVED)
   if (volunteer && volunteer.isApproved) {
     return <VolunteerApprovedBanner volunteer={volunteer} />;
   }
 
-  // State C: Sudah Mendaftar namun Masih Ditinjau (PENDING)
   if (volunteer && volunteer.status === "PENDING") {
     return (
       <>
@@ -329,7 +313,6 @@ export function VolunteerForm() {
     );
   }
 
-  // State D: Belum Terdaftar (Tampilkan Form Input Bersih)
   return (
     <VolunteerRegistrationFields
       fullName={fullName}

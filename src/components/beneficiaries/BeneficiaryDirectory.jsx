@@ -32,24 +32,19 @@ export function BeneficiaryDirectory({ initialBeneficiaries = [], stats = {} }) 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
-  // Debounce search query to prevent laggy keystrokes
   const debouncedSearch = useDebounce(searchQuery.trim().toLowerCase(), 300);
 
-  // Filter Data (aman dari page non-aktif & otomatis reset ke hal 1)
   const filteredData = useMemo(() => {
     let result = [...initialBeneficiaries];
 
-    // Filter Kategori
     if (category !== BENEFICIARY_CATEGORIES.ALL) {
       result = result.filter((item) => item.category === category);
     }
 
-    // Filter Gender
     if (gender !== "ALL") {
       result = result.filter((item) => item.gender === gender);
     }
 
-    // Filter Search dengan query yang telah di-sanitize & di-debounce
     if (debouncedSearch) {
       result = result.filter((item) =>
         item.name.toLowerCase().includes(debouncedSearch)
@@ -59,7 +54,6 @@ export function BeneficiaryDirectory({ initialBeneficiaries = [], stats = {} }) 
     return result;
   }, [initialBeneficiaries, category, gender, debouncedSearch]);
 
-  // Pagination calculation
   const totalItems = filteredData.length;
   const totalPages = Math.ceil(totalItems / pageSize) || 1;
   const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
@@ -67,7 +61,6 @@ export function BeneficiaryDirectory({ initialBeneficiaries = [], stats = {} }) 
   const paginatedItems = filteredData.slice(startIndex, startIndex + pageSize);
 
   const handleSearchChange = (e) => {
-    // Sanitasi: anti-leading space, anti-double space, dan strip karakter berbahaya
     const clean = sanitizeSearchQuery(e.target.value).replace(/^\s+/, "");
     setSearchQuery(clean);
     setCurrentPage(1); // Selalu reset ke halaman pertama saat mengetik
@@ -90,17 +83,14 @@ export function BeneficiaryDirectory({ initialBeneficiaries = [], stats = {} }) 
 
   return (
     <section className="space-y-6">
-      {/* Heading: Parent tanpa padding, font-medium, tanpa sub heading */}
       <div>
         <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight">
           Daftar Penerima Manfaat Binaan
         </h2>
       </div>
 
-      {/* Stats Bar (Cards bentuk folder putih polos dari admin panel) */}
       <BeneficiaryStatsBar stats={stats} />
 
-      {/* Table Section: Toolbar + Single Full-Width Table + Integrated Pagination */}
       <div className="space-y-3.5">
         <TableToolbar
           search={searchQuery}
@@ -127,7 +117,6 @@ export function BeneficiaryDirectory({ initialBeneficiaries = [], stats = {} }) 
                 </SelectContent>
               </Select>
 
-              {/* Jenis Kelamin Dropdown w-48 sm:w-52 agar teks 'Semua Jenis Kelamin' tidak wrap */}
               <Select value={gender} onValueChange={handleGenderChange}>
                 <SelectTrigger className="h-10 w-48 sm:w-52 text-sm font-normal bg-white border border-slate-300 shrink-0 whitespace-nowrap">
                   <SelectValue placeholder="Semua Jenis Kelamin" />
@@ -148,7 +137,6 @@ export function BeneficiaryDirectory({ initialBeneficiaries = [], stats = {} }) 
           }
         />
 
-        {/* Standard Reusable TableContainer from Admin System (Single Full-Width Table) */}
         <TableContainer>
           <Table>
             <TableHeader>
@@ -177,7 +165,6 @@ export function BeneficiaryDirectory({ initialBeneficiaries = [], stats = {} }) 
             </TableBody>
           </Table>
 
-          {/* Standard Reusable TablePaginationFooter from Admin System */}
           <TablePaginationFooter
             totalItems={totalItems}
             pageSize={pageSize}

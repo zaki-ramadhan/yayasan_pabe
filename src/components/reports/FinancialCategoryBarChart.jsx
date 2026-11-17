@@ -47,7 +47,6 @@ export function FinancialCategoryBarChart({ data = [], categories = [] }) {
           </div>
         ) : (
           <>
-            {/* Top Legend Header */}
             <div className="flex flex-wrap items-center justify-start gap-x-4 gap-y-2 text-sm">
               {displayCategories.map((cat) => (
                 <div key={cat.id} className="flex items-center gap-1.5">
@@ -68,7 +67,6 @@ export function FinancialCategoryBarChart({ data = [], categories = [] }) {
               </div>
             </div>
 
-            {/* Recharts Stacked & Grouped Bar Chart */}
             <div className="w-full flex-1 min-h-[320px] sm:min-h-[380px] aspect-auto">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -100,7 +98,6 @@ export function FinancialCategoryBarChart({ data = [], categories = [] }) {
                     content={<ChartTooltipCard formatter={formatRupiah} />}
                   />
 
-                  {/* Stacked Bars for Income Categories */}
                   {displayCategories.map((cat, idx) => (
                     <Bar
                       key={cat.id}
@@ -113,7 +110,6 @@ export function FinancialCategoryBarChart({ data = [], categories = [] }) {
                     />
                   ))}
 
-                  {/* Cash Out Bar (Emerald) */}
                   <Bar
                     dataKey="penyaluran"
                     name="Penyaluran (Cash Out)"

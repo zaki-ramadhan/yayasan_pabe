@@ -35,30 +35,23 @@ export function ArticleCardSkeleton({ isCompact = false, className }) {
         className
       )}
     >
-      {/* Top Section: Side-by-side Thumbnail + Content */}
       <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 items-start flex-1 w-full">
-        {/* Left: Thumbnail preview skeleton */}
         <Skeleton className="w-full aspect-[16/9] sm:aspect-square sm:w-32 md:w-36 sm:h-32 md:h-36 shrink-0 rounded-lg" />
 
-        {/* Right: Content (Category, Title, Excerpt, Tags) */}
         <div className="flex-1 flex flex-col justify-between min-w-0 space-y-2 w-full py-0.5">
           <div className="space-y-1.5 w-full">
-            {/* Category */}
             <Skeleton className="h-3.5 w-20 rounded" />
 
-            {/* Title */}
             <div className="space-y-1.5 pt-0.5">
               <Skeleton className="h-4.5 sm:h-5 w-full rounded" />
               <Skeleton className="h-4.5 sm:h-5 w-4/5 rounded" />
             </div>
 
-            {/* Excerpt */}
             <div className="space-y-1 pt-1">
               <Skeleton className="h-3.5 w-full rounded" />
               <Skeleton className="h-3.5 w-5/6 rounded" />
             </div>
 
-            {/* Tags */}
             <div className="flex items-center gap-1.5 pt-1">
               <Skeleton className="h-4.5 w-14 rounded-md" />
               <Skeleton className="h-4.5 w-16 rounded-md" />
@@ -67,7 +60,6 @@ export function ArticleCardSkeleton({ isCompact = false, className }) {
         </div>
       </div>
 
-      {/* Bottom Metadata: Author, Date & Reactions */}
       <div className="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-slate-200 mt-2.5 sm:mt-3 w-full gap-2">
         <div className="flex items-center gap-2">
           <Skeleton className="h-3.5 w-20 rounded" />

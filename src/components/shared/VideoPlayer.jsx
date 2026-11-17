@@ -54,7 +54,6 @@ export function VideoPlayer({
   const resolvedPoster = getVideoPosterUrl(src) || poster || null;
   const resolvedSrc = isYt ? src : getStreamingUrl(src);
 
-  // Auto-pause saat berpindah slide carousel atau tidak aktif (React derived state pattern)
   const [prevIsActive, setPrevIsActive] = useState(isActive);
   if (isActive !== prevIsActive) {
     setPrevIsActive(isActive);
@@ -79,7 +78,6 @@ export function VideoPlayer({
   };
 
   const handleContainerTouchOrClick = (e) => {
-    // Mencegah interaksi pemutar media memicu navigasi kartu atau pergeseran swipe induk
     e.stopPropagation();
   };
 
@@ -99,7 +97,6 @@ export function VideoPlayer({
       onTouchEnd={isPlaying ? handleContainerTouchOrClick : undefined}
     >
       {isYt ? (
-        // Mode Video YouTube
         isPlaying && ytVideoId ? (
           <iframe
             src={`https://www.youtube-nocookie.com/embed/${ytVideoId}?autoplay=1&rel=0&modestbranding=1`}
@@ -133,13 +130,11 @@ export function VideoPlayer({
               <div className="w-full h-full bg-slate-900" />
             )}
 
-            {/* Lencana Sumber Media */}
             <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-950/80 text-white text-xs font-medium tracking-normal shadow-2xs backdrop-blur-xs border border-white/10">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
               YouTube
             </span>
 
-            {/* Tombol Play Khas YouTube */}
             <div className="absolute inset-0 bg-slate-950/25 group-hover/player:bg-slate-950/40 transition-colors flex items-center justify-center">
               <div className="w-12 h-8.5 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-lg group-hover/player:scale-110 transition-transform">
                 <PlayIcon className="w-4 h-4 fill-white text-white ml-0.5" />
@@ -148,7 +143,6 @@ export function VideoPlayer({
           </div>
         )
       ) : (
-        // Mode Video Langsung (Cloudflare R2 / MP4 / WebM / MOV)
         <div className="relative w-full h-full">
           {isPlaying ? (
             <video
@@ -183,13 +177,11 @@ export function VideoPlayer({
               />
 
               <div className="absolute inset-0 z-10 bg-slate-950/15 group-hover/player:bg-slate-950/30 transition-colors flex items-center justify-center">
-                {/* Lencana Video Langsung */}
                 <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-950/80 text-white text-xs font-medium tracking-normal shadow-2xs backdrop-blur-xs border border-white/10 pointer-events-none">
                   <VideocameraIcon className="w-3.5 h-3.5 text-slate-300" />
                   Video
                 </span>
 
-                {/* Tombol Play Beranimasi Halus */}
                 <div className="w-12 h-12 rounded-full bg-slate-950/75 hover:bg-slate-950 text-white flex items-center justify-center shadow-lg group-hover/player:scale-110 transition-all border border-white/20 backdrop-blur-xs">
                   <PlayIcon className="w-5 h-5 fill-white text-white ml-0.5" />
                 </div>

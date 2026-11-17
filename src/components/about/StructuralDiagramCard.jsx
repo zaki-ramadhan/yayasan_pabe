@@ -18,12 +18,10 @@ export function StructuralDiagramCard({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  // Jika tidak ada URL gambar yang diberikan, komponen tidak dirender
   if (!src) return null;
 
   return (
     <div className="relative w-full overflow-hidden rounded-xl">
-      {/* Shimmer Skeleton Placeholder saat gambar sedang dimuat */}
       {isLoading && !hasError && (
         <div
           aria-hidden="true"
@@ -31,7 +29,6 @@ export function StructuralDiagramCard({
         />
       )}
 
-      {/* Foto Bagan Murni */}
       {!hasError && (
         <Image
           src={src}

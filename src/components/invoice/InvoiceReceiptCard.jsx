@@ -33,7 +33,6 @@ export function InvoiceReceiptCard({
 
   return (
     <div className="relative">
-      {/* Section Atas: Header Tagihan & Batas Waktu */}
       <div className="bg-white rounded-t-xl border-t border-x border-slate-300 p-5 sm:p-6 sm:py-4 pb-4 space-y-2.5">
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm text-slate-600 block">
@@ -99,9 +98,7 @@ export function InvoiceReceiptCard({
         </div>
       </div>
 
-      {/* Divider Perforasi dengan Notch Sobekan di Sisi Kiri & Kanan */}
       <div className="relative h-5 flex items-center bg-white -my-px">
-        {/* Notch Kiri */}
         <svg
           width="10"
           height="20"
@@ -113,10 +110,8 @@ export function InvoiceReceiptCard({
           <path d="M 0 0 A 10 10 0 0 1 0 20" fill="none" stroke="#cbd5e1" strokeWidth="1" />
         </svg>
 
-        {/* Garis Putus-Putus */}
         <DashedDivider className="mx-3" />
 
-        {/* Notch Kanan */}
         <svg
           width="10"
           height="20"
@@ -129,9 +124,7 @@ export function InvoiceReceiptCard({
         </svg>
       </div>
 
-      {/* Section Bawah: Total & Rincian Transaksi */}
       <div className="bg-white border-x border-slate-300 p-5 sm:p-6 sm:py-4 pt-3 space-y-4">
-        {/* Total Transfer Row */}
         <div className="space-y-1">
           <span className="text-sm text-slate-600 block">
             {donation.status === "PAID" ? vocab.totalPaidLabel : "Total yang Harus Ditransfer"}
@@ -141,7 +134,6 @@ export function InvoiceReceiptCard({
           </span>
         </div>
 
-        {/* Rincian Transaksi */}
         <div className="space-y-3 pb-1">
           <span className="text-sm text-slate-600 block">{vocab.detailsLabel}</span>
           <div className="space-y-2.5 text-sm">
@@ -225,7 +217,6 @@ export function InvoiceReceiptCard({
         </div>
       </div>
 
-      {/* Sisi Bawah Bergerigi Lingkaran Halus */}
       <div className="relative w-full h-3.5 select-none -mt-px overflow-hidden border-x border-slate-300">
         <svg
           className="w-full h-3.5 block"

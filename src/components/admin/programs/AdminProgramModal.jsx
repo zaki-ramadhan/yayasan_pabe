@@ -188,7 +188,6 @@ export function AdminProgramModal({
 			return null;
 		}
 
-		// Cek apakah sudah ada di categories existing dengan perbandingan case-insensitive
 		const existing =
 			categoryList.find(
 				(
@@ -417,7 +416,6 @@ export function AdminProgramModal({
 			isSubmitting={isSubmitting}
 			submitDisabled={!isFormValid || (isEditing && !isDirty)}
 		>
-			{/* Judul program */}
 			<FormField
 				label="Judul program"
 				required
@@ -446,7 +444,6 @@ export function AdminProgramModal({
 			</FormField>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-				{/* Kategori program */}
 				<FormField
 					label={isZisMode ? "Kategori ZIS" : "Kategori program"}
 					required
@@ -496,7 +493,6 @@ export function AdminProgramModal({
 					)}
 				</FormField>
 
-				{/* Target donasi */}
 				<FormField
 					label="Target pendanaan (Rp)"
 					error={errors.targetAmount}
@@ -519,7 +515,6 @@ export function AdminProgramModal({
 			</div>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-				{/* Tenggat waktu */}
 				<FormField label="Batas waktu penggalangan">
 					<DatePicker
 						value={endDate}
@@ -528,7 +523,6 @@ export function AdminProgramModal({
 					/>
 				</FormField>
 
-				{/* Wilayah penyaluran */}
 				<FormField label="Wilayah atau lokasi penyaluran">
 					<Input
 						type="text"
@@ -543,7 +537,6 @@ export function AdminProgramModal({
 				</FormField>
 			</div>
 
-			{/* Foto sampul / banner R2 */}
 			<FileUploadZone
 				value={bannerUrl}
 				onChange={setBannerUrl}
@@ -554,7 +547,6 @@ export function AdminProgramModal({
 				helperText="Mendukung JPG, PNG, WebP (Maks. 10MB) • Bisa Ctrl + V. Otomatis dikonversi ke WebP."
 			/>
 
-			{/* Detail & uraian cerita program */}
 			<FormField
 				label="Detail & cerita program"
 				error={errors.story}

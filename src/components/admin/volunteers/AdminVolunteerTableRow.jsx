@@ -24,7 +24,6 @@ export function AdminVolunteerTableRow({
         isSelected ? "bg-primary/5 hover:bg-primary/10" : ""
       }`}
     >
-      {/* 0. Selection Checkbox */}
       <TableCell className="w-12 text-center py-3 px-3 align-middle" onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={isSelected}
@@ -33,7 +32,6 @@ export function AdminVolunteerTableRow({
         />
       </TableCell>
 
-      {/* 1. Relawan */}
       <TableCell className="w-60 min-w-[200px] py-3 align-middle">
         <div className="flex items-center gap-2.5">
           <UserAvatar
@@ -54,21 +52,18 @@ export function AdminVolunteerTableRow({
         </div>
       </TableCell>
 
-      {/* 2. No. Telepon */}
       <TableCell className="w-40 text-center py-3 whitespace-nowrap align-middle">
         <span className="text-sm font-normal text-slate-700 tabular-nums">
           {item.phone ? maskPhone(item.phone) : "-"}
         </span>
       </TableCell>
 
-      {/* 3. Domisili */}
       <TableCell className="w-36 text-sm text-slate-700 py-3 align-middle whitespace-nowrap">
         <span className="font-normal block truncate">
           {item.city || "-"}
         </span>
       </TableCell>
 
-      {/* 4. Bidang Minat */}
       <TableCell className="text-sm text-slate-800 py-3 align-middle">
         <span className="font-normal block leading-snug line-clamp-1">
           {item.interest}
@@ -80,12 +75,10 @@ export function AdminVolunteerTableRow({
         )}
       </TableCell>
 
-      {/* 5. Tanggal Daftar */}
       <TableCell className="w-36 text-sm text-slate-500 py-3 whitespace-nowrap align-middle text-center tabular-nums">
         {formatDate(item.createdAt)}
       </TableCell>
 
-      {/* 6. Status (Inline Notion-Style) */}
       <TableCell className="w-32 text-center py-3 whitespace-nowrap align-middle" onClick={(e) => e.stopPropagation()}>
         <AdminVolunteerStatusSelect
           status={item.status}
@@ -94,7 +87,6 @@ export function AdminVolunteerTableRow({
         />
       </TableCell>
 
-      {/* 7. Aksi */}
       <TableCell className="w-24 text-right py-3 whitespace-nowrap align-middle pr-4">
         <TableRowActions
           onView={() => onViewDetail(item)}

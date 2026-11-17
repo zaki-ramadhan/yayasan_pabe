@@ -22,14 +22,12 @@ export function FinancialDetailsSection({ data }) {
     { id: "2025", label: "Tahun 2025" },
   ];
 
-  // Filter bulanan sesuai tahun aktif
   const filteredMonthlyData = useMemo(() => {
     const list = data?.monthlyData || [];
     if (selectedYear === "all") return list;
     return list.filter((item) => item.year === selectedYear);
   }, [data?.monthlyData, selectedYear]);
 
-  // Hitung ulang distribusi kategori jika tahun tertentu dipilih
   const filteredDistribution = useMemo(() => {
     if (selectedYear === "all" && data?.categoryDistribution) {
       return data.categoryDistribution;
@@ -61,10 +59,8 @@ export function FinancialDetailsSection({ data }) {
 
   return (
     <section className="space-y-4">
-      {/* Section Header */}
       <ReportSectionHeader title="Rincian Laporan Keuangan" />
 
-      {/* Year Filter Pill */}
       <div>
         <YearFilterPills
           years={availableYears}
@@ -73,7 +69,6 @@ export function FinancialDetailsSection({ data }) {
         />
       </div>
 
-      {/* 2 Columns: Bar Chart & Donut Chart (Equal Height, Gap 3) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
         <div className="lg:col-span-8 flex flex-col h-full">
           <FinancialCategoryBarChart

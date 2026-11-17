@@ -87,7 +87,6 @@ function NavigationProgressBarInner() {
           if (container) container.style.display = "none";
         }, 8000);
       } catch {
-        // Abaikan parse error URL
       }
     };
 

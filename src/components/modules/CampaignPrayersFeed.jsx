@@ -57,7 +57,6 @@ export function CampaignPrayersFeed({ initialDonors = [] }) {
 
   return (
     <div className="space-y-4">
-      {/* Header: Title & Sort Dropdown */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="font-semibold text-slate-950 text-base sm:text-lg">
@@ -82,7 +81,6 @@ export function CampaignPrayersFeed({ initialDonors = [] }) {
         </div>
       </div>
 
-      {/* Scrollable prayer list feed (2 column unified divided grid on md) */}
       <div
         ref={scrollRef}
         className="max-h-[480px] sm:max-h-[520px] overflow-y-auto pr-1 sm:pr-1.5 pt-1 pb-2"
@@ -108,7 +106,6 @@ export function CampaignPrayersFeed({ initialDonors = [] }) {
           </div>
         )}
 
-        {/* Loading indicator di dalam scroll area */}
         {isLoadingMore && (
           <div className="flex justify-center py-3">
             <Loader2 className="w-[18px] h-[18px] text-primary animate-spin" />

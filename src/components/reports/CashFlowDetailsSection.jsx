@@ -22,14 +22,12 @@ export function CashFlowDetailsSection({ data }) {
     { id: "2025", label: "Tahun 2025" },
   ];
 
-  // Filter data bulanan sesuai tahun
   const filteredMonthlyData = useMemo(() => {
     const list = data?.monthlyData || [];
     if (selectedYear === "all") return list;
     return list.filter((item) => item.year === selectedYear);
   }, [data?.monthlyData, selectedYear]);
 
-  // Hitung ulang total Cash In & Cash Out jika tahun tertentu dipilih
   const filteredTotals = useMemo(() => {
     if (selectedYear === "all" && data?.totals) {
       return data.totals;
@@ -47,10 +45,8 @@ export function CashFlowDetailsSection({ data }) {
 
   return (
     <section className="space-y-4">
-      {/* Section Header */}
       <ReportSectionHeader title="Rincian Arus Kas" />
 
-      {/* Year Filter Pill */}
       <div>
         <YearFilterPills
           years={availableYears}
@@ -59,7 +55,6 @@ export function CashFlowDetailsSection({ data }) {
         />
       </div>
 
-      {/* 2 Columns: Area Chart & Ratio Pie Chart (Equal Height, Gap 3) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
         <div className="lg:col-span-8 flex flex-col h-full">
           <CashFlowTrendAreaChart data={filteredMonthlyData} />

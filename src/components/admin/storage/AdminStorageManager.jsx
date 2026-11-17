@@ -40,17 +40,14 @@ export function AdminStorageManager({ initialOverview = null }) {
 
   return (
     <div className="space-y-5">
-      {/* 1. Banner Status Kapasitas Cloudflare R2 */}
       <StorageCapacityBanner overview={overview} />
 
-      {/* 2. Kartu Rincian Berkas per Folder */}
       <StorageFolderBreakdownCard
         folders={overview?.folders || []}
         isConfigured={overview?.isConfigured ?? true}
         onRefresh={refreshOverview}
       />
 
-      {/* 2. Toolbar Pencarian & Pemicu Pemindaian Sampah */}
       <StorageScanToolbar
         search={search}
         onSearchChange={handleSearchChange}
@@ -64,7 +61,6 @@ export function AdminStorageManager({ initialOverview = null }) {
         onScan={handleScan}
       />
 
-      {/* 3. Tabel Berkas Sampah (Orphan) */}
       <StorageOrphanTable
         items={orphans}
         selectedKeys={selectedKeys}
@@ -76,7 +72,6 @@ export function AdminStorageManager({ initialOverview = null }) {
         isScanning={isScanning}
       />
 
-      {/* 4. Modal Dialog Konfirmasi Penghapusan Destruktif */}
       <StorageDeleteModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

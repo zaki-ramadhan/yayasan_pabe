@@ -25,7 +25,6 @@ export function AdminDistributionTableRow({
 				isSelected ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-slate-50/70"
 			}`}
 		>
-			{/* Checkbox Pemilihan */}
 			<TableCell className="w-12 px-4 py-3 align-middle">
 				<Checkbox
 					checked={isSelected}
@@ -34,7 +33,6 @@ export function AdminDistributionTableRow({
 				/>
 			</TableCell>
 
-			{/* Program Donasi Asal */}
 			<TableCell className="w-72 py-3 align-middle">
 				<div className="flex items-center gap-2.5">
 					<div className="w-10 h-10 rounded-md bg-white overflow-hidden relative border border-slate-200 shrink-0">
@@ -83,7 +81,6 @@ export function AdminDistributionTableRow({
 				</div>
 			</TableCell>
 
-			{/* Judul & Media */}
 			<TableCell className="space-y-1.5 py-3 align-middle">
 				<p className="font-normal text-sm text-slate-800 leading-snug line-clamp-2">
 					{item.title}
@@ -119,21 +116,18 @@ export function AdminDistributionTableRow({
 				})()}
 			</TableCell>
 
-			{/* Tanggal */}
 			<TableCell className="text-sm text-slate-600 py-3 align-middle text-center whitespace-nowrap tabular-nums">
 				{formatDate(
 					item.date,
 				)}
 			</TableCell>
 
-			{/* Nominal */}
 			<TableCell className="text-right font-medium text-sm text-slate-900 py-3 align-middle whitespace-nowrap tabular-nums">
 				{formatRupiah(
 					item.disbursedAmount,
 				)}
 			</TableCell>
 
-			{/* Aksi */}
 			<TableCell className="text-right py-3 whitespace-nowrap align-middle pr-4">
 				<TableRowActions
 					onEdit={() =>

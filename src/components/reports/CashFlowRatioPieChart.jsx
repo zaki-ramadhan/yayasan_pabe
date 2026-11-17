@@ -53,7 +53,6 @@ export function CashFlowRatioPieChart({ totals = { cashIn: 0, cashOut: 0 } }) {
   return (
     <Card className="rounded-lg border-slate-200 shadow-xs h-full flex flex-col">
       <CardContent className="p-4 sm:p-6 flex flex-col justify-between flex-1 space-y-4">
-        {/* Title */}
         <h3 className="text-base sm:text-lg font-semibold text-slate-950 text-center tracking-tight">
           Proporsi Rasio Arus Kas
         </h3>
@@ -70,7 +69,6 @@ export function CashFlowRatioPieChart({ totals = { cashIn: 0, cashOut: 0 } }) {
           </div>
         ) : (
           <>
-            {/* Pie Chart */}
             <div className="w-full flex-1 min-h-[220px] sm:min-h-[250px] aspect-auto">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -117,7 +115,6 @@ export function CashFlowRatioPieChart({ totals = { cashIn: 0, cashOut: 0 } }) {
               </ResponsiveContainer>
             </div>
 
-            {/* Legend Grid Below */}
             <div className="pt-2 border-t border-slate-100">
               <ChartLegendGrid items={legendItems} />
             </div>

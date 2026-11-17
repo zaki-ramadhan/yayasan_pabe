@@ -28,7 +28,6 @@ export function NavDesktopMenu({ pathname }) {
 	const isArtikelActive = isNavItemActive("/artikel", pathname);
 	const isInformasiActive = isParentMenuActive(INFORMASI_MENU, pathname);
 
-	// Otomatis tutup menu saat route berubah
 	const [prevPathname, setPrevPathname] = useState(pathname);
 	if (prevPathname !== pathname) {
 		setPrevPathname(pathname);
@@ -38,7 +37,6 @@ export function NavDesktopMenu({ pathname }) {
 
 	return (
 		<nav className="hidden lg:flex items-stretch h-full gap-1 xl:gap-2">
-			{/* 1. Home */}
 			<Link
 				href="/"
 				className={cn(
@@ -51,7 +49,6 @@ export function NavDesktopMenu({ pathname }) {
 				Beranda
 			</Link>
 
-			{/* 2. Tentang Kami */}
 			<Link
 				href="/tentang-kami"
 				className={cn(
@@ -64,7 +61,6 @@ export function NavDesktopMenu({ pathname }) {
 				Tentang Kami
 			</Link>
 
-			{/* 3. Program Dropdown (Click to toggle) */}
 			<DropdownMenu open={isProgramOpen} onOpenChange={setIsProgramOpen}>
 				<DropdownMenuTrigger asChild>
 					<button
@@ -119,7 +115,6 @@ export function NavDesktopMenu({ pathname }) {
 				</DropdownMenuContent>
 			</DropdownMenu>
 
-			{/* 4. Galeri (Direct Link) */}
 			<Link
 				href="/galeri"
 				className={cn(
@@ -132,7 +127,6 @@ export function NavDesktopMenu({ pathname }) {
 				Galeri
 			</Link>
 
-			{/* 5. Artikel (Direct Link) */}
 			<Link
 				href="/artikel"
 				className={cn(
@@ -145,7 +139,6 @@ export function NavDesktopMenu({ pathname }) {
 				Artikel
 			</Link>
 
-			{/* 6. Informasi Dropdown (Click to toggle) */}
 			<DropdownMenu open={isInformasiOpen} onOpenChange={setIsInformasiOpen}>
 				<DropdownMenuTrigger asChild>
 					<button

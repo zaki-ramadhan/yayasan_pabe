@@ -43,10 +43,8 @@ export function TransparencyTrendChart({ data = [], className = "" }) {
             </linearGradient>
           </defs>
 
-          {/* Garis horizontal solid tipis */}
           <CartesianGrid vertical={false} stroke="#e2e8f0" strokeDasharray="0" />
 
-          {/* 12 Bulan pada sumbu X */}
           <XAxis
             dataKey="month"
             tickLine={false}
@@ -55,7 +53,6 @@ export function TransparencyTrendChart({ data = [], className = "" }) {
             className="text-xs sm:text-sm fill-slate-400 font-normal"
           />
 
-          {/* Tooltip standar sistem chart persis tab riwayat donasi */}
           <ChartTooltip
             cursor={{ stroke: "#94a3b8", strokeWidth: 1, strokeDasharray: "4 4" }}
             content={
@@ -85,7 +82,6 @@ export function TransparencyTrendChart({ data = [], className = "" }) {
             }
           />
 
-          {/* Satu garis kurva tunggal yang mengalir tenang dan elegan */}
           <Area
             type="monotone"
             dataKey="amount"

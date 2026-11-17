@@ -86,7 +86,6 @@ export function AdminSettingsForm({ initialSettings }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. Validasi menyeluruh input dan aturan bisnis
     const validation = validateOrgSettings(formData);
     if (!validation.isValid) {
       setErrors(validation.errors || {});
@@ -95,7 +94,6 @@ export function AdminSettingsForm({ initialSettings }) {
     }
     setErrors({});
 
-    // 2. Bersihkan dan trim seluruh field sebelum dikirim
     const cleanedPayload = {
       ...formData,
       name: (formData.name || "").trim(),
@@ -146,28 +144,24 @@ export function AdminSettingsForm({ initialSettings }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      {/* 1. Identitas Yayasan */}
       <AdminSettingsIdentitySection
         formData={formData}
         errors={errors}
         onFieldChange={handleFieldChange}
       />
 
-      {/* 2. Legalitas & Perizinan */}
       <AdminSettingsLegalSection
         formData={formData}
         errors={errors}
         onFieldChange={handleFieldChange}
       />
 
-      {/* 3. Kontak & Kantor */}
       <AdminSettingsContactSection
         formData={formData}
         errors={errors}
         onFieldChange={handleFieldChange}
       />
 
-      {/* 4. Rekening Bank Resmi */}
       <AdminSettingsBankSection
         bankAccounts={formData.officialBankAccounts || []}
         errors={errors}
@@ -176,7 +170,6 @@ export function AdminSettingsForm({ initialSettings }) {
         onBankAccountChange={handleBankAccountChange}
       />
 
-      {/* Action Footer */}
       <div className="flex items-center justify-end gap-3 pt-2">
         <Button
           type="submit"

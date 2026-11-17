@@ -79,7 +79,6 @@ export function VolunteerPrintDialog({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Node Render Khusus Unduh Kartu Siap Cetak (CR80 Siku Sempurna) */}
         <div
           id="volunteer-print-front-export"
           className="fixed -left-[9999px] top-0 pointer-events-none p-6 bg-transparent w-[360px]"
@@ -126,7 +125,6 @@ export function VolunteerPrintDialog({
             </Button>
           )}
 
-          {/* Unduh Langsung: Paket ZIP (Depan & Belakang) */}
           <Button
             type="button"
             onClick={handleDownloadZip}

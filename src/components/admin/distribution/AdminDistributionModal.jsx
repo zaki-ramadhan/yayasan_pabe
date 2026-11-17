@@ -175,7 +175,6 @@ export function AdminDistributionModal({
 		setErrors({});
 		setIsSubmitting(true);
 		try {
-			// Unggah berkas baru foto & video langsung ke R2
 			const uploadedUrls = [];
 			const total = selectedFiles.length;
 
@@ -203,7 +202,6 @@ export function AdminDistributionModal({
 				uploadedUrls.push(uploadResult.url);
 			}
 
-			// Gabungkan media tersimpan, media baru terunggah, dan tautan YouTube
 			const finalImages = [
 				...existingMedia,
 				...uploadedUrls,
@@ -383,7 +381,6 @@ export function AdminDistributionModal({
 						if (errors.campaignId) {
 							setErrors((prev) => ({ ...prev, campaignId: "" }));
 						}
-						// Validasi ulang nominal penyaluran saat berganti program
 						if (disbursedAmount > 0) {
 							const newSelected = campaigns.find((c) => c.id === val) || null;
 							if (newSelected) {
@@ -509,7 +506,6 @@ export function AdminDistributionModal({
 				/>
 			</FormField>
 
-			{/* Sub-komponen modular upload foto, video R2, dan video YouTube */}
 			<AdminDistributionMediaFields
 				existingMedia={existingMedia}
 				onRemoveExistingMedia={(idx) =>

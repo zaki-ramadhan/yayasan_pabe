@@ -32,7 +32,6 @@ export function FileUploadPreview({
       ? `/api/media/${activeSrc.split(".r2.dev/")[1]}`
       : activeSrc;
 
-  // Derived state: error hanya aktif jika URL yang gagal memuat identik dengan resolvedSrc aktif
   const isError = Boolean(failedSrc && failedSrc === resolvedSrc);
   const isVideo = Boolean(typeof resolvedSrc === "string" && isVideoUrl(resolvedSrc));
   

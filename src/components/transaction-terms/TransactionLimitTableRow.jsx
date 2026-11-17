@@ -15,7 +15,6 @@ import { TableRow, TableCell } from "@/components/ui/Table";
 export function TransactionLimitTableRow({ item }) {
   return (
     <TableRow>
-      {/* Saluran Pembayaran (Logo + Nama & Platform) */}
       <TableCell className="align-middle">
         <div className="flex items-center gap-3">
           {item.logo && (
@@ -35,14 +34,12 @@ export function TransactionLimitTableRow({ item }) {
         </div>
       </TableCell>
 
-      {/* Batas Minimum */}
       <TableCell className="align-middle">
         <span className="text-sm font-normal text-slate-700 block">
           {formatRupiah(item.minAmount)}
         </span>
       </TableCell>
 
-      {/* Batas Maksimum */}
       <TableCell className="align-middle">
         <span className="text-sm font-medium text-slate-900 block">
           {formatRupiah(item.maxAmount)}

@@ -10,7 +10,6 @@ export function ErrorStandaloneLayout({ children }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/70 text-slate-900 font-sans antialiased selection:bg-primary/10">
-      {/* Top minimal header (Hanya Logo resmi yang mengarah ke beranda, tanpa tombol redundan) */}
       <header className="w-full py-3.5 px-4 sm:px-6 border-b border-slate-200/80 bg-white/90 backdrop-blur-sm sticky top-0 z-30">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href="/" className="inline-flex items-center gap-2" aria-label="Beranda Yayasan Payung Berkah">
@@ -26,12 +25,10 @@ export function ErrorStandaloneLayout({ children }) {
         </div>
       </header>
 
-      {/* Main centered canvas dengan ruang lapang */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 my-auto">
         {children}
       </main>
 
-      {/* Bottom minimal footer (Relatif mengalir di bawah dengan jarak lega) */}
       <footer className="w-full py-6 sm:py-8 px-4 sm:px-6 border-t border-slate-200/60 bg-white/60 text-center mt-auto">
         <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
           &copy; {currentYear} Yayasan Payung Berkah (PABE). Butuh bantuan?{" "}

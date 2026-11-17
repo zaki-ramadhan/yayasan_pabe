@@ -166,7 +166,6 @@ export function AdminFaqTable({ initialFaqs = [] }) {
 
   return (
     <div className="space-y-4">
-      {/* Top Filter and Action Bar */}
       <AdminFaqToolbar
         search={search}
         onSearchChange={handleSearchChange}
@@ -178,7 +177,6 @@ export function AdminFaqTable({ initialFaqs = [] }) {
         onOpenAdd={handleOpenAdd}
       />
 
-      {/* Reusable Bulk Action Bar */}
       <TableSelectionBar
         selectedCount={selection.selectedCount}
         totalCount={paginatedFaqs.length}

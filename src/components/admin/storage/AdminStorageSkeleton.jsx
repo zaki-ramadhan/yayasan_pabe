@@ -15,7 +15,6 @@ import {
 export function AdminStorageSkeleton() {
   return (
     <div className="space-y-5 animate-pulse">
-      {/* 1. StorageCapacityBanner Skeleton */}
         <div className="bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden flex flex-col md:flex-row items-stretch">
           <div className="w-full md:w-24 lg:w-28 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200/80 flex items-center justify-center p-2 shrink-0 min-h-[56px] md:min-h-0">
             <Skeleton className="w-10 h-10 rounded-lg" />
@@ -35,7 +34,6 @@ export function AdminStorageSkeleton() {
           </div>
         </div>
 
-        {/* StorageFolderBreakdownCard Skeleton */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-2xs space-y-3">
         <div className="flex items-center justify-between pb-1">
           <div className="flex items-center gap-2">
@@ -61,7 +59,6 @@ export function AdminStorageSkeleton() {
                 </TableRow>
               </TableHeader>
               <TableBody className="divide-y divide-slate-100">
-                {/* Folder 1: Expanded with 2 child file rows */}
                 <TableRow className="hover:bg-transparent">
                   <TableCell className="py-2.5 px-2.5">
                     <div className="flex items-center gap-2">
@@ -106,7 +103,6 @@ export function AdminStorageSkeleton() {
                   </TableCell>
                 </TableRow>
 
-                {/* Folder 2: Collapsed */}
                 <TableRow className="hover:bg-transparent">
                   <TableCell className="py-2.5 px-2.5">
                     <div className="flex items-center gap-2">
@@ -123,7 +119,6 @@ export function AdminStorageSkeleton() {
                   </TableCell>
                 </TableRow>
 
-                {/* Folder 3: Collapsed */}
                 <TableRow className="hover:bg-transparent">
                   <TableCell className="py-2.5 px-2.5">
                     <div className="flex items-center gap-2">
@@ -140,7 +135,6 @@ export function AdminStorageSkeleton() {
                   </TableCell>
                 </TableRow>
 
-                {/* Folder 4: Collapsed */}
                 <TableRow className="hover:bg-transparent">
                   <TableCell className="py-2.5 px-2.5">
                     <div className="flex items-center gap-2">
@@ -161,7 +155,6 @@ export function AdminStorageSkeleton() {
           </div>
         </div>
 
-      {/* 3. StorageScanToolbar Skeleton */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex flex-1 flex-wrap items-center gap-2">
           <Skeleton className="h-10 flex-1 min-w-[200px] max-w-xs rounded-lg" />
@@ -171,7 +164,6 @@ export function AdminStorageSkeleton() {
         <Skeleton className="h-10 w-52 rounded-lg shrink-0 self-start sm:self-auto" />
       </div>
 
-      {/* 4. StorageOrphanTable Skeleton */}
       <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
@@ -233,7 +225,6 @@ export function AdminStorageSkeleton() {
             </TableBody>
           </Table>
 
-          {/* Table Pagination Footer Skeleton */}
           <div className="px-4 py-3 border-t border-slate-200/90 bg-white flex flex-col sm:flex-row items-center justify-between gap-3">
             <Skeleton className="h-4 w-44 rounded" />
             <div className="flex items-center gap-1">

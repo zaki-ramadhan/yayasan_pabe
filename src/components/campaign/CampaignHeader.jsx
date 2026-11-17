@@ -25,14 +25,12 @@ export function CampaignHeader({ campaign, progress, daysLeft }) {
 
 	return (
 		<div className="space-y-3">
-			{/* Title */}
 			<h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-slate-950 leading-tight">
 				{
 					campaign.title
 				}
 			</h1>
 
-			{/* Category & Location Metadata */}
 			<div className="flex items-center gap-2.5 text-sm sm:text-base text-slate-800 flex-wrap pt-0.5">
 				<span className="font-semibold text-slate-950">
 					{
@@ -59,7 +57,6 @@ export function CampaignHeader({ campaign, progress, daysLeft }) {
 				)}
 			</div>
 
-			{/* Mobile-only Keterangan Dana Terkumpul Card */}
 			<div className="lg:hidden p-4 bg-white rounded-xl border border-slate-300 space-y-3.5 shadow-xs">
 				{hasTarget ? (
 					<div className="space-y-2">
@@ -96,7 +93,6 @@ export function CampaignHeader({ campaign, progress, daysLeft }) {
 					</div>
 				)}
 
-				{/* Metrics Row: Orang Baik & Sisa Hari */}
 				<div className="grid grid-cols-2 divide-x divide-slate-200 pt-3 border-t border-slate-200 text-center">
 					<div className="pr-3">
 						<span className="block font-semibold text-slate-950 text-xl">

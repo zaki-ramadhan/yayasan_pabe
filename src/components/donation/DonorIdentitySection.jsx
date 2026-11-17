@@ -39,7 +39,6 @@ export function DonorIdentitySection({
         title={isZakat ? "Data muzakki & niat kebaikan" : "Data donatur & doa kebaikan"}
       />
 
-      {/* Checkbox Hamba Allah */}
       <AnonymousCheckbox
         checked={isAnonymous}
         onChange={(val) => {
@@ -47,7 +46,6 @@ export function DonorIdentitySection({
         }}
       />
 
-      {/* Nama Lengkap */}
       <FormField
         label={isZakat ? "Nama lengkap muzakki" : "Nama lengkap"}
         required
@@ -132,7 +130,6 @@ export function DonorIdentitySection({
         </FormField>
       </div>
 
-      {/* Doa / Pesan Kebaikan (Maksimal 1 doa per orang) */}
       <div className="space-y-1.5 pt-1">
         {hasExistingPrayer && !prayer && (
           <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs sm:text-sm text-slate-600 font-normal">

@@ -114,7 +114,6 @@ export function useRoutineDonation({ campaigns = [] }) {
           setExistingActiveRoutine(null);
         }
       } catch {
-        // Ignore check errors
       } finally {
         setIsCheckingActive(false);
       }
@@ -136,7 +135,6 @@ export function useRoutineDonation({ campaigns = [] }) {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
 
-    // Guard Wajib Login: Simpan seluruh draft dan alihkan ke halaman login
     if (!currentUser) {
       try {
         sessionStorage.setItem(

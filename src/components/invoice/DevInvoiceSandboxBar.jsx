@@ -32,7 +32,6 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
   const isExpired = donation.status === "EXPIRED";
   const isCancelled = donation.status === "CANCELLED";
 
-  // Identifikasi Simulator Midtrans
   const isQris = donation.paymentChannelType === "QRIS" || donation.paymentChannelId === "qris";
   const isVirtualAccount =
     donation.paymentChannelType === "VA" ||
@@ -87,7 +86,6 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
 
   return (
     <div className="rounded-xl border border-dashed border-amber-300 bg-amber-50/70 p-4 sm:p-5 space-y-3 shadow-2xs">
-      {/* Header Panel Dev */}
       <div className="flex items-center justify-between gap-2 border-b border-amber-200/80 pb-2.5">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-md bg-amber-500 text-white flex items-center justify-center shadow-2xs">
@@ -108,9 +106,7 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
         </span>
       </div>
 
-      {/* Baris Tombol Aksi Cepat 3D */}
       <div className="flex flex-wrap items-center gap-2 pt-1">
-        {/* 1. Tombol Bayar Lunas (Instant Settlement) */}
         {!isPaid && (
           <Button
             type="button"
@@ -125,7 +121,6 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
           </Button>
         )}
 
-        {/* 2. Tombol Simulasi Waktu Habis (Expired) */}
         {!isExpired && (
           <Button
             type="button"
@@ -140,7 +135,6 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
           </Button>
         )}
 
-        {/* 3. Tombol Simulasi Gagal / Pembatalan (Cancelled) */}
         {!isCancelled && (
           <Button
             type="button"
@@ -155,7 +149,6 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
           </Button>
         )}
 
-        {/* 4. Tombol Reset ke Pending (Untuk uji coba berulang) */}
         {!isPending && (
           <Button
             type="button"
@@ -171,7 +164,6 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
           </Button>
         )}
 
-        {/* 4. Link & Copy Simulator Midtrans Asli */}
         {simulatorUrl && (
           <div className="flex items-center gap-1.5 ml-auto">
             {simCopyValue && (

@@ -11,7 +11,6 @@ import {
   cancelVolunteerRegistration,
 } from "@/services/volunteerClientService";
 
-// Sub-widgets modular & reusable (DRY)
 import { VolunteerApprovedCard } from "@/components/volunteer/VolunteerApprovedCard";
 import { VolunteerPendingCard } from "@/components/volunteer/VolunteerPendingCard";
 import { VolunteerCancellationDialog } from "@/components/volunteer/VolunteerCancellationDialog";
@@ -20,7 +19,6 @@ import { VolunteerIdCardSkeleton } from "@/components/volunteer/VolunteerIdCard"
 export function DonorVolunteerCardSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      {/* 1. Top Identity Banner Skeleton */}
       <div className="relative w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950 p-5 sm:p-6 shadow-md">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div className="space-y-2.5 w-full max-w-xl">
@@ -35,12 +33,10 @@ export function DonorVolunteerCardSkeleton() {
         </div>
       </div>
 
-      {/* 2. Kartu Identitas Relawan 2D Skeleton (CR80) */}
       <div className="py-2">
         <VolunteerIdCardSkeleton />
       </div>
 
-      {/* 3. Bottom Row Link & Action Skeleton */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100">
         <Skeleton className="h-4 w-52 rounded" />
         <Skeleton className="h-4 w-36 rounded" />
@@ -56,7 +52,6 @@ export function DonorVolunteerCardView() {
   const [volunteer, setVolunteer] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Cancellation Modal State
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
 
@@ -108,7 +103,6 @@ export function DonorVolunteerCardView() {
 
   return (
     <div className="space-y-6">
-      {/* 1. Banner CTA (Hanya jika belum terdaftar relawan) */}
       {!volunteer && (
         <CampaignCTA
           title="Tertarik Bergabung Menjadi Relawan?"
@@ -125,7 +119,6 @@ export function DonorVolunteerCardView() {
         />
       )}
 
-      {/* 2. Konten Utama Sesuai Status Keanggotaan */}
       {volunteer && volunteer.isApproved ? (
         <VolunteerApprovedCard
           volunteer={volunteer}
@@ -162,7 +155,6 @@ export function DonorVolunteerCardView() {
         </div>
       )}
 
-      {/* Dialog Konfirmasi Pembatalan / Resign */}
       <VolunteerCancellationDialog
         isOpen={isCancelModalOpen}
         onClose={() => setIsCancelModalOpen(false)}

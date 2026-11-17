@@ -12,7 +12,6 @@ import { FloatingWhatsAppButton } from "./floating-actions/FloatingWhatsAppButto
 export function FloatingActionDock() {
   const pathname = usePathname();
 
-  // Sembunyikan seluruh dock pada halaman admin, dashboard, atau login
   const isHiddenPage =
     pathname?.startsWith("/admin") ||
     pathname?.startsWith("/dashboard") ||

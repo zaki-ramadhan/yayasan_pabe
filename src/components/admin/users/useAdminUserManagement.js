@@ -17,15 +17,12 @@ export function useAdminUserManagement({ initialData = {} }) {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Reset password dialog state
   const [resetDialogData, setResetDialogData] = useState(null);
 
-  // Confirm dialog state (suspend/delete)
   const [confirmState, setConfirmState] = useState({
     isOpen: false,
     type: null,

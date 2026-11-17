@@ -39,10 +39,8 @@ export function RegionSelector({
   inputClassName = "h-11 font-normal",
   gridClassName = "grid grid-cols-1 sm:grid-cols-2 gap-4",
 }) {
-  // Simpan provinsi yang dipilih manual oleh pengguna (null jika belum pernah diubah secara manual)
   const [manualProvince, setManualProvince] = React.useState(null);
 
-  // Derived state: gunakan pilihan manual jika ada, atau auto-resolve dari selectedCity
   const effectiveProvince = React.useMemo(() => {
     if (manualProvince !== null) {
       return manualProvince;
@@ -50,17 +48,14 @@ export function RegionSelector({
     return findProvinceByCity(selectedCity) || "";
   }, [manualProvince, selectedCity]);
 
-  // Daftar kota/kabupaten turunan sesuai provinsi yang efektif aktif
   const citiesInProvince = React.useMemo(() => {
     return getCitiesByProvince(effectiveProvince);
   }, [effectiveProvince]);
 
-  // Handler saat pengguna memilih provinsi
   const handleProvinceChange = (newProvince) => {
     setManualProvince(newProvince);
     if (onClearError) onClearError();
 
-    // Reset pilihan kota jika kota sebelumnya bukan bagian dari provinsi baru
     if (selectedCity) {
       const validCities = getCitiesByProvince(newProvince);
       const isStillInProvince = validCities.some(
@@ -72,13 +67,11 @@ export function RegionSelector({
     }
   };
 
-  // Handler saat pengguna memilih kota dari opsi dropdown
   const handleCityChange = (cityValue) => {
     onCityChange(cityValue);
     if (onClearError) onClearError();
   };
 
-  // Handler penambahan kota kustom (creatable / free-solo) jika tidak ada di daftar
   const handleCreateCity = (rawInput) => {
     const clean = sanitizeCity(rawInput).trim();
     if (clean) {
@@ -90,7 +83,6 @@ export function RegionSelector({
 
   return (
     <div className={gridClassName}>
-      {/* 1. Field Pilihan Provinsi */}
       <FormField
         label={provinceLabel}
         required={required}
@@ -107,7 +99,6 @@ export function RegionSelector({
         />
       </FormField>
 
-      {/* 2. Field Pilihan Kota / Kabupaten */}
       <FormField
         label={cityLabel}
         required={required}

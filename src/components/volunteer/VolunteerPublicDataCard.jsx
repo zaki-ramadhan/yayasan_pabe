@@ -24,7 +24,6 @@ export function VolunteerPublicDataCard({ volunteer }) {
 
   return (
     <section className="p-5 sm:p-7 md:p-8 bg-white border-t border-slate-200/80">
-      {/* Header Bersih */}
       <div className="pb-4 mb-5 border-b border-slate-200/80">
         <h2 className="text-base font-medium text-slate-950 leading-snug">
           Informasi Data Diri
@@ -34,9 +33,7 @@ export function VolunteerPublicDataCard({ volunteer }) {
         </p>
       </div>
 
-      {/* Grid Susunan Data (6 Field Presisi Sesuai Form Profil) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Field 1: Nama Lengkap */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-slate-700 block">
             Nama lengkap
@@ -46,7 +43,6 @@ export function VolunteerPublicDataCard({ volunteer }) {
           </div>
         </div>
 
-        {/* Field 2: Nomor ID Relawan */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-slate-700 block">
             ID Relawan
@@ -56,7 +52,6 @@ export function VolunteerPublicDataCard({ volunteer }) {
           </div>
         </div>
 
-        {/* Field 3: Bidang Relawan */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-slate-700 block">
             Bidang penugasan
@@ -66,7 +61,6 @@ export function VolunteerPublicDataCard({ volunteer }) {
           </div>
         </div>
 
-        {/* Field 4: Wilayah Domisili */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-slate-700 block">
             Wilayah domisili
@@ -76,7 +70,6 @@ export function VolunteerPublicDataCard({ volunteer }) {
           </div>
         </div>
 
-        {/* Field 5: Tanggal Terdaftar */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-slate-700 block">
             Tanggal bergabung
@@ -86,7 +79,6 @@ export function VolunteerPublicDataCard({ volunteer }) {
           </div>
         </div>
 
-        {/* Field 6: Masa Berlaku */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-slate-700 block">
             Masa berlaku

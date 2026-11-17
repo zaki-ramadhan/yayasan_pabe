@@ -22,7 +22,6 @@ import { ORG_PROFILE } from "@/data/orgProfile";
 export function VolunteerPublicProfileView({ volunteer }) {
   return (
     <div className="min-h-screen w-full bg-slate-50/70 text-slate-900 flex flex-col justify-between">
-      {/* 1. Top Navigation Bar: Logo Yayasan & Tautan Kembali */}
       <header className="w-full bg-white border-b border-slate-200/80 px-4 sm:px-6 py-3.5 sticky top-0 z-20 shadow-2xs">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
           <Link
@@ -46,18 +45,14 @@ export function VolunteerPublicProfileView({ volunteer }) {
         </div>
       </header>
 
-      {/* 2. Main Kanvas Profil Relawan Publik */}
       <main className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1">
         <div className="rounded-xl border border-slate-200/90 bg-white overflow-hidden shadow-xs">
-          {/* Banner Foto Yayasan + Avatar + Nama & Verified Badge */}
           <VolunteerPublicProfileCover volunteer={volunteer} />
 
-          {/* Susunan Data Diri Murni Teks (Identik Form Profil, Tanpa Input & Tanpa Tab Keamanan) */}
           <VolunteerPublicDataCard volunteer={volunteer} />
         </div>
       </main>
 
-      {/* 3. Footer Bersih */}
       <footer className="w-full max-w-4xl mx-auto px-4 py-6 text-center text-xs text-slate-400 font-normal">
         <p>© {new Date().getFullYear()} {ORG_PROFILE.name}</p>
       </footer>

@@ -80,7 +80,6 @@ export function DonorPrayersCard({ currentUser }) {
                 </p>
               </div>
 
-              {/* Respons Aamiin dan Tautan */}
               <div className="w-full pt-1 border-t border-slate-100 flex items-center justify-between text-xs font-normal">
                 <span className="inline-flex items-center gap-1 text-rose-600">
                   <Heart className="w-3 h-3 fill-rose-500 text-rose-500" />

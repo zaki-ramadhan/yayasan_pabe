@@ -77,7 +77,6 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-a
 
   return (
     <div className="relative w-full aspect-[592/458] min-h-[380px] sm:min-h-[390px]">
-      {/* Folder Parent Frame */}
       <Image
         src="/img/frames/folder-hero.svg"
         alt=""
@@ -89,12 +88,10 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-a
         className="object-fill pointer-events-none select-none drop-shadow-lg"
       />
 
-      {/* Konten Formulir Donasi di Dalam Folder */}
       <form
         onSubmit={handleSubmit}
         className="relative z-10 h-full flex flex-col justify-end pt-12 pb-9 sm:pb-11 px-6 sm:px-7 space-y-3 sm:space-y-3.5"
       >
-        {/* Header Form */}
         <div className="space-y-0.5 min-w-0 pb-1.5 sm:pb-2">
           <h2 className="text-base font-semibold text-slate-950">
             Formulir donasi cepat
@@ -102,7 +99,6 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-a
           <p className="text-sm text-slate-700">Pilih atau tentukan nominal sedekah</p>
         </div>
 
-        {/* Amount Presets Grid */}
         <div className="space-y-2">
           <NominalGridPicker
             presets={PRESET_AMOUNTS}
@@ -116,7 +112,6 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-a
           />
         </div>
 
-        {/* Custom Nominal Input */}
         {isCustomMode && (
           <div className="animate-in fade-in slide-in-from-top-1 duration-150">
             <FormField label="Nominal lainnya (min. Rp 10.000 - maks. Rp 50.000.000)" error={amountError}>
@@ -133,7 +128,6 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-a
           </div>
         )}
 
-        {/* CTA Button */}
         <div className="pt-1">
           <Button
             type="submit"

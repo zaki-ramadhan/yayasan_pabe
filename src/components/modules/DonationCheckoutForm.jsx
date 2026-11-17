@@ -65,7 +65,6 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
 
   return (
     <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-      {/* LEFT COLUMN: Steps */}
       <div className="lg:col-span-7 space-y-4">
         <NominalPresetsPicker
           presets={NOMINAL_PRESETS}
@@ -107,7 +106,6 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
         />
       </div>
 
-      {/* RIGHT COLUMN: Preview & Summary */}
       <DonationCheckoutSummary
         campaign={campaign}
         amount={amount}
@@ -122,7 +120,6 @@ export function DonationCheckoutForm({ campaign, initialAmount = 50000, initialP
         turnstileRef={turnstileRef}
       />
 
-      {/* Dialog Penanganan Tagihan Donasi Aktif Duplikat */}
       <PendingInvoiceDialog
         isOpen={pendingInvoiceModal.isOpen}
         onClose={() => setPendingInvoiceModal({ isOpen: false, invoice: null })}

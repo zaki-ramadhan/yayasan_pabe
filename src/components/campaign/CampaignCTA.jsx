@@ -46,7 +46,6 @@ export function CampaignCTA({
     isLoggedIn = false;
   }
 
-  // Jika di halaman detail program publik: sembunyikan jika program tutup atau user sudah login
   if (!ignoreAuthCheck && campaign && (isCampaignClosed(campaign) || isLoggedIn)) {
     return null;
   }
@@ -84,7 +83,6 @@ export function CampaignCTA({
         className || "mt-6"
       }`}
     >
-      {/* Atmospheric Background image + radial gradient overlay */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         {effectiveBannerUrl && (
           <Image

@@ -9,7 +9,6 @@ export function AboutVisionMission({ orgSettings = null }) {
 
   return (
     <section className="p-4 sm:p-5 space-y-5">
-      {/* 1. Maksud dan Tujuan */}
       <div className="space-y-3">
         <h2 className="text-lg sm:text-xl font-medium text-slate-950">
           Maksud dan Tujuan
@@ -23,13 +22,11 @@ export function AboutVisionMission({ orgSettings = null }) {
         </ol>
       </div>
 
-      {/* 2. Visi & Misi */}
       <div className="space-y-4 pt-4 border-t border-slate-100">
         <h3 className="text-base sm:text-lg font-medium text-slate-950">
           Visi &amp; Misi
         </h3>
 
-        {/* Visi */}
         <div className="p-3.5 sm:p-4 bg-slate-50 border-l-4 border-primary rounded-r-md space-y-1">
           <span className="text-sm font-medium text-primary block">
             Visi
@@ -39,7 +36,6 @@ export function AboutVisionMission({ orgSettings = null }) {
           </p>
         </div>
 
-        {/* Misi */}
         <div className="space-y-2.5 pt-1">
           <span className="text-sm font-medium text-primary block">
             Misi

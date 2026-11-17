@@ -27,7 +27,6 @@ export function ArticleMiniCard({
         className
       )}
     >
-      {/* Left: Compact Square Thumbnail or Brand Fallback */}
       <div className="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-md overflow-hidden bg-white border border-slate-200 aspect-square flex items-center justify-center">
         <SafeImage
           src={article.bannerUrl}
@@ -37,7 +36,6 @@ export function ArticleMiniCard({
         />
       </div>
 
-      {/* Right: Category + Title with font-medium */}
       <div className="flex-1 min-w-0 space-y-0.5">
         <span className="text-xs font-semibold text-primary block truncate">
           {article.category}

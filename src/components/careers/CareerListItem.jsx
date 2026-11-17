@@ -44,7 +44,6 @@ export function CareerListItem({
         </div>
       </div>
 
-      {/* Metadata Row: Location, Type & Workplace at text-xs with text-slate-600 */}
       <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 mt-2">
         <CareerMetaItem icon={MapPin} text={job.location} size="xs" />
         <CareerMetaItem icon={Briefcase} text={job.type} size="xs" />
@@ -59,7 +58,6 @@ export function CareerListItem({
         </p>
       )}
 
-      {/* Bottom Row: Applicant count and posted date at text-xs text-slate-600 separated by dashed line */}
       <CareerCardFooter
         applicantCount={job.applicantCount}
         postedAt={job.postedAt}

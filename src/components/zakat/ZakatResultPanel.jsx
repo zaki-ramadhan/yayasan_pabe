@@ -61,14 +61,12 @@ export function ZakatResultPanel({
     }
   };
 
-  // Rasio capaian nisab untuk progress bar ala Earnest (maksimal 100%)
   const nisabRatioPercent = nisabThreshold > 0
     ? Math.min(100, Math.round((netAmount / nisabThreshold) * 100))
     : 0;
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-6 sm:p-7 space-y-6 shadow-xs">
-      {/* 1. Header Hero Number ala Earnest */}
       <div className="space-y-1.5">
         <h2 className="text-xl font-medium text-slate-950">
           Total Kewajiban Zakat
@@ -84,7 +82,6 @@ export function ZakatResultPanel({
         </p>
       </div>
 
-      {/* 2. Visual Proportion / Nisab Threshold Bar ala Earnest */}
       <div className="space-y-2 pt-1">
         <div className="flex justify-between items-end text-sm">
           <div className="text-left space-y-0.5">
@@ -118,7 +115,6 @@ export function ZakatResultPanel({
         </div>
       </div>
 
-      {/* 3. Key Metrics Stat Strip (Horizontal Row dengan Divider) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-4 border-y border-slate-200 text-sm">
         <div className="space-y-0.5">
           <span className="text-slate-600 block">Batas Nisab</span>
@@ -146,7 +142,6 @@ export function ZakatResultPanel({
         </div>
       </div>
 
-      {/* 4. CTA Button Group */}
       <div className="pt-2 space-y-2.5">
         <Button
           onClick={onPay}

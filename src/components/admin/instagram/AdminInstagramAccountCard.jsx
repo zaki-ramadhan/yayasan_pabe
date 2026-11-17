@@ -164,7 +164,6 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
       <CardContent className="p-5 sm:p-6">
         <form onSubmit={handleSubmit} className="w-full">
           <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
-            {/* Foto Avatar Profil */}
             <div className="relative shrink-0">
               <div
                 onClick={() => !isUploadingAvatar && fileInputRef.current?.click()}
@@ -185,7 +184,6 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
                   <span className="font-bold text-slate-700 text-2xl sm:text-3xl select-none">{initial}</span>
                 )}
 
-                {/* Overlay Indikator Unggah Berpersentase */}
                 {isUploadingAvatar && (
                   <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-2xs flex flex-col items-center justify-center text-white z-10 select-none">
                     <Loader2 className="w-5 h-5 animate-spin mb-1 text-white" />
@@ -196,7 +194,6 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
                 )}
               </div>
 
-              {/* Tombol Icon Edit / Ganti Avatar */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -220,9 +217,7 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
               />
             </div>
 
-            {/* Form Fields & Tombol Simpan (Sejajar dengan kotak input) */}
             <div className="flex flex-col sm:flex-row sm:items-end gap-4 flex-1 w-full min-w-0">
-              {/* Input Form Fields: Username & Nama Akun */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1 min-w-0">
                 <FormField label="Username Instagram" required>
                   <Input
@@ -253,7 +248,6 @@ export function AdminInstagramAccountCard({ profile, onSaveProfile }) {
                 </FormField>
               </div>
 
-              {/* Tombol Simpan */}
               <div className="shrink-0 w-full sm:w-auto">
                 <Button
                   type="submit"

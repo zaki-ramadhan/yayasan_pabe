@@ -17,57 +17,46 @@ export function VolunteerIdCardSkeleton({ className = "", rounded = true }) {
   return (
     <div className={`w-full max-w-2xl mx-auto select-none ${className}`}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start justify-center">
-        {/* Skeleton Depan (Dengan Footer) */}
         <div className="flex flex-col items-center w-full max-w-[320px] mx-auto">
           <div className={`relative w-full aspect-[54/85.6] overflow-hidden shadow-md border border-slate-200/90 bg-white flex flex-col justify-between ${
             rounded ? "rounded-2xl" : "rounded-none"
           }`}>
-            {/* Pattern placeholder */}
             <div className="absolute left-0 right-0 top-[26%] h-[38%] bg-slate-50 z-0 animate-pulse" />
 
             <div className="relative z-10 w-full flex-1 flex flex-col justify-between p-4.5 pb-2">
-              {/* Header: punch hole (spasi tak terlihat) & logo */}
               <div className="flex flex-col items-center w-full">
                 <div className="w-10 h-2 invisible pointer-events-none select-none mx-auto" aria-hidden="true" />
                 <div className="h-6 w-28 bg-slate-100 rounded mx-auto mt-3 animate-pulse" />
               </div>
 
-              {/* Avatar center (skala lebih besar) */}
               <div className="w-24 h-24 sm:w-26 sm:h-26 rounded-full ring-6 ring-white shadow-md bg-slate-100 mx-auto my-auto animate-pulse" />
 
-              {/* Nama & Role */}
               <div className="w-full text-center pb-2 -translate-y-5 sm:-translate-y-6 space-y-1.5 flex flex-col items-center">
                 <div className="h-4.5 w-36 bg-slate-200/80 rounded animate-pulse" />
                 <div className="h-3.5 w-24 bg-slate-100 rounded animate-pulse" />
               </div>
             </div>
 
-            {/* Footer Bar Skeleton Khusus Depan */}
             <div className="w-full h-8 bg-slate-200/80 shrink-0 animate-pulse" />
           </div>
         </div>
 
-        {/* Skeleton Belakang (Hijau Solid #0D3B2E) */}
         <div className="flex flex-col items-center w-full max-w-[320px] mx-auto">
           <div className={`relative w-full aspect-[54/85.6] overflow-hidden shadow-md border border-[#092B21] bg-[#0D3B2E] flex flex-col justify-between p-5 ${
             rounded ? "rounded-2xl" : "rounded-none"
           }`}>
-            {/* Pattern placeholder */}
             <div className="absolute inset-0 bg-white/5 z-0 animate-pulse" />
 
-            {/* Header: punch hole (spasi tak terlihat) & label */}
             <div className="relative z-10 flex flex-col items-center w-full pt-0.5">
               <div className="w-10 h-2 invisible pointer-events-none select-none mx-auto" aria-hidden="true" />
               <div className="h-4 w-36 bg-white/20 rounded mx-auto mt-3 animate-pulse" />
             </div>
 
-            {/* QR Persegi Putih */}
             <div className="relative z-10 flex flex-col items-center justify-center my-auto space-y-3">
               <div className="w-[140px] h-[140px] rounded-xl border border-white/25 bg-white/10 animate-pulse" />
               <div className="h-3 w-44 bg-white/20 rounded animate-pulse" />
             </div>
 
-            {/* Info tanggal */}
             <div className="relative z-10 pt-3 pb-0.5 border-t border-white/20 flex justify-between items-center w-full">
               <div className="h-3 w-24 bg-white/20 rounded animate-pulse" />
               <div className="h-3 w-20 bg-white/20 rounded animate-pulse" />
@@ -98,14 +87,12 @@ export function VolunteerIdCard({
     setIsClientMounted(true);
   }, []);
 
-  // Periksa apakah pengguna yang login adalah pemilik akun sah kartu ini (bukan admin yang sedang menginspeksi)
   const isCardOwner = Boolean(
     currentUser?.email &&
       volunteer?.email &&
       currentUser.email.trim().toLowerCase() === volunteer.email.trim().toLowerCase()
   );
 
-  // Prioritaskan foto profil milik entitas relawan; gunakan currentUser HANYA jika ia adalah pemilik kartu
   const pfp =
     volunteer?.avatarUrl ||
     volunteer?.avatar ||
@@ -120,7 +107,6 @@ export function VolunteerIdCard({
       : null) ||
     null;
 
-  // Construct absolute validation URL deterministik untuk QR code (resolusi origin dinamis di client)
   const validationUrl = useMemo(() => {
     if (customValidationUrl) return customValidationUrl;
     if (!volunteer?.id) return "";
@@ -140,7 +126,6 @@ export function VolunteerIdCard({
     (isCardOwner ? currentUser?.name : "") ||
     "Anggota Relawan";
 
-  // Skala proporsional berpasangan: Nama & Peran selalu menjaga hierarki visual tanpa elipsis
   const { nameClass, roleClass, containerOffset } = useMemo(() => {
     const len = fullName.length;
     if (len > 30) {
@@ -201,7 +186,6 @@ export function VolunteerIdCard({
           mode === "both" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 w-full mx-auto"
         }`}
       >
-        {/* ==================== SISI 1: TAMPAK DEPAN (CLEAN WHITE + FOOTER IJO) ==================== */}
         {showFront && (
         <div className="flex flex-col items-center w-full mx-auto">
           <div
@@ -213,7 +197,6 @@ export function VolunteerIdCard({
               rounded ? "rounded-2xl print:rounded-none" : "rounded-none"
             }`}
           >
-            {/* Layer 0: Pita Pattern Geometris Horizontal (Full Opacity) */}
             <div
               className="absolute left-0 right-0 top-[26%] h-[38%] z-0 pointer-events-none select-none overflow-hidden"
               aria-hidden="true"
@@ -228,14 +211,10 @@ export function VolunteerIdCard({
               />
             </div>
 
-            {/* Layer 10: Konten Utama Tampak Depan */}
             <div className="relative z-10 w-full flex-1 flex flex-col justify-between p-4.5 pb-2 select-none">
-              {/* 1. Header Atas: Spasi Lanyard & Logo Yayasan */}
               <div className="flex flex-col items-center w-full">
-                {/* Spasi vertikal untuk lubang fisik tali tanpa visual penanda (agar konten tidak geser) */}
                 <div className="w-10 h-2 invisible pointer-events-none select-none" aria-hidden="true" />
 
-                {/* Aksen Dekorasi Geometris Kiri & Kanan */}
                 <div className="w-full flex items-center justify-between px-2 -mt-1 select-none pointer-events-none">
                   <Image
                     src={ASSET_PATHS.CARDS.DECORATION}
@@ -269,7 +248,6 @@ export function VolunteerIdCard({
                 </div>
               </div>
 
-              {/* 2. Tengah: Circular Avatar Terkunci di Tengah Pattern */}
               <div className="relative mx-auto my-auto flex items-center justify-center">
                 <div className="relative w-24 h-24 sm:w-26 sm:h-26 rounded-full ring-6 ring-white shadow-lg overflow-hidden bg-white flex items-center justify-center">
                   {pfp && !imgError ? (
@@ -290,7 +268,6 @@ export function VolunteerIdCard({
                 </div>
               </div>
 
-              {/* 3. Bawah: Nama Anggota & Peran (Hierarki Berpasangan, Bebas Elipsis) */}
               <div
                 className={`w-full text-center pb-2 px-2 ${containerOffset}`}
               >
@@ -307,7 +284,6 @@ export function VolunteerIdCard({
               </div>
             </div>
 
-            {/* Footer Bar Hijau Pekat: Khusus Tampak Depan dengan Padding Lebih Lapang */}
             <div className="relative z-10 w-full bg-[#0D3B2E] py-2 px-3 text-center text-white text-[11px] font-medium select-none shrink-0 border-t border-emerald-900/40">
               Yayasan Payung Berkah
             </div>
@@ -315,7 +291,6 @@ export function VolunteerIdCard({
         </div>
         )}
 
-        {/* ==================== SISI 2: TAMPAK BELAKANG (HIJAU SOLID #0D3B2E DENGAN QR PUTIH MINIMALIS) ==================== */}
         {showBack && (
         <div className="flex flex-col items-center w-full mx-auto">
           <div
@@ -326,7 +301,6 @@ export function VolunteerIdCard({
               rounded ? "rounded-2xl print:rounded-none" : "rounded-none"
             }`}
           >
-            {/* Layer 0: Pattern Belakang Vertikal Penuh Menyatu dengan Warna Hijau Solid */}
             <div
               className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden opacity-[0.10] mix-blend-overlay"
               aria-hidden="true"
@@ -341,17 +315,13 @@ export function VolunteerIdCard({
               />
             </div>
 
-            {/* Layer 10: Konten Tampak Belakang */}
-            {/* Header: Spasi Lanyard & Label Kartu Resmi Relawan Putih (Maksimal Font-Medium) */}
             <div className="relative z-10 flex flex-col items-center w-full pt-0.5">
-              {/* Spasi vertikal untuk lubang fisik tali tanpa visual penanda (agar konten tidak geser) */}
               <div className="w-10 h-2 invisible pointer-events-none select-none" aria-hidden="true" />
               <p className="mt-3 text-xs font-medium text-white">
                 Kartu Resmi Relawan
               </p>
             </div>
 
-            {/* Tengah: QR Code Berstandar ISO/IEC (Kontras Tinggi Gelap di atas Putih + Quiet Zone Padat) */}
             <div className="relative z-10 flex flex-col items-center justify-center my-auto space-y-3.5">
               <div className="p-2.5 bg-white rounded-xl shadow-md border border-white/20 flex items-center justify-center">
                 <QRCodeSVG
@@ -368,7 +338,6 @@ export function VolunteerIdCard({
               </p>
             </div>
 
-            {/* Bawah: Info Tanggal Terdaftar Riil (Maksimal Font-Medium, Sesuai Data Database) */}
             <div className="relative z-10 w-full pt-3 pb-0.5 border-t border-white/20 text-xs flex justify-between items-center select-none">
               <span className="text-white/80 font-medium">Terdaftar sejak:</span>
               <span className="text-white font-medium">{joinDate}</span>

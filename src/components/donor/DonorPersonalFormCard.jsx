@@ -164,7 +164,6 @@ export function DonorPersonalFormCard({
           />
         </FormField>
 
-        {/* Wilayah Domisili (Provinsi & Kota / Kabupaten Combobox) */}
         <RegionSelector
           selectedCity={values.city || ""}
           onCityChange={(newCity) => {

@@ -47,7 +47,6 @@ export function AdminCareerBasicInfoFields({
 
   return (
     <>
-      {/* Judul posisi */}
       <FormField label="Nama posisi / jabatan" required error={errors.title}>
         <Input
           type="text"
@@ -65,9 +64,7 @@ export function AdminCareerBasicInfoFields({
         />
       </FormField>
 
-      {/* Baris 1: Tipe kepegawaian & Durasi kontrak (kondisional) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-        {/* Tipe pekerjaan */}
         <FormField label="Tipe kepegawaian" required>
           <Select value={type} onValueChange={onTypeChange} required>
             <SelectTrigger className="h-10 text-sm bg-white">
@@ -83,7 +80,6 @@ export function AdminCareerBasicInfoFields({
           </Select>
         </FormField>
 
-        {/* Durasi kontrak / proyek saat Kontrak / Project dipilih */}
         {isContract && (
           <FormField
             label="Durasi kontrak / proyek"
@@ -108,9 +104,7 @@ export function AdminCareerBasicInfoFields({
         )}
       </div>
 
-      {/* Baris 2: Sistem kerja & Lokasi penempatan */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-        {/* Sistem kerja */}
         <FormField label="Sistem kerja">
           <Select value={workplace} onValueChange={onWorkplaceChange}>
             <SelectTrigger className="h-10 text-sm bg-white">
@@ -126,7 +120,6 @@ export function AdminCareerBasicInfoFields({
           </Select>
         </FormField>
 
-        {/* Lokasi kerja */}
         <FormField label="Lokasi penempatan" required error={errors.location}>
           <CreatableCombobox
             options={locationList}
@@ -144,9 +137,7 @@ export function AdminCareerBasicInfoFields({
         </FormField>
       </div>
 
-      {/* Baris 3: Pengalaman kerja & Batas akhir pendaftaran */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-        {/* Batas pengalaman */}
         <FormField label="Pengalaman kerja">
           <Input
             type="text"
@@ -160,7 +151,6 @@ export function AdminCareerBasicInfoFields({
           />
         </FormField>
 
-        {/* Batas akhir lamar */}
         <FormField label="Batas akhir pendaftaran" error={errors.deadline}>
           <DatePicker
             value={deadline}
@@ -174,7 +164,6 @@ export function AdminCareerBasicInfoFields({
       </div>
 
       <div className="space-y-3 pt-1">
-        {/* Wajibkan lampiran berkas CV */}
         <Checkbox
           id="requiresResume"
           variant="card"
@@ -184,7 +173,6 @@ export function AdminCareerBasicInfoFields({
           description="Jika dicentang, pelamar wajib mengunggah dokumen PDF. Jika tidak dicentang, pelamar cukup mengisi data diri dan motivasi."
         />
 
-        {/* Status aktif lowongan */}
         <Checkbox
           id="isActive"
           variant="card"

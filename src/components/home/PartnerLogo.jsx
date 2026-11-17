@@ -15,17 +15,13 @@ export function PartnerLogo({ partner }) {
       }
     : {};
 
-  // Optical sizing classes per logo ID to ensure visually balanced weight
   const getLogoSizeClass = (id) => {
     switch (id) {
       case "baznas-dki":
-        // Logo vertikal/tall: beri tinggi proporsional agar Garuda & teks terbaca jelas
         return "h-12 sm:h-14 w-auto max-w-[140px]";
       case "kemenkumham":
-        // Logo persegi / 1:1: emblem resmi Pengayoman
         return "h-11 sm:h-12 w-auto max-w-[52px] rounded-lg shadow-2xs";
       case "kemensos-dinsos":
-        // Logo horizontal memanjang (banner dua lambang + teks resmi)
         return "h-8 sm:h-9 w-auto max-w-[210px] sm:max-w-[240px]";
       default:
         return "h-8 sm:h-9 w-auto max-w-[120px]";

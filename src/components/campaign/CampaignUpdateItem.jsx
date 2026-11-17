@@ -59,7 +59,6 @@ export function CampaignUpdateItem({ update }) {
         </p>
       </div>
 
-      {/* Grid Dokumentasi Foto & Video Penyaluran */}
       {mediaList.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 mt-2">
           {mediaList.map((mediaUrl, idx) => {
@@ -92,14 +91,12 @@ export function CampaignUpdateItem({ update }) {
                     />
                   )}
 
-                  {/* Play Button Overlay */}
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
                     <div className="w-9 h-9 rounded-full bg-white/95 text-slate-900 shadow-md flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Play className="w-4 h-4 fill-slate-900 ml-0.5 text-slate-900" />
                     </div>
                   </div>
 
-                  {/* Badge penanda jenis video */}
                   <div className="absolute left-1.5 bottom-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-black/65 backdrop-blur-xs text-white text-3xs font-medium pointer-events-none">
                     {isYt ? (
                       <>
@@ -117,7 +114,6 @@ export function CampaignUpdateItem({ update }) {
               );
             }
 
-            // Foto dokumentasi standar
             return (
               <a
                 key={idx}
@@ -139,7 +135,6 @@ export function CampaignUpdateItem({ update }) {
         </div>
       )}
 
-      {/* Modal Dialog Pemutar Video Terpadu */}
       {activeVideoUrl && (
         <Dialog
           open={Boolean(activeVideoUrl)}

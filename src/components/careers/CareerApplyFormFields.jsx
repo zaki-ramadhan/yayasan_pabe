@@ -26,7 +26,6 @@ export function CareerApplyFormFields({
 }) {
   return (
     <div className="space-y-4">
-      {/* 1. Posisi yang dilamar (Konsisten bergaya Input readOnly seperti nama/email) */}
       <FormField label="Posisi yang dilamar">
         <Input
           type="text"
@@ -36,7 +35,6 @@ export function CareerApplyFormFields({
         />
       </FormField>
 
-      {/* 2. Data Identitas Kontak (Nama, Email, WA) */}
       <CareerApplicantPersonalFields
         formData={formData}
         onChange={onChange}
@@ -47,7 +45,6 @@ export function CareerApplyFormFields({
         errors={errors}
       />
 
-      {/* 3. Berkas CV / Resume (Kondisional: Ditampilkan hanya jika lowongan mewajibkan berkas) */}
       {requiresResume && (
         <CareerResumeUpload
           value={formData.resumeUrl}
@@ -56,7 +53,6 @@ export function CareerApplyFormFields({
         />
       )}
 
-      {/* 4. Surat Pengantar & Motivasi Bergabung */}
       <CareerApplicantProfileFields
         formData={formData}
         onChange={onChange}

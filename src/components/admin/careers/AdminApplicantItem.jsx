@@ -49,7 +49,6 @@ export function AdminApplicantItem({
 
   return (
     <div className="py-4 space-y-3 first:pt-4 last:pb-4">
-      {/* Baris Atas: Identitas Pelamar & Dropdown Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div className="flex items-center gap-3">
           <UserAvatar
@@ -99,7 +98,6 @@ export function AdminApplicantItem({
         </div>
       </div>
 
-      {/* Baris Tengah: Kontak Email, WhatsApp / Telepon, & Resume CV */}
       <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600">
         <span className="flex items-center gap-1.5">
           <LetterIcon className="w-4 h-4 text-slate-400" />
@@ -108,7 +106,6 @@ export function AdminApplicantItem({
           </span>
         </span>
 
-        {/* Nomor Kontak dengan Ikon WhatsApp & Direct Link */}
         <span className="flex items-center gap-1.5">
           {waUrl ? (
             <a
@@ -145,7 +142,6 @@ export function AdminApplicantItem({
         )}
       </div>
 
-      {/* Baris Bawah: Surat Pengantar & Motivasi (Jika ada) */}
       {application.coverLetter && (
         <div className="bg-slate-50/80 p-3 rounded-lg border border-slate-200/70 text-sm text-slate-700 leading-relaxed font-normal">
           <span className="font-medium text-slate-900 block mb-1">

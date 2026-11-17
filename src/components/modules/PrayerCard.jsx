@@ -38,13 +38,10 @@ export function PrayerCard({ donor, isAmined, onToggleAmin, className }) {
         className
       )}
     >
-      {/* Avatar donatur */}
       <PrayerAvatar name={donor.name} avatar={donor.avatar} size="md" className="mt-0.5 shrink-0" />
 
-      {/* Konten Doa & Aksi */}
       <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
         <div>
-          {/* Header Identitas Donatur: Nama & Email Terproteksi */}
           <div className="min-w-0">
             <h4 className="font-semibold text-slate-900 text-sm truncate">
               {donor.name}
@@ -56,13 +53,11 @@ export function PrayerCard({ donor, isAmined, onToggleAmin, className }) {
             )}
           </div>
 
-          {/* Isi Teks Doa */}
           <p className="mt-2 text-sm text-slate-800 leading-relaxed font-normal break-words">
             &ldquo;{cleanPrayer}&rdquo;
           </p>
         </div>
 
-        {/* Footer: Keterangan Waktu di Kiri, Tombol Aamiin di Kanan */}
         <div className="mt-3 flex items-center justify-between gap-2">
           <span className="text-sm text-slate-500 font-normal whitespace-nowrap">
             {getRelativeTime(donor.date)}

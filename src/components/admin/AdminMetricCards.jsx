@@ -52,25 +52,25 @@ export function AdminMetricCards({ stats: initialStats }) {
       label: "Total Donasi Terhimpun",
       value: formatRupiah(totalCollected),
       fullValue: formatRupiah(totalCollected),
-      radialColor: "#10B981", // Emerald (Kas Masuk)
+      radialColor: "#10B981",
     },
     {
       label: "Dana Telah Disalurkan",
       value: formatRupiah(totalDisbursed),
       fullValue: formatRupiah(totalDisbursed),
-      radialColor: "#0284C7", // Sky/Blue (Penyaluran)
+      radialColor: "#0284C7",
     },
     {
       label: "Donatur Terdaftar",
       value: `${formatNumber(activeDonors)} Orang`,
       fullValue: `${formatNumber(activeDonors)} Orang`,
-      radialColor: "#D97706", // Warm Amber (Komunitas Donatur)
+      radialColor: "#D97706",
     },
     {
       label: "Program Donasi Aktif",
       value: `${formatNumber(activeCampaigns)} Program`,
       fullValue: `${formatNumber(activeCampaigns)} Program`,
-      radialColor: "#E11D48", // Rose (Program Aktif)
+      radialColor: "#E11D48",
     },
   ];
 
@@ -81,7 +81,6 @@ export function AdminMetricCards({ stats: initialStats }) {
           key={card.label}
           className="relative w-full aspect-[363/224]"
         >
-          {/* Background Folder Frame */}
           <Image
             src="/img/frames/folder-admin.svg"
             alt=""
@@ -93,7 +92,6 @@ export function AdminMetricCards({ stats: initialStats }) {
             className="object-fill pointer-events-none select-none"
           />
 
-          {/* Radial Gradient Overlay */}
           <div
             aria-hidden="true"
             className="absolute inset-0 pointer-events-none select-none opacity-7"
@@ -108,7 +106,6 @@ export function AdminMetricCards({ stats: initialStats }) {
             }}
           />
 
-          {/* Dekorasi Garis Lingkaran Tanpa Fill (Border Putih Nampak) */}
           <div
             aria-hidden="true"
             className="absolute inset-0 pointer-events-none select-none overflow-hidden"
@@ -124,7 +121,6 @@ export function AdminMetricCards({ stats: initialStats }) {
             <div className="absolute right-0 bottom-0 translate-x-1/3 translate-y-1/3 w-28 h-28 sm:w-32 sm:h-32 rounded-full border-[18px] border-white bg-transparent opacity-60" />
           </div>
 
-          {/* Konten Metrik di Dalam Folder */}
           <div className="relative z-10 h-full flex flex-col justify-end pb-2.5 sm:pb-3.5 md:pb-4 px-2.5 sm:px-4 md:px-4.5 space-y-0.5">
             <span className="text-xs sm:text-sm font-medium text-slate-600 block leading-tight truncate">
               {card.label}

@@ -85,7 +85,6 @@ export function startCampaignDetailTour(hasDonations = false) {
     });
   }
 
-  // Filter out steps whose element doesn't exist in the DOM
   const validSteps = steps.filter(({ element }) => {
     if (!element) return true;
     return Boolean(document.querySelector(element));

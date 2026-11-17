@@ -92,7 +92,6 @@ export function InvoiceDisplay({ donation: initialDonation }) {
     activePrayer,
   ]);
 
-  // Timestamp-based countdown persistence (anti reset on refresh)
   useEffect(() => {
     if (!donation?.expiredAt || currentStatus !== "PENDING") {
       return;
@@ -177,7 +176,6 @@ export function InvoiceDisplay({ donation: initialDonation }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-      {/* SISI KIRI: Metode & Instruksi Pembayaran */}
       <div className="lg:col-span-7 space-y-4">
         <div className="bg-white rounded-xl border border-slate-300 px-5 pt-5 pb-3.5 sm:px-6 sm:pt-6 sm:pb-4 space-y-4 shadow-xs">
           <InvoicePaymentMethod
@@ -201,7 +199,6 @@ export function InvoiceDisplay({ donation: initialDonation }) {
         )}
       </div>
 
-      {/* SISI KANAN: Lembar Tagihan Donasi & Aksi */}
       <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
         <InvoiceReceiptCard
           donation={donation}
@@ -212,7 +209,6 @@ export function InvoiceDisplay({ donation: initialDonation }) {
           campaignImage={campaignImage}
         />
 
-        {/* Form Titip Doa (Hanya muncul jika donasi sudah LUNAS/PAID dan belum menulis doa) */}
         {!activePrayer && donation.status === "PAID" && (
           <PostDonationPrayerForm
             invoiceId={donation.invoiceId}
@@ -227,7 +223,6 @@ export function InvoiceDisplay({ donation: initialDonation }) {
           />
         )}
 
-        {/* Actions */}
         <InvoiceActions
           shareText={shareText}
           catalogHref={isZisTransaction(donation) ? "/zis" : "/program"}

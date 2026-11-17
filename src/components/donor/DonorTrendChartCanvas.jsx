@@ -30,8 +30,6 @@ const MONTH_NAMES = [
 export function DonorTrendChartCanvas({ data = [], isChartEmpty = false }) {
   const gradientId = useId();
 
-  // Memastikan data chart selalu memiliki 12 titik bulan lengkap (Jan - Des)
-  // sehingga XAxis tidak pernah hilang meski data dari API bernilai kosong []
   const chartData = useMemo(() => {
     if (Array.isArray(data) && data.length === 12) {
       return data;
@@ -75,14 +73,12 @@ export function DonorTrendChartCanvas({ data = [], isChartEmpty = false }) {
             </linearGradient>
           </defs>
 
-          {/* Grid garis horizontal koordinat halus */}
           <CartesianGrid
             strokeDasharray="3 3"
             vertical={false}
             stroke="#f1f5f9"
           />
 
-          {/* Sumbu X (Jan - Des) yang selalu konsisten tampil */}
           <XAxis
             dataKey="month"
             stroke="#cbd5e1"
@@ -91,7 +87,6 @@ export function DonorTrendChartCanvas({ data = [], isChartEmpty = false }) {
             axisLine={{ stroke: "#e2e8f0" }}
           />
 
-          {/* Sumbu Y (Rp 0 atau auto) */}
           <YAxis
             width={70}
             stroke="#cbd5e1"
@@ -119,7 +114,6 @@ export function DonorTrendChartCanvas({ data = [], isChartEmpty = false }) {
             />
           )}
 
-          {/* Area spline grafik donasi: jika kosong tetap dirender transparan agar koordinat Recharts tidak kolaps */}
           <Area
             type="monotone"
             dataKey="donasi"

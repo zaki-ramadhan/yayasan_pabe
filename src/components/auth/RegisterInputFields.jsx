@@ -36,7 +36,6 @@ export function RegisterInputFields({
 
   return (
     <>
-      {/* 1. Nama Lengkap */}
       <FormField
         label="Nama lengkap"
         required
@@ -68,7 +67,6 @@ export function RegisterInputFields({
         />
       </FormField>
 
-      {/* 2. Email */}
       <FormField
         label="Alamat email"
         required
@@ -98,7 +96,6 @@ export function RegisterInputFields({
         />
       </FormField>
 
-      {/* 3. Nomor WhatsApp */}
       <FormField
         label="Nomor WhatsApp"
         required
@@ -130,7 +127,6 @@ export function RegisterInputFields({
         />
       </FormField>
 
-      {/* 4. Kata Sandi */}
       <AuthPasswordInput
         id="password"
         label="Kata sandi"
@@ -150,7 +146,6 @@ export function RegisterInputFields({
         autoComplete="new-password"
       />
 
-      {/* 5. Agree Terms Checkbox */}
       <div className="space-y-1 pt-1">
         <div className="flex items-start gap-2.5">
           <input

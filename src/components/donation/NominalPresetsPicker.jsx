@@ -29,7 +29,6 @@ export function NominalPresetsPicker({
         title={isZakat ? "Zakat terbaik Anda" : "Pilih nominal donasi"}
       />
 
-      {/* Presets Grid */}
       <NominalGridPicker
         presets={presets}
         selectedAmount={amount}
@@ -41,7 +40,6 @@ export function NominalPresetsPicker({
         customLabel={isZakat ? "Nominal zakat lainnya" : "Nominal lainnya"}
       />
 
-      {/* Custom Input: Only rendered when isCustomMode is active */}
       {isCustomMode && (
         <div className="pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
           <FormField

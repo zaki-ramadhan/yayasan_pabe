@@ -78,7 +78,6 @@ export function AdminProgramTable({
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 
-  // Live SSE: Memperbarui nominal terkumpul dan jumlah donatur program secara real-time
   useAdminLiveEvent("DONATION_PAID", (payload) => {
     if (!payload?.campaignTitle && !payload?.campaignSlug) return;
     setCampaigns((prev) =>
@@ -119,7 +118,6 @@ export function AdminProgramTable({
     }
   });
 
-  // Live SSE: Sinkronisasi data saat ada program dibuat, diubah, atau dihapus oleh sesama pengurus
   useAdminLiveEvent("PROGRAM_MUTATED", () => {
     safeFetch(`/api/admin/programs?limit=100&mode=${encodeURIComponent(mode)}`)
       .then((res) => res.json())
@@ -303,7 +301,6 @@ export function AdminProgramTable({
 
   return (
     <div className="space-y-4">
-      {/* Top Filter Bar & Add Action */}
       <AdminProgramToolbar
         search={search}
         onSearchChange={handleSearchChange}
@@ -328,7 +325,6 @@ export function AdminProgramTable({
         </div>
       )}
 
-      {/* Reusable Floating Bulk Action Bar */}
       <TableSelectionBar
         selectedCount={selection.selectedCount}
         totalCount={paginatedCampaigns.length}
@@ -349,7 +345,6 @@ export function AdminProgramTable({
         </Button>
       </TableSelectionBar>
 
-      {/* Table Container */}
       <TableContainer>
         <div className="overflow-x-auto">
           <Table>
@@ -410,7 +405,6 @@ export function AdminProgramTable({
         )}
       </TableContainer>
 
-      {/* Program Modal (Add/Edit) */}
       <AdminProgramModal
         isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
@@ -420,7 +414,6 @@ export function AdminProgramTable({
         onSuccess={refreshList}
       />
 
-      {/* Bulk Delete Confirm Dialog */}
       <ConfirmDialog
         isOpen={isBulkDeleteOpen}
         onClose={() => setIsBulkDeleteOpen(false)}

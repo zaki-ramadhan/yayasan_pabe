@@ -7,7 +7,6 @@ import { CalendarDateIcon } from "@solar-icons/react/bold-duotone/calendar-date"
 export function FloatingRoutineDonateButton() {
   const pathname = usePathname();
 
-  // Sembunyikan pada rute administrasi, otentikasi, atau halaman donasi langsung
   const isDonationPage =
     pathname?.startsWith("/program") ||
     pathname?.startsWith("/zis") ||

@@ -42,7 +42,6 @@ export function AdminInstagramTable({
 
   return (
     <div className="space-y-4">
-      {/* Standardized TableToolbar */}
       <TableToolbar
         search={search}
         onSearchChange={onSearchChange}
@@ -74,7 +73,6 @@ export function AdminInstagramTable({
         }}
       />
 
-      {/* Reusable Floating Bulk Action Bar */}
       {selection && (
         <TableSelectionBar
           selectedCount={selection.selectedCount}
@@ -97,7 +95,6 @@ export function AdminInstagramTable({
         </TableSelectionBar>
       )}
 
-      {/* Table Container */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <Table>

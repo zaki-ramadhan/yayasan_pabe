@@ -26,7 +26,6 @@ export function VolunteerInvalidCardFallback({ volunteer = null }) {
 
   return (
     <div className="min-h-screen w-full bg-[#0b0f17] text-white flex flex-col justify-between p-4 sm:p-6 select-none">
-      {/* Top Bar Minimalis */}
       <header className="w-full max-w-4xl mx-auto flex items-center justify-between py-2">
         <Link
           href="/"
@@ -40,7 +39,6 @@ export function VolunteerInvalidCardFallback({ volunteer = null }) {
         </span>
       </header>
 
-      {/* Main Alert Box */}
       <main className="w-full max-w-md mx-auto my-auto py-8">
         <div className="bg-slate-900/90 border border-rose-900/40 rounded-2xl p-6 sm:p-8 text-center space-y-5 shadow-2xl backdrop-blur-xs">
           <div className="w-14 h-14 bg-rose-950/80 border border-rose-500/30 text-rose-400 rounded-full flex items-center justify-center mx-auto">
@@ -82,7 +80,6 @@ export function VolunteerInvalidCardFallback({ volunteer = null }) {
         </div>
       </main>
 
-      {/* Footer Info */}
       <footer className="w-full max-w-4xl mx-auto text-center py-2 text-[11px] text-slate-500 font-mono">
         {ORG_PROFILE.name} • Verifikasi Kartu Relawan
       </footer>

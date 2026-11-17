@@ -29,7 +29,6 @@ export function FinancialLedgerDashboard({
 }) {
   return (
     <div className="space-y-10">
-      {/* Top Header */}
       {!hideHeader && (
         <div className="space-y-1.5 border-b border-slate-200 pb-5">
           <h1 className="text-2xl sm:text-3xl font-semibold text-slate-950 tracking-tight">
@@ -41,7 +40,6 @@ export function FinancialLedgerDashboard({
         </div>
       )}
 
-      {/* Section 1: Ikhtisar Keuangan & Realisasi Program (Unified Parent Container) */}
       <section className="space-y-4">
         <ReportSectionHeader title="Ikhtisar Transparansi Keuangan &amp; Program" />
 
@@ -52,10 +50,8 @@ export function FinancialLedgerDashboard({
         />
       </section>
 
-      {/* Section 2: Rincian Laporan Keuangan */}
       <FinancialDetailsSection data={financialDetails} />
 
-      {/* Section 3: Rincian Arus Kas */}
       <CashFlowDetailsSection data={cashFlowDetails} />
     </div>
   );

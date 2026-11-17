@@ -28,12 +28,10 @@ export function RoutineDonorIdentity({
 
   return (
     <div id="tour-donor-identity" className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
-      {/* Header Step 1 */}
       <h2 className="text-base sm:text-lg font-semibold text-slate-950">
         Data donatur
       </h2>
 
-      {/* Anonymous Checkbox */}
       <AnonymousCheckbox
         checked={isAnonymous}
         onChange={(val) => {
@@ -42,7 +40,6 @@ export function RoutineDonorIdentity({
         }}
       />
 
-      {/* Full Name */}
       {!isAnonymous && (
         <FormField
           label="Nama lengkap"
@@ -66,7 +63,6 @@ export function RoutineDonorIdentity({
         </FormField>
       )}
 
-      {/* Email Utama - Terkunci Otomatis Sesuai Akun Login */}
       <FormField
         label="Alamat email aktif"
         required

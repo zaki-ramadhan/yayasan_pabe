@@ -21,7 +21,6 @@ export function AdminApplicantToolbar({
 }) {
   return (
     <div className="px-5 py-2.5 sm:px-6 bg-slate-50/60 border-b border-slate-100 flex items-center justify-end gap-3 shrink-0">
-      {/* Filter Status */}
       <div className="flex items-center gap-1.5 shrink-0">
         <span className="text-sm font-normal text-slate-600 shrink-0 flex items-center gap-1">
           <FilterIcon className="w-3.5 h-3.5 text-slate-400" />
@@ -51,7 +50,6 @@ export function AdminApplicantToolbar({
         </Select>
       </div>
 
-      {/* Sorting Dropdown dengan lebar proporsional (w-44) tanpa text wrap */}
       <div className="flex items-center gap-1.5 shrink-0">
         <span className="text-sm font-normal text-slate-600 shrink-0 flex items-center gap-1">
           <ChevronsUpDownIcon className="w-3.5 h-3.5 text-slate-400" />

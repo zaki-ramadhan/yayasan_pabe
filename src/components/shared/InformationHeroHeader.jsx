@@ -28,7 +28,6 @@ export function InformationHeroHeader({
         className
       )}
     >
-      {/* Background Image Texture */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none">
         <Image
           src={imageSrc}
@@ -40,12 +39,10 @@ export function InformationHeroHeader({
           draggable={false}
           aria-hidden="true"
         />
-        {/* Subtle Dark Overlays for Optimal Text Readability & Contrast */}
         <div className="absolute inset-0 bg-slate-950/40 pointer-events-none select-none" />
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/50 to-slate-950/90 pointer-events-none select-none" />
       </div>
 
-      {/* Inner Content bounded to standard body width to prevent ultra-wide stretching */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-3">
           {badge && <div className="mb-2 flex justify-center">{badge}</div>}

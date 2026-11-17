@@ -40,7 +40,6 @@ export function CashFlowTrendAreaChart({ data = [] }) {
           </div>
         ) : (
           <>
-            {/* Top Legend Header */}
             <div className="flex items-center justify-start gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded-xs bg-sky-500 shrink-0" aria-hidden="true" />
@@ -52,7 +51,6 @@ export function CashFlowTrendAreaChart({ data = [] }) {
               </div>
             </div>
 
-            {/* Recharts Area Chart */}
             <div className="w-full flex-1 min-h-[320px] sm:min-h-[380px] aspect-auto">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart

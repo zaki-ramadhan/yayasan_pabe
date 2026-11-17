@@ -212,7 +212,6 @@ export function AdminArticleTable({
         onOpenAdd={handleOpenAdd}
       />
 
-      {/* Reusable Bulk Action Bar */}
       <TableSelectionBar
         selectedCount={selection.selectedCount}
         totalCount={paginatedArticles.length}

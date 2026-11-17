@@ -46,9 +46,7 @@ export function DonorHistoryDashboard() {
   const debouncedSearch = useDebounce(search.trim(), 300);
   const isSearching = Boolean(search.trim().length > 0 && search.trim() !== debouncedSearch);
 
-  // Check auth and redirect if guest
   useEffect(() => {
-    // Only check after component mounts on client
     const timer = setTimeout(() => {
       if (!isAuthenticated && typeof window !== "undefined") {
         const stored = localStorage.getItem("pabe_auth_user");
@@ -124,7 +122,6 @@ export function DonorHistoryDashboard() {
     }
   }, [currentUser?.email, currentUser?.name, fetchHistory, pagination.limit]);
 
-  // Auto-sync real-time saat donatur kembali aktif membuka tab riwayat (zero-reload)
   useEffect(() => {
     const handleSync = () => {
       if (document.visibilityState === "visible" && (currentUser?.email || currentUser?.name)) {
@@ -170,7 +167,6 @@ export function DonorHistoryDashboard() {
 
   return (
     <div className="space-y-2.5">
-      {/* Banner Pengingat Tagihan Aktif Menunggu Pembayaran */}
       {!fetchError && pendingInvoices?.length > 0 && (
         <DonorPendingInvoiceBanner
           invoices={pendingInvoices}
@@ -178,7 +174,6 @@ export function DonorHistoryDashboard() {
         />
       )}
 
-      {/* Segmented Tabs Pemisah Donasi Umum vs ZIS */}
       <Tabs value={typeFilter} onValueChange={setTypeFilter}>
         <TabsList className="bg-sidebar border border-slate-200/90 shadow-2xs p-1 h-auto gap-1">
           <TabsTrigger value={TRANSACTION_TABS.ALL} className={TAB_TRIGGER_3D_CLASS}>
@@ -193,10 +188,8 @@ export function DonorHistoryDashboard() {
         </TabsList>
       </Tabs>
 
-      {/* 3 Metric Cards Strip */}
       <DonorSummaryCards metrics={metrics} typeFilter={typeFilter} isLoading={false} />
 
-      {/* Error state if fetch failed */}
       {fetchError && (
         <DataFetchErrorState
           compact
@@ -210,7 +203,6 @@ export function DonorHistoryDashboard() {
         />
       )}
 
-      {/* Transaction Table */}
       <DonorTransactionTable
         items={items}
         pagination={pagination}

@@ -64,7 +64,6 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     onClose();
   };
 
-  // Restore draft and prefill logged in user when modal opens (mirip form relawan)
   useEffect(() => {
     if (!isOpen || !job?.id) return;
     try {
@@ -91,7 +90,6 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     }
   }, [isOpen, job?.id, activeUser, isNameLocked, isEmailLocked]);
 
-  // Auto-save draft on input
   useEffect(() => {
     if (!job?.id) return;
     try {
@@ -209,7 +207,6 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
       commitUploads();
       setIsSuccess(true);
 
-      // Sinkronisasi sesi lokal jika nomor WhatsApp di profil sebelumnya masih kosong
       if (activeUser && (!activeUser.phone || activeUser.phone === "-") && phoneValidation.sanitized) {
         updateLocalUser({ phone: phoneValidation.sanitized });
       }
@@ -255,7 +252,6 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
                 errors={errors}
               />
 
-              {/* Verifikasi Keamanan Senyap (Invisible Turnstile) */}
               <TurnstileWidget
                 id="cf-turnstile-career"
                 ref={turnstileRef}

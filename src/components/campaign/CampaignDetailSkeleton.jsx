@@ -6,7 +6,6 @@ import { Skeleton } from "@/components/ui/Skeleton";
 export function CampaignDetailSkeleton() {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 pb-24 lg:pb-12 animate-pulse">
-      {/* Breadcrumb Skeleton */}
       <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
         <Skeleton className="h-4 w-14 rounded" />
         <Skeleton className="h-3.5 w-3.5 rounded-full" />
@@ -15,9 +14,7 @@ export function CampaignDetailSkeleton() {
         <Skeleton className="h-4 w-48 sm:w-64 rounded" />
       </div>
 
-      {/* Main 2-Column Editorial Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-        {/* Left Column: Media, Header, Tabs, Story */}
         <div className="lg:col-span-8 space-y-4">
           <div className="relative aspect-video w-full rounded-2xl border border-slate-300 bg-slate-100 overflow-hidden">
             <Skeleton className="w-full h-full rounded-none" />
@@ -39,7 +36,6 @@ export function CampaignDetailSkeleton() {
             </div>
           </div>
 
-          {/* Mobile-Only Donation Metrics Placeholder */}
           <div className="lg:hidden p-4 bg-white rounded-xl border border-slate-300 space-y-3.5 shadow-xs">
             <div className="space-y-2">
               <Skeleton className="h-4 w-28 rounded" />
@@ -62,14 +58,12 @@ export function CampaignDetailSkeleton() {
             </div>
           </div>
 
-          {/* Tabs Bar Placeholder */}
           <div className="border-b border-slate-300 pb-0 pt-4 sm:pt-5 flex items-center gap-6 overflow-x-auto">
             <Skeleton className="h-9 w-28 rounded-t-md" />
             <Skeleton className="h-9 w-36 rounded-t-md" />
             <Skeleton className="h-9 w-32 rounded-t-md" />
           </div>
 
-          {/* Story Paragraphs Skeleton */}
           <div className="space-y-3.5 pt-2">
             <Skeleton className="h-4.5 w-full rounded" />
             <Skeleton className="h-4.5 w-full rounded" />
@@ -78,14 +72,12 @@ export function CampaignDetailSkeleton() {
             <Skeleton className="h-4.5 w-4/5 rounded" />
           </div>
 
-          {/* Persistent CTA Box Placeholder */}
           <div className="p-5 sm:p-6 rounded-xl border border-slate-300 bg-white space-y-3">
             <Skeleton className="h-6 w-64 rounded" />
             <Skeleton className="h-4 w-3/4 rounded" />
             <Skeleton className="h-10 w-44 rounded-lg" />
           </div>
 
-          {/* Mobile-Only Forum Chat Skeleton */}
           <div className="lg:hidden space-y-3 pt-2">
             <Skeleton className="h-5 w-40 rounded" />
             <div className="relative rounded-2xl border border-slate-300 overflow-hidden shadow-xs bg-slate-900 p-3.5 space-y-3 min-h-[220px]">
@@ -100,7 +92,6 @@ export function CampaignDetailSkeleton() {
           </div>
         </div>
 
-        {/* Right Column: Sticky Donation Panel & Doa Chat Sidebar */}
         <div className="lg:col-span-4 hidden lg:block space-y-4 sticky top-24">
           <div className="p-6 sm:p-7 bg-white rounded-xl border border-slate-300 space-y-4 shadow-xs">
             <div className="space-y-2.5">
@@ -142,7 +133,6 @@ export function CampaignDetailSkeleton() {
                   <Skeleton className="h-5 w-24 rounded-full bg-slate-800" />
                 </div>
 
-                {/* Incoming bubble */}
                 <div className="flex flex-col items-start w-full">
                   <div className="pl-[36px] mb-1">
                     <Skeleton className="h-3.5 w-24 bg-slate-800 rounded" />
@@ -164,7 +154,6 @@ export function CampaignDetailSkeleton() {
                   </div>
                 </div>
 
-                {/* Outgoing bubble */}
                 <div className="flex flex-col items-end w-full">
                   <div className="pr-[36px] mb-1">
                     <Skeleton className="h-3.5 w-20 bg-slate-800 rounded" />

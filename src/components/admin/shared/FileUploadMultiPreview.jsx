@@ -46,7 +46,6 @@ export function FileUploadMultiPreview({
             key={item.id || idx}
             className="flex items-center gap-3.5 p-2.5 rounded-xl border border-slate-200 bg-white shadow-2xs hover:border-slate-300 transition-colors"
           >
-            {/* Thumbnail di sisi kiri */}
             <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-800 shrink-0 flex items-center justify-center">
               {item.isVideo ? (
                 <>
@@ -93,7 +92,6 @@ export function FileUploadMultiPreview({
               )}
             </div>
 
-            {/* Informasi berkas di tengah */}
             <div className="flex-1 min-w-0 pr-1">
               <p className="text-sm font-medium text-slate-800 truncate">
                 {item.name}
@@ -114,7 +112,6 @@ export function FileUploadMultiPreview({
               </div>
             </div>
 
-            {/* Tombol aksi hapus di sisi kanan */}
             {!isUploading && onRemoveFile && (
               <Button
                 type="button"

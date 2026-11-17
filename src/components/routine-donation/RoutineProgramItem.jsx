@@ -45,7 +45,6 @@ export function RoutineProgramItem({
         Pilihan program &amp; jadwal donasi
       </h2>
 
-      {/* Program Selector */}
       <RoutineProgramPicker
         item={item}
         campaignList={campaignList}
@@ -54,24 +53,20 @@ export function RoutineProgramItem({
         isFirstIndex={index === 0}
       />
 
-      {/* Schedule Picker (Frekuensi, Hari Pekanan, Tanggal Bulanan) */}
       <RoutineSchedulePicker
         item={item}
         onChange={onChange}
         isFirstIndex={index === 0}
       />
 
-      {/* Jam Pengingat (Format 24 Jam) */}
       <RoutineReminderTimePicker
         item={item}
         onChange={onChange}
         isFirstIndex={index === 0}
       />
 
-      {/* Batas Waktu / Masa Berlaku Opsional */}
       <RoutineCustomPeriod item={item} onChange={onChange} />
 
-      {/* Pengaturan Nominal Donasi Otomatis (Invoice Email) */}
       <RoutineAutoDonationConfig item={item} onChange={onChange} />
     </div>
   );

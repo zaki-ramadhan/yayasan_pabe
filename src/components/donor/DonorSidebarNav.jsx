@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
-// Solar Icons - Line Duotone (Inactive)
 import { Widget2Icon as Widget2Line } from "@solar-icons/react/line-duotone/widget-2";
 import { BillListIcon as BillListLine } from "@solar-icons/react/line-duotone/bill-list";
 import { UserIdIcon as UserIdLine } from "@solar-icons/react/line-duotone/user-id";
@@ -14,7 +13,6 @@ import { HandHeartIcon as HandHeartLine } from "@solar-icons/react/line-duotone/
 import { DocumentTextIcon as DocumentTextLine } from "@solar-icons/react/line-duotone/document-text";
 import { Logout2Icon as Logout2Line } from "@solar-icons/react/line-duotone/logout-2";
 
-// Solar Icons - Bold (Active, High Contrast Cutout)
 import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold/widget-2";
 import { BillListIcon as BillListBold } from "@solar-icons/react/bold/bill-list";
 import { UserIdIcon as UserIdBold } from "@solar-icons/react/bold/user-id";
@@ -103,9 +101,7 @@ export function DonorSidebarNav({
 
   return (
     <div className="h-full flex flex-col justify-between bg-sidebar border-r border-slate-200 overflow-hidden select-none">
-      {/* Top Section */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1 sidebar-scrollbar">
-        {/* Brand Header */}
         <div className="pb-3 pt-1 border-b border-slate-300">
           <Link
             href="/"
@@ -138,7 +134,6 @@ export function DonorSidebarNav({
           </Link>
         </div>
 
-        {/* Main Navigation */}
         <div className="space-y-0.5 pt-2">
           {isCollapsed ? (
             <nav className="space-y-0.5">
@@ -209,10 +204,8 @@ export function DonorSidebarNav({
           )}
         </div>
 
-        {/* Full-width Divider */}
         <div className="-mx-3 my-2.5 border-t border-slate-300" />
 
-        {/* Website Utama Navigation */}
         <div className="space-y-0.5">
           {isCollapsed ? (
             <nav className="space-y-0.5">
@@ -284,7 +277,6 @@ export function DonorSidebarNav({
         </div>
       </div>
 
-      {/* Bottom Section: Dedicated Logout Button */}
       <div className="shrink-0 p-3 pt-3 border-t border-slate-300 mt-auto bg-sidebar">
         <button
           type="button"

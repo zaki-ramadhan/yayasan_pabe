@@ -138,7 +138,6 @@ export function AdminUserTable({
 					</Table>
 				</div>
 
-				{/* Standardized Table Pagination Footer */}
 				{users.length >
 					0 && (
 					<TablePaginationFooter
@@ -191,7 +190,6 @@ export function AdminUserTable({
 				}
 			/>
 
-			{/* Dialog: Reset Password */}
 			<AdminUserResetDialog
 				isOpen={Boolean(
 					resetDialogData,
@@ -212,7 +210,6 @@ export function AdminUserTable({
 				}
 			/>
 
-			{/* Dialog: Konfirmasi Tangguhkan / Hapus */}
 			<AdminUserConfirmDialog
 				isOpen={
 					confirmState.isOpen

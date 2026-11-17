@@ -25,7 +25,6 @@ export function AboutSidebarInfo({ orgSettings = null }) {
 
   return (
     <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-300 space-y-4 shadow-2xs">
-      {/* 1. Legalitas Resmi Lembaga */}
       <div className="space-y-3.5">
         <div className="flex items-center gap-2">
           <h3 className="font-medium text-slate-950 text-base">
@@ -128,7 +127,6 @@ export function AboutSidebarInfo({ orgSettings = null }) {
         </div>
       </div>
 
-      {/* 2. Kantor & Layanan Donatur */}
       <div className="space-y-3.5 pt-4 border-t border-slate-200">
         <h3 className="font-medium text-slate-950 text-base">
           Sekretariat &amp; Kontak

@@ -20,7 +20,6 @@ export function CategoryTabs({
       : Object.values(counts).reduce((acc, curr) => (typeof curr === "number" ? acc + curr : acc), 0)
     : undefined;
 
-  // Jika total data benar-benar 0, sembunyikan seluruh chip tabs agar tampilan clean
   if (totalCount === 0) {
     return null;
   }
@@ -36,10 +35,8 @@ export function CategoryTabs({
       catName === "Semua Program" ||
       catName === "Semua Artikel";
 
-    // Opsi "Semua" dipertahankan jika masih ada data dalam katalog
     if (isAll) return true;
 
-    // Sembunyikan kategori jika counts disediakan dan nilainya 0
     if (hasCounts) {
       const count = counts[catId] ?? counts[catName];
       if (typeof count === "number") {
@@ -47,7 +44,6 @@ export function CategoryTabs({
       }
     }
 
-    // Jika objek category dari database memiliki properti count
     if (typeof cat?.count === "number") {
       return cat.count > 0;
     }
@@ -55,12 +51,10 @@ export function CategoryTabs({
     return true;
   });
 
-  // Jika tidak ada kategori yang valid tersisa
   if (visibleCategories.length === 0) {
     return null;
   }
 
-  // Jika hanya tersisa 1 tab dan itu adalah opsi "Semua" dengan data 0
   if (visibleCategories.length === 1) {
     const single = visibleCategories[0];
     const singleId = typeof single === "string" ? (single === "Semua Kategori" ? "all" : single) : single.id;

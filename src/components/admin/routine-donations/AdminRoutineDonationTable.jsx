@@ -35,7 +35,6 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 
-  // 1. Live SSE: Menambahkan data pendaftaran komitmen donasi rutin baru secara real-time (hanya jika aktif)
   useAdminLiveEvent("ROUTINE_DONATION_CREATED", (payload) => {
     if (!payload?.id || payload.status !== "ACTIVE") return;
     setItems((prev) => {
@@ -45,7 +44,6 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
     toast.info(`Donasi rutin baru terdaftar dari ${payload.donorName || "Donatur"}`);
   });
 
-  // 2. Live SSE: Sinkronisasi pembaruan status (jika tidak aktif lagi, keluarkan dari monitoring aktif)
   useAdminLiveEvent("ROUTINE_DONATION_STATUS_CHANGED", (payload) => {
     if (!payload?.id) return;
     setItems((prev) => {
@@ -255,7 +253,6 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
         )}
       </TableContainer>
 
-      {/* Detail Dialog */}
       <AdminRoutineDonationDetailDialog
         donation={selectedItem}
         isOpen={Boolean(selectedItem)}

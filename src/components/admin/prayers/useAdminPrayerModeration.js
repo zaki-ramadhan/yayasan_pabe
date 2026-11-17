@@ -27,7 +27,6 @@ export function useAdminPrayerModeration({
   const debouncedSearch = useDebounce(search.trim(), 350);
   const isInitialMount = useRef(true);
 
-  // Live SSE: Menerima doa donatur baru saat donasi berhasil terbayar secara real-time
   useAdminLiveEvent("DONATION_PAID", (payload) => {
     if (!payload?.prayer) return;
     setPrayers((prev) => {

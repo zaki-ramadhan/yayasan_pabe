@@ -10,7 +10,6 @@ import Image from "next/image";
 export function BankCardShowcase() {
   return (
     <>
-      {/* SVG Defs for True Rounded Trapezoid Clip Path */}
       <svg
         width="0"
         height="0"
@@ -24,12 +23,10 @@ export function BankCardShowcase() {
         </defs>
       </svg>
 
-      {/* Card Showcase Wrapper */}
       <div
         className="hidden md:flex md:col-span-6 relative w-full h-72 sm:h-80 md:h-[340px] items-center justify-center select-none"
         onContextMenu={(e) => e.preventDefault()}
       >
-        {/* Rounded Trapezoid Backdrop Container (Menyatu tanpa border & inset shadow) */}
         <div
           className="absolute inset-0 overflow-hidden pointer-events-none"
           style={{ clipPath: "url(#rounded-trapezoid-clip)" }}
@@ -44,7 +41,6 @@ export function BankCardShowcase() {
           />
         </div>
 
-        {/* Image Asset Layer (Pop-out 3D proporsional, proteksi klik kanan & drag) */}
         <div className="relative z-10 w-full h-full flex items-center justify-center overflow-visible pointer-events-none select-none">
           <Image
             src="/img/decorations/bank-cards-showcase.webp"

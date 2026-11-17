@@ -51,7 +51,6 @@ export function AdminPrayerTableRow({
           : ""
       }`}
     >
-      {/* 0. Checkbox Selection */}
       <TableCell className="w-12 text-center py-3 align-top" onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={isSelected}
@@ -59,7 +58,6 @@ export function AdminPrayerTableRow({
           aria-label={`Pilih doa dari ${item.donorName}`}
         />
       </TableCell>
-      {/* 1. No. Invoice (Persis gaya & posisi seperti Mutasi Transaksi) */}
       <TableCell className="w-[170px] text-sm py-3 align-top">
         <div className="flex items-center gap-1.5 w-full min-w-0 max-w-[160px]">
           <span
@@ -82,7 +80,6 @@ export function AdminPrayerTableRow({
         </div>
       </TableCell>
 
-      {/* 2. Donatur (Email disensor & ukuran teks minimal sm) */}
       <TableCell className="w-52 py-3 align-top">
         <div className="flex items-center gap-2.5">
           <UserAvatar
@@ -108,7 +105,6 @@ export function AdminPrayerTableRow({
         </div>
       </TableCell>
 
-      {/* 3. Program Donasi */}
       <TableCell className="min-w-[240px] max-w-[340px] py-3 align-top">
         {item.campaignSlug ? (
           <Link
@@ -140,12 +136,10 @@ export function AdminPrayerTableRow({
         )}
       </TableCell>
 
-      {/* 4. Nominal Donasi */}
       <TableCell className="w-32 py-3 align-top whitespace-nowrap text-sm font-normal text-slate-700 text-right tabular-nums">
         {formatRupiah(item.amount)}
       </TableCell>
 
-      {/* 5. Pesan Doa (line-clamp-2) */}
       <TableCell className="min-w-[240px] max-w-md py-3 align-top space-y-1.5">
         <p className="text-sm font-normal text-slate-800 leading-relaxed italic line-clamp-2">
           &ldquo;{item.prayer}&rdquo;
@@ -158,7 +152,6 @@ export function AdminPrayerTableRow({
         )}
       </TableCell>
 
-      {/* 6. Waktu Kirim (Dua baris tanggal & jam, teks jelas) */}
       <TableCell className="w-36 py-3 align-top whitespace-nowrap text-sm text-slate-700 font-normal text-center tabular-nums">
         <div className="space-y-0.5">
           <span className="font-normal text-slate-700 block leading-tight">
@@ -170,7 +163,6 @@ export function AdminPrayerTableRow({
         </div>
       </TableCell>
 
-      {/* 7. Status Moderasi (Badge) */}
       <TableCell className="w-32 text-center py-3 align-top whitespace-nowrap">
         {item.isPrayerHidden ? (
           <Badge variant="danger" className="gap-1 max-w-[140px]" title="Disembunyikan">
@@ -185,7 +177,6 @@ export function AdminPrayerTableRow({
         )}
       </TableCell>
 
-      {/* 8. Aksi Moderasi */}
       <TableCell className="w-24 text-right py-3 align-top pr-4 whitespace-nowrap">
         <div className="flex items-center justify-end gap-1">
           <Button

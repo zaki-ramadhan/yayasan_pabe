@@ -39,19 +39,16 @@ export function DonorProfileSkeleton() {
               <Skeleton className="h-4 w-64 max-w-full rounded-sm" />
             </div>
 
-            {/* Field 1: Nama Lengkap */}
             <div className="space-y-1.5">
               <Skeleton className="h-3.5 w-24 rounded-xs" />
               <Skeleton className="h-9.5 w-full rounded-md border border-slate-200" />
             </div>
 
-            {/* Field 2: Nomor WhatsApp */}
             <div className="space-y-1.5">
               <Skeleton className="h-3.5 w-32 rounded-xs" />
               <Skeleton className="h-9.5 w-full rounded-md border border-slate-200" />
             </div>
 
-            {/* Field 3 & 4: Wilayah Domisili (Provinsi & Kota / Kabupaten Combobox) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <div className="space-y-1.5">
                 <Skeleton className="h-3.5 w-28 rounded-xs" />
@@ -63,13 +60,11 @@ export function DonorProfileSkeleton() {
               </div>
             </div>
 
-            {/* Field 5: Alamat Lengkap */}
             <div className="space-y-1.5">
               <Skeleton className="h-3.5 w-28 rounded-xs" />
               <Skeleton className="h-20 w-full rounded-md border border-slate-200" />
             </div>
 
-            {/* Tombol Simpan di kanan bawah */}
             <div className="pt-2 flex justify-end">
               <Skeleton className="h-9 w-24 rounded-md" />
             </div>

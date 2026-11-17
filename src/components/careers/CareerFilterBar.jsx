@@ -30,7 +30,6 @@ export function CareerFilterBar({
 }) {
   return (
     <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
-      {/* Search Input using reusable UI Input */}
       <div className="flex-1 min-w-0">
         <Input
           type="search"
@@ -47,7 +46,6 @@ export function CareerFilterBar({
         />
       </div>
 
-      {/* Filter Selects Row */}
       <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-row sm:items-center sm:gap-3 shrink-0">
         <CareerFilterSelect
           label="Lokasi"

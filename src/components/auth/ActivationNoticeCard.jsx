@@ -55,7 +55,6 @@ export function ActivationNoticeCard() {
 
   return (
     <div className="w-full max-w-md mx-auto p-6 sm:p-8 bg-white border border-slate-200 rounded-xl shadow-xs text-center space-y-6">
-      {/* Icon Amplop Surat Bersih */}
       <div className="mx-auto w-14 h-14 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
         <svg
           className="w-7 h-7"

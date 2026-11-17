@@ -22,7 +22,6 @@ export function DonorMonthlyTrendChart({
 }) {
   const currentDeviceYear = new Date().getFullYear();
 
-  // Dropdown list dinamis 5 tahun terakhir mundur dari waktu perangkat
   const availableYears = useMemo(() => {
     return Array.from({ length: 5 }, (_, i) => String(currentDeviceYear - i));
   }, [currentDeviceYear]);

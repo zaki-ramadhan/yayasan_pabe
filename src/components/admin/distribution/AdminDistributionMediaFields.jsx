@@ -51,7 +51,6 @@ function ExistingMediaCard({ mediaUrl, index, isUploading, onRemove }) {
         />
       )}
 
-      {/* Badge penanda jenis media */}
       <div className="absolute left-1.5 bottom-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-3xs font-medium pointer-events-none">
         {isYt ? (
           <>
@@ -68,7 +67,6 @@ function ExistingMediaCard({ mediaUrl, index, isUploading, onRemove }) {
         )}
       </div>
 
-      {/* Tombol hapus media */}
       {!isUploading && onRemove && (
         <button
           type="button"
@@ -101,7 +99,6 @@ export function AdminDistributionMediaFields({
 }) {
   return (
     <div className="space-y-4 pt-1">
-      {/* 1. Pratinjau media yang sudah tersimpan sebelumnya (Mode Edit) */}
       {existingMedia.length > 0 && (
         <div className="space-y-1.5">
           <div className="flex items-center justify-between gap-2">
@@ -125,7 +122,6 @@ export function AdminDistributionMediaFields({
         </div>
       )}
 
-      {/* 2. Zona Unggah Foto & Video Sorotan (Direct R2) */}
       <FileUploadZone
         multiple={true}
         allowVideo={true}
@@ -138,7 +134,6 @@ export function AdminDistributionMediaFields({
         error={error}
       />
 
-      {/* 3. Tautan Video YouTube Opsional (Long-form Video) */}
       <FormField label="Tautan video YouTube (opsional)">
         <Input
           type="url"

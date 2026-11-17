@@ -44,7 +44,6 @@ export function VolunteerCardViewer({ volunteer }) {
     setActiveSide((prev) => (prev === "front" ? "back" : "front"));
   };
 
-  // Navigasi swipe touch di perangkat seluler
   const handleTouchStart = (e) => {
     if (e.touches && e.touches[0]) {
       touchStartXRef.current = e.touches[0].clientX;
@@ -59,7 +58,6 @@ export function VolunteerCardViewer({ volunteer }) {
     const deltaX = touchEndX - touchStartXRef.current;
     const deltaY = touchEndY - touchStartYRef.current;
 
-    // Pastikan gestur swipe horizontal lebih dominan daripada scroll vertikal
     if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
       if (deltaX < 0) {
         setActiveSide("back");
@@ -71,7 +69,6 @@ export function VolunteerCardViewer({ volunteer }) {
     touchStartYRef.current = null;
   };
 
-  // Navigasi keyboard (Panah Kiri/Kanan, Space, Enter)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "ArrowLeft") {
@@ -94,7 +91,6 @@ export function VolunteerCardViewer({ volunteer }) {
       className="min-h-screen w-full bg-[#0b0f17] text-white flex items-center justify-center p-3 sm:p-6 select-none overflow-hidden print:bg-white print:p-0 print:text-slate-900"
     >
       <main className="w-full max-w-xl mx-auto flex items-center justify-center gap-3 sm:gap-4.5 px-2">
-        {/* Tombol Slide Kiri (Menempel di samping kiri kartu) */}
         <button
           type="button"
           onClick={handlePrev}
@@ -104,7 +100,6 @@ export function VolunteerCardViewer({ volunteer }) {
           <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
-        {/* Kontainer 3D Flip Card dengan Ukuran Pasti Presisi */}
         <div
           onClick={toggleFlip}
           onTouchStart={handleTouchStart}
@@ -125,7 +120,6 @@ export function VolunteerCardViewer({ volunteer }) {
               activeSide === "back" ? "[transform:rotateY(180deg)]" : ""
             }`}
           >
-            {/* Muka 1: Tampak Depan */}
             <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [-webkit-backface-visibility:hidden]">
               <VolunteerIdCard
                 volunteer={volunteer}
@@ -134,7 +128,6 @@ export function VolunteerCardViewer({ volunteer }) {
               />
             </div>
 
-            {/* Muka 2: Tampak Belakang */}
             <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)]">
               <VolunteerIdCard
                 volunteer={volunteer}
@@ -145,7 +138,6 @@ export function VolunteerCardViewer({ volunteer }) {
           </div>
         </div>
 
-        {/* Tombol Slide Kanan (Menempel di samping kanan kartu) */}
         <button
           type="button"
           onClick={handleNext}

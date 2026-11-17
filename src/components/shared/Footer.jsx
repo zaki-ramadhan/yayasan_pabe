@@ -13,7 +13,6 @@ export function Footer() {
 
   return (
     <footer className="relative z-40 overflow-hidden bg-slate-950 text-white pt-12 pb-8 border-t border-slate-800">
-      {/* Background Texture Overlay */}
       <div className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none opacity-100 bg-[url('/img/textures/texture-overlay-1.webp')]" />
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-950/70 via-slate-950/90 to-slate-950 pointer-events-none" />
 

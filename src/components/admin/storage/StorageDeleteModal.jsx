@@ -42,7 +42,6 @@ export function StorageDeleteModal({
       confirmVariant="destructive"
     >
       <div className="space-y-3 py-1">
-        {/* Warning Alert */}
         <div className="p-3 bg-rose-50 border border-rose-200 rounded-lg flex items-start gap-2.5 text-rose-900 text-xs leading-relaxed">
           <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
           <div>
@@ -54,7 +53,6 @@ export function StorageDeleteModal({
           </div>
         </div>
 
-        {/* Single Item Preview */}
         {isSingle && singleItem && (
           <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg flex items-center gap-3">
             <div className="w-14 h-14 rounded-md bg-slate-200 overflow-hidden relative shrink-0 border border-slate-300">
@@ -87,7 +85,6 @@ export function StorageDeleteModal({
           </div>
         )}
 
-        {/* Multiple Items List Summary */}
         {!isSingle && (
           <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm space-y-1.5 max-h-40 overflow-y-auto">
             <p className="font-medium text-slate-800">Daftar berkas yang akan dihapus:</p>

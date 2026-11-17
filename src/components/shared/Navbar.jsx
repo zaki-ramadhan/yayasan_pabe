@@ -48,12 +48,9 @@ export function Navbar() {
       toast.success(`Selamat datang, ${justLoggedInName}! Berhasil masuk ke akun.`);
     }
 
-    // Validasi keselarasan sesi lokal dengan sesi server aktif
     if (currentUser) {
       safeFetch("/api/auth/me")
         .then(async (res) => {
-          // Hanya logout jika server secara eksplisit menolak sesi (401 Unauthorized)
-          // Jangan logout jika server error sementara (500) atau kendala jaringan
           if (res.status === 401) {
             const data = await res.json().catch(() => null);
             if (data && data.authenticated === false) {
@@ -85,13 +82,11 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-12 sm:h-13">
-          {/* Brand Logo & Text */}
           <Link
             href="/"
             className="flex items-center gap-2 sm:gap-2.5 select-none focus:outline-none"
             aria-label="Beranda Yayasan PABE"
           >
-            {/* Logo Langsung Tanpa Pembungkus Box & Border, Skala Proporsional */}
             <div className="relative h-9 sm:h-14 w-9 sm:w-14 shrink-0 flex items-center justify-center">
               <Image
                 src="/img/branding/logo-ypabe.webp"
@@ -110,10 +105,8 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* Modular Desktop Navigation */}
           <NavDesktopMenu pathname={pathname} />
 
-          {/* Right Action & User Profile */}
           <div className="flex items-center gap-2.5">
             <div className="hidden lg:block">
               <NavUserDropdown
@@ -123,7 +116,6 @@ export function Navbar() {
               />
             </div>
 
-            {/* Mobile Hamburger Toggle */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -136,7 +128,6 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Modular Mobile Drawer */}
       {isMobileMenuOpen && (
         <NavMobileDrawer
           pathname={pathname}

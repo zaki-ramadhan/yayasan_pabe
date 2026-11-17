@@ -65,7 +65,6 @@ export function Combobox({
       : formContext?.isInvalid || false;
   const resolvedId = id || formContext?.id;
 
-  // Normalisasi opsi menjadi bentuk standar: { value, label, category, raw }
   const normalizedOptions = React.useMemo(() => {
     return (options || []).map((item) => {
       if (typeof item === "string") {
@@ -83,12 +82,10 @@ export function Combobox({
     });
   }, [options]);
 
-  // Item yang sedang aktif terpilih
   const selectedItem = React.useMemo(() => {
     return normalizedOptions.find((opt) => opt.value === String(value));
   }, [normalizedOptions, value]);
 
-  // Filter opsi berdasarkan kata kunci pencarian (mencari di label & kategori)
   const filteredOptions = React.useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
     if (!q) return normalizedOptions;
@@ -99,14 +96,12 @@ export function Combobox({
     });
   }, [normalizedOptions, searchTerm]);
 
-  // Reset indeks highlighted saat hasil filter berubah (React derived state pattern)
   const [prevFilteredOptions, setPrevFilteredOptions] = React.useState(filteredOptions);
   if (filteredOptions !== prevFilteredOptions) {
     setPrevFilteredOptions(filteredOptions);
     setHighlightedIndex(0);
   }
 
-  // Apakah input pencarian perlu ditampilkan
   const showSearch =
     alwaysShowSearch || normalizedOptions.length >= searchThreshold;
 
@@ -115,7 +110,6 @@ export function Combobox({
     if (isOpen) {
       setSearchTerm("");
       setHighlightedIndex(0);
-      // Auto-focus search input setelah popover terbuka
       setTimeout(() => {
         searchInputRef.current?.focus();
       }, 50);
@@ -128,7 +122,6 @@ export function Combobox({
     setSearchTerm("");
   };
 
-  // Navigasi keyboard (ArrowDown, ArrowUp, Enter, Tab, Escape)
   const handleKeyDown = (e) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -149,7 +142,6 @@ export function Combobox({
         prev > 0 ? prev - 1 : filteredOptions.length - 1
       );
     } else if (e.key === "Tab") {
-      // Shortcut Tab: Langsung pilih opsi yang sedang di-highlight
       if (open && filteredOptions[highlightedIndex]) {
         e.preventDefault();
         handleSelect(filteredOptions[highlightedIndex]);
@@ -183,7 +175,6 @@ export function Combobox({
     }
   };
 
-  // Scroll otomatis ke item yang di-highlight via keyboard
   React.useEffect(() => {
     if (open && listRef.current) {
       const activeEl = listRef.current.children[highlightedIndex];
@@ -249,7 +240,6 @@ export function Combobox({
         }
       >
         <div className="space-y-1.5">
-          {/* Input Pencarian Filter Lookup */}
           {showSearch && (
             <div className="relative px-1 pt-1 pb-1">
               <MagnifierIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
@@ -287,7 +277,6 @@ export function Combobox({
             </div>
           )}
 
-          {/* Daftar Opsi Terfilter */}
           <div
             ref={listRef}
             id={listboxId}

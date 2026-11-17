@@ -42,14 +42,12 @@ export function ZakatMuzakkiSection({
         </p>
       </div>
 
-      {/* Checkbox Hamba Allah */}
       <AnonymousCheckbox
         id="muzakki-anonymous"
         checked={isAnonymous}
         onChange={setIsAnonymous}
       />
 
-      {/* Nama lengkap */}
       <FormField
         label="Nama lengkap muzakki"
         required
@@ -66,7 +64,6 @@ export function ZakatMuzakkiSection({
         />
       </FormField>
 
-      {/* Email & Kontak Telepon */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
         <FormField
           label="Alamat email aktif"
@@ -120,7 +117,6 @@ export function ZakatMuzakkiSection({
         </FormField>
       </div>
 
-      {/* NPWP / NIK */}
       <FormField
         label="NPWP / NIK (opsional)"
         hint="Untuk bukti pengurang pajak penghasilan SPT tahunan."
@@ -133,7 +129,6 @@ export function ZakatMuzakkiSection({
         />
       </FormField>
 
-      {/* Doa muzakki */}
       <FormField label="Doa atau pesan kebaikan (opsional)">
         <Textarea
           value={prayer}

@@ -38,9 +38,7 @@ export function VolunteerApprovedCard({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Banner Identitas Relawan Aktif (Atmosferik Senada dengan VolunteerPendingCard) */}
       <div className="relative w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950 text-white p-5 sm:p-6 shadow-md print:hidden">
-        {/* Atmospheric Background Image & Overlay */}
         <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
           <Image
             src="/img/banners/covers/volunteer-cover.webp"
@@ -55,7 +53,6 @@ export function VolunteerApprovedCard({
         </div>
 
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-          {/* Konten Kiri: Status, Judul & Penjelasan */}
           <div className="space-y-1.5">
             <div className="text-xs font-medium text-emerald-400">
               Status: Relawan Aktif
@@ -68,7 +65,6 @@ export function VolunteerApprovedCard({
             </p>
           </div>
 
-          {/* Konten Kanan: Aksi Bagikan Tautan & Unduh Kartu */}
           <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto flex-wrap">
             <ShareDropdown
               url={`/relawan/validasi/${volunteer.id}`}
@@ -94,7 +90,6 @@ export function VolunteerApprovedCard({
         </div>
       </div>
 
-      {/* Node Render Khusus Unduh Kartu (Kotak Rapi Tanpa Sudut Melengkung) */}
       <div
         id="volunteer-approved-card-export"
         className="fixed -left-[9999px] top-0 pointer-events-none p-6 bg-transparent"
@@ -103,12 +98,10 @@ export function VolunteerApprovedCard({
         <VolunteerIdCard volunteer={volunteer} mode="both" rounded={false} />
       </div>
 
-      {/* Visualisasi Kartu Relawan 2 Sisi (CR80) */}
       <div className="py-2 p-2 bg-transparent">
         <VolunteerIdCard volunteer={volunteer} />
       </div>
 
-      {/* Opsi Pengunduran Diri */}
       {onResignClick && (
         <div className="flex items-center justify-end pt-2 border-t border-slate-100 text-xs print:hidden">
           <button

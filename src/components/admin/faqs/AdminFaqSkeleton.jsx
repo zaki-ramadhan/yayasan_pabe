@@ -11,7 +11,6 @@ import {
 export function AdminFaqSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
-      {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div className="flex items-center gap-2 flex-1 max-w-md">
           <Skeleton className="h-10 w-full rounded-lg" />
@@ -23,7 +22,6 @@ export function AdminFaqSkeleton() {
         </div>
       </div>
 
-      {/* Main Table Skeleton */}
       <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <Table>

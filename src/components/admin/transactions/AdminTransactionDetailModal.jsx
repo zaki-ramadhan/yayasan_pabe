@@ -45,7 +45,6 @@ export function AdminTransactionDetailModal({
         </DialogHeader>
 
         <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5 sm:px-6 space-y-5 text-sm">
-          {/* Section 1: Identitas Donatur */}
           <div className="space-y-3 pb-5 border-b border-slate-100">
             <div className="flex items-center justify-between gap-4">
               <span className="text-slate-700 font-normal shrink-0">Nama donatur</span>
@@ -72,7 +71,6 @@ export function AdminTransactionDetailModal({
             </div>
           </div>
 
-          {/* Section 2: Informasi Invoice & Pembayaran */}
           <div className="space-y-3 pb-5 border-b border-slate-100">
             <div className="flex items-center justify-between gap-4">
               <span className="text-slate-700 font-normal shrink-0">Nomor invoice</span>
@@ -108,7 +106,6 @@ export function AdminTransactionDetailModal({
             </div>
           </div>
 
-          {/* Section 3: Program & Penyaluran */}
           <div className="space-y-3 pb-2">
             <div className="flex items-start justify-between gap-4">
               <span className="text-slate-700 font-normal shrink-0">Program donasi</span>
@@ -135,7 +132,6 @@ export function AdminTransactionDetailModal({
             </div>
           </div>
 
-          {/* Doa / Pesan Donatur */}
           {transaction.prayer && (
             <div className="pt-4 border-t border-slate-100 space-y-1.5">
               <div className="flex items-center gap-1.5 text-slate-600">
@@ -149,7 +145,6 @@ export function AdminTransactionDetailModal({
           )}
         </div>
 
-        {/* Footer Actions */}
         <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex items-center justify-end gap-2">
           <Button
             type="button"

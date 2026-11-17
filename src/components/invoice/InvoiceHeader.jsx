@@ -13,7 +13,6 @@ export function InvoiceHeader({ initialUser = null }) {
   const router = useRouter();
   const { currentUser } = useCurrentUser();
 
-  // Utamakan state client reaktif, dengan fallback ke sesi server awal
   const activeUser = currentUser || initialUser;
 
   const handleLogout = async () => {
@@ -34,7 +33,6 @@ export function InvoiceHeader({ initialUser = null }) {
 
   return (
     <header className="flex items-center justify-between pb-1">
-      {/* Brand Logo & Name */}
       <Link
         href="/"
         className="inline-flex items-center gap-2.5 select-none focus:outline-none group"
@@ -55,7 +53,6 @@ export function InvoiceHeader({ initialUser = null }) {
         </span>
       </Link>
 
-      {/* Profil Dropdown Pengguna */}
       <div className="flex items-center">
         <NavUserDropdown currentUser={activeUser} onLogout={handleLogout} />
       </div>

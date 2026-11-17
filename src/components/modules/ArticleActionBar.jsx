@@ -41,9 +41,7 @@ export function ArticleActionBar({
 				className,
 			)}
 		>
-			{/* Action Buttons: Like + Dislike + Share (Sejajar) */}
 			<div className="flex items-center gap-2">
-				{/* Like Button */}
 				<button
 					type="button"
 					onClick={handleToggleLike}
@@ -65,7 +63,6 @@ export function ArticleActionBar({
 					</span>
 				</button>
 
-				{/* Dislike Button */}
 				<button
 					type="button"
 					onClick={handleToggleDislike}

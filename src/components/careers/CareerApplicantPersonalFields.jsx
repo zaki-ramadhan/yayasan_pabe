@@ -23,7 +23,6 @@ export function CareerApplicantPersonalFields({
 }) {
   return (
     <div className="space-y-4">
-      {/* 1. Nama Lengkap */}
       <FormField
         label="Nama lengkap"
         required
@@ -56,7 +55,6 @@ export function CareerApplicantPersonalFields({
         />
       </FormField>
 
-      {/* 2. Grid Email Aktif & WhatsApp */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
           label="Email aktif"

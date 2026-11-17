@@ -66,7 +66,6 @@ export function ZakatCheckoutForm({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-      {/* Kolom Kiri: Pilihan Nominal (Non-Kalkulator), Form Input Muzakki & Kanal Bayar (7 Kolom) */}
       <div className="lg:col-span-7 space-y-4">
         {!isFromCalculator && (
           <>
@@ -91,7 +90,6 @@ export function ZakatCheckoutForm({
           </>
         )}
 
-        {/* 1. Data Identitas Muzakki */}
         <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
           <ZakatMuzakkiSection
             isAnonymous={isAnonymous}
@@ -112,7 +110,6 @@ export function ZakatCheckoutForm({
           />
         </div>
 
-        {/* 2. Kanal Pembayaran */}
         <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
           <div className="space-y-1">
             <h3 className="text-base font-semibold text-slate-900">
@@ -137,12 +134,9 @@ export function ZakatCheckoutForm({
         </div>
       </div>
 
-      {/* Kolom Kanan: Akad & Ringkasan Sticky (5 Kolom) */}
       <div className="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
-        {/* Akad & Niat Zakat */}
         <ZakatNiatCard selectedTypeId={selectedTypeId} />
 
-        {/* Ringkasan Pembayaran */}
         <ZakatPaymentSummaryCard
           selectedTypeId={selectedTypeId}
           amount={amount}
@@ -156,7 +150,6 @@ export function ZakatCheckoutForm({
         />
       </div>
 
-      {/* Dialog Konfirmasi Tagihan Aktif */}
       <PendingInvoiceDialog
         isOpen={pendingInvoiceModal.isOpen}
         onClose={() => setPendingInvoiceModal({ isOpen: false, invoice: null })}

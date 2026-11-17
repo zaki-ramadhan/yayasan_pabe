@@ -71,7 +71,6 @@ const Input = React.forwardRef(
           {...props}
         />
 
-        {/* Right Loading Spinner or Clear X Button */}
         {isLoading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
             <LoaderIcon className="w-4 h-4 animate-spin" />

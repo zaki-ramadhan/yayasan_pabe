@@ -17,7 +17,6 @@ import { cn } from "@/lib/utils";
  * @param {Function} [props.onRefresh]
  */
 export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, onRefresh }) {
-  // Simpan state folder terbuka
   const [expandedFolders, setExpandedFolders] = useState(() => {
     const initial = {};
     folders.forEach((f) => {
@@ -30,7 +29,6 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
     const isCurrentlyExpanded = Boolean(expandedFolders[folderName]);
     const targetFolder = folders.find((f) => f.folder === folderName);
 
-    // Jika folder berpenghuni dibuka namun array files belum dimuat, picu refresh data
     if (!isCurrentlyExpanded && targetFolder?.count > 0 && (!targetFolder.files || targetFolder.files.length === 0)) {
       onRefresh?.();
     }
@@ -47,7 +45,6 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-2xs space-y-3">
-      {/* Header Kartu Rincian Folder */}
       <div className="flex items-center justify-between pb-1">
         <div className="flex items-center gap-2">
           <Folder className="w-4.5 h-4.5 text-amber-500 fill-amber-400 shrink-0" />
@@ -60,7 +57,6 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
         </span>
       </div>
 
-      {/* Tabel Berkas Berjenjang (Accordion) */}
       <div className="max-h-80 overflow-y-auto overflow-x-auto rounded-lg border border-slate-200/80 bg-white">
         <table className="w-full text-left text-sm font-normal">
           <thead className="sticky top-0 bg-slate-50 z-10 border-b border-slate-200">
@@ -126,7 +122,6 @@ export function StorageFolderBreakdownCard({ folders = [], isConfigured = true, 
                     </td>
                   </tr>
 
-                  {/* Baris File Di Dalam Folder (Hanya Muncul Jika Berkas > 0) */}
                   {isExpanded && item.count > 0 && (
                     hasFiles ? (
                       item.files.map((file) => (

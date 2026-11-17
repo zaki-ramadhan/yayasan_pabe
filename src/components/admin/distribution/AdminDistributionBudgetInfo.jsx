@@ -46,7 +46,6 @@ export function AdminDistributionBudgetInfo({
   const isOverBudget = requested > remainingBudget;
   const hasZeroCollected = budget.collectedAmount <= 0;
 
-  // Sisa saldo setelah disimulasikan dengan input saat ini
   const simulatedRemaining = Math.max(0, remainingBudget - requested);
 
   return (
@@ -74,7 +73,6 @@ export function AdminDistributionBudgetInfo({
         </span>
       </div>
 
-      {/* Grid 3 Kolom Metrik Finansial */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">
         <div className="bg-white rounded-lg p-2.5 border border-slate-200/80">
           <span className="text-sm text-slate-700 block font-normal leading-none mb-1">
@@ -116,7 +114,6 @@ export function AdminDistributionBudgetInfo({
         </div>
       </div>
 
-      {/* Pesan Kontekstual Edukatif */}
       <div
         className={cn(
           "rounded-lg px-2.5 py-1.5 text-sm flex items-center gap-2 border leading-tight select-none",

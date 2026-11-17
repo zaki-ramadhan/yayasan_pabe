@@ -34,7 +34,6 @@ export function CareerDetailHeader({ job, onApply }) {
           </div>
         </div>
 
-        {/* Action Controls: Trigger internal apply modal or fallback to applyUrl */}
         <div className="shrink-0">
           <CareerApplyButton
             url={job.applyUrl}
@@ -44,7 +43,6 @@ export function CareerDetailHeader({ job, onApply }) {
         </div>
       </div>
 
-      {/* Detail Metadata: Zero dot characters, spaced cleanly */}
       <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 pt-0.5">
         <CareerMetaItem icon={MapPin} text={job.location} />
         <CareerMetaItem icon={Briefcase} text={job.type} />

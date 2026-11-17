@@ -56,7 +56,6 @@ export function VolunteerRegistrationFields({
         </p>
       </div>
 
-      {/* 1. Nama Lengkap (Terkunci jika login, dengan info sinkronisasi) */}
       <FormField
         label="Nama lengkap"
         required
@@ -93,7 +92,6 @@ export function VolunteerRegistrationFields({
         />
       </FormField>
 
-      {/* 2. WhatsApp & Email */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormField
           label="Nomor WhatsApp"
@@ -158,7 +156,6 @@ export function VolunteerRegistrationFields({
         </FormField>
       </div>
 
-      {/* 3. Wilayah Domisili (Provinsi & Kota/Kabupaten Berjenjang) */}
       <VolunteerRegionSelector
         selectedCity={city}
         onCityChange={(newCity) => {
@@ -176,7 +173,6 @@ export function VolunteerRegistrationFields({
         disabled={loading}
       />
 
-      {/* 4. Motivasi Relawan */}
       <FormField
         label="Motivasi atau pengalaman singkat"
         error={errors.motivation}
@@ -204,7 +200,6 @@ export function VolunteerRegistrationFields({
         </div>
       </FormField>
 
-      {/* Verifikasi Keamanan Senyap (Invisible Turnstile) */}
       <TurnstileWidget
         id="cf-turnstile-volunteer"
         ref={turnstileRef}
@@ -215,7 +210,6 @@ export function VolunteerRegistrationFields({
         onExpire={() => setTurnstileToken?.("")}
       />
 
-      {/* Submit Button */}
       <Button
         type="submit"
         isLoading={loading || !turnstileToken}

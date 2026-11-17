@@ -227,7 +227,6 @@ export function DonorRoutineListSkeleton({ count = 1 }) {
 					key={idx}
 					className="p-3 sm:p-3.5 rounded-md border border-slate-300 bg-white space-y-2.5"
 				>
-					{/* 1. Header: Frekuensi, Status, dan Nominal */}
 					<div className="w-full flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
 						<div className="flex items-center gap-1.5">
 							<Skeleton className="h-5 w-16 rounded" />
@@ -236,13 +235,11 @@ export function DonorRoutineListSkeleton({ count = 1 }) {
 						<Skeleton className="h-5 w-24 rounded" />
 					</div>
 
-					{/* 2. Body: Judul Program Lebar Penuh & Tipe Penagihan */}
 					<div className="w-full space-y-1.5">
 						<Skeleton className="h-4 w-4/5 rounded" />
 						<Skeleton className="h-3 w-36 rounded" />
 					</div>
 
-					{/* 3. Footer: Tombol Aksi Mandiri */}
 					<div className="w-full pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
 						<Skeleton className="h-7 w-16 rounded-md" />
 						<Skeleton className="h-7 w-20 rounded-md" />

@@ -68,7 +68,6 @@ const SelectScrollDownButton = React.forwardRef(({ className, ...props }, ref) =
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
 
 const SelectContent = React.forwardRef(({ className, children, position = "popper", ...props }, ref) => {
-  // Prevent Radix UI / react-remove-scroll from blocking outer page scroll when dropdown opens
   React.useEffect(() => {
     const handleCapture = (e) => {
       const target = e.target;
@@ -76,7 +75,6 @@ const SelectContent = React.forwardRef(({ className, children, position = "poppe
         target?.closest?.('[role="listbox"]') ||
         target?.closest?.('[data-radix-select-viewport]');
       if (!isInsideSelect) {
-        // Prevent react-remove-scroll's document listener from calling e.preventDefault()
         e.stopImmediatePropagation();
       }
     };

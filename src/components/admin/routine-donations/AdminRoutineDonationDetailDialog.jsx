@@ -57,7 +57,6 @@ export function AdminRoutineDonationDetailDialog({
         </DialogHeader>
 
         <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5 sm:px-6 space-y-5 text-sm">
-          {/* Section 1: Profil Donatur */}
           <div className="space-y-3 pb-5 border-b border-slate-100">
             <div className="flex items-center justify-between gap-4">
               <span className="text-slate-700 font-normal shrink-0">Nama donatur</span>
@@ -97,7 +96,6 @@ export function AdminRoutineDonationDetailDialog({
             </div>
           </div>
 
-          {/* Section 2: Program & Komitmen Nominal */}
           <div className="space-y-3 pb-5 border-b border-slate-100">
             <div className="flex items-start justify-between gap-4">
               <span className="text-slate-700 font-normal shrink-0">Program donasi</span>
@@ -114,7 +112,6 @@ export function AdminRoutineDonationDetailDialog({
             </div>
           </div>
 
-          {/* Section 3: Jadwal & Ketentuan Komitmen */}
           <div className="space-y-3 pb-5 border-b border-slate-100">
             <div className="flex items-center justify-between gap-4">
               <span className="text-slate-700 font-normal shrink-0">Frekuensi</span>
@@ -147,7 +144,6 @@ export function AdminRoutineDonationDetailDialog({
             )}
           </div>
 
-          {/* Section 4: Ubah Status Komitmen */}
           <div className="pt-1">
             <FormField label="Ubah status komitmen">
               <div className="flex items-center gap-2">

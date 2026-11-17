@@ -53,7 +53,6 @@ export function VolunteerPendingCard({
     <div
       className={`relative w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950 text-white p-5 sm:p-6 shadow-md ${className}`}
     >
-      {/* Atmospheric Background Image & Overlay */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         <Image
           src="/img/banners/covers/volunteer-cover.webp"
@@ -68,7 +67,6 @@ export function VolunteerPendingCard({
       </div>
 
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        {/* Konten Kiri: Status, Judul, Penjelasan, & Teks Link Buka/Periksa Kartu */}
         <div className="space-y-2">
           <div className="text-xs font-medium text-amber-400">
             Status: Menunggu Persetujuan
@@ -93,7 +91,6 @@ export function VolunteerPendingCard({
           )}
         </div>
 
-        {/* Konten Kanan: Tombol Batalkan Berlatar Merah (Gaya CTA) */}
         {onCancelClick && (
           <Button
             type="button"

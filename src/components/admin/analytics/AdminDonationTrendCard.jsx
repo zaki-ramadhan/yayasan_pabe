@@ -173,7 +173,6 @@ export function AdminDonationTrendCard({
     return base;
   }, [isSuperAdmin, timeRange]);
 
-  // Fallback jika viewMode terpilih tidak tersedia setelah ubah filter
   React.useEffect(() => {
     if (!viewModeOptions.some((opt) => opt.value === viewMode)) {
       setViewMode("all");
@@ -224,7 +223,6 @@ export function AdminDonationTrendCard({
 
   return (
     <Card className={cn("shadow-2xs overflow-hidden", className)}>
-      {/* Header Kartu */}
       <CardHeader className="p-3.5 sm:p-4 pb-3.5 border-b border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-3 space-y-0">
         <div>
           <CardTitle className="text-base font-medium text-slate-900 leading-tight">
@@ -232,7 +230,6 @@ export function AdminDonationTrendCard({
           </CardTitle>
         </div>
 
-        {/* Filter Bar */}
         <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2 w-full sm:w-auto">
           <SortDropdown
             options={TIME_RANGE_OPTIONS}
@@ -251,7 +248,6 @@ export function AdminDonationTrendCard({
         </div>
       </CardHeader>
 
-      {/* Subheader Ringkasan Nilai & Legenda */}
       <div className="px-3.5 sm:px-4 py-2.5 bg-slate-50/50 border-b border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
         <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
           <div>
@@ -276,7 +272,6 @@ export function AdminDonationTrendCard({
           </div>
         </div>
 
-        {/* Legend Indicators */}
         <div className="flex items-center gap-3.5 self-start sm:self-auto text-sm text-slate-600 shrink-0">
           {(viewMode === "all" || viewMode === "daily") && (
             <div className="flex items-center gap-1.5">
@@ -299,7 +294,6 @@ export function AdminDonationTrendCard({
         </div>
       </div>
 
-      {/* Recharts Canvas */}
       <CardContent className="p-3.5 sm:p-4 pt-3.5 sm:pt-4">
         <AdminDonationTrendCanvas
           data={activeData}

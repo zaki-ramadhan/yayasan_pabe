@@ -26,7 +26,6 @@ export function HomeTransparencySection({
           align="center"
         />
 
-        {/* Layout Sebaris: Chart di Kiri (8 col) & Card Ringkasan di Kanan (4 col) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch pt-2">
           <div className="lg:col-span-8 flex flex-col justify-center">
             <TransparencyTrendChart data={metrics?.monthlyTrend} />

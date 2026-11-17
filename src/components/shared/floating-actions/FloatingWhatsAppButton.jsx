@@ -11,7 +11,6 @@ export function FloatingWhatsAppButton() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Hidden on admin, dashboard, or authentication routes
   const isHiddenPage =
     pathname?.startsWith("/admin") ||
     pathname?.startsWith("/dashboard") ||

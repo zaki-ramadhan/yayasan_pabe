@@ -43,7 +43,6 @@ export function HomeHero({ defaultCampaignSlug }) {
 
   return (
     <section className="relative overflow-hidden border-b border-slate-300 py-14 sm:py-20">
-      {/* Background Image Slideshow Layer */}
       <div
         className="absolute inset-0 z-0 pointer-events-none select-none"
         onContextMenu={(e) => e.preventDefault()}
@@ -69,14 +68,11 @@ export function HomeHero({ defaultCampaignSlug }) {
           </div>
         ))}
 
-        {/* Directional Light Overlay: Solid enough on left so text is 100% crisp & non-faint, transparent on right */}
         <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/20 sm:to-white/10 pointer-events-none select-none" />
       </div>
 
-      {/* Foreground Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12">
-          {/* Left Copy: Mengambil sisa ruang dinamis secara leluasa */}
           <div className="flex-1 max-w-2xl space-y-6">
             <div className="space-y-1.5 sm:space-y-2">
               <h1 className="text-6xl sm:text-6xl md:text-6xl lg:text-7xl xl:text-8xl font-crustaceans text-slate-950 leading-[1.08] sm:leading-[1.1] break-words">
@@ -110,7 +106,6 @@ export function HomeHero({ defaultCampaignSlug }) {
             </div>
           </div>
 
-          {/* Right Quick Donation Folder: Ukuran Mandiri Bebas Grid (Mudah Diubah-ubah) */}
           <div className="w-full lg:w-[500px] shrink-0 flex justify-center lg:justify-end">
             <QuickDonateFolder defaultCampaignSlug={defaultCampaignSlug} />
           </div>

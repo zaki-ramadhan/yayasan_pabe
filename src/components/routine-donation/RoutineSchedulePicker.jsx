@@ -79,12 +79,10 @@ export function RoutineSchedulePicker({ item, onChange, isFirstIndex = false }) 
         </DropdownMenu>
       </div>
 
-      {/* Pekanan: Sub-komponen Grid Hari */}
       {currentFrequency === "WEEKLY" && (
         <RoutineWeeklyDayPicker item={item} onChange={onChange} />
       )}
 
-      {/* Bulanan: Sub-komponen Popover Kalender */}
       {currentFrequency === "MONTHLY" && (
         <RoutineMonthlyDatePicker item={item} onChange={onChange} />
       )}

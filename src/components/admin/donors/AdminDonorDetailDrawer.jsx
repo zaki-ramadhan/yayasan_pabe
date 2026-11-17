@@ -120,7 +120,6 @@ export function AdminDonorDetailDrawer({
     };
   }, [isOpen, donor, fetchInitialHistory]);
 
-  // Infinite scroll observer on bottom sentinel
   useEffect(() => {
     if (!isOpen || isLoading || !hasMore) return;
     const sentinelEl = sentinelRef.current;
@@ -144,16 +143,13 @@ export function AdminDonorDetailDrawer({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl md:max-w-2xl max-h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
-        {/* Header */}
         <DialogHeader className="px-5 py-3.5 sm:px-6 border-b border-slate-100 flex flex-row items-center justify-between shrink-0">
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-900 leading-tight">
             Rincian donatur
           </DialogTitle>
         </DialogHeader>
 
-        {/* Scrollable Body */}
         <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5 sm:px-6 space-y-7">
-          {/* Identitas & Ringkasan Terpadu */}
           <div className="pb-4 border-b border-slate-100">
             <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
               <UserAvatar
@@ -204,7 +200,6 @@ export function AdminDonorDetailDrawer({
             </div>
           </div>
 
-          {/* Riwayat Donasi Terkini dengan Infinite Scroll */}
           <div className="space-y-2.5">
             <div className="flex items-center justify-between pb-1 border-b border-slate-100">
               <h5 className="text-xs font-medium text-slate-700 uppercase tracking-wider">
@@ -266,7 +261,6 @@ export function AdminDonorDetailDrawer({
                   </div>
                 ))}
 
-                {/* Infinite Scroll Sentinel / Loading More Indicator */}
                 {hasMore && (
                   <div ref={sentinelRef} className="py-3 text-center text-xs text-slate-500 flex items-center justify-center gap-2">
                     {isFetchingMore ? (
@@ -288,7 +282,6 @@ export function AdminDonorDetailDrawer({
           </div>
         </div>
 
-        {/* Footer */}
         <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex justify-end">
           <Button
             type="button"

@@ -40,7 +40,6 @@ export function AdminApplicantDrawer({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
-        {/* Header Modal */}
         <DialogHeader className="border-b border-slate-100">
           <DialogTitle className="text-base sm:text-lg font-medium text-slate-950">
             Daftar pelamar: {vacancy?.title || "Lowongan"}{" "}
@@ -48,7 +47,6 @@ export function AdminApplicantDrawer({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Sub-bar Filter & Urutan */}
         <AdminApplicantToolbar
           statusFilter={statusFilter}
           onStatusFilterChange={handleStatusFilterChange}
@@ -56,7 +54,6 @@ export function AdminApplicantDrawer({
           onSortChange={handleSortChange}
         />
 
-        {/* List Pelamar dengan Scroll & Divider Bersih */}
         <div className="flex-1 min-h-0 overflow-y-auto px-5 sm:px-6 divide-y divide-slate-100">
           {isLoading ? (
             <div className="h-full min-h-[300px] flex flex-col items-center justify-center gap-2 text-sm text-slate-600">
@@ -80,7 +77,6 @@ export function AdminApplicantDrawer({
             </div>
           )}
 
-          {/* Tombol Paginasi Tambahan */}
           {hasMore && (
             <div className="pt-3 pb-4 text-center">
               <Button
@@ -104,7 +100,6 @@ export function AdminApplicantDrawer({
           )}
         </div>
 
-        {/* Footer Modal */}
         <div className="px-5 py-3 sm:px-6 sm:py-3.5 border-t border-slate-100 bg-white shrink-0 flex justify-end">
           <Button
             type="button"

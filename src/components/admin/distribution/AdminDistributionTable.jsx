@@ -52,7 +52,6 @@ export function AdminDistributionTable({
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const PAGE_SIZE = 10;
 
-  // 1. Live SSE: Menambahkan data rekam penyaluran (LPJ) baru secara real-time tanpa refresh
   useAdminLiveEvent("DISTRIBUTION_CREATED", (payload) => {
     if (!payload?.id) return;
     setDistributions((prev) => {
@@ -193,7 +192,6 @@ export function AdminDistributionTable({
 
   return (
     <div className="space-y-4">
-      {/* Top Bar: Search & Action Buttons */}
       <AdminDistributionToolbar
         search={search}
         onSearchChange={handleSearchChange}
@@ -203,7 +201,6 @@ export function AdminDistributionTable({
         onOpenAdd={handleOpenAdd}
       />
 
-      {/* Floating Bulk Action Bar */}
       <TableSelectionBar
         selectedCount={selection.selectedCount}
         totalCount={paginatedDistributions.length}
@@ -224,7 +221,6 @@ export function AdminDistributionTable({
         </Button>
       </TableSelectionBar>
 
-      {/* Table Container */}
       <TableContainer>
         <div className="overflow-x-auto">
           <Table>

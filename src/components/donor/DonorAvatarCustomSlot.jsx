@@ -121,7 +121,6 @@ export function DonorAvatarCustomSlot({
       />
 
       <div className="flex items-center justify-between gap-3">
-        {/* Kiri: Avatar & Judul Sumber Foto */}
         <div className="flex items-center gap-2.5 min-w-0">
           {customAvatar && (
             <div className="relative w-9 h-9 rounded-full overflow-hidden border border-slate-200 shrink-0 bg-slate-100 flex items-center justify-center">
@@ -151,7 +150,6 @@ export function DonorAvatarCustomSlot({
           </div>
         </div>
 
-        {/* Kanan: Tombol Aksi */}
         <div className="flex items-center gap-1.5 shrink-0">
           {customAvatar && !isActive && (
             <Button
@@ -204,7 +202,6 @@ export function DonorAvatarCustomSlot({
         </div>
       </div>
 
-      {/* Baris Bawah: Deskripsi Kontekstual Membentang Penuh */}
       <p className="text-xs text-slate-500 font-normal leading-relaxed border-t border-slate-200/60 pt-2">
         {slotDescription}
       </p>

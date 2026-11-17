@@ -11,7 +11,6 @@ import {
 export function AdminAuditReportSkeleton() {
   return (
     <div className="space-y-4">
-      {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex-1 max-w-sm">
           <Skeleton className="h-10 w-full rounded-lg" />
@@ -22,7 +21,6 @@ export function AdminAuditReportSkeleton() {
         </div>
       </div>
 
-      {/* Table Skeleton */}
       <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <Table>

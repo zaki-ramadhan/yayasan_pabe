@@ -21,9 +21,7 @@ export function DonationCheckoutSummary({
 }) {
   return (
     <div className="lg:col-span-5 lg:sticky lg:top-20">
-      {/* Unified Summary & Program Card */}
       <div className="bg-white p-5 sm:p-6 rounded-xl space-y-4 shadow-xs border border-slate-300">
-        {/* Campaign Info Section */}
         {campaign && (
           <div className="space-y-3 pb-4 border-b border-slate-200">
             <span className="text-xs sm:text-sm text-slate-600 block font-normal">
@@ -54,7 +52,6 @@ export function DonationCheckoutSummary({
           </div>
         )}
 
-        {/* Payment Breakdown Section */}
         <div className="space-y-3">
           <div className="space-y-0.5">
             <h3 className="text-base sm:text-lg font-semibold text-slate-950">
@@ -82,7 +79,6 @@ export function DonationCheckoutSummary({
           </div>
         </div>
 
-        {/* Verification (Invisible) & Submit Action */}
         <div className="space-y-2.5 pt-0.5">
           <TurnstileWidget
             ref={turnstileRef}

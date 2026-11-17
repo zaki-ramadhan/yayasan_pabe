@@ -53,7 +53,6 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   const [bulkStatusToConfirm, setBulkStatusToConfirm] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 1. Live SSE: Menyisipkan pendaftar relawan baru secara instan tanpa reload browser
   useAdminLiveEvent("VOLUNTEER_CHECKIN", (payload) => {
     if (!payload?.id) return;
     setVolunteers((prev) => {
@@ -285,7 +284,6 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         onRefresh={refreshList}
       />
 
-      {/* Reusable Bulk Action Bar */}
       <TableSelectionBar
         selectedCount={selection.selectedCount}
         totalCount={paginatedVolunteers.length}

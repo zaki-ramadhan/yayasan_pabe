@@ -23,7 +23,6 @@ export function VolunteerPublicProfileCover({ volunteer }) {
 
   return (
     <div className="relative w-full">
-      {/* Banner Foto Resmi Yayasan */}
       <div className="h-36 sm:h-48 md:h-56 w-full relative overflow-hidden select-none bg-slate-800">
         <Image
           src={bannerSrc}
@@ -36,10 +35,8 @@ export function VolunteerPublicProfileCover({ volunteer }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
       </div>
 
-      {/* Profil Bar: Avatar Bulat & Identitas */}
       <div className="px-4 sm:px-6 md:px-8 pb-5 bg-white">
         <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
-          {/* Avatar Murni (Tanpa Tombol Upload) */}
           <div className="relative shrink-0 -mt-12 sm:-mt-14 z-10 self-center sm:self-auto">
             <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-slate-100 shadow-md overflow-hidden flex items-center justify-center">
               {volunteer?.avatarUrl && !avatarLoadError ? (
@@ -70,14 +67,12 @@ export function VolunteerPublicProfileCover({ volunteer }) {
             </div>
           </div>
 
-          {/* Nama + Ikon Verified Solid + Email & Tanggal Bergabung */}
           <div className="text-center sm:text-left space-y-1.5 pt-3 sm:pt-4.5 flex-1 min-w-0">
             <div className="flex items-center justify-center sm:justify-start gap-1.5">
               <h1 className="text-lg sm:text-xl font-medium text-slate-950 tracking-tight truncate">
                 {fullName}
               </h1>
 
-              {/* Ikon Verified Solid Background (Scalloped Badge Hijau Pekat + Check Putih) */}
               <svg
                 className="w-5 h-5 text-emerald-600 shrink-0 inline-block drop-shadow-2xs"
                 viewBox="0 0 24 24"
@@ -99,14 +94,12 @@ export function VolunteerPublicProfileCover({ volunteer }) {
               </svg>
             </div>
 
-            {/* Email di Bawah Nama */}
             {displayEmail && (
               <p className="text-sm font-normal text-slate-500 truncate">
                 {displayEmail}
               </p>
             )}
 
-            {/* Tanggal Bergabung */}
             <p className="text-sm font-normal text-slate-500">
               Bergabung {formatDate(volunteer?.createdAt, { month: "long" })}
             </p>

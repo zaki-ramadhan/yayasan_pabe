@@ -226,7 +226,6 @@ export function FileUploadZone({
         </p>
       )}
 
-      {/* Hidden File Input */}
       <input
         ref={fileInputRef}
         type="file"

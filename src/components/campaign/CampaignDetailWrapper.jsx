@@ -31,7 +31,6 @@ export function CampaignDetailWrapper({
 }) {
   const [activeTab, setActiveTab] = useState("detail");
 
-  // Auto-start tour on first visit (global key). Manual trigger is in SidebarTourButton.
   useCampaignDetailTour({ slug: campaign.slug, hasDonations });
 
   const isClosed = isCampaignClosed(campaign);
@@ -54,7 +53,6 @@ export function CampaignDetailWrapper({
 
       <CampaignCTA campaign={campaign} />
 
-      {/* Forum Chat Doa & Dukungan di Mobile */}
       <div className="block lg:hidden pt-2 space-y-4">
         <CampaignPrayersSidebar
           initialDonors={campaign.recentDonors || []}

@@ -338,8 +338,6 @@ export function DonorSecurityFormCard({
         </form>
       )}
 
-
-      {/* 2. Zona Penghapusan Akun */}
       <div className="pt-6 border-t border-slate-200 mt-8 space-y-3">
         <div className="space-y-1">
           <h3 className="text-sm font-medium text-red-600">

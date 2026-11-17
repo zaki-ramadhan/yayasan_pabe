@@ -74,7 +74,6 @@ export function AdminGalleryTable({
         onOpenUpload={handleOpenCreate}
       />
 
-      {/* Bilah Aksi Massal Reusable */}
       <TableSelectionBar
         selectedCount={selection.selectedCount}
         totalCount={items.length}
@@ -148,14 +147,12 @@ export function AdminGalleryTable({
           </Table>
         </div>
 
-        {/* Standard Pagination Footer */}
         <TablePaginationFooter
           pagination={pagination}
           onPageChange={handlePageChange}
         />
       </TableContainer>
 
-      {/* Reusable Modal Dialog with FileUploadZone */}
       <AdminGalleryModal
         isOpen={modalOpen}
         onOpenChange={setModalOpen}
@@ -164,7 +161,6 @@ export function AdminGalleryTable({
         onSuccess={() => fetchItems(pagination.page || 1, category, search)}
       />
 
-      {/* Delete Confirmation Dialog Satuan */}
       <AdminGalleryDeleteDialog
         isOpen={Boolean(itemToDelete)}
         onClose={() => !isDeleting && setItemToDelete(null)}
@@ -173,7 +169,6 @@ export function AdminGalleryTable({
         isLoading={isDeleting}
       />
 
-      {/* Delete Confirmation Dialog Massal */}
       <ConfirmDialog
         isOpen={isBulkDeleteOpen}
         onClose={() => !isBulkDeleting && setIsBulkDeleteOpen(false)}

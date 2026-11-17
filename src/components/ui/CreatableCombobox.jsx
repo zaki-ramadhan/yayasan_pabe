@@ -50,10 +50,8 @@ export function CreatableCombobox({
   const [highlightedIndex, setHighlightedIndex] = React.useState(0);
   const listRef = React.useRef(null);
 
-  // Debounced search term for smooth lookup filtering without stuttering
   const debouncedSearch = useDebounce(searchTerm, 200);
 
-  // Normalize options into consistent shape: { value: string, label: string, raw: any }
   const normalizedOptions = React.useMemo(() => {
     return (options || []).map((item) => {
       if (typeof item === "string") {
@@ -65,12 +63,10 @@ export function CreatableCombobox({
     });
   }, [options]);
 
-  // Selected item label
   const selectedItem = React.useMemo(() => {
     return normalizedOptions.find((opt) => opt.value === String(value));
   }, [normalizedOptions, value]);
 
-  // Filter options based on debounced search query
   const filteredOptions = React.useMemo(() => {
     const q = debouncedSearch.trim().toLowerCase();
     if (!q) return normalizedOptions;
@@ -125,7 +121,6 @@ export function CreatableCombobox({
     }
   };
 
-  // Navigasi keyboard (ArrowDown, ArrowUp, Enter, Tab, Escape)
   const handleKeyDown = (e) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -146,7 +141,6 @@ export function CreatableCombobox({
         setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : totalItems - 1));
       }
     } else if (e.key === "Tab") {
-      // Shortcut Tab: Langsung pilih opsi yang sedang di-highlight
       if (open && totalItems > 0) {
         if (highlightedIndex < filteredOptions.length && filteredOptions[highlightedIndex]) {
           e.preventDefault();
@@ -192,7 +186,6 @@ export function CreatableCombobox({
     }
   };
 
-  // Scroll otomatis ke item yang di-highlight via keyboard
   React.useEffect(() => {
     if (open && listRef.current) {
       const activeEl = listRef.current.children[highlightedIndex];
@@ -239,7 +232,6 @@ export function CreatableCombobox({
         }}
       >
         <div className="space-y-2">
-          {/* Search Input with Debounce */}
           <Input
             leftIcon={MagnifierIcon}
             placeholder={searchPlaceholder}
@@ -253,7 +245,6 @@ export function CreatableCombobox({
             autoFocus
           />
 
-          {/* Options List */}
           <div
             ref={listRef}
             role="listbox"
@@ -294,7 +285,6 @@ export function CreatableCombobox({
               </div>
             ) : null}
 
-            {/* Creatable Action Bar */}
             {canCreate && (
               <button
                 type="button"

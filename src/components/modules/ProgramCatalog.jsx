@@ -18,7 +18,6 @@ import { EmptyState } from "@/components/shared/EmptyState";
 const BATCH_SIZE = 6;
 
 function filterCampaign(campaign, { category, searchQuery, categories, status = "all" }) {
-  // Selalu filter keluar program ZIS (Zakat, Infaq, Sedekah) dari katalog program donasi umum
   if (isZisCampaign(campaign)) return false;
 
   if (category !== "all" && category !== "semua") {
@@ -120,7 +119,6 @@ export function ProgramCatalog({ initialCampaigns = [], categories = [] }) {
     }, 450);
   }, [isLoadingMore, hasMore, filteredItems.length]);
 
-  // Observer pada elemen sentinel di bawah grid
   useEffect(() => {
     if (!hasMore || isLoadingMore) return;
     const observer = new IntersectionObserver(
@@ -189,10 +187,8 @@ export function ProgramCatalog({ initialCampaigns = [], categories = [] }) {
               ))}
             </div>
 
-            {/* Sentinel trigger untuk memuat lebih banyak program saat discroll */}
             <div ref={sentinelRef} className="h-4 w-full pointer-events-none" />
 
-            {/* Loading Indicator saat infinite scroll berlangsung */}
             {isLoadingMore && (
               <div className="flex items-center justify-center gap-2.5 py-8 text-sm text-slate-600">
                 <Loader2 className="w-5 h-5 text-primary animate-spin" />
@@ -200,7 +196,6 @@ export function ProgramCatalog({ initialCampaigns = [], categories = [] }) {
               </div>
             )}
 
-            {/* Keterangan akhir saat semua program telah dimuat */}
             {!hasMore && filteredItems.length > BATCH_SIZE && (
               <div className="text-center py-8 text-xs sm:text-sm text-slate-500 select-none">
                 Seluruh program ({filteredItems.length}) telah ditampilkan

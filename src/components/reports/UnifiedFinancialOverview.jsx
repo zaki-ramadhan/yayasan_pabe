@@ -65,7 +65,6 @@ export function UnifiedFinancialOverview({
   return (
     <div className={cn("bg-transparent", className)}>
       <div className="flex flex-col lg:flex-row items-stretch gap-6 lg:gap-8">
-        {/* Bilah Samping Ramping: Tanpa border luar, murni garis pemisah antar-item atas ke bawah (divide-y) */}
         <div className="w-full lg:w-64 xl:w-72 shrink-0 divide-y divide-slate-200 flex flex-col justify-between">
           <MetricCell
             label="Total Penghimpunan"
@@ -84,7 +83,6 @@ export function UnifiedFinancialOverview({
           />
         </div>
 
-        {/* Sisi Kanan: Wrapper Konten Top 5 Program (tetap ada border, rounded, dan bg white) */}
         <div className="flex-1 min-w-0 bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-5 sm:p-6 shadow-2xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
             <div className="space-y-0.5">
@@ -98,7 +96,6 @@ export function UnifiedFinancialOverview({
               </p>
             </div>
 
-            {/* Filter Controls: Mode & Tahun */}
             <div className="flex items-center gap-2">
               <SortDropdown
                 options={MODE_OPTIONS}

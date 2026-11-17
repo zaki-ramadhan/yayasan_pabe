@@ -29,7 +29,6 @@ export function useAdminGallery({
   const [itemToDelete, setItemToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Bulk Selection & Deletion State
   const selection = useTableSelection(items);
   const { clearSelection } = selection;
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);

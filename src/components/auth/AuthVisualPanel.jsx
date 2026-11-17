@@ -46,7 +46,6 @@ export function AuthVisualPanel() {
   return (
     <div className="hidden lg:block h-[100dvh] max-h-screen sticky top-0 p-2 overflow-hidden">
       <div className="h-full w-full rounded-3xl relative overflow-hidden flex flex-col justify-end items-center text-center p-6 sm:p-8 lg:p-10 pb-5 lg:pb-6 shadow-2xl border border-slate-800/80 bg-slate-950">
-        {/* Top-Left Icon-Only Back to Home Button */}
         <div className="absolute top-5 left-5 lg:top-6 lg:left-6 z-20">
           <Link
             href="/"
@@ -57,7 +56,6 @@ export function AuthVisualPanel() {
           </Link>
         </div>
 
-        {/* Dynamic Photographic Background Slideshow */}
         <div className="absolute inset-0 z-0 pointer-events-none select-none">
           {AUTH_SLIDES.map((slide, idx) => (
             <div
@@ -81,7 +79,6 @@ export function AuthVisualPanel() {
           ))}
         </div>
 
-        {/* Artistic Texture Overlay */}
         <div className="absolute inset-0 mix-blend-overlay opacity-45 pointer-events-none select-none">
           <Image
             src={ASSET_PATHS.TEXTURES.OVERLAY_2}
@@ -94,16 +91,12 @@ export function AuthVisualPanel() {
           />
         </div>
 
-        {/* Gradient Layer for Text Legibility & Contrast */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-900/30 pointer-events-none" />
 
-        {/* Ambient Glow Accents */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-blue-600/15 blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 right-10 w-72 h-72 rounded-full bg-emerald-600/10 blur-3xl pointer-events-none" />
 
-        {/* Bottom Aligned Content Group */}
         <div className="relative z-10 w-full max-w-md xl:max-w-lg mx-auto flex flex-col items-center">
-          {/* Inviting Action Headline & Subheading with Crossfade */}
           <div className="space-y-4 text-center min-h-[140px] flex flex-col justify-end">
             <h1 className="text-3xl lg:text-4xl xl:text-5xl font-crustaceans text-white tracking-tight leading-[1.15] transition-all duration-700">
               {AUTH_SLIDES[currentSlide].title}
@@ -114,7 +107,6 @@ export function AuthVisualPanel() {
             </p>
           </div>
 
-          {/* Slide Indicator Dots */}
           <div className="flex items-center justify-center gap-1.5 mt-6 mb-2">
             {AUTH_SLIDES.map((_, idx) => (
               <button
@@ -132,7 +124,6 @@ export function AuthVisualPanel() {
             ))}
           </div>
 
-          {/* Generous Spacing Before Copyright */}
           <div className="mt-6 sm:mt-8 text-center">
             <p className="text-sm text-slate-400 font-normal">
               © {new Date().getFullYear()} Yayasan PABE

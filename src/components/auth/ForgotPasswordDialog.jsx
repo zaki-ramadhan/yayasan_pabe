@@ -39,7 +39,6 @@ export function ForgotPasswordDialog({
     60
   );
 
-  // Inisialisasi input saat modal dibuka (React derived state pattern)
   const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   if (isOpen !== prevIsOpen) {
     setPrevIsOpen(isOpen);
@@ -103,13 +102,11 @@ export function ForgotPasswordDialog({
       if (!res.ok || !data.success) {
         setTurnstileToken("");
         turnstileRef.current?.reset();
-        // Jika gagal: jangan aktifkan cooldown, tetap buka modal agar user bisa perbaiki input
         throw new Error(
           data.message || "Gagal mengirimkan tautan reset kata sandi."
         );
       }
 
-      // Berhasil: aktifkan cooldown persisten 60 detik, tampilkan toast sukses, dan tutup modal
       startCooldown(60);
       toast.success(
         data.message || "Tautan pemulihan kata sandi telah dikirim ke email Anda."

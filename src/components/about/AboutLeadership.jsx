@@ -21,12 +21,10 @@ export function AboutLeadership({ leaders = [] }) {
         </p>
       </div>
 
-      {/* 1. Bagan Visual Struktural Murni */}
       {activeStructureImage && (
         <StructuralDiagramCard src={activeStructureImage} />
       )}
 
-      {/* 2. Daftar Personil Dewan & Pengurus */}
       <div className="space-y-2 pt-2 border-t border-slate-100">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
           {displayLeaders.map((leader, idx) => (

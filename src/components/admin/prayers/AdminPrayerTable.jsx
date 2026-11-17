@@ -50,7 +50,6 @@ export function AdminPrayerTable({
 
   return (
     <div className="space-y-4">
-      {/* Top Filter and Actions Toolbar */}
       <AdminPrayerToolbar
         search={search}
         onSearchChange={handleSearchChange}
@@ -64,7 +63,6 @@ export function AdminPrayerTable({
         onRefresh={handleRefresh}
       />
 
-      {/* Reusable Bulk Action Bar */}
       <TableSelectionBar
         selectedCount={selection.selectedCount}
         totalCount={prayers.length}
@@ -168,7 +166,6 @@ export function AdminPrayerTable({
           </Table>
         </div>
 
-        {/* Server Pagination Footer */}
         <TablePaginationFooter
           currentPage={currentPage}
           totalPages={totalPages}

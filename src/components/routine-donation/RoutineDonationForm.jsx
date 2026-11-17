@@ -54,7 +54,6 @@ export function RoutineDonationForm({ campaigns = [] }) {
       <RoutineDonationHero />
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        {/* Left Column (7 Cols): Donor Identity & Program Selection */}
         <div className="lg:col-span-7 space-y-4">
           {existingActiveRoutine && (
             <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 sm:p-5 text-slate-800 space-y-2.5 animate-in fade-in duration-200">
@@ -117,7 +116,6 @@ export function RoutineDonationForm({ campaigns = [] }) {
           />
         </div>
 
-        {/* Right Column (5 Cols): Sticky Order Summary & Submit Button */}
         <div className="lg:col-span-5 lg:sticky lg:top-20">
           <RoutineSummaryCard
             selectedPrograms={selectedPrograms}

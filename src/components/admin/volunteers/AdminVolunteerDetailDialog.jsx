@@ -41,7 +41,6 @@ export function AdminVolunteerDetailDialog({
         </DialogHeader>
 
         <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5 space-y-5 text-sm">
-          {/* Metadata Grid Bersih */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
             <div>
               <span className="text-xs text-slate-500 block font-normal">Nama lengkap</span>
@@ -97,7 +96,6 @@ export function AdminVolunteerDetailDialog({
             </div>
           </div>
 
-          {/* Motivasi & Harapan Pendaftar */}
           <div className="space-y-1.5 pt-3 border-t border-slate-100">
             <span className="text-xs text-slate-500 block font-normal">Motivasi pendaftaran</span>
             <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-lg text-sm text-slate-800 leading-relaxed whitespace-pre-line">

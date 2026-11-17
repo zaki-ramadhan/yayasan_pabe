@@ -11,7 +11,6 @@ import {
 export function AdminArticleSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
-      {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex flex-1 items-center gap-2.5 max-w-lg">
           <Skeleton className="h-10 flex-1 rounded-lg" />
@@ -23,7 +22,6 @@ export function AdminArticleSkeleton() {
         </div>
       </div>
 
-      {/* Table Container */}
       <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
@@ -58,28 +56,23 @@ export function AdminArticleSkeleton() {
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
-                  {/* Selection Checkbox */}
                   <TableCell className="w-12 text-center py-2.5 px-3 align-middle">
                     <Skeleton className="w-4 h-4 rounded mx-auto" />
                   </TableCell>
 
-                  {/* Banner */}
                   <TableCell className="w-16 py-2.5 align-middle">
                     <Skeleton className="w-12 h-9 rounded" />
                   </TableCell>
 
-                  {/* Title */}
                   <TableCell className="space-y-1 py-2.5 align-middle min-w-[280px] sm:min-w-[340px] max-w-lg">
                     <Skeleton className="h-4 w-4/5 max-w-full rounded" />
                     <Skeleton className="h-4 w-1/2 rounded" />
                   </TableCell>
 
-                  {/* Category */}
                   <TableCell className="w-36 py-2.5 text-center align-middle">
                     <Skeleton className="h-5 w-24 rounded mx-auto" />
                   </TableCell>
 
-                  {/* Author */}
                   <TableCell className="w-60 py-2.5 align-middle">
                     <div className="flex items-center gap-2">
                       <Skeleton className="h-6 w-6 rounded-full shrink-0" />
@@ -87,17 +80,14 @@ export function AdminArticleSkeleton() {
                     </div>
                   </TableCell>
 
-                  {/* Published Date */}
                   <TableCell className="w-32 py-2.5 text-center align-middle">
                     <Skeleton className="h-3.5 w-24 rounded mx-auto" />
                   </TableCell>
 
-                  {/* Likes/Appreciation */}
                   <TableCell className="w-24 py-2.5 text-center align-middle">
                     <Skeleton className="h-4 w-10 rounded mx-auto" />
                   </TableCell>
 
-                  {/* Actions */}
                   <TableCell className="w-28 py-2.5 text-right align-middle">
                     <div className="flex items-center justify-end gap-1.5">
                       <Skeleton className="h-7 w-7 rounded" />
@@ -110,7 +100,6 @@ export function AdminArticleSkeleton() {
           </Table>
         </div>
 
-        {/* Pagination Footer */}
         <div className="px-4 py-3 border-t border-slate-200/90 flex items-center justify-between">
           <Skeleton className="h-4 w-36 rounded" />
           <div className="flex items-center gap-1">

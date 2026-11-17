@@ -12,7 +12,6 @@ export function CampaignTransactionItem({ item }) {
 
   return (
     <div className="p-2 flex items-center justify-between gap-2.5 shadow-2xs">
-      {/* Left: Avatar & Donor Info */}
       <div className="flex items-center gap-2.5 min-w-0">
         <UserAvatar
           src={item.avatar}
@@ -30,7 +29,6 @@ export function CampaignTransactionItem({ item }) {
         </div>
       </div>
 
-      {/* Right: Donation Amount & Time */}
       <div className="text-right shrink-0">
         <span className="text-xs sm:text-sm font-medium text-slate-950 block">
           {formatRupiah(item.amount)}

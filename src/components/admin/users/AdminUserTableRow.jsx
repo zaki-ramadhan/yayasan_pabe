@@ -25,7 +25,6 @@ export function AdminUserTableRow({
 
   return (
     <TableRow key={user.id} className="hover:bg-slate-50/70 transition-colors">
-      {/* 1. Identitas Pengurus (Avatar, Nama, Email, Tag Status) */}
       <TableCell className="py-3 px-4 w-64 max-w-xs align-middle">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center text-xs font-medium text-slate-600">
@@ -78,14 +77,12 @@ export function AdminUserTableRow({
         </div>
       </TableCell>
 
-      {/* 2. Kontak (Centered) */}
       <TableCell className="py-3 px-4 w-36 max-w-[150px] text-center align-middle">
         <span className="text-sm font-normal text-slate-700 tabular-nums line-clamp-2 break-all block">
           {displayPhone}
         </span>
       </TableCell>
 
-      {/* 3. Jabatan & Akses */}
       <TableCell className="py-3 px-4 w-56 max-w-xs align-middle">
         <div className="space-y-1">
           <span className="text-sm font-normal text-slate-700 leading-snug line-clamp-2 break-words block">
@@ -109,14 +106,12 @@ export function AdminUserTableRow({
         </div>
       </TableCell>
 
-      {/* 4. Terdaftar */}
       <TableCell className="py-3 px-4 w-36 max-w-[150px] text-center align-middle">
         <span className="text-sm font-normal text-slate-700 tabular-nums line-clamp-2 block">
           {user.createdAt ? formatDate(user.createdAt) : "-"}
         </span>
       </TableCell>
 
-      {/* 5. Aksi */}
       <TableCell className="py-3 px-4 text-right align-middle w-20 max-w-[100px]">
         <AdminUserActionMenu
           user={user}

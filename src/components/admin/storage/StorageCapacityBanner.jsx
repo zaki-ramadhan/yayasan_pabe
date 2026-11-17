@@ -31,7 +31,6 @@ export function StorageCapacityBanner({ overview }) {
 
 	return (
 		<div className="bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden flex flex-col md:flex-row items-stretch transition-shadow hover:shadow-xs">
-			{/* Sisi Kiri: Background Abu-abu Bersih & Logo Resmi Cloudflare */}
 			<div className="w-full md:w-24 lg:w-28 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200/80 flex items-center justify-center p-2 select-none shrink-0 min-h-[56px] md:min-h-0 relative overflow-hidden">
 				<div className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center">
 					<Image
@@ -45,9 +44,7 @@ export function StorageCapacityBanner({ overview }) {
 				</div>
 			</div>
 
-			{/* Sisi Kanan: Area Konten & Aksi Ramping */}
 			<div className="flex-1 py-2 px-3 sm:py-2.5 sm:px-4 flex flex-col justify-center space-y-1.5 min-w-0">
-				{/* Baris Atas: Informasi Teks & Tombol Aksi */}
 				<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div className="space-y-0.5">
             <div className="flex items-center gap-2 flex-wrap">
@@ -78,7 +75,6 @@ export function StorageCapacityBanner({ overview }) {
             </div>
           </div>
 
-          {/* Tombol Aksi 3D Oranye Khas Cloudflare */}
           <div className="shrink-0 self-start sm:self-center">
             <Link
               href="/api/admin/external/cloudflare-r2"
@@ -92,7 +88,6 @@ export function StorageCapacityBanner({ overview }) {
           </div>
         </div>
 
-        {/* Baris Bawah: Progress Bar & Teks Persentase Sederhana */}
         <div className="flex items-center gap-2.5 pt-0.5">
           <div className="flex-1">
             <Progress

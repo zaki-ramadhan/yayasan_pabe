@@ -36,34 +36,28 @@ export function CareerDetailPanel({ job, hasVacancies = true }) {
   return (
     <>
       <Card className="rounded-xl p-5 sm:p-6 space-y-4 sm:space-y-5 bg-white border-slate-200 shadow-2xs">
-        {/* Header Section */}
         <CareerDetailHeader job={job} onApply={() => setIsApplyModalOpen(true)} />
 
-        {/* Deskripsi Amanah: Rapat dan terhubung langsung */}
         <CareerDetailSection title="Ringkasan Peran" className="-mt-4">
           <p className="text-sm font-normal text-slate-700 leading-relaxed">
             {job.overview}
           </p>
         </CareerDetailSection>
 
-        {/* Tugas & Tanggung Jawab */}
         <CareerDetailSection title="Tugas & Tanggung Jawab Utama">
           <CareerChecklist items={job.responsibilities} />
         </CareerDetailSection>
 
-        {/* Kualifikasi & Persyaratan */}
         <CareerDetailSection title="Kualifikasi & Persyaratan">
           <CareerChecklist items={job.requirements} />
         </CareerDetailSection>
 
-        {/* Fasilitas & Benefit */}
         {job.benefits && job.benefits.length > 0 && (
           <CareerDetailSection title="Fasilitas & Lingkungan Kerja">
             <CareerChecklist items={job.benefits} />
           </CareerDetailSection>
         )}
 
-        {/* Bottom Apply CTA */}
         <CareerDetailCta
           applyUrl={job.applyUrl}
           deadline={job.deadline}
@@ -71,7 +65,6 @@ export function CareerDetailPanel({ job, hasVacancies = true }) {
         />
       </Card>
 
-      {/* Internal Application Dialog Modal */}
       <CareerApplyModal
         isOpen={isApplyModalOpen}
         onClose={() => setIsApplyModalOpen(false)}

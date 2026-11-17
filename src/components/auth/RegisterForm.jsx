@@ -209,7 +209,6 @@ export function RegisterForm({ siteKey }) {
           onOpenTerms={() => setIsTermsModalOpen(true)}
         />
 
-        {/* Cloudflare Turnstile Anti-Bot Verification */}
         <FormField label="Verifikasi keamanan" htmlFor="cf-turnstile-register">
           <TurnstileWidget
             id="cf-turnstile-register"

@@ -74,7 +74,6 @@ export function useFileUploadZone({
     : internalUploadProgress;
   const progressText = uploadProgressText || internalProgressText;
 
-  // Sinkronisasi status preview saat value dibersihkan (React derived state pattern)
   const [prevVal, setPrevVal] = useState(value);
   if (!value && prevVal) {
     setPrevVal(value);
@@ -103,7 +102,6 @@ export function useFileUploadZone({
 
   const resolvedHelperText = helperText || defaultHelperText;
 
-  // Penanganan Berkas Mode Multi / Batch
   const handleProcessMultipleFiles = async (fileList) => {
     if (!fileList || fileList.length === 0) return;
 
@@ -224,7 +222,6 @@ export function useFileUploadZone({
     }
   };
 
-  // Penanganan Berkas Mode Tunggal
   const handleSingleFileSelect = async (file) => {
     if (!file) return;
 
@@ -283,7 +280,6 @@ export function useFileUploadZone({
       });
 
       if (data?.url) {
-        // Hapus berkas sementara sebelumnya jika pengguna mengganti berkas di sesi modal yang sama
         if (value && typeof value === "string" && stagedUrlsRef.current.has(value)) {
           deleteFileFromServer(value);
           stagedUrlsRef.current.delete(value);
@@ -390,7 +386,6 @@ export function useFileUploadZone({
       try {
         URL.revokeObjectURL(fileToRemove.previewUrl);
       } catch {
-        // Abaikan
       }
     }
     if (onFilesChange) {
@@ -404,7 +399,6 @@ export function useFileUploadZone({
         try {
           URL.revokeObjectURL(f.previewUrl);
         } catch {
-          // Abaikan
         }
       }
     });
@@ -413,7 +407,6 @@ export function useFileUploadZone({
     }
   };
 
-  // Penanganan Penempelan Berkas dari Clipboard (Ctrl + V)
   const pasteHandlerRef = useRef(null);
   useEffect(() => {
     pasteHandlerRef.current = (pastedFiles) => {

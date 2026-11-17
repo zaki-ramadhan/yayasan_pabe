@@ -16,12 +16,10 @@ import { InvoiceVirtualAccountSection } from "./InvoiceVirtualAccountSection";
 export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
   if (!donation) return null;
 
-  // 1. Terminal payment status screens (PAID, EXPIRED, CANCELLED)
   if (["PAID", "EXPIRED", "CANCELLED"].includes(donation.status)) {
     return <InvoicePaymentStatusBanner donation={donation} />;
   }
 
-  // 2. Determine channel type
   const isQris =
     donation.paymentChannelType === "QRIS" ||
     donation.paymentChannelId === "qris" ||
@@ -43,7 +41,6 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
 
   return (
     <div className="space-y-5">
-      {/* Header Channel */}
       <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-200">
         <div className="min-w-0 flex-1">
           <h2 className="text-base font-semibold text-slate-900 truncate">
@@ -66,7 +63,6 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
         </span>
       </div>
 
-      {/* Konten Spesifik Kanal */}
       {isQris && (
         <InvoiceQrisSection
           donation={donation}

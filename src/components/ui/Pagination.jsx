@@ -20,25 +20,20 @@ function getPageNumbers(currentPage, totalPages, maxVisible = 5) {
   const startPage = Math.max(2, currentPage - sidePages);
   const endPage = Math.min(totalPages - 1, currentPage + sidePages);
 
-  // Always include page 1
   pages.push(1);
 
-  // Ellipsis before middle pages
   if (startPage > 2) {
     pages.push("ellipsis-start");
   }
 
-  // Middle pages
   for (let i = startPage; i <= endPage; i++) {
     pages.push(i);
   }
 
-  // Ellipsis after middle pages
   if (endPage < totalPages - 1) {
     pages.push("ellipsis-end");
   }
 
-  // Always include last page
   pages.push(totalPages);
 
   return pages;
@@ -66,7 +61,6 @@ export function Pagination({
       aria-label="Pagination Navigation"
       className={cn("flex items-center justify-end gap-1 sm:gap-1.5", className)}
     >
-      {/* Previous Page Button (Icon Only) */}
       <button
         type="button"
         onClick={() => handlePageClick(currentPage - 1)}
@@ -82,7 +76,6 @@ export function Pagination({
         <AltArrowLeftIcon className="w-4 h-4 shrink-0" />
       </button>
 
-      {/* Page Numbers */}
       <div className="flex items-center gap-1.5">
         {pageNumbers.map((page, index) => {
           if (typeof page === "string") {
@@ -118,7 +111,6 @@ export function Pagination({
         })}
       </div>
 
-      {/* Next Page Button (Icon Only) */}
       <button
         type="button"
         onClick={() => handlePageClick(currentPage + 1)}

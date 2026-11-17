@@ -24,7 +24,6 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState("");
 
-  // Saring hanya tagihan yang aktif dan memiliki tanggal kedaluwarsa
   const sortedInvoices = [...(invoices || [])]
     .filter((inv) => Boolean(inv?.expiredAt))
     .sort((a, b) => new Date(a.expiredAt).getTime() - new Date(b.expiredAt).getTime());
@@ -117,9 +116,7 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
         className="relative overflow-hidden rounded-xl border border-stone-800 bg-gradient-to-r from-[#BC430D] via-[#6F2908] to-[#241705] p-4 sm:p-4.5 text-stone-100 shadow-md transition-all"
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
-          {/* Kolom Informasi Tagihan */}
           <div className="flex items-start gap-3.5 sm:gap-4 min-w-0">
-            {/* 3D Warning Icon Badge Glowing Amber */}
             <div className="relative inline-flex items-center justify-center shrink-0 mt-0.5">
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/15 border border-white/20 flex items-center justify-center shadow-xs">
                 <div className="w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-full bg-gradient-to-b from-[#F09410] via-[#FF884D] to-[#BC430D] border-t border-t-[#FFB77D] border-x border-x-[#F09410] border-b-[2.5px] border-b-[#7A2402] text-white flex items-center justify-center shadow-[inset_0_1.5px_1.5px_rgba(255,255,255,0.6),0_4px_8px_rgba(240,148,16,0.4)]">
@@ -175,7 +172,6 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
             </div>
           </div>
 
-          {/* Kolom Aksi */}
           <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
             <button
               type="button"
@@ -205,7 +201,6 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
         </div>
       </aside>
 
-      {/* Modal Dialog Konfirmasi Pembatalan Donasi */}
       <ConfirmDialog
         isOpen={isConfirmOpen}
         onClose={() => setIsConfirmOpen(false)}

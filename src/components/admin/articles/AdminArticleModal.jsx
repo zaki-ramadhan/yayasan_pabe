@@ -301,7 +301,6 @@ export function AdminArticleModal({
 			isSubmitting={isSubmitting}
 			submitDisabled={!isFormValid || (isEditing && !isDirty)}
 		>
-			{/* Judul artikel */}
 			<FormField
 				label="Judul artikel"
 				required
@@ -326,7 +325,6 @@ export function AdminArticleModal({
 			</FormField>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-				{/* Kategori */}
 				<FormField
 					label="Kategori berita"
 					required
@@ -349,7 +347,6 @@ export function AdminArticleModal({
 					/>
 				</FormField>
 
-				{/* Penulis / Redaksi */}
 				<FormField label="Nama penulis / redaksi">
 					<Input
 						type="text"
@@ -364,7 +361,6 @@ export function AdminArticleModal({
 				</FormField>
 			</div>
 
-			{/* Banner Upload / URL */}
 			<FileUploadZone
 				value={bannerUrl}
 				onChange={setBannerUrl}

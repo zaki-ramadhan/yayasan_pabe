@@ -11,7 +11,6 @@ import {
 export function AdminCareerSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
-      {/* Filter and Action Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex flex-1 items-center gap-2.5 max-w-lg">
           <Skeleton className="h-10 flex-1 rounded-lg" />
@@ -23,7 +22,6 @@ export function AdminCareerSkeleton() {
         </div>
       </div>
 
-      {/* Table Container */}
       <div className="rounded-lg border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
@@ -61,48 +59,39 @@ export function AdminCareerSkeleton() {
             <TableBody className="divide-y divide-slate-100">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <TableRow key={i} className="hover:bg-transparent">
-                  {/* Selection Checkbox */}
                   <TableCell className="w-12 text-center py-3 px-3 align-middle">
                     <Skeleton className="w-4 h-4 rounded mx-auto" />
                   </TableCell>
 
-                  {/* Position */}
                   <TableCell className="min-w-[240px] w-64 py-3 align-middle">
                     <Skeleton className="h-4 w-44 rounded" />
                   </TableCell>
 
-                  {/* Experience */}
                   <TableCell className="w-36 py-3 align-middle">
                     <Skeleton className="h-4 w-24 rounded" />
                   </TableCell>
 
-                  {/* Type & System */}
                   <TableCell className="min-w-[180px] w-48 space-y-1.5 py-3 align-middle">
                     <Skeleton className="h-4 w-28 rounded" />
                     <Skeleton className="h-3 w-20 rounded" />
                   </TableCell>
 
-                  {/* Location */}
                   <TableCell className="min-w-[160px] w-48 py-3 align-middle">
                     <Skeleton className="h-3.5 w-28 rounded" />
                   </TableCell>
 
-                  {/* Deadline */}
                   <TableCell className="w-36 py-3 text-center align-middle">
                     <Skeleton className="h-4 w-24 rounded mx-auto" />
                   </TableCell>
 
-                  {/* Applicants */}
                   <TableCell className="w-32 py-3 text-center align-middle">
                     <Skeleton className="h-7 w-20 rounded-md mx-auto" />
                   </TableCell>
 
-                  {/* Status */}
                   <TableCell className="w-28 py-3 text-center align-middle">
                     <Skeleton className="h-5 w-16 rounded mx-auto" />
                   </TableCell>
 
-                  {/* Actions */}
                   <TableCell className="w-24 py-3 text-right align-middle">
                     <Skeleton className="h-8 w-8 rounded ml-auto" />
                   </TableCell>
@@ -112,7 +101,6 @@ export function AdminCareerSkeleton() {
           </Table>
         </div>
 
-        {/* Pagination Footer */}
         <div className="px-4 py-3 border-t border-slate-200/90 flex items-center justify-between">
           <Skeleton className="h-4 w-36 rounded" />
           <div className="flex items-center gap-1">

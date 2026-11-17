@@ -37,7 +37,6 @@ export function TransactionLimitTable({ title, description, items = [] }) {
       </div>
 
       <TableContainer className="bg-white">
-        {/* Responsive Table */}
         <Table>
         <TableHeader>
           <TableRow>

@@ -134,7 +134,6 @@ export function CareerResumeUpload({
 
   return (
     <div className="space-y-2">
-      {/* Label */}
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium text-slate-800 select-none">
           Berkas CV / resume <span className="text-rose-500">*</span>
@@ -156,7 +155,6 @@ export function CareerResumeUpload({
         />
 
         {isUploaded ? (
-          /* Tampilan Berkas Terunggah */
           <div className="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-white shadow-2xs">
             <div className="flex items-center gap-3 min-w-0 pr-3">
               <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200">
@@ -183,7 +181,6 @@ export function CareerResumeUpload({
             </button>
           </div>
         ) : (
-          /* Kotak Dropzone Seragam dengan Admin Panel (min-h-[175px]) */
           <div
             onDrop={handleDrop}
             onDragOver={handleDragOver}

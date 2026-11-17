@@ -52,7 +52,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [fetchError, setFetchError] = useState(null);
 
-	// Fetch data dashboard menyeluruh untuk pengguna saat ini (mendukung silent background update)
 	const fetchDashboardData = useCallback(async ({ silent = false } = {}) => {
 		if (
 			!currentUser?.email &&
@@ -114,7 +113,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 		fetchDashboardData();
 	}, [fetchDashboardData]);
 
-	// Auto-sync real-time saat donatur kembali aktif membuka tab dashboard (zero-reload)
 	useEffect(() => {
 		const handleSync = () => {
 			if (document.visibilityState === "visible") {
@@ -129,7 +127,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 		};
 	}, [fetchDashboardData]);
 
-	// Auto-scroll dan highlight kartu donasi rutin saat URL memuat hash #donor-routine-card
 	useEffect(() => {
 		if (
 			!isLoading &&
@@ -178,7 +175,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 
 	return (
 		<div className="space-y-4 sm:space-y-5">
-			{/* Banner Error Sinkronisasi: Mencegah salah sangka data kosong */}
 			{fetchError && (
 				<DataFetchErrorState
 					title="Kendala Sinkronisasi Data Donasi"
@@ -192,7 +188,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 				/>
 			)}
 
-			{/* Banner Pengingat Tagihan Aktif Menunggu Pembayaran */}
 			{!fetchError && dashboardData.pendingInvoices?.length > 0 && (
 				<DonorPendingInvoiceBanner
 					invoices={dashboardData.pendingInvoices}
@@ -200,7 +195,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 				/>
 			)}
 
-			{/* Banner Promosi Cepat: HANYA muncul jika belum pernah berdonasi dan tidak error */}
 			{!fetchError &&
 				metrics.totalTransactions ===
 					0 &&
@@ -214,7 +208,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 					/>
 				)}
 
-			{/* Heading Utama */}
 			<div>
 				<h1 className="text-lg sm:text-xl font-medium tracking-tight text-slate-950">
 					Dashboard
@@ -225,11 +218,7 @@ export function DonorOverviewDashboard({ currentUser }) {
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5">
-				{/* ======================================================== */}
-				{/* KOLOM KIRI & TENGAH (8 KANVAS: METRIK + GRAFIK + LAPORAN) */}
-				{/* ======================================================== */}
 				<div className="lg:col-span-8 space-y-2.5">
-					{/* 1. Baris Kartu Metrik Utama & Quick Actions */}
 					<DonorMetricCards
 						metrics={
 							metrics
@@ -245,7 +234,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 						}
 					/>
 
-					{/* 2. Grafik Riwayat Donasi Bulanan (Terisolasi per tahun) */}
 					<DonorMonthlyTrendChart
 						initialMonthlyTrend={
 							dashboardData.monthlyTrend
@@ -258,7 +246,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 						}
 					/>
 
-					{/* 3. Kabar Penyaluran Terbaru */}
 					<DonorRecentReportsCard
 						recentReports={
 							dashboardData.recentReports
@@ -268,15 +255,10 @@ export function DonorOverviewDashboard({ currentUser }) {
 						}
 					/>
 
-					{/* 4. Doa & Harapan Saya */}
 					<DonorPrayersCard currentUser={currentUser} />
 				</div>
 
-				{/* ======================================================== */}
-				{/* KOLOM KANAN (4 KANVAS: KATEGORI + TRANSAKSI + TARGET + RUTIN) */}
-				{/* ======================================================== */}
 				<div className="lg:col-span-4 space-y-2.5">
-					{/* 1. Kategori Donasi (Semi-circle Gauge Donut) */}
 					<DonorCategoryDonutCard
 						categoryDistribution={
 							dashboardData.categoryDistribution
@@ -286,7 +268,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 						}
 					/>
 
-					{/* 2. Transaksi Terakhir */}
 					<DonorRecentTransactionsCard
 						recentItems={
 							dashboardData.recentItems
@@ -296,7 +277,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 						}
 					/>
 
-					{/* 3. Target Kebaikan Bulanan */}
 					<DonorMonthlyTargetCard
 						currentMonthAchieved={
 							dashboardData.currentMonthAchieved
@@ -306,7 +286,6 @@ export function DonorOverviewDashboard({ currentUser }) {
 						}
 					/>
 
-					{/* 4. Donasi Rutin Tersimpan */}
 					<div id="donor-routine-card" className="scroll-mt-20 rounded-xl transition-all duration-300">
 						<DonorRoutineDonationsCard
 							routineDonations={

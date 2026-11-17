@@ -82,7 +82,6 @@ export function DonorTransactionTable({
 
   return (
     <TableContainer className="bg-sidebar">
-      {/* Table Header Toolbar via Shared TableToolbar */}
       <div className="p-4 sm:p-5 border-b border-slate-200">
         <TableToolbar
           title="Daftar Riwayat Transaksi"
@@ -115,7 +114,6 @@ export function DonorTransactionTable({
         />
       </div>
 
-      {/* Standar Reusable Table Primitives */}
       <Table>
         <DonorTransactionTableHeader showTypeColumn={isAllTab} />
 
@@ -148,7 +146,6 @@ export function DonorTransactionTable({
         </TableBody>
       </Table>
 
-      {/* Table Pagination Footer */}
       <TablePaginationFooter
         pagination={pagination}
         onPageChange={onPageChange}

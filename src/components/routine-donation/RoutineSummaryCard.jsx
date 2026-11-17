@@ -29,7 +29,6 @@ export function RoutineSummaryCard({
         </p>
       </div>
 
-      {/* Program Breakdown List */}
       <div className="space-y-3.5">
         {selectedPrograms.map((p, idx) => {
           const camp =
@@ -45,7 +44,6 @@ export function RoutineSummaryCard({
         })}
       </div>
 
-      {/* Total Commitment Calculation (Hanya tampil jika ada program donasi otomatis) */}
       {hasAnyAutoDonation && (
         <div className="pt-3 border-t border-slate-200 space-y-1">
           <div className="flex justify-between items-baseline text-sm font-medium text-slate-950">
@@ -60,7 +58,6 @@ export function RoutineSummaryCard({
         </div>
       )}
 
-      {/* Primary 3D CTA Submit Button + Icon-only Tour Button */}
       <div className="flex items-center gap-2 pt-1">
         <Button
           type="submit"

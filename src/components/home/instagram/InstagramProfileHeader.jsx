@@ -18,7 +18,6 @@ export function InstagramProfileHeader({ account }) {
 
   return (
     <div className="flex items-center gap-3.5 px-3 sm:px-3.5">
-      {/* Circle Avatar dengan Story Gradient Ring */}
       <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full p-[2.7px] bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 shrink-0 shadow-sm">
         <div className="relative w-full h-full rounded-full border-2 border-slate-900 bg-slate-950 overflow-hidden flex items-center justify-center">
           {account?.avatarUrl ? (
@@ -38,7 +37,6 @@ export function InstagramProfileHeader({ account }) {
         </div>
       </div>
 
-      {/* Detail Akun */}
       <div className="min-w-0 flex-1 space-y-0.5">
         <div className="flex items-center gap-1.5">
           <span className="font-semibold text-white text-sm sm:text-base tracking-tight truncate">

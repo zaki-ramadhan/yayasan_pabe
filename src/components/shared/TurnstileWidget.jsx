@@ -29,7 +29,6 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
   const widgetIdRef = useRef(null);
   const [isWidgetLoaded, setIsWidgetLoaded] = useState(false);
 
-  // Simpan callback dalam ref agar useEffect render tidak restart setiap kali fungsi parent berubah
   const onSuccessRef = useRef(onSuccess);
   const onErrorRef = useRef(onError);
   const onExpireRef = useRef(onExpire);
@@ -91,7 +90,6 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
         try {
           window.turnstile.reset(widgetIdRef.current);
         } catch {
-          // ignore
         }
       }
     },
@@ -104,13 +102,11 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
             window.turnstile.remove(currentId);
           }
         } catch {
-          // ignore
         }
       }
     },
   }));
 
-  // Pastikan skrip resmi Cloudflare Turnstile disuntikkan ke dokumen
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -124,7 +120,6 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
     }
   }, []);
 
-  // Lifecycle render Turnstile
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -142,7 +137,6 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
         try {
           window.turnstile.remove(currentId);
         } catch {
-          // ignore
         }
       }
     };
@@ -245,7 +239,6 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
         className
       )}
     >
-      {/* Skeleton Shimmer Placeholder saat widget sedang memuat (seperti SumoPod) */}
       {!isWidgetLoaded && (
         <div className="absolute inset-0 z-10 bg-[#f9f9f9] border border-[#d9d9d9] rounded flex items-center px-4 gap-3 overflow-hidden shadow-xs w-full">
           <div className="w-6 h-6 rounded-full bg-slate-200 shrink-0 animate-pulse" />
@@ -260,7 +253,6 @@ export const TurnstileWidget = forwardRef(function TurnstileWidget(
         </div>
       )}
 
-      {/* Target Mount Container Turnstile */}
       <div
         ref={containerRef}
         className="w-full block min-h-[65px] [&_div]:!w-full [&_iframe]:!w-full [&_iframe]:!min-w-full"

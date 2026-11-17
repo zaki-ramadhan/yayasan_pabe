@@ -42,7 +42,6 @@ export function AdminCareerTable({ initialVacancies = [] }) {
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const PAGE_SIZE = 10;
 
-  // 1. Live SSE: Menambahkan jumlah pelamar (applicantCount) secara real-time tanpa refresh
   useAdminLiveEvent("CAREER_APPLICATION", (payload) => {
     if (!payload?.position) return;
     setVacancies((prev) =>
@@ -215,7 +214,6 @@ export function AdminCareerTable({ initialVacancies = [] }) {
         isLoading={isLoading}
       />
 
-      {/* Reusable Bulk Action Bar */}
       <TableSelectionBar
         selectedCount={selection.selectedCount}
         totalCount={paginatedVacancies.length}

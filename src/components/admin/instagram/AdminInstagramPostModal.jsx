@@ -175,7 +175,6 @@ export function AdminInstagramPostModal({
       submitDisabled={!isFormValid || (isEditing && !isDirty)}
     >
       <div className="space-y-4 py-1">
-        {/* Mendukung upload R2 langsung maupun URL eksternal CDN */}
         <FileUploadZone
           label="Foto postingan"
           value={imageUrl}

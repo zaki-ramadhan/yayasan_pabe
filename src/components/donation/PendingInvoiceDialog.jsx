@@ -126,7 +126,6 @@ export function PendingInvoiceDialog({
             )}
           </p>
 
-          {/* Rincian Tagihan Bersih (Raw Text / Bordered Divider) */}
           <div className="py-2.5 border-y border-slate-100 text-xs sm:text-sm space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-slate-500">Nomor invoice</span>

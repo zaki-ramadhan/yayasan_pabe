@@ -98,7 +98,6 @@ export function DonorAvatarDialog({
         </DialogHeader>
 
         <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5 sm:px-6 space-y-5">
-          {/* 1. Lingkaran Utama di Tengah (Foto Terpilih / Terunggah) */}
           <div className="flex flex-col items-center justify-center text-center">
             <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-slate-100 bg-slate-50 shadow-sm overflow-hidden flex items-center justify-center transition-all duration-200">
               {selectedAvatar ? (
@@ -126,14 +125,12 @@ export function DonorAvatarDialog({
             </p>
           </div>
 
-          {/* 2. Pilihan Avatar Karakter Default */}
           <DonorAvatarPresetPicker
             selectedAvatar={selectedAvatar}
             onSelect={handlePresetSelect}
             disabled={isUpdating}
           />
 
-          {/* 3. Garis Pemisah dengan Teks "ATAU" */}
           <div className="relative flex items-center justify-center py-0.5">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-slate-200/80" />
@@ -143,7 +140,6 @@ export function DonorAvatarDialog({
             </span>
           </div>
 
-          {/* 4. Unggah Foto dari Perangkat / Akun */}
           <DonorAvatarCustomSlot
             customAvatar={stagedCustomAvatar}
             isActive={Boolean(stagedCustomAvatar && selectedAvatar === stagedCustomAvatar)}

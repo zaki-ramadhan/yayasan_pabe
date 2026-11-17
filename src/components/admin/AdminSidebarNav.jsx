@@ -5,7 +5,6 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
 
-// Solar Icons - Line Duotone (Default / Inactive)
 import { Widget2Icon as Widget2Line } from "@solar-icons/react/line-duotone/widget-2";
 import { UsersGroupTwoRoundedIcon as UsersGroupTwoRoundedLine } from "@solar-icons/react/line-duotone/users-group-two-rounded";
 import { HandHeartIcon as HandHeartLine } from "@solar-icons/react/line-duotone/hand-heart";
@@ -28,7 +27,6 @@ import { ShieldKeyholeIcon as ShieldKeyholeLine } from "@solar-icons/react/line-
 import { CodeCircleIcon as CodeCircleLine } from "@solar-icons/react/line-duotone/code-circle";
 import { Logout2Icon as Logout2Line } from "@solar-icons/react/line-duotone/logout-2";
 
-// Solar Icons - Bold (Active State, High Contrast Cutout)
 import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold/widget-2";
 import { UsersGroupTwoRoundedIcon as UsersGroupTwoRoundedBold } from "@solar-icons/react/bold/users-group-two-rounded";
 import { HandHeartIcon as HandHeartBold } from "@solar-icons/react/bold/hand-heart";
@@ -162,7 +160,6 @@ export function AdminSidebarNav({
 
   return (
     <div className="h-full flex flex-col bg-sidebar border-r border-slate-200 select-none overflow-hidden">
-      {/* Brand Header (Fixed Top) */}
       <div className="shrink-0 p-3 pb-3 border-b border-slate-300">
         <Link
           href="/"
@@ -194,12 +191,10 @@ export function AdminSidebarNav({
         </Link>
       </div>
 
-      {/* Main Navigation Groups (Scrollable) */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1 sidebar-scrollbar">
         {navGroups.map((group, index) => {
           return (
             <div key={group.title} className="space-y-0.5">
-              {/* Full-width divider between groups */}
               {index > 0 && <div className="-mx-3 my-2.5 border-t border-slate-300" />}
 
               {isCollapsed ? (
@@ -230,14 +225,12 @@ export function AdminSidebarNav({
                 </nav>
               ) : (
                 <>
-                  {/* Group Header Label: Teks biasa tanpa ikon */}
                   <div className="px-3 pt-1 pb-1 select-none">
                     <span className="truncate text-sm font-normal text-slate-900 block">
                       {group.title}
                     </span>
                   </div>
 
-                  {/* Nav Item Links */}
                   <nav className="space-y-0.5">
                     {group.items.map((item) => {
                       const isActive = item.exact
@@ -311,7 +304,6 @@ export function AdminSidebarNav({
         })}
       </div>
 
-      {/* Bottom Actions (Fixed Bottom, Never Overflown) */}
       <div className="shrink-0 p-3 pt-3 border-t border-slate-300 mt-auto bg-sidebar">
         <button
           type="button"

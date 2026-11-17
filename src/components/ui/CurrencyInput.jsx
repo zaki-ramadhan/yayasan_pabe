@@ -33,10 +33,8 @@ export function CurrencyInput({
 
   const handleChange = (e) => {
     const raw = e.target.value.replace(/\D/g, "");
-    // Abaikan jika sudah melebihi batas panjang digit
     if (raw.length > effectiveMaxDigits) return;
     const parsed = raw ? parseInt(raw, 10) : 0;
-    // Cegah input melebihi nilai maksimal yang ditentukan
     if (max !== undefined && max > 0 && parsed > max) return;
     const finalRaw = parsed > 0 ? String(parsed) : (raw === "" ? "" : "0");
     onChange(parsed, finalRaw);

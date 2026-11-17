@@ -274,7 +274,6 @@ export function useZakatCheckout({
         }
       }
     } catch {
-      // Jika cek tagihan gagal, lanjutkan transaksi baru
     } finally {
       isSubmittingRef.current = false;
       setIsSubmitting(false);
@@ -309,7 +308,6 @@ export function useZakatCheckout({
       });
       const json = await res.json().catch(() => ({}));
 
-      // Jika donasi lama ternyata baru saja dibayar (PAID), arahkan ke invoice pembayarannya
       if (!res.ok && json.message?.toLowerCase().includes("sudah terbayar")) {
         toast.error("Tagihan lama ini telah terbayar. Mengalihkan ke kuitansi...");
         setPendingInvoiceModal({ isOpen: false, invoice: null });
@@ -317,12 +315,9 @@ export function useZakatCheckout({
         return;
       }
 
-      // Dalam semua skenario lain (batal berhasil, atau tagihan lama sudah otomatis kedaluwarsa):
-      // Tutup dialog konfirmasi dan langsung buat tagihan baru
       setPendingInvoiceModal({ isOpen: false, invoice: null });
       await executePayment();
     } catch {
-      // Fallback defensif: tetap izinkan pembuatan tagihan baru agar muzakki tidak terjebak
       setPendingInvoiceModal({ isOpen: false, invoice: null });
       await executePayment();
     } finally {

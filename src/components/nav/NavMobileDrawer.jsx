@@ -32,17 +32,14 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
 
   return (
     <>
-      {/* Backdrop Overlay (Klik luar untuk menutup menu) */}
       <div
         className="lg:hidden fixed inset-0 top-12 sm:top-13 bg-slate-900/40 backdrop-blur-xs z-40 animate-in fade-in"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Floating Menu Panel - Menempel Rapat ke Bawah Header Tanpa Jeda / Celah */}
       <div className="lg:hidden fixed inset-x-0 top-12 sm:top-13 z-50 bg-white border-b border-slate-300 px-4 pt-2 pb-6 space-y-3 shadow-xl max-h-[calc(100dvh-3rem)] sm:max-h-[calc(100dvh-3.25rem)] overflow-y-auto animate-in fade-in slide-in-from-top-1">
         <div className="space-y-1">
-        {/* Home */}
         <Link
           href="/"
           onClick={onClose}
@@ -54,7 +51,6 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
           Beranda
         </Link>
 
-        {/* Tentang Kami */}
         <Link
           href="/tentang-kami"
           onClick={onClose}
@@ -66,7 +62,6 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
           Tentang Kami
         </Link>
 
-        {/* Program Accordion */}
         <NavMobileAccordion
           label="Program"
           name="program"
@@ -78,7 +73,6 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
           onClose={onClose}
         />
 
-        {/* Galeri (Direct Link) */}
         <Link
           href="/galeri"
           onClick={onClose}
@@ -90,7 +84,6 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
           Galeri
         </Link>
 
-        {/* Artikel (Direct Link) */}
         <Link
           href="/artikel"
           onClick={onClose}
@@ -102,7 +95,6 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
           Artikel
         </Link>
 
-        {/* Informasi Accordion */}
         <NavMobileAccordion
           label="Informasi"
           name="informasi"
@@ -115,7 +107,6 @@ export function NavMobileDrawer({ pathname, currentUser, onClose, onLogout }) {
         />
       </div>
 
-      {/* Mobile Auth Button & Profile */}
       <NavMobileUserSection
         pathname={pathname}
         currentUser={currentUser}

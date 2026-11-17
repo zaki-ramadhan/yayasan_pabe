@@ -111,7 +111,6 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
           setServerResults(json.data);
         }
       } catch {
-        // ignore error
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -336,7 +335,6 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
         )}
       </TableContainer>
 
-      {/* Detail Modal */}
       <AdminTransactionDetailModal
         isOpen={Boolean(selectedDetail)}
         onClose={() => setSelectedDetail(null)}

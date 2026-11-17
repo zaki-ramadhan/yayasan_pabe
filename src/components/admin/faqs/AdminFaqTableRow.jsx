@@ -17,7 +17,6 @@ export function AdminFaqTableRow({
         isSelected ? "bg-primary/5 hover:bg-primary/10" : ""
       }`}
     >
-      {/* 0. Selection Checkbox */}
       <TableCell className="w-12 text-center py-3 px-3 align-middle" onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={isSelected}
@@ -26,7 +25,6 @@ export function AdminFaqTableRow({
         />
       </TableCell>
 
-      {/* Question & Answer snippet */}
 			<TableCell className="py-3 px-4 align-middle">
 				<div className="space-y-0.5">
 					<span
@@ -42,7 +40,6 @@ export function AdminFaqTableRow({
 				</div>
 			</TableCell>
 
-			{/* Category Tag */}
 			<TableCell className="w-36 py-3 px-4 whitespace-nowrap align-middle text-center">
 				<span
 					title={faq.category || "Umum"}
@@ -53,7 +50,6 @@ export function AdminFaqTableRow({
 				</span>
 			</TableCell>
 
-			{/* Updated Date */}
 			<TableCell className="w-36 py-3 px-4 whitespace-nowrap align-middle text-center">
 				<span className="text-sm font-normal text-slate-600 tabular-nums block">
 					{formatDate(
@@ -63,7 +59,6 @@ export function AdminFaqTableRow({
 				</span>
 			</TableCell>
 
-			{/* Actions */}
 			<TableCell className="w-24 py-3 px-4 text-right whitespace-nowrap align-middle pr-4">
 				<TableRowActions
 					onEdit={() =>
