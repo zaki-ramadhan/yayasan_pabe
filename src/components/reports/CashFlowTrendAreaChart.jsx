@@ -9,7 +9,6 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { Chart2Icon as TrendingUp } from "@solar-icons/react/line-duotone/chart-2";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ChartTooltipCard } from "./ChartTooltipCard";
 import { formatCompactRupiah, formatRupiah } from "@/lib/formatters";
@@ -30,9 +29,6 @@ export function CashFlowTrendAreaChart({ data = [] }) {
       <CardContent className="p-4 sm:p-6 space-y-4 flex flex-col flex-1">
         {!hasData ? (
           <div className="flex-1 flex flex-col items-center justify-center py-16 text-center px-4">
-            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2.5">
-              <TrendingUp className="w-5 h-5" />
-            </div>
             <p className="text-sm font-semibold text-slate-900">Belum ada data arus kas</p>
             <p className="text-xs sm:text-sm text-slate-500 max-w-sm mt-1">
               Belum ada mutasi kas tercatat pada periode ini.
@@ -87,7 +83,7 @@ export function CashFlowTrendAreaChart({ data = [] }) {
                   />
                   <Tooltip
                     cursor={{ stroke: "#cbd5e1", strokeWidth: 1 }}
-                    wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
+                    wrapperStyle={{ zIndex: 10, pointerEvents: "none" }}
                     content={<ChartTooltipCard formatter={formatRupiah} />}
                   />
                   <Area

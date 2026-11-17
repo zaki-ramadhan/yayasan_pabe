@@ -43,7 +43,7 @@ export function DonorGaugeChartCanvas({
           {!data[0]?.isPlaceholder && (
             <RechartsTooltip
               formatter={(val) => formatRupiah(val)}
-              wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
+              wrapperStyle={{ zIndex: 10, pointerEvents: "none" }}
               contentStyle={{
                 backgroundColor: "#ffffff",
                 borderColor: "#cbd5e1",

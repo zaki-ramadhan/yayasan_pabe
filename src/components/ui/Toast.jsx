@@ -114,6 +114,84 @@ function ToastIcon({ variant }) {
   return <InfoCircleIcon className="h-5 w-5 shrink-0 text-white" />;
 }
 
+function ToastSwipeableItem({
+  id,
+  title,
+  description,
+  action,
+  variant,
+  open,
+  dismiss,
+  ...props
+}) {
+  const [offsetX, setOffsetX] = React.useState(0);
+  const [isSwiping, setIsSwiping] = React.useState(false);
+  const startXRef = React.useRef(0);
+  const isPointerDownRef = React.useRef(false);
+
+  const handlePointerDown = (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    isPointerDownRef.current = true;
+    startXRef.current = e.clientX;
+    setIsSwiping(true);
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isPointerDownRef.current) return;
+    const diff = e.clientX - startXRef.current;
+    setOffsetX(diff);
+  };
+
+  const handlePointerEnd = () => {
+    if (!isPointerDownRef.current) return;
+    isPointerDownRef.current = false;
+    setIsSwiping(false);
+    if (Math.abs(offsetX) > 60) {
+      setOffsetX(offsetX > 0 ? 350 : -350);
+      setTimeout(() => {
+        dismiss(id);
+      }, 150);
+    } else {
+      setOffsetX(0);
+    }
+  };
+
+  const opacity = Math.max(0.1, 1 - Math.abs(offsetX) / 250);
+
+  return (
+    <div
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerEnd}
+      onPointerCancel={handlePointerEnd}
+      style={{
+        transform: `translateX(${offsetX}px)`,
+        opacity,
+        transition: isSwiping ? "none" : "transform 0.25s ease-out, opacity 0.25s ease-out",
+        touchAction: "pan-y",
+      }}
+      className="w-full cursor-grab active:cursor-grabbing select-none"
+    >
+      <Toast
+        variant={variant}
+        open={open}
+        className="pointer-events-auto"
+        {...props}
+      >
+        <div className="flex items-start gap-3 w-full pr-7">
+          <ToastIcon variant={variant} />
+          <div className="grid gap-0.5 text-left flex-1 min-w-0">
+            {title && <ToastTitle>{title}</ToastTitle>}
+            {description && <ToastDescription>{description}</ToastDescription>}
+          </div>
+        </div>
+        {action}
+        <ToastClose onClick={() => dismiss(id)} />
+      </Toast>
+    </div>
+  );
+}
+
 export function Toaster() {
   const { toasts, dismiss } = useToast();
 
@@ -125,23 +203,17 @@ export function Toaster() {
     >
       {toasts.map(function ({ id, title, description, action, variant, open, onOpenChange, ...props }) {
         return (
-          <Toast
+          <ToastSwipeableItem
             key={id}
+            id={id}
+            title={title}
+            description={description}
+            action={action}
             variant={variant}
             open={open}
-            className="pointer-events-auto"
+            dismiss={dismiss}
             {...props}
-          >
-            <div className="flex items-start gap-3 w-full pr-7">
-              <ToastIcon variant={variant} />
-              <div className="grid gap-0.5 text-left flex-1 min-w-0">
-                {title && <ToastTitle>{title}</ToastTitle>}
-                {description && <ToastDescription>{description}</ToastDescription>}
-              </div>
-            </div>
-            {action}
-            <ToastClose onClick={() => dismiss(id)} />
-          </Toast>
+          />
         );
       })}
     </div>

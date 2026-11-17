@@ -9,7 +9,6 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { ChartSquareIcon as BarChart3 } from "@solar-icons/react/line-duotone/chart-square";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ChartTooltipCard } from "./ChartTooltipCard";
 import { formatCompactRupiah, formatRupiah } from "@/lib/formatters";
@@ -37,9 +36,6 @@ export function FinancialCategoryBarChart({ data = [], categories = [] }) {
       <CardContent className="p-4 sm:p-6 space-y-4 flex flex-col flex-1">
         {!hasData ? (
           <div className="flex-1 flex flex-col items-center justify-center py-16 text-center px-4">
-            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2.5">
-              <BarChart3 className="w-5 h-5" />
-            </div>
             <p className="text-sm font-semibold text-slate-900">Belum ada data laporan</p>
             <p className="text-xs sm:text-sm text-slate-500 max-w-sm mt-1">
               Belum ada transaksi tercatat pada periode ini.
@@ -93,7 +89,7 @@ export function FinancialCategoryBarChart({ data = [], categories = [] }) {
                     width={70}
                   />
                   <Tooltip
-                    wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
+                    wrapperStyle={{ zIndex: 10, pointerEvents: "none" }}
                     cursor={{ fill: "rgba(241, 245, 249, 0.5)" }}
                     content={<ChartTooltipCard formatter={formatRupiah} />}
                   />

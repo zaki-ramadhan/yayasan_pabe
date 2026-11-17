@@ -7,7 +7,6 @@ import {
   Cell,
   Tooltip,
 } from "recharts";
-import { PieChart2Icon as PieChartIcon } from "@solar-icons/react/line-duotone/pie-chart-2";
 import { Card, CardContent } from "@/components/ui/Card";
 import { ChartLegendGrid } from "./ChartLegendGrid";
 import { formatRupiah } from "@/lib/formatters";
@@ -59,9 +58,6 @@ export function CashFlowRatioPieChart({ totals = { cashIn: 0, cashOut: 0 } }) {
 
         {!hasData ? (
           <div className="flex-1 flex flex-col items-center justify-center py-10 sm:py-14 text-center px-4">
-            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-2.5">
-              <PieChartIcon className="w-5 h-5" />
-            </div>
             <p className="text-sm font-semibold text-slate-900">Belum ada data rasio arus kas</p>
             <p className="text-xs sm:text-sm text-slate-500 max-w-xs mt-1">
               Rasio tampil otomatis saat ada transaksi.
@@ -73,7 +69,7 @@ export function CashFlowRatioPieChart({ totals = { cashIn: 0, cashOut: 0 } }) {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Tooltip
-                    wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
+                    wrapperStyle={{ zIndex: 10, pointerEvents: "none" }}
                     content={({ active, payload }) => {
                       if (!active || !payload || payload.length === 0) return null;
                       const item = payload[0];

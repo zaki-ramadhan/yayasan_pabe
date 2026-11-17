@@ -26,10 +26,12 @@ export function AboutLeadership({ leaders = [] }) {
       )}
 
       <div className="space-y-2 pt-2 border-t border-slate-100">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-          {displayLeaders.map((leader, idx) => (
-            <LeaderItem key={leader.id || leader.name || idx} leader={leader} />
-          ))}
+        <div className="max-h-[480px] sm:max-h-[520px] overflow-y-auto pr-1.5 focus:outline-none focus:ring-1 focus:ring-slate-300 rounded-lg">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            {displayLeaders.map((leader, idx) => (
+              <LeaderItem key={leader.id || leader.name || idx} leader={leader} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

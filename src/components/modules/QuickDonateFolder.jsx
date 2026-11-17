@@ -76,21 +76,23 @@ export function QuickDonateFolder({ defaultCampaignSlug = "beasiswa-pendidikan-a
   };
 
   return (
-    <div className="relative w-full aspect-[592/458] min-h-[380px] sm:min-h-[390px]">
-      <Image
-        src="/img/frames/folder-hero.svg"
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-        fill
-        sizes="(max-width: 1024px) 100vw, 500px"
-        priority
-        className="object-fill pointer-events-none select-none drop-shadow-lg"
-      />
+    <div className="relative w-full sm:aspect-[592/458] sm:min-h-[390px] bg-white/95 sm:bg-transparent rounded-2xl sm:rounded-none border sm:border-0 border-slate-200/90 shadow-sm sm:shadow-none p-5 sm:p-0">
+      <div className="hidden sm:block absolute inset-0 pointer-events-none select-none">
+        <Image
+          src="/img/frames/folder-hero.svg"
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          fill
+          sizes="(max-width: 1024px) 100vw, 500px"
+          priority
+          className="object-fill drop-shadow-lg"
+        />
+      </div>
 
       <form
         onSubmit={handleSubmit}
-        className="relative z-10 h-full flex flex-col justify-end pt-12 pb-9 sm:pb-11 px-6 sm:px-7 space-y-3 sm:space-y-3.5"
+        className="relative z-10 h-full flex flex-col justify-end sm:pt-12 sm:pb-11 sm:px-7 space-y-3 sm:space-y-3.5"
       >
         <div className="space-y-0.5 min-w-0 pb-1.5 sm:pb-2">
           <h2 className="text-base font-semibold text-slate-950">

@@ -18,7 +18,7 @@ export function DistributionAuditDonutChart({ allocations = [] }) {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Tooltip
-              wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
+              wrapperStyle={{ zIndex: 10, pointerEvents: "none" }}
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   const data = payload[0].payload;

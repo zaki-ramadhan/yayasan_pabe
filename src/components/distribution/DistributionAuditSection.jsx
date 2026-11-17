@@ -67,10 +67,10 @@ export function DistributionAuditSection({ auditData = {} }) {
                 href={currentAudit.pdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+                className="inline-flex items-center gap-1.5 h-8 sm:h-9 px-3 rounded-md border border-slate-300 bg-white text-xs sm:text-sm font-medium text-slate-800 shadow-2xs transition-colors hover:bg-slate-50 hover:text-emerald-700"
                 title={`Unduh berkas PDF laporan pertanggungjawaban ${selectedYear}`}
               >
-                <FileDown className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                <FileDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-600 shrink-0" />
                 <span>Unduh PDF</span>
               </a>
             )}

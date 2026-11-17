@@ -3,6 +3,7 @@
 import { LinkRoundIcon as Link2 } from "@solar-icons/react/line-duotone/link-round";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Switch } from "@/components/ui/Switch";
 import { FileUploadPreview } from "./FileUploadPreview";
 import { FileUploadDropzone } from "./FileUploadDropzone";
 import { FileUploadMultiPreview } from "./FileUploadMultiPreview";
@@ -101,18 +102,17 @@ export function FileUploadZone({
             </label>
           ) : <div />}
           {!multiple && showManualUrl && (
-            <button
-              type="button"
-              onClick={() => setIsManualUrl(!isManualUrl)}
-              className="text-xs text-emerald-700 hover:text-emerald-800 font-medium flex items-center gap-1 transition-colors cursor-pointer"
-            >
-              <Link2 className="w-3.5 h-3.5" />
-              {isManualUrl
-                ? "Unggah berkas"
-                : isPdf
-                ? "Gunakan tautan dokumen"
-                : "Gunakan tautan gambar"}
-            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-normal text-slate-500 select-none">
+                {isPdf ? "Tautan URL Dokumen" : "Tautan URL"}
+              </span>
+              <Switch
+                size="sm"
+                checked={isManualUrl}
+                onCheckedChange={setIsManualUrl}
+                aria-label={isPdf ? "Toggle input URL dokumen manual" : "Toggle input URL gambar manual"}
+              />
+            </div>
           )}
         </div>
       ) : null}
