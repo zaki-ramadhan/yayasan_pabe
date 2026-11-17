@@ -28,7 +28,6 @@ export async function POST(request) {
     const body = await request.json();
     const { name, fullName, username, email, phone, password, turnstileToken } = body || {};
 
-    // Validasi Anti-Bot Cloudflare Turnstile
     const clientIp = getClientIp(request);
     const turnstileCheck = await verifyTurnstileToken(turnstileToken, clientIp);
     if (!turnstileCheck.success) {
@@ -42,7 +41,6 @@ export async function POST(request) {
       );
     }
 
-    // 1. Sanitize & Validate Nama Lengkap (mengizinkan spasi, min 2 max 60)
     const rawName = (name || fullName || username || "").trim();
     const nameValidation = validateName(rawName);
     if (!nameValidation.isValid) {
@@ -56,7 +54,6 @@ export async function POST(request) {
     }
     const cleanName = nameValidation.sanitized;
 
-    // 2. Validate Email & DNS Domain
     const cleanEmail = String(email || "").trim().toLowerCase();
     const emailValidation = await verifyEmailDomainDns(cleanEmail, {
       isRequired: true,
@@ -73,7 +70,6 @@ export async function POST(request) {
       );
     }
 
-    // 3. Validate Password
     const cleanPassword = typeof password === "string" ? password.trim() : "";
     if (!cleanPassword || cleanPassword.length < 6) {
       return NextResponse.json(
@@ -85,7 +81,6 @@ export async function POST(request) {
       );
     }
 
-    // 4. Validate Phone if provided
     let cleanPhone = "-";
     if (phone) {
       const phoneValidation = validatePhone(phone);
@@ -101,7 +96,6 @@ export async function POST(request) {
       cleanPhone = phone.trim();
     }
 
-    // 5. Generate Collision-free Username untuk database
     let candidateUsername = "";
     if (username && typeof username === "string" && username.trim()) {
       const uVal = validateUsername(username);
@@ -134,7 +128,6 @@ export async function POST(request) {
     }
     const cleanUsername = candidateUsername;
 
-    // 6. Check if email already exists in DB
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
@@ -158,7 +151,6 @@ export async function POST(request) {
       );
     }
 
-    // 7. Hash Password & Create User in DB (Status isActive: false sampai email diaktivasi)
     const passwordHash = hashPassword(cleanPassword);
     const assignedRole = USER_ROLES.DONOR;
     const assignedTitle = "Donatur";
@@ -173,7 +165,7 @@ export async function POST(request) {
         role: assignedRole,
         title: assignedTitle,
         avatar: null,
-        isActive: false, // Wajib aktivasi email sebelum bisa login
+        isActive: false,
       },
       select: {
         id: true,
@@ -186,7 +178,6 @@ export async function POST(request) {
       },
     });
 
-    // 7. Kirim Email Aktivasi Akun Berisi Token Verifikasi (24 Jam)
     try {
       const originUrl = request.nextUrl.origin || process.env.NEXT_PUBLIC_APP_URL;
       await sendActivationEmailWorkflow({
@@ -196,10 +187,8 @@ export async function POST(request) {
       });
     } catch (emailErr) {
       console.error("[Register] Gagal mengirim email aktivasi:", emailErr.message);
-      // Akun tetap terdaftar belum aktif, user dapat meminta kirim ulang di layar berikutnya
     }
 
-    // 8. Kembalikan respon sukses verifikasi (TANPA cookie sesi login)
     return NextResponse.json(
       {
         success: true,

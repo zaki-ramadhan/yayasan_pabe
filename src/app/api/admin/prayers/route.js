@@ -48,7 +48,6 @@ export async function PATCH(request) {
     const body = await request.json();
     const { action, donationId, donationIds } = body;
 
-    // Penanganan Moderasi Massal (Bulk Moderation)
     if (action === "BULK_HIDE" || action === "BULK_SHOW") {
       let normalizedIds = donationIds;
       if (normalizedIds && typeof normalizedIds === "object" && !Array.isArray(normalizedIds)) {

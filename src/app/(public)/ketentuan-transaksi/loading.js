@@ -3,7 +3,6 @@ import { Skeleton } from "@/components/ui/Skeleton";
 export default function KetentuanTransaksiLoading() {
   return (
     <div className="w-full animate-pulse">
-      {/* Hero Header Banner - Centered Dark Theme */}
       <div className="relative w-full bg-slate-950 border-b border-slate-800 pt-10 sm:pt-14 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-3">
           <Skeleton className="h-8 sm:h-10 w-64 bg-slate-800 mx-auto rounded-lg" />
@@ -15,12 +14,10 @@ export default function KetentuanTransaksiLoading() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10 lg:space-y-12">
-        {/* Section 1: AkadTermsSection Skeleton (Tanpa outer border/padding) */}
         <div className="space-y-3">
           <Skeleton className="h-6 w-64 rounded" />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
-            {/* Card 0: Dark Slate Card */}
             <div className="p-4 sm:p-5 rounded-lg border border-slate-800 bg-slate-900 space-y-2 shadow-xs">
               <Skeleton className="h-5 w-40 bg-slate-700/80 rounded" />
               <div className="space-y-1.5 pt-0.5">
@@ -29,7 +26,6 @@ export default function KetentuanTransaksiLoading() {
               </div>
             </div>
 
-            {/* Card 1: White Card */}
             <div className="p-4 sm:p-5 rounded-lg border border-slate-200 bg-white space-y-2 shadow-2xs">
               <Skeleton className="h-5 w-36 rounded" />
               <div className="space-y-1.5 pt-0.5">
@@ -38,7 +34,6 @@ export default function KetentuanTransaksiLoading() {
               </div>
             </div>
 
-            {/* Card 2: White Card */}
             <div className="p-4 sm:p-5 rounded-lg border border-slate-200 bg-white space-y-2 shadow-2xs">
               <Skeleton className="h-5 w-44 rounded" />
               <div className="space-y-1.5 pt-0.5">
@@ -47,7 +42,6 @@ export default function KetentuanTransaksiLoading() {
               </div>
             </div>
 
-            {/* Card 3: Slate Themed */}
             <div className="p-4 sm:p-5 rounded-lg border border-slate-700/60 bg-slate-900 space-y-2 shadow-xs">
               <Skeleton className="h-5 w-40 bg-slate-700 rounded" />
               <div className="space-y-1.5 pt-0.5">
@@ -58,9 +52,7 @@ export default function KetentuanTransaksiLoading() {
           </div>
         </div>
 
-        {/* Section 2 & 3: Split Kanan-Kiri Tabel Batas Transaksi */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 items-start">
-          {/* Table 1: Virtual Account (VA) (2 channels) */}
           <div className="space-y-3">
             <Skeleton className="h-6 w-52 rounded" />
             <div className="rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
@@ -84,7 +76,6 @@ export default function KetentuanTransaksiLoading() {
             </div>
           </div>
 
-          {/* Table 2: E-Wallet & QRIS (5 channels) */}
           <div className="space-y-3">
             <Skeleton className="h-6 w-56 rounded" />
             <div className="rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden">

@@ -6,7 +6,6 @@ import { processScheduledRoutineDonations } from "@/services/routineDonationSche
  * Accepts Vercel Cron header or Bearer CRON_SECRET token.
  */
 function isAuthorized(request) {
-  // Izinkan pengujian langsung di lingkungan development lokal
   if (process.env.NODE_ENV === "development") {
     return true;
   }
@@ -14,12 +13,10 @@ function isAuthorized(request) {
   const cronSecret = process.env.CRON_SECRET;
   const authHeader = request.headers.get("authorization");
 
-  // Jika CRON_SECRET dikonfigurasi, wajibkan kecocokan Bearer token rahasia
   if (cronSecret) {
     return authHeader === `Bearer ${cronSecret}`;
   }
 
-  // Hanya izinkan header bawaan Vercel jika sistem memang berjalan di lingkungan Vercel
   const vercelCronHeader = request.headers.get("x-vercel-cron");
   if (process.env.VERCEL === "1" && vercelCronHeader) {
     return true;
@@ -71,7 +68,6 @@ export async function POST(request) {
     try {
       body = await request.json();
     } catch {
-      // Body kosong diperbolehkan
     }
 
     const { forceRoutineId } = body;

@@ -5,7 +5,6 @@ import { checkRateLimit } from "@/lib/rateLimit";
 import { validatePasswordInput } from "@/lib/security";
 
 export async function PUT(request) {
-  // 1. Rate Limiting ketat untuk mutasi kata sandi (Maks 5 per menit per IP untuk mencegah brute-force)
   const rateLimitResponse = checkRateLimit(request, {
     action: "update_password",
     limit: 5,
@@ -13,7 +12,6 @@ export async function PUT(request) {
   });
   if (rateLimitResponse) return rateLimitResponse;
 
-  // 2. Autentikasi Pengguna
   const { user: authUser, errorResponse } = await requireAuth(request);
   if (errorResponse) return errorResponse;
 
@@ -21,7 +19,6 @@ export async function PUT(request) {
     const body = await request.json();
     const { oldPassword, newPassword } = body;
 
-    // 3. Validasi Keberadaan Kata Sandi Saat Ini
     if (!oldPassword || typeof oldPassword !== "string" || !oldPassword.trim()) {
       return NextResponse.json(
         {
@@ -32,7 +29,6 @@ export async function PUT(request) {
       );
     }
 
-    // 4. Validasi Kata Sandi Baru
     const newPassValidation = validatePasswordInput(newPassword, "Kata sandi baru");
     if (!newPassValidation.isValid) {
       return NextResponse.json(
@@ -44,7 +40,6 @@ export async function PUT(request) {
       );
     }
 
-    // 5. Cegah kesamaan dengan kata sandi saat ini
     if (oldPassword === newPassword) {
       return NextResponse.json(
         {
@@ -55,7 +50,6 @@ export async function PUT(request) {
       );
     }
 
-    // Always enforce the authenticated user's email (Anti-IDOR)
     const result = await updateDonorPassword({
       userEmail: authUser.email,
       oldPassword,

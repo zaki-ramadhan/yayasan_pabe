@@ -43,13 +43,11 @@ export async function GET(request) {
     const page = searchParams.get("page") || "1";
     const limit = searchParams.get("limit") || "10";
 
-    // Strict Scope: Regular users can only access their own donations (Anti-IDOR)
     const isAdmin = authUser.role && authUser.role !== USER_ROLES.DONOR;
     const userEmail = (isAdmin && requestedEmail) ? requestedEmail : authUser.email;
     const userName = (isAdmin && requestedName) ? requestedName : authUser.name;
     const userPhone = authUser.phone || "";
 
-    // Proactive status reconciliation for recent pending donations with Midtrans
     if (getMidtransServerKey() && process.env.NODE_ENV !== "test") {
       try {
         const identityCondition = buildUserWhereClause(userEmail, userName, userPhone);

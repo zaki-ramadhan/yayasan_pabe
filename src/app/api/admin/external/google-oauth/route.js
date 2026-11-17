@@ -24,7 +24,6 @@ export async function GET(request) {
 
   const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID || "web-ypabe";
 
-  // Arahkan langsung ke halaman daftar Clients OAuth di Google Auth Platform (web-ypabe)
   const destinationUrl = `https://console.cloud.google.com/auth/clients?authuser=0&project=${projectId}&supportedpurview=project`;
   return NextResponse.redirect(destinationUrl, 307);
 }

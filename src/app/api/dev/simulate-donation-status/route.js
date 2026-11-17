@@ -8,7 +8,6 @@ import { broadcastAdminEvent } from "@/lib/sseBroadcast";
  * Dibatasi secara mutlak hanya untuk lingkungan development.
  */
 export async function POST(request) {
-  // Hard guard: 100% diblokir jika bukan development
   if (process.env.NODE_ENV !== "development") {
     return NextResponse.json(
       { success: false, message: "Akses ditolak. Fitur simulasi hanya tersedia pada mode development." },
@@ -41,7 +40,6 @@ export async function POST(request) {
     const previousStatus = donation.status;
     const wasPaid = previousStatus === "PAID";
 
-    // 1. Simulasi Pembayaran Berhasil (PAID)
     if (action === "PAID") {
       if (donation.status === "PAID") {
         return NextResponse.json({
@@ -62,7 +60,6 @@ export async function POST(request) {
       });
     }
 
-    // 2. Simulasi Waktu Pembayaran Habis (EXPIRED), Pembatalan (CANCELLED), atau Reset ke Menunggu (PENDING)
     if (action === "EXPIRED" || action === "CANCELLED" || action === "RESET_PENDING") {
       const targetStatus =
         action === "RESET_PENDING"
@@ -97,7 +94,6 @@ export async function POST(request) {
           },
         });
 
-        // Rekonsiliasi atomik total program jika status sebelumnya PAID (Rollback donasi)
         if (donation.campaignId) {
           const agg = await tx.donation.aggregate({
             where: { campaignId: donation.campaignId, status: "PAID" },

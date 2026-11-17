@@ -60,13 +60,11 @@ export default async function ArticleDetailPage({ params }) {
         label="Kembali ke Berita &amp; Artikel"
       />
 
-      {/* Title & Metadata Header */}
       <div className="space-y-3">
         <h1 className="text-2xl sm:text-3xl font-semibold text-slate-950 leading-tight">
           {article.title}
         </h1>
 
-        {/* Metadata Header */}
         <div className="flex items-center divide-x divide-slate-300 text-xs sm:text-sm text-slate-600 flex-wrap gap-y-1 pt-0.5">
           <span className="pr-3 font-semibold text-slate-900">{article.category}</span>
           {article.author && <span className="px-3">Oleh {article.author}</span>}
@@ -76,7 +74,6 @@ export default async function ArticleDetailPage({ params }) {
         </div>
       </div>
 
-      {/* Optional Featured Image with Left-Aligned Attribution Footer */}
       {article.bannerUrl && (
         <figure className="space-y-1.5">
           <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
@@ -107,12 +104,10 @@ export default async function ArticleDetailPage({ params }) {
         </figure>
       )}
 
-      {/* Article Content */}
       <div className="text-base text-slate-800 leading-relaxed space-y-4 whitespace-pre-line pt-1">
         {article.content}
       </div>
 
-      {/* Multi-Tags */}
       {Array.isArray(article.tags) && article.tags.length > 0 && (
         <div className="flex items-center gap-2 flex-wrap pt-4 border-t border-slate-200">
           <span className="text-xs font-medium text-slate-500 mr-1">
@@ -130,7 +125,6 @@ export default async function ArticleDetailPage({ params }) {
         </div>
       )}
 
-      {/* Interactive Like & Share Bar */}
       <ArticleActionBar
         articleId={article.id}
         slug={article.slug}
@@ -140,12 +134,9 @@ export default async function ArticleDetailPage({ params }) {
         description={article.excerpt}
       />
 
-      {/* Related Articles Recommendation */}
       <RelatedArticles currentArticle={article} allArticles={allArticles} />
 
-      {/* Donation Promo CTA Box (Atmospheric gradient overlay + semi-transparent bg image + 3D CTA button) */}
       <div className="relative overflow-hidden rounded-xl border border-slate-700/70 bg-slate-950 text-white p-5 sm:p-6 shadow-md mt-4">
-        {/* Background image + atmospheric bottom-anchored radial gradient */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
           <Image
             src={article.bannerUrl || "https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=800&q=80"}

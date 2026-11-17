@@ -20,7 +20,6 @@ export async function POST(request) {
     const body = await request.json();
     const { identifier, password, rememberMe, turnstileToken } = body || {};
 
-    // Validasi Anti-Bot Cloudflare Turnstile
     const clientIp = getClientIp(request);
     const turnstileCheck = await verifyTurnstileToken(turnstileToken, clientIp);
     if (!turnstileCheck.success) {
@@ -57,7 +56,6 @@ export async function POST(request) {
       );
     }
 
-    // 1. Look up user in Database
     let user = null;
     try {
       user = await prisma.user.findFirst({
@@ -72,7 +70,6 @@ export async function POST(request) {
       console.warn("DB login lookup fallback:", dbErr.message);
     }
 
-    // 1.1 Gatekeeper Pengurus Tanpa Akses Login (Internal Non-Login Staff)
     if (user?.email?.endsWith("@internal.yayasanpayungberkah.org")) {
       return NextResponse.json(
         {
@@ -83,7 +80,6 @@ export async function POST(request) {
       );
     }
 
-    // 2. If user exists in DB, verify password hash
     if (user) {
       if (!user.passwordHash) {
         return NextResponse.json(
@@ -106,7 +102,6 @@ export async function POST(request) {
         );
       }
 
-      // Gatekeeper Aktivasi Akun: Tolak login jika email belum diverifikasi
       if (user.isActive === false) {
         return NextResponse.json(
           {
@@ -120,7 +115,6 @@ export async function POST(request) {
       }
     }
 
-    // 3. Fallback to DEMO_USERS in development / demo mode only
     if (!user && (process.env.NODE_ENV !== "production" || process.env.ALLOW_DEMO_LOGIN === "true")) {
       const demoMatch = DEMO_USERS.find(
         (u) =>
@@ -155,7 +149,6 @@ export async function POST(request) {
       }
     }
 
-    // 4. Reject if account does not exist
     if (!user) {
       return NextResponse.json(
         {
@@ -166,7 +159,6 @@ export async function POST(request) {
       );
     }
 
-    // 5. If user matches configured Super Admin email/identifier, ensure role consistency
     const isSuper =
       isSuperAdminIdentifier(cleanIdentifier) ||
       (user && isSuperAdminIdentifier(user.username)) ||
@@ -188,11 +180,9 @@ export async function POST(request) {
 
     const cleanTitle = (user.title && user.title.includes("Ketua Yayasan")) ? "Super Admin" : (user.title || "Donatur Terdaftar");
 
-    // Calculate cookie expiration: 12-24h for Staff, 7-30d for Donors via SSOT helper
     const durationSec = getSessionDuration(user.role, rememberMe);
     const expiresAt = Date.now() + durationSec * 1000;
 
-    // Safe user response (exclude passwordHash)
     const safeUser = {
       id: user.id,
       name: user.name,

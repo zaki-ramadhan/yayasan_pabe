@@ -8,7 +8,6 @@ import { Widget2Icon as LayoutDashboard } from "@solar-icons/react/line-duotone/
 
 export default function AdminSegmentError({ error, reset }) {
   useEffect(() => {
-    // Log context error tanpa membocorkan kredensial sesi
     console.error("[Admin Segment Error]:", error?.message || error);
   }, [error]);
 

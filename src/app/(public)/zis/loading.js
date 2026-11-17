@@ -4,13 +4,11 @@ import { CampaignCardSkeleton } from "@/components/shared/CampaignCardSkeleton";
 export default function ZisLoading() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 animate-pulse">
-      {/* 1. Page Header Skeleton */}
       <div className="space-y-2 max-w-3xl">
         <Skeleton className="h-8 sm:h-9 w-72 max-w-full rounded-lg" />
         <Skeleton className="h-4 sm:h-5 w-full max-w-2xl rounded" />
       </div>
 
-      {/* 2. Search Bar & Status Controls Skeleton */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between">
           <div className="w-full sm:max-w-md">
@@ -28,7 +26,6 @@ export default function ZisLoading() {
           </div>
         </div>
 
-        {/* 4. Campaign Cards Grid Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <CampaignCardSkeleton key={n} />

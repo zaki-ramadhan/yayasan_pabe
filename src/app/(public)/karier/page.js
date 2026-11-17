@@ -51,17 +51,14 @@ export default function KarierPage() {
     fetchVacancies();
   }, []);
 
-  // Secure search change handler with validation & sanitization
   const handleSearchChange = (rawQuery) => {
     const sanitized = sanitizeSearchQuery(rawQuery);
     setSearchQuery(sanitized);
   };
 
-  // Filtered vacancies logic with debounced search matching
   const filteredJobs = useMemo(() => {
     return vacancies.filter((job) => {
 
-      // Debounced search matching
       if (debouncedSearchQuery.trim()) {
         const query = debouncedSearchQuery.toLowerCase();
         const matchesTitle = job.title.toLowerCase().includes(query);
@@ -72,12 +69,10 @@ export default function KarierPage() {
         }
       }
 
-      // Location matching
       if (location !== "Semua Lokasi" && job.location !== location) {
         return false;
       }
 
-      // Type matching
       if (type !== "Semua Tipe" && job.type !== type && !job.type.startsWith(type)) {
         return false;
       }
@@ -86,7 +81,6 @@ export default function KarierPage() {
     });
   }, [vacancies, debouncedSearchQuery, location, type]);
 
-  // Active job calculation
   const activeJob = useMemo(() => {
     if (filteredJobs.length === 0) return null;
     const found = filteredJobs.find((j) => j.id === activeJobId);
@@ -101,15 +95,12 @@ export default function KarierPage() {
 
   return (
     <div className="w-full">
-      {/* Full-width Hero Header with texture overlay background */}
       <CareerHeader
         title="Peluang Karier "
         description="Kami membuka peluang bagi individu yang berdedikasi untuk bergabung bersama kami dalam mewujudkan misi kemanusiaan dan pemberdayaan. Di halaman ini, Anda dapat menemukan informasi mengenai lowongan pekerjaan, proses rekrutmen, serta nilai-nilai yang kami pegang dalam bekerja bersama masyarakat."
       />
 
-      {/* Main Content Area bounded to max-w-7xl */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-6 pb-10 sm:pb-12 space-y-5">
-        {/* Filter & Search Bar with Debounce & Sanitization */}
         <CareerFilterBar
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
@@ -119,9 +110,7 @@ export default function KarierPage() {
           onTypeChange={setType}
         />
 
-        {/* Master-Detail Split Grid: Compact gap between left and right columns */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
-          {/* Left: Master List */}
           <div className="lg:col-span-5 space-y-3">
             <CareerMasterList
               jobs={filteredJobs}
@@ -135,7 +124,6 @@ export default function KarierPage() {
             />
           </div>
 
-          {/* Right: Sticky Detail Panel */}
           <div className="lg:col-span-7 lg:sticky lg:top-24">
             <CareerDetailPanel
               job={activeJob}

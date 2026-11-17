@@ -24,13 +24,10 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-2.5">
-      {/* 1. Metric Overview Cards */}
       <AdminMetricCards stats={stats} />
 
-      {/* 2. Donation & Cashflow Trend Analytics Chart */}
       <AdminDonationTrendCard initialTrends={trendData} />
 
-      {/* 3. Main Grid: Real-time Transactions + Priority Campaign Progress (Fit-Content) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-start">
         <div className="lg:col-span-8 xl:col-span-9 flex flex-col">
           <AdminRecentTransactionsCard

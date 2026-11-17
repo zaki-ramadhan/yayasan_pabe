@@ -76,7 +76,6 @@ export async function POST(request) {
     const body = await request.json().catch(() => ({}));
     const { token, newPassword, turnstileToken } = body || {};
 
-    // Validasi Anti-Bot Cloudflare Turnstile
     const clientIp = getClientIp(request);
     const turnstileCheck = await verifyTurnstileToken(turnstileToken, clientIp);
     if (!turnstileCheck.success) {

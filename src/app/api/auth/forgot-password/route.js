@@ -17,7 +17,6 @@ export async function POST(request) {
   let validatedEmail = null;
 
   try {
-    // 1. Rate Limit Proteksi IP: Maksimal 10 permintaan per IP per 15 menit (mencegah bot DoS massal)
     const rateLimitBlocked = isRateLimitDisabled
       ? null
       : checkRateLimit(request, {
@@ -30,7 +29,6 @@ export async function POST(request) {
     const body = await request.json().catch(() => ({}));
     const { email, turnstileToken } = body || {};
 
-    // Validasi Anti-Bot Cloudflare Turnstile
     const clientIp = getClientIp(request);
     const turnstileCheck = await verifyTurnstileToken(turnstileToken, clientIp);
     if (!turnstileCheck.success) {
@@ -65,7 +63,6 @@ export async function POST(request) {
 
     validatedEmail = cleanEmail;
 
-    // 2. Proteksi Kuota Harian Akun: Maksimal 3 kali per email per 24 jam (Anti-Flooding)
     if (!isRateLimitDisabled) {
       const dailyQuota = checkDailyPasswordResetLimit(cleanEmail);
       if (!dailyQuota.success) {
@@ -88,7 +85,6 @@ export async function POST(request) {
       }
     }
 
-    // Tentukan origin domain web
     const origin =
       request.headers.get("origin") ||
       request.nextUrl?.origin ||

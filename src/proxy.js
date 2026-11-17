@@ -41,7 +41,6 @@ export function proxy(request) {
     }
   }
 
-  // 0. Validasi Kriptografis Token Sesi (Anti-Session Forgery & Anti-Privilege Escalation)
   if (isSignedSessionTokenFormat(session)) {
     const verified = verifySessionToken(session);
     if (verified) {
@@ -52,12 +51,11 @@ export function proxy(request) {
       role = null;
     }
   } else if (process.env.NODE_ENV === "production") {
-    // Pada mode produksi, tolak seluruh format sesi unsigned/plain-text
     session = null;
     role = null;
   }
 
-  // 1. Backward-Compatibility Redirect: /dashboard/* -> /admin/*
+  // Backward-compatibility redirect: /dashboard/* -> /admin/*
   if (pathname === "/dashboard" || pathname.startsWith("/dashboard/")) {
     const newPath = pathname.replace(/^\/dashboard/, "/admin");
     const redirectUrl = new URL(newPath, request.url);
@@ -65,7 +63,6 @@ export function proxy(request) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // 2. Reverse Guard: If already authenticated, redirect away from /login & /register
   if (pathname === "/login" || pathname === "/register") {
     if (session) {
       const isStaff = Boolean(role && role !== "DONOR");
@@ -92,13 +89,11 @@ export function proxy(request) {
     return NextResponse.next();
   }
 
-  // 3. Guard Admin Panel Pages (/admin and /admin/*)
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     const isStaff = Boolean(session && role && role !== "DONOR");
 
-    // Jika belum login atau bukan staf yayasan:
     if (!isStaff) {
-      // Jika sudah login tapi akun Donatur biasa: cegah redirect loop dengan mengalihkan langsung ke dasbor donatur
+      // Prevent redirect loop for donor accounts
       if (session && role === "DONOR") {
         return NextResponse.redirect(new URL("/donatur/dashboard", request.url));
       }
@@ -112,7 +107,6 @@ export function proxy(request) {
       return redirectRes;
     }
 
-    // Validasi akses rute spesifik berdasarkan role (SSOT routeAccess)
     if (!canAccessAdminPath(pathname, role)) {
       return NextResponse.redirect(new URL("/admin", request.url));
     }
@@ -125,7 +119,6 @@ export function proxy(request) {
     return response;
   }
 
-  // 4. Guard Client Portal Pages (/donatur and /donatur/*)
   if (pathname === "/donatur" || pathname.startsWith("/donatur/")) {
     if (!session) {
       const loginUrl = new URL("/login", request.url);
@@ -153,11 +146,10 @@ export function proxy(request) {
     return response;
   }
 
-  // 5. Guard Sensitive Internal API Endpoints (/api/admin/*, /api/user/*, /api/dashboard/*)
   if (pathname.startsWith("/api/admin")) {
     const isStaff = Boolean(session && role && role !== "DONOR");
 
-    // Kembalikan 404 palsu untuk API admin agar bot scanner tidak mendeteksi endpoint admin
+    // Return 404 to avoid bot scanning and endpoint enumeration
     if (!isStaff) {
       return NextResponse.json(
         {

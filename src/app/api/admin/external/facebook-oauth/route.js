@@ -27,7 +27,6 @@ export async function GET(request) {
     process.env.FACEBOOK_APP_ID ||
     "1105847055308833";
 
-  // Arahkan ke halaman pengaturan dasar / credentials aplikasi di Meta for Developers
   const destinationUrl = `https://developers.facebook.com/apps/${appId}/settings/basic/`;
 
   return NextResponse.redirect(destinationUrl, 307);

@@ -13,7 +13,6 @@ export async function GET(request) {
     const requestedEmail = searchParams.get("email");
     const requestedId = searchParams.get("id");
 
-    // Only SUPER_ADMIN and ADMIN can inspect other users; other roles can only access their own profile
     const canInspectOthers = [USER_ROLES.SUPER_ADMIN, USER_ROLES.ADMIN].includes(authUser.role);
     const targetEmail = (canInspectOthers && requestedEmail) ? requestedEmail : authUser.email;
     const targetId = (canInspectOthers && requestedId) ? requestedId : authUser.id;
@@ -37,7 +36,6 @@ export async function GET(request) {
 }
 
 export async function PUT(request) {
-  // 1. Rate Limiting (Maks 20 per menit per IP untuk mencegah abuse)
   const rateLimitResponse = checkRateLimit(request, {
     action: "update_profile",
     limit: 20,
@@ -45,7 +43,6 @@ export async function PUT(request) {
   });
   if (rateLimitResponse) return rateLimitResponse;
 
-  // 2. Autentikasi Pengguna
   const { user: authUser, errorResponse } = await requireAuth(request);
   if (errorResponse) return errorResponse;
 
@@ -63,7 +60,6 @@ export async function PUT(request) {
       );
     }
 
-    // 3. Whitelist Kolom Profil (Perlindungan Anti-Mass Assignment / Anti-IDOR / Anti-Privilege Escalation)
     const ALLOWED_FIELDS = [
       "name",
       "city",
@@ -80,7 +76,6 @@ export async function PUT(request) {
       }
     }
 
-    // Always scope to the authenticated user's email (Anti-IDOR)
     const updatedUser = await updateDonorProfile({
       userEmail: authUser.email,
       profileData: safeProfileData,
@@ -104,7 +99,6 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
-  // 1. Rate Limiting (Maks 5 per menit untuk aksi destruktif)
   const rateLimitResponse = checkRateLimit(request, {
     action: "anonymize_profile",
     limit: 5,
@@ -112,7 +106,6 @@ export async function DELETE(request) {
   });
   if (rateLimitResponse) return rateLimitResponse;
 
-  // 2. Autentikasi Pengguna
   const { user: authUser, errorResponse } = await requireAuth(request);
   if (errorResponse) return errorResponse;
 
@@ -127,7 +120,6 @@ export async function DELETE(request) {
       message: result.message || "Akun Anda berhasil dihapus.",
     });
 
-    // Hapus cookie sesi agar klien langsung logout secara bersih
     response.cookies.delete("pabe_session");
     response.cookies.delete("pabe_role");
 

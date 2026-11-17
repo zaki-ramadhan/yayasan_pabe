@@ -49,16 +49,13 @@ export default async function TentangKamiPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-4">
-      {/* 1. Profile Header with Real Team Count & Dynamic Org Settings */}
       <AboutHeader
         orgSettings={orgSettings}
         volunteerCount={volunteerCount}
         leaders={leaders}
       />
 
-      {/* 2. Editorial 2-Column Content */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        {/* Main Column (8 Cols): Unified Editorial Section with Dashed Dividers */}
         <div className="lg:col-span-8 bg-white rounded-xl border border-slate-300 shadow-2xs overflow-hidden">
           <AboutStory orgSettings={orgSettings} />
           <DashedDivider className="px-4 sm:px-5" />
@@ -71,7 +68,6 @@ export default async function TentangKamiPage() {
           <AboutBankAccounts orgSettings={orgSettings} />
         </div>
 
-        {/* Sidebar Column (4 Cols): Unified Sidebar Card with Dynamic Legal & Contact */}
         <aside className="lg:col-span-4 sticky top-20">
           <AboutSidebarInfo orgSettings={orgSettings} />
         </aside>

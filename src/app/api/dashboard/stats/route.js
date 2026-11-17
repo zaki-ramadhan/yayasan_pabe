@@ -5,7 +5,6 @@ import { USER_ROLES } from "@/services/authService";
 import { formatPaymentChannel } from "@/lib/formatters";
 
 export async function GET(request) {
-  // Enforce staff/admin roles only (Anti-Data Leak)
   const { user: authUser, errorResponse } = await requireAuth(request, [
     USER_ROLES.SUPER_ADMIN,
     USER_ROLES.ADMIN,

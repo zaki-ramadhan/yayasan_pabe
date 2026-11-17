@@ -88,7 +88,6 @@ export async function DELETE(request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
-    // Jika dipanggil via JSON body { ids: [...] } (Bulk Delete)
     if (!id) {
       let body;
       try {

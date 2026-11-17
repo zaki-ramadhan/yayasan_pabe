@@ -40,28 +40,21 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-16 sm:space-y-20 lg:space-y-28 pb-20 sm:pb-24">
-      {/* 1. Hero Section with Quick Donate */}
       <HomeHero defaultCampaignSlug={quickDonateTargetSlug} />
 
-      {/* 2. Mitra & Lembaga Terkait */}
       <HomePartnersSection />
 
-      {/* 3. Program Donasi Pilihan */}
       <HomeFeaturedPrograms
         campaigns={featuredCampaigns}
         totalCount={activeCampaigns.length}
       />
 
-      {/* 4. Transparansi & Audit Keuangan */}
       <HomeTransparencySection metrics={metrics} />
 
-      {/* 5. Program Kerja Jangka Pendek & Jangka Panjang (Roadmap Strategis Yayasan) */}
       <HomeStrategicRoadmap />
 
-      {/* 6. Dokumentasi Media Sosial (Instagram Feed) */}
       <HomeInstagramFeed posts={instagramPosts} account={instagramAccount} />
 
-      {/* 6. Artikel & FAQ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           <div className="lg:col-span-7">
@@ -73,7 +66,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 7. Call To Action */}
       <HomeCtaSection defaultCampaignSlug={activeCampaigns[0]?.slug} />
     </div>
   );

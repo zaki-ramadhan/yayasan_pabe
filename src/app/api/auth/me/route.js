@@ -36,7 +36,6 @@ export async function GET(request) {
       },
     });
 
-    // Sinkronkan cookie role agar konsisten dengan autoritas server
     response.cookies.set("pabe_role", user.role, {
       path: "/",
       httpOnly: false,

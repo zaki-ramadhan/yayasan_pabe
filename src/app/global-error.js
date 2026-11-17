@@ -7,7 +7,6 @@ export default function GlobalError({ reset }) {
     <html lang="id">
       <body className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 font-sans text-slate-900 antialiased">
         <main className="w-full max-w-2xl text-center flex flex-col items-center justify-center py-8">
-          {/* Hero Illustration (1.5x lebih lebar) */}
           <div className="relative w-full max-w-[460px] sm:max-w-[540px] mb-3 sm:mb-4 flex justify-center">
             <Image
               src="/img/illustrations/error-500.svg?v=2"

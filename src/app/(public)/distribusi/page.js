@@ -50,13 +50,11 @@ export default async function DistribusiPage() {
       <DistributionHeader />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10 lg:space-y-12">
-        {/* Grid 2 Kolom: Laporan Chart Audit & Tren Penyaluran */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 pb-8 sm:pb-10 border-b border-slate-200">
           <DistributionAuditSection auditData={auditData} />
           <DistributionTrendSection trendData={trendData} />
         </div>
 
-        {/* Daftar Transparansi Penerima Manfaat Binaan (Setelah Seluruh Chart) */}
         <BeneficiaryDirectory
           initialBeneficiaries={beneficiaries}
           stats={beneficiaryStats}

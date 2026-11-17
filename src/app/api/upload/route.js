@@ -59,7 +59,6 @@ export async function POST(request) {
       );
     }
 
-    // Role-Based Authorization jika konteks mensyaratkan otentikasi/peran tertentu
     if (contextConfig.allowedRoles !== null) {
       const { errorResponse } = await requireAuth(request, contextConfig.allowedRoles);
       if (errorResponse) return errorResponse;
@@ -74,7 +73,6 @@ export async function POST(request) {
       originalName = file.name || "upload";
       declaredType = file.type;
     } else {
-      // Tolak pengunggahan via URL untuk konteks publik (misal pelamar lowongan kerja)
       if (contextConfig.allowedRoles === null) {
         return NextResponse.json(
           {
@@ -94,7 +92,6 @@ export async function POST(request) {
           arrayBuffer = await fetchRes.arrayBuffer();
           originalName = "pasted-image";
         } else {
-          // Validasi anti-SSRF: Cegah penyerangan ke private network & metadata endpoints
           let parsedUrl;
           try {
             parsedUrl = new URL(targetUrl);
@@ -154,7 +151,6 @@ export async function POST(request) {
             signal: AbortSignal.timeout(10000),
           });
 
-          // Validasi ulang URL final setelah redirect (Anti-Redirect SSRF Bypass)
           if (fetchRes.url) {
             try {
               const finalUrl = new URL(fetchRes.url);
@@ -239,7 +235,6 @@ export async function POST(request) {
       identifier: typeof identifier === "string" ? identifier.trim() : "",
     });
 
-    // Jika berkas utama berupa video dan poster pendamping disertakan, unggah cover .poster.webp
     let posterUrl = null;
     if (
       result?.mimeType?.startsWith("video/") &&
@@ -315,14 +310,12 @@ export async function DELETE(request) {
 
     let targetUrls = [];
 
-    // Baca dari query param jika ada
     const { searchParams } = new URL(request.url);
     const queryUrl = searchParams.get("url");
     if (queryUrl) {
       targetUrls.push(queryUrl);
     }
 
-    // Baca dari request body (mendukung JSON dan teks beacon)
     if (targetUrls.length === 0) {
       try {
         const contentType = request.headers.get("content-type") || "";
@@ -349,7 +342,6 @@ export async function DELETE(request) {
           }
         }
       } catch {
-        // Abaikan parse body error jika kosong
       }
     }
 

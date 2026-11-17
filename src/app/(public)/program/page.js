@@ -47,7 +47,6 @@ export default async function ProgramPage() {
         description="Pilih program donasi yang ingin Anda bantu. Seluruh donasi disalurkan secara amanah, tepat sasaran, dan dilaporkan secara berkala kepada donatur."
       />
 
-      {/* Catalog Component with Suspense */}
       <Suspense
         fallback={
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">

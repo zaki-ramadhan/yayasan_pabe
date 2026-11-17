@@ -12,7 +12,6 @@ import { ASSET_PATHS } from "@/lib/assetConstants";
 export default function InvoiceLoading() {
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-4">
-      {/* Brand Header Sederhana */}
       <div className="flex items-center justify-between pb-1">
         <div className="inline-flex items-center gap-2.5 select-none">
           <div className="relative w-8 h-8 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center">
@@ -32,7 +31,6 @@ export default function InvoiceLoading() {
         <Skeleton className="w-8.5 h-8.5 rounded-full" />
       </div>
 
-      {/* 1. Breadcrumb (Identical to actual page, prevents layout shift) */}
       <Breadcrumb
         items={[
           { label: "Beranda", href: "/" },
@@ -41,12 +39,9 @@ export default function InvoiceLoading() {
         ]}
       />
 
-      {/* 2. Two-Column Checkout Layout (7 Cols Left, 5 Cols Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        {/* SISI KIRI: Metode Pembayaran (QRIS) & Instruksi */}
         <div className="lg:col-span-7 space-y-4">
           <div className="bg-white rounded-xl border border-slate-300 px-5 pt-5 pb-3.5 sm:px-6 sm:pt-6 sm:pb-4 space-y-4 shadow-xs">
-            {/* Header: Judul Metode & Badge */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div className="space-y-1.5">
                 <Skeleton className="h-5 w-56 sm:w-64 rounded-md" />
@@ -59,7 +54,6 @@ export default function InvoiceLoading() {
               </span>
             </div>
 
-            {/* Area QR Code (Square QRIS) */}
             <div className="flex flex-col items-center justify-center py-2 space-y-3.5 text-center">
               <div className="p-3 bg-white rounded-xl border border-slate-300 shadow-2xs">
                 <Skeleton className="w-[210px] h-[210px] sm:w-[230px] sm:h-[230px] rounded-lg" />
@@ -81,7 +75,6 @@ export default function InvoiceLoading() {
               </div>
             </div>
 
-            {/* Petunjuk Transfer Accordion (Single Row dengan Garis Putus-putus) */}
             <div className="space-y-1">
               <DashedDivider />
               <div className="flex items-center justify-between pt-2.5 pb-0 text-slate-800">
@@ -92,10 +85,8 @@ export default function InvoiceLoading() {
           </div>
         </div>
 
-        {/* SISI KANAN: Lembar Tagihan Donasi (Ticket Receipt) */}
         <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-20">
           <div className="relative">
-            {/* Section Atas Tiket: Header Tagihan & Batas Waktu */}
             <div className="bg-white rounded-t-xl border-t border-x border-slate-300 p-5 sm:p-6 sm:py-4 pb-4 space-y-2.5">
               <div className="flex items-center justify-between gap-2">
                 <Skeleton className="h-4 w-28 rounded" />
@@ -108,9 +99,7 @@ export default function InvoiceLoading() {
               </div>
             </div>
 
-            {/* Divider Perforasi Tiket dengan Notch Sobekan Kiri & Kanan */}
             <div className="relative h-5 flex items-center bg-white -my-px">
-              {/* Notch Kiri */}
               <svg
                 width="10"
                 height="20"
@@ -124,7 +113,6 @@ export default function InvoiceLoading() {
 
               <DashedDivider className="mx-3" />
 
-              {/* Notch Kanan */}
               <svg
                 width="10"
                 height="20"
@@ -137,21 +125,17 @@ export default function InvoiceLoading() {
               </svg>
             </div>
 
-            {/* Section Bawah Tiket: Total & Rincian Transaksi */}
             <div className="bg-white border-x border-slate-300 p-5 sm:p-6 sm:py-4 pt-3 space-y-4">
-              {/* Total Transfer Row */}
               <div className="space-y-1">
                 <span className="text-sm text-slate-600 block">Total yang Harus Ditransfer</span>
                 <Skeleton className="h-8 w-40 rounded-md" />
                 <Skeleton className="h-3.5 w-full max-w-sm rounded pt-0.5" />
               </div>
 
-              {/* Rincian Transaksi Key-Value List */}
               <div className="space-y-3 pb-1">
                 <span className="text-sm text-slate-600 block">Rincian Donasi</span>
 
                 <div className="space-y-2.5 text-sm">
-                  {/* Campaign Mini Item */}
                   <div className="flex items-center gap-3 pt-0.5 pb-1">
                     <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-md bg-white border border-slate-200 shrink-0 p-1 flex items-center justify-center">
                       <Image
@@ -165,7 +149,6 @@ export default function InvoiceLoading() {
                     <Skeleton className="h-4 w-44 rounded flex-1" />
                   </div>
 
-                  {/* 7 Key-Value Data Rows (Sesuai Foto 1) */}
                   <div className="flex justify-between items-center text-slate-600 pt-1">
                     <span className="shrink-0">Donatur</span>
                     <Skeleton className="h-4 w-28 rounded" />
@@ -194,7 +177,6 @@ export default function InvoiceLoading() {
               </div>
             </div>
 
-            {/* Sisi Bawah Bergerigi Lingkaran Halus (Scalloped Edges) */}
             <div className="relative w-full h-3.5 select-none -mt-px overflow-hidden border-x border-slate-300">
               <svg
                 className="w-full h-3.5 block"
@@ -229,7 +211,6 @@ export default function InvoiceLoading() {
             </div>
           </div>
 
-          {/* Action Buttons Skeleton (Matches InvoiceActions: Bagikan ke WA & Lihat Program Lainnya) */}
           <div className="flex flex-col gap-2 pt-1">
             <Skeleton className="h-10 w-full rounded-lg" />
             <Skeleton className="h-10 w-full rounded-lg" />

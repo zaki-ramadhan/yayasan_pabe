@@ -16,7 +16,6 @@ export async function POST(request) {
   let validatedEmail = null;
 
   try {
-    // 1. Rate Limit Proteksi IP: Maksimal 10 permintaan per IP per 15 menit
     const rateLimitBlocked = isRateLimitDisabled
       ? null
       : checkRateLimit(request, {
@@ -50,7 +49,6 @@ export async function POST(request) {
 
     validatedEmail = cleanEmail;
 
-    // 2. Proteksi Kuota Harian Akun: Maksimal 3 kali kirim ulang per email per 24 jam (Anti-Flooding)
     if (!isRateLimitDisabled) {
       const dailyQuota = checkDailyActivationResendLimit(cleanEmail);
       if (!dailyQuota.success) {

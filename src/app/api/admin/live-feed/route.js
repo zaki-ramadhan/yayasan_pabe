@@ -29,7 +29,6 @@ export async function GET(request) {
         encoder.encode(`event: connected\ndata: ${JSON.stringify({ status: "connected" })}\n\n`)
       );
 
-      // Heartbeat comment ping setiap 25 detik agar koneksi tidak diputus oleh proxy/Cloudflare
       heartbeatInterval = setInterval(() => {
         try {
           controller.enqueue(encoder.encode(": ping\n\n"));

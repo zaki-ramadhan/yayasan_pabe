@@ -45,19 +45,17 @@ export async function GET(request, { params }) {
     rawPath.pop();
   }
 
-  // 1. Anti Path-Traversal Guard
   if (rawPath.some((seg) => seg === ".." || seg === "." || seg.includes("\\") || seg.includes("\0"))) {
     return new NextResponse("Akses path tidak valid", { status: 400 });
   }
 
   const key = rawPath.join("/");
 
-  // 2. Proteksi Mutlak: Larangan akses publik ke arsip pencadangan database
   if (key.startsWith("backups/") || key.startsWith("backups")) {
     return new NextResponse("Akses ke direktori arsip pencadangan dilarang (Forbidden)", { status: 403 });
   }
 
-  // 3. Kepatuhan UU PDP No. 27/2022: Akses berkas resume pelamar (PII) khusus administrator
+  // Kepatuhan UU PDP No. 27/2022: Akses berkas resume pelamar (PII) khusus administrator
   const isResume = key.startsWith("careers/resumes/");
   if (isResume) {
     const authResult = await getAuthenticatedUser(request);

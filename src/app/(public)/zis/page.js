@@ -44,7 +44,6 @@ export default async function ZisPage() {
         description="Pilih pos penyaluran zakat, infak, dan sedekah yang ingin Anda tunaikan. Seluruh dana dikelola secara amanah dan disalurkan tepat sasaran kepada mustahik 8 asnaf binaan yayasan."
       />
 
-      {/* ZIS Catalog Component with Suspense Fallback */}
       <Suspense
         fallback={
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">

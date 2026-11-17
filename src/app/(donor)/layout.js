@@ -30,7 +30,6 @@ export default async function DonorLayout({ children }) {
     redirect("/login?redirect=/donatur/dashboard");
   }
 
-  // Jika akun adalah staf/admin, arahkan langsung ke panel admin yayasan
   if (user.role && user.role !== "DONOR") {
     redirect("/admin");
   }

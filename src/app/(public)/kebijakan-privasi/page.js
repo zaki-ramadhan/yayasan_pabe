@@ -91,7 +91,6 @@ export default function KebijakanPrivasiPage() {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <article className="rounded-xl border border-slate-200 bg-white p-6 sm:p-8 lg:p-10 shadow-2xs divide-y divide-slate-100">
-          {/* Header & Pengantar Kebijakan */}
           <div className="pb-6 sm:pb-8 space-y-2">
             <h2 className="text-lg sm:text-xl font-semibold text-slate-950">
               Prinsip amanah &amp; keterbukaan data
@@ -104,7 +103,6 @@ export default function KebijakanPrivasiPage() {
             </p>
           </div>
 
-          {/* Konten Poin Kebijakan Privasi Terpadu */}
           <div className="pt-6 sm:pt-8 space-y-8">
             {PRIVACY_SECTIONS.map((section) => (
               <section key={section.title} className="space-y-3">
@@ -112,7 +110,6 @@ export default function KebijakanPrivasiPage() {
                   {section.title}
                 </h3>
 
-                {/* Konten Menjorok ke Dalam (Indented) */}
                 <div className="pl-4 sm:pl-6 space-y-3">
                   {section.paragraphs?.map((paragraph, idx) => (
                     <p key={idx} className="text-sm text-slate-600 leading-relaxed">

@@ -25,13 +25,11 @@ export async function GET(request) {
         Buffer.from(stateRaw, stateRaw.includes("-") || stateRaw.includes("_") ? "base64url" : "base64").toString("utf-8")
       );
 
-      // Verifikasi CSRF token jika tersimpan di cookie
       if (storedCsrfToken && parsed.csrfToken && storedCsrfToken !== parsed.csrfToken) {
         return NextResponse.redirect(`${origin}/login?error=csrf_token_mismatch`);
       }
 
       if (parsed.callbackUrl && typeof parsed.callbackUrl === "string") {
-        // Cegah Open Redirect: Wajib relative path yang diawali satu slash '/'
         const isSafePath = parsed.callbackUrl.startsWith("/") && !parsed.callbackUrl.startsWith("//");
         if (isSafePath) {
           callbackUrl = parsed.callbackUrl === "/dashboard" || parsed.callbackUrl.startsWith("/dashboard/")
@@ -60,7 +58,6 @@ export async function GET(request) {
   try {
     const redirectUri = `${origin}/api/auth/callback/google`;
 
-    // 1. Exchange code for tokens
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -81,7 +78,6 @@ export async function GET(request) {
 
     const tokens = await tokenResponse.json();
 
-    // 2. Fetch User Profile Info
     const userInfoResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
       headers: { Authorization: `Bearer ${tokens.access_token}` },
     });
@@ -96,7 +92,6 @@ export async function GET(request) {
       return NextResponse.redirect(`${origin}/login?error=no_email_provided`);
     }
 
-    // 3. Upsert User in PostgreSQL Database via Prisma (with resilient fallback)
     const sanitizedUsername = profile.email
       .split("@")[0]
       .toLowerCase()
@@ -204,7 +199,6 @@ export async function GET(request) {
       sessionIssuedAt: Date.now(),
     };
 
-    // 4. Return HTML bridge to sync localStorage session and redirect smoothly
     const sessionJson = JSON.stringify(sessionPayload).replace(/</g, "\\u003c");
     const isStaffRole = userRole && userRole !== USER_ROLES.DONOR;
     let targetUrl;
@@ -349,7 +343,6 @@ export async function GET(request) {
       headers: { "Content-Type": "text/html; charset=utf-8" },
     });
 
-    // Set secure session cookie with role-based maxAge (httpOnly untuk proteksi sesi server)
     const cookieOpts = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

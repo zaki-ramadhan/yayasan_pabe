@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/Button";
 
 export default function GlobalRouteError({ error, reset }) {
   useEffect(() => {
-    // Log error secara aman tanpa membocorkan data sensitif pengguna
     if (process.env.NODE_ENV !== "production") {
       console.error("[App Error Boundary]:", error);
     }

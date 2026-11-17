@@ -8,11 +8,9 @@ import { HomeInstagramSkeleton } from "@/components/home/HomeInstagramSkeleton";
 export default function HomeLoading() {
   return (
     <div className="space-y-16 sm:space-y-20 lg:space-y-28 pb-20 sm:pb-24 animate-pulse">
-      {/* 1. Hero Section with Quick Donate (Light theme matching HomeHero) */}
       <section className="relative overflow-hidden border-b border-slate-300 py-14 sm:py-20 bg-slate-50/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12">
-            {/* Left: Headline, Subtitle & Buttons */}
             <div className="flex-1 max-w-2xl space-y-6">
               <div className="space-y-3">
                 <Skeleton className="h-9 sm:h-11 lg:h-12 w-full max-w-xl rounded-lg" />
@@ -30,7 +28,6 @@ export default function HomeLoading() {
               </div>
             </div>
 
-            {/* Right: Quick Donate Folder Skeleton */}
             <div className="w-full lg:w-[500px] shrink-0 flex justify-center lg:justify-end">
               <div className="relative w-full aspect-[592/458] min-h-[380px] sm:min-h-[390px]">
                 <Image
@@ -63,7 +60,6 @@ export default function HomeLoading() {
         </div>
       </section>
 
-      {/* 2. Mitra & Lembaga Resmi Section (Centered Header & Borderless Logos) */}
       <section>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
@@ -79,9 +75,7 @@ export default function HomeLoading() {
         </div>
       </section>
 
-      {/* 3. Program Donasi Pilihan (Modern Split Layout: Sticky Header Kiri, Grid 2x2 Kanan) */}
       <section className="relative overflow-hidden bg-slate-100/80 border-y border-slate-200 py-12 sm:py-16">
-        {/* Background Line Decoration Overlay (Full Lebar & Tinggi, Opacity 20%) */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
           <Image
             src="/img/decorations/line-accent.svg"
@@ -96,7 +90,6 @@ export default function HomeLoading() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-            {/* Kolom Kiri: Sticky Header Skeleton */}
             <div className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
               <div className="space-y-2 sm:space-y-2.5">
                 <Skeleton className="h-8 sm:h-9 lg:h-10 w-72 max-w-full rounded-lg" />
@@ -106,13 +99,11 @@ export default function HomeLoading() {
                 </div>
               </div>
 
-              {/* Action Button Skeleton */}
               <div className="pt-1">
                 <Skeleton className="h-9 sm:h-9.5 w-48 rounded-lg" />
               </div>
             </div>
 
-            {/* Kolom Kanan: Grid 2x2 Kartu Program Minimalis (4 Kartu) */}
             <div className="lg:col-span-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 {[1, 2, 3, 4].map((i) => (
@@ -126,7 +117,6 @@ export default function HomeLoading() {
         </div>
       </section>
 
-      {/* 4. Transparansi & Audit Keuangan (12-col grid: Chart on Left, Summary on Right) */}
       <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
@@ -135,7 +125,6 @@ export default function HomeLoading() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch pt-2">
-            {/* Chart Skeleton (8 col) */}
             <div className="lg:col-span-8 bg-white rounded-xl border border-slate-300 p-5 sm:p-6 space-y-4 h-[380px] flex flex-col justify-between">
               <div className="flex justify-between items-center">
                 <Skeleton className="h-5 w-44 rounded" />
@@ -149,7 +138,6 @@ export default function HomeLoading() {
               </div>
             </div>
 
-            {/* Summary Card Skeleton (4 col) */}
             <div className="lg:col-span-4 bg-white rounded-xl border border-slate-300 p-5 sm:p-6 space-y-4 h-[380px] flex flex-col justify-between">
               <div className="space-y-1.5">
                 <Skeleton className="h-5 w-36 rounded" />
@@ -165,16 +153,12 @@ export default function HomeLoading() {
         </div>
       </section>
 
-      {/* 5. Program Kerja Jangka Pendek & Jangka Panjang (Roadmap Section) */}
       <HomeStrategicRoadmapSkeleton />
 
-      {/* 6. Dokumentasi Media Sosial (Instagram Feed Section) */}
       <HomeInstagramSkeleton />
 
-      {/* 6. Artikel & FAQ Grid Section (7 col Articles, 5 col FAQ) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-          {/* Articles Digest (7 col) */}
           <div className="lg:col-span-7 space-y-4">
             <div className="flex items-center justify-between">
               <Skeleton className="h-6 sm:h-7 w-48 sm:w-52 rounded-lg" />
@@ -188,7 +172,6 @@ export default function HomeLoading() {
             </div>
           </div>
 
-          {/* FAQ Accordion (5 col) */}
           <div className="lg:col-span-5 space-y-4">
             <Skeleton className="h-6 sm:h-7 w-44 sm:w-48 rounded-lg" />
 
@@ -207,7 +190,6 @@ export default function HomeLoading() {
         </div>
       </section>
 
-      {/* 7. Call To Action Banner Skeleton */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="rounded-2xl sm:rounded-3xl p-5 sm:p-7 bg-slate-900 border border-slate-800">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">

@@ -37,7 +37,6 @@ export async function PUT(request) {
     const body = await request.json();
     const updated = await updateOrgSettings(body, user);
 
-    // Invalidate Next.js server cache agar admin form dan halaman publik langsung menyajikan data terbaru
     revalidatePath("/admin/pengaturan");
     revalidatePath("/tentang-kami");
     revalidatePath("/");

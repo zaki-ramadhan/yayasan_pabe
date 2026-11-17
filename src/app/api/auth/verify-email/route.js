@@ -30,7 +30,6 @@ export async function GET(request) {
     );
   }
 
-  // Sukses: Redirect ke halaman login dengan parameter verified=true
   return NextResponse.redirect(
     `${baseUrl}/login?verified=true`
   );

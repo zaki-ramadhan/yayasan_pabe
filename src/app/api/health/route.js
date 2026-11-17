@@ -5,7 +5,6 @@ import { checkRateLimit } from "@/lib/rateLimit";
 export const dynamic = "force-dynamic";
 
 export async function GET(request) {
-  // Cegah spam scraping pada endpoint status
   const rateLimitBlocked = checkRateLimit(request, {
     action: "health_check",
     limit: 60,
@@ -16,7 +15,6 @@ export async function GET(request) {
   const startTime = Date.now();
 
   try {
-    // Query ultra-ringan tanpa scanning tabel (< 1ms)
     await prisma.$queryRaw`SELECT 1`;
     const latencyMs = Date.now() - startTime;
 

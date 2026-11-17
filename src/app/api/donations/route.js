@@ -89,7 +89,6 @@ export async function POST(request) {
 
     const body = await request.json();
 
-    // Validasi Anti-Bot Cloudflare Turnstile
     const clientIp = getClientIp(request);
     const turnstileCheck = await verifyTurnstileToken(body.turnstileToken, clientIp);
     if (!turnstileCheck.success) {
@@ -103,7 +102,6 @@ export async function POST(request) {
       );
     }
 
-    // 1. Enforce Server-Side Amount Validation (Channel-Specific Limits)
     const amountVal = validateDonationAmount(body.amount, body.paymentChannelId || body.paymentChannel);
     if (!amountVal.isValid) {
       return NextResponse.json(
@@ -112,7 +110,6 @@ export async function POST(request) {
       );
     }
 
-    // 2. Validate Donor Name if not anonymous
     if (!body.isAnonymous) {
       const nameVal = validateName(body.donorName);
       if (!nameVal.isValid) {
@@ -123,7 +120,6 @@ export async function POST(request) {
       }
     }
 
-    // 3. Validate Phone if supplied
     if (body.donorPhone) {
       const phoneVal = validatePhone(body.donorPhone);
       if (!phoneVal.isValid) {
@@ -134,7 +130,6 @@ export async function POST(request) {
       }
     }
 
-    // 4. Sanitize internal-only fields (prevent external clients forging routine idempotency or arbitrary avatar URLs)
     const authState = await getAuthenticatedUser(request);
     const sessionUser = authState?.user || null;
     const rawIdempotencyKey =

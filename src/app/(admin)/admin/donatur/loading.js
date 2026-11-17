@@ -11,7 +11,6 @@ import {
 export default function AdminDonorsLoading() {
   return (
     <div className="space-y-4">
-      {/* Toolbar Skeleton */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-pulse">
         <div className="flex items-center gap-2 flex-1 max-w-sm">
           <div className="h-10 w-full bg-slate-200/80 rounded-md" />
@@ -21,7 +20,6 @@ export default function AdminDonorsLoading() {
         </div>
       </div>
 
-      {/* Table Skeleton */}
       <TableContainer>
         <Table>
           <TableHeader>

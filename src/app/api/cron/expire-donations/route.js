@@ -79,7 +79,6 @@ export async function POST(request) {
     try {
       body = await request.json();
     } catch {
-      // Body kosong diperbolehkan
     }
 
     const limit = parseInt(body.limit, 10) || 50;

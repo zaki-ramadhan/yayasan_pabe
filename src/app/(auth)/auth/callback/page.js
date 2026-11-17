@@ -49,7 +49,6 @@ function AuthCallbackContent() {
           throw new Error("Format profil tidak valid.");
         }
 
-        // Save user session
         loginUser(user);
 
         const providerLabel =

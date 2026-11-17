@@ -22,7 +22,6 @@ export async function GET(request) {
     process.env.NEXT_PUBLIC_FACEBOOK_APP_ID || process.env.FACEBOOK_APP_ID;
   const appSecret = process.env.FACEBOOK_APP_SECRET;
 
-  // Retrieve stored cookies
   const cookies = request.cookies;
   const storedState = cookies.get("pabe_fb_oauth_state")?.value;
   const authMode = cookies.get("pabe_auth_mode")?.value || "login";
@@ -30,7 +29,6 @@ export async function GET(request) {
 
   const fallbackBaseUrl = authMode === "register" ? "/register" : "/login";
 
-  // Handle user cancellation or Facebook authorization error
   if (error || !code) {
     const errorRedirect = new URL(fallbackBaseUrl, origin);
     errorRedirect.searchParams.set(
@@ -47,7 +45,6 @@ export async function GET(request) {
     return res;
   }
 
-  // Validate CSRF state
   if (!storedState || storedState !== state) {
     const invalidStateRedirect = new URL(fallbackBaseUrl, origin);
     invalidStateRedirect.searchParams.set("error", "fb_state_mismatch");
@@ -71,7 +68,6 @@ export async function GET(request) {
   try {
     const callbackUrl = `${origin}/api/auth/callback/facebook`;
 
-    // 1. Exchange code for Facebook Graph API access token
     const tokenUrl = new URL("https://graph.facebook.com/v19.0/oauth/access_token");
     tokenUrl.searchParams.set("client_id", appId);
     tokenUrl.searchParams.set("client_secret", appSecret);
@@ -99,7 +95,6 @@ export async function GET(request) {
 
     const accessToken = tokenData.access_token;
 
-    // 2. Fetch User Profile from Facebook Graph API
     const profileUrl = new URL("https://graph.facebook.com/v19.0/me");
     profileUrl.searchParams.set(
       "fields",
@@ -126,7 +121,6 @@ export async function GET(request) {
       return res;
     }
 
-    // 3. Format standardized User object and resolve Avatar
     const cleanName = profileData.name || "Donatur Facebook";
     const initials = cleanName
       .trim()
@@ -144,7 +138,6 @@ export async function GET(request) {
 
     let fbAvatar = profileData.picture?.data?.url || null;
 
-    // Resilient fallback: Query dedicated /me/picture endpoint if profileData didn't return a direct picture URL
     if (!fbAvatar && profileData.id) {
       try {
         const picUrl = new URL(`https://graph.facebook.com/v19.0/${profileData.id}/picture`);

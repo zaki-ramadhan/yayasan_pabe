@@ -17,7 +17,6 @@ export default async function AdminUsersPage() {
         description="Kelola akun staf, peran akses, dan status keaktifan pengurus."
       />
 
-      {/* Daftar Personil Akun Pengurus */}
       <AdminUserTable initialData={usersData} />
     </div>
   );

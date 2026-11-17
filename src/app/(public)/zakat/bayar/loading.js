@@ -3,7 +3,6 @@ import { Skeleton } from "@/components/ui/Skeleton";
 export default function ZakatBayarLoading() {
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-4">
-      {/* Header Skeleton */}
       <div className="space-y-4">
         <Skeleton className="h-4 w-52 rounded" />
         <div className="space-y-1.5">
@@ -12,11 +11,8 @@ export default function ZakatBayarLoading() {
         </div>
       </div>
 
-      {/* Grid 2 Kolom Skeleton (7 Kolom Kiri & 5 Kolom Kanan) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        {/* Kolom Kiri: Pemilih Jenis, Preset Nominal, Input Muzakki & Kanal Bayar (7 Kolom) */}
         <div className="lg:col-span-7 space-y-4">
-          {/* 1. Pemilih Jenis Zakat Skeleton */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 pb-2 border-b border-slate-200">
               <div className="space-y-1">
@@ -44,29 +40,24 @@ export default function ZakatBayarLoading() {
             </div>
           </div>
 
-          {/* 2. Nominal Presets & Custom Input Skeleton */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
             <div className="space-y-1 pb-2 border-b border-slate-200">
               <Skeleton className="h-5 w-36 rounded" />
               <Skeleton className="h-4 w-60 rounded" />
             </div>
-            {/* Grid 6 Tombol Preset */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <Skeleton key={`preset-skel-${i}`} className="h-11 w-full rounded-lg" />
               ))}
             </div>
-            {/* Input Nominal Kustom */}
             <Skeleton className="h-12 w-full rounded-lg" />
           </div>
 
-          {/* 3. Data Identitas Muzakki Skeleton */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
             <div className="space-y-1 pb-2 border-b border-slate-200">
               <Skeleton className="h-5 w-44 rounded" />
               <Skeleton className="h-4 w-72 rounded" />
             </div>
-            {/* Checkbox Hamba Allah */}
             <div className="flex items-start gap-3 p-3.5 rounded-lg border border-slate-200 bg-slate-50">
               <Skeleton className="w-4 h-4 rounded mt-0.5 shrink-0" />
               <div className="space-y-1.5 flex-1">
@@ -74,27 +65,21 @@ export default function ZakatBayarLoading() {
                 <Skeleton className="h-3 w-40 rounded" />
               </div>
             </div>
-            {/* Nama Lengkap */}
             <Skeleton className="h-11 w-full rounded-lg" />
-            {/* Email & Kontak Telepon Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               <Skeleton className="h-11 w-full rounded-lg" />
               <Skeleton className="h-11 w-full rounded-lg" />
             </div>
-            {/* NPWP / NIK */}
             <Skeleton className="h-11 w-full rounded-lg" />
-            {/* Doa Muzakki */}
             <Skeleton className="h-20 w-full rounded-lg" />
           </div>
 
-          {/* 4. Kanal Pembayaran Skeleton */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
             <div className="space-y-1">
               <Skeleton className="h-5 w-48 rounded" />
               <Skeleton className="h-4 w-72 rounded" />
             </div>
             <div className="space-y-4">
-              {/* Kategori 1: QRIS & E-Wallet */}
               <div className="space-y-2">
                 <Skeleton className="h-4 w-28 rounded" />
                 <div className="space-y-2">
@@ -110,7 +95,6 @@ export default function ZakatBayarLoading() {
                   ))}
                 </div>
               </div>
-              {/* Kategori 2: Virtual Account Bank */}
               <div className="space-y-2">
                 <Skeleton className="h-4 w-36 rounded" />
                 <div className="space-y-2">
@@ -130,9 +114,7 @@ export default function ZakatBayarLoading() {
           </div>
         </div>
 
-        {/* Kolom Kanan: Sticky Akad & Ringkasan (5 Kolom) */}
         <div className="lg:col-span-5 lg:sticky lg:top-20 space-y-4">
-          {/* Akad & Niat Card Skeleton */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-3.5 shadow-xs">
             <div className="space-y-1 pb-3 border-b border-slate-200">
               <Skeleton className="h-5 w-48 rounded" />
@@ -145,7 +127,6 @@ export default function ZakatBayarLoading() {
             </div>
           </div>
 
-          {/* Ringkasan Zakat Card Skeleton */}
           <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-300 space-y-4 shadow-xs">
             <div className="space-y-1 pb-3 border-b border-slate-200">
               <Skeleton className="h-5 w-36 rounded" />

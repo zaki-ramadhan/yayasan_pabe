@@ -47,7 +47,6 @@ export async function POST(request) {
       domainStatus = parsed.status;
       rawStatus = parsed.rawStatus.toUpperCase();
     } else {
-      // Fallback hanya diizinkan untuk unit test otomatis internal
       const isTestEnv = process.env.NODE_ENV === "test" || process.env.VITEST;
       if (!isTestEnv) {
         return NextResponse.json(
@@ -71,7 +70,6 @@ export async function POST(request) {
       );
     }
 
-    // Eksekusi mutasi atomik
     let updated = null;
     let previousStatus = null;
 
@@ -95,7 +93,6 @@ export async function POST(request) {
 
         previousStatus = donation.status;
 
-        // Idempotensi: jika sudah PAID, jangan ubah ke EXPIRED atau CANCELLED
         if (donation.status === "PAID") {
           return donation;
         }

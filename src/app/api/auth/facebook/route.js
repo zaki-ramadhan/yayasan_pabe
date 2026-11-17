@@ -27,7 +27,6 @@ export async function GET(request) {
     return NextResponse.redirect(errorUrl);
   }
 
-  // Generate secure CSRF state token
   const state = crypto.randomBytes(24).toString("hex");
   const callbackUrl = `${origin}/api/auth/callback/facebook`;
 
@@ -45,10 +44,9 @@ export async function GET(request) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 10, // 10 minutes
+    maxAge: 60 * 10,
   };
 
-  // Store temporary state and mode in cookies for CSRF verification
   response.cookies.set("pabe_fb_oauth_state", state, cookieOpts);
   response.cookies.set("pabe_auth_mode", mode, cookieOpts);
   response.cookies.set("pabe_auth_redirect", callbackUrlParam, cookieOpts);

@@ -27,7 +27,6 @@ export async function GET(request) {
         where: { year: parseInt(year, 10) || 2025 },
       }).catch(() => null);
 
-      // Jika ada berkas PDF fisik yang diunggah oleh admin, alihkan langsung ke URL berkas tersebut
       if (dbReport?.pdfUrl && typeof dbReport.pdfUrl === "string" && dbReport.pdfUrl.trim()) {
         const targetUrl = dbReport.pdfUrl.startsWith("http")
           ? dbReport.pdfUrl

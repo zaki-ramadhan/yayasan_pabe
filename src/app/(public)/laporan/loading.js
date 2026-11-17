@@ -3,7 +3,6 @@ import { Skeleton } from "@/components/ui/Skeleton";
 export default function LaporanLoading() {
   return (
     <div className="w-full animate-pulse">
-      {/* Hero Header Banner - Centered Dark Theme */}
       <div className="relative w-full bg-slate-950 border-b border-slate-800 pt-10 sm:pt-14 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-3">
           <Skeleton className="h-8 sm:h-10 w-80 bg-slate-800 mx-auto rounded-lg" />
@@ -16,13 +15,11 @@ export default function LaporanLoading() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
 
-      {/* Section 1: Ikhtisar Keuangan & Program (Bilah Samping Unified Container Skeleton) */}
       <section className="space-y-4">
         <Skeleton className="h-6 w-56 rounded" />
 
         <div className="bg-transparent">
           <div className="flex flex-col lg:flex-row items-stretch gap-6 lg:gap-8">
-            {/* Bilah Samping Skeleton (Tanpa border luar, murni divide-y) */}
             <div className="w-full lg:w-64 xl:w-72 shrink-0 divide-y divide-slate-200 flex flex-col justify-between">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="py-3 sm:py-3.5 space-y-1">
@@ -33,7 +30,6 @@ export default function LaporanLoading() {
               ))}
             </div>
 
-            {/* Sisi Kanan: Top 5 Program & Kontrol Filter (dengan card wrapper) */}
             <div className="flex-1 min-w-0 bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-5 sm:p-6 shadow-2xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
                 <div className="space-y-1">
@@ -73,7 +69,6 @@ export default function LaporanLoading() {
         </div>
       </section>
 
-      {/* Section 2: Rincian Laporan Keuangan (Bar Chart + Donut Chart) */}
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <Skeleton className="h-6 w-60 rounded" />
@@ -84,7 +79,6 @@ export default function LaporanLoading() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Bar Chart Container */}
           <div className="lg:col-span-8 bg-white p-5 sm:p-6 rounded-xl border border-slate-200 space-y-4">
             <Skeleton className="h-5 w-48 rounded" />
             <div className="h-64 sm:h-72 w-full flex items-end justify-between gap-3 pt-4">
@@ -94,7 +88,6 @@ export default function LaporanLoading() {
             </div>
           </div>
 
-          {/* Donut Chart Container */}
           <div className="lg:col-span-4 bg-white p-5 sm:p-6 rounded-xl border border-slate-200 space-y-4 flex flex-col justify-between">
             <Skeleton className="h-5 w-40 rounded" />
             <div className="flex justify-center py-4">
@@ -108,7 +101,6 @@ export default function LaporanLoading() {
         </div>
       </section>
 
-      {/* Section 3: Rincian Arus Kas (Area Chart + Pie Chart) */}
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <Skeleton className="h-6 w-48 rounded" />
@@ -119,7 +111,6 @@ export default function LaporanLoading() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Area Chart Container */}
           <div className="lg:col-span-8 bg-white p-5 sm:p-6 rounded-xl border border-slate-200 space-y-4">
             <Skeleton className="h-5 w-48 rounded" />
             <div className="h-64 sm:h-72 w-full flex items-end justify-between gap-3 pt-4">
@@ -129,7 +120,6 @@ export default function LaporanLoading() {
             </div>
           </div>
 
-          {/* Pie Chart Container */}
           <div className="lg:col-span-4 bg-white p-5 sm:p-6 rounded-xl border border-slate-200 space-y-4 flex flex-col justify-between">
             <Skeleton className="h-5 w-36 rounded" />
             <div className="flex justify-center py-4">
