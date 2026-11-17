@@ -98,12 +98,10 @@ export function useTableSelection(items = [], options = {}) {
     [items, selectedIds, keyExtractor]
   );
 
-  // Toggle seleksi satu baris
   const toggleSelect = useCallback((key) => {
     setSelectedIds((prev) => toggleKeyInSet(prev, key));
   }, []);
 
-  // Toggle seleksi semua baris tabel aktif
   const toggleSelectAll = useCallback(
     (checked) => {
       setSelectedIds((prev) => {
@@ -115,26 +113,21 @@ export function useTableSelection(items = [], options = {}) {
     [derived.allCurrentKeys, derived.allSelected]
   );
 
-  // Memilih seluruh baris aktif secara eksplisit
   const selectAll = useCallback(() => {
     setSelectedIds((prev) =>
       toggleAllKeysInSet(prev, derived.allCurrentKeys, true)
     );
   }, [derived.allCurrentKeys]);
 
-  // Bersihkan seluruh seleksi
   const clearSelection = useCallback(() => {
     setSelectedIds(new Set());
   }, []);
 
-  // Tentukan apakah sebuah ID sedang terpilih
   const isSelected = useCallback(
     (key) => selectedIds.has(key),
     [selectedIds]
   );
 
-  // Buat array representasi yang dapat diserialisasi langsung oleh JSON.stringify
-  // Lengkapi dengan method .has() dan .size agar kompatibel ganda jika dipanggil sebagai Set
   const selectedList = useMemo(() => {
     const arr = Array.from(selectedIds);
     arr.has = (key) => selectedIds.has(key);

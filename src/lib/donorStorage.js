@@ -43,7 +43,6 @@ export function saveDonorInvoice({
       markCampaignPrayerAsSubmitted(campaignSlug);
     }
   } catch {
-    // Abaikan kegagalan localStorage
   }
 }
 
@@ -76,7 +75,6 @@ export function getPendingDonationForCampaign(campaignSlug, customInvoicesRaw = 
   }
 }
 
-
 /**
  * Tandai doa sudah dibuat untuk campaign dan invoice bersangkutan.
  */
@@ -106,7 +104,6 @@ export function markPrayerSubmitted(campaignSlug, invoiceId) {
       })
     );
   } catch {
-    // Abaikan kegagalan localStorage
   }
 }
 
@@ -119,7 +116,6 @@ function markCampaignPrayerAsSubmitted(campaignSlug) {
       localStorage.setItem(USER_PRAYERS_KEY, JSON.stringify(list));
     }
   } catch {
-    // Abaikan
   }
 }
 

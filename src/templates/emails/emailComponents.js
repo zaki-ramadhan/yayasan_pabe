@@ -38,7 +38,6 @@ export function formatGreetingName(fullName, fallback = "Sahabat Kebaikan") {
 
   const first = words[0];
   const second = words[1];
-  // Jika kata pertama adalah awalan/gelar umum, gunakan kata kedua
   if (/^(m\.|m|moch|muh|muhammad|h\.|hj\.|ust\.|ustadz|bpk|ibu|pak|dr\.|drs\.)$/i.test(first) && second) {
     return second;
   }
@@ -182,7 +181,6 @@ export function buildEmailCtaButton({
     `.trim();
   }
 
-  // 3D Embossed Blue Gradient (Centered, Sesuai gaya brand di homepage, font-weight 500)
   return `
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 28px 0;">
       <tr>

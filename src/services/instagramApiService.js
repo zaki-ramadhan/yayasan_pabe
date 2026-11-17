@@ -51,7 +51,6 @@ export async function getLiveInstagramPosts(limit = 9) {
             };
           });
 
-          // Urutkan berdasarkan tanggal terbaru (descending)
           mappedPosts.sort((a, b) => b.timestamp - a.timestamp);
 
           return mappedPosts.slice(0, Math.min(limit, 50));
@@ -142,7 +141,6 @@ export async function getLiveInstagramAccount() {
     const count = await prisma.instagramPost.count();
     if (count > 0) dbCount = count;
   } catch {
-    // ignore
   }
 
   return {

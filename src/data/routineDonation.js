@@ -34,7 +34,6 @@ export const ROUTINE_TYPE_OPTIONS = [
 export function normalizeFrequency(freq) {
   if (freq === "MONTHLY_PAYDAY" || freq === "MONTHLY") return "MONTHLY";
   if (freq === "WEEKLY_FRIDAY" || freq === "WEEKLY") return "WEEKLY";
-  // Fallback aman untuk data historis agar hemat kuota email
   return "WEEKLY";
 }
 

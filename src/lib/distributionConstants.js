@@ -22,7 +22,6 @@ export function calculateCampaignDisbursementBudget({
   const safeDisbursed = Math.max(0, Number(totalDisbursed) || 0);
   const safeCurrent = Math.max(0, Number(currentDisbursementAmount) || 0);
 
-  // Jika sedang mengedit, kurangkan nominal lama dari totalDisbursed agar tidak terhitung ganda
   const netOtherDisbursed = Math.max(0, safeDisbursed - safeCurrent);
   const remainingBudget = Math.max(0, safeCollected - netOtherDisbursed);
 

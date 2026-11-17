@@ -1,6 +1,5 @@
 import { USER_ROLES } from "@/services/authService";
 
-// Batas kuota gratis Cloudflare R2 bulanan (10 Gigabytes)
 export const R2_FREE_TIER_BYTES = 10 * 1024 * 1024 * 1024;
 
 /**
@@ -185,5 +184,4 @@ export function getStorageContext(contextKey) {
   return context;
 }
 
-// Re-export utilitas penamaan kunci agar modul lama tetap kompatibel tanpa duplikasi
 export { generateR2Key, extractR2Key, formatDateStamp, sanitizeFileSlug } from "./r2KeyUtils";

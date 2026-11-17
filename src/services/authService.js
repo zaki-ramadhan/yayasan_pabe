@@ -160,7 +160,6 @@ export function getStoredUser() {
     const parsed = JSON.parse(raw);
     if (!parsed) return null;
 
-    // Periksa apakah sesi lokal sudah kedaluwarsa
     if (parsed.expiresAt && Date.now() > parsed.expiresAt) {
       logoutUser();
       return null;
@@ -198,14 +197,12 @@ export function loginUser(user, options = {}) {
   }
   sessionStorage.setItem("pabe_last_activity", String(Date.now()));
 
-  // Clean up legacy keys if present
   try {
     localStorage.removeItem("ygsm_auth_user");
     localStorage.removeItem("ygsm_auth_session");
     sessionStorage.removeItem("ygsm_just_logged_in");
   } catch {}
 
-  // Sync session cookie client-side sesuai token kriptografis atau identifier otentik
   const validId = user?.sessionToken || user?.id || user?.email || user?.username || "";
   const userId = encodeURIComponent(validId);
   const role = encodeURIComponent(user?.role || "DONOR");
@@ -320,20 +317,17 @@ export async function logoutUser() {
   sessionStorage.removeItem("pabe_just_logged_in");
   sessionStorage.removeItem("zakat_calculator_state");
 
-  // Clean legacy keys
   try {
     localStorage.removeItem("ygsm_auth_user");
     localStorage.removeItem("ygsm_auth_session");
     sessionStorage.removeItem("ygsm_just_logged_in");
   } catch {}
 
-  // Invalidate session cookie immediately
   document.cookie = "pabe_session=; path=/; max-age=0; SameSite=Lax";
   document.cookie = "pabe_role=; path=/; max-age=0; SameSite=Lax";
   document.cookie = "ygsm_session=; path=/; max-age=0; SameSite=Lax";
   document.cookie = "ygsm_role=; path=/; max-age=0; SameSite=Lax";
 
-  // Await server logout to clear HttpOnly cookies via Set-Cookie headers
   let serverSuccess = true;
   try {
     const res = await safeFetch("/api/auth/logout", { method: "POST", timeoutMs: 4000 });

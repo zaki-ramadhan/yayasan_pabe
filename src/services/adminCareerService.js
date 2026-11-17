@@ -245,7 +245,6 @@ export async function getAdminApplications({
     const parsedLimit = Math.max(1, Math.min(50, parseInt(limit, 10) || 15));
     const skip = (parsedPage - 1) * parsedLimit;
 
-    // Sorting createdAt desc / asc
     const orderBy = {
       createdAt: sort === "oldest" ? "asc" : "desc",
     };

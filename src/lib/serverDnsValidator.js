@@ -37,13 +37,11 @@ export async function verifyEmailDomainDns(
     timeoutMs = 2500,
   } = {}
 ) {
-  // 1. Validasi sintaksis dan format domain lokal terlebih dahulu
   const syntaxCheck = validateEmail(email, isRequired);
   if (!syntaxCheck.isValid) {
     return syntaxCheck;
   }
 
-  // Jika opsional dan string kosong, langsung loloskan
   if (!syntaxCheck.sanitized) {
     return syntaxCheck;
   }
@@ -57,19 +55,16 @@ export async function verifyEmailDomainDns(
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // 2. Deteksi email sementara (disposable) via SSOT
   if (!allowDisposable && isDisposableEmail(clean)) {
     const msg = "Email sementara tidak diizinkan. Gunakan email pribadi Anda.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // 3. Deteksi email peran (role-based) via SSOT
   if (!allowRole && isRoleBasedEmail(clean)) {
     const msg = "Gunakan email pribadi, bukan email kantor/umum.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // 4. Cek in-memory cache
   const cached = DNS_CACHE.get(domain);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
     if (cached.isValid) {
@@ -79,7 +74,6 @@ export async function verifyEmailDomainDns(
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // 5. Query DNS internet dengan timeout guard
   try {
     const hasMx = await queryDnsWithTimeout(domain, timeoutMs);
     DNS_CACHE.set(domain, { isValid: hasMx, timestamp: Date.now() });
@@ -93,15 +87,12 @@ export async function verifyEmailDomainDns(
   } catch (error) {
     const errorCode = error?.code;
 
-    // Jika domain secara eksplisit tidak ditemukan di root DNS (domain fiktif / tidak terdaftar)
     if (errorCode === "ENOTFOUND" || errorCode === "ENODATA" || errorCode === "NXDOMAIN") {
       DNS_CACHE.set(domain, { isValid: false, timestamp: Date.now() });
       const msg = "Domain email tidak ditemukan. Periksa kembali pengetikannya.";
       return { isValid: false, valid: false, message: msg, error: msg };
     }
 
-    // Jika terjadi timeout atau kendala jaringan resolver lokal ISP
-    // Kebijakan: fail-open dengan log agar transaksi donasi/registrasi tidak macet total
     console.warn(
       `[DNS Verifier] DNS resolution timeout/warning for domain "${domain}":`,
       error.message
@@ -123,7 +114,6 @@ async function queryDnsWithTimeout(domain, timeoutMs) {
       }
     }, timeoutMs);
 
-    // Coba resolve MX record (Mail Exchange)
     dns
       .resolveMx(domain)
       .then((mxRecords) => {
@@ -133,14 +123,12 @@ async function queryDnsWithTimeout(domain, timeoutMs) {
           if (Array.isArray(mxRecords) && mxRecords.length > 0) {
             resolve(true);
           } else {
-            // Jika MX kosong, fallback ke A record (RFC 5321 Section 5)
             resolveFallbackA(domain, resolve, reject);
           }
         }
       })
       .catch((mxErr) => {
         if (!isSettled) {
-          // Jika MX record tidak ada (ENODATA), coba periksa A record
           if (mxErr?.code === "ENODATA") {
             resolveFallbackA(domain, resolve, reject, timer);
           } else {

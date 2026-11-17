@@ -20,7 +20,6 @@ export async function sendMetaCloudWhatsApp({
 
   const endpoint = `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`;
 
-  // Payload: gunakan template jika templateName disediakan, fallback ke text message
   let bodyPayload = {};
   if (templateName) {
     bodyPayload = {
@@ -40,7 +39,6 @@ export async function sendMetaCloudWhatsApp({
       },
     };
   } else {
-    // Standard text message
     bodyPayload = {
       messaging_product: "whatsapp",
       recipient_type: "individual",

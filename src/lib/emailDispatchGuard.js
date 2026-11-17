@@ -4,11 +4,9 @@
  * menjaga kuota provider email (Resend/Brevo) tetap stabil dan melindungi dari ketidaksengajaan klik admin.
  */
 
-// Durasi cooldown default: 1 jam di production, 5 detik di development
 const DEFAULT_EMAIL_COOLDOWN_MS =
   process.env.NODE_ENV === "development" ? 5 * 1000 : 60 * 60 * 1000;
 
-// In-Memory store untuk mencatat timestamp pengiriman terakhir per (email + status)
 const dispatchHistory = new Map();
 
 /**

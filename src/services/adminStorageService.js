@@ -10,10 +10,8 @@ import {
 
 export { R2_FREE_TIER_BYTES };
 
-// Default batas minimal umur berkas untuk proteksi grace period (0 = pindai semua berkas tak terpakai)
 export const DEFAULT_ORPHAN_GRACE_HOURS = 0;
 
-// Cache in-memory untuk efisiensi request S3 & anti-rate limit Class A
 let cachedStorageOverview = null;
 let lastCacheTimestamp = 0;
 const CACHE_TTL_MS = 3 * 60 * 1000; // 3 menit
@@ -61,7 +59,6 @@ export async function getStorageOverview({ forceRefresh = false } = {}) {
   let totalBytes = 0;
   const folderStats = {};
 
-  // Inisialisasi folder resmi dari STORAGE_CONTEXTS
   Object.values(STORAGE_CONTEXTS).forEach((ctx) => {
     folderStats[ctx.folder] = { folder: ctx.folder, count: 0, bytes: 0, files: [] };
   });
@@ -98,12 +95,10 @@ export async function getStorageOverview({ forceRefresh = false } = {}) {
     });
   });
 
-  // Urutkan berkas di dalam masing-masing folder berdasarkan waktu unggah terbaru
   Object.values(folderStats).forEach((f) => {
     f.files.sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime());
   });
 
-  // Jika mockPercent aktif dari environment, timpa totalBytes untuk simulasi QA
   if (mockPercent !== null && !isNaN(mockPercent)) {
     totalBytes = Math.round((mockPercent / 100) * R2_FREE_TIER_BYTES);
   }
@@ -224,10 +219,8 @@ export async function scanOrphanFiles({ minAgeHours = DEFAULT_ORPHAN_GRACE_HOURS
   let totalOrphanBytes = 0;
 
   objects.forEach((obj) => {
-    // 1. Jika terdaftar di database, berkas aktif -> BUKAN sampah
     if (referencedKeys.has(obj.key)) return;
 
-    // 2. Proteksi Grace Period (hanya jika minAgeHours > 0)
     const modifiedTime = new Date(obj.lastModified).getTime();
     const ageMs = Math.max(0, now - modifiedTime);
     if (minAgeHours > 0 && ageMs < minAgeMs) return;
@@ -266,7 +259,6 @@ export async function cleanupOrphanFiles(targetKeys = [], adminMeta = {}) {
     throw new Error("Daftar berkas yang akan dihapus tidak boleh kosong.");
   }
 
-  // Safety Gate: Verifikasi ganda bahwa tidak ada kunci yang sedang aktif di database
   const referencedKeys = await getReferencedStorageKeys();
   const safeKeysToDelete = targetKeys.filter((key) => !referencedKeys.has(key));
 
@@ -280,7 +272,6 @@ export async function cleanupOrphanFiles(targetKeys = [], adminMeta = {}) {
 
   const deleteResult = await deleteMultipleFromR2(safeKeysToDelete);
 
-  // Catat ke log aktivitas admin
   if (prisma.activityLog) {
     try {
       await prisma.activityLog.create({

@@ -44,7 +44,6 @@ export function useDonationStatusPolling({
       startTimeRef.current = Date.now();
     }
 
-    // Safety timeout: hentikan polling otomatis jika sudah melebihi batas waktu maksimal (namun izinkan pengecekan manual)
     if (!isManual && Date.now() - startTimeRef.current > maxDurationMs) {
       return;
     }
@@ -90,7 +89,6 @@ export function useDonationStatusPolling({
     }
   }, [invoiceId, maxDurationMs]);
 
-  // Loop Polling dengan Page Visibility & Backoff Handling
   useEffect(() => {
     if (!invoiceId || currentStatus !== "PENDING") {
       if (timerRef.current) clearTimeout(timerRef.current);
@@ -110,7 +108,6 @@ export function useDonationStatusPolling({
       );
 
       timerRef.current = setTimeout(async () => {
-        // Hanya eksekusi jika tab browser sedang aktif dilihat oleh donatur
         if (typeof document !== "undefined" && document.visibilityState === "visible") {
           await checkStatus();
         }
@@ -122,7 +119,6 @@ export function useDonationStatusPolling({
 
     scheduleNextPoll();
 
-    // Trigger instant check saat pengguna kembali ke tab browser (misal setelah buka m-banking)
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible" && statusRef.current === "PENDING") {
         checkStatus();

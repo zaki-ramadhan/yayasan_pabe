@@ -176,12 +176,10 @@ export async function deleteGalleryItem(id) {
     throw new Error("Dokumentasi galeri tidak ditemukan.");
   }
 
-  // Hapus dari database
   await prisma.galleryItem.delete({
     where: { id },
   });
 
-  // Hapus dari R2 jika url ada
   if (existing.imageUrl) {
     try {
       await deleteFromR2(existing.imageUrl);
@@ -226,7 +224,6 @@ export async function updateGalleryItem(id, { title, category, description, acti
     if (!isNaN(parsed.getTime())) date = parsed;
   }
 
-  // Jika gambar diperbarui, hapus berkas lama dari R2
   if (imageUrl && imageUrl.trim() !== existing.imageUrl) {
     try {
       await deleteFromR2(existing.imageUrl);
@@ -277,7 +274,6 @@ export async function deleteGalleryItemsBatch(ids) {
     where: { id: { in: validIds } },
   });
 
-  // Hapus berkas gambar/video dari R2 secara paralel tanpa memutus proses bila ada yang gagal
   await Promise.allSettled(
     items
       .filter((i) => i.imageUrl && !i.imageUrl.includes("youtube.com") && !i.imageUrl.includes("youtu.be"))

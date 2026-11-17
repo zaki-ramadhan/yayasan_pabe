@@ -32,7 +32,6 @@ export function getDateBadgeLabel(dateInput) {
   const nowWIB = new Date(now.getTime() + (7 * 60 + now.getTimezoneOffset()) * 60000);
   const targetWIB = new Date(date.getTime() + (7 * 60 + date.getTimezoneOffset()) * 60000);
 
-  // Normalisasi ke jam 00:00:00 untuk perbandingan hari kalender secara akurat
   const startOfNow = new Date(nowWIB.getFullYear(), nowWIB.getMonth(), nowWIB.getDate());
   const startOfTarget = new Date(targetWIB.getFullYear(), targetWIB.getMonth(), targetWIB.getDate());
 
@@ -45,7 +44,6 @@ export function getDateBadgeLabel(dateInput) {
     return ID_DAYS[targetWIB.getDay()];
   }
 
-  // 7 hari atau lebih lama: hanya tanggal dengan singkatan nama bulan (e.g. "12 Okt 2026")
   return formatDate(date, { month: "short", withDay: false });
 }
 

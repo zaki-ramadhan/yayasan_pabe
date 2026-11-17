@@ -66,7 +66,6 @@ const tokenStore = {
     }
 
     const id = crypto.randomUUID();
-    // Self-healing migration jika tabel belum dibuat di PostgreSQL
     await prisma.$executeRawUnsafe(
       `CREATE TABLE IF NOT EXISTS "AccountActivationToken" (
         "id" TEXT PRIMARY KEY,
@@ -120,7 +119,6 @@ export async function createActivationToken(email) {
   const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
   const expiresAt = new Date(Date.now() + ACCOUNT_ACTIVATION_POLICY.TOKEN_EXPIRY_HOURS * 60 * 60 * 1000);
 
-  // Bersihkan token lama untuk email ini agar hanya ada 1 token aktif terkini
   await tokenStore.deleteManyByEmail(cleanEmail);
 
   await tokenStore.createToken({
@@ -155,7 +153,6 @@ export async function sendActivationEmailWorkflow({ email, name, originUrl }) {
     console.info(`[Auth Activation Link] Tautan aktivasi untuk ${cleanEmail}: ${activationUrl}`);
   }
 
-  // Kirim email via Resend dengan fallback antrean retry jika terjadi gangguan jaringan/rate limit
   try {
     return await sendAccountActivationEmail({
       to: cleanEmail,
@@ -219,7 +216,6 @@ export async function verifyActivationToken(rawToken) {
 
   const cleanEmail = tokenRecord.email.toLowerCase();
 
-  // Aktifkan akun pengguna di database
   try {
     await prisma.user.update({
       where: { email: cleanEmail },
@@ -233,7 +229,6 @@ export async function verifyActivationToken(rawToken) {
     };
   }
 
-  // Hapus token setelah berhasil digunakan (One-Time Use)
   await tokenStore.deleteById(tokenRecord.id);
 
   return {
@@ -260,7 +255,7 @@ export async function resendActivationWorkflow(email, originUrl) {
     select: { id: true, name: true, email: true, isActive: true },
   });
 
-  // Anti-Enumeration: Jangan bocorkan jika email tidak terdaftar
+  // Anti-enumeration: preserve generic response
   if (!user) {
     return {
       success: true,

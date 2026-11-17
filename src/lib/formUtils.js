@@ -26,10 +26,8 @@ export function areFormValuesEqual(a, b) {
   const normA = normalizeFormValue(a);
   const normB = normalizeFormValue(b);
 
-  // 1. Primitive direct comparison
   if (normA === normB) return true;
 
-  // 2. Jika salah satu bernilai primitive atau salah satu null/undefined setelah normalisasi
   if (
     typeof normA !== "object" ||
     typeof normB !== "object" ||
@@ -41,7 +39,6 @@ export function areFormValuesEqual(a, b) {
     return normA === normB;
   }
 
-  // 3. Array comparison
   if (Array.isArray(normA) && Array.isArray(normB)) {
     if (normA.length !== normB.length) return false;
     for (let i = 0; i < normA.length; i++) {
@@ -50,10 +47,8 @@ export function areFormValuesEqual(a, b) {
     return true;
   }
 
-  // Jika satu array dan yang lain bukan array
   if (Array.isArray(normA) !== Array.isArray(normB)) return false;
 
-  // 4. Object comparison
   const keysA = Object.keys(normA);
   const keysB = Object.keys(normB);
   const allKeys = new Set([...keysA, ...keysB]);

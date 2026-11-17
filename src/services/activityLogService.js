@@ -48,7 +48,6 @@ export async function logActivity({
       },
     });
   } catch (error) {
-    // Fail-safe: catat ke console tanpa melempar fatal exception ke client
     console.error("[ActivityLog] Gagal menyimpan log aktivitas:", error.message);
     return null;
   }

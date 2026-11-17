@@ -110,7 +110,6 @@ export async function getAdminDistributions({ page = 1, limit = 10 } = {}) {
   }
 }
 
-
 /**
  * Mencatat rekam penyaluran bantuan mustahik baru ke database dengan validasi sisa anggaran.
  * @param {object} payload
@@ -278,7 +277,6 @@ export async function updateAdminDistribution(id, payload, adminMeta = {}) {
       const newImages = payload.images.map((img) => sanitizeInput(img).trim());
       updateData.images = newImages;
 
-      // Bersihkan foto yang dihapus dari daftar
       if (Array.isArray(existing?.images)) {
         const removedImages = existing.images.filter((oldImg) => !newImages.includes(oldImg));
         if (removedImages.length > 0) {

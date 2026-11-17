@@ -50,7 +50,6 @@ export async function processNotificationQueue({
   batchSize = QUEUE_CONFIG.DEFAULT_BATCH_SIZE,
   now = new Date(),
 } = {}) {
-  // 1. Ambil antrean berstatus PENDING yang sudah masuk jadwal jatuh tempo
   const pendingItems = await prisma.notificationQueue.findMany({
     where: {
       status: QUEUE_STATUS.PENDING,
@@ -75,7 +74,6 @@ export async function processNotificationQueue({
   let failed = 0;
 
   for (const item of pendingItems) {
-    // 2. Kunci status menjadi PROCESSING secara atomic (mencegah double worker race condition)
     try {
       const locked = await prisma.notificationQueue.updateMany({
         where: {
@@ -88,7 +86,6 @@ export async function processNotificationQueue({
       });
 
       if (locked.count === 0) {
-        // Sudah diambil oleh worker lain
         continue;
       }
     } catch (lockErr) {
@@ -100,7 +97,6 @@ export async function processNotificationQueue({
     const payload = typeof item.payload === "string" ? JSON.parse(item.payload) : item.payload || {};
 
     try {
-      // 3. Eksekusi pengiriman multi-kanal: utamakan Email, fallback otomatis ke WhatsApp jika gagal (atau sebaliknya)
       let dispatchResult = null;
       let usedChannel = null;
       const targetEmail = payload.donorEmail || item.routineDonation?.donorEmail || null;
@@ -173,7 +169,6 @@ export async function processNotificationQueue({
         }
       }
 
-      // Fallback ke WhatsApp jika pengiriman email gagal atau target email tidak tersedia
       if (!usedChannel && targetPhone) {
         if (item.type === NOTIFICATION_TYPE.ROUTINE_COMPLETION) {
           dispatchResult = await sendWhatsAppCompletionNotification({
@@ -211,7 +206,6 @@ export async function processNotificationQueue({
         throw new Error(dispatchResult?.error || "Gagal memproses pengiriman notifikasi pada seluruh kanal (Email & WhatsApp).");
       }
 
-      // 4. Sukses: update antrean menjadi SENT
       await prisma.notificationQueue.update({
         where: { id: item.id },
         data: {
@@ -222,7 +216,6 @@ export async function processNotificationQueue({
         },
       });
 
-      // 5. Catat log pengiriman sukses ke NotificationLog
       await prisma.notificationLog.create({
         data: {
           queueId: item.id,
@@ -251,7 +244,6 @@ export async function processNotificationQueue({
       const errorMessage = err?.message || "Gagal memproses pengiriman notifikasi.";
       console.error(`[NotificationWorker] Gagal kirim pesan ke ${item.recipientPhone} (Percobaan #${currentAttempt}):`, errorMessage);
 
-      // 6. Evaluasi apakah masih bisa di-retry atau sudah FAILED permanen
       const canRetry = currentAttempt < item.maxAttempts;
       const nextScheduled = canRetry ? calculateNextRetryTime(currentAttempt) : null;
       const finalStatus = canRetry ? QUEUE_STATUS.PENDING : QUEUE_STATUS.FAILED;
@@ -266,7 +258,6 @@ export async function processNotificationQueue({
         },
       });
 
-      // Catat log kegagalan ke NotificationLog
       await prisma.notificationLog.create({
         data: {
           queueId: item.id,

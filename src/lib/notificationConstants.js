@@ -30,6 +30,5 @@ export const NOTIFICATION_PROVIDER = {
 export const QUEUE_CONFIG = {
   DEFAULT_MAX_ATTEMPTS: 3,
   DEFAULT_BATCH_SIZE: 15,
-  // Delay dalam menit untuk setiap percobaan ulang (retry backoff)
   RETRY_DELAYS_MINUTES: [5, 15, 60],
 };

@@ -39,7 +39,6 @@ export function broadcastAdminEvent(eventType, payload = {}) {
     try {
       controller.enqueue(encoded);
     } catch {
-      // Hapus controller yang sudah zombie / tertutup
       clients.delete(controller);
     }
   }

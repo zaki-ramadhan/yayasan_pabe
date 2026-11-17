@@ -133,7 +133,6 @@ export function useAdminLiveFeed({ enabled = true, onEvent } = {}) {
         setIsConnected(false);
         es.close();
 
-        // Exponential backoff reconnect: 3s, 6s, 12s, maks 30s
         const delay = Math.min(3000 * Math.pow(2, retryCountRef.current), 30000);
         retryCountRef.current += 1;
 

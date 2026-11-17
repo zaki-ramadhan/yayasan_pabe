@@ -101,7 +101,6 @@ export function useArticleReaction({
     }
   }, [hasLiked, hasDisliked]);
 
-  // Tangani event sinkronisasi antar komponen di halaman yang sama
   useEffect(() => {
     const handleSync = (e) => {
       const detail = e.detail;
@@ -264,7 +263,6 @@ export function useArticleReaction({
         })
       );
     } catch {
-      // ignore storage error
     }
   }, [hasLiked, hasDisliked, targetSlug, articleId, instanceId, likes, dislikes, scheduleTransition]);
 
@@ -317,7 +315,6 @@ export function useArticleReaction({
         })
       );
     } catch {
-      // ignore storage error
     }
   }, [hasDisliked, hasLiked, targetSlug, articleId, instanceId, likes, dislikes, scheduleTransition]);
 

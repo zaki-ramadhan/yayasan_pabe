@@ -104,7 +104,6 @@ export async function getDistributionTrendData() {
     });
 
     if (updates && updates.length > 0) {
-      // Aggregate by year and month from real DB updates
       const trendMap = {};
       const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
       const fullMonthNames = [
@@ -153,7 +152,6 @@ export async function getDistributionTrendData() {
     })),
   };
 }
-
 
 export async function getDistributionRecords() {
   try {

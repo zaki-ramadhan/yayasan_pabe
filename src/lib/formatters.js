@@ -131,7 +131,6 @@ export function formatDate(dateInput, options = {}) {
     withSeconds = false,
   } = options;
 
-  // Convert consistently to WIB (UTC+7)
   const wibTime = new Date(date.getTime() + (7 * 60 + date.getTimezoneOffset()) * 60000);
   const dayName = ID_DAYS[wibTime.getDay()];
   const day = wibTime.getDate();
@@ -237,22 +236,18 @@ export function formatDateRange(startDateInput, endDateInput, options = {}) {
   const eMonth = end.getMonth();
   const eYear = end.getFullYear();
 
-  // Sama persis
   if (sDay === eDay && sMonth === eMonth && sYear === eYear) {
     return `${sDay} ${getMonthName(start)} ${sYear}`;
   }
 
-  // Sama bulan dan tahun
   if (sMonth === eMonth && sYear === eYear) {
     return `${sDay} - ${eDay} ${getMonthName(start)} ${sYear}`;
   }
 
-  // Beda bulan, sama tahun
   if (sYear === eYear) {
     return `${sDay} ${getMonthName(start)} - ${eDay} ${getMonthName(end)} ${sYear}`;
   }
 
-  // Beda tahun
   return `${sDay} ${getMonthName(start)} ${sYear} - ${eDay} ${getMonthName(end)} ${eYear}`;
 }
 
@@ -319,7 +314,6 @@ export function formatHumanRelativeDate(dateInput) {
   if (diffDay === 1) return "Kemarin";
   if (diffDay <= 7) return `${diffDay} hari yang lalu`;
 
-  // Lewat dari 7 hari: gunakan format tanggal kalender absolut
   return formatDate(date, { month: "short" });
 }
 
@@ -334,7 +328,6 @@ export function calculateDaysLeft(endDateInput) {
   const targetDate = new Date(endDateInput);
   if (isNaN(targetDate.getTime())) return null;
 
-  // Jika format input adalah YYYY-MM-DD tanpa waktu, set ke akhir hari
   if (typeof endDateInput === "string" && /^\d{4}-\d{2}-\d{2}$/.test(endDateInput.trim())) {
     targetDate.setHours(23, 59, 59, 999);
   }

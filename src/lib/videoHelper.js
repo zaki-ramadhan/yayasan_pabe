@@ -63,7 +63,6 @@ export function extractVideoMetadata(file) {
     let isSettled = false;
     let capturedThumbnail = null;
 
-    // Pasang sementara ke DOM secara tersembunyi agar Chromium mengaktifkan decoder hardware
     video.style.position = "fixed";
     video.style.left = "-9999px";
     video.style.top = "-9999px";
@@ -79,7 +78,6 @@ export function extractVideoMetadata(file) {
     try {
       document.body.appendChild(video);
     } catch {
-      // Abaikan jika tidak dapat append
     }
 
     const finish = (result) => {
@@ -96,13 +94,11 @@ export function extractVideoMetadata(file) {
         }
         URL.revokeObjectURL(objectUrl);
       } catch {
-        // Abaikan pembersihan jika sudah dilepas
       }
 
       resolve(result);
     };
 
-    // Timeout pengaman 3000ms agar proses validasi UI tidak pernah macet
     const timeoutTimer = setTimeout(() => {
       let dur = video.duration;
       if (!isFinite(dur) || isNaN(dur) || dur <= 0) dur = 0;
@@ -114,7 +110,6 @@ export function extractVideoMetadata(file) {
       });
     }, 3000);
 
-    // Tangkap frame saat ini ke Canvas 2D menjadi foto statis
     const captureThumbnail = () => {
       try {
         const vw = video.videoWidth || 0;
@@ -136,7 +131,6 @@ export function extractVideoMetadata(file) {
           }
         }
       } catch {
-        // Fallback jika canvas terhalang security policy
       }
       return false;
     };
@@ -147,7 +141,6 @@ export function extractVideoMetadata(file) {
         finalDuration = 0;
       }
 
-      // Ambil frame terbaik yang tersedia sebagai foto statis
       captureThumbnail();
 
       finish({
@@ -158,9 +151,7 @@ export function extractVideoMetadata(file) {
       });
     };
 
-    // Ketika frame pertama (loadeddata) sudah didecode oleh peramban
     video.onloadeddata = () => {
-      // Pancing 1 frame agar GPU texture terisi, lalu langsung pause agar foto statis
       const p = video.play();
       if (p !== undefined) {
         p.then(() => {
@@ -180,7 +171,6 @@ export function extractVideoMetadata(file) {
     };
 
     video.onloadedmetadata = () => {
-      // Jika durasi terbaca Infinity atau 0 (khas WhatsApp / fMP4), pancing kalkulasi durasi demuxer
       if (!isFinite(video.duration) || video.duration === 0) {
         const onSeekEnd = () => {
           video.removeEventListener("seeked", onSeekEnd);
@@ -194,13 +184,11 @@ export function extractVideoMetadata(file) {
         try {
           video.currentTime = 1e9;
         } catch {
-          // Lanjut ke onloadeddata
         }
       }
     };
 
     video.onerror = () => {
-      // Codec tidak dapat didecode peramban lokal (contoh HEVC/H.265 di Windows tanpa codec pack)
       finish({
         duration: 0,
         durationFormatted: null,

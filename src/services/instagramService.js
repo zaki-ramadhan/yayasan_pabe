@@ -55,7 +55,6 @@ export async function getInstagramPosts(limit = 8) {
     }
   }
 
-  // Fallback data lokal jika database belum terisi postingan
   return INSTAGRAM_POSTS.slice(0, limit).map((post) => ({
     ...post,
     engagementScore: (post.likes || 0) + (post.comments || 0),

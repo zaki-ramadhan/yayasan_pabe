@@ -46,7 +46,6 @@ export function getTopProgramsData(
 ) {
   const programMap = new Map();
 
-  // Initialize map from campaign records
   campaigns.forEach((camp) => {
     programMap.set(camp.id, {
       id: camp.id,
@@ -59,7 +58,6 @@ export function getTopProgramsData(
     });
   });
 
-  // Aggregate income (donations) and disbursements from transactions
   transactions.forEach((tx) => {
     const txYear = new Date(tx.date).getFullYear();
     if (selectedYear !== "ALL" && txYear !== Number(selectedYear)) {
@@ -88,7 +86,6 @@ export function getTopProgramsData(
     }
   });
 
-  // Fallback for all-time when transaction list is limited to recent records
   if (selectedYear === "ALL") {
     campaigns.forEach((camp, idx) => {
       const target = programMap.get(camp.id);
@@ -105,7 +102,6 @@ export function getTopProgramsData(
     });
   }
 
-  // Filter out programs without any activity in the selected mode
   const activePrograms = Array.from(programMap.values()).filter((p) =>
     mode === "PENYALURAN" ? p.penyaluran > 0 : p.penghimpunan > 0
   );
@@ -114,14 +110,12 @@ export function getTopProgramsData(
     return [];
   }
 
-  // Sort descending according to selected mode
   if (mode === "PENYALURAN") {
     activePrograms.sort((a, b) => b.penyaluran - a.penyaluran);
   } else {
     activePrograms.sort((a, b) => b.penghimpunan - a.penghimpunan);
   }
 
-  // Take top 5 programs (ranked #1 to #5)
   return activePrograms.slice(0, 5).map((p) => ({
     ...p,
     displayAmount: mode === "PENYALURAN" ? p.penyaluran : p.penghimpunan,

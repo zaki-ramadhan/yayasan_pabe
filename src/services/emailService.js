@@ -258,7 +258,6 @@ export async function sendEmail({ to, subject, html, attachments }) {
 
   const { resendApiKey, brevoApiKey, resendFromEmail, brevoFromEmail } = getEmailConfig();
 
-  // Mode Fallback/Simulasi jika belum ada satupun API key yang dikonfigurasi di .env
   if (!resendApiKey && !brevoApiKey) {
     const urlMatch = html ? html.match(/href="([^"]*token=[^"]*)"/) : null;
     const detectedUrl = urlMatch ? urlMatch[1] : null;
@@ -275,7 +274,6 @@ export async function sendEmail({ to, subject, html, attachments }) {
     return { success: true, simulated: true };
   }
 
-  // 1. Coba jalur utama: Resend
   if (resendApiKey) {
     try {
       return await sendViaResend({
@@ -289,7 +287,6 @@ export async function sendEmail({ to, subject, html, attachments }) {
     } catch (resendErr) {
       console.warn(`[EmailService] Resend gagal (${resendErr.message}).`);
 
-      // 2. Jika Brevo tersedia, aktifkan failover otomatis
       if (brevoApiKey) {
         console.info(`[EmailService] Mengaktifkan failover otomatis ke Brevo untuk ${to}...`);
         try {
@@ -310,12 +307,10 @@ export async function sendEmail({ to, subject, html, attachments }) {
         }
       }
 
-      // Jika Brevo tidak dikonfigurasi, lemparkan error asli Resend
       throw resendErr;
     }
   }
 
-  // 3. Jika hanya Brevo yang dikonfigurasi
   return sendViaBrevo({
     apiKey: brevoApiKey,
     fromEmail: brevoFromEmail,
@@ -405,8 +400,6 @@ export async function sendRoutineDonationEmail({
     html,
   });
 }
-
-
 
 /**
  * Mengirimkan email apresiasi & pemberitahuan penutupan program donasi rutin
@@ -562,9 +555,6 @@ export async function sendDonationReceiptEmail({
     html,
   });
 }
-
-
-
 
 /**
  * Mengirim email tanda terima berkas pendaftaran relawan baru

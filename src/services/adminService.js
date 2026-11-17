@@ -1,6 +1,5 @@
 import prisma from "@/lib/prisma";
 
-// Re-export sub-services untuk menjaga backward compatibility 100%
 export {
   getAdminCampaigns,
   createAdminCategory,

@@ -157,7 +157,6 @@ export async function updateDonorProfile({ userEmail, profileData }) {
     const cleanCustomAvatar = sanitizeImageUrl(profileData.customAvatar);
     updatePayload.customAvatar = cleanCustomAvatar;
 
-    // Hapus berkas R2 lama HANYA jika foto kustom diganti dengan berkas baru atau dihapus permanen
     if (existingUser?.customAvatar && existingUser.customAvatar !== cleanCustomAvatar) {
       await deleteFromR2(existingUser.customAvatar);
     }
@@ -165,7 +164,6 @@ export async function updateDonorProfile({ userEmail, profileData }) {
 
   if (profileData.avatar !== undefined) {
     updatePayload.avatar = sanitizeImageUrl(profileData.avatar);
-    // Catatan: Jika avatar berganti ke preset, foto kustom di R2 tetap disimpan dengan aman
   }
 
   try {
@@ -288,7 +286,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
     }
   }
 
-  // Bersihkan berkas CV lamaran kerja jika donatur pernah melamar lowongan kerja
   if (user.email) {
     try {
       const applications = await prisma.jobApplication.findMany({
@@ -309,7 +306,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
   const anonymizedUsername = `anon_${user.id.slice(-8)}_${Date.now()}`;
 
   await prisma.$transaction(async (tx) => {
-    // Ambil daftar id RoutineDonation milik donatur untuk membatalkan antrean notifikasi terkait
     const userRoutines = await tx.routineDonation.findMany({
       where: {
         OR: [
@@ -321,7 +317,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
     });
     const routineIds = userRoutines.map((r) => r.id);
 
-    // 1. Batalkan seluruh jadwal komitmen donasi rutin yang aktif
     await tx.routineDonation.updateMany({
       where: {
         OR: [
@@ -335,7 +330,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
       },
     });
 
-    // 2. Batalkan seluruh antrean notifikasi (NotificationQueue) yang belum terkirim
     if (routineIds.length > 0 || user.phone) {
       await tx.notificationQueue.deleteMany({
         where: {
@@ -348,7 +342,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
       });
     }
 
-    // 3. Hapus token keamanan yang masih aktif (PasswordResetToken & AccountActivationToken)
     if (user.email) {
       await tx.passwordResetToken.deleteMany({
         where: { email: user.email },
@@ -358,7 +351,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
       });
     }
 
-    // 4. Samarkan data donatur pada histori donasi finansial & sembunyikan doa dari publik
     await tx.donation.updateMany({
       where: {
         donorEmail: user.email,
@@ -373,7 +365,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
       },
     });
 
-    // 5. Samarkan data pendaftaran relawan (Volunteer) jika pernah mendaftar
     if (user.email || user.phone) {
       await tx.volunteer.updateMany({
         where: {
@@ -391,7 +382,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
       });
     }
 
-    // 6. Samarkan data lamaran karier (JobApplication)
     if (user.email || user.phone) {
       await tx.jobApplication.updateMany({
         where: {
@@ -412,7 +402,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
       });
     }
 
-    // 7. Anonimkan data profil pengguna
     await tx.user.update({
       where: { id: user.id },
       data: {
@@ -430,7 +419,6 @@ export async function anonymizeDonorAccount({ userId, userEmail }) {
       },
     });
 
-    // 8. Catat ke Activity Log sistem
     await tx.activityLog.create({
       data: {
         action: "PDP_ACCOUNT_ANONYMIZED",

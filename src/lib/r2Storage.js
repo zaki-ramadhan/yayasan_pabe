@@ -95,7 +95,6 @@ export async function uploadToR2({
   const uint8 = data instanceof Uint8Array ? data : new Uint8Array(data);
   const originalSize = uint8.byteLength;
 
-  // Resolusi profil konteks penyimpanan jika disediakan
   let resolvedContext = null;
   if (context) {
     resolvedContext = getStorageContext(context);
@@ -112,7 +111,6 @@ export async function uploadToR2({
   const effectiveQuality =
     quality || (resolvedContext ? resolvedContext.quality : 85);
 
-  // 1. Validasi Magic Bytes & Integritas File Mentah
   const validation = validateUploadFile({
     data: uint8,
     size: originalSize,
@@ -127,7 +125,6 @@ export async function uploadToR2({
 
   const verifiedMime = validation.verifiedMime;
 
-  // 2. Optimasi Gambar melalui Image Optimizer Service
   let uploadBuffer = Buffer.isBuffer(uint8) ? uint8 : Buffer.from(uint8);
   let finalMime = verifiedMime;
   let finalExtension = "bin";
@@ -159,7 +156,6 @@ export async function uploadToR2({
       ? Math.round(((originalSize - finalSize) / originalSize) * 100)
       : 0;
 
-  // 3. Bangun Kunci R2 Unik (Delegasi ke Key Utils atau gunakan customKey terverifikasi)
   let key = "";
   if (customKey && typeof customKey === "string") {
     key = customKey.replace(/^\/+|\/+$/g, "");
@@ -183,7 +179,6 @@ export async function uploadToR2({
     key = `${cleanFolder}/${timestamp}_${safeBase}_${randomSuffix}.${finalExtension}`;
   }
 
-  // 4. Kirim Objek ke Cloudflare R2 S3 API
   const client = getR2Client();
   await client.send(
     new PutObjectCommand({
@@ -191,11 +186,10 @@ export async function uploadToR2({
       Key: key,
       Body: uploadBuffer,
       ContentType: finalMime,
-      CacheControl: "public, max-age=31536000, immutable", // Cache 1 tahun di CDN edge
+      CacheControl: "public, max-age=31536000, immutable", // Cache 1 year at CDN edge
     })
   );
 
-  // Gunakan proxy lokal /api/media/ jika publicUrl menggunakan *.r2.dev bawaan yang diblokir ISP Indonesia
   const isBlockedDevDomain = publicUrl.includes(".r2.dev");
   const finalUrl = isBlockedDevDomain || !publicUrl ? `/api/media/${key}` : `${publicUrl}/${key}`;
 
@@ -340,7 +334,6 @@ export async function deleteMultipleFromR2(keysOrUrls) {
     };
   } catch (err) {
     console.error("Gagal menghapus batch berkas di R2:", err.message);
-    // Fallback: hapus satuan jika batch command gagal
     let successCount = 0;
     const fallbackErrors = [];
     for (const key of validKeys) {

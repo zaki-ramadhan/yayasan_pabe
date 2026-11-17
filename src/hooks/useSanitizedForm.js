@@ -20,7 +20,6 @@ export function useSanitizedForm(initialValues = {}, fieldSanitizers = {}, valid
 
   const initialRef = useRef(initialValues);
 
-  // Sinkronisasi otomatis saat initialValues berubah dari luar tanpa memicu loop render-phase
   useEffect(() => {
     if (isFormDirty(initialRef.current, initialValues)) {
       initialRef.current = initialValues;
@@ -81,12 +80,10 @@ export function useSanitizedForm(initialValues = {}, fieldSanitizers = {}, valid
     [values, fieldSanitizers, handleChange, handleBlur]
   );
 
-  // SSOT dirty checking: membandingkan values saat ini dengan initialValues
   const isDirty = useMemo(() => {
     return isFormDirty(initialValues, values);
   }, [initialValues, values]);
 
-  // SSOT validasi formulir real-time
   const isValid = useMemo(() => {
     if (!validator) return true;
     const res = validator(values);

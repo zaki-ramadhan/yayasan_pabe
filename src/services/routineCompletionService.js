@@ -34,7 +34,6 @@ export async function rolloverOrCompleteRoutineDonationsForCampaign(
     return { action: "NONE", updatedCount: 0, notifiedCount: 0, errors: [] };
   }
 
-  // 1. Ambil seluruh komitmen donasi rutin aktif yang terikat ke program ini
   const activeRoutines = await prismaClient.routineDonation.findMany({
     where: {
       campaignId,
@@ -54,14 +53,12 @@ export async function rolloverOrCompleteRoutineDonationsForCampaign(
   const oldCampaign = activeRoutines[0]?.campaign;
   const oldTitle = activeRoutines[0]?.programTitle || oldCampaign?.title || "Program Donasi";
 
-  // 2. Evaluasi target program pengganti melalui Selector Engine (Smart Rollover)
   const targetCampaign = await selectRolloverCampaign({
     currentCampaignId: campaignId,
     currentCategoryId: oldCampaign?.categoryId || null,
     prismaClient,
   });
 
-  // Jika tidak ditemukan program aktif lain, fallback ke Opsi Penutupan Aman (Completed)
   if (!targetCampaign) {
     const completedResult = await completeRoutineDonationsForCampaign(campaignId, {
       reason: `${reason} (Tidak ada program aktif lain untuk pengalihan)`,
@@ -71,7 +68,6 @@ export async function rolloverOrCompleteRoutineDonationsForCampaign(
     return { action: "COMPLETED", ...completedResult };
   }
 
-  // 3. Eksekusi pengalihan komitmen secara atomic ke program baru
   const routineIds = activeRoutines.map((r) => r.id);
   await prismaClient.routineDonation.updateMany({
     where: { id: { in: routineIds } },
@@ -81,7 +77,6 @@ export async function rolloverOrCompleteRoutineDonationsForCampaign(
     },
   });
 
-  // 4. Catat audit trail ke ActivityLog
   try {
     await prismaClient.activityLog.create({
       data: {
@@ -96,7 +91,6 @@ export async function rolloverOrCompleteRoutineDonationsForCampaign(
     console.error("[RoutineRollover] Gagal mencatat ActivityLog:", logErr);
   }
 
-  // 5. Kirim notifikasi transparansi pengalihan ke donatur
   let notifiedCount = 0;
   const errors = [];
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yayasanpabe.org";
@@ -173,14 +167,12 @@ export async function rolloverOrCompleteSingleRoutineDonation(
 
   const oldTitle = routine.programTitle || routine.campaign?.title || "Program Donasi";
 
-  // Evaluasi kandidat pengalihan
   const targetCampaign = await selectRolloverCampaign({
     currentCampaignId: routine.campaignId,
     currentCategoryId: routine.campaign?.categoryId || null,
     prismaClient,
   });
 
-  // Jika tidak ada program aktif pengganti, selesaikan jadwal (Completed)
   if (!targetCampaign) {
     const updated = await completeSingleRoutineDonation(routineId, {
       notifyDonor,
@@ -189,7 +181,6 @@ export async function rolloverOrCompleteSingleRoutineDonation(
     return { action: "COMPLETED", routine: updated };
   }
 
-  // Update komitmen ke program pengganti
   const updatedRoutine = await prismaClient.routineDonation.update({
     where: { id: routineId },
     data: {

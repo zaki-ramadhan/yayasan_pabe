@@ -66,7 +66,6 @@ export function extractR2Key(urlOrKey, publicUrlEnv = process.env.R2_PUBLIC_URL)
   const trimmed = urlOrKey.trim();
   const validFolders = Object.values(STORAGE_CONTEXTS).map((c) => c.folder);
 
-  // 1. Cek apakah sudah berupa relative key lokal yang valid atau melalui proxy /api/media/
   if (trimmed.startsWith("/api/media/")) {
     const extracted = trimmed.replace(/^\/api\/media\//, "");
     for (const folder of validFolders) {
@@ -82,7 +81,6 @@ export function extractR2Key(urlOrKey, publicUrlEnv = process.env.R2_PUBLIC_URL)
     }
   }
 
-  // 2. Cek apakah berupa URL CDN kustom dari konfigurasi .env
   const configuredDomain = (publicUrlEnv || "").replace(/\/+$/, "");
   if (configuredDomain && trimmed.startsWith(configuredDomain)) {
     const extracted = trimmed.slice(configuredDomain.length).replace(/^\/+/, "");
@@ -93,7 +91,6 @@ export function extractR2Key(urlOrKey, publicUrlEnv = process.env.R2_PUBLIC_URL)
     }
   }
 
-  // 3. Cek subdomain bawaan Cloudflare R2 (*.r2.dev atau *.r2.cloudflarestorage.com)
   if (trimmed.includes(".r2.dev/") || trimmed.includes(".r2.cloudflarestorage.com/")) {
     for (const folder of validFolders) {
       const folderMarker = `/${folder}/`;

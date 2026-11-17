@@ -83,7 +83,6 @@ export function useCampaignLiveStats({
 
       lastFetchedAtRef.current = Date.now();
     } catch {
-      // Fallback diam-diam tanpa memutus UI
     } finally {
       if (isMountedRef.current) {
         setIsUpdating(false);
@@ -98,7 +97,6 @@ export function useCampaignLiveStats({
     const handleFocusOrVisible = () => {
       if (document.visibilityState === "visible") {
         const timeSinceLastFetch = Date.now() - lastFetchedAtRef.current;
-        // Cegah spam fetch jika fokus berulang dalam < 3 detik
         if (timeSinceLastFetch > 3000) {
           fetchLiveStats();
         }

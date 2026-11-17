@@ -301,7 +301,6 @@ export async function updateAdminCampaign(id, payload) {
     data: updateData,
   });
 
-  // Jika status kampanye diubah menjadi COMPLETED, otomatis alihkan komitmen donasi rutin yang terikat (Smart Rollover)
   if (updateData.status === "COMPLETED") {
     try {
       await rolloverOrCompleteRoutineDonationsForCampaign(id, {
@@ -313,7 +312,6 @@ export async function updateAdminCampaign(id, payload) {
     }
   }
 
-  // Auto-cleanup: jika kategori program berganti dan kategori sebelumnya menjadi kosong, hapus otomatis
   if (oldCategoryId && updateData.categoryId && oldCategoryId !== updateData.categoryId) {
     await cleanupOrphanCategories(prisma);
   }
@@ -334,7 +332,6 @@ export async function updateAdminCampaign(id, payload) {
  * Menghapus program kampanye dari database dan membersihkan banner terkait di R2.
  */
 export async function deleteAdminCampaign(id) {
-  // 1. Cek proteksi donasi: program yang memiliki transaksi tidak boleh dihapus demi integritas invoice dan audit
   const donationsCount = await prisma.donation.count({
     where: { campaignId: id },
   });
@@ -344,7 +341,6 @@ export async function deleteAdminCampaign(id) {
     );
   }
 
-  // Alihkan atau selesaikan komitmen donasi rutin sebelum program dihapus
   try {
     await rolloverOrCompleteRoutineDonationsForCampaign(id, {
       reason: "Campaign deleted by admin",
@@ -381,7 +377,6 @@ export async function deleteAdminCampaign(id) {
   return deleted;
 }
 
-
 /**
  * Menghapus banyak program sekaligus dengan proteksi donasi (Guarded Bulk Delete).
  * Program yang sudah memiliki donasi masuk tidak boleh dihapus demi integritas data dan audit.
@@ -396,7 +391,6 @@ export async function deleteAdminCampaignsBulk(ids) {
     throw new Error("Tidak ada ID program yang valid.");
   }
 
-  // 1. Cek program yang sudah memiliki donasi atau transaksi masuk
   const campaignsWithDonations = await prisma.campaign.findMany({
     where: {
       id: { in: validIds },
@@ -415,13 +409,11 @@ export async function deleteAdminCampaignsBulk(ids) {
     );
   }
 
-  // 2. Ambil data banner dan kategori untuk pembersihan storage & orphan category
   const campaignsToDelete = await prisma.campaign.findMany({
     where: { id: { in: validIds } },
     select: { id: true, bannerUrl: true, categoryId: true },
   });
 
-  // Hapus banner dari R2 storage jika ada
   for (const c of campaignsToDelete) {
     if (c.bannerUrl) {
       try {
@@ -432,12 +424,10 @@ export async function deleteAdminCampaignsBulk(ids) {
     }
   }
 
-  // 3. Hapus program dari database
   const result = await prisma.campaign.deleteMany({
     where: { id: { in: validIds } },
   });
 
-  // 4. Bersihkan kategori yang menjadi kosong
   await cleanupOrphanCategories(prisma);
 
   try {

@@ -1,4 +1,3 @@
-// Re-export untuk backward-compatibility 100%
 export {
   getDonorProfile,
   updateDonorProfile,

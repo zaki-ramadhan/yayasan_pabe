@@ -23,7 +23,6 @@ export async function getCampaignDonationStats(slug) {
       ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
       ninetyDaysAgo.setHours(0, 0, 0, 0);
 
-      // Hitung total akumulasi sebelum 90 hari terakhir via aggregation O(1)
       const priorAggregate = await prisma.donation.aggregate({
         where: {
           campaignId: campaign.id,

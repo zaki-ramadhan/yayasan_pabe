@@ -33,7 +33,6 @@ export function buildRoutineWhatsAppMessage({
     );
   }
 
-  // Fallback: Pengingat Saja (Reminder Only)
   return (
     `*Assalamu’alaikum Warahmatullahi Wabarakatuh*\n\n` +
     `Halo ${greeting},\n` +

@@ -30,7 +30,6 @@ export async function expireDonationRecord(invoiceId, reason = "EXPIRED_BY_SYSTE
         select: { id: true, status: true, invoiceId: true },
       });
 
-      // Hanya ubah jika masih PENDING (mencegah overwrite transaksi PAID)
       if (!existing || existing.status !== DONATION_STATUS.PENDING) {
         return null;
       }
@@ -122,7 +121,6 @@ export async function getPendingInvoicesForUser({
     for (const item of candidateInvoices) {
       const isPastExpiry = item.expiredAt && new Date(item.expiredAt) <= now;
 
-      // Jika sudah melewati batas waktu, lakukan pengecekan langsung ke Midtrans sebelum ditandai kedaluwarsa
       if (isPastExpiry) {
         if (getMidtransServerKey() && process.env.NODE_ENV !== "test") {
           try {
@@ -139,12 +137,10 @@ export async function getPendingInvoicesForUser({
           }
         }
 
-        // Tandai sebagai EXPIRED di database
         await expireDonationRecord(item.invoiceId, "EXPIRED_ON_READ");
         continue;
       }
 
-      // Masih aktif dalam batas waktu
       const remainingMs = Math.max(0, new Date(item.expiredAt).getTime() - now.getTime());
       const remainingMinutes = Math.ceil(remainingMs / (60 * 1000));
       const remainingHours = Math.floor(remainingMinutes / 60);
@@ -228,7 +224,6 @@ export async function cancelAndExpirePendingDonation(invoiceId, authUser) {
       return { success: false, message: "Donasi yang sudah terbayar tidak dapat dibatalkan." };
     }
 
-    // Jika tagihan sudah kedaluwarsa atau dibatalkan, tagihan lama sudah tidak aktif lagi
     const isPastExpiry = donation.expiredAt && new Date(donation.expiredAt) <= new Date();
     if (donation.status === DONATION_STATUS.EXPIRED || donation.status === DONATION_STATUS.CANCELLED || isPastExpiry) {
       if (donation.status === DONATION_STATUS.PENDING && isPastExpiry) {
@@ -247,7 +242,6 @@ export async function cancelAndExpirePendingDonation(invoiceId, authUser) {
       };
     }
 
-    // Mutasi atomik status PENDING -> CANCELLED (mencegah menimpa transaksi yang baru saja dibayar)
     const result = await prisma.donation.updateMany({
       where: { invoiceId, status: DONATION_STATUS.PENDING },
       data: { status: DONATION_STATUS.CANCELLED },
@@ -339,7 +333,6 @@ export async function expireStalePendingDonations(batchLimit = 50) {
     for (const item of staleInvoices) {
       let isSettled = false;
 
-      // 1. Cek status ke Midtrans terlebih dahulu jika server key aktif
       if (getMidtransServerKey() && process.env.NODE_ENV !== "test") {
         try {
           const midtransStatus = await checkMidtransOrderStatus(item.invoiceId);
@@ -356,7 +349,6 @@ export async function expireStalePendingDonations(batchLimit = 50) {
         }
       }
 
-      // 2. Jika belum terbayar, tandai EXPIRED di database & panggil expire di Midtrans
       if (!isSettled) {
         await expireDonationRecord(item.invoiceId, "CRON_EXPIRATION");
         expiredCount++;

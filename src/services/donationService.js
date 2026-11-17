@@ -213,7 +213,6 @@ export async function createDonation({
     }
   }
 
-  // Fallback lokal hanya untuk mode development/test jika sandbox offline
   if (!virtualAccountNumber && channel.type === "VA" && process.env.NODE_ENV !== "production") {
     const bankPrefix = {
       bri_va: "04240",
@@ -458,7 +457,6 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
             data: { accessToken: effectiveAccessToken },
           });
         } catch {
-          // Ignore if update fails
         }
       }
 
@@ -547,7 +545,6 @@ export async function getDonationByInvoiceId(invoiceId, token = null, sessionUse
               }).catch(() => {});
             }
           } catch {
-            // fallback silent
           }
         }
       }
@@ -639,7 +636,6 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
 
     if (!donation) return null;
 
-    // Verifikasi integritas nominal: selisih nominal tidak boleh melampaui toleransi pembulatan Rp 1
     if (expectedAmount !== null && !isNaN(expectedAmount) && expectedAmount > 0) {
       if (Math.abs(expectedAmount - Number(donation.totalAmount)) > 1) {
         console.error(
@@ -688,7 +684,6 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
       }
     }
 
-    // Rekonsiliasi transaksi terlambat (Late Webhook / Expired Invoices yang akhirnya terbayar)
     if (previousStatus === "EXPIRED" || previousStatus === "CANCELLED") {
       await tx.activityLog.create({
         data: {
@@ -742,7 +737,6 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
       }
     }
 
-    // Kirim bukti donasi digital via Resend (dengan fallback antrean retry jika terjadi rate limit)
     if (settled.donorEmail && settled.donorEmail.includes("@")) {
       const appUrl = (
         process.env.NEXT_PUBLIC_APP_URL ||

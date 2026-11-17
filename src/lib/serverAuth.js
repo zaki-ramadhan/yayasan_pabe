@@ -21,7 +21,6 @@ export function getSuperAdminEmails() {
     .map((e) => e.trim().toLowerCase())
     .filter((e) => e.length > 0);
 
-  // Selalu sertakan akun super admin infrastruktur dan akun official yayasan
   [...INFRASTRUCTURE_EMAILS, "superadmin@pabe.or.id", "admin@payungberkah.org"].forEach((email) => {
     const clean = email.toLowerCase().trim();
     if (!list.includes(clean)) {
@@ -104,12 +103,10 @@ export function verifyPassword(password, storedHash) {
 export async function getAuthenticatedUser(request) {
   let sessionId = null;
 
-  // 1. NextRequest helper (.cookies.get)
   if (request?.cookies && typeof request.cookies.get === "function") {
     sessionId = request.cookies.get("pabe_session")?.value;
   }
 
-  // 2. Fallback: Parse raw Request header 'cookie'
   if (!sessionId && request?.headers) {
     const cookieHeader =
       typeof request.headers.get === "function"
@@ -121,17 +118,14 @@ export async function getAuthenticatedUser(request) {
     }
   }
 
-  // 3. Fallback: Official Next.js cookies() store from next/headers
   if (!sessionId) {
     try {
       const cookieStore = await cookies();
       sessionId = cookieStore.get("pabe_session")?.value;
     } catch {
-      // Ignored if executed outside server context
     }
   }
 
-  // 4. Fallback: Request headers 'x-pabe-session' or 'authorization'
   if (!sessionId && request?.headers) {
     const authHeader =
       (typeof request.headers.get === "function" ? request.headers.get("x-pabe-session") : null) ||
@@ -141,7 +135,6 @@ export async function getAuthenticatedUser(request) {
     }
   }
 
-  // Sanitize sessionId value
   if (sessionId) {
     sessionId = String(sessionId).replace(/^["']|["']$/g, "").trim();
   }
@@ -150,7 +143,6 @@ export async function getAuthenticatedUser(request) {
     return { authenticated: false, user: null, reason: "NO_SESSION_COOKIE" };
   }
 
-  // 5. Validasi Kriptografis Token Sesi (HMAC-SHA256 Anti-Forgery)
   let verifiedUserId = null;
   let verifiedEmail = null;
   if (isSignedSessionTokenFormat(sessionId)) {
@@ -162,7 +154,6 @@ export async function getAuthenticatedUser(request) {
       return { authenticated: false, user: null, reason: "INVALID_SESSION_SIGNATURE" };
     }
   } else if (process.env.NODE_ENV === "production") {
-    // Pada lingkungan produksi, tolak seluruh format sesi unsigned/plain-text
     return { authenticated: false, user: null, reason: "UNSIGNED_SESSION_REJECTED" };
   }
 
@@ -194,8 +185,6 @@ export async function getAuthenticatedUser(request) {
         select: userSelectFields,
       });
 
-      // Fallback: Jika lookup by id gagal namun token memiliki email terverifikasi (HMAC-SHA256),
-      // cari akun berdasarkan email tersebut (menangani id token OAuth USR-GGL/USR-FB)
       if (!user && verifiedEmail) {
         user = await prisma.user.findUnique({
           where: { email: verifiedEmail.toLowerCase() },
@@ -203,7 +192,6 @@ export async function getAuthenticatedUser(request) {
         });
       }
       if (!user && !verifiedUserId) {
-        // Fallback pencarian fleksibel hanya untuk mode dev/test
         const cleanProviderId = lookupId.replace(/^USR-(?:GGL|FB)-/, "");
         user = await prisma.user.findFirst({
           where: {
@@ -258,7 +246,6 @@ export async function getAuthenticatedUser(request) {
       };
     }
 
-    // Check demo users fallback
     const lookupTarget = lookupId || sessionId;
     const demoMatch = DEMO_USERS.find(
       (u) =>
@@ -287,7 +274,6 @@ export async function getAuthenticatedUser(request) {
       };
     }
 
-    // Fallback tangguh untuk Super Admin resmi dengan token sesi bertanda tangan kriptografis valid
     if (verifiedEmail && isSuperAdminEmail(verifiedEmail)) {
       return {
         authenticated: true,

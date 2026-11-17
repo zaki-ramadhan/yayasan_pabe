@@ -46,7 +46,6 @@ export async function getAdminVolunteers({
       }),
     ]);
 
-    // Batch query avatar akun relawan jika pengguna terdaftar di User
     const rawEmails = items.map((v) => v.email?.trim().toLowerCase()).filter(Boolean);
     const uniqueEmails = Array.from(new Set(rawEmails));
     const userMap = new Map();

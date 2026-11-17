@@ -26,28 +26,22 @@ function escapePdfText(str) {
 export function buildPdfDocument(contentStreamText) {
   const objects = [];
 
-  // 1: Catalog
   objects.push("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
 
-  // 2: Pages list
   objects.push("2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n");
 
-  // 3: Page (A4: 595.28 x 841.89 pt)
   objects.push(
     "3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>\nendobj\n"
   );
 
-  // 4: Font Bold (Helvetica-Bold)
   objects.push(
     "4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>\nendobj\n"
   );
 
-  // 5: Font Regular (Helvetica)
   objects.push(
     "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n"
   );
 
-  // 6: Stream contents
   const streamBuffer = Buffer.from(contentStreamText, "utf-8");
   objects.push(
     `6 0 obj\n<< /Length ${streamBuffer.length} >>\nstream\n${contentStreamText}\nendstream\nendobj\n`
@@ -93,7 +87,6 @@ export function generateAuditReportPdf(data = {}) {
   const totalFundsOutFormatted = formatRupiah(fundsOut);
   const beneficiariesFormatted = `${formatNumber(beneficiaryCount)} jiwa`;
 
-  // Dynamic program allocation based on fundsOut
   const p1Amt = Math.round(fundsOut * 0.50);
   const p2Amt = Math.round(fundsOut * 0.30);
   const p3Amt = Math.round(fundsOut * 0.12);

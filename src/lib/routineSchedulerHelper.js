@@ -11,7 +11,6 @@ export { normalizeWhatsAppNumber } from "@/lib/whatsappUtils";
 export function isRoutineScheduledForNow(routine, currentTime = new Date()) {
   if (!routine || routine.status !== "ACTIVE") return false;
 
-  // Evaluasi masa berlaku jika opsi rentang tanggal aktif
   if (routine.hasCustomPeriod) {
     if (routine.startDate) {
       const start = new Date(routine.startDate);
@@ -29,12 +28,10 @@ export function isRoutineScheduledForNow(routine, currentTime = new Date()) {
   const currentHour = wibTime.getHours();
   const currentMinute = wibTime.getMinutes();
 
-  // Parse reminderTime (format "HH:mm", defaults to "05:00")
   const reminderTime = routine.reminderTime || "05:00";
   const [targetHourStr] = reminderTime.split(":");
   const targetHour = parseInt(targetHourStr, 10);
 
-  // Cocokkan jam target (toleransi run dalam window 1 jam cron)
   if (currentHour !== targetHour) {
     return false;
   }
@@ -54,8 +51,6 @@ export function isRoutineScheduledForNow(routine, currentTime = new Date()) {
   if (frequency === "MONTHLY") {
     const currentDate = wibTime.getDate(); // 1 - 31
     const rawTargetDate = routine.monthlyDate ? new Date(routine.monthlyDate).getDate() : 1;
-    // End-of-Month Clamp: jika bulan berjalan hanya memiliki 28/29/30 hari dan target donatur > jumlah hari,
-    // maka eksekusi di hari terakhir bulan tersebut (misal tgl 31 di Februari -> dieksekusi 28/29 Februari)
     const lastDayOfMonth = new Date(wibTime.getFullYear(), wibTime.getMonth() + 1, 0).getDate();
     const effectiveTargetDate = Math.min(rawTargetDate, lastDayOfMonth);
     return currentDate === effectiveTargetDate;

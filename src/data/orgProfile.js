@@ -278,7 +278,6 @@ Yayasan Payung Berkah bercita-cita mewujudkan interaksi antara masyarakat kurang
       gender: "P",
       image: "/img/avatars/avatar-female.svg",
     },
-    // divisi humas
     {
       name: "Sabar",
       role: "Divisi Humas",
@@ -291,7 +290,6 @@ Yayasan Payung Berkah bercita-cita mewujudkan interaksi antara masyarakat kurang
       gender: "P",
       image: "/img/avatars/avatar-female.svg",
     },
-    // divisi keagamaan
     {
       name: "Ahmad Turmudzi",
       role: "Divisi Keagamaan",
@@ -304,7 +302,6 @@ Yayasan Payung Berkah bercita-cita mewujudkan interaksi antara masyarakat kurang
       gender: "P",
       image: "/img/avatars/avatar-female.svg",
     },
-    // divisi sosial
     {
       name: "Bandini",
       role: "Divisi Sosial",
@@ -317,7 +314,6 @@ Yayasan Payung Berkah bercita-cita mewujudkan interaksi antara masyarakat kurang
       gender: "P",
       image: "/img/avatars/avatar-female.svg",
     },
-    // divisi pendidikan
     {
       name: "Syahrialdi",
       role: "Divisi Pendidikan",
@@ -330,7 +326,6 @@ Yayasan Payung Berkah bercita-cita mewujudkan interaksi antara masyarakat kurang
       gender: "L",
       image: "/img/avatars/avatar-male.svg",
     },
-    // divisi kesehatan
     {
       name: "Heri Sulistyowati, S.Apt.",
       role: "Divisi Kesehatan",

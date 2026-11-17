@@ -54,7 +54,6 @@ export async function downloadVolunteerCardImage(target, options = {}) {
       },
     });
 
-    // Format nama file bersih tanpa spasi ganda atau karakter ilegal
     const cleanName = volunteerName
       .trim()
       .replace(/[^a-zA-Z0-9\s-]/g, "")
@@ -62,7 +61,6 @@ export async function downloadVolunteerCardImage(target, options = {}) {
     const cleanId = volunteerId ? `-${volunteerId.replace(/[^a-zA-Z0-9-]/g, "")}` : "";
     const fileName = `Kartu-Relawan-Payung-Berkah-${cleanName}${cleanId}.png`;
 
-    // Buat anchor virtual untuk mengunduh gambar ke penyimpanan lokal pengguna
     const link = document.createElement("a");
     link.download = fileName;
     link.href = dataUrl;

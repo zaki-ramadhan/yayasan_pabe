@@ -11,14 +11,11 @@ export function formatVolunteerId(id = "", dateInput = null) {
     ? String(new Date(dateInput).getFullYear()).slice(-2)
     : String(new Date().getFullYear()).slice(-2);
 
-  // Jika id sudah memiliki minimal 4 digit angka di dalamnya
   const numericOnly = String(id).replace(/\D/g, "");
   if (numericOnly.length >= 4) {
     return `${yearSuffix}${numericOnly.slice(-4)}`;
   }
 
-  // Jika id berupa string CUID / alfanumerik (misal cm7...tvul),
-  // ubah secara deterministik menjadi 4 digit angka konsisten (0001 - 9999)
   let hash = 0;
   const str = String(id || "volunteer");
   for (let i = 0; i < str.length; i++) {
@@ -50,7 +47,6 @@ export function formatVolunteerBadgeName(fullName = "", maxLineChars = 13) {
 
   const words = clean.split(" ");
 
-  // Kasus 1 kata
   if (words.length === 1) {
     const single =
       words[0].length > maxLineChars + 3
@@ -59,7 +55,6 @@ export function formatVolunteerBadgeName(fullName = "", maxLineChars = 13) {
     return { line1: single, line2: "", displayName: single };
   }
 
-  // Kasus 2 kata: Idealnya 1 kata di line 1 dan 1 kata di line 2
   if (words.length === 2) {
     let [w1, w2] = words;
     if (w1.length > maxLineChars) {
@@ -77,10 +72,8 @@ export function formatVolunteerBadgeName(fullName = "", maxLineChars = 13) {
     return { line1: w1, line2: w2, displayName: `${w1} ${w2}` };
   }
 
-  // Kasus >= 3 kata
   const processed = [...words];
 
-  // Singkat kata pertama jika merupakan awalan panjang populer
   if (/^(muh(ammad)?|moch(ammad)?)$/i.test(processed[0])) {
     processed[0] = "M.";
   } else if (/^ahmad$/i.test(processed[0])) {
@@ -91,7 +84,6 @@ export function formatVolunteerBadgeName(fullName = "", maxLineChars = 13) {
   let line2 = "";
 
   if (processed.length === 3) {
-    // 3 kata: [W0, W1, W2]
     if (`${processed[0]} ${processed[1]}`.length <= maxLineChars) {
       line1 = `${processed[0]} ${processed[1]}`;
       line2 = processed[2];
@@ -106,7 +98,6 @@ export function formatVolunteerBadgeName(fullName = "", maxLineChars = 13) {
       }
     }
   } else {
-    // >= 4 kata: contoh "Siti Nurhaliza Rahmawati Putri" atau "M. Ilham Bintang Ramadhan"
     const first = processed[0];
     const last = processed[processed.length - 1];
     const middleWords = processed.slice(1, -1);

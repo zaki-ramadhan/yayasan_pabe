@@ -50,14 +50,12 @@ export function usePersistentCooldown(storageKey, defaultSeconds = 60) {
 
   const [cooldown, setCooldown] = useState(() => getRemainingSeconds());
 
-  // Sinkronisasi saat storageKey berubah (React derived state pattern)
   const [prevKey, setPrevKey] = useState(storageKey);
   if (storageKey !== prevKey) {
     setPrevKey(storageKey);
     setCooldown(getRemainingSeconds());
   }
 
-  // Interval timer per detik saat cooldown aktif
   useEffect(() => {
     if (cooldown <= 0) return;
 

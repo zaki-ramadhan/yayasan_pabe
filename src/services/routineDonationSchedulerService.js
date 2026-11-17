@@ -26,7 +26,6 @@ export async function processScheduledRoutineDonations({
 } = {}) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-  // 1. Ambil data komitmen donasi rutin yang berstatus aktif
   const queryWhere = { status: "ACTIVE" };
   if (forceRoutineId) {
     queryWhere.id = forceRoutineId;
@@ -40,7 +39,6 @@ export async function processScheduledRoutineDonations({
   });
 
   if (!routines || routines.length === 0) {
-    // Tetap proses antrean yang mungkin masih tersisa dari retry sebelumnya
     const workerSummary = await processNotificationQueue({ now: currentTime });
     return {
       success: true,
@@ -54,7 +52,6 @@ export async function processScheduledRoutineDonations({
     };
   }
 
-  // 2. Filter yang sesuai jadwal saat ini (jika bukan force run)
   const dueRoutines = forceRoutineId
     ? routines
     : routines.filter((r) => isRoutineScheduledForNow(r, currentTime));
@@ -68,7 +65,6 @@ export async function processScheduledRoutineDonations({
     const execKey = getRoutineExecutionKey(routine.id, currentTime);
 
     try {
-      // 3a. Cek masa berlaku: Jika melewati batas tanggal berakhir, selesaikan jadwal otomatis
       if (routine.hasCustomPeriod && routine.endDate) {
         const end = new Date(routine.endDate);
         end.setHours(23, 59, 59, 999);
@@ -88,8 +84,6 @@ export async function processScheduledRoutineDonations({
         }
       }
 
-      // 3b. Fail-safe Fiqih & Smart Rollover: Jika program terikat sudah tidak aktif atau ditutup,
-      // alihkan ke program aktif yang paling membutuhkan dana. Jika tidak ada, selesaikan jadwal (Completed).
       if (routine.campaign && (routine.campaign.status !== "ACTIVE" || isCampaignClosed(routine.campaign))) {
         const rolloverRes = await rolloverOrCompleteSingleRoutineDonation(routine.id, {
           notifyDonor: true,
@@ -111,7 +105,6 @@ export async function processScheduledRoutineDonations({
         }
       }
 
-      // 4. Verifikasi Idempotensi: Cek apakah jadwal ini sudah pernah dieksekusi hari ini
       if (!forceRoutineId) {
         const alreadyExecuted = await prisma.activityLog.findFirst({
           where: {
@@ -137,7 +130,6 @@ export async function processScheduledRoutineDonations({
       let invoiceId = null;
       let actionUrl = `${baseUrl}/donasi-rutin`;
 
-      // 4b. Consecutive Unpaid Guard: Cegah spam invoice jika 3 tagihan sebelumnya kedaluwarsa berturut-turut
       if (routine.routineType === "AUTO_DONATION" && !forceRoutineId && typeof prisma?.donation?.findMany === "function") {
         const recentInvoices = await prisma.donation.findMany({
           where: {
@@ -193,7 +185,6 @@ export async function processScheduledRoutineDonations({
         }
       }
 
-      // 5. Jika mode Donasi Otomatis (Auto-Invoice), terbitkan invoice donasi baru dengan saluran pilihan donatur
       if (routine.routineType === "AUTO_DONATION") {
         const donationIdempotencyKey = forceRoutineId
           ? `${execKey}_TEST_${Date.now()}`
@@ -222,7 +213,6 @@ export async function processScheduledRoutineDonations({
         actionUrl = `${baseUrl}${getCampaignDetailHref(routine.campaign)}`;
       }
 
-      // 6. Masukkan tugas pengiriman pesan ke PostgreSQL Queue (Producer)
       const queueKey = forceRoutineId
         ? `ROUTINE_QUEUE_${execKey}_${Date.now()}`
         : `ROUTINE_QUEUE_${execKey}`;
@@ -250,7 +240,6 @@ export async function processScheduledRoutineDonations({
         idempotencyKey: queueKey,
       });
 
-      // 7. Catat log eksekusi scheduler ke ActivityLog
       await prisma.activityLog.create({
         data: {
           action: "ROUTINE_EXECUTION",
@@ -284,7 +273,6 @@ export async function processScheduledRoutineDonations({
     }
   }
 
-  // 8. Jalankan Consumer Worker untuk memproses antrean yang jatuh tempo
   const workerSummary = await processNotificationQueue({ now: currentTime });
 
   return {

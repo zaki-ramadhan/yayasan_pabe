@@ -13,7 +13,6 @@ export function saveDonationDraft(campaignSlug, data) {
       JSON.stringify({ campaignSlug, ...data, savedAt: Date.now() })
     );
   } catch {
-    // Ignore QuotaExceededError
   }
 }
 

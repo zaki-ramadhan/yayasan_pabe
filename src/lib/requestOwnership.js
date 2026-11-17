@@ -17,13 +17,11 @@ export function extractInvoiceTokenFromRequest(request, invoiceId, explicitToken
 
   const cookieName = `pabe_inv_${invoiceId}`;
 
-  // 1. NextRequest .cookies.get
   if (request.cookies && typeof request.cookies.get === "function") {
     const val = request.cookies.get(cookieName)?.value;
     if (val) return val.trim();
   }
 
-  // 2. Raw Cookie header fallback
   if (request.headers && typeof request.headers.get === "function") {
     const cookieHeader = request.headers.get("cookie") || "";
     if (cookieHeader && invoiceId) {
@@ -38,7 +36,6 @@ export function extractInvoiceTokenFromRequest(request, invoiceId, explicitToken
     if (headerToken) return headerToken.trim();
   }
 
-  // 3. Query string ?token=
   if (request.url) {
     try {
       const u = new URL(request.url);

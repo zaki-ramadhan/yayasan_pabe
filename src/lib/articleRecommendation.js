@@ -54,7 +54,6 @@ export function getRelatedArticles(currentArticle, allArticles = [], limit = 2) 
   const currentId = currentArticle.id ? String(currentArticle.id) : "";
   const currentSlug = currentArticle.slug ? String(currentArticle.slug) : "";
 
-  // Normalisasi kategori artikel aktif (mendukung single string 'category' dan array 'categories')
   const rawCurrentCategories = Array.isArray(currentArticle.categories) && currentArticle.categories.length > 0
     ? currentArticle.categories
     : [currentArticle.category];
@@ -62,14 +61,12 @@ export function getRelatedArticles(currentArticle, allArticles = [], limit = 2) 
     rawCurrentCategories.map(normalizeString).filter(Boolean)
   );
 
-  // Normalisasi tags artikel aktif
   const currentTags = new Set(
     (Array.isArray(currentArticle.tags) ? currentArticle.tags : [])
       .map(normalizeString)
       .filter(Boolean)
   );
 
-  // Filter eksklusif artikel saat ini (berdasarkan id atau slug)
   const candidates = allArticles.filter((art) => {
     if (!art || typeof art !== "object") return false;
     const isSameId = currentId && String(art.id) === currentId;
@@ -89,12 +86,10 @@ export function getRelatedArticles(currentArticle, allArticles = [], limit = 2) 
     };
   }
 
-  // Hitung skor & tier relevansi untuk setiap kandidat
   const scored = candidates.map((art) => {
     let score = 0;
     let categoryMatch = false;
 
-    // 1. Cek kecocokan kategori
     const artCategories = (
       Array.isArray(art.categories) && art.categories.length > 0
         ? art.categories
@@ -104,12 +99,11 @@ export function getRelatedArticles(currentArticle, allArticles = [], limit = 2) 
     for (const cat of artCategories) {
       if (currentCategories.has(cat)) {
         categoryMatch = true;
-        score += 3.0; // Bobot kategori utama
+        score += 3.0; // Primary category weight
         break;
       }
     }
 
-    // 2. Cek kecocokan tags (topik)
     const artTags = (Array.isArray(art.tags) ? art.tags : [])
       .map(normalizeString)
       .filter(Boolean);
@@ -122,7 +116,6 @@ export function getRelatedArticles(currentArticle, allArticles = [], limit = 2) 
     }
     score += matchingTagsCount * 1.5;
 
-    // Validasi timestamp publikasi untuk secondary sorting (terbaru)
     const publishedTime = art.publishedAt ? new Date(art.publishedAt).getTime() : 0;
     const safePublishedTime = Number.isNaN(publishedTime) ? 0 : publishedTime;
 
@@ -135,7 +128,6 @@ export function getRelatedArticles(currentArticle, allArticles = [], limit = 2) 
     };
   });
 
-  // Urutkan: Skor tertinggi dahulu -> Tanggal publikasi terbaru
   scored.sort((a, b) => {
     if (b.score !== a.score) {
       return b.score - a.score;
@@ -147,7 +139,6 @@ export function getRelatedArticles(currentArticle, allArticles = [], limit = 2) 
   const selectedEntries = scored.slice(0, targetLimit);
   const selectedArticles = selectedEntries.map((e) => e.article);
 
-  // Analisis kontekstual untuk UX penamaan heading
   const hasCategoryMatch = selectedEntries.some((e) => e.categoryMatch);
   const hasTagMatch = selectedEntries.some((e) => e.hasMatchingTags);
   const hasAnyRelevance = selectedEntries.some((e) => e.score > 0);

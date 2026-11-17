@@ -80,14 +80,12 @@ export async function createCoreApiCharge({
   } else if (channel === "shopeepay") {
     payload.payment_type = "shopeepay";
   } else {
-    // Default: QRIS
     payload.payment_type = "qris";
     payload.qris = {
       acquirer: "gopay",
     };
   }
 
-  // Sinkronisasi batas waktu tagihan dengan Midtrans (khusus donasi rutin berdurasi 24 jam)
   payload.custom_expiry = buildMidtransCustomExpiry(channel, "", new Date(), { isRoutine });
 
   const response = await fetch(getMidtransCoreApiChargeUrl(), {

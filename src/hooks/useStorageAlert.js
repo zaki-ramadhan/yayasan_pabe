@@ -38,7 +38,6 @@ export function useStorageAlert() {
 
   const fetchAlerts = useCallback(async () => {
     setIsLoading(true);
-    // 1. Cek parameter pengujian instan di URL atau sessionStorage (?mockStorage=85 atau ?mockStorage=96)
     if (typeof window !== "undefined") {
       try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -62,7 +61,6 @@ export function useStorageAlert() {
           return;
         }
       } catch {
-        // Lanjutkan pengambilan normal jika parsing query gagal
       }
     }
 
@@ -84,7 +82,6 @@ export function useStorageAlert() {
   useEffect(() => {
     let ignore = false;
     async function load() {
-      // 1. Cek parameter pengujian instan di URL atau sessionStorage
       if (typeof window !== "undefined") {
         try {
           const urlParams = new URLSearchParams(window.location.search);

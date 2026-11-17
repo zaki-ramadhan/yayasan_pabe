@@ -220,7 +220,6 @@ export function getTransactionVocabulary(txOrParams = {}) {
   const normCatName = String(categoryName).toLowerCase().trim();
   const normTitle = String(programTitle).toLowerCase().trim();
 
-  // 1. ZAKAT
   const isZakat =
     normType === "ZAKAT" ||
     normCatSlug === "zakat" ||
@@ -254,7 +253,6 @@ export function getTransactionVocabulary(txOrParams = {}) {
     };
   }
 
-  // 2. WAKAF
   const isWakaf =
     normType === "WAKAF" ||
     normCatSlug === "wakaf" ||
@@ -288,7 +286,6 @@ export function getTransactionVocabulary(txOrParams = {}) {
     };
   }
 
-  // 3. INFAQ
   const isInfaq =
     normType === "INFAQ" ||
     normCatSlug === "infaq" ||
@@ -323,7 +320,6 @@ export function getTransactionVocabulary(txOrParams = {}) {
     };
   }
 
-  // 4. SEDEKAH
   const isSedekah =
     normType === "SEDEKAH" ||
     normType === "INFAK_SUBUH" ||
@@ -358,7 +354,6 @@ export function getTransactionVocabulary(txOrParams = {}) {
     };
   }
 
-  // 5. DONASI (Default)
   return {
     kind: "DONASI",
     noun: "donasi",

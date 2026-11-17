@@ -128,7 +128,6 @@ export async function getFinancialLedgerData() {
     const totalSubsidies = incomingTx.reduce((acc, tx) => acc + (tx.subsidyFee || 0), 0);
     const netTotalIncome = Math.max(0, totalIncome - totalSubsidies);
 
-    // Aggregasi data analitik riil untuk Rincian Laporan Keuangan & Arus Kas
     const analytics = aggregateFinancialAnalytics(donations, updates, totalIncome, totalExpenses);
 
     return {

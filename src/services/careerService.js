@@ -140,7 +140,6 @@ export async function submitJobApplication(payload) {
     resumeUrl = "",
   } = payload || {};
 
-  // Validation
   if (!fullName || typeof fullName !== "string" || fullName.trim().length < 2) {
     throw new Error("Nama lengkap wajib diisi minimal 2 karakter.");
   }
@@ -157,7 +156,6 @@ export async function submitJobApplication(payload) {
     throw new Error("Surat pengantar / alasan melamar wajib diisi minimal 10 karakter.");
   }
 
-  // Resolve target vacancy in DB
   const targetVacancy = await prisma.jobVacancy.findFirst({
     where: {
       OR: [{ id: vacancyId }, { jobCode: vacancyId }],

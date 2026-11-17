@@ -3,7 +3,6 @@
  * Memvalidasi token respons Turnstile dari browser ke endpoint resmi Cloudflare.
  */
 
-// Kunci testing resmi bawaan Cloudflare (Selalu Lolos / Always Passes)
 export const CLOUDFLARE_TEST_SITE_KEY = "1x00000000000000000000AA";
 export const CLOUDFLARE_TEST_SECRET_KEY = "1x0000000000000000000000000000000AA";
 
@@ -31,13 +30,10 @@ export async function verifyTurnstileToken(token, remoteIp = null) {
 
   const secretKey = configuredSecret || CLOUDFLARE_TEST_SECRET_KEY;
 
-  // Jika di lingkungan automated test dan token tidak dikirim, izinkan lewat agar tidak memblokir tes modul lain
   if (process.env.NODE_ENV === "test" && !token) {
     return { success: true };
   }
 
-  // Jika di local dev dan menggunakan test key, verifikasi tetap dipanggil ke Cloudflare
-  // Endpoint Cloudflare mendukung secret key testing ini dan otomatis merespons success: true.
   if (!token || typeof token !== "string" || !token.trim()) {
     return {
       success: false,

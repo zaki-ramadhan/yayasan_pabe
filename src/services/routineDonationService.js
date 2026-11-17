@@ -55,7 +55,6 @@ export async function createRoutineDonations({
   if (!emailVal.isValid) throw new Error(emailVal.message);
   const cleanEmail = emailVal.sanitized;
 
-  // Single program enforcement
   const targetPrograms = Array.isArray(programs) && programs.length > 0 ? programs : program ? [program] : [];
   if (targetPrograms.length === 0) {
     throw new Error("Minimal harus memilih 1 program donasi rutin.");
@@ -65,7 +64,6 @@ export async function createRoutineDonations({
     throw new Error("Jadwal donasi rutin dibatasi untuk 1 program donasi.");
   }
 
-  // Guard: Hanya boleh memiliki 1 jadwal donasi rutin aktif
   const existingActive = await prisma.routineDonation.findFirst({
     where: {
       donorEmail: { equals: cleanEmail, mode: "insensitive" },

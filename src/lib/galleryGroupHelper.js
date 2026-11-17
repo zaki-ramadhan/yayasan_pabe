@@ -106,7 +106,6 @@ export function groupGalleryItems(items = []) {
   const groupsMap = new Map();
 
   items.forEach((item) => {
-    // Normalisasi kunci pengelompokan berdasarkan judul & kategori kegiatan serta decode HTML entities
     const rawTitle = decodeHtmlEntities((item.title || "Dokumentasi kegiatan").trim());
     const rawCat = decodeHtmlEntities((item.category || "Umum").trim());
     const titleKey = rawTitle.toLowerCase();
@@ -130,7 +129,6 @@ export function groupGalleryItems(items = []) {
         existing.images.push(item.imageUrl);
         existing.rawItems.push(item);
       }
-      // Prioritaskan deskripsi jika item awal belum memiliki deskripsi
       if (!existing.description && item.description) {
         existing.description = decodeHtmlEntities(item.description);
       }
@@ -140,7 +138,6 @@ export function groupGalleryItems(items = []) {
   return Array.from(groupsMap.values()).map((group) => {
     const rawImages = group.images || [];
 
-    // Prioritaskan video sebagai cover utama (indeks 0) jika ada video dalam dokumentasi
     const firstVideoIndex = rawImages.findIndex((url) => isVideoUrl(url));
     let orderedImages = [...rawImages];
 

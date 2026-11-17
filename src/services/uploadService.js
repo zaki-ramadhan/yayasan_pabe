@@ -79,10 +79,8 @@ export async function uploadFileToServer({
     file &&
     (file.size > 5 * 1024 * 1024 || (file.type && file.type.startsWith("video/")))
   );
-  // Toleransi timeout diperlonggar: 60 dtk (berkas normal) dan 180 dtk (video/berkas besar)
   const timeoutMs = customTimeoutMs || (isLargeOrVideo ? 180000 : 60000);
 
-  // Gunakan XMLHttpRequest di peramban untuk melacak transfer byte nyata
   if (typeof window !== "undefined" && typeof window.XMLHttpRequest === "function") {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -90,13 +88,11 @@ export async function uploadFileToServer({
       xhr.withCredentials = true;
       xhr.timeout = timeoutMs;
 
-      // Hubungkan pembatalan via AbortSignal jika disediakan
       if (signal) {
         signal.addEventListener("abort", () => {
           try {
             xhr.abort();
           } catch {
-            // Abaikan penanganan jika request sudah tuntas
           }
         });
       }
@@ -159,7 +155,6 @@ export async function uploadFileToServer({
     });
   }
 
-  // Fallback ke safeFetch jika di luar peramban
   const response = await safeFetch("/api/upload", {
     method: "POST",
     body: formData,
@@ -304,6 +299,5 @@ export function sendBeaconDelete(urlOrUrls) {
     const blob = new Blob([JSON.stringify({ urls })], { type: "application/json" });
     navigator.sendBeacon("/api/upload", blob);
   } catch {
-    // Abaikan kegagalan pengiriman beacon
   }
 }

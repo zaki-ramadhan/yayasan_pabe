@@ -39,13 +39,11 @@ export function sanitizePublicLeadershipTitle(title, name = "") {
   const trimmed = title.trim();
   const lower = trimmed.toLowerCase();
 
-  // Ekstrak jabatan di dalam tanda kurung, misal: "Super Admin (Ketua Yayasan)" -> "Ketua Yayasan"
   const bracketMatch = trimmed.match(/\((.*?)\)/);
   if (bracketMatch && (lower.startsWith("super admin") || lower.startsWith("admin"))) {
     return bracketMatch[1].trim();
   }
 
-  // Jika title mentah berisi role sistem teknis, mapping ke nama jabatan yayasan yang wajar
   if (
     lower === "super admin" ||
     lower === "superadmin" ||
@@ -129,7 +127,6 @@ export async function ensureDefaultLeadersSeeded() {
           },
         }).catch(() => null);
       } else if (exists && OLD_TO_NEW_TITLES[exists.title] && leader.role === OLD_TO_NEW_TITLES[exists.title]) {
-        // Pembaruan aman untuk nama jabatan default awal yang diperbarui di orgProfile
         await prisma.user.update({
           where: { id: exists.id },
           data: { title: leader.role },
@@ -179,11 +176,9 @@ export async function getPublicLeadership() {
       },
     });
 
-    // Sanitasi lapis kedua di memori: filter email vendor/dev dan jabatan murni teknis non-struktural
     const excludedSet = new Set(excludedEmails.map((e) => e.toLowerCase()));
     const eligibleUsers = (users || []).filter((u) => {
       if (u.email && excludedSet.has(u.email.toLowerCase())) return false;
-      // Jangan tampilkan akun dengan peran teknis murni website (Admin Web, IT, Developer, dll.)
       if (isNonStructuralTechTitle(u.title)) return false;
       return true;
     });
@@ -192,7 +187,6 @@ export async function getPublicLeadership() {
       return ORG_PROFILE.leadership || [];
     }
 
-    // Urutkan berdasarkan hierarki jabatan struktural, lalu nama
     const sorted = [...eligibleUsers].sort((a, b) => {
       const titleA = sanitizePublicLeadershipTitle(a.title, a.name);
       const titleB = sanitizePublicLeadershipTitle(b.title, b.name);
@@ -256,7 +250,6 @@ export async function getDistinctStaffTitles() {
       .map((r) => r.title?.trim())
       .filter((t) => Boolean(t && t.length > 0));
 
-    // Gabungkan dengan default preset dan hapus duplikat (case-insensitive)
     const titleMap = new Map();
 
     for (const title of [...DEFAULT_STRUCTURAL_TITLES, ...dbTitles]) {

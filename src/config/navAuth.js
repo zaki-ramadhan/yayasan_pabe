@@ -18,7 +18,6 @@ export const DEFAULT_NAV_AUTH_CONFIG = {
 export function getNavAuthButtonConfig(pathname) {
   const currentPath = typeof pathname === "string" ? pathname.toLowerCase() : "";
 
-  // Jangan redirect kembali ke halaman auth itu sendiri jika pengguna sudah di auth
   const isAuthPage =
     currentPath.startsWith("/login") ||
     currentPath.startsWith("/register") ||

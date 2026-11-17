@@ -31,7 +31,6 @@ export function usePrayersSync(initialDonors = [], campaignSlug = null) {
   const [localExtraCounts, setLocalExtraCounts] = useState({});
   const aminedRaw = useSyncExternalStore(subscribe, getAminedSnapshot, getServerSnapshot);
 
-  // Background polling untuk doa baru (setiap 20 detik saat tab aktif)
   useEffect(() => {
     if (!campaignSlug) return;
 
@@ -72,7 +71,6 @@ export function usePrayersSync(initialDonors = [], campaignSlug = null) {
     };
   }, [campaignSlug, initialDonors, submittedPrayers]);
 
-  // Bersihkan cache lama di localStorage agar tidak menduplikasi hitungan database
   useEffect(() => {
     try {
       localStorage.removeItem("pabe_prayer_amin_counts");
@@ -112,7 +110,6 @@ export function usePrayersSync(initialDonors = [], campaignSlug = null) {
       const updatedAmined = Array.isArray(storedAmined) ? [...storedAmined, donorId] : [donorId];
       localStorage.setItem(AMINED_STORAGE_KEY, JSON.stringify(updatedAmined));
 
-      // Optimistic bump di memori sesi saat ini
       setLocalExtraCounts((prev) => ({
         ...prev,
         [donorId]: 1,
@@ -124,7 +121,6 @@ export function usePrayersSync(initialDonors = [], campaignSlug = null) {
         })
       );
 
-      // Sinkronisasi permanen ke backend & database PostgreSQL
       safeFetch("/api/donations/amin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -132,7 +128,6 @@ export function usePrayersSync(initialDonors = [], campaignSlug = null) {
         timeoutMs: 8000,
       }).catch(() => {});
     } catch {
-      // Ignore storage errors
     }
   }, []);
 

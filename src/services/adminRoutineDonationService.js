@@ -19,7 +19,6 @@ export async function getAdminRoutineDonations({
   const skip = (Math.max(1, page) - 1) * limit;
 
   try {
-    // Update nomor testing ke donatur Dewi Lestari jika belum diset
     await prisma.routineDonation.updateMany({
       where: {
         donorName: { contains: "Dewi", mode: "insensitive" },

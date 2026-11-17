@@ -10,7 +10,6 @@ const globalForSession = globalThis;
 
 function getDeterministicDevSecret() {
   if (!globalForSession.__pabeDeterministicDevSecret) {
-    // Generate secret deterministik per-proyek lokal agar identik di seluruh worker Next.js
     const projectSeed = `pabe-dev-session-seed:${process.cwd()}`;
     globalForSession.__pabeDeterministicDevSecret = crypto
       .createHash("sha256")

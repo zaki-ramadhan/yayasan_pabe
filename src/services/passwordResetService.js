@@ -147,14 +147,12 @@ export async function requestPasswordReset(email, baseUrl = "http://localhost:30
 
   const cleanEmail = email.trim().toLowerCase();
 
-  // Cari data pengguna di database
   const user = await prisma.user.findUnique({
     where: { email: cleanEmail },
     select: { id: true, name: true, email: true, isActive: true },
   });
 
   // Proteksi Anti-User-Enumeration:
-  // Jika email tidak terdaftar, tetap kembalikan pesan sukses generik agar penyerang tidak bisa menebak email terdaftar
   if (!user || user.isActive === false) {
     return {
       success: true,
@@ -162,22 +160,18 @@ export async function requestPasswordReset(email, baseUrl = "http://localhost:30
     };
   }
 
-  // 1. Generate 64-karakter secure random hex token
   const rawToken = crypto.randomBytes(32).toString("hex");
   const tokenHash = hashToken(rawToken);
   const expiresAt = new Date(Date.now() + PASSWORD_RESET_POLICY.TOKEN_EXPIRY_MINUTES * 60 * 1000);
 
-  // 2. Bersihkan token lama untuk email yang sama
   await tokenStore.deleteManyByEmail(cleanEmail);
 
-  // 3. Simpan token baru
   await tokenStore.createToken({
     email: cleanEmail,
     tokenHash,
     expiresAt,
   });
 
-  // 4. Siapkan URL reset
   const sanitizedBaseUrl = baseUrl.replace(/\/+$/, "");
   const resetUrl = `${sanitizedBaseUrl}/reset-password?token=${rawToken}`;
 
@@ -185,7 +179,6 @@ export async function requestPasswordReset(email, baseUrl = "http://localhost:30
     console.info(`[Password Reset Link] Tautan reset kata sandi untuk ${cleanEmail}: ${resetUrl}`);
   }
 
-  // 5. Kirim email via Resend dengan fallback antrean retry
   try {
     await sendPasswordResetEmail({
       to: cleanEmail,
@@ -243,7 +236,6 @@ export async function verifyPasswordResetToken(rawToken) {
   }
 
   if (new Date() > record.expiresAt) {
-    // Hapus token yang sudah kedaluwarsa
     await tokenStore.deleteById(record.id);
     return {
       isValid: false,
@@ -278,7 +270,6 @@ export async function resetPasswordWithToken(rawToken, newPassword) {
   const passwordHash = hashPassword(cleanPassword);
   const targetEmail = verification.email;
 
-  // Lakukan pembaruan kata sandi dan hapus token secara atomik
   await tokenStore.commitPasswordReset(targetEmail, passwordHash);
 
   return {

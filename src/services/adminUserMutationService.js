@@ -63,7 +63,6 @@ export async function createAdminUser({
     }
     cleanEmail = emailVal.sanitized;
   } else {
-    // Generate internal placeholder email yang unik dan valid untuk schema database
     const nameSlug = cleanName.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 15) || "pengurus";
     cleanEmail = `${nameSlug}.${crypto.randomBytes(4).toString("hex")}@internal.yayasanpayungberkah.org`;
   }
@@ -157,7 +156,7 @@ export async function updateAdminUser(id, payload, actorUser) {
     throw new Error("Data pengurus tidak ditemukan.");
   }
 
-  // Anti-Lockout: Cek jika mencoba mendemosikan Super Admin
+  // Anti-lockout: prevent demoting sole Super Admin
   if (target.role === USER_ROLES.SUPER_ADMIN && payload.role && payload.role !== USER_ROLES.SUPER_ADMIN) {
     if (actorUser?.id === target.id) {
       throw new Error("Anda tidak dapat menurunkan hak akses Super Admin akun Anda sendiri.");
@@ -186,7 +185,6 @@ export async function updateAdminUser(id, payload, actorUser) {
   const cleanTitle = payload.title !== undefined ? sanitizeText(payload.title) : target.title;
   const nextRole = payload.role && STAFF_ROLES.includes(payload.role) ? payload.role : target.role;
 
-  // Proteksi: Hanya Developer / Pemilik Sistem yang berwenang menaikkan akun lain menjadi Super Admin
   if (nextRole === USER_ROLES.SUPER_ADMIN && target.role !== USER_ROLES.SUPER_ADMIN) {
     if (!actorUser?.email || !isInfrastructureEmail(actorUser.email)) {
       throw new Error("Hanya Developer / Pemilik Sistem yang berwenang menaikkan hak akses menjadi Super Admin.");
@@ -373,12 +371,10 @@ export async function deleteAdminUser(id, actorUser) {
     }
   }
 
-  // Jika target yang dihapus adalah akun donatur, jalankan anonimisasi PDP & pembatalan komitmen donasi rutin
   if (target.role === USER_ROLES.DONOR) {
     return anonymizeDonorAccount({ userId: target.id, userEmail: target.email });
   }
 
-  // Jika target adalah pengurus/staf, batalkan donasi rutin aktif miliknya (jika ada) dan hapus avatar R2
   if (target.customAvatar && target.customAvatar.startsWith("/api/media/")) {
     try {
       await deleteFromR2(target.customAvatar);
@@ -388,7 +384,6 @@ export async function deleteAdminUser(id, actorUser) {
   }
 
   return prisma.$transaction(async (tx) => {
-    // Batalkan jadwal komitmen donasi rutin yang mungkin pernah dibuat pengurus dengan email/nomor ponselnya
     if (target.email || target.phone) {
       await tx.routineDonation.updateMany({
         where: {
@@ -404,7 +399,6 @@ export async function deleteAdminUser(id, actorUser) {
       });
     }
 
-    // Catat audit trail aksi penghapusan pengurus oleh Super Admin
     await tx.activityLog.create({
       data: {
         userId: actorUser?.id || null,

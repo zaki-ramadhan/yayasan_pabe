@@ -54,7 +54,6 @@ export async function getAdminDonors({
       }),
     ]);
 
-    // Lookup map akun terdaftar untuk enrichment data profil donatur
     const userLookup = new Map();
     for (const u of registeredUsers) {
       const email = normalizeEmail(u.email);
@@ -65,12 +64,10 @@ export async function getAdminDonors({
 
     const donorMap = new Map();
 
-    // Hanya agregasi dari transaksi donasi yang berstatus PAID
     for (const d of donations) {
       const email = normalizeEmail(d.donorEmail);
       const phone = normalizePhone(d.donorPhone);
 
-      // Pencocokan akun terdaftar jika ada
       const userMatch =
         (email && userLookup.get(`email:${email}`)) ||
         (phone && userLookup.get(`phone:${phone}`)) ||
@@ -130,7 +127,6 @@ export async function getAdminDonors({
       }
     }
 
-    // Pastikan 100% hanya donatur yang memiliki riwayat donasi sah (paidCount > 0)
     let allDonors = Array.from(donorMap.values()).filter((d) => d.paidCount > 0);
 
     const cleanSearch = sanitizeSearchQuery(search || "").toLowerCase();
@@ -181,7 +177,6 @@ export async function getAdminDonors({
     };
   }
 }
-
 
 export async function getAdminDonorDetail({ email, phone, name, page = 1, limit = 8 } = {}) {
   try {

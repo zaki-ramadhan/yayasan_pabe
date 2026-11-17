@@ -8,17 +8,14 @@
 export async function copyToClipboard(text) {
   if (!text || typeof window === "undefined") return false;
 
-  // 1. Modern asynchronous Clipboard API (secure context)
   try {
     if (navigator?.clipboard?.writeText && window.isSecureContext) {
       await navigator.clipboard.writeText(text);
       return true;
     }
   } catch {
-    // Fall back to execCommand below
   }
 
-  // 2. Fallback using temporary hidden textarea (for non-secure or restricted contexts)
   try {
     const textarea = document.createElement("textarea");
     textarea.value = text;

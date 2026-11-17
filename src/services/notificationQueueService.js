@@ -45,7 +45,6 @@ export async function enqueueNotification({
     throw new Error("idempotencyKey wajib disertakan untuk memastikan keunikan antrean.");
   }
 
-  // 1. Cek apakah tugas dengan idempotencyKey ini sudah pernah dibuat
   const existing = await prisma.notificationQueue.findUnique({
     where: { idempotencyKey },
   });
@@ -54,7 +53,6 @@ export async function enqueueNotification({
     return { created: false, queueItem: existing };
   }
 
-  // 2. Buat antrean baru dengan status PENDING
   const queueItem = await prisma.notificationQueue.create({
     data: {
       routineDonationId,

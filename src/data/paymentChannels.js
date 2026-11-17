@@ -14,7 +14,6 @@ export const PAYMENT_CATEGORIES = [
 ];
 
 export const PAYMENT_CHANNELS = [
-  // 1. QRIS & E-Wallet
   {
     id: "qris",
     category: "qris_ewallet",
@@ -68,7 +67,6 @@ export const PAYMENT_CHANNELS = [
     ],
   },
 
-  // 2. Virtual Account
   {
     id: "bca_va",
     category: "va",

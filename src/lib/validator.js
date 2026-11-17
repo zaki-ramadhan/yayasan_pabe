@@ -243,7 +243,6 @@ export function validatePhone(phone, { isRequired = true, fieldName = "Nomor Wha
     return { isValid: false, valid: false, message: msg, error: msg, sanitized: "", e164: "" };
   }
 
-  // Normalisasi prefix internasional (628 / 6208) ke format nasional (08)
   let normalized = rawDigits;
   if (normalized.startsWith("628")) {
     normalized = "0" + normalized.slice(2);
@@ -251,19 +250,16 @@ export function validatePhone(phone, { isRequired = true, fieldName = "Nomor Wha
     normalized = "0" + normalized.slice(3);
   }
 
-  // 1. Cek awalan seluler 08
   if (!normalized.startsWith("08")) {
     const msg = `${fieldName} harus diawali dengan 08 atau 628 (contoh: 08123456789).`;
     return { isValid: false, valid: false, message: msg, error: msg, sanitized: rawDigits, e164: "" };
   }
 
-  // 2. Cek digit ke-3: tolak 080X (bebas pulsa / call center / intelligent network)
   if (normalized.startsWith("080")) {
     const msg = "Nomor 080x (bebas pulsa) tidak dapat digunakan untuk nomor seluler/WhatsApp.";
     return { isValid: false, valid: false, message: msg, error: msg, sanitized: rawDigits, e164: "" };
   }
 
-  // 3. Cek panjang standar seluler Indonesia (10 - 13 digit untuk format 08)
   if (normalized.length < 10) {
     const msg = `${fieldName} terlalu pendek (minimal 10 digit, contoh: 08123456789).`;
     return { isValid: false, valid: false, message: msg, error: msg, sanitized: rawDigits, e164: "" };
@@ -273,7 +269,6 @@ export function validatePhone(phone, { isRequired = true, fieldName = "Nomor Wha
     return { isValid: false, valid: false, message: msg, error: msg, sanitized: rawDigits, e164: "" };
   }
 
-  // 4. Proteksi nomor fiktif / angka berulang identik setelah prefix (misal 081111111111, 089999999999)
   if (/^08(\d)\1{7,}$/.test(normalized)) {
     const msg = `${fieldName} tidak valid (terdeteksi pola nomor fiktif berulang).`;
     return { isValid: false, valid: false, message: msg, error: msg, sanitized: rawDigits, e164: "" };
@@ -291,7 +286,6 @@ export function validatePhone(phone, { isRequired = true, fieldName = "Nomor Wha
   };
 }
 
-// Daftar domain typo umum untuk proteksi salah ketik pengguna
 const COMMON_TYPO_DOMAINS = {
   "gmai.com": "gmail.com",
   "gmaill.com": "gmail.com",
@@ -317,13 +311,11 @@ export function validateEmail(email, isRequired = false) {
     return { isValid: true, valid: true, message: "", error: "", sanitized: "" };
   }
 
-  // 1. Batasan panjang standar
   if (clean.length < 5 || clean.length > 254) {
     const msg = "Format email tidak valid.";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // 2. Pemisahan karakter @ tepat satu
   const atParts = clean.split("@");
   if (atParts.length !== 2) {
     const msg = "Format email tidak valid (contoh: nama@email.com).";
@@ -332,7 +324,6 @@ export function validateEmail(email, isRequired = false) {
 
   const [localPart, domainPart] = atParts;
 
-  // 3. Validasi Local Part (sebelum @)
   if (!localPart || localPart.length > 64) {
     const msg = "Format email tidak valid.";
     return { isValid: false, valid: false, message: msg, error: msg };
@@ -348,7 +339,6 @@ export function validateEmail(email, isRequired = false) {
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // 4. Validasi Domain Part (setelah @)
   if (!domainPart || domainPart.length > 253) {
     const msg = "Domain email tidak valid.";
     return { isValid: false, valid: false, message: msg, error: msg };
@@ -373,14 +363,12 @@ export function validateEmail(email, isRequired = false) {
     }
   }
 
-  // TLD (label terakhir) wajib minimal 2 karakter alfabet
   const tld = domainLabels[domainLabels.length - 1];
   if (!/^[a-zA-Z]{2,24}$/.test(tld)) {
     const msg = "Ekstensi email tidak valid (contoh: .com, .id).";
     return { isValid: false, valid: false, message: msg, error: msg };
   }
 
-  // 5. Proteksi Typo Domain Populer
   if (COMMON_TYPO_DOMAINS[domainPart]) {
     const suggested = COMMON_TYPO_DOMAINS[domainPart];
     const msg = `Mungkin maksud Anda "${localPart}@${suggested}"?`;
@@ -470,7 +458,6 @@ export function validateOrgSettings(formData) {
     return { isValid: false, error: "Data pengaturan yayasan tidak valid.", errors: { _global: "Data pengaturan yayasan tidak valid." } };
   }
 
-  // 1. Identitas
   const name = (formData.name || "").trim();
   if (!name || name.length < 3) {
     errors.name = "Nama resmi yayasan minimal 3 karakter.";
@@ -481,7 +468,6 @@ export function validateOrgSettings(formData) {
     errors.shortName = "Singkatan nama yayasan minimal 2 karakter.";
   }
 
-  // 2. Kontak
   const email = (formData.contacts?.email || "").trim();
   if (email) {
     const emailCheck = validateEmail(email, true);
@@ -506,7 +492,6 @@ export function validateOrgSettings(formData) {
     }
   }
 
-  // 3. Rekening Bank
   if (Array.isArray(formData.officialBankAccounts)) {
     for (let i = 0; i < formData.officialBankAccounts.length; i++) {
       const acc = formData.officialBankAccounts[i];
@@ -561,7 +546,6 @@ export function validateWebUrl(urlInput, options = {}) {
     return { isValid: false, normalizedUrl: "", message: "Tautan tidak boleh kosong." };
   }
 
-  // Teks tidak boleh mengandung spasi atau karakter newline
   if (/\s/.test(trimmed)) {
     return {
       isValid: false,

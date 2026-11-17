@@ -42,14 +42,12 @@ export function compareCampaignUrgency(a, b) {
     return ratioA - ratioB; // Lower ratio first (paling membutuhkan dana)
   }
 
-  // Jika rasio sama, dahulukan yang memiliki batas waktu terdekat
   if (a.endDate && b.endDate) {
     return new Date(a.endDate).getTime() - new Date(b.endDate).getTime();
   }
   if (a.endDate && !b.endDate) return -1;
   if (!a.endDate && b.endDate) return 1;
 
-  // Fallback ke yang lebih baru
   return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
 }
 
@@ -78,7 +76,6 @@ export async function selectRolloverCampaign({
 
   let categoryId = currentCategoryId;
 
-  // Jika categoryId belum disediakan, ambil dari campaign saat ini
   if (!categoryId && currentCampaignId && typeof prismaClient?.campaign?.findUnique === "function") {
     const current = await prismaClient.campaign.findUnique({
       where: { id: currentCampaignId },
@@ -91,7 +88,6 @@ export async function selectRolloverCampaign({
     return allowGeneralFallback ? DEFAULT_GENERAL_PROGRAM : null;
   }
 
-  // 1. Ambil kandidat kampanye berstatus ACTIVE (selain kampanye yang sedang ditutup)
   const candidatePool = await prismaClient.campaign.findMany({
     where: {
       status: "ACTIVE",
@@ -114,13 +110,11 @@ export async function selectRolloverCampaign({
     return allowGeneralFallback ? DEFAULT_GENERAL_PROGRAM : null;
   }
 
-  // Filter kandidat yang belum kedaluwarsa secara waktu (endDate)
   const openCandidates = candidatePool.filter((c) => !isCampaignClosed(c));
   if (openCandidates.length === 0) {
     return allowGeneralFallback ? DEFAULT_GENERAL_PROGRAM : null;
   }
 
-  // Tier 1: Cari kandidat dalam kategori yang sama
   if (categoryId) {
     const sameCategoryCandidates = openCandidates.filter((c) => c.categoryId === categoryId);
     if (sameCategoryCandidates.length > 0) {
@@ -129,8 +123,6 @@ export async function selectRolloverCampaign({
     }
   }
 
-  // Tier 2: Fallback ke seluruh kategori aktif
-  // Prioritaskan program unggulan (isFeatured) jika ada, lalu sort berdasarkan urgensi
   const featured = openCandidates.filter((c) => c.isFeatured);
   const generalPool = featured.length > 0 ? featured : openCandidates;
 

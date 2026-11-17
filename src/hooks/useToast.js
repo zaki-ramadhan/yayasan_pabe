@@ -129,7 +129,6 @@ function toast({ duration = DEFAULT_TOAST_DURATION, ...props }) {
     },
   });
 
-  // Auto-dismiss after specified duration
   if (duration > 0 && duration !== Infinity) {
     dismissTimer = setTimeout(() => {
       dismiss();
@@ -143,7 +142,6 @@ function toast({ duration = DEFAULT_TOAST_DURATION, ...props }) {
   };
 }
 
-// Ergonomic helpers for shadcn toast
 toast.success = (titleOrDescription, options = {}) => {
   if (typeof titleOrDescription === "string" && !options.title && !options.description) {
     return toast({

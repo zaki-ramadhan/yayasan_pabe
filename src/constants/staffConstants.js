@@ -141,7 +141,6 @@ export function resolveStaffAvatar(avatar, gender = "MALE") {
   }
 
   const cleanAvatar = avatar.trim();
-  // Jika avatar masih menggunakan SVG bawaan, pastikan selalu sinkron dengan jenis kelamin terkini
   if (
     cleanAvatar === DEFAULT_STAFF_AVATARS.MALE ||
     cleanAvatar === DEFAULT_STAFF_AVATARS.FEMALE

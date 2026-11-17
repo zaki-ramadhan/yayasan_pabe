@@ -27,7 +27,6 @@ function normalizeParams(arg1, arg2) {
     amount = arg1;
     channelOrId = arg2;
   } else {
-    // Both are numbers or strings: arg1 is amount, arg2 is channel
     amount = arg1;
     channelOrId = arg2;
   }

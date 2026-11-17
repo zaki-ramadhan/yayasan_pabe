@@ -210,7 +210,6 @@ export function sanitizeNPWP(input) {
 export function sanitizeWhatsAppNumber(input) {
   if (typeof input !== "string") return "";
   const cleaned = stripEmojis(input).replace(/[^\d+\-\s]/g, "");
-  // Pastikan '+' hanya boleh di index ke-0
   const hasPlus = cleaned.startsWith("+");
   const withoutPlus = cleaned.replace(/\+/g, "");
   const result = (hasPlus ? "+" : "") + withoutPlus;
@@ -241,5 +240,4 @@ export function sanitizeSlug(input, maxLength = 60) {
     .replace(/^-+/, "")
     .slice(0, maxLength);
 }
-
 

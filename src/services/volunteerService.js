@@ -49,7 +49,6 @@ export async function registerVolunteer({
     status: "PENDING",
   };
 
-  // 1. Cegah pendaftaran ganda (berdasarkan email atau nomor WhatsApp)
   const duplicateConditions = [];
   if (cleanEmail) {
     duplicateConditions.push({ email: { equals: cleanEmail, mode: "insensitive" } });
@@ -83,7 +82,6 @@ export async function registerVolunteer({
           "Pendaftaran relawan dengan email atau nomor WhatsApp ini sudah diajukan dan sedang dalam proses pemeriksaan."
         );
       }
-      // Jika sebelumnya pernah ditolak (REJECTED), perbarui data pengajuan lama alih-alih membuat baris duplikat
       if (existing.status === "REJECTED") {
         const updated = await prisma.volunteer.update({
           where: { id: existing.id },

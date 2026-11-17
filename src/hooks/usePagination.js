@@ -19,7 +19,6 @@ export function usePagination(items = [], options = {}) {
   const safeLimit = pageSize > 0 ? pageSize : 10;
   const totalPages = Math.ceil(safeItems.length / safeLimit) || 1;
 
-  // Clamps activePage if total items shrinks (e.g. after search/status filter change)
   const activePage = Math.min(Math.max(1, currentPage), totalPages);
 
   const paginatedItems = useMemo(() => {

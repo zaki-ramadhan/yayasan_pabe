@@ -233,9 +233,7 @@ export async function getCampaignBySlug(slug) {
 
 export { getCampaignDonationsPaginated } from "./campaignFeedService";
 
-
 export { getCampaignDonationStats } from "./campaignStatsService";
-
 
 export async function getCategories() {
   try {
@@ -273,7 +271,6 @@ export async function getCategories() {
 
 export { getCampaignUpdates } from "./campaignFeedService";
 
-
 /**
  * Menentukan target program untuk formulir Donasi Cepat berdasarkan hierarki kebutuhan:
  * 1. Program AKTIF dengan tenggat waktu (endDate) terdekat yang BELUM mencapai target.
@@ -284,7 +281,6 @@ export function getQuickDonateTargetSlug(campaigns = []) {
     return "beasiswa-pendidikan-anak-yatim";
   }
 
-  // 1. Filter hanya program aktif yang belum 100% mencapai target dana (atau program berkelanjutan tanpa target)
   const unfulfilled = campaigns.filter(
     (c) =>
       !isCampaignClosed(c) &&
@@ -293,7 +289,6 @@ export function getQuickDonateTargetSlug(campaigns = []) {
 
   const pool = unfulfilled.length > 0 ? unfulfilled : campaigns.filter((c) => !isCampaignClosed(c));
 
-  // 2. Prioritas: Tenggat waktu (endDate) terdekat yang belum capai target
   const sortedByEndDate = [...pool].sort((a, b) => {
     const timeA = a.endDate ? new Date(a.endDate).getTime() : Infinity;
     const timeB = b.endDate ? new Date(b.endDate).getTime() : Infinity;

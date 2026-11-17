@@ -20,7 +20,6 @@ export async function optimizeImageIfNeeded(
   const isImage =
     mimeType === "image/jpeg" || mimeType === "image/png" || mimeType === "image/webp";
 
-  // Pertahankan dokumen PDF dan berkas video non-gambar murni apa adanya
   if (!isImage) {
     const NON_IMG_EXTS = {
       "application/pdf": "pdf",
@@ -39,10 +38,10 @@ export async function optimizeImageIfNeeded(
   try {
     const rawBuffer = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
     const optimizedBuffer = await sharp(rawBuffer)
-      .rotate() // Auto-orient berdasarkan EXIF sensor kamera ponsel
+      .rotate() // Auto-orient via EXIF
       .resize({
         width: maxWidth,
-        withoutEnlargement: true, // Cegah gambar kecil dipaksa pecah/buram
+        withoutEnlargement: true, // Prevent upscaling small images
         fit: "inside",
       })
       .webp({
@@ -58,7 +57,6 @@ export async function optimizeImageIfNeeded(
       isOptimized: true,
     };
   } catch {
-    // Fallback aman: jika stream gambar rusak, pertahankan buffer asli
     const EXT_MAP = {
       "image/jpeg": "jpg",
       "image/png": "png",

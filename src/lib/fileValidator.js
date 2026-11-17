@@ -18,12 +18,10 @@ export const FILE_UPLOAD_LIMITS = {
 export function detectMagicBytesMime(bytes) {
   if (!bytes || bytes.length < 4) return null;
 
-  // JPEG signature: FF D8 FF
   if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
     return "image/jpeg";
   }
 
-  // PNG signature: 89 50 4E 47 (0x89 'P' 'N' 'G')
   if (
     bytes[0] === 0x89 &&
     bytes[1] === 0x50 &&
@@ -33,7 +31,6 @@ export function detectMagicBytesMime(bytes) {
     return "image/png";
   }
 
-  // PDF signature: 25 50 44 46 ('%PDF')
   if (
     bytes[0] === 0x25 &&
     bytes[1] === 0x50 &&
@@ -43,7 +40,6 @@ export function detectMagicBytesMime(bytes) {
     return "application/pdf";
   }
 
-  // WebP signature: 'RIFF' .... 'WEBP'
   if (
     bytes.length >= 12 &&
     bytes[0] === 0x52 && // R
@@ -58,7 +54,6 @@ export function detectMagicBytesMime(bytes) {
     return "image/webp";
   }
 
-  // WebM / EBML signature: 1A 45 DF A3
   if (
     bytes[0] === 0x1a &&
     bytes[1] === 0x45 &&
@@ -68,7 +63,6 @@ export function detectMagicBytesMime(bytes) {
     return "video/webm";
   }
 
-  // MP4 / MOV signature: ....ftyp (offset 4)
   if (
     bytes.length >= 8 &&
     bytes[4] === 0x66 && // f
@@ -86,7 +80,6 @@ export function detectMagicBytesMime(bytes) {
     return "video/mp4";
   }
 
-  // QuickTime classic moov signature: ....moov
   if (
     bytes.length >= 8 &&
     bytes[4] === 0x6d && // m
@@ -151,14 +144,11 @@ export function validateUploadFile({
     };
   }
 
-  // Jika declaredType ada, pastikan tidak bertentangan secara ekstrim (misal mengklaim image tapi isinya video)
   if (declaredType && declaredType !== detectedMime && declaredType !== "application/octet-stream") {
-    // Normalisasi image/jpg vs image/jpeg
     const isJpgMismatch =
       (declaredType === "image/jpg" && detectedMime === "image/jpeg") ||
       (declaredType === "image/pjpeg" && detectedMime === "image/jpeg");
 
-    // Normalisasi video/mp4 vs video/quicktime (kontainer MP4/MOV serupa)
     const isVideoCrossFormat =
       (declaredType === "video/quicktime" && detectedMime === "video/mp4") ||
       (declaredType === "video/mp4" && detectedMime === "video/quicktime");
