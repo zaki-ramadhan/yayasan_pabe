@@ -61,7 +61,7 @@ export function NavMobileUserSection({ pathname, currentUser, onClose, onLogout 
             className="w-full h-10 rounded-lg font-medium border border-rose-200 text-rose-600 hover:bg-rose-50 text-sm cursor-pointer flex items-center justify-center gap-2 transition-colors"
           >
             <Logout2Icon className="w-4 h-4 text-rose-600" />
-            <span>Keluar (Logout)</span>
+            <span>Keluar</span>
           </button>
         </div>
       ) : (
