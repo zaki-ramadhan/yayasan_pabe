@@ -1,15 +1,17 @@
 import { cn } from "@/lib/utils";
 
 const MODES = [
-  { id: "penghasilan", label: "Penghasilan" },
-  { id: "maal", label: "Maal" },
-  { id: "perusahaan", label: "Perusahaan" },
-  { id: "perdagangan", label: "Perdagangan" },
+  { id: "profesi", label: "Profesi" },
   { id: "emas", label: "Emas" },
+  { id: "perak", label: "Perak" },
+  { id: "perdagangan", label: "Perdagangan" },
+  { id: "perusahaan", label: "Perusahaan" },
+  { id: "tabungan", label: "Tabungan" },
+  { id: "pertanian", label: "Pertanian" },
 ];
 
 /**
- * Organism: Mode Selector untuk 5 kategori zakat
+ * Mode selector for zakat categories.
  */
 export function ZakatModeSelector({
   activeMode,
@@ -37,7 +39,7 @@ export function ZakatModeSelector({
             className={cn(
               "px-4 py-2 text-sm font-medium rounded-md whitespace-nowrap transition-colors cursor-pointer select-none",
               isActive
-                ? "bg-primary text-white shadow-xs"
+                ? "bg-primary text-white shadow-xs font-semibold"
                 : "text-slate-700 hover:text-slate-950 hover:bg-slate-200/60"
             )}
           >

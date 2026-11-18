@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { Textarea } from "@/components/ui/Textarea";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
-import { LockIcon as Lock } from "@solar-icons/react/line-duotone/lock";
 import { cn } from "@/lib/utils";
 import { sanitizeName, sanitizePhone, sanitizeEmail, sanitizePrayer } from "@/lib/security";
 
@@ -70,33 +69,21 @@ export function ZakatMuzakkiSection({
           required
           error={errors.muzakkiEmail}
         >
-          <div className={cn("relative", isEmailLocked && "cursor-not-allowed")}>
-            <Input
-              type="email"
-              readOnly={isEmailLocked}
-              tabIndex={isEmailLocked ? -1 : undefined}
-              value={muzakkiEmail}
-              onChange={(e) => {
-                if (!isEmailLocked) {
-                  setMuzakkiEmail(sanitizeEmail(e.target.value));
-                  clearError("muzakkiEmail");
-                }
-              }}
-              placeholder="nama@email.com"
-              className={cn(
-                "h-11 text-sm font-normal",
-                isEmailLocked && "bg-slate-100 text-slate-600 border-slate-300 pr-10 focus:border-slate-300 focus:ring-0 hover:border-slate-300 pointer-events-none select-none shadow-none"
-              )}
-            />
-            {isEmailLocked && (
-              <div
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                title="Email terkunci dari akun profil Anda"
-              >
-                <Lock className="w-4 h-4 text-slate-500" />
-              </div>
-            )}
-          </div>
+          <Input
+            type="email"
+            isLocked={isEmailLocked}
+            lockedNotice="Email terisi otomatis dari akun Anda. Silakan sesuaikan lewat profil."
+            tabIndex={isEmailLocked ? -1 : undefined}
+            value={muzakkiEmail}
+            onChange={(e) => {
+              if (!isEmailLocked) {
+                setMuzakkiEmail(sanitizeEmail(e.target.value));
+                clearError("muzakkiEmail");
+              }
+            }}
+            placeholder="nama@email.com"
+            className="h-11 text-sm font-normal"
+          />
         </FormField>
 
         <FormField

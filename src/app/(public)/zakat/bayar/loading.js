@@ -22,7 +22,7 @@ export default function ZakatBayarLoading() {
               <Skeleton className="h-4 w-32 rounded self-start sm:self-auto shrink-0" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                 <div
                   key={`type-skel-${i}`}
                   className="p-3.5 sm:p-4 rounded-lg border border-slate-200 flex flex-col justify-between min-h-[96px] space-y-2"

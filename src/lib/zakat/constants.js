@@ -1,11 +1,19 @@
 /**
- * Standar acuan syariat zakat nasional & nilai acuan emas (BAZNAS / Antam)
+ * Standar acuan syariat zakat nasional & nilai acuan emas/perak/pertanian
  */
 export const ZAKAT_GOLD_NISAB_GRAMS = 85;
-export const ZAKAT_RATE = 0.025; // 2.5%
+export const ZAKAT_SILVER_NISAB_GRAMS = 595;
+export const ZAKAT_RATE = 0.025;
+
+export const ZAKAT_AGRICULTURE_NISAB_BERAS_KG = 522;
+export const ZAKAT_AGRICULTURE_NISAB_GABAH_KG = 653;
+export const ZAKAT_AGRICULTURE_RATE_RAIN = 0.1;
+export const ZAKAT_AGRICULTURE_RATE_IRRIGATION = 0.05;
 
 export const DEFAULT_GOLD_PRICE_PER_GRAM = 2492965;
+export const DEFAULT_SILVER_PRICE_PER_GRAM = 17500;
+export const DEFAULT_BERAS_PRICE_PER_KG = 15000;
+export const DEFAULT_GABAH_PRICE_PER_KG = 8000;
 
-export const DEFAULT_ANNUAL_NISAB = ZAKAT_GOLD_NISAB_GRAMS * DEFAULT_GOLD_PRICE_PER_GRAM; // Rp 211.902.025
-
-export const DEFAULT_MONTHLY_NISAB = Math.round(DEFAULT_ANNUAL_NISAB / 12); // ~Rp 17.658.502
+export const DEFAULT_ANNUAL_NISAB = ZAKAT_GOLD_NISAB_GRAMS * DEFAULT_GOLD_PRICE_PER_GRAM;
+export const DEFAULT_MONTHLY_NISAB = Math.round(DEFAULT_ANNUAL_NISAB / 12);

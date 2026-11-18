@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import { Button } from "@/components/ui/Button";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
 import { ZakatHaulCheckbox } from "../ZakatHaulCheckbox";
+import { ZakatFormActions } from "../ZakatFormActions";
 
 export function ZakatPerdaganganForm({
   values,
@@ -25,7 +25,7 @@ export function ZakatPerdaganganForm({
     e.preventDefault();
     if (!hasValidInput) {
       setErrors({
-        asetLancar: "Masukkan nominal aset lancar atau laba untuk menghitung",
+        asetLancar: "Masukkan nominal stok barang dagangan atau laba untuk menghitung",
       });
       return;
     }
@@ -45,14 +45,14 @@ export function ZakatPerdaganganForm({
           Zakat Perdagangan
         </h2>
         <p className="text-sm text-slate-600 leading-relaxed">
-          Hitung zakat dari harta perdagangan, aset lancar, keuntungan, serta kewajiban usaha yang relevan.
+          Nisab zakat perdagangan setara 85 gr emas dengan kadar 2,5%, ditunaikan setelah perputaran usaha genap 1 tahun (haul).
         </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <ZakatFieldGroup
           id="asetLancar"
-          label="Aset lancar"
+          label="Nilai stok barang dagangan &amp; kas lancar"
           error={errors.asetLancar}
         >
           <CurrencyInput
@@ -63,7 +63,11 @@ export function ZakatPerdaganganForm({
           />
         </ZakatFieldGroup>
 
-        <ZakatFieldGroup id="laba" label="Laba">
+        <ZakatFieldGroup
+          id="laba"
+          label="Laba usaha / piutang lancar dagang"
+          helperText="Keuntungan atau piutang lancar yang diharapkan tertagih"
+        >
           <CurrencyInput
             id="laba"
             value={values.laba}
@@ -71,32 +75,31 @@ export function ZakatPerdaganganForm({
             placeholder="0"
           />
         </ZakatFieldGroup>
+
+        <div className="sm:col-span-2">
+          <ZakatFieldGroup
+            id="utangJatuhTempo"
+            label="Utang dagang jatuh tempo (pengurang)"
+            helperText="Kewajiban pembayaran dagang yang jatuh tempo dalam periode berjalan"
+          >
+            <CurrencyInput
+              id="utangJatuhTempo"
+              value={values.utangJatuhTempo || 0}
+              onChange={(val) => handleFieldChange("utangJatuhTempo", val)}
+              placeholder="0"
+            />
+          </ZakatFieldGroup>
+        </div>
       </div>
 
       <ZakatHaulCheckbox
         id="perdagangan-haul"
         checked={values.isHaulMet}
         onChange={(val) => onChange("isHaulMet", val)}
-        label="Usaha/harta telah memenuhi haul (1 tahun)"
+        label="Perputaran usaha dagang telah genap 1 tahun (haul)"
       />
 
-      <div className="flex items-center gap-3 pt-2">
-        <Button
-          type="submit"
-          variant="default"
-          className="rounded-md px-5 h-10 text-sm font-medium cursor-pointer"
-        >
-          Hitung zakat
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleReset}
-          className="rounded-md px-4 h-10 text-sm font-medium text-slate-700 hover:text-slate-900 border-slate-300 cursor-pointer"
-        >
-          Atur ulang
-        </Button>
-      </div>
+      <ZakatFormActions onReset={handleReset} />
     </form>
   );
 }

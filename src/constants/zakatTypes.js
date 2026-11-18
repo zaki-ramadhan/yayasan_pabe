@@ -1,35 +1,47 @@
 export const ZAKAT_TYPES = [
   {
     id: "ZAKAT_PENGHASILAN",
-    label: "Zakat Penghasilan",
-    shortLabel: "Penghasilan",
-    description: "Zakat profesi/gaji atas penghasilan rutin bulanan yang telah mencapai nisab.",
+    alias: ["ZAKAT_PROFESI"],
+    label: "Zakat Profesi",
+    shortLabel: "Profesi",
+    description: "Zakat profesi/gaji atas penghasilan rutin bulanan dengan nisab 85 gr emas per tahun, ditunaikan saat menerima.",
     niat: {
       arab: "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ مَالِي فَرْضًا لِلَّهِ تَعَالَى",
       latin: "Nawaitu an ukhrija zakaata maali fardhan lillaahi ta'aala",
-      arti: "Aku niat mengeluarkan zakat hartaku, fardhu karena Allah Ta'ala.",
-    },
-  },
-  {
-    id: "ZAKAT_MAAL",
-    label: "Zakat Maal (Simpanan)",
-    shortLabel: "Maal / Harta",
-    description: "Zakat atas tabungan, deposito, atau aset lancar yang telah mengendap selama 1 tahun (haul).",
-    niat: {
-      arab: "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ مَالِي فَرْضًا لِلَّهِ تَعَالَى",
-      latin: "Nawaitu an ukhrija zakaata maali fardhan lillaahi ta'aala",
-      arti: "Aku niat mengeluarkan zakat hartaku, fardhu karena Allah Ta'ala.",
+      arti: "Aku niat mengeluarkan zakat profesiku, fardhu karena Allah Ta'ala.",
     },
   },
   {
     id: "ZAKAT_EMAS",
-    label: "Zakat Emas & Logam Mulia",
-    shortLabel: "Emas / Mulia",
-    description: "Zakat kepemilikan emas simpanan yang telah mencapai nisab 85 gram dan genap haul 1 tahun.",
+    label: "Zakat Emas",
+    shortLabel: "Emas",
+    description: "Zakat kepemilikan simpanan emas yang telah mencapai nisab 85 gram dan genap haul 1 tahun.",
     niat: {
       arab: "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ ذَهَبِي فَرْضًا لِلَّهِ تَعَالَى",
       latin: "Nawaitu an ukhrija zakaata dzahabii fardhan lillaahi ta'aala",
       arti: "Aku niat mengeluarkan zakat emasku, fardhu karena Allah Ta'ala.",
+    },
+  },
+  {
+    id: "ZAKAT_PERAK",
+    label: "Zakat Perak",
+    shortLabel: "Perak",
+    description: "Zakat kepemilikan simpanan perak yang telah mencapai nisab 595 gram dan genap haul 1 tahun.",
+    niat: {
+      arab: "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ فِضَّتِي فَرْضًا لِلَّهِ تَعَالَى",
+      latin: "Nawaitu an ukhrija zakaata fidhdhatii fardhan lillaahi ta'aala",
+      arti: "Aku niat mengeluarkan zakat perakku, fardhu karena Allah Ta'ala.",
+    },
+  },
+  {
+    id: "ZAKAT_PERDAGANGAN",
+    label: "Zakat Perdagangan",
+    shortLabel: "Perdagangan",
+    description: "Zakat komoditas atau perputaran stok barang dagangan yang diniatkan untuk dijual kembali.",
+    niat: {
+      arab: "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ تِجَارَتِي فَرْضًا لِلَّهِ تَعَالَى",
+      latin: "Nawaitu an ukhrija zakaata tijaaratii fardhan lillaahi ta'aala",
+      arti: "Aku niat mengeluarkan zakat perdaganganku, fardhu karena Allah Ta'ala.",
     },
   },
   {
@@ -44,14 +56,26 @@ export const ZAKAT_TYPES = [
     },
   },
   {
-    id: "ZAKAT_PERDAGANGAN",
-    label: "Zakat Perdagangan",
-    shortLabel: "Perdagangan",
-    description: "Zakat komoditas atau perputaran stok barang dagangan yang diniatkan untuk dijual kembali.",
+    id: "ZAKAT_MAAL",
+    alias: ["ZAKAT_TABUNGAN"],
+    label: "Zakat Tabungan",
+    shortLabel: "Tabungan",
+    description: "Zakat atas saldo tabungan dan deposito mengendap dengan nisab setara 85 gr emas setelah haul 1 tahun.",
     niat: {
-      arab: "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ تِجَارَتِي فَرْضًا لِلَّهِ تَعَالَى",
-      latin: "Nawaitu an ukhrija zakaata tijaaratii fardhan lillaahi ta'aala",
-      arti: "Aku niat mengeluarkan zakat perdaganganku, fardhu karena Allah Ta'ala.",
+      arab: "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ مَالِي فَرْضًا لِلَّهِ تَعَالَى",
+      latin: "Nawaitu an ukhrija zakaata maali fardhan lillaahi ta'aala",
+      arti: "Aku niat mengeluarkan zakat tabunganku, fardhu karena Allah Ta'ala.",
+    },
+  },
+  {
+    id: "ZAKAT_PERTANIAN",
+    label: "Zakat Pertanian",
+    shortLabel: "Pertanian",
+    description: "Zakat hasil panen pertanian dengan nisab 522 kg beras atau 653 kg gabah, ditunaikan saat panen.",
+    niat: {
+      arab: "نَوَيْتُ أَنْ أُخْرِجَ زَكَاةَ زَرْعِي فَرْضًا لِلَّهِ تَعَالَى",
+      latin: "Nawaitu an ukhrija zakaata zar'ii fardhan lillaahi ta'aala",
+      arti: "Aku niat mengeluarkan zakat hasil tanamanku, fardhu karena Allah Ta'ala.",
     },
   },
   {
@@ -83,14 +107,14 @@ export const ZAKAT_NOMINAL_PRESETS = [
 ];
 
 /**
- * Mengambil nama label resmi dari ID tipe zakat
+ * Resolves zakat type label by type ID or legacy alias.
  * @param {string} typeId
  * @returns {string}
  */
 export function getZakatTypeLabel(typeId) {
   if (!typeId) return "Zakat";
-  const found = ZAKAT_TYPES.find((t) => t.id === typeId);
+  const found = ZAKAT_TYPES.find(
+    (t) => t.id === typeId || t.alias?.includes(typeId)
+  );
   return found?.label || "Zakat";
 }
-
-

@@ -3,8 +3,17 @@ import { Button } from "@/components/ui/Button";
 import { formatRupiah, formatNumber } from "@/lib/formatters";
 import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
-import { WhatsAppIcon } from "@/components/icons/SocialIcons";
+import { CheckCircleFill, AlertCircleFill } from "@/components/icons/StatusIcons";
 import { ZakatEmptyState } from "./ZakatEmptyState";
+
+function InvoiceItem({ label, value, children, className = "" }) {
+  return (
+    <div className={`flex justify-between items-center gap-3 ${className}`}>
+      <span className="text-slate-600 shrink-0">{label} :</span>
+      {children || <span className="font-medium text-slate-950 text-right">{value}</span>}
+    </div>
+  );
+}
 
 export function ZakatResultPanel({
   result,
@@ -22,21 +31,28 @@ export function ZakatResultPanel({
     nisabThreshold = 0,
     isNisabMet = false,
     zakatAmount = 0,
-    periodLabel = "Per Bulan",
+    periodLabel = "Saat Menerima",
     categoryKey = "ZAKAT",
   } = result;
 
+  const kadarText =
+    categoryKey === "ZAKAT_PERTANIAN"
+      ? result.breakdown?.find((b) => b.label === "Kadar Zakat")?.value || "10% / 5%"
+      : "2,5%";
+
   const buildZakatShareText = () => {
     const url = typeof window !== "undefined"
-      ? `${window.location.origin}/zakat`
-      : "https://yayasanpayungberkah.org/zakat";
+      ? `${window.location.origin}/kalkulator-zakat`
+      : "https://payungberkah.com/kalkulator-zakat";
     return `*Kalkulator Zakat - Yayasan Payung Berkah*\n\n` +
-      `• Jenis: ${categoryKey}\n` +
-      `• Nilai Bersih: ${formatRupiah(netAmount)}\n` +
-      `• Batas Nisab: ${formatRupiah(nisabThreshold)}\n` +
+      `• Kategori: ${categoryKey}\n` +
+      `• Nilai Harta Bersih: ${formatRupiah(netAmount)}\n` +
+      `• Batas Nishab: ${formatRupiah(nisabThreshold)}\n` +
+      `• Kadar Zakat: ${kadarText}\n` +
+      `• Waktu Penunaian: ${periodLabel}\n` +
       `• Status Syariah: ${isNisabMet ? "Wajib Ditunaikan" : "Belum Wajib Zakat"}\n` +
-      `• Estimasi Zakat: ${formatRupiah(zakatAmount)} (${periodLabel})\n\n` +
-      `Hitung dan tunaikan zakat Anda dengan mudah dan tepat melalui kalkulator resmi:\n${url}`;
+      `• Estimasi Zakat: ${formatRupiah(zakatAmount)}\n\n` +
+      `Hitung dan tunaikan zakat Anda dengan mudah melalui kalkulator resmi:\n${url}`;
   };
 
   const handleShareWhatsApp = () => {
@@ -61,85 +77,45 @@ export function ZakatResultPanel({
     }
   };
 
-  const nisabRatioPercent = nisabThreshold > 0
-    ? Math.min(100, Math.round((netAmount / nisabThreshold) * 100))
-    : 0;
-
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-6 sm:p-7 space-y-6 shadow-xs">
-      <div className="space-y-1.5">
-        <h2 className="text-xl font-medium text-slate-950">
-          Total Kewajiban Zakat
+      <div className="space-y-1.5 pb-4 border-b border-slate-200">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          Total kewajiban zakat
         </h2>
-        <div className="text-3xl sm:text-4xl font-medium text-slate-950 tracking-tight flex items-baseline gap-1.5">
-          <span className="text-xl sm:text-2xl font-medium text-slate-950">
+        <div className="text-3xl sm:text-4xl font-semibold text-slate-950 tracking-tight flex items-baseline gap-1.5">
+          <span className="text-xl sm:text-2xl font-normal text-slate-700">
             Rp
           </span>
           <span>{formatNumber(zakatAmount)}</span>
         </div>
-        <p className="text-sm text-slate-600 font-normal">
-          Kadar zakat 2.5% ({periodLabel})
+        <p className="text-xs text-slate-500">
+          Kadar {kadarText} • {periodLabel}
         </p>
       </div>
 
-      <div className="space-y-2 pt-1">
-        <div className="flex justify-between items-end text-sm">
-          <div className="text-left space-y-0.5">
-            <span className="text-slate-600 block">Harta Bersih</span>
-            <span className="font-medium text-slate-950 block">
-              {formatRupiah(netAmount)}
-            </span>
-          </div>
-          <div className="text-right space-y-0.5">
-            <span className="text-slate-600 block">Batas Nisab</span>
-            <span className="font-medium text-slate-950 block">
-              {formatRupiah(nisabThreshold)}
-            </span>
-          </div>
-        </div>
-
-        <div className="h-2.5 w-full bg-slate-100 rounded-md overflow-hidden flex">
-          <div
-            className={`h-full transition-all duration-300 ${
-              isNisabMet ? "bg-emerald-600" : "bg-amber-500"
-            }`}
-            style={{ width: `${Math.max(5, nisabRatioPercent)}%` }}
-          />
-        </div>
-
-        <div className="flex justify-between items-center text-sm text-slate-600 font-normal">
-          <span>Tercapai: {nisabRatioPercent}% dari nisab</span>
-          <span>
-            {isNisabMet ? "Memenuhi ambang batas syariah" : "Belum mencapai ambang batas"}
-          </span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-4 border-y border-slate-200 text-sm">
-        <div className="space-y-0.5">
-          <span className="text-slate-600 block">Batas Nisab</span>
-          <span className="font-medium text-slate-950 block">
-            {formatRupiah(nisabThreshold)}
-          </span>
-        </div>
-
-        <div className="space-y-0.5 sm:border-l sm:border-slate-200 sm:pl-4">
-          <span className="text-slate-600 block">Kadar Zakat</span>
-          <span className="font-medium text-slate-950 block">
-            2.5%
-          </span>
-        </div>
-
-        <div className="space-y-0.5 sm:border-l sm:border-slate-200 sm:pl-4">
-          <span className="text-slate-600 block">Status Syariah</span>
+      <div className="space-y-3 text-sm">
+        <InvoiceItem label="Harta terhitung" value={formatRupiah(netAmount)} />
+        <InvoiceItem label="Batas nishab" value={formatRupiah(nisabThreshold)} />
+        <InvoiceItem label="Kadar zakat" value={kadarText} />
+        <InvoiceItem label="Waktu penunaian" value={periodLabel} />
+        <InvoiceItem
+          label="Status syariah"
+          className="pt-3 border-t border-dashed border-slate-200"
+        >
           <span
-            className={`font-medium block ${
+            className={`inline-flex items-center gap-1.5 font-medium text-right ${
               isNisabMet ? "text-emerald-700" : "text-amber-700"
             }`}
           >
-            {isNisabMet ? "Wajib Ditunaikan" : "Belum Wajib Zakat"}
+            {isNisabMet ? (
+              <CheckCircleFill className="w-4 h-4 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertCircleFill className="w-4 h-4 text-amber-500 shrink-0" />
+            )}
+            <span>{isNisabMet ? "Wajib Ditunaikan" : "Belum Wajib Zakat"}</span>
           </span>
-        </div>
+        </InvoiceItem>
       </div>
 
       <div className="pt-2 space-y-2.5">
@@ -148,7 +124,7 @@ export function ZakatResultPanel({
           disabled={!isNisabMet || zakatAmount <= 0}
           className="w-full h-11 text-sm font-medium rounded-md cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed"
         >
-          Tunaikan Zakat Sekarang
+          Tunaikan zakat sekarang
         </Button>
 
         <div className="flex items-center gap-2">
@@ -156,25 +132,24 @@ export function ZakatResultPanel({
             type="button"
             variant="outline"
             onClick={handleShareWhatsApp}
-            className="flex-1 h-10 text-xs sm:text-sm font-medium rounded-md border-slate-300 text-slate-800 hover:bg-slate-50 cursor-pointer gap-2"
+            className="flex-1 h-10 text-xs sm:text-sm font-medium rounded-md border-slate-300 text-slate-800 hover:bg-slate-50 cursor-pointer"
           >
-            <WhatsAppIcon className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Bagikan ke WhatsApp</span>
+            Bagikan ke WhatsApp
           </Button>
 
           <Button
             type="button"
             variant="outline"
             onClick={handleSaveResult}
-            className="h-10 px-3.5 text-xs sm:text-sm font-medium rounded-md border-slate-300 text-slate-700 hover:text-slate-900 cursor-pointer shrink-0"
+            className="h-10 px-4 text-xs sm:text-sm font-medium rounded-md border-slate-300 text-slate-700 hover:text-slate-900 cursor-pointer shrink-0"
           >
-            {isSaved ? "Tersalin" : "Salin"}
+            {isSaved ? "Tersalin" : "Salin rincian"}
           </Button>
         </div>
 
         {!isNisabMet && (
-          <p className="text-sm text-slate-600 text-center mt-1 font-normal">
-            Harta belum mencapai batas nisab. Anda tetap dapat berinfak atau bersedekah secara sukarela.
+          <p className="text-xs text-slate-500 text-center mt-1 leading-relaxed">
+            Harta belum mencapai batas nishab. Anda tetap dapat menunaikan infak atau sedekah secara sukarela.
           </p>
         )}
       </div>
