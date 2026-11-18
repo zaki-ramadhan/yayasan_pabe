@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
-import { DocumentTextIcon as FileText } from "@solar-icons/react/line-duotone/document-text";
 import { CampaignUpdateItem } from "@/components/campaign/CampaignUpdateItem";
 import { useScrollLoadMore } from "@/hooks/useScrollLoadMore";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -31,7 +30,6 @@ export function CampaignUpdatesFeed({ updates = [] }) {
     return (
       <EmptyState
         variant="dashed"
-        icon={FileText}
         title="Belum ada kabar penyaluran"
         description="Dokumentasi penyaluran akan diperbarui oleh tim yayasan."
       />

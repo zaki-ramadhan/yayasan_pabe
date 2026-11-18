@@ -10,9 +10,8 @@ import { cn } from "@/lib/utils";
  */
 export function ReportSectionHeader({ title, className = "" }) {
   return (
-    <div className={cn("flex items-center gap-2.5", className)}>
-      <div className="w-1 h-5 rounded-xs bg-primary shrink-0" />
-      <h2 className="text-lg sm:text-xl font-semibold text-slate-950 tracking-tight">
+    <div className={className}>
+      <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight">
         {title}
       </h2>
     </div>

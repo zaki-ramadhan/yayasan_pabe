@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { CampaignCTA } from "@/components/campaign/CampaignCTA";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { toast } from "@/hooks/useToast";
@@ -131,27 +130,13 @@ export function DonorVolunteerCardView() {
           showViewCardButton={false}
         />
       ) : (
-        <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-3 shadow-2xs">
-          <div className="relative w-56 h-56 sm:w-72 sm:h-72 mx-auto pointer-events-none select-none">
-            <Image
-              src="/img/illustrations/empty-state.webp"
-              alt=""
-              fill
-              sizes="(max-width: 640px) 224px, 288px"
-              className="object-contain pointer-events-none select-none"
-              draggable={false}
-              aria-hidden="true"
-              priority
-            />
-          </div>
-          <div className="space-y-1">
-            <h2 className="text-base sm:text-lg font-semibold text-slate-900 tracking-tight">
-              Kartu Relawan Belum Tersedia
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
-              Daftar melalui banner di atas untuk mendapatkan kartu relawan resmi.
-            </p>
-          </div>
+        <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-1.5 shadow-2xs">
+          <h2 className="text-base sm:text-lg font-semibold text-slate-900 tracking-tight">
+            Kartu Relawan Belum Tersedia
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
+            Daftar melalui banner di atas untuk mendapatkan kartu relawan resmi.
+          </p>
         </div>
       )}
 

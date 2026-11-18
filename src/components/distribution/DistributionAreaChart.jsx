@@ -20,13 +20,16 @@ import { formatRupiah, formatNumber, formatCompactRupiah } from "@/lib/formatter
 export function DistributionAreaChart({ data = [] }) {
   if (!data || data.length === 0) return null;
 
+  const maxAmount = Math.max(0, ...data.map((d) => Number(d.amount) || 0));
+  const hasData = maxAmount > 0;
+
   return (
     <div className="w-full flex flex-col items-center justify-center">
-      <div className="w-full h-52 sm:h-56">
+      <div className="w-full h-56 sm:h-60">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
-            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+            margin={{ top: 22, right: 16, left: -4, bottom: 6 }}
           >
             <defs>
               <linearGradient id="distributionGradient" x1="0" y1="0" x2="0" y2="1">
@@ -39,16 +42,18 @@ export function DistributionAreaChart({ data = [] }) {
               dataKey="month"
               stroke="#64748b"
               tickLine={false}
-              tick={{ fontSize: 13, fill: "#64748b", fontWeight: 500 }}
-              dy={6}
+              tick={{ fontSize: 12, fill: "#64748b", fontWeight: 500 }}
+              dy={4}
             />
             <YAxis
               stroke="#64748b"
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 13, fill: "#64748b", fontWeight: 500 }}
-              tickFormatter={(v) => formatCompactRupiah(v, 2, { short: true })}
-              width={56}
+              tick={{ fontSize: 12, fill: "#64748b", fontWeight: 500 }}
+              tickFormatter={(v) => (v === 0 ? "Rp 0" : formatCompactRupiah(v, 0, { short: true }))}
+              domain={[0, hasData ? "auto" : 1000000]}
+              ticks={hasData ? undefined : [0, 500000, 1000000]}
+              width={72}
             />
             <Tooltip
               wrapperStyle={{ zIndex: 10, pointerEvents: "none" }}

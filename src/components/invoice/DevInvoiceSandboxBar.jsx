@@ -63,6 +63,22 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
       if (data.success) {
         toast.success(data.message);
         onStatusChange?.(data.status, data.paidAt);
+        if (action === "SET_PAID" && typeof window !== "undefined") {
+          const detail = {
+            id: donation?.id || donation?.invoiceId,
+            donor: donation?.donor || donation?.donorName || "Hamba Allah",
+            amount: donation?.amount,
+            campaignTitle: donation?.campaign?.title || donation?.campaignTitle || "Program Kebaikan Yayasan PABE",
+          };
+          window.dispatchEvent(new CustomEvent("pabe:new-donation", { detail }));
+          try {
+            if (typeof BroadcastChannel !== "undefined") {
+              const bc = new BroadcastChannel("pabe_donations_channel");
+              bc.postMessage(detail);
+              bc.close();
+            }
+          } catch {}
+        }
         router.refresh();
       } else {
         toast.error(data.message || "Gagal memproses simulasi status.");

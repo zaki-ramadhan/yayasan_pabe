@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { DocumentAddIcon as FileCheck } from "@solar-icons/react/line-duotone/document-add";
+import Image from "next/image";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { Pen2Icon as Edit2 } from "@solar-icons/react/line-duotone/pen-2";
 import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
 import { ImageFallback } from "@/components/ui/ImageFallback";
 import { Button } from "@/components/ui/Button";
 import { isVideoUrl } from "@/lib/galleryGroupHelper";
+import { getFileIconAsset, isDocumentFile } from "@/lib/fileIconHelper";
 
 /**
  * Sub-komponen representasi berkas terunggah di Cloudflare R2.
@@ -52,9 +53,11 @@ export function FileUploadPreview({
     }
   }
 
+  const isDoc = isPdf || isDocumentFile(fileName || resolvedSrc);
+
   return (
     <div className="flex items-center gap-3.5 p-3 rounded-xl border border-slate-200 bg-white shadow-2xs">
-      {!isPdf ? (
+      {!isDoc ? (
         <div
           className={
             shape === "circle"
@@ -102,9 +105,16 @@ export function FileUploadPreview({
           )}
         </div>
       ) : (
-        <div className="w-14 h-14 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center shrink-0">
-          <FileCheck className="w-6 h-6" />
-        </div>
+        <Image
+          src={getFileIconAsset(
+            fileName || resolvedSrc,
+            isPdf ? "pdf" : value instanceof File ? value.type : ""
+          )}
+          alt={fileName || "Ikon Dokumen"}
+          width={36}
+          height={36}
+          className="w-9 h-9 object-contain shrink-0 select-none"
+        />
       )}
 
       <div className="flex-1 min-w-0 pr-1">

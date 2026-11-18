@@ -103,7 +103,7 @@ export default function TentangKamiLoading() {
           <DashedDivider className="px-4 sm:px-5" />
 
           <div className="p-4 sm:p-5 space-y-4">
-            <Skeleton className="h-6 w-72 rounded-md" />
+            <Skeleton className="h-6 w-48 rounded-md" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="flex items-start gap-3.5 p-2">

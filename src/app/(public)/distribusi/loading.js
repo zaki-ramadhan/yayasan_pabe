@@ -21,11 +21,8 @@ export default function DistribusiLoading() {
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
               <div className="space-y-1">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-1 h-5 rounded-xs bg-primary shrink-0" />
-                  <Skeleton className="h-6 w-52 rounded" />
-                </div>
-                <Skeleton className="h-4 w-72 sm:w-80 rounded ml-3.5" />
+                <Skeleton className="h-7 sm:h-8 w-64 rounded" />
+                <Skeleton className="h-4 w-72 sm:w-80 rounded" />
               </div>
               <Skeleton className="h-8 sm:h-9 w-28 rounded-md" />
             </div>
@@ -69,17 +66,14 @@ export default function DistribusiLoading() {
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
               <div className="space-y-1">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-1 h-5 rounded-xs bg-primary shrink-0" />
-                  <Skeleton className="h-6 w-44 rounded" />
-                </div>
-                <Skeleton className="h-4 w-72 sm:w-80 rounded ml-3.5" />
+                <Skeleton className="h-7 sm:h-8 w-56 rounded" />
+                <Skeleton className="h-4 w-72 sm:w-80 rounded" />
               </div>
               <Skeleton className="h-8 sm:h-9 w-28 rounded-md" />
             </div>
 
             <div className="w-full flex flex-col items-center justify-center">
-              <div className="w-full h-52 sm:h-56 relative flex flex-col justify-between pt-2 pb-1">
+              <div className="w-full h-56 sm:h-60 relative flex flex-col justify-between pt-2 pb-1">
                 <div className="space-y-6 w-full">
                   {[1, 2, 3, 4].map((line) => (
                     <div key={line} className="flex items-center gap-2 w-full">

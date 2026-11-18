@@ -57,6 +57,22 @@ export function InvoiceDisplay({ donation: initialDonation }) {
       handleStatusChange(newStatus, newPaidAt);
       if (newStatus === "PAID" || newStatus === "SETTLEMENT") {
         toast.success("Alhamdulillah! Pembayaran donasi Anda berhasil diverifikasi.");
+        if (typeof window !== "undefined") {
+          const detail = {
+            id: initialDonation?.id || initialDonation?.invoiceId,
+            donor: initialDonation?.donor || initialDonation?.donorName || "Hamba Allah",
+            amount: initialDonation?.amount,
+            campaignTitle: initialDonation?.campaign?.title || initialDonation?.campaignTitle || "Program Kebaikan Yayasan PABE",
+          };
+          window.dispatchEvent(new CustomEvent("pabe:new-donation", { detail }));
+          try {
+            if (typeof BroadcastChannel !== "undefined") {
+              const bc = new BroadcastChannel("pabe_donations_channel");
+              bc.postMessage(detail);
+              bc.close();
+            }
+          } catch {}
+        }
       } else if (newStatus === "EXPIRED") {
         toast.error("Waktu pembayaran untuk invoice ini telah kedaluwarsa.");
       } else if (newStatus === "CANCELLED") {

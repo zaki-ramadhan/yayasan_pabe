@@ -1,4 +1,3 @@
-import { LockIcon as Lock } from "@solar-icons/react/line-duotone/lock";
 import { Input } from "@/components/ui/Input";
 import { FormField } from "@/components/ui/FormField";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
@@ -68,33 +67,24 @@ export function RoutineDonorIdentity({
         required
         error={errors.email}
         hint={
-          isLoggedIn
-            ? "Terkunci sesuai akun Anda. Tautan invoice & kuitansi resmi otomatis dikirim ke email ini."
-            : "Masuk ke akun Anda untuk mengunci email donatur resmi secara otomatis."
+          !isLoggedIn
+            ? "Masuk ke akun Anda untuk mengunci email donatur resmi secara otomatis."
+            : undefined
         }
       >
-        <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-            <Lock className="w-4 h-4 text-slate-500" />
-          </div>
-          <Input
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            required
-            readOnly={isLoggedIn}
-            disabled={!isLoggedIn}
-            spellCheck={false}
-            value={displayEmail}
-            placeholder={isLoggedIn ? "nama@email.com" : "Otomatis terisi setelah masuk ke akun"}
-            className={cn(
-              "h-11 text-sm font-normal pl-9 select-none",
-              isLoggedIn
-                ? "bg-slate-100 text-slate-800 border-slate-300 cursor-not-allowed"
-                : "bg-slate-50 text-slate-500 border-slate-200 cursor-not-allowed"
-            )}
-          />
-        </div>
+        <Input
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          required
+          isLocked={isLoggedIn}
+          lockedNotice="Email terisi otomatis dari akun Anda. Silakan sesuaikan lewat profil."
+          disabled={!isLoggedIn}
+          spellCheck={false}
+          value={displayEmail}
+          placeholder={isLoggedIn ? "nama@email.com" : "Otomatis terisi setelah masuk ke akun"}
+          className="h-11 text-sm font-normal"
+        />
       </FormField>
     </div>
   );

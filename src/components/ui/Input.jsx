@@ -3,6 +3,8 @@
 import * as React from "react";
 import { CloseIcon } from "@solar-icons/react/linear/close";
 import { LoaderIcon } from "@solar-icons/react/linear/loader";
+import { LockIcon as Lock } from "@solar-icons/react/line-duotone/lock";
+import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import { useFormField } from "@/components/ui/FormField";
 
@@ -12,17 +14,23 @@ const Input = React.forwardRef(
       className,
       type = "text",
       isLoading = false,
+      isLocked = false,
+      lockedNotice = "",
+      rightIcon: RightIcon,
       onClear,
       value,
       icon: Icon,
       leftIcon,
       error,
       isInvalid,
+      readOnly,
       ...props
     },
     ref
   ) => {
     const formContext = useFormField();
+    const lastNoticeTimeRef = React.useRef(0);
+
     const hasError =
       isInvalid !== undefined
         ? Boolean(isInvalid)
@@ -32,6 +40,15 @@ const Input = React.forwardRef(
 
     const ResolvedIcon = Icon || leftIcon;
     const hasValue = value !== undefined && value !== null && String(value).length > 0;
+    const isActuallyReadOnly = readOnly !== undefined ? readOnly : isLocked;
+
+    const triggerLockedNotice = React.useCallback(() => {
+      if (!isLocked || !lockedNotice) return;
+      const now = Date.now();
+      if (now - lastNoticeTimeRef.current < 1500) return;
+      lastNoticeTimeRef.current = now;
+      toast.info(lockedNotice);
+    }, [isLocked, lockedNotice]);
 
     const renderLeftIcon = () => {
       if (!ResolvedIcon) return null;
@@ -45,7 +62,10 @@ const Input = React.forwardRef(
     };
 
     return (
-      <div className="relative w-full flex items-center">
+      <div
+        className={cn("relative w-full flex items-center", isLocked && "cursor-not-allowed")}
+        onClick={isLocked && lockedNotice ? triggerLockedNotice : undefined}
+      >
         {ResolvedIcon && (
           <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center shrink-0 z-10">
             {renderLeftIcon()}
@@ -55,16 +75,29 @@ const Input = React.forwardRef(
         <input
           type={type}
           value={value}
+          readOnly={isActuallyReadOnly}
           suppressHydrationWarning
           aria-invalid={hasError ? "true" : undefined}
+          onClick={(e) => {
+            if (isLocked) triggerLockedNotice();
+            props.onClick?.(e);
+          }}
+          onKeyDown={(e) => {
+            if (isLocked && (e.key === "Enter" || e.key === " ")) {
+              triggerLockedNotice();
+            }
+            props.onKeyDown?.(e);
+          }}
           className={cn(
             "flex h-10 w-full rounded-lg border bg-white px-3 py-2 text-sm text-slate-950 placeholder:text-slate-400 placeholder:text-sm focus:outline-none transition-colors [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden disabled:cursor-not-allowed disabled:opacity-50",
             hasError
               ? "border-rose-500 bg-rose-50/15 text-rose-950 placeholder:text-rose-300 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+              : isLocked
+              ? "bg-slate-100 text-slate-700 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
               : "border-slate-300 focus:border-primary focus:ring-1 focus:ring-primary",
             type === "date" && "[&::-webkit-calendar-picker-indicator]:ml-auto [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:p-0.5",
             ResolvedIcon && "pl-9",
-            (isLoading || (onClear && hasValue)) && "pr-9",
+            (isLoading || isLocked || RightIcon || (onClear && hasValue)) && "pr-9",
             className
           )}
           ref={ref}
@@ -77,7 +110,29 @@ const Input = React.forwardRef(
           </div>
         )}
 
-        {!isLoading && onClear && hasValue && (
+        {isLocked && !isLoading && (
+          <button
+            type="button"
+            tabIndex={-1}
+            onClick={(e) => {
+              e.stopPropagation();
+              triggerLockedNotice();
+            }}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer select-none rounded-md"
+            title={lockedNotice || props.title || "Nilai terkunci"}
+            aria-label="Keterangan input terkunci"
+          >
+            <Lock className="w-4 h-4" />
+          </button>
+        )}
+
+        {!isLocked && !isLoading && RightIcon && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none select-none">
+            {React.isValidElement(RightIcon) ? RightIcon : <RightIcon className="w-4 h-4" />}
+          </div>
+        )}
+
+        {!isLocked && !isLoading && !RightIcon && onClear && hasValue && (
           <button
             type="button"
             onClick={onClear}

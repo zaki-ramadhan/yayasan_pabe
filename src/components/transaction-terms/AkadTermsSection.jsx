@@ -49,9 +49,9 @@ const CARD_SCHEME = ["blue", "white", "white", "slate"];
  */
 export function AkadTermsSection() {
   return (
-    <section className="space-y-3">
+    <section className="space-y-4">
       <div>
-        <h2 className="text-lg sm:text-xl font-medium text-slate-950">
+        <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight">
           Ketentuan Akad Donasi &amp; Penyaluran Zakat
         </h2>
       </div>

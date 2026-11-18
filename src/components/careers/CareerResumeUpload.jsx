@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { DocumentTextIcon as FileText } from "@solar-icons/react/line-duotone/document-text";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { uploadFileToServer, deleteFileFromServer } from "@/services/uploadService";
@@ -8,6 +9,7 @@ import { formatBytes } from "@/lib/formatters";
 import { toast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import { UploadProgressBar } from "@/components/ui/UploadProgressBar";
+import { getFileIconAsset } from "@/lib/fileIconHelper";
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
@@ -156,10 +158,14 @@ export function CareerResumeUpload({
 
         {isUploaded ? (
           <div className="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-white shadow-2xs">
-            <div className="flex items-center gap-3 min-w-0 pr-3">
-              <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200">
-                <FileText className="w-5 h-5 text-slate-600" />
-              </div>
+            <div className="flex items-center gap-3.5 min-w-0 pr-3">
+              <Image
+                src={getFileIconAsset(displayFileName || value || "resume.pdf", "pdf")}
+                alt="Dokumen CV"
+                width={36}
+                height={36}
+                className="w-9 h-9 object-contain shrink-0 select-none"
+              />
               <div className="min-w-0">
                 <p className="text-sm font-medium text-slate-900 truncate">
                   {displayFileName || "Berkas CV terlampir (PDF)"}

@@ -11,9 +11,10 @@ import { checkRateLimit } from "@/lib/rateLimit";
  */
 export async function GET(request) {
   try {
+    const isDev = process.env.NODE_ENV === "development";
     const rateLimitBlocked = checkRateLimit(request, {
       action: "document_download",
-      limit: 15,
+      limit: isDev ? 120 : 60,
       windowMs: 60000,
     });
     if (rateLimitBlocked) return rateLimitBlocked;
@@ -27,17 +28,38 @@ export async function GET(request) {
         where: { year: parseInt(year, 10) || 2025 },
       }).catch(() => null);
 
-      if (dbReport?.pdfUrl && typeof dbReport.pdfUrl === "string" && dbReport.pdfUrl.trim()) {
+      const isSelfReference = (urlStr) => {
+        if (!urlStr) return true;
+        const clean = urlStr.trim().toLowerCase();
+        return (
+          clean === "#" ||
+          clean.includes("/api/documents/download") ||
+          clean === request.url.toLowerCase()
+        );
+      };
+
+      if (
+        dbReport?.pdfUrl &&
+        typeof dbReport.pdfUrl === "string" &&
+        dbReport.pdfUrl.trim() &&
+        !isSelfReference(dbReport.pdfUrl)
+      ) {
         const targetUrl = dbReport.pdfUrl.startsWith("http")
           ? dbReport.pdfUrl
           : new URL(dbReport.pdfUrl, request.url).toString();
-        return NextResponse.redirect(targetUrl);
+
+        if (!isSelfReference(targetUrl)) {
+          return NextResponse.redirect(targetUrl);
+        }
       }
+
+      const rawOpinion = dbReport?.opinionStatus || AUDIT_SUMMARY_DATA.opinion;
+      const cleanOpinion = rawOpinion === "WTP" || !rawOpinion ? "Terbuka & Akuntabel" : rawOpinion;
 
       const pdfBuffer = generateAuditReportPdf({
         year,
-        auditorName: dbReport?.auditorName || AUDIT_SUMMARY_DATA.auditorName,
-        opinion: dbReport?.opinionStatus || AUDIT_SUMMARY_DATA.opinion,
+        auditorName: dbReport?.auditorName || "Internal Pembukuan Yayasan",
+        opinion: cleanOpinion,
         operationalRatio: dbReport?.operationalRatio || AUDIT_SUMMARY_DATA.operationalRatio,
         maxAllowedRatio: AUDIT_SUMMARY_DATA.maxAllowedRatio,
         totalFundsIn: dbReport ? dbReport.totalFundsIn : AUDIT_SUMMARY_DATA.totalFundsManaged,

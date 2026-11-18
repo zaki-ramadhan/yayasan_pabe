@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { ArrowRightUpIcon as ArrowUpRight } from "@solar-icons/react/line-duotone/arrow-right-up";
 import { INSTAGRAM_ACCOUNT as DEFAULT_ACCOUNT } from "@/data/instagramPosts";
 import { InstagramProfileCard } from "@/components/home/InstagramProfileCard";
-import { InstagramIcon } from "@/components/icons/SocialIcons";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { InstagramPhotoGrid } from "./instagram/InstagramPhotoGrid";
@@ -40,7 +39,6 @@ export function HomeInstagramFeed({ posts = [], account = DEFAULT_ACCOUNT }) {
       ) : (
         <EmptyState
           variant="dashed"
-          icon={InstagramIcon}
           title="Belum ada postingan Instagram"
           description="Ikuti akun resmi kami untuk kabar kegiatan terbaru."
           action={

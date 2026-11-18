@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { CloseIcon } from "@solar-icons/react/linear/close";
 import { formatRupiah } from "@/lib/formatters";
@@ -8,16 +8,19 @@ import { cn } from "@/lib/utils";
 
 /**
  * Live Donation Social Proof Popup Toast.
- * Menampilkan nama donatur riil dari formulir, nominal, dan program tujuan secara bergantian.
- * Murni mengandalkan data transaksi berhasil (PAID) dari database.
+ * HANYA aktif dan muncul saat ada transaksi donasi yang benar-benar baru lunas (PAID).
+ * Tidak melakukan rotasi otomatis donasi lama atau memicu popup saat sekadar berpindah halaman.
  */
 export function LiveDonationPopup() {
   const pathname = usePathname();
-  const [donations, setDonations] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentDonation, setCurrentDonation] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+
   const isHoveredRef = useRef(false);
+  const hideTimeoutRef = useRef(null);
+  const latestIdRef = useRef(null);
+  const isInitializedRef = useRef(false);
 
   const isHiddenPage = Boolean(
     pathname?.startsWith("/admin") ||
@@ -30,94 +33,112 @@ export function LiveDonationPopup() {
     pathname?.includes("/donate")
   );
 
-  const canShow = !isHiddenPage && !isDismissed && donations.length > 0;
+  const triggerNotification = useCallback((donationData) => {
+    if (!donationData || isHiddenPage) return;
 
+    setCurrentDonation(donationData);
+    setIsVisible(true);
+    setIsDismissed(false);
+
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+    }
+
+    hideTimeoutRef.current = setTimeout(() => {
+      if (!isHoveredRef.current) {
+        setIsVisible(false);
+      }
+    }, 6500);
+  }, [isHiddenPage]);
+
+  // 1. Dengarkan event real-time (CustomEvent di window & BroadcastChannel antar-tab)
+  useEffect(() => {
+    if (isHiddenPage) return;
+
+    const handleCustomEvent = (e) => {
+      if (e?.detail) {
+        triggerNotification(e.detail);
+      }
+    };
+
+    window.addEventListener("pabe:new-donation", handleCustomEvent);
+
+    let channel = null;
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        channel = new BroadcastChannel("pabe_donations_channel");
+        channel.onmessage = (event) => {
+          if (event?.data) {
+            triggerNotification(event.data);
+          }
+        };
+      }
+    } catch {}
+
+    return () => {
+      window.removeEventListener("pabe:new-donation", handleCustomEvent);
+      if (channel) {
+        channel.close();
+      }
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    };
+  }, [isHiddenPage, triggerNotification]);
+
+  // 2. Background polling: Mengambil ID transaksi terakhir saat pertama kali masuk (sebagai baseline, TANPA menampilkan popup),
+  // dan HANYA memicu popup jika ada ID transaksi baru yang masuk sesudahnya.
   useEffect(() => {
     if (isHiddenPage) return;
     let isMounted = true;
 
-    async function loadRecent() {
+    async function checkNewDonation() {
       try {
-        const res = await fetch("/api/donations?limit=10", {
+        const res = await fetch("/api/donations?limit=1", {
           headers: { Accept: "application/json" },
           cache: "no-store",
         });
         if (!res.ok) return;
         const json = await res.json();
-        if (isMounted && json?.success && Array.isArray(json.data)) {
-          setDonations((prev) => {
-            if (json.data.length === 0) return [];
-            const latestNew = json.data[0];
-            const latestCurrent = prev[0];
-            if (latestNew && latestCurrent && latestNew.id !== latestCurrent.id) {
-              setCurrentIndex(0);
-              setIsVisible(true);
-            }
-            return json.data;
-          });
+        if (!isMounted || !json?.success || !Array.isArray(json.data) || json.data.length === 0) {
+          return;
         }
-      } catch {
-        // Abaikan kendala jaringan
-      }
+
+        const latest = json.data[0];
+        if (!latest?.id) return;
+
+        // Kunjungan pertama / inisialisasi: cukup catat ID terakhir sebagai baseline, JANGAN munculkan popup
+        if (!isInitializedRef.current) {
+          latestIdRef.current = latest.id;
+          isInitializedRef.current = true;
+          return;
+        }
+
+        // Pengecekan berkala: jika terdeteksi ID baru yang berbeda dari baseline, barulah munculkan notifikasi
+        if (latest.id !== latestIdRef.current) {
+          latestIdRef.current = latest.id;
+          triggerNotification(latest);
+        }
+      } catch {}
     }
 
-    loadRecent();
-    // Background polling setiap 30 detik untuk mendeteksi transaksi masuk secara otomatis
-    const pollInterval = setInterval(loadRecent, 30000);
+    checkNewDonation();
+    const pollInterval = setInterval(checkNewDonation, 30000);
 
     return () => {
       isMounted = false;
       clearInterval(pollInterval);
     };
-  }, [isHiddenPage]);
+  }, [isHiddenPage, triggerNotification]);
 
-  useEffect(() => {
-    if (!canShow) return;
-
-    const initialTimer = setTimeout(() => {
-      setIsVisible(true);
-    }, 2500);
-
-    return () => clearTimeout(initialTimer);
-  }, [canShow]);
-
-  useEffect(() => {
-    if (!canShow) return;
-
-    let hideTimer = null;
-    let nextTimer = null;
-
-    if (isVisible) {
-      hideTimer = setTimeout(() => {
-        if (!isHoveredRef.current) {
-          setIsVisible(false);
-        }
-      }, 6500);
-    } else {
-      nextTimer = setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % donations.length);
-        setTimeout(() => {
-          setIsVisible(true);
-        }, 80);
-      }, 15000);
-    }
-
-    return () => {
-      if (hideTimer) clearTimeout(hideTimer);
-      if (nextTimer) clearTimeout(nextTimer);
-    };
-  }, [isVisible, donations.length, canShow]);
-
+  const canShow = !isHiddenPage && !isDismissed && Boolean(currentDonation);
   if (!canShow) {
     return null;
   }
 
-  const currentDonation = donations[currentIndex];
-  if (!currentDonation) return null;
-
   const donorName = currentDonation.donor || currentDonation.donorName || "Hamba Allah";
   const formattedAmount = formatRupiah(currentDonation.amount);
-  const campaignTitle = currentDonation.campaignTitle || "Sedekah Umum Yayasan PABE";
+  const campaignTitle = currentDonation.campaignTitle || currentDonation.campaign?.title || "Sedekah Umum Yayasan PABE";
 
   const isCampaignDetailPage = pathname?.startsWith("/program/");
   const bottomPositionClass = isCampaignDetailPage
@@ -133,6 +154,12 @@ export function LiveDonationPopup() {
       }}
       onMouseLeave={() => {
         isHoveredRef.current = false;
+        if (isVisible) {
+          if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+          hideTimeoutRef.current = setTimeout(() => {
+            setIsVisible(false);
+          }, 2000);
+        }
       }}
       className={cn(
         "fixed left-4 sm:left-6 z-30 max-w-[320px] sm:max-w-[350px] w-full select-none print:hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",

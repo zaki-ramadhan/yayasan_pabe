@@ -16,7 +16,6 @@ import { ChatRoundDotsIcon as ChatRoundDotsLine } from "@solar-icons/react/line-
 import { DocumentTextIcon as DocumentTextLine } from "@solar-icons/react/line-duotone/document-text";
 import { GalleryWideIcon as GalleryWideLine } from "@solar-icons/react/line-duotone/gallery-wide";
 import { CameraMinimalisticIcon as CameraMinimalisticLine } from "@solar-icons/react/line-duotone/camera-minimalistic";
-import { ChartSquareIcon as ChartSquareLine } from "@solar-icons/react/line-duotone/chart-square";
 import { CaseRoundIcon as CaseRoundLine } from "@solar-icons/react/line-duotone/case-round";
 import { HandShakeIcon as HandShakeLine } from "@solar-icons/react/line-duotone/hand-shake";
 import { QuestionCircleIcon as QuestionCircleLine } from "@solar-icons/react/line-duotone/question-circle";
@@ -37,7 +36,6 @@ import { ChatRoundDotsIcon as ChatRoundDotsBold } from "@solar-icons/react/bold/
 import { DocumentTextIcon as DocumentTextBold } from "@solar-icons/react/bold/document-text";
 import { GalleryWideIcon as GalleryWideBold } from "@solar-icons/react/bold/gallery-wide";
 import { CameraMinimalisticIcon as CameraMinimalisticBold } from "@solar-icons/react/bold/camera-minimalistic";
-import { ChartSquareIcon as ChartSquareBold } from "@solar-icons/react/bold/chart-square";
 import { CaseRoundIcon as CaseRoundBold } from "@solar-icons/react/bold/case-round";
 import { HandShakeIcon as HandShakeBold } from "@solar-icons/react/bold/hand-shake";
 import { QuestionCircleIcon as QuestionCircleBold } from "@solar-icons/react/bold/question-circle";
@@ -73,7 +71,6 @@ const ADMIN_NAV_GROUPS = [
       { href: "/admin/artikel", label: "Berita & Artikel", icon: DocumentTextLine, activeIcon: DocumentTextBold },
       { href: "/admin/galeri", label: "Galeri Dokumentasi", icon: GalleryWideLine, activeIcon: GalleryWideBold },
       { href: "/admin/instagram", label: "Feed Instagram", icon: CameraMinimalisticLine, activeIcon: CameraMinimalisticBold },
-      { href: "/admin/laporan-audit", label: "Laporan Audit Keuangan", icon: ChartSquareLine, activeIcon: ChartSquareBold },
       { href: "/admin/karier", label: "Lowongan Karier", icon: CaseRoundLine, activeIcon: CaseRoundBold },
       { href: "/admin/relawan", label: "Kelola Relawan", icon: HandShakeLine, activeIcon: HandShakeBold },
       { href: "/admin/faq", label: "Pusat FAQ", icon: QuestionCircleLine, activeIcon: QuestionCircleBold },

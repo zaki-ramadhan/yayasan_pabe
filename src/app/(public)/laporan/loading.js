@@ -16,7 +16,7 @@ export default function LaporanLoading() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
 
       <section className="space-y-4">
-        <Skeleton className="h-6 w-56 rounded" />
+        <Skeleton className="h-7 sm:h-8 w-72 max-w-full rounded" />
 
         <div className="bg-transparent">
           <div className="flex flex-col lg:flex-row items-stretch gap-6 lg:gap-8">
@@ -71,7 +71,7 @@ export default function LaporanLoading() {
 
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <Skeleton className="h-6 w-60 rounded" />
+          <Skeleton className="h-7 sm:h-8 w-60 rounded" />
           <div className="flex gap-2">
             <Skeleton className="h-8 w-24 rounded-full" />
             <Skeleton className="h-8 w-24 rounded-full" />
@@ -103,7 +103,7 @@ export default function LaporanLoading() {
 
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <Skeleton className="h-6 w-48 rounded" />
+          <Skeleton className="h-7 sm:h-8 w-52 rounded" />
           <div className="flex gap-2">
             <Skeleton className="h-8 w-24 rounded-full" />
             <Skeleton className="h-8 w-24 rounded-full" />

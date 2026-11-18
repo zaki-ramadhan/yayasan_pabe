@@ -23,23 +23,15 @@ export function CareerApplicantPersonalFields({
 }) {
   return (
     <div className="space-y-4">
-      <FormField
-        label="Nama lengkap"
-        required
-        error={errors.fullName}
-        hint={
-          isNameLocked
-            ? "Nama lengkap disinkronkan dari profil akun Anda. Ubah di pengaturan profil jika ada kekeliruan."
-            : undefined
-        }
-      >
+      <FormField label="Nama lengkap" required error={errors.fullName}>
         <Input
           type="text"
           placeholder="Nama lengkap sesuai KTP"
           value={formData.fullName}
           minLength={FIELD_LIMITS.NAME.min}
           maxLength={FIELD_LIMITS.NAME.max}
-          readOnly={isNameLocked}
+          isLocked={isNameLocked}
+          lockedNotice="Nama terisi otomatis dari akun Anda. Silakan sesuaikan lewat profil."
           onChange={(e) => {
             if (isNameLocked) return;
             onChange("fullName", e.target.value);
@@ -47,11 +39,7 @@ export function CareerApplicantPersonalFields({
           onBlur={onBlur ? onBlur("fullName") : undefined}
           required
           autoComplete="name"
-          className={cn(
-            "h-10 text-sm font-normal",
-            isNameLocked &&
-              "bg-slate-100 text-slate-700 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
-          )}
+          className="h-10 text-sm font-normal"
         />
       </FormField>
 
@@ -60,11 +48,7 @@ export function CareerApplicantPersonalFields({
           label="Email aktif"
           required
           error={errors.email}
-          hint={
-            isEmailLocked
-              ? "Email disinkronkan otomatis dari akun Anda."
-              : "Notifikasi tahapan rekrutmen akan dikirim ke email ini."
-          }
+          hint={!isEmailLocked ? "Notifikasi tahapan rekrutmen akan dikirim ke email ini." : undefined}
         >
           <Input
             type="email"
@@ -74,7 +58,8 @@ export function CareerApplicantPersonalFields({
             spellCheck={false}
             placeholder="nama@email.com"
             value={formData.email}
-            readOnly={isEmailLocked}
+            isLocked={isEmailLocked}
+            lockedNotice="Email terisi otomatis dari akun Anda. Silakan sesuaikan lewat profil."
             onChange={(e) => {
               if (isEmailLocked) return;
               onChange("email", e.target.value);
@@ -82,11 +67,7 @@ export function CareerApplicantPersonalFields({
             onBlur={onBlur ? onBlur("email") : undefined}
             required
             autoComplete="email"
-            className={cn(
-              "h-10 text-sm font-normal",
-              isEmailLocked &&
-                "bg-slate-100 text-slate-700 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
-            )}
+            className="h-10 text-sm font-normal"
           />
         </FormField>
 

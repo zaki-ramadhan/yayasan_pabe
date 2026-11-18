@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
 import { Button } from "@/components/ui/Button";
 import { formatBytes } from "@/lib/formatters";
+import { getFileIconAsset, isDocumentFile } from "@/lib/fileIconHelper";
 
 /**
  * Sub-komponen visual daftar pratinjau multi-berkas terpilih.
@@ -46,51 +48,64 @@ export function FileUploadMultiPreview({
             key={item.id || idx}
             className="flex items-center gap-3.5 p-2.5 rounded-xl border border-slate-200 bg-white shadow-2xs hover:border-slate-300 transition-colors"
           >
-            <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-800 shrink-0 flex items-center justify-center">
-              {item.isVideo ? (
-                <>
-                  {item.thumbnailUrl ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={item.thumbnailUrl}
-                      alt={item.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <video
-                      src={item.previewUrl}
-                      className="w-full h-full object-cover"
-                      muted
-                      playsInline
-                      autoPlay
-                      preload="auto"
-                      onLoadedData={(e) => {
-                        try {
-                          const p = e.target.play();
-                          if (p !== undefined) p.catch(() => {});
-                        } catch {}
-                      }}
-                      onTimeUpdate={(e) => {
-                        const vid = e.target;
-                        if (vid.currentTime >= 0.12 || (vid.duration > 0 && vid.currentTime >= vid.duration / 2)) {
-                          vid.pause();
-                        }
-                      }}
-                    />
-                  )}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-slate-950/20">
-                    <Video className="w-5 h-5 text-white drop-shadow-md" />
-                  </div>
-                </>
-              ) : (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={item.previewUrl}
-                  alt={item.name}
-                  className="w-full h-full object-cover"
-                />
-              )}
-            </div>
+            {isDocumentFile(item.name || item.previewUrl) ? (
+              <Image
+                src={getFileIconAsset(
+                  item.name || item.previewUrl,
+                  item.type || (item.file instanceof File ? item.file.type : "")
+                )}
+                alt={item.name}
+                width={36}
+                height={36}
+                className="w-9 h-9 object-contain shrink-0 select-none"
+              />
+            ) : (
+              <div className="relative w-20 h-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-800 shrink-0 flex items-center justify-center">
+                {item.isVideo ? (
+                  <>
+                    {item.thumbnailUrl ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={item.thumbnailUrl}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <video
+                        src={item.previewUrl}
+                        className="w-full h-full object-cover"
+                        muted
+                        playsInline
+                        autoPlay
+                        preload="auto"
+                        onLoadedData={(e) => {
+                          try {
+                            const p = e.target.play();
+                            if (p !== undefined) p.catch(() => {});
+                          } catch {}
+                        }}
+                        onTimeUpdate={(e) => {
+                          const vid = e.target;
+                          if (vid.currentTime >= 0.12 || (vid.duration > 0 && vid.currentTime >= vid.duration / 2)) {
+                            vid.pause();
+                          }
+                        }}
+                      />
+                    )}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-slate-950/20">
+                      <Video className="w-5 h-5 text-white drop-shadow-md" />
+                    </div>
+                  </>
+                ) : (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={item.previewUrl}
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
+            )}
 
             <div className="flex-1 min-w-0 pr-1">
               <p className="text-sm font-medium text-slate-800 truncate">

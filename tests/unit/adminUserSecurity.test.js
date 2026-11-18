@@ -78,7 +78,7 @@ describe("Otorisasi & Keamanan Penghapusan Pengurus (deleteAdminUser)", () => {
         },
         nonDevUser
       )
-    ).rejects.toThrow("Hanya Developer / Pemilik Sistem yang berwenang memberikan hak akses Super Admin.");
+    ).rejects.toThrow("Hanya Super Admin utama yayasan yang berwenang memberikan hak akses Super Admin.");
   });
 
   it("menolak pengubahan role ke Super Admin jika bukan dilakukan oleh developer/pemilik sistem", async () => {
@@ -97,7 +97,7 @@ describe("Otorisasi & Keamanan Penghapusan Pengurus (deleteAdminUser)", () => {
         },
         nonDevUser
       )
-    ).rejects.toThrow("Hanya Developer / Pemilik Sistem yang berwenang menaikkan hak akses menjadi Super Admin.");
+    ).rejects.toThrow("Hanya Super Admin utama yayasan yang berwenang menaikkan hak akses menjadi Super Admin.");
   });
 });
 

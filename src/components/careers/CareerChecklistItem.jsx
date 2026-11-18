@@ -1,4 +1,4 @@
-import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
+import { CheckCircleIcon } from "@solar-icons/react/bold/check-circle";
 
 /**
  * Atomic component: Single checklist line item
@@ -11,9 +11,10 @@ export function CareerChecklistItem({ text }) {
 
   return (
     <li className="flex items-start gap-2.5">
-      <span className="mt-0.5 flex items-center justify-center w-4.5 h-4.5 rounded bg-emerald-50 text-emerald-600 shrink-0">
-        <Check className="w-3 h-3" aria-hidden="true" />
-      </span>
+      <CheckCircleIcon
+        className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
+        aria-hidden="true"
+      />
       <span className="text-sm font-normal text-slate-700 leading-relaxed">
         {text}
       </span>

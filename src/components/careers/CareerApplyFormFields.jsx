@@ -30,8 +30,9 @@ export function CareerApplyFormFields({
         <Input
           type="text"
           value={`${job.title} • ${job.location}`}
-          readOnly
-          className="h-10 text-sm font-normal bg-slate-100 text-slate-700 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
+          isLocked
+          lockedNotice="Posisi lowongan telah disesuaikan dengan pilihan Anda."
+          className="h-10 text-sm font-normal"
         />
       </FormField>
 

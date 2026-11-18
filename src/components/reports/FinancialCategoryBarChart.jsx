@@ -67,7 +67,7 @@ export function FinancialCategoryBarChart({ data = [], categories = [] }) {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={data}
-                  margin={{ top: 12, right: 16, left: 16, bottom: 8 }}
+                  margin={{ top: 20, right: 16, left: 16, bottom: 8 }}
                   barGap={4}
                 >
                   <CartesianGrid

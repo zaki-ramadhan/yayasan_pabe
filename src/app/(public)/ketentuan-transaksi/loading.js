@@ -14,8 +14,8 @@ export default function KetentuanTransaksiLoading() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 sm:space-y-10 lg:space-y-12">
-        <div className="space-y-3">
-          <Skeleton className="h-6 w-64 rounded" />
+        <div className="space-y-4">
+          <Skeleton className="h-7 sm:h-8 w-64 max-w-full rounded" />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
             <div className="p-4 sm:p-5 rounded-lg border border-slate-800 bg-slate-900 space-y-2 shadow-xs">
@@ -53,8 +53,8 @@ export default function KetentuanTransaksiLoading() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 items-start">
-          <div className="space-y-3">
-            <Skeleton className="h-6 w-52 rounded" />
+          <div className="space-y-4">
+            <Skeleton className="h-7 sm:h-8 w-52 max-w-full rounded" />
             <div className="rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
               <div className="divide-y divide-slate-100">
                 <div className="px-4 py-3 bg-slate-50/50 flex justify-between">
@@ -76,8 +76,8 @@ export default function KetentuanTransaksiLoading() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <Skeleton className="h-6 w-56 rounded" />
+          <div className="space-y-4">
+            <Skeleton className="h-7 sm:h-8 w-56 max-w-full rounded" />
             <div className="rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
               <div className="divide-y divide-slate-100">
                 <div className="px-4 py-3 bg-slate-50/50 flex justify-between">

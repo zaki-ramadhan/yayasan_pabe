@@ -6,7 +6,6 @@ import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { AnonymousCheckbox } from "@/components/donation/AnonymousCheckbox";
 import { PrayerTextarea } from "@/components/donation/PrayerTextarea";
 import { CheckoutStepHeader } from "@/components/donation/CheckoutStepHeader";
-import { LockIcon as Lock } from "@solar-icons/react/line-duotone/lock";
 
 export function DonorIdentitySection({
   isAnonymous,
@@ -73,39 +72,26 @@ export function DonorIdentitySection({
           required
           error={errors.donorEmail}
         >
-          <div className={cn("relative", isEmailLocked && "cursor-not-allowed")}>
-            <Input
-              type="email"
-              inputMode="email"
-              spellCheck={false}
-              required
-              readOnly={isEmailLocked}
-              tabIndex={isEmailLocked ? -1 : undefined}
-              value={donorEmail}
-              minLength={FIELD_LIMITS.EMAIL.min}
-              maxLength={FIELD_LIMITS.EMAIL.max}
-              onChange={(e) => {
-                if (!isEmailLocked) {
-                  setDonorEmail(sanitizeEmail(e.target.value));
-                  clearError("donorEmail");
-                }
-              }}
-              onBlur={() => setDonorEmail((prev) => prev.trim())}
-              placeholder="nama@email.com"
-              className={cn(
-                "h-11 text-sm font-normal",
-                isEmailLocked && "bg-slate-100 text-slate-600 border-slate-300 pr-10 focus:border-slate-300 focus:ring-0 hover:border-slate-300 pointer-events-none select-none shadow-none"
-              )}
-            />
-            {isEmailLocked && (
-              <div
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                title="Email terkunci dari akun profil Anda"
-              >
-                <Lock className="w-4 h-4 text-slate-500" />
-              </div>
-            )}
-          </div>
+          <Input
+            type="email"
+            inputMode="email"
+            spellCheck={false}
+            required
+            isLocked={isEmailLocked}
+            lockedNotice="Email terisi otomatis dari akun Anda. Silakan sesuaikan lewat profil."
+            tabIndex={isEmailLocked ? -1 : undefined}
+            minLength={FIELD_LIMITS.EMAIL.min}
+            maxLength={FIELD_LIMITS.EMAIL.max}
+            onChange={(e) => {
+              if (!isEmailLocked) {
+                setDonorEmail(sanitizeEmail(e.target.value));
+                clearError("donorEmail");
+              }
+            }}
+            onBlur={() => setDonorEmail((prev) => prev.trim())}
+            placeholder="nama@email.com"
+            className="h-11 text-sm font-normal"
+          />
         </FormField>
 
         <FormField

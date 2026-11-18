@@ -12,13 +12,10 @@ export function AboutLeadership({ leaders = [] }) {
 
   return (
     <section className="p-4 sm:p-5 space-y-4">
-      <div className="space-y-1">
+      <div>
         <h2 className="text-lg sm:text-xl font-medium text-slate-950">
           Struktur Organisasi
         </h2>
-        <p className="text-xs sm:text-sm text-slate-600">
-          Susunan dewan pengurus dan bagan tata kelola Yayasan Payung Berkah.
-        </p>
       </div>
 
       {activeStructureImage && (

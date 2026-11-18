@@ -1,9 +1,6 @@
 "use client";
 
-import { MagnifierBugIcon as SearchX } from "@solar-icons/react/line-duotone/magnifier-bug";
-import { DangerCircleIcon as AlertCircle } from "@solar-icons/react/line-duotone/danger-circle";
 import { RestartIcon as RotateCcw } from "@solar-icons/react/line-duotone/restart";
-import { CaseRoundIcon as Briefcase } from "@solar-icons/react/line-duotone/case-round";
 import { CareerListItem } from "./CareerListItem";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/Button";
@@ -48,7 +45,6 @@ export function CareerMasterList({
       ) : error ? (
         <EmptyState
           variant="dashed"
-          icon={AlertCircle}
           title="Gagal memuat daftar posisi"
           description={error}
           action={
@@ -69,14 +65,12 @@ export function CareerMasterList({
         totalVacancies === 0 ? (
           <EmptyState
             variant="dashed"
-            icon={Briefcase}
             title="Belum ada lowongan"
             description="Cek kembali secara berkala untuk posisi terbaru."
           />
         ) : (
           <EmptyState
             variant="dashed"
-            icon={SearchX}
             title="Posisi tidak ditemukan"
             description="Coba ubah kata kunci atau filter."
             action={

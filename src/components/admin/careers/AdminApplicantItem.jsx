@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   Select,
   SelectTrigger,
@@ -18,6 +19,7 @@ import { LetterIcon } from "@solar-icons/react/line-duotone/letter";
 import { PhoneIcon } from "@solar-icons/react/line-duotone/phone";
 import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
 import { DocumentTextIcon } from "@solar-icons/react/line-duotone/document-text";
+import { getFileIconAsset } from "@/lib/fileIconHelper";
 import { LoaderIcon } from "@solar-icons/react/linear/loader";
 
 /**
@@ -128,7 +130,13 @@ export function AdminApplicantItem({
 
         {application.resumeUrl && (
           <span className="flex items-center gap-1.5">
-            <DocumentTextIcon className="w-4 h-4 text-slate-400" />
+            <Image
+              src={getFileIconAsset(application.resumeUrl, "pdf")}
+              alt="Berkas CV"
+              width={18}
+              height={18}
+              className="w-4.5 h-4.5 object-contain shrink-0"
+            />
             <a
               href={application.resumeUrl}
               target="_blank"

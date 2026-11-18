@@ -55,12 +55,13 @@ export async function getDistributionAuditData() {
       const result = {};
       reports.forEach((rep, idx) => {
         const yearKey = `Tahun ${rep.year}`;
+        const isCustomKap = rep.opinionStatus === "Diaudit KAP";
         result[yearKey] = {
           year: rep.year,
           title: rep.title || `Laporan Pertanggungjawaban (${yearKey})`,
           description: rep.summary || AUDIT_SUMMARY_DATA.description,
-          auditorName: rep.auditorName || AUDIT_SUMMARY_DATA.auditorName,
-          opinion: rep.opinionStatus || AUDIT_SUMMARY_DATA.opinion,
+          auditorName: rep.auditorName || "Internal Pembukuan Yayasan",
+          opinion: isCustomKap ? "Diaudit KAP Independen" : "Terbuka & Akuntabel",
           auditPeriod: `Tahun Buku ${rep.year}`,
           operationalRatio: rep.operationalRatio || AUDIT_SUMMARY_DATA.operationalRatio,
           maxAllowedRatio: AUDIT_SUMMARY_DATA.maxAllowedRatio,

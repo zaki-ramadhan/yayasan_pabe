@@ -1,4 +1,3 @@
-import { CloudOffIcon } from "@solar-icons/react/line-duotone/cloud-off";
 import { RestartIcon } from "@solar-icons/react/linear/restart";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -30,8 +29,7 @@ export function DataFetchErrorState({
           className
         )}
       >
-        <div className="flex items-center gap-2.5 min-w-0">
-          <CloudOffIcon className="w-4 h-4 text-rose-500 shrink-0" aria-hidden="true" />
+        <div className="min-w-0">
           <span className="font-medium text-slate-900">{description}</span>
         </div>
         {onRetry && (
@@ -58,10 +56,6 @@ export function DataFetchErrorState({
         className
       )}
     >
-      <div className="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
-        <CloudOffIcon className="w-5 h-5" aria-hidden="true" />
-      </div>
-
       <div className="space-y-1 max-w-sm mx-auto">
         <h3 className="text-base font-semibold text-slate-950">{title}</h3>
         <p className="text-sm text-slate-600 leading-relaxed">{description}</p>

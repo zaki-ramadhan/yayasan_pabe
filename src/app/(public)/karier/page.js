@@ -6,6 +6,9 @@ import { CareerHeader } from "@/components/careers/CareerHeader";
 import { CareerFilterBar } from "@/components/careers/CareerFilterBar";
 import { CareerMasterList } from "@/components/careers/CareerMasterList";
 import { CareerDetailPanel } from "@/components/careers/CareerDetailPanel";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { Button } from "@/components/ui/Button";
+import { RestartIcon as RotateCcw } from "@solar-icons/react/line-duotone/restart";
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
@@ -110,27 +113,92 @@ export default function KarierPage() {
           onTypeChange={setType}
         />
 
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
-          <div className="lg:col-span-5 space-y-3">
-            <CareerMasterList
-              jobs={filteredJobs}
-              totalVacancies={vacancies.length}
-              activeJobId={activeJob?.id || null}
-              onSelectJob={setActiveJobId}
-              onResetFilter={handleResetFilters}
-              isLoading={isLoading}
-              error={error}
-              onRetry={fetchVacancies}
+        {isLoading ? (
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+            <div className="lg:col-span-5 space-y-3">
+              <CareerMasterList
+                jobs={[]}
+                totalVacancies={0}
+                activeJobId={null}
+                onSelectJob={setActiveJobId}
+                onResetFilter={handleResetFilters}
+                isLoading={true}
+                error={null}
+                onRetry={fetchVacancies}
+              />
+            </div>
+            <div className="lg:col-span-7 lg:sticky lg:top-24">
+              <CareerDetailPanel job={null} isLoading={true} />
+            </div>
+          </section>
+        ) : error ? (
+          <div className="w-full">
+            <EmptyState
+              variant="dashed"
+              title="Gagal memuat daftar posisi"
+              description={error}
+              action={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={fetchVacancies}
+                  className="inline-flex items-center gap-1.5 text-sm font-medium"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Coba lagi</span>
+                </Button>
+              }
+              className="py-12 sm:py-16"
             />
           </div>
+        ) : filteredJobs.length === 0 ? (
+          <div className="w-full">
+            <EmptyState
+              variant="dashed"
+              title={vacancies.length === 0 ? "Belum ada lowongan" : "Posisi tidak ditemukan"}
+              description={
+                vacancies.length === 0
+                  ? "Saat ini belum ada lowongan yang dibuka. Cek kembali secara berkala untuk posisi terbaru."
+                  : "Coba ubah kata kunci atau filter pencarian Anda."
+              }
+              action={
+                vacancies.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleResetFilters}
+                    className="text-sm font-medium"
+                  >
+                    Reset Semua Filter
+                  </Button>
+                )
+              }
+              className="py-12 sm:py-16"
+            />
+          </div>
+        ) : (
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+            <div className="lg:col-span-5 space-y-3">
+              <CareerMasterList
+                jobs={filteredJobs}
+                totalVacancies={vacancies.length}
+                activeJobId={activeJob?.id || null}
+                onSelectJob={setActiveJobId}
+                onResetFilter={handleResetFilters}
+                isLoading={false}
+                error={null}
+                onRetry={fetchVacancies}
+              />
+            </div>
 
-          <div className="lg:col-span-7 lg:sticky lg:top-24">
-            <CareerDetailPanel
-              job={activeJob}
-              hasVacancies={filteredJobs.length > 0}
-            />
-          </div>
-        </section>
+            <div className="lg:col-span-7 lg:sticky lg:top-24">
+              <CareerDetailPanel
+                job={activeJob}
+                hasVacancies={true}
+              />
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );

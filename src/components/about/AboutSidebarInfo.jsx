@@ -111,7 +111,7 @@ export function AboutSidebarInfo({ orgSettings = null }) {
             </p>
           </div>
 
-          <div className="pt-2 border-t border-slate-100 space-y-1.5">
+          <div className="pt-3 border-t border-slate-200 space-y-1.5">
             <span className="text-sm font-medium text-primary block">
               Kepatuhan &amp; Akuntabilitas
             </span>

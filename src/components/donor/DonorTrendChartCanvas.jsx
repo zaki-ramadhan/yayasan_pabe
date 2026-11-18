@@ -58,7 +58,7 @@ export function DonorTrendChartCanvas({ data = [], isChartEmpty = false }) {
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={chartData}
-          margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+          margin={{ top: 18, right: 12, left: -4, bottom: 4 }}
         >
           <defs>
             <linearGradient

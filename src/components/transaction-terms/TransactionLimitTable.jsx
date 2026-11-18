@@ -24,13 +24,13 @@ import {
  */
 export function TransactionLimitTable({ title, description, items = [] }) {
   return (
-    <section className="space-y-3">
-      <div>
-        <h2 className="text-lg sm:text-xl font-medium text-slate-950">
+    <section className="space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-xl sm:text-2xl font-medium text-slate-900 tracking-tight">
           {title}
         </h2>
         {description && (
-          <p className="text-sm font-normal text-slate-600 mt-0.5 leading-relaxed">
+          <p className="text-sm font-normal text-slate-600 leading-relaxed">
             {description}
           </p>
         )}

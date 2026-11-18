@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { ShieldWarningIcon as ShieldAlert } from "@solar-icons/react/line-duotone/shield-warning";
 import { PhoneCallingIcon as PhoneCall } from "@solar-icons/react/line-duotone/phone-calling";
 import { ArrowLeftIcon as ArrowLeft } from "@solar-icons/react/line-duotone/arrow-left";
 import { Button } from "@/components/ui/Button";
@@ -41,10 +40,6 @@ export function VolunteerInvalidCardFallback({ volunteer = null }) {
 
       <main className="w-full max-w-md mx-auto my-auto py-8">
         <div className="bg-slate-900/90 border border-rose-900/40 rounded-2xl p-6 sm:p-8 text-center space-y-5 shadow-2xl backdrop-blur-xs">
-          <div className="w-14 h-14 bg-rose-950/80 border border-rose-500/30 text-rose-400 rounded-full flex items-center justify-center mx-auto">
-            <ShieldAlert className="w-7 h-7" />
-          </div>
-
           <div className="space-y-2">
             <h1 className="text-lg sm:text-xl font-medium text-white leading-tight">
               Identitas belum terverifikasi

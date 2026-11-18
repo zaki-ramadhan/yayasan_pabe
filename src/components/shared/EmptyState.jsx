@@ -2,7 +2,6 @@ import { cn } from "@/lib/utils";
 
 /**
  * Standardized EmptyState component for search, filters, and blank collections
- * @param {React.ComponentType} [icon]
  * @param {string} title
  * @param {string} [description]
  * @param {React.ReactNode} [action]
@@ -10,7 +9,6 @@ import { cn } from "@/lib/utils";
  * @param {string} [className]
  */
 export function EmptyState({
-  icon: Icon,
   title,
   description,
   action,
@@ -27,11 +25,6 @@ export function EmptyState({
         className
       )}
     >
-      {Icon && (
-        <div className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-slate-100 text-slate-500 mb-1">
-          <Icon className="w-5 h-5" />
-        </div>
-      )}
       <p className="text-base font-semibold text-slate-950">{title}</p>
       {description && (
         <p className="text-sm text-slate-700 max-w-sm mx-auto leading-relaxed">

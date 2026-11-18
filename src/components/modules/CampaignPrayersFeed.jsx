@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
-import { HeartIcon as Heart } from "@solar-icons/react/line-duotone/heart";
 import { PRAYER_SORT_OPTIONS } from "@/data/sortOptions";
 import { SortDropdown } from "@/components/shared/SortDropdown";
 import { PrayerCard } from "@/components/modules/PrayerCard";
@@ -48,7 +47,6 @@ export function CampaignPrayersFeed({ initialDonors = [] }) {
     return (
       <EmptyState
         variant="dashed"
-        icon={Heart}
         title="Belum ada doa dan dukungan"
         description="Jadilah yang pertama mengirim doa untuk program ini."
       />

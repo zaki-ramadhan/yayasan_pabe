@@ -37,7 +37,7 @@ describe("ktaDownloadHelper - High-Resolution PNG Generator", () => {
     const result = await downloadVolunteerCardImage("missing-id");
     expect(result).toBe(false);
     expect(toastModule.toast.error).toHaveBeenCalledWith(
-      "Gagal menemukan elemen kartu untuk diunduh."
+      "Kartu belum siap diunduh. Silakan muat ulang halaman dan coba kembali."
     );
 
     delete global.window;

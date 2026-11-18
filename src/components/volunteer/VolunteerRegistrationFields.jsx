@@ -56,20 +56,12 @@ export function VolunteerRegistrationFields({
         </p>
       </div>
 
-      <FormField
-        label="Nama lengkap"
-        required
-        error={errors.fullName}
-        hint={
-          isNameLocked
-            ? "Nama lengkap disinkronkan dari profil akun Anda. Ubah di pengaturan profil jika ada kekeliruan."
-            : undefined
-        }
-      >
+      <FormField label="Nama lengkap" required error={errors.fullName}>
         <Input
           type="text"
           required
-          readOnly={isNameLocked}
+          isLocked={isNameLocked}
+          lockedNotice="Nama terisi otomatis dari akun Anda. Silakan sesuaikan lewat profil."
           value={fullName}
           minLength={FIELD_LIMITS.NAME.min}
           maxLength={FIELD_LIMITS.NAME.max}
@@ -84,11 +76,7 @@ export function VolunteerRegistrationFields({
             if (!isNameLocked) setFullName((prev) => prev.trim());
           }}
           placeholder="Nama lengkap sesuai KTP"
-          className={cn(
-            "h-11 font-normal",
-            isNameLocked &&
-              "bg-slate-100 text-slate-700 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
-          )}
+          className="h-11 font-normal"
         />
       </FormField>
 
@@ -124,16 +112,13 @@ export function VolunteerRegistrationFields({
           label="Alamat email"
           required
           error={errors.email}
-          hint={
-            isEmailLocked
-              ? "Email disinkronkan otomatis dari akun Anda."
-              : "Notifikasi kartu relawan akan dikirim ke email ini."
-          }
+          hint={!isEmailLocked ? "Notifikasi kartu relawan akan dikirim ke email ini." : undefined}
         >
           <Input
             type="email"
             required
-            readOnly={isEmailLocked}
+            isLocked={isEmailLocked}
+            lockedNotice="Email terisi otomatis dari akun Anda. Silakan sesuaikan lewat profil."
             value={email}
             minLength={FIELD_LIMITS.EMAIL.min}
             maxLength={FIELD_LIMITS.EMAIL.max}
@@ -147,11 +132,7 @@ export function VolunteerRegistrationFields({
             }}
             onBlur={() => setEmail((prev) => prev.trim())}
             placeholder="email@anda.com"
-            className={cn(
-              "h-11 font-normal",
-              isEmailLocked &&
-                "bg-slate-100 text-slate-700 border-slate-200 cursor-not-allowed select-none focus:ring-0 focus:border-slate-200"
-            )}
+            className="h-11 font-normal"
           />
         </FormField>
       </div>
