@@ -26,7 +26,7 @@ import {
 import { getMidtransServerKey } from "@/lib/midtransConfig";
 import { calculateDonationExpiryDate } from "@/lib/donationExpiryConstants";
 import { broadcastAdminEvent } from "@/lib/sseBroadcast";
-import { sendDonationReceiptEmail } from "@/services/emailService";
+import { sendDonationReceiptEmail, sendDonationAdminAlertEmail } from "@/services/emailService";
 import { enqueueNotification } from "@/services/notificationQueueService";
 import { NOTIFICATION_TYPE } from "@/lib/notificationConstants";
 
@@ -735,6 +735,28 @@ export async function settleDonationStatus(invoiceId, paidAt = new Date(), optio
       } catch (sseErr) {
         console.warn("Peringatan: Gagal broadcast SSE admin:", sseErr?.message);
       }
+
+      // Kirim email notifikasi ke internal pengurus/bendahara yayasan (jika disetel)
+      try {
+        const appUrl = (
+          process.env.NEXT_PUBLIC_APP_URL ||
+          process.env.NEXTAUTH_URL ||
+          "http://localhost:3000"
+        ).replace(/\/+$/, "");
+        sendDonationAdminAlertEmail({
+          invoiceId: settled.invoiceId,
+          donorName: settled.isAnonymous ? "Hamba Allah" : settled.donorName,
+          programTitle: broadcastPayload.campaignTitle || "Program Yayasan",
+          amount: Number(settled.amount),
+          paymentChannelName: settled.paymentChannel || "Digital Payment",
+          paidAt: settled.paidAt || new Date(),
+          donationType: broadcastPayload.donationType || settled.donationType || "CAMPAIGN",
+          zakatType: broadcastPayload.zakatType || settled.zakatType || null,
+          adminDashboardUrl: `${appUrl}/admin/transaksi?invoice=${encodeURIComponent(settled.invoiceId)}`,
+        }).catch((alertEmailErr) => {
+          console.warn("[DonationService] Alert email admin gagal dikirim:", alertEmailErr?.message);
+        });
+      } catch {}
     }
 
     if (settled.donorEmail && settled.donorEmail.includes("@")) {
