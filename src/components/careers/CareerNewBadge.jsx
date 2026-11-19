@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/Badge";
 
 /**
  * Atomic component: 'Baru' badge chip for vacancies posted today
@@ -8,13 +9,11 @@ import { cn } from "@/lib/utils";
  */
 export function CareerNewBadge({ className = "" }) {
   return (
-    <span
-      className={cn(
-        "shrink-0 px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/70 select-none",
-        className
-      )}
+    <Badge
+      variant="info"
+      className={cn("shrink-0 select-none", className)}
     >
       Baru
-    </span>
+    </Badge>
   );
 }

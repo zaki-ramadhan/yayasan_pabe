@@ -69,7 +69,7 @@ export function AdminApplicantItem({
         </div>
 
         <div className="flex items-center gap-2">
-          <StatusBadge status={application.status} className="text-xs px-2.5 py-0.5" />
+          <StatusBadge status={application.status} />
 
           <Select
             value={application.status}

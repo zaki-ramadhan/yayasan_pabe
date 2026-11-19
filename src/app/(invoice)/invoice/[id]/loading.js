@@ -2,6 +2,7 @@ import Image from "next/image";
 import { AltArrowDownIcon as ChevronDown } from "@solar-icons/react/line-duotone/alt-arrow-down";
 import { Breadcrumb } from "@/components/shared/Breadcrumb";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Badge } from "@/components/ui/Badge";
 import { DashedDivider } from "@/components/ui/DashedDivider";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 
@@ -49,9 +50,9 @@ export default function InvoiceLoading() {
                   Scan kode QR via m-Banking atau E-Wallet.
                 </p>
               </div>
-              <span className="text-xs font-medium text-slate-600 px-2 py-0.5 rounded bg-slate-100 shrink-0">
+              <Badge variant="secondary" className="shrink-0">
                 QRIS
-              </span>
+              </Badge>
             </div>
 
             <div className="flex flex-col items-center justify-center py-2 space-y-3.5 text-center">

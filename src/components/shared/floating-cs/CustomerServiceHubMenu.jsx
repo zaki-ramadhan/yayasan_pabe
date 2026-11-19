@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
+import { Badge } from "@/components/ui/Badge";
 import { WhatsAppIcon } from "@/components/icons/SocialIcons";
 import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 
@@ -35,9 +36,9 @@ export function CustomerServiceHubMenu({
             </span>
             <div className="ml-auto flex items-center gap-1.5 shrink-0">
               {cs.isPrimary && (
-                <span className="text-sm font-semibold tracking-wide px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                <Badge variant="success">
                   Utama
-                </span>
+                </Badge>
               )}
               <ArrowRightUpIcon className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
             </div>

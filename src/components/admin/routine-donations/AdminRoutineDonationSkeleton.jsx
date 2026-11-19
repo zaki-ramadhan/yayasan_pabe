@@ -48,6 +48,9 @@ export function AdminRoutineDonationSkeleton() {
                 <TableHead className="w-40 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-28 rounded" />
                 </TableHead>
+                <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                  <Skeleton className="h-4 w-20 mx-auto rounded" />
+                </TableHead>
                 <TableHead className="w-28 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-14 rounded mx-auto" />
                 </TableHead>
@@ -95,10 +98,7 @@ export function AdminRoutineDonationTableSkeletonRows({ rows = 5 }) {
           </TableCell>
 
           <TableCell className="py-3 align-middle min-w-[280px] max-w-[360px]">
-            <div className="space-y-1">
-              <Skeleton className="h-4 w-48 max-w-full rounded" />
-              <Skeleton className="h-3 w-28 rounded" />
-            </div>
+            <Skeleton className="h-4 w-48 max-w-full rounded" />
           </TableCell>
 
           <TableCell className="w-36 py-3 text-right align-middle whitespace-nowrap">
@@ -112,8 +112,12 @@ export function AdminRoutineDonationTableSkeletonRows({ rows = 5 }) {
             </div>
           </TableCell>
 
+          <TableCell className="w-36 text-center py-3 align-middle whitespace-nowrap">
+            <Skeleton className="h-4 w-20 mx-auto rounded" />
+          </TableCell>
+
           <TableCell className="w-28 text-center py-3 align-middle whitespace-nowrap">
-            <Skeleton className="h-5 w-14 rounded-full mx-auto" />
+            <Skeleton className="h-5 w-10 rounded-md mx-auto" />
           </TableCell>
 
           <TableCell className="w-24 text-right py-3 align-middle whitespace-nowrap pr-4">

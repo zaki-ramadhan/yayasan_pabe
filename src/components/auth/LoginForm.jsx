@@ -281,7 +281,6 @@ export function LoginForm({ siteKey }) {
             if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
           }}
           placeholder="Masukkan kata sandi"
-          helperText="Gunakan minimal 6 karakter."
           error={errors.password}
           autoComplete="current-password"
           extraAction={

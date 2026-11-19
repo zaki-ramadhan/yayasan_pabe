@@ -147,9 +147,6 @@ export function AdminDistributionMediaFields({
           onBlur={() => onYoutubeUrlChange(youtubeUrl.trim())}
           className="h-10 text-sm bg-white"
         />
-        <p className="text-xs text-slate-500 mt-1">
-          Tempel tautan video YouTube (publik/unlisted). Sangat disarankan untuk video dokumentasi berdurasi panjang (&gt; 1 menit).
-        </p>
       </FormField>
     </div>
   );

@@ -183,7 +183,6 @@ export function AdminLayoutClient({ children, initialUser }) {
           currentUser={currentUser}
           onToggleSidebar={handleToggleSidebar}
           isSidebarExpanded={true}
-          isLiveConnected={isConnected}
         />
         <main className="px-4 sm:px-6 lg:px-8 pt-3.5 sm:pt-4.5 lg:pt-5 pb-6 sm:pb-8 flex-1 w-full max-w-7xl mx-auto space-y-5">
           {children}

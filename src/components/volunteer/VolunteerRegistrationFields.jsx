@@ -85,7 +85,6 @@ export function VolunteerRegistrationFields({
           label="Nomor WhatsApp"
           required
           error={errors.phone}
-          hint="Untuk koordinasi aksi relawan di lapangan."
         >
           <Input
             type="tel"
@@ -112,7 +111,6 @@ export function VolunteerRegistrationFields({
           label="Alamat email"
           required
           error={errors.email}
-          hint={!isEmailLocked ? "Notifikasi kartu relawan akan dikirim ke email ini." : undefined}
         >
           <Input
             type="email"
@@ -157,7 +155,6 @@ export function VolunteerRegistrationFields({
       <FormField
         label="Motivasi atau pengalaman singkat"
         error={errors.motivation}
-        hint="Ceritakan alasan ketertarikan Anda atau keahlian yang ingin dibagikan (opsional)."
       >
         <AutoResizeTextarea
           value={motivation}

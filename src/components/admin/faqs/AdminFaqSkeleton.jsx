@@ -57,7 +57,7 @@ export function AdminFaqSkeleton() {
                     </div>
                   </TableCell>
                   <TableCell className="w-36 py-3 px-4 text-center">
-                    <Skeleton className="h-5 w-20 rounded mx-auto" />
+                    <Skeleton className="h-5 w-16 rounded-md mx-auto" />
                   </TableCell>
                   <TableCell className="w-36 py-3 px-4 text-center">
                     <Skeleton className="h-4 w-24 mx-auto" />

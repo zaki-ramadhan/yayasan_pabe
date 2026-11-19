@@ -6,7 +6,7 @@ import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
 import { formatRupiah, formatDate, decodeHtmlEntities, formatPaymentChannel } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { UserAvatar } from "@/components/ui/Avatar";
-import { StatusBadge } from "@/components/ui/Badge";
+import { Badge, StatusBadge } from "@/components/ui/Badge";
 import { maskEmail } from "@/lib/security";
 import { isZisTransaction, getTransactionTypeLabel, getCampaignDetailHref } from "@/lib/zisFilter";
 
@@ -40,28 +40,19 @@ export function AdminTransactionTableRow({
         </div>
       </TableCell>
 
-      <TableCell className="w-px py-3 whitespace-nowrap align-middle">
+      <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
         {txIsZis ? (
-          <span
-            title={typeLabel}
-            className="inline-block text-center align-middle px-2.5 py-1 rounded-md bg-amber-50 text-amber-900 border border-amber-200/80 text-sm font-medium max-w-[150px] truncate whitespace-nowrap"
-          >
+          <Badge variant="warning">
             {typeLabel}
-          </span>
+          </Badge>
         ) : item.routineDonationId || item.isRoutine ? (
-          <span
-            title="Donasi Rutin"
-            className="inline-block text-center align-middle px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-900 border border-emerald-200/80 text-sm font-medium max-w-[150px] truncate whitespace-nowrap"
-          >
+          <Badge variant="success">
             Donasi Rutin
-          </span>
+          </Badge>
         ) : (
-          <span
-            title="Donasi Program"
-            className="inline-block text-center align-middle px-2.5 py-1 rounded-md bg-sky-50 text-sky-900 border border-sky-200/80 text-sm font-medium max-w-[150px] truncate whitespace-nowrap"
-          >
+          <Badge variant="info">
             Donasi Program
-          </span>
+          </Badge>
         )}
       </TableCell>
 
@@ -129,12 +120,9 @@ export function AdminTransactionTableRow({
       </TableCell>
 
       <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
-        <span
-          title={formatPaymentChannel(item.paymentChannel)}
-          className="inline-block text-center align-middle px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap"
-        >
+        <Badge variant="secondary">
           {formatPaymentChannel(item.paymentChannel)}
-        </span>
+        </Badge>
       </TableCell>
 
       <TableCell className="w-px text-sm text-slate-500 py-3 whitespace-nowrap align-middle text-center tabular-nums">

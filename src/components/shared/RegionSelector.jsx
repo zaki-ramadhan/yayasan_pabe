@@ -103,11 +103,6 @@ export function RegionSelector({
         label={cityLabel}
         required={required}
         error={error}
-        hint={
-          !effectiveProvince
-            ? "Pilih provinsi terlebih dahulu."
-            : undefined
-        }
       >
         <CreatableCombobox
           options={citiesInProvince}

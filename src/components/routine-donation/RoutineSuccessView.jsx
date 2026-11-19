@@ -5,6 +5,7 @@ import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
 import { BellIcon as Bell } from "@solar-icons/react/line-duotone/bell";
 import { CalendarIcon as Calendar } from "@solar-icons/react/line-duotone/calendar";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { formatRupiah, formatDateRange } from "@/lib/formatters";
 import { getRoutineProgramAmount } from "@/lib/routineDonationConstants";
 import { ASSET_PATHS } from "@/lib/assetConstants";
@@ -92,22 +93,22 @@ export function RoutineSuccessView({
                   </div>
 
                   <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
+                    <Badge variant="secondary" className="gap-1.5">
                       <Bell className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                       <span>{formatRoutineSchedule(p)} • {p.reminderTime || "05:00"} WIB</span>
-                    </span>
+                    </Badge>
 
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
+                    <Badge variant="secondary">
                       <span>Nominal {formatRupiah(nominal)}</span>
-                    </span>
+                    </Badge>
 
                     {p.hasCustomPeriod && p.startDate && (
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
+                      <Badge variant="secondary" className="gap-1.5">
                         <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                         <span>
                           {formatDateRange(p.startDate, p.endDate)}
                         </span>
-                      </span>
+                      </Badge>
                     )}
                   </div>
                 </div>

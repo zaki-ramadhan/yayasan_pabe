@@ -15,14 +15,14 @@ export function SuperAdminNoticeBanner({ isSuperAdmin = false }) {
     <div
       role="status"
       aria-label="Status hak akses super administrator"
-      className="w-full bg-gradient-to-r from-slate-950 via-amber-900 to-slate-900 text-white px-4 sm:px-6 lg:px-8 py-1.5 text-xs flex items-center justify-center border-b border-amber-500/30 select-none shadow-2xs"
+      className="w-full bg-gradient-to-r from-slate-950 via-amber-900 to-slate-900 text-white px-3 sm:px-6 py-1 text-xs flex items-center justify-center border-b border-amber-500/30 select-none shadow-2xs"
     >
-      <div className="flex items-center gap-4">
-        <span>
+      <div className="flex items-center gap-2.5 sm:gap-3">
+        <span className="font-normal">
           Mode Super Admin
         </span>
-        <ShieldCheckIcon className="w-4 h-4 text-white shrink-0" aria-hidden="true" />
-        <span>
+        <ShieldCheckIcon className="w-3.5 h-3.5 text-white shrink-0" aria-hidden="true" />
+        <span className="text-white/90 font-normal">
           Akses penuh sistem aktif
         </span>
       </div>

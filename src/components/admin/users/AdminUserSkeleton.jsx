@@ -95,7 +95,7 @@ export function AdminUserTableSkeletonRows({ rows = 5 }) {
             <div className="space-y-1.5">
               <Skeleton className="h-4 w-36 rounded" />
               {i % 2 === 1 && (
-                <Skeleton className="h-4 w-20 rounded-md" />
+                <Skeleton className="h-5 w-14 rounded-md" />
               )}
             </div>
           </TableCell>

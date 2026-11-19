@@ -48,7 +48,6 @@ export function CareerApplicantPersonalFields({
           label="Email aktif"
           required
           error={errors.email}
-          hint={!isEmailLocked ? "Notifikasi tahapan rekrutmen akan dikirim ke email ini." : undefined}
         >
           <Input
             type="email"
@@ -75,7 +74,6 @@ export function CareerApplicantPersonalFields({
           label="Nomor WhatsApp"
           required
           error={errors.phone}
-          hint="Untuk koordinasi jadwal wawancara & tes."
         >
           <Input
             type="tel"

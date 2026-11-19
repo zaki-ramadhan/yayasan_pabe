@@ -17,61 +17,107 @@ import { safeFetch } from "@/lib/safeFetch";
  * @param {boolean} [props.disabled=false]
  */
 export function AdminUserTitleCombobox({
-  value,
-  onChange,
-  error,
-  hint = "Contoh: Ketua Dewan Pembina, Sekretaris.",
-  required = true,
-  disabled = false,
+	value,
+	onChange,
+	error,
+	hint,
+	required = true,
+	disabled = false,
 }) {
-  const [options, setOptions] = useState(DEFAULT_STRUCTURAL_TITLES);
+	const [options, setOptions] = useState(
+		DEFAULT_STRUCTURAL_TITLES,
+	);
 
-  useEffect(() => {
-    let isMounted = true;
+	useEffect(() => {
+		let isMounted = true;
 
-    async function loadTitles() {
-      try {
-        const res = await safeFetch("/api/admin/users/titles");
-        if (isMounted && res?.success && Array.isArray(res.data)) {
-          setOptions(res.data);
-        }
-      } catch (err) {
-        console.warn("Menggunakan opsi jabatan default:", err);
-      }
-    }
+		async function loadTitles() {
+			try {
+				const res =
+					await safeFetch(
+						"/api/admin/users/titles",
+					);
+				if (
+					isMounted &&
+					res?.success &&
+					Array.isArray(
+						res.data,
+					)
+				) {
+					setOptions(
+						res.data,
+					);
+				}
+			} catch (err) {
+				console.warn(
+					"Menggunakan opsi jabatan default:",
+					err,
+				);
+			}
+		}
 
-    loadTitles();
+		loadTitles();
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+		return () => {
+			isMounted = false;
+		};
+	}, []);
 
-  const handleCreateNewTitle = (newTerm) => {
-    const trimmed = newTerm.trim();
-    if (!trimmed) return;
-    setOptions((prev) => (prev.includes(trimmed) ? prev : [...prev, trimmed]));
-    return trimmed;
-  };
+	const handleCreateNewTitle = (newTerm) => {
+		const trimmed =
+			newTerm.trim();
+		if (!trimmed) return;
+		setOptions((prev) =>
+			prev.includes(
+				trimmed,
+			)
+				? prev
+				: [
+						...prev,
+						trimmed,
+					],
+		);
+		return trimmed;
+	};
 
-  return (
-    <FormField
-      label="Jabatan struktural"
-      required={required}
-      error={error}
-      hint={hint}
-    >
-      <CreatableCombobox
-        options={options}
-        value={value}
-        onChange={(val) => onChange(val)}
-        onCreate={handleCreateNewTitle}
-        placeholder="Pilih atau ketik jabatan..."
-        searchPlaceholder="Cari atau ketik jabatan baru..."
-        createPrefix="Gunakan jabatan baru"
-        disabled={disabled}
-        className="w-full"
-      />
-    </FormField>
-  );
+	return (
+		<FormField
+			label="Jabatan struktural"
+			required={
+				required
+			}
+			error={
+				error
+			}
+			hint={
+				hint
+			}
+		>
+			<CreatableCombobox
+				options={
+					options
+				}
+				value={
+					value
+				}
+				onChange={(
+					val,
+				) =>
+					onChange(
+						val,
+					)
+				}
+				onCreate={
+					handleCreateNewTitle
+				}
+				placeholder="Pilih atau ketik jabatan..."
+				searchPlaceholder="Cari atau ketik jabatan baru..."
+				createPrefix="Gunakan jabatan baru"
+				disabled={
+					disabled
+				}
+				className="w-full"
+			/>
+		</FormField>
+	);
 }

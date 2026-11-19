@@ -89,7 +89,7 @@ export function AdminCareerSkeleton() {
                   </TableCell>
 
                   <TableCell className="w-28 py-3 text-center align-middle">
-                    <Skeleton className="h-5 w-16 rounded mx-auto" />
+                    <Skeleton className="h-5 w-12 rounded-md mx-auto" />
                   </TableCell>
 
                   <TableCell className="w-24 py-3 text-right align-middle">

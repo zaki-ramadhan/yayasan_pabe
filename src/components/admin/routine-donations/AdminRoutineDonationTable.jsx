@@ -213,6 +213,9 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                 <TableHead className="w-40 font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Frekuensi &amp; jadwal
                 </TableHead>
+                <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                  Tanggal daftar
+                </TableHead>
                 <TableHead className="w-28 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Status
                 </TableHead>
@@ -234,7 +237,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                 ))
               ) : (
                 <TableEmptyRow
-                  colSpan={7}
+                  colSpan={8}
                   isFiltered={Boolean(debouncedSearch || frequencyFilter !== "ALL")}
                 />
               )}

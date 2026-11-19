@@ -70,7 +70,7 @@ export function AdminArticleSkeleton() {
                   </TableCell>
 
                   <TableCell className="w-36 py-2.5 text-center align-middle">
-                    <Skeleton className="h-5 w-24 rounded mx-auto" />
+                    <Skeleton className="h-5 w-16 rounded-md mx-auto" />
                   </TableCell>
 
                   <TableCell className="w-60 py-2.5 align-middle">

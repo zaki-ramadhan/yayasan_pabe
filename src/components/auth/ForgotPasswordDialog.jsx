@@ -155,7 +155,7 @@ export function ForgotPasswordDialog({
               hint={
                 cooldown > 0
                   ? `Tautan telah dikirim. Anda dapat mengirim ulang dalam ${cooldown} detik.`
-                  : "Masukkan email terdaftar untuk menerima tautan pemulihan kata sandi."
+                  : undefined
               }
             >
               <Input

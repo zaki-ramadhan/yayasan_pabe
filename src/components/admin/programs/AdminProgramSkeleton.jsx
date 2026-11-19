@@ -85,7 +85,7 @@ export function AdminProgramTableSkeletonRows({ rows = 5 }) {
           </TableCell>
 
           <TableCell className="py-3 align-middle text-center">
-            <Skeleton className="h-5 w-20 rounded mx-auto" />
+            <Skeleton className="h-5 w-16 rounded-md mx-auto" />
           </TableCell>
 
           <TableCell className="space-y-2 py-3 align-middle text-center w-56 min-w-[220px]">
@@ -110,7 +110,7 @@ export function AdminProgramTableSkeletonRows({ rows = 5 }) {
           </TableCell>
 
           <TableCell className="py-3 align-middle text-center">
-            <Skeleton className="h-5 w-16 rounded mx-auto" />
+            <Skeleton className="h-5 w-12 rounded-md mx-auto" />
           </TableCell>
 
           <TableCell className="py-3 align-middle text-right">

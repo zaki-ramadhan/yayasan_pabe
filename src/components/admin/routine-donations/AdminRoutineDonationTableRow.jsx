@@ -75,9 +75,6 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
             {decodeHtmlEntities(item.programTitle)}
           </span>
         )}
-        <span className="text-sm text-slate-500 font-normal block mt-0.5">
-          Didaftarkan {formatDate(item.createdAt)}
-        </span>
       </TableCell>
 
       <TableCell className="w-36 text-sm font-medium text-slate-900 py-3 align-middle whitespace-nowrap text-right tabular-nums">
@@ -93,6 +90,10 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
             Pukul {item.reminderTime} WIB
           </span>
         </div>
+      </TableCell>
+
+      <TableCell className="w-36 text-sm text-slate-500 py-3 whitespace-nowrap align-middle text-center tabular-nums">
+        {formatDate(item.createdAt)}
       </TableCell>
 
       <TableCell className="w-28 text-center py-3 align-middle whitespace-nowrap">

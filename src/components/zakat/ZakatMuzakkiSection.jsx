@@ -104,10 +104,7 @@ export function ZakatMuzakkiSection({
         </FormField>
       </div>
 
-      <FormField
-        label="NPWP / NIK (opsional)"
-        hint="Untuk bukti pengurang pajak penghasilan SPT tahunan."
-      >
+      <FormField label="NPWP / NIK (opsional)">
         <Input
           value={muzakkiNpwp}
           onChange={(e) => setMuzakkiNpwp(e.target.value.replace(/[^0-9.-]/g, "").slice(0, 20))}

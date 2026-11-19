@@ -4,6 +4,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
 import { FormField } from "@/components/ui/FormField";
+import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { USER_ROLES } from "@/services/authService";
@@ -283,7 +284,6 @@ export function AdminUserModal({
               if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
             }}
             error={errors.title}
-            hint="Contoh: Ketua Dewan Pembina, Sekretaris."
           />
 
           <FormField
@@ -293,11 +293,6 @@ export function AdminUserModal({
                 : "Alamat email (opsional)"
             }
             required={formData.hasLoginAccess}
-            hint={
-              formData.hasLoginAccess
-                ? "Wajib untuk akun login dashboard."
-                : "Kosongkan jika tidak memakai email."
-            }
             error={errors.email}
           >
             <Input
@@ -324,7 +319,7 @@ export function AdminUserModal({
               placeholder={
                 formData.hasLoginAccess
                   ? "nama@pabe.or.id"
-                  : "nama@email.com (opsional)"
+                  : "nama@email.com"
               }
             />
           </FormField>
@@ -339,7 +334,7 @@ export function AdminUserModal({
             error={errors.gender}
           />
 
-          <FormField label="Nomor WhatsApp" error={errors.phone}>
+          <FormField label="Nomor WhatsApp (opsional)" error={errors.phone}>
             <Input
               type="tel"
               inputMode="tel"
@@ -356,7 +351,7 @@ export function AdminUserModal({
               onBlur={() =>
                 setFormData((prev) => ({ ...prev, phone: prev.phone.trim() }))
               }
-              placeholder="081234567890 (opsional)"
+              placeholder="081234567890"
             />
           </FormField>
         </div>
@@ -431,9 +426,9 @@ export function AdminUserModal({
                 className="text-sm font-medium text-slate-900 cursor-pointer select-none flex items-center gap-1.5"
               >
                 <span>Beri hak akses Super admin</span>
-                <span className="text-sm font-medium text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+                <Badge variant="purple">
                   Otoritas penuh
-                </span>
+                </Badge>
               </label>
               <p className="text-sm text-slate-500 font-normal mt-0.5">
                 Memiliki kendali penuh atas sistem, termasuk menambah, mengatur akses, dan menghapus pengurus lain.
@@ -489,7 +484,6 @@ export function AdminUserModal({
             ) : (
               <FormField
                 label="Ubah kata sandi (opsional)"
-                hint="Kosongkan jika tidak ingin memperbarui kata sandi akun ini."
                 error={errors.password}
               >
                 <Input

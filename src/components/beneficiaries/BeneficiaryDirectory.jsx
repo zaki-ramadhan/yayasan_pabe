@@ -143,7 +143,7 @@ export function BeneficiaryDirectory({ initialBeneficiaries = [], stats = {} }) 
               <TableRow>
                 <TableHead className="w-16 whitespace-nowrap">No.</TableHead>
                 <TableHead className="whitespace-nowrap">Nama Penerima</TableHead>
-                <TableHead className="w-40 whitespace-nowrap">Kategori</TableHead>
+                <TableHead className="w-40 text-center whitespace-nowrap">Kategori</TableHead>
                 <TableHead className="w-36 whitespace-nowrap">Jenis Kelamin</TableHead>
               </TableRow>
             </TableHeader>

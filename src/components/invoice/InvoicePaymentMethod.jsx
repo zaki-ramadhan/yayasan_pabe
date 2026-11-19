@@ -1,6 +1,7 @@
 "use client";
 
 import { InvoicePaymentStatusBanner } from "./InvoicePaymentStatusBanner";
+import { Badge } from "@/components/ui/Badge";
 import { InvoiceQrisSection } from "./InvoiceQrisSection";
 import { InvoiceMandiriSection } from "./InvoiceMandiriSection";
 import { InvoiceVirtualAccountSection } from "./InvoiceVirtualAccountSection";
@@ -54,13 +55,13 @@ export function InvoicePaymentMethod({ donation, copiedVa, onCopyVa }) {
               : "Transfer ke nomor Virtual Account di bawah."}
           </p>
         </div>
-        <span className="text-xs font-medium text-slate-600 px-2 py-0.5 rounded bg-slate-100 shrink-0 whitespace-nowrap">
+        <Badge variant="secondary" className="shrink-0 whitespace-nowrap">
           {donation.paymentChannelType === "EWALLET"
             ? "E-Wallet"
             : isQris
             ? "QRIS"
             : "VA"}
-        </span>
+        </Badge>
       </div>
 
       {isQris && (

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { formatBytes } from "@/lib/formatters";
 import { getFileIconAsset, isDocumentFile } from "@/lib/fileIconHelper";
 
@@ -112,17 +113,17 @@ export function FileUploadMultiPreview({
                 {item.name}
               </p>
               <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                <span className="inline-flex items-center rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs font-normal text-slate-700">
+                <Badge variant="secondary">
                   {formatBytes(item.size)}
-                </span>
+                </Badge>
                 {item.isVideo ? (
-                  <span className="inline-flex items-center rounded-md border border-amber-200/80 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                  <Badge variant="warning">
                     {item.durationFormatted ? `Video (${item.durationFormatted})` : "Video sorotan"}
-                  </span>
+                  </Badge>
                 ) : (
-                  <span className="inline-flex items-center rounded-md border border-emerald-200/80 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                  <Badge variant="success">
                     Foto siap diunggah
-                  </span>
+                  </Badge>
                 )}
               </div>
             </div>

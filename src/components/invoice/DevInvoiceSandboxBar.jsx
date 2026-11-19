@@ -11,6 +11,7 @@ import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
 import { CodeCircleIcon as Terminal } from "@solar-icons/react/line-duotone/code-circle";
 import { CloseCircleIcon as XCircle } from "@solar-icons/react/line-duotone/close-circle";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 import { copyToClipboard } from "@/lib/clipboard";
@@ -117,9 +118,9 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
             </span>
           </div>
         </div>
-        <span className="text-xs px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-semibold capitalize shrink-0">
+        <Badge variant="warning" className="capitalize shrink-0">
           Dev Only
-        </span>
+        </Badge>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 pt-1">

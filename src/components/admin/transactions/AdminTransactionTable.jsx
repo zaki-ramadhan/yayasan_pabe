@@ -271,7 +271,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                 <TableHead className="w-[170px] font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Invoice
                 </TableHead>
-                <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-px text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Jenis transaksi
                 </TableHead>
                 <TableHead className="w-px font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">

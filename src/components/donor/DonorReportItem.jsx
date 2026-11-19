@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { formatDate } from "@/lib/formatters";
+import { Badge } from "@/components/ui/Badge";
 import { getCampaignDetailHref } from "@/lib/zisFilter";
 
 export function DonorReportItem({ report }) {
@@ -11,9 +12,9 @@ export function DonorReportItem({ report }) {
     <div className="p-4 rounded-md border border-slate-200 bg-white transition-colors flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div className="space-y-1 min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 truncate">
+          <Badge variant="success" className="truncate">
             {report.categoryName}
-          </span>
+          </Badge>
           <span className="text-xs font-normal text-slate-400 shrink-0">
             {formatDate(report.date)}
           </span>

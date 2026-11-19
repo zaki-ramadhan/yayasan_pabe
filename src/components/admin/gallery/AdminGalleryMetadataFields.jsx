@@ -37,11 +37,11 @@ export function AdminGalleryMetadataFields({
           onBlur={() => setTitle((prev) => (typeof prev === "string" ? prev.trim() : prev))}
           className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
         />
-        <p className="text-xs text-slate-500 mt-1">
-          {isBatch
-            ? "Judul ini akan diterapkan ke seluruh foto yang diunggah bersamaan."
-            : "Boleh dikosongkan jika tidak ada nama khusus (default: \"Dokumentasi kegiatan\")."}
-        </p>
+        {isBatch && (
+          <p className="text-xs text-slate-500 mt-1">
+            Judul ini akan diterapkan ke seluruh foto yang diunggah bersamaan.
+          </p>
+        )}
       </FormField>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -81,9 +81,6 @@ export function AdminGalleryMetadataFields({
             onBlur={() => setYoutubeUrl((prev) => (typeof prev === "string" ? prev.trim() : prev))}
             className="h-10 text-sm text-slate-900 border-slate-300 rounded-lg"
           />
-          <p className="text-xs text-slate-500 mt-1">
-            Tempel tautan video YouTube (publik/unlisted). Sangat disarankan untuk video dokumentasi berdurasi panjang (&gt; 1 menit).
-          </p>
         </FormField>
       )}
     </div>

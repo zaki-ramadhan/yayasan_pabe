@@ -7,7 +7,7 @@ import { PlayIcon as Play } from "@solar-icons/react/line-duotone/play";
 import { CloseCircleIcon as XCircle } from "@solar-icons/react/line-duotone/close-circle";
 import { formatRupiah } from "@/lib/formatters";
 import { Button } from "@/components/ui/Button";
-import { StatusBadge } from "@/components/ui/Badge";
+import { Badge, StatusBadge } from "@/components/ui/Badge";
 import {
   DonorCard,
   DonorListItem,
@@ -80,13 +80,13 @@ export function DonorRoutineDonationsCard({
               <DonorListItem key={item.id} className="flex-col items-start gap-2.5 p-3 sm:p-3.5">
                 <div className="w-full flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-xs font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    <Badge variant="success">
                       {item.frequency === "DAILY"
                         ? "Harian"
                         : item.frequency === "WEEKLY"
                         ? "Pekanan"
                         : "Bulanan"}
-                    </span>
+                    </Badge>
                     <StatusBadge status={item.status} />
                   </div>
                   <div className="text-right shrink-0">

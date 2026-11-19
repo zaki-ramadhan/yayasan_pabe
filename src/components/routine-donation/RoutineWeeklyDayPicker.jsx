@@ -40,9 +40,6 @@ export function RoutineWeeklyDayPicker({ item, onChange }) {
           );
         })}
       </div>
-      <p className="text-xs text-slate-600 italic font-normal">
-        *Jadwal donasi akan diingatkan atau ditagihkan setiap hari {selectedDayLabel}.
-      </p>
     </div>
   );
 }

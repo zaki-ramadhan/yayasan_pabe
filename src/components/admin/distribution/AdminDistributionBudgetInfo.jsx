@@ -5,6 +5,7 @@ import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone
 import { DangerTriangleIcon as AlertTriangle } from "@solar-icons/react/line-duotone/danger-triangle";
 import { DangerIcon as AlertOctagon } from "@solar-icons/react/line-duotone/danger";
 import { formatRupiah } from "@/lib/formatters";
+import { Badge } from "@/components/ui/Badge";
 import { calculateCampaignDisbursementBudget } from "@/lib/distributionConstants";
 import { cn } from "@/lib/utils";
 
@@ -55,22 +56,21 @@ export function AdminDistributionBudgetInfo({
           Status Anggaran Program
         </span>
 
-        <span
-          className={cn(
-            "text-sm font-medium px-2.5 py-0.5 rounded-full border",
+        <Badge
+          variant={
             hasZeroCollected
-              ? "bg-amber-50 text-amber-800 border-amber-200"
+              ? "warning"
               : isOverBudget
-              ? "bg-rose-50 text-rose-800 border-rose-200"
-              : "bg-emerald-50 text-emerald-800 border-emerald-200"
-          )}
+              ? "danger"
+              : "success"
+          }
         >
           {hasZeroCollected
             ? "Belum ada dana"
             : isOverBudget
             ? "Melebihi saldo"
             : "Saldo aman"}
-        </span>
+        </Badge>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">

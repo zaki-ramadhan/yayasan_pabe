@@ -66,11 +66,6 @@ export function RoutineDonorIdentity({
         label="Alamat email aktif"
         required
         error={errors.email}
-        hint={
-          !isLoggedIn
-            ? "Masuk ke akun Anda untuk mengunci email donatur resmi secara otomatis."
-            : undefined
-        }
       >
         <Input
           type="email"

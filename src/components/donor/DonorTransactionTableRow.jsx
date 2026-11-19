@@ -4,7 +4,7 @@ import Link from "next/link";
 import { DocumentTextIcon as FileText } from "@solar-icons/react/line-duotone/document-text";
 import { formatRupiah, formatDate, formatTime, formatPaymentChannel } from "@/lib/formatters";
 import { TableRow, TableCell } from "@/components/ui/Table";
-import { StatusBadge } from "@/components/ui/Badge";
+import { Badge, StatusBadge } from "@/components/ui/Badge";
 import {
   isZisTransaction,
   getCampaignDetailHref,
@@ -41,15 +41,9 @@ export function DonorTransactionTableRow({ item, showTypeColumn = false }) {
       </TableCell>
       {showTypeColumn && (
         <TableCell className="text-center whitespace-nowrap align-middle">
-          <span
-            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${
-              isZis
-                ? "bg-slate-100 text-slate-700 border-slate-200"
-                : "bg-slate-50 text-slate-600 border-slate-200"
-            }`}
-          >
+          <Badge variant="secondary">
             {isZis ? "Zakat" : "Donasi"}
-          </span>
+          </Badge>
         </TableCell>
       )}
       <TableCell className="text-right font-medium text-sm text-emerald-800 align-middle tabular-nums whitespace-nowrap min-w-[125px]">
@@ -73,18 +67,12 @@ export function DonorTransactionTableRow({ item, showTypeColumn = false }) {
         )}
       </TableCell>
       <TableCell className="text-center whitespace-nowrap align-middle min-w-[160px]">
-        <span
-          title={formatPaymentChannel(item.paymentChannel)}
-          className="inline-block text-center align-middle px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 max-w-[150px] truncate whitespace-nowrap"
-        >
+        <Badge variant="secondary">
           {formatPaymentChannel(item.paymentChannel)}
-        </span>
+        </Badge>
       </TableCell>
       <TableCell className="text-center whitespace-nowrap align-middle">
-        <StatusBadge
-          status={item.status || "PAID"}
-          className="text-sm font-normal px-2.5 py-0.5"
-        />
+        <StatusBadge status={item.status || "PAID"} />
       </TableCell>
       <TableCell className="whitespace-nowrap align-middle text-center">
         <div className="flex flex-col items-center leading-tight">

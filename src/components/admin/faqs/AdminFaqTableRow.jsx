@@ -3,6 +3,7 @@
 import { formatDate } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { Badge } from "@/components/ui/Badge";
 
 export function AdminFaqTableRow({
   faq,
@@ -41,13 +42,9 @@ export function AdminFaqTableRow({
 			</TableCell>
 
 			<TableCell className="w-36 py-3 px-4 whitespace-nowrap align-middle text-center">
-				<span
-					title={faq.category || "Umum"}
-					className="inline-block text-center align-middle px-2 py-0.5 rounded text-sm font-normal bg-slate-100 text-slate-700 border border-slate-200/90 whitespace-nowrap max-w-[130px] truncate"
-				>
-					{faq.category ||
-						"Umum"}
-				</span>
+				<Badge variant="secondary">
+					{faq.category || "Umum"}
+				</Badge>
 			</TableCell>
 
 			<TableCell className="w-36 py-3 px-4 whitespace-nowrap align-middle text-center">

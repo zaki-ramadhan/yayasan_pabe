@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/Table";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { StatusBadge } from "@/components/ui/Badge";
+import { Badge, StatusBadge } from "@/components/ui/Badge";
 import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 export function AdminRecentTransactionsCard({
@@ -179,12 +179,9 @@ export function AdminRecentTransactionsCard({
                     {formatRupiah(item.amount)}
                   </TableCell>
                   <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
-                    <span
-                      title={formatPaymentChannel(item.paymentChannel)}
-                      className="inline-block text-center align-middle px-2.5 py-0.5 rounded text-sm font-normal bg-slate-100 border border-slate-200 text-slate-700 max-w-[160px] truncate whitespace-nowrap"
-                    >
+                    <Badge variant="secondary">
                       {formatPaymentChannel(item.paymentChannel)}
-                    </span>
+                    </Badge>
                   </TableCell>
                   <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
                     <StatusBadge status={item.status} />

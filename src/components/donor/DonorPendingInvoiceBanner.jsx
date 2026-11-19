@@ -139,12 +139,12 @@ export function DonorPendingInvoiceBanner({ invoices = [], onInvoiceCancelled })
 
             <div className="space-y-1.5 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-md bg-white/15 border border-white/20 px-2.5 py-0.5 text-xs font-semibold text-amber-200 shadow-2xs">
+                <span className="inline-flex items-center gap-1.5 rounded-md bg-white/15 border border-white/20 px-1.5 py-0.5 text-xs font-normal text-amber-200 shadow-2xs">
                   <Clock className="w-3.5 h-3.5 text-amber-300 shrink-0" />
                   <span>Sisa waktu: {timeLeft}</span>
                 </span>
                 {additionalCount > 0 && (
-                  <span className="text-xs font-semibold text-white/90 bg-white/15 border border-white/20 px-1.5 py-0.5 rounded shadow-2xs">
+                  <span className="text-xs font-normal text-white/90 bg-white/15 border border-white/20 px-1.5 py-0.5 rounded-md shadow-2xs">
                     +{additionalCount} tagihan lainnya
                   </span>
                 )}

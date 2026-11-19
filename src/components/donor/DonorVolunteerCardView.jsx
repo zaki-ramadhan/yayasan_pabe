@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { CampaignCTA } from "@/components/campaign/CampaignCTA";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { toast } from "@/hooks/useToast";
@@ -13,32 +14,17 @@ import {
 import { VolunteerApprovedCard } from "@/components/volunteer/VolunteerApprovedCard";
 import { VolunteerPendingCard } from "@/components/volunteer/VolunteerPendingCard";
 import { VolunteerCancellationDialog } from "@/components/volunteer/VolunteerCancellationDialog";
-import { VolunteerIdCardSkeleton } from "@/components/volunteer/VolunteerIdCard";
 
 export function DonorVolunteerCardSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="relative w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950 p-5 sm:p-6 shadow-md">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-          <div className="space-y-2.5 w-full max-w-xl">
-            <Skeleton className="h-3 w-32 bg-slate-800 rounded" />
-            <Skeleton className="h-5 sm:h-6 w-48 bg-slate-800 rounded" />
-            <Skeleton className="h-4 w-80 max-w-full bg-slate-800/80 rounded" />
-          </div>
-          <div className="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
-            <Skeleton className="h-9 w-28 bg-slate-800 rounded-md" />
-            <Skeleton className="h-9 w-28 bg-slate-800 rounded-md" />
-          </div>
+      <Skeleton className="h-32 sm:h-28 w-full rounded-md" />
+      <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-4 shadow-2xs">
+        <Skeleton className="w-56 h-56 sm:w-72 sm:h-72 mx-auto rounded-xl" />
+        <div className="space-y-2">
+          <Skeleton className="h-5 w-48 mx-auto rounded" />
+          <Skeleton className="h-4 w-72 max-w-full mx-auto rounded" />
         </div>
-      </div>
-
-      <div className="py-2">
-        <VolunteerIdCardSkeleton />
-      </div>
-
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100">
-        <Skeleton className="h-4 w-52 rounded" />
-        <Skeleton className="h-4 w-36 rounded" />
       </div>
     </div>
   );
@@ -130,13 +116,27 @@ export function DonorVolunteerCardView() {
           showViewCardButton={false}
         />
       ) : (
-        <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-1.5 shadow-2xs">
-          <h2 className="text-base sm:text-lg font-semibold text-slate-900 tracking-tight">
-            Kartu Relawan Belum Tersedia
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
-            Daftar melalui banner di atas untuk mendapatkan kartu relawan resmi.
-          </p>
+        <div className="p-8 sm:p-12 bg-white rounded-xl border border-slate-200 text-center space-y-3 shadow-2xs">
+          <div className="relative w-56 h-56 sm:w-72 sm:h-72 mx-auto pointer-events-none select-none">
+            <Image
+              src="/img/illustrations/empty-state.webp"
+              alt=""
+              fill
+              sizes="(max-width: 640px) 224px, 288px"
+              className="object-contain pointer-events-none select-none"
+              draggable={false}
+              aria-hidden="true"
+              priority
+            />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-base sm:text-lg font-semibold text-slate-900 tracking-tight">
+              Kartu Relawan Belum Tersedia
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
+              Daftar melalui banner di atas untuk mendapatkan kartu relawan resmi.
+            </p>
+          </div>
         </div>
       )}
 

@@ -63,7 +63,7 @@ export function AdminGallerySkeleton() {
                     </div>
                   </TableCell>
                   <TableCell className="w-40 text-center py-3 align-middle">
-                    <Skeleton className="h-5 w-24 mx-auto rounded-full" />
+                    <Skeleton className="h-5 w-16 rounded-md mx-auto" />
                   </TableCell>
                   <TableCell className="w-36 py-3 align-middle text-center">
                     <Skeleton className="h-4 w-24 mx-auto rounded" />

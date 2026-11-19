@@ -22,9 +22,6 @@ export function RoutineReminderTimePicker({ item, onChange, isFirstIndex = false
         value={item.reminderTime || "05:00"}
         onChange={(newTime) => onChange(item.id, "reminderTime", newTime)}
       />
-      <p className="mt-1 text-xs text-slate-600 italic font-normal">
-        *Notifikasi otomatis akan dikirimkan pada jam yang ditentukan (Format 24 Jam).
-      </p>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { CalendarIcon as Calendar } from "@solar-icons/react/line-duotone/calend
 import { formatRupiah, formatDateRange } from "@/lib/formatters";
 import { getRoutineProgramAmount } from "@/lib/routineDonationConstants";
 import { formatRoutineSchedule } from "./RoutineProgramItem";
+import { Badge } from "@/components/ui/Badge";
 
 /**
  * Single routine donation breakdown row inside RoutineSummaryCard
@@ -23,22 +24,22 @@ export function RoutineSummaryItem({ program, index, campaign }) {
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
+        <Badge variant="secondary" className="gap-1.5">
           <Bell className="w-3.5 h-3.5 text-slate-500 shrink-0" />
           <span>{formatRoutineSchedule(program)} • {program.reminderTime || "05:00"} WIB</span>
-        </span>
+        </Badge>
 
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
+        <Badge variant="secondary">
           <span>Nominal {formatRupiah(nominal)}</span>
-        </span>
+        </Badge>
 
         {program.hasCustomPeriod && program.startDate && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200">
+          <Badge variant="secondary" className="gap-1.5">
             <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
             <span>
               {formatDateRange(program.startDate, program.endDate)}
             </span>
-          </span>
+          </Badge>
         )}
       </div>
     </div>

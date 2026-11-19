@@ -3,18 +3,19 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center max-w-[140px] rounded-md border px-2.5 py-0.5 text-xs font-medium truncate whitespace-nowrap transition-colors focus:outline-none focus:ring-2 focus:ring-primary",
+  "inline-flex items-center justify-center max-w-[160px] rounded-md border px-2 py-0.5 text-xs font-normal leading-tight truncate whitespace-nowrap transition-colors focus:outline-none focus:ring-2 focus:ring-primary",
   {
     variants: {
       variant: {
-        default: "border-transparent bg-primary-light text-primary border-primary/20",
-        secondary: "border-transparent bg-slate-100 text-slate-800",
-        success: "border-transparent bg-emerald-50 text-emerald-700 border-emerald-200/80",
-        urgent: "border-transparent bg-warning-light text-amber-800 border-warning/20",
-        warning: "border-transparent bg-amber-50 text-amber-800 border-amber-200/80",
-        danger: "border-transparent bg-rose-50 text-rose-700 border-rose-200/80",
-        outline: "border-border-strong text-slate-800",
-        info: "border-transparent bg-sky-50 text-sky-700 border-sky-200/80",
+        default: "bg-primary-light text-primary border-primary/25",
+        secondary: "bg-slate-100 text-slate-800 border-slate-200",
+        success: "bg-emerald-50 text-emerald-800 border-emerald-200",
+        urgent: "bg-warning-light text-amber-800 border-amber-300/80",
+        warning: "bg-amber-50 text-amber-800 border-amber-200",
+        danger: "bg-rose-50 text-rose-800 border-rose-200",
+        outline: "border-slate-300 text-slate-800 bg-white",
+        info: "bg-sky-50 text-sky-800 border-sky-200",
+        purple: "bg-purple-50 text-purple-800 border-purple-200",
       },
     },
     defaultVariants: {
@@ -93,9 +94,9 @@ function StatusBadge({ status, label, variant, className, ...props }) {
 }
 
 const ROLE_CONFIG_MAP = {
-  SUPER_ADMIN: { label: "Super admin", variant: "warning" },
-  ADMIN: { label: "Admin yayasan", variant: "secondary" },
-  FINANCE: { label: "Admin keuangan", variant: "info" },
+  SUPER_ADMIN: { label: "Super admin", variant: "purple" },
+  ADMIN: { label: "Admin", variant: "info" },
+  FINANCE: { label: "Admin keuangan", variant: "default" },
   VOLUNTEER: { label: "Relawan lapangan", variant: "success" },
 };
 

@@ -85,7 +85,6 @@ export function AdminCareerBasicInfoFields({
             label="Durasi kontrak / proyek"
             required
             error={errors.contractDuration}
-            hint="Pilih opsi umum atau ketik untuk membuat baru."
           >
             <CreatableCombobox
               options={durationList}

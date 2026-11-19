@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { UserAvatar } from "@/components/ui/Avatar";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { StatusBadge } from "@/components/ui/Badge";
+import { Badge, StatusBadge } from "@/components/ui/Badge";
 import { safeFetch } from "@/lib/safeFetch";
 import { formatRupiah, formatDate, formatPaymentChannel } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
@@ -237,7 +237,7 @@ export function AdminDonorDetailDrawer({
                         <span className="font-medium text-slate-900 text-xs block truncate select-all">
                           {d.invoiceId}
                         </span>
-                        {d.status && <StatusBadge status={d.status} className="scale-90 origin-left" />}
+                        {d.status && <StatusBadge status={d.status} />}
                       </div>
                       <p className="text-xs text-slate-600 truncate">
                         {d.campaignTitle}
@@ -251,12 +251,9 @@ export function AdminDonorDetailDrawer({
                       <span className="font-medium text-slate-900 text-sm block tabular-nums">
                         {formatRupiah(d.totalAmount)}
                       </span>
-                      <span
-                        title={formatPaymentChannel(d.paymentChannel)}
-                        className="inline-block text-center align-middle px-2 py-0.5 mt-0.5 rounded text-sm leading-tight font-medium bg-slate-100 border border-slate-200 text-slate-600 max-w-[140px] truncate"
-                      >
+                      <Badge variant="secondary" className="mt-0.5 max-w-[140px]">
                         {formatPaymentChannel(d.paymentChannel)}
-                      </span>
+                      </Badge>
                     </div>
                   </div>
                 ))}

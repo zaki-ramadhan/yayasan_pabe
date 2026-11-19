@@ -6,6 +6,7 @@ import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
 import { CheckIcon as Check } from "@solar-icons/react/line-duotone/check";
 import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone/check-circle";
 import { formatRupiah, formatDate } from "@/lib/formatters";
+import { StatusBadge } from "@/components/ui/Badge";
 import { DashedDivider } from "@/components/ui/DashedDivider";
 import { ASSET_PATHS } from "@/lib/assetConstants";
 import { getTransactionVocabulary } from "@/lib/zisFilter";
@@ -38,27 +39,18 @@ export function InvoiceReceiptCard({
           <span className="text-sm text-slate-600 block">
             {vocab.billLabel}
           </span>
-          {donation.status === "PAID" ? (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-              Lunas Terverifikasi
-            </span>
-          ) : donation.status === "EXPIRED" ? (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
-              <Clock className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-              Kedaluwarsa
-            </span>
-          ) : donation.status === "CANCELLED" ? (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium">
-              <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-              Dibatalkan
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium">
-              <Clock className="w-3.5 h-3.5 text-amber-700 shrink-0" />
-              Menunggu Pembayaran
-            </span>
-          )}
+          <StatusBadge
+            status={donation.status}
+            label={
+              donation.status === "PAID"
+                ? "Lunas Terverifikasi"
+                : donation.status === "EXPIRED"
+                ? "Kedaluwarsa"
+                : donation.status === "CANCELLED"
+                ? "Dibatalkan"
+                : "Menunggu Pembayaran"
+            }
+          />
         </div>
 
         <div className="flex items-center justify-between gap-2 text-sm">

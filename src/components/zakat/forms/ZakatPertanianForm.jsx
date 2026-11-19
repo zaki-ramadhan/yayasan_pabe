@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FormattedNumberInput } from "@/components/ui/FormattedNumberInput";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
+import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import {
   DEFAULT_BERAS_PRICE_PER_KG,
@@ -134,7 +135,7 @@ export function ZakatPertanianForm({
             >
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-slate-900">Tadah Hujan / Alami</span>
-                <span className="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">10%</span>
+                <Badge variant="success">10%</Badge>
               </div>
               <p className="text-xs text-slate-600 mt-1">
                 Tanpa biaya irigasi tambahan atau mengandalkan air hujan/sungai alami.
@@ -153,7 +154,7 @@ export function ZakatPertanianForm({
             >
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-slate-900">Irigasi / Pompa</span>
-                <span className="text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">5%</span>
+                <Badge variant="info">5%</Badge>
               </div>
               <p className="text-xs text-slate-600 mt-1">
                 Menggunakan biaya pengairan mekanik, diesel pompa, atau kanal berbayar.

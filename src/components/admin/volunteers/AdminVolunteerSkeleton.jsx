@@ -97,7 +97,7 @@ export function AdminVolunteerTableSkeletonRows({ rows = 5 }) {
           </TableCell>
 
           <TableCell className="w-32 py-3 text-center align-middle whitespace-nowrap">
-            <Skeleton className="h-5 w-20 rounded mx-auto" />
+            <Skeleton className="h-5 w-14 rounded-md mx-auto" />
           </TableCell>
 
           <TableCell className="w-24 py-3 text-right align-middle whitespace-nowrap pr-4">

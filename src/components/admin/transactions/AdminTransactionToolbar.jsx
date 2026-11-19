@@ -47,19 +47,19 @@ export function AdminTransactionToolbar({
                 ShopeePay
               </SelectItem>
               <SelectItem value="bca_va" className="cursor-pointer text-sm font-normal py-2">
-                BCA Virtual Account
+                BCA VA
               </SelectItem>
               <SelectItem value="mandiri_va" className="cursor-pointer text-sm font-normal py-2">
-                Mandiri Bill Payment
+                Mandiri VA
               </SelectItem>
               <SelectItem value="bri_va" className="cursor-pointer text-sm font-normal py-2">
-                BRI Virtual Account
+                BRI VA
               </SelectItem>
               <SelectItem value="bni_va" className="cursor-pointer text-sm font-normal py-2">
-                BNI Virtual Account
+                BNI VA
               </SelectItem>
               <SelectItem value="permata_va" className="cursor-pointer text-sm font-normal py-2">
-                Permata Virtual Account
+                Permata VA
               </SelectItem>
           </SelectContent>
         </Select>

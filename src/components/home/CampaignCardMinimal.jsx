@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Progress } from "@/components/ui/Progress";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { RibbonBadge } from "@/components/ui/RibbonBadge";
+import { Badge } from "@/components/ui/Badge";
 import { getCampaignDetailHref } from "@/lib/zisFilter";
 import { cn } from "@/lib/utils";
 
@@ -79,13 +80,13 @@ export function CampaignCardMinimal({
                 {formatRupiah(campaign.collectedAmount)}
               </span>
               {hasTarget ? (
-                <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">
+                <Badge variant="success">
                   {progress}%
-                </span>
+                </Badge>
               ) : (
-                <span className="text-xs font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                <Badge variant="secondary">
                   Rutin
-                </span>
+                </Badge>
               )}
             </div>
           </div>

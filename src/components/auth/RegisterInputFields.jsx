@@ -100,7 +100,6 @@ export function RegisterInputFields({
         label="Nomor WhatsApp"
         required
         error={errors.phone}
-        hint="Untuk notifikasi akun & bukti donasi."
       >
         <Input
           type="tel"

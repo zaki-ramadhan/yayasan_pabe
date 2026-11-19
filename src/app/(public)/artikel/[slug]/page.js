@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { BackLink } from "@/components/shared/BackLink";
 import { getArticleBySlug, getArticles } from "@/services/articleService";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/formatters";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { ArticleActionBar } from "@/components/modules/ArticleActionBar";
@@ -114,12 +115,10 @@ export default async function ArticleDetailPage({ params }) {
             Topik:
           </span>
           {article.tags.map((tag) => (
-            <Link
-              key={tag}
-              href="/artikel"
-              className="text-xs px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition-colors"
-            >
-              #{tag}
+            <Link key={tag} href="/artikel">
+              <Badge variant="secondary" className="hover:bg-slate-200 transition-colors">
+                #{tag}
+              </Badge>
             </Link>
           ))}
         </div>

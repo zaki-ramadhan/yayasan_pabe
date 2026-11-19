@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { HighlightText } from "@/components/shared/HighlightText";
 import { ShareDropdown } from "@/components/shared/ShareDropdown";
@@ -76,13 +77,14 @@ export function ArticleCard({
 						{Array.isArray(article.tags) && article.tags.length > 0 && (
 							<div className="flex items-center gap-1.5 flex-wrap pt-0.5">
 								{article.tags.slice(0, 3).map((tag) => (
-									<span
+									<Badge
 										key={tag}
+										variant="secondary"
 										title={`#${tag}`}
-										className="inline-block text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium max-w-[120px] truncate align-middle"
+										className="max-w-[120px] align-middle"
 									>
 										#{tag}
-									</span>
+									</Badge>
 								))}
 							</div>
 						)}

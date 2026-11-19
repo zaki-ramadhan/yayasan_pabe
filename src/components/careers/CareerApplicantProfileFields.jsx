@@ -22,7 +22,6 @@ export function CareerApplicantProfileFields({
       label="Motivasi bergabung"
       required
       error={errors.coverLetter}
-      hint={`Ceritakan secara ringkas latar belakang, keahlian, atau niat berkhidmat Anda (min. ${MIN_COVER_LETTER_LENGTH} karakter).`}
       action={
         <span
           className={cn(

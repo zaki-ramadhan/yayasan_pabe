@@ -15,8 +15,8 @@ export function BeneficiaryTableRow({ item, index }) {
         <span className="block truncate">{item.name}</span>
       </TableCell>
 
-      <TableCell className="w-40 py-3.5 align-middle whitespace-nowrap">
-        <Badge variant={isYatim ? "success" : "info"} className="text-sm font-normal">
+      <TableCell className="w-40 text-center py-3.5 align-middle whitespace-nowrap">
+        <Badge variant={isYatim ? "success" : "info"}>
           {item.categoryLabel}
         </Badge>
       </TableCell>

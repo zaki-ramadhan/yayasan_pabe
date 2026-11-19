@@ -508,9 +508,6 @@ export function AdminProgramModal({
 						}}
 						className="h-10"
 					/>
-					<p className="text-xs text-slate-500 mt-1">
-						Kosongkan atau isi 0 jika program penggalangan dana berkelanjutan tanpa batas target.
-					</p>
 				</FormField>
 			</div>
 
@@ -550,7 +547,6 @@ export function AdminProgramModal({
 			<FormField
 				label="Detail & cerita program"
 				error={errors.story}
-				hint="Ditampilkan penuh pada tab 'Detail Program' di halaman publik. Rangkuman awal otomatis dijadikan pratinjau SEO."
 			>
 				<AutoResizeTextarea
 					minRows={5}

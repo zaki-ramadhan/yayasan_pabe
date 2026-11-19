@@ -130,7 +130,7 @@ export function VideoPlayer({
               <div className="w-full h-full bg-slate-900" />
             )}
 
-            <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-950/80 text-white text-xs font-medium tracking-normal shadow-2xs backdrop-blur-xs border border-white/10">
+            <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-md bg-slate-950/80 text-white text-xs font-normal tracking-normal shadow-2xs backdrop-blur-xs border border-white/10">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
               YouTube
             </span>
@@ -177,7 +177,7 @@ export function VideoPlayer({
               />
 
               <div className="absolute inset-0 z-10 bg-slate-950/15 group-hover/player:bg-slate-950/30 transition-colors flex items-center justify-center">
-                <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-950/80 text-white text-xs font-medium tracking-normal shadow-2xs backdrop-blur-xs border border-white/10 pointer-events-none">
+                <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-md bg-slate-950/80 text-white text-xs font-normal tracking-normal shadow-2xs backdrop-blur-xs border border-white/10 pointer-events-none">
                   <VideocameraIcon className="w-3.5 h-3.5 text-slate-300" />
                   Video
                 </span>

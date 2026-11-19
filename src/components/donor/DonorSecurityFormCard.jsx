@@ -7,6 +7,7 @@ import { ShieldCheckIcon as ShieldCheck } from "@solar-icons/react/bold/shield-c
 import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone/check-circle";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { FormField } from "@/components/ui/FormField";
 import { toast } from "@/hooks/useToast";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
@@ -207,10 +208,10 @@ export function DonorSecurityFormCard({
                   <h3 className="text-sm font-medium text-slate-900">
                     {isGoogle ? "Masuk dengan Akun Google" : `Masuk dengan Akun ${provider}`}
                   </h3>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <Badge variant="success" className="gap-1">
                     <CheckCircle2 className="w-3 h-3" />
                     Terhubung
-                  </span>
+                  </Badge>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   Akun Anda terhubung dengan {isGoogle ? "Google" : provider}. Kata sandi dan keamanan dikelola langsung lewat akun {isGoogle ? "Google" : provider} Anda.
@@ -253,10 +254,10 @@ export function DonorSecurityFormCard({
               <div className="space-y-0.5 text-sm">
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-slate-900">Tertaut dengan {isGoogle ? "Akun Google" : provider}</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <Badge variant="success" className="gap-1">
                     <CheckCircle2 className="w-3 h-3" />
                     Aktif
-                  </span>
+                  </Badge>
                 </div>
                 <p className="text-slate-500 font-normal leading-relaxed text-xs sm:text-sm">
                   Anda dapat masuk menggunakan {isGoogle ? "Google" : provider} atau kata sandi. Anda juga dapat memperbarui kata sandi Anda di bawah ini.

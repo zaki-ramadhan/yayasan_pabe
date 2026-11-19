@@ -206,7 +206,7 @@ export function AdminStorageSkeleton() {
                     <Skeleton className="h-3 w-32 rounded mt-0.5" />
                   </TableCell>
                   <TableCell className="text-center py-3">
-                    <Skeleton className="h-5 w-20 rounded-md mx-auto" />
+                    <Skeleton className="h-5 w-16 rounded-md mx-auto" />
                   </TableCell>
                   <TableCell className="text-right py-3">
                     <Skeleton className="h-4 w-16 rounded ml-auto" />

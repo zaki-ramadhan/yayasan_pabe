@@ -45,9 +45,6 @@ export function RoutineCustomPeriod({ item, onChange }) {
               className="h-11"
             />
           </FormField>
-          <p className="mt-1 text-xs text-slate-600 italic font-normal">
-            *Jadwal donasi rutin akan otomatis berakhir setelah tanggal batas selesai terlewati.
-          </p>
         </div>
       )}
     </div>

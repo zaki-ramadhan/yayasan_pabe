@@ -7,6 +7,7 @@ import { Pen2Icon as Edit2 } from "@solar-icons/react/line-duotone/pen-2";
 import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
 import { ImageFallback } from "@/components/ui/ImageFallback";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { isVideoUrl } from "@/lib/galleryGroupHelper";
 import { getFileIconAsset, isDocumentFile } from "@/lib/fileIconHelper";
 
@@ -123,21 +124,21 @@ export function FileUploadPreview({
         </p>
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
           {isVideo ? (
-            <span className="inline-flex items-center rounded-md border border-amber-200/80 bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+            <Badge variant="warning">
               Video dokumentasi
-            </span>
+            </Badge>
           ) : value instanceof File ? (
-            <span className="inline-flex items-center rounded-md border border-slate-300 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
+            <Badge variant="secondary">
               Siap disimpan
-            </span>
+            </Badge>
           ) : typeof value === "string" && (value.includes(".r2.dev") || value.includes("r2.cloudflarestorage.com") || value.startsWith("/api/media/")) ? (
-            <span className="inline-flex items-center rounded-md border border-emerald-200/80 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+            <Badge variant="success">
               Tersimpan
-            </span>
+            </Badge>
           ) : (
-            <span className="inline-flex items-center rounded-md border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
+            <Badge variant="secondary">
               Tautan gambar eksternal
-            </span>
+            </Badge>
           )}
           {(uploadMeta?.sizeKb || value instanceof File) && (
             <span className="text-xs text-slate-500 font-normal">

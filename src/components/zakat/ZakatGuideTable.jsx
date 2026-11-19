@@ -1,4 +1,5 @@
 import { formatRupiah } from "@/lib/formatters";
+import { Badge } from "@/components/ui/Badge";
 import { DEFAULT_ANNUAL_NISAB, DEFAULT_MONTHLY_NISAB } from "@/lib/zakat/constants";
 
 const ZAKAT_GUIDE_ROWS = [
@@ -95,9 +96,9 @@ export function ZakatGuideTable() {
                   )}
                 </td>
                 <td className="py-3 px-4 text-center">
-                  <span className="inline-block px-2.5 py-0.5 text-xs font-semibold rounded bg-emerald-50 text-emerald-800 border border-emerald-200/70">
+                  <Badge variant="success">
                     {row.kadar}
-                  </span>
+                  </Badge>
                 </td>
                 <td className="py-3 px-4 text-slate-700 text-xs sm:text-sm">{row.waktu}</td>
               </tr>

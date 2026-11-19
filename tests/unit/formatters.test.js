@@ -6,6 +6,7 @@ import {
   calculateProgress,
   isCampaignClosed,
   formatDateRange,
+  formatPaymentChannel,
 } from "@/lib/formatters";
 
 describe("formatters - formatRupiah", () => {
@@ -101,5 +102,31 @@ describe("formatters - formatDateRange", () => {
     expect(formatDateRange(null, null)).toBe("-");
     expect(formatDateRange("", "")).toBe("-");
     expect(formatDateRange("invalid", "invalid")).toBe("-");
+  });
+});
+
+describe("formatters - formatPaymentChannel", () => {
+  it("memformat saluran Virtual Account menjadi ringkas (Opsi A: Bank VA)", () => {
+    expect(formatPaymentChannel("bca_va")).toBe("BCA VA");
+    expect(formatPaymentChannel("mandiri_va")).toBe("Mandiri VA");
+    expect(formatPaymentChannel("bni_va")).toBe("BNI VA");
+    expect(formatPaymentChannel("bri_va")).toBe("BRI VA");
+    expect(formatPaymentChannel("bsi_va")).toBe("BSI VA");
+    expect(formatPaymentChannel("cimb_va")).toBe("CIMB VA");
+    expect(formatPaymentChannel("danamon_va")).toBe("Danamon VA");
+    expect(formatPaymentChannel("permata_va")).toBe("Permata VA");
+  });
+
+  it("memformat input string yang sudah memuat 'Virtual Account' menjadi 'VA'", () => {
+    expect(formatPaymentChannel("BCA Virtual Account")).toBe("BCA VA");
+    expect(formatPaymentChannel("BNI Virtual Account")).toBe("BNI VA");
+  });
+
+  it("memformat saluran non-VA dan e-wallet secara benar", () => {
+    expect(formatPaymentChannel("qris")).toBe("QRIS");
+    expect(formatPaymentChannel("gopay")).toBe("GoPay");
+    expect(formatPaymentChannel("shopeepay")).toBe("ShopeePay");
+    expect(formatPaymentChannel(null)).toBe("-");
+    expect(formatPaymentChannel("")).toBe("-");
   });
 });

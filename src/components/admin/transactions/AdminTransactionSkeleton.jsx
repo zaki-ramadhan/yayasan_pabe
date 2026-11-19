@@ -32,8 +32,8 @@ export function AdminTransactionSkeleton() {
                 <TableHead className="w-[170px] py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-24 rounded" />
                 </TableHead>
-                <TableHead className="w-px py-2.5 whitespace-nowrap">
-                  <Skeleton className="h-4 w-24 rounded" />
+                <TableHead className="w-px py-2.5 text-center whitespace-nowrap">
+                  <Skeleton className="h-4 w-24 rounded mx-auto" />
                 </TableHead>
                 <TableHead className="w-px py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-20 rounded" />
@@ -89,8 +89,8 @@ export function AdminTransactionTableSkeletonRows({ rows = 5 }) {
             </div>
           </TableCell>
 
-          <TableCell className="w-px py-3 whitespace-nowrap align-middle">
-            <Skeleton className="h-6 w-24 rounded-md" />
+          <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
+            <Skeleton className="h-5 w-20 rounded-md mx-auto" />
           </TableCell>
 
           <TableCell className="w-px py-3 whitespace-nowrap align-middle">
@@ -123,7 +123,7 @@ export function AdminTransactionTableSkeletonRows({ rows = 5 }) {
           </TableCell>
 
           <TableCell className="w-px py-3 text-center whitespace-nowrap align-middle">
-            <Skeleton className="h-5 w-16 rounded mx-auto" />
+            <Skeleton className="h-5 w-12 rounded-md mx-auto" />
           </TableCell>
 
           <TableCell className="w-24 py-3 text-right whitespace-nowrap align-middle pr-4">

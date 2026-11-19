@@ -68,9 +68,6 @@ export function RoutineMonthlyDatePicker({ item, onChange }) {
           />
         </PopoverContent>
       </Popover>
-      <p className="text-xs text-slate-600 italic font-normal">
-        *Donasi rutin akan berulang setiap tanggal {formattedDate || "1"} setiap bulannya.
-      </p>
     </div>
   );
 }

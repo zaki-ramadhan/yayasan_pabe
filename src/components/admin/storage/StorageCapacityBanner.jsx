@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRightUpIcon as ExternalLink } from "@solar-icons/react/linear/arrow-right-up";
 import { DangerTriangleIcon as AlertTriangle } from "@solar-icons/react/line-duotone/danger-triangle";
 import { DangerIcon as AlertOctagon } from "@solar-icons/react/line-duotone/danger";
+import { Badge } from "@/components/ui/Badge";
 import { Progress } from "@/components/ui/Progress";
 import { formatBytes } from "@/lib/formatters";
 import { R2_FREE_TIER_BYTES, calculateStorageHealth } from "@/lib/storageConstants";
@@ -52,16 +53,16 @@ export function StorageCapacityBanner({ overview }) {
                 Kapasitas penyimpanan cloud
               </h2>
               {isCritical && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm font-medium bg-rose-100 text-rose-800 border border-rose-200">
+                <Badge variant="danger" className="gap-1">
                   <AlertOctagon className="w-3.5 h-3.5 text-rose-600" />
                   Kritis
-                </span>
+                </Badge>
               )}
               {!isCritical && isWarning && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-sm font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                <Badge variant="warning" className="gap-1">
                   <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
                   Mendekati batas
-                </span>
+                </Badge>
               )}
             </div>
             <div className="text-sm text-slate-700 font-normal space-y-0.5 leading-tight">
