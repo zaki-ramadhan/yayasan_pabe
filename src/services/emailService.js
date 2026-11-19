@@ -43,6 +43,7 @@ import {
   buildCareerRejectionEmailHtml,
   getCareerRejectionEmailSubject,
 } from "@/templates/emails/careerRejectionEmailTemplate";
+import { buildDonationAdminAlertEmailHtml } from "@/templates/emails/donationAdminAlertEmailTemplate";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
 const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
@@ -694,6 +695,67 @@ export async function sendCareerRejectionEmail({
 
   return sendEmail({
     to,
+    subject,
+    html,
+  });
+}
+
+/**
+ * Mengirimkan email ringkasan notifikasi transaksi baru (Donasi/Zakat) ke pengurus/bendahara yayasan
+ * @param {object} params
+ * @param {string} [params.to] - Alamat email pengurus (fallback ke FINANCE_NOTIFICATION_EMAIL / ADMIN_NOTIFICATION_EMAIL)
+ * @param {string} params.invoiceId
+ * @param {string} params.donorName
+ * @param {string} params.programTitle
+ * @param {number} params.amount
+ * @param {string} params.paymentChannelName
+ * @param {Date|string} params.paidAt
+ * @param {string} [params.donationType]
+ * @param {string} [params.zakatType]
+ * @param {string} [params.adminDashboardUrl]
+ */
+export async function sendDonationAdminAlertEmail({
+  to,
+  invoiceId,
+  donorName,
+  programTitle,
+  amount,
+  paymentChannelName,
+  paidAt,
+  donationType = "CAMPAIGN",
+  zakatType = null,
+  adminDashboardUrl,
+}) {
+  const targetEmail =
+    to ||
+    process.env.FINANCE_NOTIFICATION_EMAIL ||
+    process.env.ADMIN_NOTIFICATION_EMAIL ||
+    null;
+
+  if (!targetEmail || !targetEmail.includes("@")) {
+    return null;
+  }
+
+  const logoUrl = await getPublicEmailLogoUrl();
+  const typeLabel = donationType === "ZAKAT" ? "Zakat" : "Donasi";
+  const formattedAmount = `Rp ${Number(amount || 0).toLocaleString("id-ID")}`;
+  const subject = `[Notifikasi ${typeLabel}] Penerimaan Baru: ${formattedAmount} (${invoiceId})`;
+
+  const html = buildDonationAdminAlertEmailHtml({
+    invoiceId,
+    donorName,
+    programTitle,
+    amount,
+    paymentChannel: paymentChannelName,
+    paidAt,
+    donationType,
+    zakatType,
+    adminDashboardUrl,
+    logoUrl,
+  });
+
+  return sendEmail({
+    to: targetEmail,
     subject,
     html,
   });
