@@ -10,6 +10,7 @@ import { PrayerChatBubble } from "@/components/modules/PrayerChatBubble";
 import { PrayerInputBar } from "@/components/modules/PrayerInputBar";
 import { usePrayersSync } from "@/hooks/usePrayersSync";
 import { getStoredUser } from "@/services/authService";
+import { resolveUserAvatar } from "@/lib/userParser";
 import { DateStickyBadge } from "@/components/shared/DateStickyBadge";
 import { getDateKey, getDateBadgeLabel } from "@/lib/dateUtils";
 import { validatePrayer } from "@/lib/security";
@@ -257,7 +258,7 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
                   isAmined={aminedSet.has(item.donor.id)}
                   onToggleAmin={handleToggleAmin}
                   isOwn={checkIsOwn(item.donor)}
-                  currentUserAvatar={currentUser?.avatar}
+                  currentUserAvatar={resolveUserAvatar(currentUser)}
                 />
               )
             )}

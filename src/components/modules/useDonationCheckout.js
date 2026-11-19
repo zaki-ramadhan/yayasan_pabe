@@ -17,6 +17,7 @@ import {
   sanitizePhone,
 } from "@/lib/security";
 import { getStoredUser, loginUser } from "@/services/authService";
+import { resolveUserAvatar } from "@/lib/userParser";
 import { saveDonationDraft, loadDonationDraft, clearDonationDraft } from "@/lib/donationDraft";
 import { saveDonorInvoice } from "@/lib/donorStorage";
 import { safeFetch } from "@/lib/safeFetch";
@@ -301,7 +302,7 @@ export function useDonationCheckout({ campaign, initialAmount = 50000, initialPr
           donorName: effectiveDonorName,
           donorEmail: donorEmail.trim(),
           donorPhone: donorPhone.trim(),
-          donorAvatar: isAnonymous ? null : (currentUser?.avatar || null),
+          donorAvatar: isAnonymous ? null : resolveUserAvatar(currentUser),
           isAnonymous,
           prayer: sanitizedPrayer,
           idempotencyKey,

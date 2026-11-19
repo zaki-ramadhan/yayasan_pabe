@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { DEMO_USERS } from "@/services/authService";
-import { sanitizeText } from "@/lib/userParser";
+import { sanitizeText, resolveUserAvatar } from "@/lib/userParser";
 import { ensureDefaultLeadersSeeded } from "./leadershipService";
 import {
   STAFF_ROLES,
@@ -75,6 +75,8 @@ export async function getAdminUsers({
           role: true,
           title: true,
           avatar: true,
+          customAvatar: true,
+          providerAvatar: true,
           salutation: true,
           ...(hasGenderField ? { gender: true } : {}),
           phone: true,
@@ -90,13 +92,16 @@ export async function getAdminUsers({
       const isDemo = DEMO_USERS.some((d) => d.email.toLowerCase() === u.email.toLowerCase());
       const isInternalEmail = u.email.endsWith("@internal.yayasanpayungberkah.org");
       const hasLoginAccess = Boolean(u.passwordHash && !isInternalEmail);
+      const resolvedAvatar = resolveUserAvatar(u) || u.avatar || null;
       const gender =
         u.gender ||
-        (u.salutation === "Ibu" || u.salutation === "Hj." || u.avatar?.includes("female")
+        (u.salutation === "Ibu" || u.salutation === "Hj." || resolvedAvatar?.includes("female")
           ? "FEMALE"
           : "MALE");
       return {
         ...u,
+        avatar: resolvedAvatar,
+        avatarUrl: resolvedAvatar,
         passwordHash: undefined, // jangan ekspos hash ke client
         hasLoginAccess,
         isInternalEmail,

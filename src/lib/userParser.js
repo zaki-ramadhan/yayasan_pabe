@@ -47,6 +47,35 @@ export function sanitizePhoneInput(phone) {
 export { sanitizeEmail, sanitizeStandardText as sanitizeText } from "@/lib/sanitizer";
 
 /**
+ * Resolusi avatar Single Source of Truth (SSOT).
+ * Memprioritaskan custom upload, Google/OAuth provider avatar, lalu avatar preset/default.
+ *
+ * @param {object|null} user - Objek user/profil
+ * @returns {string|null} URL gambar avatar atau null
+ */
+export function resolveUserAvatar(user) {
+  if (!user || typeof user !== "object") return null;
+
+  const candidates = [
+    user.customAvatar,
+    user.providerAvatar,
+    user.avatar,
+    user.avatarUrl,
+    user.image,
+    user.picture,
+  ];
+
+  for (const c of candidates) {
+    if (typeof c === "string") {
+      const trimmed = c.trim();
+      if (trimmed.length > 0) return trimmed;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Daftar opsi role untuk pemilihan pengurus yayasan.
  */
 export const MANAGEABLE_ROLES = [

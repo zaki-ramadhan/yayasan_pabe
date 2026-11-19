@@ -58,7 +58,9 @@ describe("Volunteer ID Card Avatar, QR, & Admin Flow", () => {
       const result = await getAdminVolunteers({ limit: 10 });
 
       expect(result.items).toHaveLength(2);
+      expect(result.items[0].avatar).toBe("https://r2.storage/fauzi-avatar.webp");
       expect(result.items[0].avatarUrl).toBe("https://r2.storage/fauzi-avatar.webp");
+      expect(result.items[1].avatar).toBeNull();
       expect(result.items[1].avatarUrl).toBeNull();
     });
   });

@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ORG_PROFILE } from "@/data/orgProfile";
+import { resolveUserAvatar } from "@/lib/userParser";
 import {
   STAFF_ROLES,
   DEFAULT_STRUCTURAL_TITLES,
@@ -171,6 +172,8 @@ export async function getPublicLeadership() {
         role: true,
         title: true,
         avatar: true,
+        customAvatar: true,
+        providerAvatar: true,
         salutation: true,
         ...(hasGenderField ? { gender: true } : {}),
       },
@@ -198,9 +201,10 @@ export async function getPublicLeadership() {
 
     return sorted.map((u) => {
       const displayTitle = sanitizePublicLeadershipTitle(u.title, u.name);
+      const resolvedAvatar = resolveUserAvatar(u) || u.avatar || null;
       const gender =
         u.gender ||
-        (u.salutation === "Ibu" || u.salutation === "Hj." || u.avatar?.includes("female")
+        (u.salutation === "Ibu" || u.salutation === "Hj." || resolvedAvatar?.includes("female")
           ? "FEMALE"
           : "MALE");
 
@@ -209,7 +213,7 @@ export async function getPublicLeadership() {
         name: u.name,
         role: displayTitle,
         gender: gender === "FEMALE" ? "P" : "L",
-        image: resolveStaffAvatar(u.avatar, gender),
+        image: resolveStaffAvatar(resolvedAvatar, gender),
       };
     });
   } catch (error) {

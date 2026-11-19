@@ -12,11 +12,12 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
-import { ROLE_LABELS, USER_ROLES, logoutUser } from "@/services/authService";
+import { USER_ROLES, logoutUser } from "@/services/authService";
 import { SuperAdminNoticeBanner } from "@/components/admin/SuperAdminNoticeBanner";
 import { AdminSystemAlertBanner } from "@/components/admin/AdminSystemAlertBanner";
 import { toast } from "@/hooks/useToast";
 import { getInitials } from "@/lib/formatters";
+import { resolveUserAvatar } from "@/lib/userParser";
 import { cn } from "@/lib/utils";
 
 const ADMIN_PAGE_TITLES = {
@@ -44,7 +45,6 @@ export function AdminTopHeader({
   currentUser,
   onToggleSidebar,
   isSidebarExpanded = false,
-  isLiveConnected = false,
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -81,9 +81,7 @@ export function AdminTopHeader({
     return match ? ADMIN_PAGE_TITLES[match] : "Panel Admin";
   }, [pathname]);
 
-  const avatarUrl = !imgError
-    ? (currentUser?.avatar || currentUser?.customAvatar || currentUser?.providerAvatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
-    : null;
+  const avatarUrl = !imgError ? resolveUserAvatar(currentUser) : null;
 
   const fallbackInitial =
     currentUser?.initials || getInitials(currentUser?.name, "A");
@@ -109,42 +107,6 @@ export function AdminTopHeader({
       </div>
 
       <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-        <div
-          className={cn(
-            "hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border select-none transition-colors",
-            isLiveConnected
-              ? "bg-emerald-50 text-emerald-700 border-emerald-200/70"
-              : "bg-amber-50 text-amber-700 border-amber-200/70"
-          )}
-          title={isLiveConnected ? "Terhubung ke pembaruan data langsung" : "Menghubungkan ulang..."}
-        >
-          <span className="relative flex h-2 w-2">
-            {isLiveConnected && (
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            )}
-            <span
-              className={cn(
-                "relative inline-flex rounded-full h-2 w-2",
-                isLiveConnected ? "bg-emerald-500" : "bg-amber-400 animate-pulse"
-              )}
-            />
-          </span>
-          <span className="text-[11px] leading-none">
-            {isLiveConnected ? "Live" : "Menyambung..."}
-          </span>
-        </div>
-
-        <div className="text-right hidden sm:block">
-          <span className="text-sm font-medium text-slate-900 block leading-tight">
-            {currentUser?.name || "Administrator"}
-          </span>
-          <span className="text-xs text-slate-500 font-normal block leading-tight mt-0.5">
-            {(ROLE_LABELS[userRole] || currentUser?.title || userRole || "Administrator")
-              .replace(/\s*\(Ketua Yayasan\)/gi, "")
-              .replace(/\s*Ketua Yayasan/gi, "")}
-          </span>
-        </div>
-
         <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
             <button

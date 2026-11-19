@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { maskEmail } from "@/lib/security";
+import { resolveUserAvatar } from "@/lib/userParser";
 import { settleDonationStatus } from "@/services/donationService";
 import { buildDonationTypeWhere, isZisTransaction } from "@/lib/zisFilter";
 
@@ -61,35 +62,73 @@ export async function getAdminTransactions({
       }),
     ]);
 
+    const emails = Array.from(new Set(items.map((d) => d.donorEmail).filter(Boolean)));
+    const phones = Array.from(new Set(items.map((d) => d.donorPhone).filter(Boolean)));
+
+    const matchedUsers =
+      emails.length > 0 || phones.length > 0
+        ? await prisma.user.findMany({
+            where: {
+              OR: [
+                ...(emails.length > 0 ? [{ email: { in: emails, mode: "insensitive" } }] : []),
+                ...(phones.length > 0 ? [{ phone: { in: phones } }] : []),
+              ],
+            },
+            select: {
+              email: true,
+              phone: true,
+              avatar: true,
+              customAvatar: true,
+              providerAvatar: true,
+            },
+          })
+        : [];
+
+    const userAvatarMap = new Map();
+    for (const u of matchedUsers) {
+      const bestAvatar = resolveUserAvatar(u);
+      if (u.email) userAvatarMap.set(`email:${u.email.toLowerCase()}`, bestAvatar);
+      if (u.phone) userAvatarMap.set(`phone:${u.phone}`, bestAvatar);
+    }
+
     return {
-      items: items.map((d) => ({
-        id: d.id,
-        invoiceId: d.invoiceId,
-        donorName: d.isAnonymous ? "Hamba Allah" : d.donorName,
-        rawDonorName: d.donorName,
-        donorEmail: d.donorEmail ? maskEmail(d.donorEmail) : "",
-        donorPhone: d.donorPhone,
-        donorAvatar: d.donorAvatar || null,
-        isAnonymous: Boolean(d.isAnonymous),
-        amount: Number(d.amount),
-        totalAmount: Number(d.totalAmount),
-        paymentChannel: d.paymentChannel,
-        status: d.status,
-        donationType: d.donationType || "CAMPAIGN",
-        campaignTitle:
-          d.campaign?.title ||
-          (d.donationType === "ZAKAT"
-            ? "Zakat Maal & Fitrah"
-            : d.donationType === "INFAK_SUBUH"
-            ? "Sedekah Subuh"
-            : "Donasi Umum"),
-        campaignSlug: d.campaign?.slug || "",
-        categorySlug: d.campaign?.category?.slug || "",
-        categoryName: d.campaign?.category?.name || "",
-        isZis: isZisTransaction(d),
-        createdAt: d.createdAt.toISOString(),
-        paidAt: d.paidAt ? d.paidAt.toISOString() : null,
-      })),
+      items: items.map((d) => {
+        const cleanEmail = d.donorEmail ? d.donorEmail.toLowerCase() : "";
+        const userAvatar =
+          (!d.isAnonymous &&
+            ((cleanEmail && userAvatarMap.get(`email:${cleanEmail}`)) ||
+              (d.donorPhone && userAvatarMap.get(`phone:${d.donorPhone}`)))) ||
+          null;
+
+        return {
+          id: d.id,
+          invoiceId: d.invoiceId,
+          donorName: d.isAnonymous ? "Hamba Allah" : d.donorName,
+          rawDonorName: d.donorName,
+          donorEmail: d.donorEmail ? maskEmail(d.donorEmail) : "",
+          donorPhone: d.donorPhone,
+          donorAvatar: d.isAnonymous ? null : (userAvatar || d.donorAvatar || null),
+          isAnonymous: Boolean(d.isAnonymous),
+          amount: Number(d.amount),
+          totalAmount: Number(d.totalAmount),
+          paymentChannel: d.paymentChannel,
+          status: d.status,
+          donationType: d.donationType || "CAMPAIGN",
+          campaignTitle:
+            d.campaign?.title ||
+            (d.donationType === "ZAKAT"
+              ? "Zakat Maal & Fitrah"
+              : d.donationType === "INFAK_SUBUH"
+              ? "Sedekah Subuh"
+              : "Donasi Umum"),
+          campaignSlug: d.campaign?.slug || "",
+          categorySlug: d.campaign?.category?.slug || "",
+          categoryName: d.campaign?.category?.name || "",
+          isZis: isZisTransaction(d),
+          createdAt: d.createdAt.toISOString(),
+          paidAt: d.paidAt ? d.paidAt.toISOString() : null,
+        };
+      }),
       pagination: {
         page,
         limit,

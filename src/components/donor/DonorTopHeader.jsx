@@ -15,6 +15,7 @@ import {
 import { logoutUser } from "@/services/authService";
 import { toast } from "@/hooks/useToast";
 import { getInitials } from "@/lib/formatters";
+import { resolveUserAvatar } from "@/lib/userParser";
 import { cn } from "@/lib/utils";
 
 const DONOR_PAGE_TITLES = {
@@ -60,9 +61,7 @@ export function DonorTopHeader({
     return DONOR_PAGE_TITLES[pathname] || "Dashboard";
   }, [pathname, firstName]);
 
-  const avatarUrl = !imgError
-    ? (currentUser?.avatar || currentUser?.customAvatar || currentUser?.providerAvatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
-    : null;
+  const avatarUrl = !imgError ? resolveUserAvatar(currentUser) : null;
 
   const fallbackInitial = getInitials(
     currentUser?.name,

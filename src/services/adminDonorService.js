@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { maskEmail, maskPhone, sanitizeSearchQuery } from "@/lib/security";
+import { resolveUserAvatar } from "@/lib/userParser";
 
 function normalizePhone(phone) {
   if (!phone) return "";
@@ -41,13 +42,14 @@ export async function getAdminDonors({
         orderBy: { createdAt: "desc" },
       }),
       prisma.user.findMany({
-        where: { role: "DONOR" },
         select: {
           id: true,
           name: true,
           email: true,
           phone: true,
           avatar: true,
+          customAvatar: true,
+          providerAvatar: true,
           city: true,
           createdAt: true,
         },
@@ -58,8 +60,10 @@ export async function getAdminDonors({
     for (const u of registeredUsers) {
       const email = normalizeEmail(u.email);
       const phone = normalizePhone(u.phone);
-      if (email) userLookup.set(`email:${email}`, u);
-      if (phone) userLookup.set(`phone:${phone}`, u);
+      const resolvedAvatar = resolveUserAvatar(u);
+      const enrichedUser = { ...u, avatar: resolvedAvatar };
+      if (email) userLookup.set(`email:${email}`, enrichedUser);
+      if (phone) userLookup.set(`phone:${phone}`, enrichedUser);
     }
 
     const donorMap = new Map();

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { CameraIcon as Camera } from "@solar-icons/react/line-duotone/camera";
 import { formatDate, getInitials } from "@/lib/formatters";
+import { resolveUserAvatar } from "@/lib/userParser";
 import { DonorProfileBannerCanvas } from "@/components/donor/DonorProfileBannerCanvas";
 import { DonorAvatarDialog } from "@/components/donor/DonorAvatarDialog";
 
@@ -18,7 +19,7 @@ export function DonorProfileCover({
 
   const displayName = profile?.name || "Pengguna";
   const initials = getInitials(profile?.name, profile?.email);
-
+  const avatarSrc = resolveUserAvatar(profile);
 
   return (
     <div className="rounded-md border border-slate-200/90 bg-sidebar overflow-hidden shadow-2xs">
@@ -29,13 +30,13 @@ export function DonorProfileCover({
           <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-6">
             <div className="relative group shrink-0 -mt-12 sm:-mt-14 z-10">
               <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-sidebar bg-slate-100 shadow-md overflow-hidden flex items-center justify-center">
-                {profile?.avatar && !avatarLoadError ? (
+                {avatarSrc && !avatarLoadError ? (
                   <Image
-                    src={profile.avatar}
+                    src={avatarSrc}
                     alt={displayName}
                     fill
                     sizes="(max-width: 640px) 96px, 112px"
-                    unoptimized={typeof profile.avatar === "string" && !profile.avatar.startsWith("/") && !profile.avatar.includes("unsplash.com") && !profile.avatar.includes("lh3.googleusercontent.com")}
+                    unoptimized={typeof avatarSrc === "string" && !avatarSrc.startsWith("/") && !avatarSrc.includes("unsplash.com") && !avatarSrc.includes("lh3.googleusercontent.com")}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                     onError={() => setAvatarLoadError(true)}
@@ -43,7 +44,7 @@ export function DonorProfileCover({
                 ) : null}
                 <div
                   className={`avatar-fallback ${
-                    profile?.avatar && !avatarLoadError ? "hidden" : "flex"
+                    avatarSrc && !avatarLoadError ? "hidden" : "flex"
                   } w-full h-full bg-slate-100 text-slate-700 font-semibold text-2xl sm:text-3xl items-center justify-center select-none`}
                 >
                   {initials}

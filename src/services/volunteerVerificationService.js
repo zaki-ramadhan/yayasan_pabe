@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { ORG_PROFILE } from "@/data/orgProfile";
 import { formatVolunteerId } from "@/lib/volunteerUtils";
+import { resolveUserAvatar } from "@/lib/userParser";
 
 export { formatVolunteerId };
 
@@ -26,7 +27,7 @@ export async function getVolunteerPublicProfile(id) {
         where: { email: { equals: v.email.trim().toLowerCase(), mode: "insensitive" } },
         select: { avatar: true, customAvatar: true, providerAvatar: true },
       });
-      userAvatar = u?.avatar || u?.customAvatar || u?.providerAvatar || null;
+      userAvatar = resolveUserAvatar(u);
     }
 
     return mapToPublicVolunteer(v, userAvatar);
@@ -55,7 +56,7 @@ export async function getVolunteerByEmail(email) {
     ]);
 
     if (v) {
-      const userAvatar = u?.avatar || u?.customAvatar || u?.providerAvatar || null;
+      const userAvatar = resolveUserAvatar(u);
       return mapToPublicVolunteer(v, userAvatar);
     }
 
@@ -87,6 +88,7 @@ function mapToPublicVolunteer(v, avatarUrl = null) {
     interest: v.interest,
     status: v.status,
     isApproved: v.status === "APPROVED",
+    avatar: avatarUrl || null,
     avatarUrl: avatarUrl || null,
     createdAt: createdDate.toISOString(),
     validUntil: expiryDate.toISOString(),

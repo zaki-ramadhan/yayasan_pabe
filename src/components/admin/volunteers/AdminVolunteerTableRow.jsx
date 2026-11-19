@@ -35,7 +35,7 @@ export function AdminVolunteerTableRow({
       <TableCell className="w-60 min-w-[200px] py-3 align-middle">
         <div className="flex items-center gap-2.5">
           <UserAvatar
-            src={item.avatar}
+            src={item.avatar || item.avatarUrl}
             name={item.fullName}
             fallback="R"
           />

@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { resolveUserAvatar } from "@/lib/userParser";
 import { sanitizeInput } from "@/lib/security";
 import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 import { VALID_ROUTINE_STATUSES } from "@/lib/routineDonationConstants";
@@ -66,26 +67,66 @@ export async function getAdminRoutineDonations({
       }),
     ]);
 
+    const emails = items.map((r) => r.donorEmail).filter(Boolean);
+    const phones = items.map((r) => r.donorPhone).filter(Boolean);
+    const users =
+      emails.length > 0 || phones.length > 0
+        ? await prisma.user.findMany({
+            where: {
+              OR: [
+                ...(emails.length > 0 ? [{ email: { in: emails } }] : []),
+                ...(phones.length > 0 ? [{ phone: { in: phones } }] : []),
+              ],
+            },
+            select: {
+              email: true,
+              phone: true,
+              avatar: true,
+              customAvatar: true,
+              providerAvatar: true,
+            },
+          })
+        : [];
+
+    const userMap = new Map();
+    for (const u of users) {
+      const av = resolveUserAvatar(u);
+      if (u.email) userMap.set(`email:${u.email.toLowerCase()}`, av);
+      if (u.phone) userMap.set(`phone:${u.phone}`, av);
+    }
+
     return {
-      items: items.map((r) => ({
-        id: r.id,
-        programTitle: r.programTitle,
-        campaignId: r.campaignId,
-        campaignTitle: r.campaign?.title || null,
-        campaignSlug: r.campaign?.slug || null,
-        amount: r.amount,
-        frequency: r.frequency,
-        routineType: r.routineType,
-        status: r.status,
-        selectedDay: r.selectedDay,
-        monthlyDate: r.monthlyDate ? r.monthlyDate.toISOString() : null,
-        reminderTime: r.reminderTime || "05:00",
-        donorName: r.donorName,
-        donorEmail: r.donorEmail,
-        donorPhone: r.donorPhone,
-        isAnonymous: r.isAnonymous,
-        createdAt: r.createdAt.toISOString(),
-      })),
+      items: items.map((r) => {
+        const cleanEmail = r.donorEmail ? r.donorEmail.toLowerCase() : "";
+        const userAvatar =
+          (!r.isAnonymous &&
+            ((cleanEmail && userMap.get(`email:${cleanEmail}`)) ||
+              (r.donorPhone && userMap.get(`phone:${r.donorPhone}`)))) ||
+          null;
+
+        return {
+          id: r.id,
+          programTitle: r.programTitle,
+          campaignId: r.campaignId,
+          campaignTitle: r.campaign?.title || null,
+          campaignSlug: r.campaign?.slug || null,
+          amount: r.amount,
+          frequency: r.frequency,
+          routineType: r.routineType,
+          status: r.status,
+          selectedDay: r.selectedDay,
+          monthlyDate: r.monthlyDate ? r.monthlyDate.toISOString() : null,
+          reminderTime: r.reminderTime || "05:00",
+          donorName: r.donorName,
+          donorEmail: r.donorEmail,
+          donorPhone: r.donorPhone,
+          donorAvatar: userAvatar,
+          avatar: userAvatar,
+          avatarUrl: userAvatar,
+          isAnonymous: r.isAnonymous,
+          createdAt: r.createdAt.toISOString(),
+        };
+      }),
       pagination: {
         page,
         limit,

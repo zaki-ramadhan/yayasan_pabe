@@ -5,17 +5,20 @@ import Image from "next/image";
 import { ShieldUserIcon } from "@solar-icons/react/bold-duotone/shield-user";
 import { Logout2Icon } from "@solar-icons/react/line-duotone/logout-2";
 import { NavLoginButton } from "./NavLoginButton";
+import { resolveUserAvatar } from "@/lib/userParser";
 
 export function NavMobileUserSection({ pathname, currentUser, onClose, onLogout }) {
+  const avatarUrl = resolveUserAvatar(currentUser);
+
   return (
     <div className="pt-3 border-t border-slate-200">
       {currentUser ? (
         <div className="space-y-3">
           <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
             <div className="relative w-10 h-10 rounded-full overflow-hidden bg-slate-900 border border-slate-200 shrink-0 flex items-center justify-center">
-              {currentUser.avatar ? (
+              {avatarUrl ? (
                 <Image
-                  src={currentUser.avatar}
+                  src={avatarUrl}
                   alt={currentUser.name || "User Avatar"}
                   width={40}
                   height={40}

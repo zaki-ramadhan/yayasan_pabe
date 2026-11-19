@@ -19,15 +19,14 @@ import {
 } from "@/components/ui/DropdownMenu";
 import { NavLoginButton } from "./NavLoginButton";
 import { USER_ROLES } from "@/services/authService";
+import { resolveUserAvatar } from "@/lib/userParser";
 import { cn } from "@/lib/utils";
 
 export function NavUserDropdown({ currentUser, onLogout, pathname }) {
   const [isOpen, setIsOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
 
-  const avatarUrl = !imgError
-    ? (currentUser?.avatar || currentUser?.customAvatar || currentUser?.providerAvatar || currentUser?.image || currentUser?.picture || currentUser?.avatarUrl)
-    : null;
+  const avatarUrl = !imgError ? resolveUserAvatar(currentUser) : null;
 
   const fallbackInitial =
     currentUser?.initials ||
@@ -96,36 +95,15 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
         sideOffset={8}
         className="w-64 sm:w-72 max-h-[85vh] overflow-y-auto p-1.5 rounded-xl border border-slate-200 bg-white shadow-lg space-y-0.5 z-50"
       >
-        <div className="px-2.5 py-2 space-y-1">
-          <div className="flex items-center gap-2.5">
-            <div className="relative w-8.5 h-8.5 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shrink-0 flex items-center justify-center">
-              {currentUser.avatar ? (
-                <Image
-                  src={currentUser.avatar}
-                  alt={currentUser.name || "Avatar"}
-                  fill
-                  sizes="34px"
-                  unoptimized={typeof currentUser.avatar === "string" && !currentUser.avatar.startsWith("/") && !currentUser.avatar.includes("lh3.googleusercontent.com")}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className="font-medium text-sm text-slate-800">
-                  {currentUser.initials || "U"}
-                </span>
-              )}
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-medium text-sm text-slate-950 truncate leading-tight">
-                {currentUser.name}
-              </p>
-              {currentUser.email && (
-                <p className="text-xs text-slate-500 truncate leading-tight mt-0.5">
-                  {currentUser.email}
-                </p>
-              )}
-            </div>
-          </div>
+        <div className="px-2.5 py-2">
+          <p className="font-medium text-sm text-slate-950 truncate leading-tight">
+            {currentUser.name}
+          </p>
+          {currentUser.email && (
+            <p className="text-xs text-slate-500 truncate leading-tight mt-0.5">
+              {currentUser.email}
+            </p>
+          )}
         </div>
 
         <DropdownMenuSeparator className="my-1 border-slate-100" />

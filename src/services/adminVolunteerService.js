@@ -60,7 +60,7 @@ export async function getAdminVolunteers({
           if (u.email) {
             userMap.set(
               u.email.toLowerCase(),
-              u.avatar || u.customAvatar || u.providerAvatar || null
+              u.customAvatar || u.providerAvatar || u.avatar || null
             );
           }
         }
@@ -72,6 +72,7 @@ export async function getAdminVolunteers({
     return {
       items: items.map((v) => {
         const cleanEmail = v.email?.trim().toLowerCase();
+        const resolvedAvatar = cleanEmail ? userMap.get(cleanEmail) || null : null;
         return {
           id: v.id,
           fullName: v.fullName,
@@ -81,7 +82,8 @@ export async function getAdminVolunteers({
           interest: v.interest,
           motivation: v.motivation,
           status: v.status,
-          avatarUrl: cleanEmail ? userMap.get(cleanEmail) || null : null,
+          avatar: resolvedAvatar,
+          avatarUrl: resolvedAvatar,
           createdAt: v.createdAt.toISOString(),
         };
       }),

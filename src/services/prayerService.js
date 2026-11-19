@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { sanitizePrayer } from "@/lib/security";
+import { resolveUserAvatar } from "@/lib/userParser";
 
 /**
  * Mengambil daftar doa donatur untuk moderasi admin yayasan.
@@ -64,27 +65,47 @@ export async function getAdminPrayers({
       prisma.donation.count({ where }),
     ]);
 
-    const formatted = donations.map((d) => ({
-      id: d.id,
-      invoiceId: d.invoiceId,
-      campaignId: d.campaignId,
-      campaignTitle: d.campaign?.title || "Donasi Umum",
-      campaignSlug: d.campaign?.slug || "",
-      donorName: d.isAnonymous ? "Hamba Allah" : d.donorName,
-      rawDonorName: d.donorName,
-      donorEmail: d.donorEmail,
-      donorAvatar: d.donorAvatar || null,
-      isAnonymous: d.isAnonymous,
-      prayer: d.prayer,
-      aminCount: d.aminCount || 0,
-      isPrayerHidden: Boolean(d.isPrayerHidden),
-      isPrayerPinned: Boolean(d.isPrayerPinned),
-      prayerReply: d.prayerReply || null,
-      prayerReplyAt: d.prayerReplyAt instanceof Date ? d.prayerReplyAt.toISOString() : d.prayerReplyAt,
-      amount: Number(d.amount || 0),
-      donationStatus: d.status,
-      createdAt: d.createdAt instanceof Date ? d.createdAt.toISOString() : d.createdAt,
-    }));
+    const emails = Array.from(new Set(donations.map((d) => d.donorEmail).filter(Boolean)));
+    const matchedUsers =
+      emails.length > 0
+        ? await prisma.user.findMany({
+            where: { email: { in: emails, mode: "insensitive" } },
+            select: { email: true, avatar: true, customAvatar: true, providerAvatar: true },
+          })
+        : [];
+
+    const userAvatarMap = new Map();
+    for (const u of matchedUsers) {
+      const best = resolveUserAvatar(u);
+      if (u.email) userAvatarMap.set(u.email.toLowerCase(), best);
+    }
+
+    const formatted = donations.map((d) => {
+      const cleanEmail = d.donorEmail ? d.donorEmail.toLowerCase() : "";
+      const liveAvatar = !d.isAnonymous && cleanEmail ? userAvatarMap.get(cleanEmail) : null;
+
+      return {
+        id: d.id,
+        invoiceId: d.invoiceId,
+        campaignId: d.campaignId,
+        campaignTitle: d.campaign?.title || "Donasi Umum",
+        campaignSlug: d.campaign?.slug || "",
+        donorName: d.isAnonymous ? "Hamba Allah" : d.donorName,
+        rawDonorName: d.donorName,
+        donorEmail: d.donorEmail,
+        donorAvatar: d.isAnonymous ? null : (liveAvatar || d.donorAvatar || null),
+        isAnonymous: d.isAnonymous,
+        prayer: d.prayer,
+        aminCount: d.aminCount || 0,
+        isPrayerHidden: Boolean(d.isPrayerHidden),
+        isPrayerPinned: Boolean(d.isPrayerPinned),
+        prayerReply: d.prayerReply || null,
+        prayerReplyAt: d.prayerReplyAt instanceof Date ? d.prayerReplyAt.toISOString() : d.prayerReplyAt,
+        amount: Number(d.amount || 0),
+        donationStatus: d.status,
+        createdAt: d.createdAt instanceof Date ? d.createdAt.toISOString() : d.createdAt,
+      };
+    });
 
     return {
       prayers: formatted,

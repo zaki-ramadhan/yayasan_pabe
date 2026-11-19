@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { TableRow, TableCell } from "@/components/ui/Table";
+import { Badge, RoleBadge } from "@/components/ui/Badge";
 import { AdminUserActionMenu } from "./AdminUserActionMenu";
-import { formatPhoneNumber } from "@/lib/userParser";
+import { formatPhoneNumber, resolveUserAvatar } from "@/lib/userParser";
 import { maskPhone } from "@/lib/security";
 import { getInitials, formatDate } from "@/lib/formatters";
 import { resolveStaffAvatar } from "@/constants/staffConstants";
@@ -18,7 +19,7 @@ export function AdminUserTableRow({
   onDelete,
 }) {
   const isSelf = currentUser?.id === user.id;
-  const avatarUrl = resolveStaffAvatar(user.avatar, user.gender);
+  const avatarUrl = resolveStaffAvatar(resolveUserAvatar(user) || user.avatar, user.gender);
 
   // Privasi Kontak Pengurus: Nomor telepon selalu disensor di tabel umum untuk mencegah intipan layar
   const displayPhone = user.phone ? maskPhone(user.phone) : "-";
@@ -48,20 +49,14 @@ export function AdminUserTableRow({
                 {user.name}
               </span>
               {isSelf && (
-                <span
-                  title="Anda"
-                  className="inline-block text-center align-middle text-sm font-medium text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 shrink-0 max-w-[80px] truncate whitespace-nowrap"
-                >
+                <Badge variant="default" className="shrink-0 max-w-[80px]">
                   Anda
-                </span>
+                </Badge>
               )}
               {!user.isActive && (
-                <span
-                  title="Ditangguhkan"
-                  className="inline-block text-center align-middle text-sm font-medium text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded shrink-0 max-w-[130px] truncate whitespace-nowrap"
-                >
+                <Badge variant="danger" className="shrink-0 max-w-[130px]">
                   Ditangguhkan
-                </span>
+                </Badge>
               )}
             </div>
             {user.email?.endsWith("@internal.yayasanpayungberkah.org") ? (
@@ -89,19 +84,9 @@ export function AdminUserTableRow({
             {user.title || "-"}
           </span>
           {user.role === USER_ROLES.SUPER_ADMIN ? (
-            <span
-              title="Super admin"
-              className="inline-block text-center align-middle text-sm font-normal text-purple-700 bg-purple-50 border border-purple-200/80 px-2 py-0.5 rounded-md shrink-0 max-w-[140px] truncate whitespace-nowrap"
-            >
-              Super admin
-            </span>
+            <RoleBadge role={USER_ROLES.SUPER_ADMIN} />
           ) : user.hasLoginAccess ? (
-            <span
-              title="Admin"
-              className="inline-block text-center align-middle text-sm font-normal text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-md shrink-0 max-w-[140px] truncate whitespace-nowrap"
-            >
-              Admin
-            </span>
+            <RoleBadge role={USER_ROLES.ADMIN} />
           ) : null}
         </div>
       </TableCell>

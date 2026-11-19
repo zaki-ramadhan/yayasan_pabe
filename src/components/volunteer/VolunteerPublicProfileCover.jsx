@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { formatDate, getInitials } from "@/lib/formatters";
 import { ASSET_PATHS } from "@/lib/assetConstants";
+import { resolveUserAvatar } from "@/lib/userParser";
 
 /**
  * Cover Banner & Identitas Profil Publik Relawan.
@@ -15,6 +16,7 @@ export function VolunteerPublicProfileCover({ volunteer }) {
 
   const fullName = volunteer?.fullName || "Relawan Terdaftar";
   const initials = getInitials(fullName);
+  const avatarSrc = resolveUserAvatar(volunteer);
   const displayEmail = volunteer?.maskedEmail || volunteer?.email;
   const bannerSrc =
     ASSET_PATHS.BANNERS.VOLUNTEER_COVER ||
@@ -39,17 +41,17 @@ export function VolunteerPublicProfileCover({ volunteer }) {
         <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
           <div className="relative shrink-0 -mt-12 sm:-mt-14 z-10 self-center sm:self-auto">
             <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-slate-100 shadow-md overflow-hidden flex items-center justify-center">
-              {volunteer?.avatarUrl && !avatarLoadError ? (
+              {avatarSrc && !avatarLoadError ? (
                 <Image
-                  src={volunteer.avatarUrl}
+                  src={avatarSrc}
                   alt={fullName}
                   fill
                   sizes="(max-width: 640px) 96px, 112px"
                   unoptimized={
-                    typeof volunteer.avatarUrl === "string" &&
-                    !volunteer.avatarUrl.startsWith("/") &&
-                    !volunteer.avatarUrl.includes("unsplash.com") &&
-                    !volunteer.avatarUrl.includes("lh3.googleusercontent.com")
+                    typeof avatarSrc === "string" &&
+                    !avatarSrc.startsWith("/") &&
+                    !avatarSrc.includes("unsplash.com") &&
+                    !avatarSrc.includes("lh3.googleusercontent.com")
                   }
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
@@ -59,7 +61,7 @@ export function VolunteerPublicProfileCover({ volunteer }) {
               ) : null}
               <div
                 className={`avatar-fallback ${
-                  volunteer?.avatarUrl && !avatarLoadError ? "hidden" : "flex"
+                  avatarSrc && !avatarLoadError ? "hidden" : "flex"
                 } w-full h-full bg-slate-200 text-slate-700 font-semibold text-2xl sm:text-3xl items-center justify-center select-none`}
               >
                 {initials}
