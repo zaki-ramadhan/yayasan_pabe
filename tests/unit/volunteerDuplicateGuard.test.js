@@ -80,5 +80,43 @@ describe("Volunteer Duplicate Registration Guard", () => {
       })
     );
   });
+
+  it("memberikan pesan penolakan spesifik WhatsApp jika hanya nomor WhatsApp yang duplikat", async () => {
+    vi.spyOn(prisma.volunteer, "findFirst").mockResolvedValueOnce({
+      id: "vol-active-1",
+      fullName: "Burhanuddin",
+      email: "old.volunteer@example.com",
+      phone: "081234567890",
+      status: "APPROVED",
+    });
+
+    await expect(
+      registerVolunteer({
+        fullName: "Zaki Ramadhan",
+        email: "new.account@example.com",
+        phone: "081234567890",
+        city: "Kab. Cirebon",
+      })
+    ).rejects.toThrow(/Nomor WhatsApp 081234567890 sudah terdaftar sebagai relawan aktif atas nama Burhanuddin/i);
+  });
+
+  it("memberikan pesan penolakan spesifik email jika hanya alamat email yang duplikat", async () => {
+    vi.spyOn(prisma.volunteer, "findFirst").mockResolvedValueOnce({
+      id: "vol-active-2",
+      fullName: "Zaki Ramadhan",
+      email: "zaki@example.com",
+      phone: "081111222333",
+      status: "APPROVED",
+    });
+
+    await expect(
+      registerVolunteer({
+        fullName: "Zaki Ramadhan",
+        email: "zaki@example.com",
+        phone: "085555666777",
+        city: "Kab. Cirebon",
+      })
+    ).rejects.toThrow(/Alamat email zaki@example.com sudah terdaftar sebagai relawan aktif/i);
+  });
 });
 

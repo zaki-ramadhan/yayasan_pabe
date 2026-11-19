@@ -27,11 +27,21 @@ import { VolunteerCancellationDialog } from "@/components/volunteer/VolunteerCan
 
 const DRAFT_STORAGE_KEY = "pabe_volunteer_draft";
 
-function getInitialDraft() {
+function getInitialDraft(currentUserEmail = "") {
   if (typeof window === "undefined") return {};
   try {
     const saved = sessionStorage.getItem(DRAFT_STORAGE_KEY);
-    return saved ? JSON.parse(saved) : {};
+    if (!saved) return {};
+    const parsed = JSON.parse(saved);
+    if (
+      currentUserEmail &&
+      parsed.email &&
+      parsed.email.trim().toLowerCase() !== currentUserEmail.trim().toLowerCase()
+    ) {
+      sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+      return {};
+    }
+    return parsed;
   } catch {
     return {};
   }
@@ -46,27 +56,11 @@ export function VolunteerForm() {
   const { currentUser } = useCurrentUser();
   const activeUser = currentUser || (typeof window !== "undefined" ? getStoredUser() : null);
 
-  const [fullName, setFullName] = useState(() => {
-    if (activeUser?.name && activeUser.name !== "Pengguna Google" && activeUser.name !== "Pengguna Facebook") {
-      return activeUser.name;
-    }
-    const draft = getInitialDraft();
-    return draft.fullName || "";
-  });
-
   const isNameLocked = Boolean(
     activeUser?.name &&
     activeUser.name !== "Pengguna Google" &&
     activeUser.name !== "Pengguna Facebook"
   );
-
-  const [email, setEmail] = useState(() => {
-    if (activeUser?.email && !activeUser.email.endsWith("@google.user") && !activeUser.email.endsWith("@facebook.user")) {
-      return activeUser.email;
-    }
-    const draft = getInitialDraft();
-    return draft.email || "";
-  });
 
   const isEmailLocked = Boolean(
     activeUser?.email &&
@@ -74,12 +68,28 @@ export function VolunteerForm() {
     !activeUser.email.endsWith("@facebook.user")
   );
 
+  const [fullName, setFullName] = useState(() => {
+    if (isNameLocked) {
+      return activeUser.name;
+    }
+    const draft = getInitialDraft(activeUser?.email);
+    return draft.fullName || "";
+  });
+
+  const [email, setEmail] = useState(() => {
+    if (isEmailLocked) {
+      return activeUser.email;
+    }
+    const draft = getInitialDraft(activeUser?.email);
+    return draft.email || "";
+  });
+
   const [phone, setPhone] = useState(() => {
     if (activeUser?.phone && activeUser.phone !== "-") {
       const clean = sanitizePhone(activeUser.phone);
       if (clean) return clean;
     }
-    const draft = getInitialDraft();
+    const draft = getInitialDraft(activeUser?.email);
     return draft.phone || "";
   });
 
@@ -87,10 +97,10 @@ export function VolunteerForm() {
     if (activeUser?.city && activeUser.city.trim()) {
       return activeUser.city.trim();
     }
-    const draft = getInitialDraft();
+    const draft = getInitialDraft(activeUser?.email);
     return draft.city || "";
   });
-  const [motivation, setMotivation] = useState(() => getInitialDraft().motivation || "");
+  const [motivation, setMotivation] = useState(() => getInitialDraft(activeUser?.email).motivation || "");
 
   const [volunteer, setVolunteer] = useState(null);
   const [checkingStatus, setCheckingStatus] = useState(true);
@@ -101,6 +111,41 @@ export function VolunteerForm() {
 
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+
+  useEffect(() => {
+    if (!activeUser) return;
+
+    if (
+      activeUser.name &&
+      activeUser.name !== "Pengguna Google" &&
+      activeUser.name !== "Pengguna Facebook"
+    ) {
+      setFullName((prev) =>
+        !prev || prev === "Pengguna Google" || prev === "Pengguna Facebook"
+          ? activeUser.name
+          : prev
+      );
+    }
+
+    if (
+      activeUser.email &&
+      !activeUser.email.endsWith("@google.user") &&
+      !activeUser.email.endsWith("@facebook.user")
+    ) {
+      setEmail(activeUser.email);
+    }
+
+    if (activeUser.phone && activeUser.phone !== "-") {
+      const clean = sanitizePhone(activeUser.phone);
+      if (clean) {
+        setPhone((prev) => (!prev ? clean : prev));
+      }
+    }
+
+    if (activeUser.city && activeUser.city.trim()) {
+      setCity((prev) => (!prev ? activeUser.city.trim() : prev));
+    }
+  }, [activeUser]);
 
   useEffect(() => {
     let isMounted = true;
@@ -212,7 +257,21 @@ export function VolunteerForm() {
     } catch (err) {
       turnstileRef.current?.reset();
       setTurnstileToken("");
-      toast.error(err.message || "Gagal mengirim pendaftaran relawan.");
+      const errorMessage = err.message || "Gagal mengirim pendaftaran relawan.";
+      toast.error(errorMessage);
+
+      if (errorMessage.toLowerCase().includes("whatsapp")) {
+        setErrors((prev) => ({
+          ...prev,
+          phone: errorMessage,
+        }));
+      } else if (errorMessage.toLowerCase().includes("email")) {
+        setErrors((prev) => ({
+          ...prev,
+          email: errorMessage,
+        }));
+      }
+
       if (email && email.trim()) {
         fetchVolunteerStatus(email.trim().toLowerCase()).then((statusRes) => {
           if (statusRes.success && statusRes.data) {

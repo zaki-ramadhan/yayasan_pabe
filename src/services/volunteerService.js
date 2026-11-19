@@ -72,12 +72,39 @@ export async function registerVolunteer({
     });
 
     if (existing) {
+      const isEmailMatch = Boolean(
+        existing.email && cleanEmail && existing.email.toLowerCase() === cleanEmail.toLowerCase()
+      );
+      const isPhoneMatch = Boolean(
+        existing.phone && cleanData.phone && existing.phone === cleanData.phone
+      );
+
       if (existing.status === "APPROVED") {
+        if (isPhoneMatch && !isEmailMatch) {
+          throw new Error(
+            `Nomor WhatsApp ${cleanData.phone} sudah terdaftar sebagai relawan aktif atas nama ${existing.fullName}. Silakan gunakan nomor WhatsApp lain.`
+          );
+        }
+        if (isEmailMatch && !isPhoneMatch) {
+          throw new Error(
+            `Alamat email ${cleanEmail} sudah terdaftar sebagai relawan aktif Yayasan Payung Berkah. Silakan periksa kartu relawan di akun Anda.`
+          );
+        }
         throw new Error(
           "Email atau nomor WhatsApp ini sudah terdaftar sebagai relawan aktif Yayasan Payung Berkah."
         );
       }
       if (existing.status === "PENDING" || existing.status === "CONTACTED") {
+        if (isPhoneMatch && !isEmailMatch) {
+          throw new Error(
+            `Pendaftaran relawan dengan nomor WhatsApp ${cleanData.phone} sudah diajukan atas nama ${existing.fullName} dan sedang dalam proses pemeriksaan.`
+          );
+        }
+        if (isEmailMatch && !isPhoneMatch) {
+          throw new Error(
+            `Pendaftaran relawan dengan alamat email ${cleanEmail} sudah diajukan dan sedang dalam proses pemeriksaan.`
+          );
+        }
         throw new Error(
           "Pendaftaran relawan dengan email atau nomor WhatsApp ini sudah diajukan dan sedang dalam proses pemeriksaan."
         );
