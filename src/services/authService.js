@@ -316,6 +316,7 @@ export async function logoutUser() {
   localStorage.removeItem("pabe_auth_session");
   sessionStorage.removeItem("pabe_just_logged_in");
   sessionStorage.removeItem("zakat_calculator_state");
+  sessionStorage.removeItem("pabe_volunteer_draft");
 
   try {
     localStorage.removeItem("ygsm_auth_user");

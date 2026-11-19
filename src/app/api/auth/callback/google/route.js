@@ -132,7 +132,7 @@ export async function GET(request) {
           update: {
             name: profile.name || undefined,
             providerAvatar: profile.picture || undefined,
-            ...(existingUser?.avatar ? {} : { avatar: profile.picture || undefined }),
+            ...(existingUser?.customAvatar ? {} : { avatar: profile.picture || undefined }),
             ...(preserveExistingProvider
               ? {}
               : { provider: "GOOGLE", providerId: profile.id }),
