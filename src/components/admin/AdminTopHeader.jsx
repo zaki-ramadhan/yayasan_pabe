@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { SidebarMinimalisticIcon } from "@solar-icons/react/line-duotone/sidebar-minimalistic";
 import { Logout2Icon } from "@solar-icons/react/line-duotone/logout-2";
@@ -12,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
+import { UserAvatarChipTrigger } from "@/components/nav/UserAvatarChipTrigger";
 import { USER_ROLES, logoutUser } from "@/services/authService";
 import { SuperAdminNoticeBanner } from "@/components/admin/SuperAdminNoticeBanner";
 import { AdminSystemAlertBanner } from "@/components/admin/AdminSystemAlertBanner";
@@ -50,7 +50,6 @@ export function AdminTopHeader({
   const router = useRouter();
   const userRole = currentUser?.role || USER_ROLES.SUPER_ADMIN;
   const isSuperAdmin = userRole === USER_ROLES.SUPER_ADMIN;
-  const [imgError, setImgError] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -81,57 +80,34 @@ export function AdminTopHeader({
     return match ? ADMIN_PAGE_TITLES[match] : "Panel Admin";
   }, [pathname]);
 
-  const avatarUrl = !imgError ? resolveUserAvatar(currentUser) : null;
-
-  const fallbackInitial =
-    currentUser?.initials || getInitials(currentUser?.name, "A");
-
   return (
     <div className="sticky top-0 z-20">
       <SuperAdminNoticeBanner isSuperAdmin={isSuperAdmin} />
       <AdminSystemAlertBanner />
       <header className="bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-4">
-      <div className="flex items-center gap-2 min-w-0">
-        <button
-          type="button"
-          onClick={onToggleSidebar}
-          aria-label={isSidebarExpanded ? "Kecilkan bilah menu" : "Perluas bilah menu"}
-          className="lg:hidden p-1.5 -ml-1.5 rounded-md text-slate-500 hover:text-slate-950 hover:bg-slate-100/80 transition-colors cursor-pointer flex items-center justify-center shrink-0"
-        >
-          <SidebarMinimalisticIcon className="w-4.5 h-4.5" />
-        </button>
+        <div className="flex items-center gap-2 min-w-0">
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            aria-label={isSidebarExpanded ? "Kecilkan bilah menu" : "Perluas bilah menu"}
+            className="lg:hidden p-1.5 -ml-1.5 rounded-md text-slate-500 hover:text-slate-950 hover:bg-slate-100/80 transition-colors cursor-pointer flex items-center justify-center shrink-0"
+          >
+            <SidebarMinimalisticIcon className="w-4.5 h-4.5" />
+          </button>
 
-        <h1 className="text-sm sm:text-base font-medium text-slate-900 leading-tight truncate">
-          {pageTitle}
-        </h1>
-      </div>
+          <h1 className="text-sm sm:text-base font-medium text-slate-900 leading-tight truncate">
+            {pageTitle}
+          </h1>
+        </div>
 
-      <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+        <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className={cn(
-                "relative w-9 h-9 rounded-full overflow-hidden bg-slate-100 border border-slate-200 text-xs font-medium text-slate-800 flex items-center justify-center shadow-2xs shrink-0 select-none cursor-pointer transition-all hover:ring-2 hover:ring-slate-300/60 focus:outline-none",
-                isDropdownOpen && "ring-2 ring-primary/20 border-primary/40"
-              )}
-              aria-label="Menu akun pengurus"
-            >
-              {avatarUrl ? (
-                <Image
-                  src={avatarUrl}
-                  alt={currentUser?.name || "Avatar"}
-                  fill
-                  sizes="36px"
-                  unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
-                  onError={() => setImgError(true)}
-                />
-              ) : (
-                <span>{fallbackInitial}</span>
-              )}
-            </button>
+            <UserAvatarChipTrigger
+              currentUser={currentUser}
+              isOpen={isDropdownOpen}
+              ariaLabel="Menu akun pengurus"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-lg">
             <div className="px-2.5 py-2">

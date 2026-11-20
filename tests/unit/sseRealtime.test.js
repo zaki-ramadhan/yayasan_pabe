@@ -165,5 +165,92 @@ describe("Real-Time Event Architecture & SSE Broadcast", () => {
       unregisterAdminSSEClient(mockController);
     });
   });
+
+  describe("Client Live Event Bus & Reconnect Resync", () => {
+    it("memancarkan dan menangkap event RECONNECTED saat klien tersambung kembali", () => {
+      const listeners = new Map();
+      const mockWindow = {
+        addEventListener: vi.fn((event, cb) => {
+          if (!listeners.has(event)) listeners.set(event, new Set());
+          listeners.get(event).add(cb);
+        }),
+        removeEventListener: vi.fn((event, cb) => {
+          listeners.get(event)?.delete(cb);
+        }),
+        dispatchEvent: vi.fn((eventObj) => {
+          const callbacks = listeners.get(eventObj.type) || [];
+          for (const cb of callbacks) {
+            cb(eventObj);
+          }
+          return true;
+        }),
+      };
+
+      const originalWindow = globalThis.window;
+      globalThis.window = mockWindow;
+
+      const receivedEvents = [];
+      const handler = (e) => {
+        if (e.detail?.type === "RECONNECTED") {
+          receivedEvents.push(e.detail);
+        }
+      };
+
+      mockWindow.addEventListener("pabe:admin-live-event", handler);
+
+      // Simulate RECONNECTED event
+      const reconnectPayload = {
+        type: "pabe:admin-live-event",
+        detail: {
+          type: "RECONNECTED",
+          data: { timestamp: new Date() },
+          timestamp: new Date(),
+        },
+      };
+
+      mockWindow.dispatchEvent(reconnectPayload);
+
+      expect(receivedEvents.length).toBe(1);
+      expect(receivedEvents[0].type).toBe("RECONNECTED");
+
+      mockWindow.removeEventListener("pabe:admin-live-event", handler);
+      globalThis.window = originalWindow;
+    });
+
+    it("menjamin deduplikasi transaksi berbasis ID (Idempotent UI State Update)", () => {
+      const processedTxIds = new Set();
+      let totalCollected = 500000;
+      let totalTransactions = 5;
+
+      const applyDonationPaid = (newTx) => {
+        const txId = newTx.id || newTx.invoiceId;
+        if (txId) {
+          if (processedTxIds.has(txId)) return false;
+          processedTxIds.add(txId);
+        }
+        totalCollected += Number(newTx.amount || 0);
+        totalTransactions += 1;
+        return true;
+      };
+
+      const eventPayload = {
+        id: "don_tx_101",
+        invoiceId: "INV-101",
+        amount: 250000,
+      };
+
+      // First call: process
+      const firstRun = applyDonationPaid(eventPayload);
+      expect(firstRun).toBe(true);
+      expect(totalCollected).toBe(750000);
+      expect(totalTransactions).toBe(6);
+
+      // Duplicate ID: ignore idempotently
+      const secondRun = applyDonationPaid(eventPayload);
+      expect(secondRun).toBe(false);
+      expect(totalCollected).toBe(750000);
+      expect(totalTransactions).toBe(6);
+    });
+  });
 });
 

@@ -33,7 +33,7 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
         {donor.phone ? (
           <span className="font-normal tabular-nums">{maskPhone(donor.phone)}</span>
         ) : (
-          <span className="text-sm text-slate-400 italic font-normal">-</span>
+          <span className="text-sm text-slate-500 italic font-normal">-</span>
         )}
       </TableCell>
 
@@ -41,7 +41,7 @@ export function AdminDonorTableRow({ donor, onOpenDetail }) {
         {donor.city ? (
           <span className="font-normal block truncate max-w-[130px] mx-auto">{donor.city}</span>
         ) : (
-          <span className="text-sm text-slate-400 italic font-normal">-</span>
+          <span className="text-sm text-slate-500 italic font-normal">-</span>
         )}
       </TableCell>
 

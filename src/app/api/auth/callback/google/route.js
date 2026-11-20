@@ -107,7 +107,14 @@ export async function GET(request) {
     try {
       const existingUser = await prisma.user.findUnique({
         where: { email: profile.email.toLowerCase() },
-        select: { avatar: true, isActive: true, provider: true },
+        select: {
+          id: true,
+          avatar: true,
+          customAvatar: true,
+          providerAvatar: true,
+          isActive: true,
+          provider: true,
+        },
       });
 
       if (existingUser && existingUser.isActive === false && !isSuperAdmin) {
@@ -127,12 +134,18 @@ export async function GET(request) {
         const preserveExistingProvider =
           existingUser?.provider && existingUser.provider !== "GOOGLE";
 
+        const resolvedActiveAvatar = existingUser?.customAvatar
+          ? existingUser.customAvatar
+          : existingUser?.avatar
+          ? existingUser.avatar
+          : (profile.picture || null);
+
         dbUser = await prisma.user.upsert({
           where: { email: profile.email.toLowerCase() },
           update: {
             name: profile.name || undefined,
+            avatar: resolvedActiveAvatar || undefined,
             providerAvatar: profile.picture || undefined,
-            ...(existingUser?.customAvatar ? {} : { avatar: profile.picture || undefined }),
             ...(preserveExistingProvider
               ? {}
               : { provider: "GOOGLE", providerId: profile.id }),
@@ -168,8 +181,8 @@ export async function GET(request) {
     const userRole = isSuperAdmin ? "SUPER_ADMIN" : (dbUser?.role || "DONOR");
     const rawUserTitle = isSuperAdmin ? "Super Admin" : (dbUser?.title || "Donatur");
     const userTitle = rawUserTitle.includes("Ketua Yayasan") ? "Super Admin" : rawUserTitle;
-    const userAvatar = dbUser?.avatar || profile.picture || null;
     const customAvatar = dbUser?.customAvatar || null;
+    const userAvatar = customAvatar || dbUser?.avatar || profile.picture || null;
     const providerAvatar = profile.picture || dbUser?.providerAvatar || null;
 
     const isStaff = userRole && userRole !== USER_ROLES.DONOR;

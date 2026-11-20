@@ -404,6 +404,7 @@ export function parseThousandsToNumber(value) {
 }
 export { maskEmail } from "@/lib/security";
 export { formatRupiah as formatCurrency };
+export { formatDate as formatDateIndonesian };
 export { formatClockTime } from "./dateUtils";
 
 /**

@@ -37,8 +37,11 @@ export function AdminVolunteerToolbar({
             <SelectItem value="PENDING" className="cursor-pointer text-sm font-normal py-2">
               Menunggu
             </SelectItem>
-            <SelectItem value="APPROVED" className="cursor-pointer text-sm font-normal py-2">
-              Disetujui
+            <SelectItem value="REVIEWED" className="cursor-pointer text-sm font-normal py-2">
+              Ditinjau
+            </SelectItem>
+            <SelectItem value="ACCEPTED" className="cursor-pointer text-sm font-normal py-2">
+              Diterima
             </SelectItem>
             <SelectItem value="REJECTED" className="cursor-pointer text-sm font-normal py-2">
               Ditolak

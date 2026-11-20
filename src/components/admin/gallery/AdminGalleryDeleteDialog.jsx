@@ -39,7 +39,7 @@ export function AdminGalleryDeleteDialog({
             <span className="text-xs text-slate-500 block">
               Kategori: {item.category || "Umum"}
             </span>
-            <span className="text-xs text-slate-400 block">
+            <span className="text-xs text-slate-500 block">
               {formatDate(item.activityDate || item.createdAt)}
             </span>
           </div>

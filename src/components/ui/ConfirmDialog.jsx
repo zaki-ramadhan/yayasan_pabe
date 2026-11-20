@@ -41,7 +41,7 @@ export function ConfirmDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className={cn(
-          "sm:max-w-[420px] min-h-[210px] sm:min-h-[230px] max-h-[85vh] overflow-hidden p-0 gap-0 bg-white border border-slate-200 flex flex-col shadow-xl",
+          "sm:max-w-[420px] min-h-[210px] sm:min-h-[230px] max-h-[85vh] overflow-hidden p-0 gap-0 bg-white border border-slate-200 flex flex-col",
           className
         )}
       >

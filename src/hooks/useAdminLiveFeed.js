@@ -15,6 +15,7 @@ export function useAdminLiveFeed({ enabled = true, onEvent } = {}) {
   const eventSourceRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
   const retryCountRef = useRef(0);
+  const hasConnectedOnceRef = useRef(false);
   const connectRef = useRef(null);
   const onEventRef = useRef(onEvent);
 
@@ -50,6 +51,11 @@ export function useAdminLiveFeed({ enabled = true, onEvent } = {}) {
 
       es.addEventListener("connected", () => {
         setIsConnected(true);
+        if (hasConnectedOnceRef.current) {
+          notifyLiveEvent("RECONNECTED", { timestamp: new Date() });
+        } else {
+          hasConnectedOnceRef.current = true;
+        }
         retryCountRef.current = 0;
       });
 

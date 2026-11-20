@@ -95,7 +95,7 @@ export function DonorTransactionTableRow({ item, showTypeColumn = false }) {
               {isZis ? "Tunaikan lagi" : "Donasi lagi"}
             </Link>
           ) : (
-            <span className="text-sm font-normal text-slate-400">
+            <span className="text-sm font-normal text-slate-500">
               Program ditutup
             </span>
           )

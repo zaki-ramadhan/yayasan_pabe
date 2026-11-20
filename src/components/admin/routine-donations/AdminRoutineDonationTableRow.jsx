@@ -42,7 +42,7 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
         {item.donorPhone ? (
           <span className="font-normal tabular-nums">{maskPhone(item.donorPhone)}</span>
         ) : (
-          <span className="text-sm text-slate-400 italic font-normal">-</span>
+          <span className="text-sm text-slate-500 italic font-normal">-</span>
         )}
       </TableCell>
 

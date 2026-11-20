@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import Image from "next/image";
+import { useState, useMemo, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { SidebarMinimalisticIcon } from "@solar-icons/react/line-duotone/sidebar-minimalistic";
 import { Logout2Icon } from "@solar-icons/react/line-duotone/logout-2";
@@ -12,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
+import { UserAvatarChipTrigger } from "@/components/nav/UserAvatarChipTrigger";
 import { logoutUser } from "@/services/authService";
 import { toast } from "@/hooks/useToast";
 import { getInitials } from "@/lib/formatters";
@@ -23,6 +23,7 @@ const DONOR_PAGE_TITLES = {
   "/donatur/dashboard": "Dashboard",
   "/donatur/riwayat": "Riwayat Donasi & Zakat",
   "/donatur/relawan": "Kartu Relawan",
+  "/donatur/karier": "Status Lamaran",
   "/donatur/profil": "Profil Saya",
 };
 
@@ -61,13 +62,6 @@ export function DonorTopHeader({
     return DONOR_PAGE_TITLES[pathname] || "Dashboard";
   }, [pathname, firstName]);
 
-  const avatarUrl = !imgError ? resolveUserAvatar(currentUser) : null;
-
-  const fallbackInitial = getInitials(
-    currentUser?.name,
-    currentUser?.initials || currentUser?.email || "U"
-  );
-
   return (
     <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-xs border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
       <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
@@ -88,29 +82,11 @@ export function DonorTopHeader({
       {currentUser && (
         <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className={cn(
-                "relative w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-full overflow-hidden bg-slate-100 border border-slate-200/90 text-xs font-semibold text-slate-700 flex items-center justify-center shadow-2xs group cursor-pointer transition-all hover:ring-2 hover:ring-slate-300/60 focus:outline-none",
-                isDropdownOpen && "ring-2 ring-primary/20 border-primary/40"
-              )}
-              aria-label="Menu akun donatur"
-            >
-              {avatarUrl ? (
-                <Image
-                  src={avatarUrl}
-                  alt={displayName}
-                  fill
-                  sizes="36px"
-                  unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                  onError={() => setImgError(true)}
-                />
-              ) : (
-                <span>{fallbackInitial}</span>
-              )}
-            </button>
+            <UserAvatarChipTrigger
+              currentUser={currentUser}
+              isOpen={isDropdownOpen}
+              ariaLabel="Menu akun donatur"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 p-1.5 shadow-lg">
             <div className="px-2.5 py-2">

@@ -48,10 +48,10 @@ describe("Volunteer Transactional Email & Approval System", () => {
         validationUrl: "https://payungberkah.org/relawan/validasi/vol-123",
       });
 
-      expect(VOLUNTEER_APPROVAL_EMAIL_SUBJECT).toContain("Disetujui");
+      expect(VOLUNTEER_APPROVAL_EMAIL_SUBJECT).toContain("Diterima");
       expect(html).toContain("Siti Rahma");
       expect(html).toContain("YPABE-202611-042");
-      expect(html).toContain("RESMI TERVERIFIKASI");
+      expect(html).toContain("Diterima (Aktif)");
       expect(html).toContain("https://payungberkah.org/relawan/validasi/vol-123");
     });
   });

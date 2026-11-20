@@ -202,7 +202,7 @@ export function AdminDonorDetailDrawer({
 
           <div className="space-y-2.5">
             <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-              <h5 className="text-xs font-medium text-slate-700 uppercase tracking-wider">
+              <h5 className="text-xs font-medium text-slate-700">
                 Riwayat donasi
               </h5>
               {donations.length > 0 && (
@@ -215,13 +215,13 @@ export function AdminDonorDetailDrawer({
             {isLoading ? (
               <div className="divide-y divide-slate-100 animate-pulse">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="py-3 flex items-center justify-between gap-3">
-                    <div className="space-y-1.5 flex-1 min-w-0">
+                  <div key={i} className="py-3.5 flex items-center justify-between gap-3">
+                    <div className="space-y-2 flex-1 min-w-0">
                       <Skeleton className="h-3.5 w-28 rounded" />
                       <Skeleton className="h-3 w-48 rounded" />
                       <Skeleton className="h-2.5 w-24 rounded" />
                     </div>
-                    <div className="space-y-1 text-right shrink-0">
+                    <div className="space-y-1.5 text-right shrink-0">
                       <Skeleton className="h-4 w-20 rounded ml-auto" />
                       <Skeleton className="h-3 w-16 rounded ml-auto" />
                     </div>
@@ -231,27 +231,26 @@ export function AdminDonorDetailDrawer({
             ) : donations.length > 0 ? (
               <div className="divide-y divide-slate-100">
                 {donations.map((d) => (
-                  <div key={d.id} className="py-3 flex items-center justify-between gap-3 text-sm hover:bg-slate-50/50 transition-colors">
-                    <div className="min-w-0 space-y-0.5 flex-1">
+                  <div key={d.id} className="py-3.5 flex items-center justify-between gap-3 text-sm hover:bg-slate-50/50 transition-colors">
+                    <div className="min-w-0 space-y-1.5 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-slate-900 text-xs block truncate select-all">
                           {d.invoiceId}
                         </span>
-                        {d.status && <StatusBadge status={d.status} />}
                       </div>
                       <p className="text-xs text-slate-600 truncate">
                         {d.campaignTitle}
                       </p>
-                      <span className="text-xs text-slate-400 block font-normal">
+                      <span className="text-xs text-slate-500 block font-normal">
                         {formatDate(d.paidAt || d.createdAt)}
                       </span>
                     </div>
 
-                    <div className="text-right shrink-0">
+                    <div className="text-right shrink-0 flex flex-col items-end gap-1.5">
                       <span className="font-medium text-slate-900 text-sm block tabular-nums">
                         {formatRupiah(d.totalAmount)}
                       </span>
-                      <Badge variant="secondary" className="mt-0.5 max-w-[140px]">
+                      <Badge variant="secondary" className="max-w-[140px]">
                         {formatPaymentChannel(d.paymentChannel)}
                       </Badge>
                     </div>
@@ -266,7 +265,7 @@ export function AdminDonorDetailDrawer({
                         <span>Memuat donasi lebih lama...</span>
                       </>
                     ) : (
-                      <span className="text-slate-400">Gulir ke bawah untuk memuat riwayat lainnya</span>
+                      <span className="text-slate-500">Gulir ke bawah untuk memuat riwayat lainnya</span>
                     )}
                   </div>
                 )}

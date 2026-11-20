@@ -21,7 +21,7 @@ export function buildVolunteerRejectionEmailHtml({
   const interestText = interest ? ` pada bidang <strong>${interest.trim()}</strong>` : "";
 
   const rejectionItems = [
-    { label: "Status Pengajuan", value: "Belum Dapat Disetujui" },
+    { label: "Status Pengajuan", value: "Ditolak" },
     { label: "Keterangan", value: "Kuota relawan untuk periode kegiatan saat ini telah terpenuhi" },
   ];
 

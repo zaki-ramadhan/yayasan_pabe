@@ -14,7 +14,9 @@ export function DonorLayoutClient({ children, initialUser }) {
   const router = useRouter();
   const pathname = usePathname();
   const { currentUser: storeUser } = useCurrentUser();
-  const currentUser = initialUser || storeUser;
+  const currentUser = storeUser
+    ? { ...initialUser, ...storeUser }
+    : initialUser;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {

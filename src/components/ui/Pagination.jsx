@@ -82,7 +82,7 @@ export function Pagination({
             return (
               <span
                 key={`${page}-${index}`}
-                className="w-7 h-9 flex items-center justify-center text-slate-400 select-none"
+                className="w-7 h-9 flex items-center justify-center text-slate-500 select-none"
                 aria-hidden="true"
               >
                 <MenuDotsIcon className="w-4 h-4" />

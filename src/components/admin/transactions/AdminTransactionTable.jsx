@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -44,6 +45,12 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
   const [copiedId, setCopiedId] = useState(null);
   const [selectedDetail, setSelectedDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (Array.isArray(initialTransactions)) {
+      setTransactions(initialTransactions.filter((t) => t.status === "PAID"));
+    }
+  }, [initialTransactions]);
 
   const applyLiveTransactionMutation = (incomingTx) => {
     if (!incomingTx || !incomingTx.invoiceId) return;

@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { AltArrowDownIcon } from "@solar-icons/react/linear/alt-arrow-down";
 import { ShieldUserIcon } from "@solar-icons/react/line-duotone/shield-user";
 import { Widget2Icon } from "@solar-icons/react/line-duotone/widget-2";
 import { BillListIcon } from "@solar-icons/react/line-duotone/bill-list";
 import { UserIdIcon } from "@solar-icons/react/line-duotone/user-id";
+import { CaseRoundIcon } from "@solar-icons/react/line-duotone/case-round";
 import { UserRoundedIcon } from "@solar-icons/react/line-duotone/user-rounded";
 import { Logout2Icon } from "@solar-icons/react/line-duotone/logout-2";
 import {
@@ -18,19 +17,11 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
 import { NavLoginButton } from "./NavLoginButton";
+import { UserAvatarChipTrigger } from "./UserAvatarChipTrigger";
 import { USER_ROLES } from "@/services/authService";
-import { resolveUserAvatar } from "@/lib/userParser";
-import { cn } from "@/lib/utils";
 
 export function NavUserDropdown({ currentUser, onLogout, pathname }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [imgError, setImgError] = useState(false);
-
-  const avatarUrl = !imgError ? resolveUserAvatar(currentUser) : null;
-
-  const fallbackInitial =
-    currentUser?.initials ||
-    (currentUser?.name ? currentUser.name.trim().charAt(0).toUpperCase() : "U");
 
   if (!currentUser) {
     return <NavLoginButton pathname={pathname} />;
@@ -42,52 +33,11 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className={cn(
-            "group flex items-center gap-1.5 p-1 pr-1.5 sm:pr-2 rounded-full transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/20",
-            isOpen
-              ? "bg-slate-100 border border-slate-300 shadow-2xs ring-2 ring-primary/15"
-              : "bg-transparent hover:bg-slate-100 border border-slate-200/90 hover:border-slate-300"
-          )}
-          aria-label="Buka menu profil pengguna"
-          aria-expanded={isOpen}
-        >
-          <div
-            className={cn(
-              "relative w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center transition-all duration-200",
-              isOpen
-                ? "border border-primary ring-2 ring-primary/30 ring-offset-1 ring-offset-white shadow-2xs bg-white"
-                : "border border-slate-300 bg-slate-100"
-            )}
-          >
-            {avatarUrl ? (
-              <Image
-                src={avatarUrl}
-                alt={currentUser.name || "Avatar"}
-                fill
-                sizes="32px"
-                unoptimized={typeof avatarUrl === "string" && !avatarUrl.startsWith("/") && !avatarUrl.includes("lh3.googleusercontent.com")}
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover"
-                onError={() => setImgError(true)}
-              />
-            ) : (
-              <span className="font-medium text-xs text-slate-800">
-                {fallbackInitial}
-              </span>
-            )}
-          </div>
-
-          <AltArrowDownIcon
-            className={cn(
-              "w-3.5 h-3.5 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180",
-              isOpen
-                ? "rotate-180 text-primary"
-                : "text-slate-500 group-hover:text-slate-800"
-            )}
-          />
-        </button>
+        <UserAvatarChipTrigger
+          currentUser={currentUser}
+          isOpen={isOpen}
+          ariaLabel="Buka menu profil pengguna"
+        />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
@@ -149,6 +99,16 @@ export function NavUserDropdown({ currentUser, onLogout, pathname }) {
               >
                 <UserIdIcon className="w-4.5 h-4.5 text-slate-700 shrink-0" />
                 <span className="flex-1">Kartu Relawan</span>
+              </Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem asChild>
+              <Link
+                href="/donatur/karier"
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm font-normal text-slate-900 hover:bg-slate-100 cursor-pointer transition-colors"
+              >
+                <CaseRoundIcon className="w-4.5 h-4.5 text-slate-700 shrink-0" />
+                <span className="flex-1">Status Lamaran</span>
               </Link>
             </DropdownMenuItem>
 

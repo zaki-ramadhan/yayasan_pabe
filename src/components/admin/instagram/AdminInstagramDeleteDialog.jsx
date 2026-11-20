@@ -36,7 +36,7 @@ export function AdminInstagramDeleteDialog({
             <p className="font-medium text-slate-900 line-clamp-2 text-xs">
               {post.caption || "Postingan Instagram"}
             </p>
-            <span className="text-xs text-slate-400 block mt-1">
+            <span className="text-xs text-slate-500 block mt-1">
               {formatDate(post.postedAt || post.createdAt)}
             </span>
           </div>

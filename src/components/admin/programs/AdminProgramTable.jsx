@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Table,
   TableContainer,
@@ -74,12 +75,24 @@ export function AdminProgramTable({
   const [isModalOpen, setIsModalOpen] = useState(Boolean(initialEditCampaign));
   const [editingCampaign, setEditingCampaign] = useState(initialEditCampaign);
   const [isLoading, setIsLoading] = useState(false);
+  const processedPaidIdsRef = useRef(new Set());
   const PAGE_SIZE = 10;
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 
+  useEffect(() => {
+    if (Array.isArray(initialCampaigns)) {
+      setCampaigns(initialCampaigns);
+    }
+  }, [initialCampaigns]);
+
   useAdminLiveEvent("DONATION_PAID", (payload) => {
     if (!payload?.campaignTitle && !payload?.campaignSlug) return;
+    const txId = payload.id || payload.invoiceId;
+    if (txId) {
+      if (processedPaidIdsRef.current.has(txId)) return;
+      processedPaidIdsRef.current.add(txId);
+    }
     setCampaigns((prev) =>
       prev.map((c) => {
         const isMatch =

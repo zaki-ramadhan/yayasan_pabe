@@ -35,6 +35,8 @@ export function DonorProfileCover({
                     src={avatarSrc}
                     alt={displayName}
                     fill
+                    priority
+                    loading="eager"
                     sizes="(max-width: 640px) 96px, 112px"
                     unoptimized={typeof avatarSrc === "string" && !avatarSrc.startsWith("/") && !avatarSrc.includes("unsplash.com") && !avatarSrc.includes("lh3.googleusercontent.com")}
                     referrerPolicy="no-referrer"

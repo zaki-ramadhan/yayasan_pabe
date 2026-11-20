@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Widget2Icon as Widget2Line } from "@solar-icons/react/line-duotone/widget-2";
 import { BillListIcon as BillListLine } from "@solar-icons/react/line-duotone/bill-list";
 import { UserIdIcon as UserIdLine } from "@solar-icons/react/line-duotone/user-id";
+import { CaseRoundIcon as CaseRoundLine } from "@solar-icons/react/line-duotone/case-round";
 import { UserRoundedIcon as UserRoundedLine } from "@solar-icons/react/line-duotone/user-rounded";
 import { Home2Icon as Home2Line } from "@solar-icons/react/line-duotone/home-2";
 import { HandHeartIcon as HandHeartLine } from "@solar-icons/react/line-duotone/hand-heart";
@@ -15,6 +16,7 @@ import { DocumentTextIcon as DocumentTextLine } from "@solar-icons/react/line-du
 import { Widget2Icon as Widget2Bold } from "@solar-icons/react/bold/widget-2";
 import { BillListIcon as BillListBold } from "@solar-icons/react/bold/bill-list";
 import { UserIdIcon as UserIdBold } from "@solar-icons/react/bold/user-id";
+import { CaseRoundIcon as CaseRoundBold } from "@solar-icons/react/bold/case-round";
 import { UserRoundedIcon as UserRoundedBold } from "@solar-icons/react/bold/user-rounded";
 import { Home2Icon as Home2Bold } from "@solar-icons/react/bold/home-2";
 import { HandHeartIcon as HandHeartBold } from "@solar-icons/react/bold/hand-heart";
@@ -47,6 +49,12 @@ export function DonorSidebarNav({
       href: "/donatur/relawan",
       icon: UserIdLine,
       activeIcon: UserIdBold,
+    },
+    {
+      label: "Status Lamaran",
+      href: "/donatur/karier",
+      icon: CaseRoundLine,
+      activeIcon: CaseRoundBold,
     },
     {
       label: "Profil Saya",

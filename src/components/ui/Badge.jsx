@@ -56,14 +56,17 @@ const STATUS_CONFIG_MAP = {
   SUCCESS: { variant: "success", label: "Berhasil" },
   COMPLETED: { variant: "success", label: "Selesai" },
   VERIFIED: { variant: "success", label: "Terverifikasi" },
-  APPROVED: { variant: "success", label: "Disetujui" },
   PUBLISHED: { variant: "success", label: "Tayang" },
+  ACCEPTED: { variant: "success", label: "Diterima" },
+  APPROVED: { variant: "success", label: "Diterima" },
+  SHORTLISTED: { variant: "success", label: "Diterima" },
 
   PENDING: { variant: "warning", label: "Menunggu" },
   WAITING: { variant: "warning", label: "Menunggu" },
   PAUSED: { variant: "warning", label: "Dijeda" },
   DRAFT: { variant: "secondary", label: "Draf" },
   CONTACTED: { variant: "info", label: "Dihubungi" },
+  REVIEWED: { variant: "info", label: "Ditinjau" },
 
   EXPIRED: { variant: "danger", label: "Kedaluwarsa" },
   FAILED: { variant: "danger", label: "Gagal" },
@@ -72,9 +75,6 @@ const STATUS_CONFIG_MAP = {
   SUSPENDED: { variant: "danger", label: "Ditangguhkan" },
   INACTIVE: { variant: "secondary", label: "Nonaktif" },
   CLOSED: { variant: "secondary", label: "Ditutup" },
-
-  REVIEWED: { variant: "info", label: "Telah Direview" },
-  SHORTLISTED: { variant: "success", label: "Lolos Seleksi" },
 };
 
 /**

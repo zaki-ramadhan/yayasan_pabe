@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRightIcon } from "@solar-icons/react/linear/arrow-right";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
@@ -23,10 +24,23 @@ export function AdminCampaignOverviewCard({
   stretch = true,
 }) {
   const [campaignList, setCampaignList] = useState(campaigns);
+  const processedPaidIdsRef = useRef(new Set());
+
+  useEffect(() => {
+    if (Array.isArray(campaigns)) {
+      setCampaignList(campaigns);
+    }
+  }, [campaigns]);
 
   useAdminLiveEvent("DONATION_PAID", (event) => {
     const newTx = event?.data;
     if (!newTx || !newTx.amount) return;
+
+    const txId = newTx.id || newTx.invoiceId;
+    if (txId) {
+      if (processedPaidIdsRef.current.has(txId)) return;
+      processedPaidIdsRef.current.add(txId);
+    }
 
     setCampaignList((prev) =>
       prev.map((c) => {

@@ -109,7 +109,7 @@ export function DonorVolunteerCardView() {
           volunteer={volunteer}
           onResignClick={() => setIsCancelModalOpen(true)}
         />
-      ) : volunteer && volunteer.status === "PENDING" ? (
+      ) : volunteer && (volunteer.status === "PENDING" || volunteer.status === "REVIEWED") ? (
         <VolunteerPendingCard
           volunteer={volunteer}
           onCancelClick={() => setIsCancelModalOpen(true)}

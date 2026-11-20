@@ -124,7 +124,7 @@ export function CampaignCard({
                 <strong className="text-slate-900 font-medium">{daysLeft}</strong> hari lagi
               </span>
             ) : (
-              <span className="text-slate-400 font-normal">-</span>
+              <span className="text-slate-500 font-normal">-</span>
             )}
           </div>
         </div>

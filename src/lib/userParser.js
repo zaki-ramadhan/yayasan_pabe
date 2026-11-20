@@ -53,17 +53,47 @@ export { sanitizeEmail, sanitizeStandardText as sanitizeText } from "@/lib/sanit
  * @param {object|null} user - Objek user/profil
  * @returns {string|null} URL gambar avatar atau null
  */
+const GENERIC_AVATAR_PLACEHOLDERS = new Set([
+  "/avatars/male.svg",
+  "/avatars/female.svg",
+  "/img/avatars/avatar-male.svg",
+  "/img/avatars/avatar-female.svg",
+]);
+
 export function resolveUserAvatar(user) {
   if (!user || typeof user !== "object") return null;
 
-  const candidates = [
-    user.customAvatar,
-    user.providerAvatar,
-    user.avatar,
-    user.avatarUrl,
-    user.image,
-    user.picture,
-  ];
+  const activeAvatar = typeof user.avatar === "string" ? user.avatar.trim() : "";
+  const customAvatar = typeof user.customAvatar === "string" ? user.customAvatar.trim() : "";
+  const providerAvatar = typeof user.providerAvatar === "string" ? user.providerAvatar.trim() : "";
+
+  const isGeneric = activeAvatar.length > 0 && GENERIC_AVATAR_PLACEHOLDERS.has(activeAvatar);
+  const isOverwrittenByProvider = Boolean(
+    customAvatar &&
+    activeAvatar &&
+    (activeAvatar === providerAvatar ||
+      activeAvatar.includes("googleusercontent.com") ||
+      activeAvatar.includes("fbcdn.net") ||
+      activeAvatar.includes("facebook.com"))
+  );
+
+  const candidates = (isGeneric || isOverwrittenByProvider)
+    ? [
+        user.customAvatar,
+        user.providerAvatar,
+        user.avatar,
+        user.avatarUrl,
+        user.image,
+        user.picture,
+      ]
+    : [
+        user.avatar,
+        user.customAvatar,
+        user.providerAvatar,
+        user.avatarUrl,
+        user.image,
+        user.picture,
+      ];
 
   for (const c of candidates) {
     if (typeof c === "string") {

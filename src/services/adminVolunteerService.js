@@ -7,7 +7,7 @@ import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
 import { shouldSendStatusEmail, resetStatusEmailCooldown } from "@/lib/emailDispatchGuard";
 
-const VALID_STATUSES = ["PENDING", "APPROVED", "REJECTED"];
+const VALID_STATUSES = ["PENDING", "REVIEWED", "ACCEPTED", "APPROVED", "REJECTED"];
 
 /**
  * Mengambil daftar pendaftar relawan dengan paginasi dan filter pencarian.
@@ -23,7 +23,11 @@ export async function getAdminVolunteers({
   try {
     const where = {};
     if (status && status !== "ALL") {
-      where.status = status;
+      if (status === "ACCEPTED") {
+        where.status = { in: ["ACCEPTED", "APPROVED"] };
+      } else {
+        where.status = status;
+      }
     }
     if (search && search.trim()) {
       const q = search.trim();
@@ -112,10 +116,11 @@ export async function getAdminVolunteers({
  * Memperbarui status pendaftar relawan (PENDING, APPROVED, CONTACTED, REJECTED).
  */
 export async function updateVolunteerStatus(id, newStatus) {
-  const status = sanitizeInput(newStatus || "").toUpperCase();
-  if (!VALID_STATUSES.includes(status)) {
+  const rawStatus = sanitizeInput(newStatus || "").toUpperCase();
+  if (!VALID_STATUSES.includes(rawStatus)) {
     throw new Error("Status pendaftar relawan tidak valid.");
   }
+  const status = rawStatus === "APPROVED" ? "ACCEPTED" : rawStatus;
 
   const existing = await prisma.volunteer.findUnique({
     where: { id },
@@ -133,7 +138,7 @@ export async function updateVolunteerStatus(id, newStatus) {
     data: { status },
   });
 
-  if (status === "APPROVED" && updated?.email && shouldSendStatusEmail(updated.email, "APPROVED")) {
+  if ((status === "ACCEPTED" || status === "APPROVED") && updated?.email && shouldSendStatusEmail(updated.email, "ACCEPTED")) {
     try {
       const formattedId = formatVolunteerId(updated.id, updated.createdAt);
       const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.org").replace(/\/+$/, "");
@@ -144,7 +149,7 @@ export async function updateVolunteerStatus(id, newStatus) {
         validationUrl: `${appUrl}/relawan/validasi/${updated.id}`,
       });
     } catch (emailErr) {
-      resetStatusEmailCooldown(updated.email, "APPROVED");
+      resetStatusEmailCooldown(updated.email, "ACCEPTED");
       console.warn("Gagal mengirim email persetujuan relawan:", emailErr?.message);
     }
   } else if (status === "REJECTED" && updated?.email && shouldSendStatusEmail(updated.email, "REJECTED")) {
@@ -192,23 +197,24 @@ export async function updateVolunteersStatusBatch(ids, newStatus) {
   if (!Array.isArray(ids) || ids.length === 0) {
     throw new Error("Daftar ID relawan tidak boleh kosong.");
   }
-  const status = sanitizeInput(newStatus || "").toUpperCase();
-  if (!VALID_STATUSES.includes(status)) {
+  const rawStatus = sanitizeInput(newStatus || "").toUpperCase();
+  if (!VALID_STATUSES.includes(rawStatus)) {
     throw new Error("Status pendaftar relawan tidak valid.");
   }
+  const status = rawStatus === "APPROVED" ? "ACCEPTED" : rawStatus;
 
   const result = await prisma.volunteer.updateMany({
     where: { id: { in: ids } },
     data: { status },
   });
 
-  if (status === "APPROVED") {
+  if (status === "ACCEPTED" || status === "APPROVED") {
     try {
       const volunteers = await prisma.volunteer.findMany({
         where: { id: { in: ids }, email: { not: null } },
         select: { id: true, fullName: true, email: true, createdAt: true },
       });
-      const eligible = volunteers.filter((v) => shouldSendStatusEmail(v.email, "APPROVED"));
+      const eligible = volunteers.filter((v) => shouldSendStatusEmail(v.email, "ACCEPTED"));
       const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://payungberkah.org").replace(/\/+$/, "");
       await Promise.allSettled(
         eligible.map(async (v) => {
@@ -220,7 +226,7 @@ export async function updateVolunteersStatusBatch(ids, newStatus) {
               validationUrl: `${appUrl}/relawan/validasi/${v.id}`,
             });
           } catch (err) {
-            resetStatusEmailCooldown(v.email, "APPROVED");
+            resetStatusEmailCooldown(v.email, "ACCEPTED");
             throw err;
           }
         })

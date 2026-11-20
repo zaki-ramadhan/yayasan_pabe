@@ -261,10 +261,11 @@ describe("Backend Integration & Real Persistence Audit", () => {
 
     it("mengizinkan submit lamaran tanpa berkas CV jika posisi tidak mewajibkan berkas", async () => {
       const { submitJobApplication } = await import("@/services/careerService");
+      const testEmail = `kreator_${Date.now()}@example.com`;
       const app = await submitJobApplication({
         vacancyId: "JOB-03",
         fullName: "Kreator Konten Handal",
-        email: "kreator@example.com",
+        email: testEmail,
         phone: "081234567890",
         coverLetter: "Saya memiliki portofolio video dakwah dan bersedia berkhidmat.",
         resumeUrl: "",
@@ -275,13 +276,14 @@ describe("Backend Integration & Real Persistence Audit", () => {
 
     it("berhasil memproses submit lamaran kerja valid via API /api/careers/apply", async () => {
       const { POST: careersApplyPost } = await import("@/app/api/careers/apply/route");
+      const testEmail = `zaki_${Date.now()}@example.com`;
       const req = new Request("http://localhost:3000/api/careers/apply", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-forwarded-for": "192.168.1.104" },
         body: JSON.stringify({
           vacancyId: "JOB-01",
           fullName: "Ahmad Zaki Ramadhan",
-          email: "zaki.applicant@example.com",
+          email: testEmail,
           phone: "081234567890",
           resumeUrl: "https://drive.google.com/file/d/test-cv/view",
           coverLetter: "Bismillah, saya memiliki pengalaman 2 tahun di bidang logistik kemanusiaan dan siap berkontribusi.",

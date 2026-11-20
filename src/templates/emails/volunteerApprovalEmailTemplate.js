@@ -7,7 +7,7 @@ import {
 } from "./emailComponents";
 
 export const VOLUNTEER_APPROVAL_EMAIL_SUBJECT =
-  "Selamat! Pendaftaran Relawan Anda Telah Disetujui - Yayasan Payung Berkah";
+  "Selamat! Pendaftaran Relawan Anda Diterima - Yayasan Payung Berkah";
 
 /**
  * Membuat konten HTML email pemberitahuan pendaftaran relawan yang telah disetujui admin
@@ -37,13 +37,13 @@ export function buildVolunteerApprovalEmailHtml({
 
   const approvalItems = [
     { label: "Nomor ID Relawan", value: `#${safeId}`, isHighlight: true },
-    { label: "Status Keanggotaan", value: "RESMI TERVERIFIKASI" },
+    { label: "Status Keanggotaan", value: "Diterima (Aktif)", isHighlight: true },
     { label: "Masa Berlaku", value: "1 Tahun (Aktif)" },
   ];
 
   const contentHtml = `
     <!-- Judul Konteks Eye-Catching -->
-    ${buildEmailHeading("Pendaftaran Relawan Disetujui")}
+    ${buildEmailHeading("Pendaftaran Relawan Diterima")}
 
     <!-- Sapaan Hangat -->
     <p style="margin: 0 0 16px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
@@ -52,7 +52,7 @@ export function buildVolunteerApprovalEmailHtml({
 
     <!-- Berita Utama -->
     <p style="margin: 0 0 18px 0; font-size: 16px; color: #111827; line-height: 1.6; font-family: ${EMAIL_FONT_STACK};">
-      Alhamdulillah, pendaftaran Anda sebagai <strong>Relawan</strong> Yayasan Payung Berkah telah disetujui:
+      Alhamdulillah, pendaftaran Anda sebagai <strong>Relawan</strong> Yayasan Payung Berkah telah resmi diterima:
     </p>
 
     <!-- Rincian Sertifikasi (Clean Raw Text Table) -->

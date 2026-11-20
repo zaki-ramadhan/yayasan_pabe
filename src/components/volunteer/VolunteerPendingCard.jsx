@@ -69,7 +69,7 @@ export function VolunteerPendingCard({
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div className="space-y-2">
           <div className="text-xs font-medium text-amber-400">
-            Status: Menunggu Persetujuan
+            Status: {volunteer.status === "REVIEWED" ? "Ditinjau" : "Menunggu"}
           </div>
           <h3 className="font-semibold text-white text-base sm:text-lg">
             Pendaftaran Anda Sedang Diperiksa

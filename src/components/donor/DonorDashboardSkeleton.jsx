@@ -58,6 +58,11 @@ export function DonorDashboardSkeleton() {
             </div>
             <DonorReportListSkeleton count={2} />
           </div>
+
+          <div className="rounded-md border border-slate-200/90 bg-sidebar p-4.5 sm:p-5 space-y-3">
+            <Skeleton className="h-5 w-40 rounded-sm" />
+            <DonorListSkeleton count={3} height="h-16" />
+          </div>
         </div>
 
         <div className="lg:col-span-4 space-y-2.5">
@@ -112,9 +117,7 @@ export function DonorDashboardSkeleton() {
           </div>
 
           <div id="donor-routine-card" className="scroll-mt-20 rounded-md border border-slate-200/90 bg-sidebar p-4.5 sm:p-5 space-y-3">
-            <h2 className="text-base font-medium text-slate-950">
-              Donasi Rutin Tersimpan
-            </h2>
+            <Skeleton className="h-5 w-44 rounded-sm" />
             <DonorRoutineListSkeleton count={1} />
           </div>
         </div>

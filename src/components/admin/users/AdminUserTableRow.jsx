@@ -60,7 +60,7 @@ export function AdminUserTableRow({
               )}
             </div>
             {user.email?.endsWith("@internal.yayasanpayungberkah.org") ? (
-              <span className="text-sm text-slate-400 block truncate font-normal italic">
+              <span className="text-sm text-slate-500 block truncate font-normal italic">
                 Tanpa akses login
               </span>
             ) : (

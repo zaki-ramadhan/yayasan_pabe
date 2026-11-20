@@ -53,7 +53,7 @@ export function VolunteerPublicProfileView({ volunteer }) {
         </div>
       </main>
 
-      <footer className="w-full max-w-4xl mx-auto px-4 py-6 text-center text-xs text-slate-400 font-normal">
+      <footer className="w-full max-w-4xl mx-auto px-4 py-6 text-center text-xs text-slate-500 font-normal">
         <p>© {new Date().getFullYear()} {ORG_PROFILE.name}</p>
       </footer>
     </div>

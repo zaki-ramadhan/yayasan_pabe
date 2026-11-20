@@ -229,7 +229,7 @@ export function TimeInput24Hour({ value = "05:00", onChange, error, isInvalid })
         <span className="sr-only">Jam</span>
       </div>
 
-      <span className={cn("text-xl font-bold select-none pb-0.5", hasError ? "text-rose-400" : "text-slate-400")}>:</span>
+      <span className={cn("text-xl font-bold select-none pb-0.5", hasError ? "text-rose-400" : "text-slate-500")}>:</span>
 
       <div className="relative">
         <input

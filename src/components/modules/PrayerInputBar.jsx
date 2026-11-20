@@ -113,7 +113,7 @@ export function PrayerInputBar({
                   "text-sm tabular-nums font-normal",
                   charCount >= maxLength
                     ? "text-rose-600 font-semibold"
-                    : "text-slate-400"
+                    : "text-slate-500"
                 )}
               >
                 {charCount}/{maxLength}

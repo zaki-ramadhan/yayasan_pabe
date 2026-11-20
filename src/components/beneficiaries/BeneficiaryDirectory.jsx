@@ -96,6 +96,7 @@ export function BeneficiaryDirectory({ initialBeneficiaries = [], stats = {} }) 
           search={searchQuery}
           onSearchChange={handleSearchChange}
           onClearSearch={handleClearSearch}
+          isSearching={Boolean(searchQuery && searchQuery !== debouncedSearch)}
           searchPlaceholder="Cari nama penerima manfaat..."
           searchWidth="flex-1 min-w-[200px] max-w-sm"
           filters={

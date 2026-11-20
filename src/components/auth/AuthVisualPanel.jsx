@@ -102,7 +102,7 @@ export function AuthVisualPanel() {
               {AUTH_SLIDES[currentSlide].title}
             </h1>
 
-            <p className="text-xs sm:text-sm xl:text-base text-slate-400 leading-relaxed max-w-md mx-auto font-normal transition-opacity duration-700">
+            <p className="text-xs sm:text-sm xl:text-base text-slate-300 leading-relaxed max-w-md mx-auto font-normal transition-opacity duration-700">
               {AUTH_SLIDES[currentSlide].desc}
             </p>
           </div>
@@ -125,7 +125,7 @@ export function AuthVisualPanel() {
           </div>
 
           <div className="mt-6 sm:mt-8 text-center">
-            <p className="text-sm text-slate-400 font-normal">
+            <p className="text-sm text-slate-300 font-normal">
               © {new Date().getFullYear()} Yayasan PABE
             </p>
           </div>

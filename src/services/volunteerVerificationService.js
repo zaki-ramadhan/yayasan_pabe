@@ -87,7 +87,7 @@ function mapToPublicVolunteer(v, avatarUrl = null) {
     city: v.city,
     interest: v.interest,
     status: v.status,
-    isApproved: v.status === "APPROVED",
+    isApproved: v.status === "APPROVED" || v.status === "ACCEPTED",
     avatar: avatarUrl || null,
     avatarUrl: avatarUrl || null,
     createdAt: createdDate.toISOString(),

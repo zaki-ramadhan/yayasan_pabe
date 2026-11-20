@@ -18,8 +18,13 @@ export const VOLUNTEER_STATUSES = [
     badgeClasses: "bg-amber-50 text-amber-800 border-amber-200/80 hover:bg-amber-100/70",
   },
   {
-    value: "APPROVED",
-    label: "Disetujui",
+    value: "REVIEWED",
+    label: "Ditinjau",
+    badgeClasses: "bg-sky-50 text-sky-800 border-sky-200/80 hover:bg-sky-100/70",
+  },
+  {
+    value: "ACCEPTED",
+    label: "Diterima",
     badgeClasses: "bg-emerald-50 text-emerald-800 border-emerald-200/80 hover:bg-emerald-100/70",
   },
   {
@@ -29,9 +34,14 @@ export const VOLUNTEER_STATUSES = [
   },
 ];
 
-const STATUS_MAP = Object.fromEntries(
-  VOLUNTEER_STATUSES.map((s) => [s.value, s])
-);
+const STATUS_MAP = {
+  ...Object.fromEntries(VOLUNTEER_STATUSES.map((s) => [s.value, s])),
+  APPROVED: {
+    value: "ACCEPTED",
+    label: "Diterima",
+    badgeClasses: "bg-emerald-50 text-emerald-800 border-emerald-200/80 hover:bg-emerald-100/70",
+  },
+};
 
 /**
  * Status selector interaktif ala Notion untuk tabel pendaftar relawan (Clean Chip, No Dot).

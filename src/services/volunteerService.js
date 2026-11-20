@@ -79,7 +79,7 @@ export async function registerVolunteer({
         existing.phone && cleanData.phone && existing.phone === cleanData.phone
       );
 
-      if (existing.status === "APPROVED") {
+      if (existing.status === "APPROVED" || existing.status === "ACCEPTED") {
         if (isPhoneMatch && !isEmailMatch) {
           throw new Error(
             `Nomor WhatsApp ${cleanData.phone} sudah terdaftar sebagai relawan aktif atas nama ${existing.fullName}. Silakan gunakan nomor WhatsApp lain.`
@@ -94,7 +94,7 @@ export async function registerVolunteer({
           "Email atau nomor WhatsApp ini sudah terdaftar sebagai relawan aktif Yayasan Payung Berkah."
         );
       }
-      if (existing.status === "PENDING" || existing.status === "CONTACTED") {
+      if (existing.status === "PENDING" || existing.status === "REVIEWED" || existing.status === "CONTACTED") {
         if (isPhoneMatch && !isEmailMatch) {
           throw new Error(
             `Pendaftaran relawan dengan nomor WhatsApp ${cleanData.phone} sudah diajukan atas nama ${existing.fullName} dan sedang dalam proses pemeriksaan.`

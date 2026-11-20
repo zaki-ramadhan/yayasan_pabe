@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { CheckCircleIcon as CheckCircle2 } from "@solar-icons/react/line-duotone/check-circle";
 import { CloseCircleIcon as XCircle } from "@solar-icons/react/line-duotone/close-circle";
@@ -52,6 +53,12 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [bulkStatusToConfirm, setBulkStatusToConfirm] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (Array.isArray(initialVolunteers)) {
+      setVolunteers(initialVolunteers);
+    }
+  }, [initialVolunteers]);
 
   useAdminLiveEvent("VOLUNTEER_CHECKIN", (payload) => {
     if (!payload?.id) return;
@@ -148,8 +155,10 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
       const data = await res.json();
       if (data.success) {
         const label =
-          newStatus === "APPROVED"
-            ? "Disetujui"
+          newStatus === "ACCEPTED" || newStatus === "APPROVED"
+            ? "Diterima"
+            : newStatus === "REVIEWED"
+            ? "Ditinjau"
             : newStatus === "REJECTED"
             ? "Ditolak"
             : "Menunggu";
@@ -173,7 +182,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
   const handleInlineStatusChange = (volunteer, targetStatus) => {
     if (!volunteer || volunteer.status === targetStatus) return;
 
-    if (targetStatus === "APPROVED" || targetStatus === "REJECTED") {
+    if (targetStatus === "ACCEPTED" || targetStatus === "APPROVED" || targetStatus === "REJECTED") {
       setStatusChangeToConfirm({
         id: volunteer.id,
         name: volunteer.fullName,
@@ -297,7 +306,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
           variant="outline"
           size="sm"
           disabled={isBulkStatusUpdating}
-          onClick={() => setBulkStatusToConfirm("APPROVED")}
+          onClick={() => setBulkStatusToConfirm("ACCEPTED")}
           className="bg-white border-slate-300 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 font-medium h-8 text-xs gap-1.5 cursor-pointer disabled:pointer-events-none disabled:opacity-50"
         >
           {isBulkStatusUpdating ? (
@@ -305,7 +314,7 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
           ) : (
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
           )}
-          <span>Setujui</span>
+          <span>Terima</span>
         </Button>
         <Button
           type="button"
@@ -443,14 +452,14 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         }}
         isLoading={updatingVolunteerId === statusChangeToConfirm?.id}
         title={
-          statusChangeToConfirm?.targetStatus === "APPROVED"
-            ? "Setujui pendaftaran relawan?"
+          statusChangeToConfirm?.targetStatus === "APPROVED" || statusChangeToConfirm?.targetStatus === "ACCEPTED"
+            ? "Terima pendaftaran relawan?"
             : "Tolak pendaftaran relawan?"
         }
         description={
-          statusChangeToConfirm?.targetStatus === "APPROVED" ? (
+          statusChangeToConfirm?.targetStatus === "APPROVED" || statusChangeToConfirm?.targetStatus === "ACCEPTED" ? (
             <>
-              Setujui pendaftaran{" "}
+              Terima pendaftaran{" "}
               <strong className="text-slate-900 font-semibold">
                 {statusChangeToConfirm?.name}
               </strong>
@@ -482,12 +491,12 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
           )
         }
         confirmLabel={
-          statusChangeToConfirm?.targetStatus === "APPROVED"
-            ? "Ya, setujui & aktifkan kartu"
+          statusChangeToConfirm?.targetStatus === "APPROVED" || statusChangeToConfirm?.targetStatus === "ACCEPTED"
+            ? "Ya, terima & aktifkan kartu"
             : "Ya, tolak berkas"
         }
         confirmVariant={
-          statusChangeToConfirm?.targetStatus === "APPROVED" ? "default" : "destructive"
+          statusChangeToConfirm?.targetStatus === "APPROVED" || statusChangeToConfirm?.targetStatus === "ACCEPTED" ? "default" : "destructive"
         }
         cancelLabel="Batal"
       />
@@ -561,14 +570,14 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         }}
         isLoading={isBulkStatusUpdating}
         title={
-          bulkStatusToConfirm === "APPROVED"
-            ? `Setujui ${selection.selectedCount} relawan terpilih?`
+          bulkStatusToConfirm === "APPROVED" || bulkStatusToConfirm === "ACCEPTED"
+            ? `Terima ${selection.selectedCount} relawan terpilih?`
             : `Tolak ${selection.selectedCount} relawan terpilih?`
         }
         description={
-          bulkStatusToConfirm === "APPROVED" ? (
+          bulkStatusToConfirm === "APPROVED" || bulkStatusToConfirm === "ACCEPTED" ? (
             <>
-              Apakah Anda yakin ingin menyetujui{" "}
+              Apakah Anda yakin ingin menerima{" "}
               <strong className="text-emerald-700 font-semibold">
                 {selection.selectedCount} pendaftar relawan terpilih
               </strong>
@@ -590,8 +599,16 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
             </>
           )
         }
-        confirmLabel={bulkStatusToConfirm === "APPROVED" ? "Ya, setujui semua" : "Ya, tolak semua"}
-        confirmVariant={bulkStatusToConfirm === "APPROVED" ? "default" : "destructive"}
+        confirmLabel={
+          bulkStatusToConfirm === "APPROVED" || bulkStatusToConfirm === "ACCEPTED"
+            ? "Ya, terima semua"
+            : "Ya, tolak semua"
+        }
+        confirmVariant={
+          bulkStatusToConfirm === "APPROVED" || bulkStatusToConfirm === "ACCEPTED"
+            ? "default"
+            : "destructive"
+        }
         cancelLabel="Batal"
       />
     </div>

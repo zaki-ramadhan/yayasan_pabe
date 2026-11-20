@@ -40,6 +40,12 @@ export function AdminDonationTrendCard({
   const [timeRange, setTimeRange] = React.useState("30d");
   const [viewMode, setViewMode] = React.useState("all");
 
+  React.useEffect(() => {
+    if (initialTrends) {
+      setTrends(initialTrends);
+    }
+  }, [initialTrends]);
+
   useAdminLiveEvent("DONATION_PAID", (event) => {
     const newTx = event?.data;
     if (!newTx || !newTx.amount) return;

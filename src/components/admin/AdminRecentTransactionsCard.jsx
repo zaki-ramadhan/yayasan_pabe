@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRightUpIcon } from "@solar-icons/react/linear/arrow-right-up";
 import { CopyIcon } from "@solar-icons/react/linear/copy";
@@ -34,6 +35,12 @@ export function AdminRecentTransactionsCard({
   );
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
+
+  useEffect(() => {
+    if (Array.isArray(initialTransactions)) {
+      setTransactions(initialTransactions.filter((t) => t.status === "PAID"));
+    }
+  }, [initialTransactions]);
 
   const applyLiveTransactionMutation = (incomingTx) => {
     if (!incomingTx || !incomingTx.invoiceId) return;

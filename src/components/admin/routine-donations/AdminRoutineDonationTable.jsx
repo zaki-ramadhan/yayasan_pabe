@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Table,
   TableContainer,
@@ -32,6 +33,12 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (Array.isArray(initialRoutineDonations)) {
+      setItems(initialRoutineDonations);
+    }
+  }, [initialRoutineDonations]);
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 

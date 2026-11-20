@@ -78,7 +78,7 @@ export function StorageDeleteModal({
               <p className="text-slate-500 mt-0.5">
                 Folder: <span className="font-mono text-slate-700">{singleItem.folder}</span> • {formatBytes(singleItem.size)}
               </p>
-              <p className="text-slate-400 mt-0.5">
+              <p className="text-slate-500 mt-0.5">
                 Diunggah: {formatDate(singleItem.lastModified, { withDay: false, withTime: true })}
               </p>
             </div>

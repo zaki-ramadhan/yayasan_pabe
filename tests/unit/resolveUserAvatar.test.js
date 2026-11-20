@@ -9,7 +9,7 @@ describe("resolveUserAvatar - SSOT Avatar Resolution", () => {
     expect(resolveUserAvatar(123)).toBeNull();
   });
 
-  it("memprioritaskan customAvatar di atas providerAvatar dan avatar preset", () => {
+  it("memprioritaskan customAvatar di atas providerAvatar dan avatar preset generic", () => {
     const user = {
       customAvatar: "https://r2.storage/custom.webp",
       providerAvatar: "https://lh3.googleusercontent.com/google.jpg",
@@ -18,7 +18,25 @@ describe("resolveUserAvatar - SSOT Avatar Resolution", () => {
     expect(resolveUserAvatar(user)).toBe("https://r2.storage/custom.webp");
   });
 
-  it("mengambil providerAvatar (Google/OAuth) jika customAvatar tidak ada", () => {
+  it("memprioritaskan customAvatar jika avatar aktif tertimpa foto Google providerAvatar", () => {
+    const user = {
+      avatar: "https://lh3.googleusercontent.com/a/google-photo.jpg",
+      customAvatar: "/api/media/users/avatars/user-avatar_custom.webp",
+      providerAvatar: "https://lh3.googleusercontent.com/a/google-photo.jpg",
+    };
+    expect(resolveUserAvatar(user)).toBe("/api/media/users/avatars/user-avatar_custom.webp");
+  });
+
+  it("memprioritaskan avatar karakter lokal yang dipilih pengguna di atas customAvatar", () => {
+    const user = {
+      avatar: "/img/avatars/avatar-male-1.webp",
+      customAvatar: "https://r2.storage/custom.webp",
+      providerAvatar: "https://lh3.googleusercontent.com/google.jpg",
+    };
+    expect(resolveUserAvatar(user)).toBe("/img/avatars/avatar-male-1.webp");
+  });
+
+  it("mengambil providerAvatar (Google/OAuth) jika customAvatar tidak ada dan avatar masih generic", () => {
     const user = {
       customAvatar: null,
       providerAvatar: "https://lh3.googleusercontent.com/google.jpg",

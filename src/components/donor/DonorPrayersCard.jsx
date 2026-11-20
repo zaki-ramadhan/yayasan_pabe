@@ -68,7 +68,7 @@ export function DonorPrayersCard({ currentUser }) {
                 <span className="text-xs font-medium text-slate-900 truncate">
                   {item.campaignTitle}
                 </span>
-                <span className="text-xs font-normal text-slate-400 shrink-0">
+                <span className="text-xs font-normal text-slate-500 shrink-0">
                   {formatDate(item.createdAt)}
                 </span>
               </div>

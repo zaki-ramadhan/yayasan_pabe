@@ -15,7 +15,7 @@ export function DonorReportItem({ report }) {
           <Badge variant="success" className="truncate">
             {report.categoryName}
           </Badge>
-          <span className="text-xs font-normal text-slate-400 shrink-0">
+          <span className="text-xs font-normal text-slate-500 shrink-0">
             {formatDate(report.date)}
           </span>
         </div>

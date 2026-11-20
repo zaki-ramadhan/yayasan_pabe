@@ -93,7 +93,7 @@ export function AdminPrayerTableRow({
               {item.donorName}
             </span>
             {item.isAnonymous ? (
-              <span className="text-sm font-normal text-slate-400 block">
+              <span className="text-sm font-normal text-slate-500 block">
                 (Anonim)
               </span>
             ) : item.donorEmail ? (

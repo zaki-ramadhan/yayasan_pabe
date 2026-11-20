@@ -94,6 +94,8 @@ export function DonorProfileView() {
       phone: json.data.phone,
     });
 
+    router.refresh();
+
     return json.data;
   };
 

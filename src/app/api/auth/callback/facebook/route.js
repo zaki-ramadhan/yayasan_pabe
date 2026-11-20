@@ -175,7 +175,14 @@ export async function GET(request) {
     try {
       const existingUser = await prisma.user.findUnique({
         where: { email: userEmail },
-        select: { avatar: true, isActive: true, provider: true },
+        select: {
+          id: true,
+          avatar: true,
+          customAvatar: true,
+          providerAvatar: true,
+          isActive: true,
+          provider: true,
+        },
       });
 
       if (existingUser && existingUser.isActive === false && !isSuperAdmin) {
@@ -184,12 +191,18 @@ export async function GET(request) {
         const preserveExistingProvider =
           existingUser?.provider && existingUser.provider !== "FACEBOOK";
 
+        const resolvedActiveAvatar = existingUser?.customAvatar
+          ? existingUser.customAvatar
+          : existingUser?.avatar
+          ? existingUser.avatar
+          : (fbAvatar || null);
+
         dbUser = await prisma.user.upsert({
           where: { email: userEmail },
           update: {
             name: cleanName || undefined,
+            avatar: resolvedActiveAvatar || undefined,
             providerAvatar: fbAvatar || undefined,
-            ...(existingUser?.avatar ? {} : (fbAvatar ? { avatar: fbAvatar } : {})),
             ...(preserveExistingProvider
               ? {}
               : { provider: "FACEBOOK", providerId: profileData.id }),
@@ -227,8 +240,8 @@ export async function GET(request) {
     const finalEmail = dbUser?.email || userEmail;
     const userRole = isSuperAdmin ? "SUPER_ADMIN" : (dbUser?.role || "DONOR");
     const userTitle = isSuperAdmin ? "Super Admin" : (dbUser?.title || "Donatur");
-    const userAvatar = dbUser?.avatar || fbAvatar || null;
     const customAvatar = dbUser?.customAvatar || null;
+    const userAvatar = customAvatar || dbUser?.avatar || fbAvatar || null;
     const providerAvatar = fbAvatar || dbUser?.providerAvatar || null;
 
     const isStaff = userRole && userRole !== USER_ROLES.DONOR;

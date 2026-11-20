@@ -241,6 +241,7 @@ export function CreatableCombobox({
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
             onClear={() => setSearchTerm("")}
+            isLoading={isCreating || Boolean(searchTerm && searchTerm !== debouncedSearch)}
             className="h-9 text-xs sm:text-sm bg-slate-50 border-slate-200 focus:bg-white"
             autoFocus
           />

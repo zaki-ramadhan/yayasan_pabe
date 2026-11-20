@@ -13,7 +13,7 @@ export function VolunteerCancellationDialog({
   status = "PENDING",
   isLoading = false,
 }) {
-  const isApproved = status === "APPROVED";
+  const isApproved = status === "APPROVED" || status === "ACCEPTED";
 
   const title = isApproved
     ? "Berhenti menjadi relawan"

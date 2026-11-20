@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import {
   Table,
@@ -51,6 +52,12 @@ export function AdminDistributionTable({
   const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const PAGE_SIZE = 10;
+
+  useEffect(() => {
+    if (Array.isArray(initialDistributions)) {
+      setDistributions(initialDistributions);
+    }
+  }, [initialDistributions]);
 
   useAdminLiveEvent("DISTRIBUTION_CREATED", (payload) => {
     if (!payload?.id) return;

@@ -1,16 +1,31 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { formatRupiah, formatNumber } from "@/lib/formatters";
 import { useAdminLiveEvent } from "@/hooks/useAdminLiveFeed";
 
 export function AdminMetricCards({ stats: initialStats }) {
   const [stats, setStats] = useState(initialStats || {});
+  const processedTxIdsRef = useRef(new Set());
+  const processedDistIdsRef = useRef(new Set());
+
+  useEffect(() => {
+    if (initialStats) {
+      setStats(initialStats);
+    }
+  }, [initialStats]);
 
   useAdminLiveEvent("DONATION_PAID", (event) => {
     const newTx = event?.data;
     if (!newTx || !newTx.amount) return;
+
+    const txId = newTx.id || newTx.invoiceId;
+    if (txId) {
+      if (processedTxIdsRef.current.has(txId)) return;
+      processedTxIdsRef.current.add(txId);
+    }
 
     setStats((prev) => ({
       ...prev,
@@ -23,7 +38,11 @@ export function AdminMetricCards({ stats: initialStats }) {
     const tx = event?.data;
     if (!tx || !tx.amount) return;
 
+    const txId = tx.id || tx.invoiceId;
     if (tx.previousStatus === "PAID" && tx.status !== "PAID") {
+      if (txId) {
+        processedTxIdsRef.current.delete(txId);
+      }
       setStats((prev) => ({
         ...prev,
         totalCollected: Math.max(0, Number(prev?.totalCollected || 0) - Number(tx.amount)),
@@ -35,6 +54,11 @@ export function AdminMetricCards({ stats: initialStats }) {
   useAdminLiveEvent("DISTRIBUTION_CREATED", (event) => {
     const dist = event?.data;
     if (!dist || !dist.disbursedAmount) return;
+
+    if (dist.id) {
+      if (processedDistIdsRef.current.has(dist.id)) return;
+      processedDistIdsRef.current.add(dist.id);
+    }
 
     setStats((prev) => ({
       ...prev,

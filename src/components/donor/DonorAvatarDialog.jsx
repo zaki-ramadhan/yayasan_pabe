@@ -135,7 +135,7 @@ export function DonorAvatarDialog({
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-slate-200/80" />
             </div>
-            <span className="relative bg-white px-3 text-sm font-medium uppercase tracking-wider text-slate-400">
+            <span className="relative bg-white px-3 text-sm font-medium uppercase tracking-wider text-slate-500">
               Atau
             </span>
           </div>
