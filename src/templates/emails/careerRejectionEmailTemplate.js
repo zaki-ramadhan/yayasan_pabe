@@ -33,7 +33,7 @@ export function buildCareerRejectionEmailHtml({
     { label: "Nama Pelamar", value: `<span style="text-transform: uppercase;">${safeName}</span>` },
     { label: "Posisi Dilamar", value: safePosition },
     { label: "Departemen", value: safeDept },
-    { label: "Status Lamaran", value: "Proses Seleksi Selesai" },
+    { label: "Status Lamaran", value: "Ditolak" },
   ];
 
   const contentHtml = `

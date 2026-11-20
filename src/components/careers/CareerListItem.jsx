@@ -6,6 +6,8 @@ import { LaptopIcon as Laptop } from "@solar-icons/react/line-duotone/laptop";
 import { Card } from "@/components/ui/Card";
 import { CareerMetaItem } from "./CareerMetaItem";
 import { CareerNewBadge } from "./CareerNewBadge";
+import { CareerAppliedBadge } from "./CareerAppliedBadge";
+import { DonorCareerTimeline } from "@/components/donor/career/DonorCareerTimeline";
 import { CareerCardFooter } from "./CareerCardFooter";
 import { isPostedToday, formatWorkplace } from "@/data/careers";
 
@@ -13,16 +15,21 @@ import { isPostedToday, formatWorkplace } from "@/data/careers";
  * Molecule component: Master job listing card
  * Directly shows job title and department without an icon,
  * dynamically renders a clean 'Baru' badge chip without dots for jobs posted today,
+ * displays a vertical stepper for applied applications,
  * and uses readable text-slate-600 matching the description text.
  * @param {object} props
  * @param {object} props.job
  * @param {boolean} props.isSelected
  * @param {Function} props.onSelect
+ * @param {boolean} [props.isApplied]
+ * @param {object} [props.application]
  */
 export function CareerListItem({
   job,
   isSelected = false,
   onSelect,
+  isApplied = false,
+  application = null,
 }) {
   const isNew = isPostedToday(job.publishedDate);
 
@@ -40,7 +47,10 @@ export function CareerListItem({
           <h3 className="text-base sm:text-lg font-semibold text-slate-900 leading-snug">
             {job.title}
           </h3>
-          {isNew && <CareerNewBadge />}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {isApplied && <CareerAppliedBadge />}
+            {isNew && !isApplied && <CareerNewBadge />}
+          </div>
         </div>
       </div>
 
@@ -58,9 +68,16 @@ export function CareerListItem({
         </p>
       )}
 
+      {isApplied && isSelected && (
+        <div className="mt-3 pt-2.5 border-t border-slate-100">
+          <DonorCareerTimeline status={application?.status || "PENDING"} size="sm" />
+        </div>
+      )}
+
       <CareerCardFooter
         applicantCount={job.applicantCount}
         postedAt={job.postedAt}
+        quota={job.quota}
       />
     </Card>
   );

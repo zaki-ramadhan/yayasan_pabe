@@ -21,7 +21,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useStagedUploads } from "@/hooks/useStagedUploads";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 
-export function CareerApplyModal({ isOpen, onClose, job }) {
+export function CareerApplyModal({ isOpen, onClose, job, onSuccess }) {
   const { currentUser, updateLocalUser } = useCurrentUser();
   const storedUser = getStoredUser();
   const activeUser = currentUser || storedUser;
@@ -61,11 +61,27 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
     }
     setTurnstileToken("");
     turnstileRef.current?.reset();
+    setIsSuccess(false);
+    setErrors({});
+    setFormData((prev) => ({
+      ...prev,
+      resumeUrl: "",
+      coverLetter: "",
+    }));
+    try {
+      if (job?.id) {
+        sessionStorage.removeItem(`career_draft_${job.id}`);
+      }
+    } catch {}
     onClose();
   };
 
   useEffect(() => {
-    if (!isOpen || !job?.id) return;
+    if (!isOpen) {
+      setIsSuccess(false);
+      return;
+    }
+    if (!job?.id) return;
     try {
       const saved = sessionStorage.getItem(`career_draft_${job.id}`);
       if (saved) {
@@ -206,6 +222,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
 
       commitUploads();
       setIsSuccess(true);
+      onSuccess?.(result.data || { vacancyId: job.id });
 
       if (activeUser && (!activeUser.phone || activeUser.phone === "-") && phoneValidation.sanitized) {
         updateLocalUser({ phone: phoneValidation.sanitized });
@@ -214,6 +231,11 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
       try {
         sessionStorage.removeItem(`career_draft_${job.id}`);
       } catch {}
+      setFormData((prev) => ({
+        ...prev,
+        resumeUrl: "",
+        coverLetter: "",
+      }));
       toast.success("Lamaran berhasil dikirim. Tim kami akan segera meninjaunya.");
     } catch (error) {
       setTurnstileToken("");
@@ -234,9 +256,7 @@ export function CareerApplyModal({ isOpen, onClose, job }) {
         </DialogHeader>
 
         {isSuccess ? (
-          <div className="flex-1 min-h-0 overflow-y-auto px-5 py-6 sm:px-6">
-            <CareerApplySuccessState job={job} onClose={handleClose} />
-          </div>
+          <CareerApplySuccessState job={job} onClose={handleClose} />
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
             <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 sm:px-6 space-y-4">

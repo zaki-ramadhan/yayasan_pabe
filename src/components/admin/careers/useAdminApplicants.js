@@ -17,7 +17,7 @@ export function useAdminApplicants({ isOpen, vacancyId }) {
   const [hasMore, setHasMore] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [sortBy, setSortBy] = useState("newest");
-  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [statusFilter, setStatusFilter] = useState("NEED_REVIEW");
 
   const fetchApplications = useCallback(
     async ({

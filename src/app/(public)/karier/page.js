@@ -12,9 +12,17 @@ import { RestartIcon as RotateCcw } from "@solar-icons/react/line-duotone/restar
 import { useDebounce } from "@/hooks/useDebounce";
 import { sanitizeSearchQuery } from "@/lib/security";
 import { safeFetch } from "@/lib/safeFetch";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import {
+  fetchUserCareerApplications,
+  cancelCareerApplication,
+} from "@/services/careerClientService";
+import { toast } from "@/hooks/useToast";
 
 export default function KarierPage() {
+  const { currentUser } = useCurrentUser();
   const [vacancies, setVacancies] = useState([]);
+  const [userApplications, setUserApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeJobId, setActiveJobId] = useState(null);
@@ -23,9 +31,11 @@ export default function KarierPage() {
   const [location, setLocation] = useState("Semua Lokasi");
   const [type, setType] = useState("Semua Tipe");
 
-  const fetchVacancies = () => {
-    setIsLoading(true);
-    setError(null);
+  const fetchVacancies = (silent = false) => {
+    if (!silent) {
+      setIsLoading(true);
+      setError(null);
+    }
     safeFetch("/api/careers", { timeoutMs: 8000 })
       .then((res) => {
         if (!res.ok) throw new Error(`Server merespons status ${res.status}`);
@@ -43,10 +53,12 @@ export default function KarierPage() {
       })
       .catch((err) => {
         console.error("Failed to fetch vacancies:", err);
-        setError("Gagal memuat lowongan. Periksa koneksi internet Anda dan coba lagi.");
+        if (!silent) {
+          setError("Gagal memuat lowongan. Periksa koneksi internet Anda dan coba lagi.");
+        }
       })
       .finally(() => {
-        setIsLoading(false);
+        if (!silent) setIsLoading(false);
       });
   };
 
@@ -54,14 +66,118 @@ export default function KarierPage() {
     fetchVacancies();
   }, []);
 
+  useEffect(() => {
+    if (currentUser?.email) {
+      fetchUserCareerApplications(currentUser.email).then((res) => {
+        if (res.success && Array.isArray(res.data)) {
+          setUserApplications(res.data);
+        }
+      });
+    } else {
+      setUserApplications([]);
+    }
+  }, [currentUser?.email]);
+
+  useEffect(() => {
+    const handleFocusSync = () => {
+      if (document.visibilityState === "visible") {
+        fetchVacancies(true);
+        if (currentUser?.email) {
+          fetchUserCareerApplications(currentUser.email).then((res) => {
+            if (res.success && Array.isArray(res.data)) {
+              setUserApplications(res.data);
+            }
+          });
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleFocusSync);
+    window.addEventListener("focus", handleFocusSync);
+    return () => {
+      document.removeEventListener("visibilitychange", handleFocusSync);
+      window.removeEventListener("focus", handleFocusSync);
+    };
+  }, [currentUser?.email]);
+
+  const appliedJobIds = useMemo(() => {
+    const ids = [];
+    userApplications.forEach((app) => {
+      if (app.vacancyId) ids.push(app.vacancyId);
+      if (app.vacancyDbId) ids.push(app.vacancyDbId);
+    });
+    return ids;
+  }, [userApplications]);
+
+  const handleApplySuccess = (submittedData) => {
+    const targetId = submittedData?.vacancyId || activeJobId;
+
+    setVacancies((prev) =>
+      prev.map((job) => {
+        if (job.id === targetId || job.dbId === targetId) {
+          return {
+            ...job,
+            applicantCount: (job.applicantCount || 0) + 1,
+          };
+        }
+        return job;
+      })
+    );
+
+    setUserApplications((prev) => [
+      {
+        id: submittedData?.id || `app-${Date.now()}`,
+        vacancyId: targetId,
+        position: submittedData?.position || "Lamaran Terkirim",
+        status: "PENDING",
+        createdAt: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+
+    fetchVacancies(true);
+    if (currentUser?.email) {
+      fetchUserCareerApplications(currentUser.email).then((res) => {
+        if (res.success && Array.isArray(res.data)) {
+          setUserApplications(res.data);
+        }
+      });
+    }
+  };
+
+  const handleCancelApplication = async (applicationId) => {
+    const targetApp = userApplications.find((a) => a.id === applicationId);
+    const res = await cancelCareerApplication(applicationId);
+
+    if (res.success) {
+      toast.success(res.message);
+      if (targetApp) {
+        setVacancies((prev) =>
+          prev.map((job) => {
+            if (job.id === targetApp.vacancyId || job.dbId === targetApp.vacancyId) {
+              return {
+                ...job,
+                applicantCount: Math.max(0, (job.applicantCount || 1) - 1),
+              };
+            }
+            return job;
+          })
+        );
+      }
+      setUserApplications((prev) => prev.filter((a) => a.id !== applicationId));
+      fetchVacancies(true);
+    } else {
+      toast.error(res.message);
+    }
+  };
+
   const handleSearchChange = (rawQuery) => {
     const sanitized = sanitizeSearchQuery(rawQuery);
     setSearchQuery(sanitized);
   };
 
   const filteredJobs = useMemo(() => {
-    return vacancies.filter((job) => {
-
+    const list = vacancies.filter((job) => {
       if (debouncedSearchQuery.trim()) {
         const query = debouncedSearchQuery.toLowerCase();
         const matchesTitle = job.title.toLowerCase().includes(query);
@@ -82,7 +198,24 @@ export default function KarierPage() {
 
       return true;
     });
-  }, [vacancies, debouncedSearchQuery, location, type]);
+
+    if (appliedJobIds.length > 0) {
+      return [...list].sort((a, b) => {
+        const aApplied =
+          appliedJobIds.includes(a.id) ||
+          (a.dbId && appliedJobIds.includes(a.dbId));
+        const bApplied =
+          appliedJobIds.includes(b.id) ||
+          (b.dbId && appliedJobIds.includes(b.dbId));
+
+        if (aApplied && !bApplied) return -1;
+        if (!aApplied && bApplied) return 1;
+        return 0;
+      });
+    }
+
+    return list;
+  }, [vacancies, debouncedSearchQuery, location, type, appliedJobIds]);
 
   const activeJob = useMemo(() => {
     if (filteredJobs.length === 0) return null;
@@ -95,6 +228,18 @@ export default function KarierPage() {
     setLocation("Semua Lokasi");
     setType("Semua Tipe");
   };
+
+  const activeAppliedApp = useMemo(() => {
+    if (!activeJob) return null;
+    return (
+      userApplications.find(
+        (a) =>
+          a.vacancyId === activeJob.id ||
+          a.vacancyDbId === activeJob.id ||
+          (activeJob.dbId && (a.vacancyId === activeJob.dbId || a.vacancyDbId === activeJob.dbId))
+      ) || null
+    );
+  }, [userApplications, activeJob]);
 
   return (
     <div className="w-full">
@@ -111,6 +256,7 @@ export default function KarierPage() {
           onLocationChange={setLocation}
           type={type}
           onTypeChange={setType}
+          isSearching={Boolean(searchQuery && searchQuery !== debouncedSearchQuery)}
         />
 
         {isLoading ? (
@@ -188,6 +334,8 @@ export default function KarierPage() {
                 isLoading={false}
                 error={null}
                 onRetry={fetchVacancies}
+                appliedJobIds={appliedJobIds}
+                userApplications={userApplications}
               />
             </div>
 
@@ -195,6 +343,10 @@ export default function KarierPage() {
               <CareerDetailPanel
                 job={activeJob}
                 hasVacancies={true}
+                isApplied={Boolean(activeAppliedApp)}
+                appliedApplication={activeAppliedApp}
+                onApplySuccess={handleApplySuccess}
+                onCancelApplication={handleCancelApplication}
               />
             </div>
           </section>

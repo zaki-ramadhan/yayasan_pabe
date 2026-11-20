@@ -125,7 +125,7 @@ model Volunteer {
   city       String
   interest   String
   motivation String
-  status     String   @default("PENDING") // PENDING, APPROVED, CONTACTED
+  status     String   @default("PENDING") // PENDING, REVIEWED, ACCEPTED, REJECTED (legacy: APPROVED)
   createdAt  DateTime @default(now())
 
   @@index([status])
@@ -261,6 +261,7 @@ model JobVacancy {
   requirements     String[]         @default([])
   benefits         String[]         @default([])
   applyUrl         String?
+  quota            Int              @default(1)
   isActive         Boolean          @default(true)
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
@@ -283,7 +284,7 @@ model JobApplication {
   portfolioUrl String?
   coverLetter  String
   resumeUrl    String?
-  status       String     @default("PENDING") // PENDING, REVIEWED, SHORTLISTED, REJECTED
+  status       String     @default("PENDING") // PENDING, REVIEWED, ACCEPTED, REJECTED (legacy: SHORTLISTED)
   createdAt    DateTime   @default(now())
 
   @@index([vacancyId])

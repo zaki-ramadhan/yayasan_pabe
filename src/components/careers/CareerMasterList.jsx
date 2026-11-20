@@ -18,6 +18,8 @@ export function CareerMasterList({
   isLoading = false,
   error = null,
   onRetry,
+  appliedJobIds = [],
+  userApplications = [],
 }) {
   return (
     <div className="space-y-3">
@@ -32,12 +34,23 @@ export function CareerMasterList({
           {[1, 2, 3].map((idx) => (
             <div
               key={idx}
-              className="p-4 rounded-xl border border-slate-200 bg-white animate-pulse space-y-3"
+              className="p-4 sm:p-4.5 rounded-lg border border-slate-200 bg-white space-y-2 animate-pulse shadow-none"
             >
-              <div className="h-5 bg-slate-200 rounded w-2/3"></div>
-              <div className="flex gap-2">
-                <div className="h-4 bg-slate-100 rounded w-20"></div>
-                <div className="h-4 bg-slate-100 rounded w-24"></div>
+              <div className="flex items-start justify-between gap-2">
+                <div className="h-5 bg-slate-200 rounded w-44" />
+                {idx === 1 && <div className="h-4 bg-slate-200 rounded w-16" />}
+              </div>
+              <div className="flex items-center gap-3 mt-2">
+                <div className="h-3.5 bg-slate-100 rounded w-24" />
+                <div className="h-3.5 bg-slate-100 rounded w-20" />
+              </div>
+              <div className="space-y-1 pt-1">
+                <div className="h-3.5 bg-slate-100 rounded w-full" />
+                <div className="h-3.5 bg-slate-100 rounded w-3/4" />
+              </div>
+              <div className="mt-3 pt-2.5 border-t border-dashed border-slate-200 flex items-center justify-between">
+                <div className="h-3.5 bg-slate-100 rounded w-24" />
+                <div className="h-3.5 bg-slate-100 rounded w-28" />
               </div>
             </div>
           ))}
@@ -87,14 +100,29 @@ export function CareerMasterList({
         )
       ) : (
         <div className="space-y-2.5">
-          {jobs.map((job) => (
-            <CareerListItem
-              key={job.id}
-              job={job}
-              isSelected={job.id === activeJobId}
-              onSelect={onSelectJob}
-            />
-          ))}
+          {jobs.map((job) => {
+            const userApp = (userApplications || []).find(
+              (a) =>
+                a.vacancyId === job.id ||
+                a.vacancyDbId === job.id ||
+                (job.dbId && (a.vacancyId === job.dbId || a.vacancyDbId === job.dbId))
+            );
+            const isApplied =
+              Boolean(userApp) ||
+              appliedJobIds.includes(job.id) ||
+              (job.dbId && appliedJobIds.includes(job.dbId));
+
+            return (
+              <CareerListItem
+                key={job.id}
+                job={job}
+                isSelected={job.id === activeJobId}
+                onSelect={onSelectJob}
+                isApplied={isApplied}
+                application={userApp}
+              />
+            );
+          })}
         </div>
       )}
     </div>

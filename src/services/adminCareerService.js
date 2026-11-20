@@ -52,6 +52,7 @@ export async function getAdminVacancies({ search = "", department = "ALL" } = {}
       requirements: v.requirements || [],
       benefits: v.benefits || [],
       applyUrl: v.applyUrl,
+      quota: typeof v.quota === "number" && v.quota >= 1 ? v.quota : 1,
       requiresResume: v.applyUrl === "WITHOUT_RESUME"
         ? false
         : (CAREER_VACANCIES.find((c) => c.id === (v.jobCode || v.id))?.requiresResume !== undefined
@@ -93,6 +94,9 @@ export async function createAdminVacancy(payload) {
     ? payload.benefits.map((b) => sanitizeInput(b).trim()).filter(Boolean)
     : [];
 
+  const rawQuota = parseInt(payload.quota, 10);
+  const quota = !isNaN(rawQuota) && rawQuota >= 1 ? Math.min(rawQuota, 999) : 1;
+
   const randomCode = `PABE-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
   return prisma.jobVacancy.create({
@@ -111,6 +115,7 @@ export async function createAdminVacancy(payload) {
       requirements,
       benefits,
       applyUrl,
+      quota,
       isActive: payload.isActive !== undefined ? Boolean(payload.isActive) : true,
     },
   });
@@ -132,6 +137,10 @@ export async function updateAdminVacancy(id, payload) {
   if (payload.overview !== undefined) data.overview = sanitizeInput(payload.overview).trim();
   if (payload.applyUrl !== undefined) {
     data.applyUrl = payload.applyUrl ? sanitizeInput(payload.applyUrl).trim() : null;
+  }
+  if (payload.quota !== undefined) {
+    const rawQuota = parseInt(payload.quota, 10);
+    data.quota = !isNaN(rawQuota) && rawQuota >= 1 ? Math.min(rawQuota, 999) : 1;
   }
   if (payload.isActive !== undefined) data.isActive = Boolean(payload.isActive);
 
@@ -239,7 +248,15 @@ export async function getAdminApplications({
   try {
     const where = {};
     if (vacancyId) where.vacancyId = vacancyId;
-    if (status && status !== "ALL") where.status = status;
+    if (status && status !== "ALL") {
+      if (status === "ACCEPTED") {
+        where.status = { in: ["ACCEPTED", "SHORTLISTED"] };
+      } else if (status === "NEED_REVIEW") {
+        where.status = { in: ["PENDING", "REVIEWED"] };
+      } else {
+        where.status = status;
+      }
+    }
 
     const parsedPage = Math.max(1, parseInt(page, 10) || 1);
     const parsedLimit = Math.max(1, Math.min(50, parseInt(limit, 10) || 15));
@@ -303,8 +320,9 @@ export async function getAdminApplications({
  * Mengubah status review berkas pelamar pekerjaan.
  */
 export async function updateApplicationStatus(applicationId, newStatus) {
-  const validStatuses = ["PENDING", "REVIEWED", "SHORTLISTED", "REJECTED"];
-  if (!validStatuses.includes(newStatus)) {
+  const normalizedStatus = newStatus === "SHORTLISTED" ? "ACCEPTED" : newStatus;
+  const validStatuses = ["PENDING", "REVIEWED", "ACCEPTED", "SHORTLISTED", "REJECTED"];
+  if (!validStatuses.includes(normalizedStatus)) {
     throw new Error("Status pelamar tidak valid.");
   }
 
@@ -323,13 +341,19 @@ export async function updateApplicationStatus(applicationId, newStatus) {
     throw new Error("Data pelamar tidak ditemukan.");
   }
 
-  if (existing.status === newStatus) {
+  const isSameStatus =
+    existing.status === newStatus ||
+    existing.status === normalizedStatus ||
+    ((existing.status === "SHORTLISTED" || existing.status === "ACCEPTED") &&
+      (newStatus === "SHORTLISTED" || newStatus === "ACCEPTED"));
+
+  if (isSameStatus) {
     return existing;
   }
 
   const updated = await prisma.jobApplication.update({
     where: { id: applicationId },
-    data: { status: newStatus },
+    data: { status: normalizedStatus },
     include: {
       vacancy: {
         select: {
@@ -344,7 +368,10 @@ export async function updateApplicationStatus(applicationId, newStatus) {
     const position = updated.vacancy?.title || "Lowongan Pekerjaan";
     const department = updated.vacancy?.department || "Yayasan Payung Berkah";
 
-    if (newStatus === "SHORTLISTED" && shouldSendStatusEmail(updated.email, "SHORTLISTED")) {
+    if (
+      (normalizedStatus === "ACCEPTED" || normalizedStatus === "SHORTLISTED") &&
+      shouldSendStatusEmail(updated.email, "ACCEPTED")
+    ) {
       try {
         await sendCareerShortlistEmail({
           to: updated.email,
@@ -353,9 +380,9 @@ export async function updateApplicationStatus(applicationId, newStatus) {
           department,
         });
       } catch (emailErr) {
-        console.warn("Gagal mengirim email shortlist pelamar:", emailErr?.message);
+        console.warn("Gagal mengirim email penerimaan pelamar:", emailErr?.message);
       }
-    } else if (newStatus === "REJECTED" && shouldSendStatusEmail(updated.email, "REJECTED")) {
+    } else if (normalizedStatus === "REJECTED" && shouldSendStatusEmail(updated.email, "REJECTED")) {
       try {
         await sendCareerRejectionEmail({
           to: updated.email,

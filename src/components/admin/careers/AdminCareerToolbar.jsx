@@ -9,6 +9,7 @@ export function AdminCareerToolbar({
   onRefresh,
   onOpenAdd,
   isLoading,
+  isSearching,
 }) {
   return (
     <TableToolbar
@@ -19,6 +20,7 @@ export function AdminCareerToolbar({
       searchWidth="flex-1 min-w-[200px] max-w-sm"
       onRefresh={onRefresh}
       isLoading={isLoading}
+      isSearching={isSearching}
       primaryAction={{
         label: "Lowongan baru",
         onClick: onOpenAdd,

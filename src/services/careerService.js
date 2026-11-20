@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { sanitizeInput } from "@/lib/security";
 import { verifyEmailDomainDns } from "@/lib/serverDnsValidator";
-import { validateWebUrl, validatePhone } from "@/lib/validator";
+import { validateWebUrl, validateResumeUrl, validatePhone } from "@/lib/validator";
 import { CAREER_VACANCIES } from "@/data/careers";
 import { broadcastAdminEvent } from "@/lib/sseBroadcast";
 import { sendCareerApplicationEmail } from "@/services/emailService";
@@ -63,6 +63,7 @@ export async function getJobVacancies({
       requirements: v.requirements,
       benefits: v.benefits,
       applyUrl: v.applyUrl,
+      quota: typeof v.quota === "number" && v.quota >= 1 ? v.quota : 1,
       requiresResume: v.applyUrl === "WITHOUT_RESUME"
         ? false
         : (CAREER_VACANCIES.find((c) => c.id === (v.jobCode || v.id))?.requiresResume !== undefined
@@ -110,6 +111,7 @@ export async function getJobVacancyById(identifier) {
         requirements: vacancy.requirements,
         benefits: vacancy.benefits,
         applyUrl: vacancy.applyUrl,
+        quota: typeof vacancy.quota === "number" && vacancy.quota >= 1 ? vacancy.quota : 1,
         requiresResume: vacancy.applyUrl === "WITHOUT_RESUME"
           ? false
           : (CAREER_VACANCIES.find((c) => c.id === (vacancy.jobCode || vacancy.id))?.requiresResume !== undefined
@@ -166,6 +168,59 @@ export async function submitJobApplication(payload) {
     throw new Error("Posisi lowongan pekerjaan yang dipilih tidak ditemukan.");
   }
 
+  const cleanEmail = emailVal.sanitized.toLowerCase();
+
+  // GUARD 1: Anti-Double Job
+  const acceptedApp = await prisma.jobApplication.findFirst({
+    where: {
+      email: cleanEmail,
+      status: "ACCEPTED",
+    },
+    select: { id: true, vacancy: { select: { title: true } } },
+  });
+  if (acceptedApp) {
+    throw new Error(
+      `Akun Anda telah terikat kontrak kerja aktif untuk posisi "${acceptedApp.vacancy?.title || "Karyawan Yayasan"}". Anda tidak dapat mengajukan lamaran baru (Anti-Double Job).`
+    );
+  }
+
+  const existingStaff = await prisma.user.findFirst({
+    where: { email: cleanEmail },
+    select: { role: true },
+  });
+  const staffRoles = ["SUPERADMIN", "ADMIN", "OPERATIONAL", "FINANCE", "DISTRIBUTION", "REPRESENTATIVE"];
+  if (existingStaff?.role && staffRoles.includes(existingStaff.role)) {
+    throw new Error("Staf internal yayasan tidak diperkenankan mengajukan lamaran kerja baru.");
+  }
+
+  // GUARD 2: Anti-Duplicate untuk posisi yang sama
+  const duplicateActive = await prisma.jobApplication.findFirst({
+    where: {
+      vacancyId: targetVacancy.id,
+      email: cleanEmail,
+      status: { in: ["PENDING", "REVIEWED", "SHORTLISTED"] },
+    },
+    select: { id: true },
+  });
+  if (duplicateActive) {
+    throw new Error(
+      "Anda telah mengirimkan berkas lamaran untuk posisi ini dan saat ini masih dalam proses seleksi."
+    );
+  }
+
+  // GUARD 3: Kuota Maksimal Lamaran Aktif (Maksimal 2 posisi aktif bersamaan)
+  const activeApplicationsCount = await prisma.jobApplication.count({
+    where: {
+      email: cleanEmail,
+      status: { in: ["PENDING", "REVIEWED", "SHORTLISTED"] },
+    },
+  });
+  if (activeApplicationsCount >= 2) {
+    throw new Error(
+      "Anda telah mencapai batas maksimal 2 lamaran aktif yang berjalan bersamaan. Harap tunggu proses peninjauan selesai sebelum melamar posisi lain."
+    );
+  }
+
   const matchingStatic = CAREER_VACANCIES.find(
     (c) => c.id === (targetVacancy.jobCode || targetVacancy.id)
   );
@@ -180,13 +235,13 @@ export async function submitJobApplication(payload) {
     if (!resumeUrl || typeof resumeUrl !== "string" || !resumeUrl.trim()) {
       throw new Error("Berkas CV / resume (PDF) wajib dicantumkan untuk posisi ini.");
     }
-    const resumeVal = validateWebUrl(resumeUrl.trim());
+    const resumeVal = validateResumeUrl(resumeUrl.trim());
     if (!resumeVal.isValid) {
-      throw new Error("Tautan berkas CV / resume tidak valid. Harap masukkan alamat URL yang benar.");
+      throw new Error("Berkas CV / resume tidak valid. Harap unggah berkas PDF yang benar.");
     }
     cleanResume = sanitizeInput(resumeVal.normalizedUrl);
   } else if (resumeUrl && typeof resumeUrl === "string" && resumeUrl.trim()) {
-    const resumeVal = validateWebUrl(resumeUrl.trim());
+    const resumeVal = validateResumeUrl(resumeUrl.trim());
     if (resumeVal.isValid) {
       cleanResume = sanitizeInput(resumeVal.normalizedUrl);
     }
@@ -202,7 +257,6 @@ export async function submitJobApplication(payload) {
   }
 
   const cleanFullName = sanitizeInput(fullName.trim());
-  const cleanEmail = emailVal.sanitized;
   const cleanPortfolio = portfolioUrl ? sanitizeInput(portfolioUrl.trim()) : null;
   const cleanCoverLetter = sanitizeInput(coverLetter.trim());
 
@@ -272,6 +326,64 @@ export async function submitJobApplication(payload) {
       fullName: application.fullName,
       email: application.email,
       submittedAt: application.createdAt.toISOString(),
+    },
+  };
+}
+
+/**
+ * Membatalkan berkas lamaran pekerjaan yang diajukan oleh pengguna.
+ * Hanya diizinkan jika status masih PENDING (belum direview oleh HR).
+ */
+export async function cancelUserJobApplication(applicationId, userEmail) {
+  if (!applicationId || !userEmail) {
+    throw new Error("ID lamaran dan email pengguna wajib disertakan.");
+  }
+
+  const cleanEmail = userEmail.trim().toLowerCase();
+
+  const application = await prisma.jobApplication.findFirst({
+    where: {
+      id: applicationId,
+      email: cleanEmail,
+    },
+    include: {
+      vacancy: {
+        select: { id: true, title: true },
+      },
+    },
+  });
+
+  if (!application) {
+    throw new Error("Data lamaran pekerjaan tidak ditemukan.");
+  }
+
+  if (application.status !== "PENDING") {
+    throw new Error(
+      "Lamaran yang sedang diproses atau telah ditinjau tidak dapat dibatalkan melalui sistem."
+    );
+  }
+
+  await prisma.jobApplication.delete({
+    where: { id: application.id },
+  });
+
+  try {
+    broadcastAdminEvent("CAREER_APPLICATION_CANCELLED", {
+      id: application.id,
+      vacancyId: application.vacancyId,
+      position: application.vacancy?.title,
+      email: application.email,
+    });
+  } catch (sseErr) {
+    console.warn("Peringatan: Gagal broadcast SSE pembatalan lamaran:", sseErr?.message);
+  }
+
+  return {
+    success: true,
+    message: "Lamaran pekerjaan berhasil dibatalkan.",
+    data: {
+      id: application.id,
+      vacancyId: application.vacancyId,
     },
   };
 }

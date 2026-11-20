@@ -34,6 +34,8 @@ export function AdminCareerBasicInfoFields({
   onCreateLocation,
   experience,
   onExperienceChange,
+  quota = 1,
+  onQuotaChange,
   deadline,
   onDeadlineChange,
   isActive,
@@ -136,17 +138,36 @@ export function AdminCareerBasicInfoFields({
         </FormField>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
         <FormField label="Pengalaman kerja">
           <Input
             type="text"
-            placeholder="Contoh: 1 - 2 tahun / Fresh graduate"
+            placeholder="1 - 2 tahun"
             value={experience}
             minLength={FIELD_LIMITS.CAREER_EXPERIENCE.min}
             maxLength={FIELD_LIMITS.CAREER_EXPERIENCE.max}
             onChange={(e) => onExperienceChange(sanitizeStandardText(e.target.value, FIELD_LIMITS.CAREER_EXPERIENCE.max))}
             onBlur={() => onExperienceChange(experience.trim())}
             className="h-10 text-sm bg-white"
+          />
+        </FormField>
+
+        <FormField label="Kuota (orang)" required error={errors.quota}>
+          <Input
+            type="number"
+            min={1}
+            max={999}
+            placeholder="1"
+            value={quota}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, "");
+              if (onQuotaChange) onQuotaChange(val ? Math.min(Number(val), 999) : "");
+              if (onClearError) onClearError("quota");
+            }}
+            onBlur={() => {
+              if (onQuotaChange && (!quota || Number(quota) < 1)) onQuotaChange(1);
+            }}
+            className="h-10 text-sm bg-white tabular-nums"
           />
         </FormField>
 
@@ -157,7 +178,7 @@ export function AdminCareerBasicInfoFields({
               onDeadlineChange(val || "");
               if (onClearError) onClearError("deadline");
             }}
-            placeholder="Pilih batas akhir pendaftaran..."
+            placeholder="Pilih batas akhir..."
           />
         </FormField>
       </div>

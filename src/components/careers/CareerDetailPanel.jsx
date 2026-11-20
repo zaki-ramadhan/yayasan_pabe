@@ -7,6 +7,7 @@ import { CareerDetailHeader } from "./CareerDetailHeader";
 import { CareerDetailSection } from "./CareerDetailSection";
 import { CareerChecklist } from "./CareerChecklist";
 import { CareerDetailCta } from "./CareerDetailCta";
+import { CareerAppliedNotice } from "./CareerAppliedNotice";
 import { CareerApplyModal } from "./CareerApplyModal";
 
 /**
@@ -15,8 +16,20 @@ import { CareerApplyModal } from "./CareerApplyModal";
  * @param {object} props
  * @param {object|null} props.job
  * @param {boolean} [props.hasVacancies]
+ * @param {boolean} [props.isLoading]
+ * @param {boolean} [props.isApplied]
+ * @param {object|null} [props.appliedApplication]
+ * @param {Function} [props.onApplySuccess]
  */
-export function CareerDetailPanel({ job, hasVacancies = true, isLoading = false }) {
+export function CareerDetailPanel({
+  job,
+  hasVacancies = true,
+  isLoading = false,
+  isApplied = false,
+  appliedApplication = null,
+  onApplySuccess,
+  onCancelApplication,
+}) {
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
   if (isLoading) {
@@ -24,7 +37,9 @@ export function CareerDetailPanel({ job, hasVacancies = true, isLoading = false 
       <Card className="rounded-xl p-5 sm:p-6 space-y-4 sm:space-y-5 bg-white border-slate-200 shadow-2xs animate-pulse">
         <div className="space-y-3 pb-4 border-b border-slate-100">
           <div className="h-6 bg-slate-200 rounded w-1/2"></div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2.5 pt-1">
+            <div className="h-4 bg-slate-100 rounded w-20"></div>
+            <div className="h-4 bg-slate-100 rounded w-24"></div>
             <div className="h-4 bg-slate-100 rounded w-20"></div>
             <div className="h-4 bg-slate-100 rounded w-24"></div>
             <div className="h-4 bg-slate-100 rounded w-28"></div>
@@ -59,7 +74,11 @@ export function CareerDetailPanel({ job, hasVacancies = true, isLoading = false 
   return (
     <>
       <Card className="rounded-xl p-5 sm:p-6 space-y-4 sm:space-y-5 bg-white border-slate-200 shadow-2xs">
-        <CareerDetailHeader job={job} onApply={() => setIsApplyModalOpen(true)} />
+        <CareerDetailHeader
+          job={job}
+          onApply={() => setIsApplyModalOpen(true)}
+          isApplied={isApplied}
+        />
 
         <CareerDetailSection title="Ringkasan Peran" className="-mt-4">
           <p className="text-sm font-normal text-slate-700 leading-relaxed">
@@ -81,17 +100,25 @@ export function CareerDetailPanel({ job, hasVacancies = true, isLoading = false 
           </CareerDetailSection>
         )}
 
-        <CareerDetailCta
-          applyUrl={job.applyUrl}
-          deadline={job.deadline}
-          onApply={() => setIsApplyModalOpen(true)}
-        />
+        {isApplied ? (
+          <CareerAppliedNotice
+            application={appliedApplication}
+            onCancel={onCancelApplication}
+          />
+        ) : (
+          <CareerDetailCta
+            applyUrl={job.applyUrl}
+            deadline={job.deadline}
+            onApply={() => setIsApplyModalOpen(true)}
+          />
+        )}
       </Card>
 
       <CareerApplyModal
         isOpen={isApplyModalOpen}
         onClose={() => setIsApplyModalOpen(false)}
         job={job}
+        onSuccess={onApplySuccess}
       />
     </>
   );

@@ -19,6 +19,8 @@ import {
  * @param {Function} props.onLocationChange
  * @param {string} props.type
  * @param {Function} props.onTypeChange
+ * @param {boolean} [props.isSearching=false]
+ * @param {boolean} [props.isLoading=false]
  */
 export function CareerFilterBar({
   searchQuery,
@@ -27,6 +29,8 @@ export function CareerFilterBar({
   onLocationChange,
   type,
   onTypeChange,
+  isSearching = false,
+  isLoading = false,
 }) {
   return (
     <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
@@ -42,6 +46,7 @@ export function CareerFilterBar({
           maxLength={FIELD_LIMITS.SEARCH_QUERY.max}
           autoComplete="off"
           spellCheck="false"
+          isLoading={isSearching || isLoading}
           className="h-10 text-sm bg-white border-slate-300 shadow-2xs"
         />
       </div>

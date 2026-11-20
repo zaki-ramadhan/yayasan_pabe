@@ -39,6 +39,9 @@ export function AdminCareerTableRow({
 				>
 					{job.title}
 				</span>
+				<span className="text-xs text-slate-500 font-normal block mt-0.5">
+					Kuota {job.quota || 1} orang
+				</span>
 			</TableCell>
 
 			<TableCell className="w-36 py-3 text-sm text-slate-700 align-middle">

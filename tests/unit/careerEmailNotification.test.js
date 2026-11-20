@@ -30,6 +30,11 @@ describe("Career Application Transactional Email System", () => {
   });
 
   describe("Service Integration & Email Triggers", () => {
+    beforeEach(() => {
+      vi.spyOn(prisma.jobApplication, "findFirst").mockResolvedValue(null);
+      vi.spyOn(prisma.jobApplication, "count").mockResolvedValue(0);
+    });
+
     it("mengirim email konfirmasi saat pelamar berhasil submit lowongan", async () => {
       const sendEmailSpy = vi
         .spyOn(emailService, "sendCareerApplicationEmail")
@@ -73,6 +78,45 @@ describe("Career Application Transactional Email System", () => {
           department: "Fundraising & Program",
         })
       );
+    });
+
+    it("berhasil menerima lamaran kerja dengan berkas CV hasil unggahan internal (/api/media/...)", async () => {
+      const sendEmailSpy = vi.spyOn(emailService, "sendEmail").mockResolvedValueOnce({ success: true });
+
+      vi.spyOn(prisma.jobVacancy, "findFirst").mockResolvedValueOnce({
+        id: "vac-001",
+        title: "Staff Fundraising & Kemitraan",
+        department: "Fundraising & Program",
+        applyUrl: "ONLINE_FORM",
+        jobCode: "JOB-01",
+      });
+
+      vi.spyOn(prisma.jobApplication, "create").mockResolvedValueOnce({
+        id: "app-002",
+        vacancyId: "vac-001",
+        fullName: "Burhanuddin",
+        email: "xburhanuddin3@gmail.com",
+        phone: "081214772370",
+        coverLetter: "Saya ingin belajar pengalaman nyata dalam kehidupan bermasyarakat.",
+        resumeUrl: "/api/media/careers/resumes/job-cv_file_123.pdf",
+        status: "PENDING",
+        createdAt: new Date("2026-11-19T10:00:00Z"),
+      });
+
+      vi.spyOn(prisma.user, "findFirst").mockResolvedValueOnce(null);
+
+      const result = await submitJobApplication({
+        vacancyId: "vac-001",
+        fullName: "Burhanuddin",
+        email: "xburhanuddin3@gmail.com",
+        phone: "081214772370",
+        coverLetter: "Saya ingin belajar pengalaman nyata dalam kehidupan bermasyarakat.",
+        resumeUrl: "/api/media/careers/resumes/job-cv_file_123.pdf",
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.data.fullName).toBe("Burhanuddin");
+      expect(result.data.email).toBe("xburhanuddin3@gmail.com");
     });
   });
 });

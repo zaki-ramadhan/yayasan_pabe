@@ -5,9 +5,11 @@ import { CaseRoundIcon as Briefcase } from "@solar-icons/react/line-duotone/case
 import { CalendarIcon as Calendar } from "@solar-icons/react/line-duotone/calendar";
 import { DiplomaIcon as GraduationCap } from "@solar-icons/react/line-duotone/diploma";
 import { LaptopIcon as Laptop } from "@solar-icons/react/line-duotone/laptop";
+import { UsersGroupTwoRoundedIcon as Users } from "@solar-icons/react/line-duotone/users-group-two-rounded";
 import { CareerMetaItem } from "./CareerMetaItem";
 import { CareerNewBadge } from "./CareerNewBadge";
 import { CareerApplyButton } from "./CareerApplyButton";
+import { CareerAppliedBadge } from "./CareerAppliedBadge";
 import { isPostedToday, formatWorkplace } from "@/data/careers";
 import { formatDeadlineDate } from "@/lib/formatters";
 
@@ -18,8 +20,9 @@ import { formatDeadlineDate } from "@/lib/formatters";
  * @param {object} props
  * @param {object} props.job
  * @param {Function} [props.onApply]
+ * @param {boolean} [props.isApplied]
  */
-export function CareerDetailHeader({ job, onApply }) {
+export function CareerDetailHeader({ job, onApply, isApplied = false }) {
   const isNew = isPostedToday(job.publishedDate);
 
   return (
@@ -35,11 +38,15 @@ export function CareerDetailHeader({ job, onApply }) {
         </div>
 
         <div className="shrink-0">
-          <CareerApplyButton
-            url={job.applyUrl}
-            label="Lamar Posisi Ini"
-            onClick={onApply}
-          />
+          {isApplied ? (
+            <CareerAppliedBadge className="text-xs px-3 py-1" />
+          ) : (
+            <CareerApplyButton
+              url={job.applyUrl}
+              label="Lamar Posisi Ini"
+              onClick={onApply}
+            />
+          )}
         </div>
       </div>
 
@@ -48,6 +55,7 @@ export function CareerDetailHeader({ job, onApply }) {
         <CareerMetaItem icon={Briefcase} text={job.type} />
         {job.workplace && <CareerMetaItem icon={Laptop} text={formatWorkplace(job.workplace)} />}
         <CareerMetaItem icon={GraduationCap} text={job.experience} />
+        <CareerMetaItem icon={Users} text={`Kuota ${job.quota || 1} orang`} />
         <CareerMetaItem
           icon={Calendar}
           text={

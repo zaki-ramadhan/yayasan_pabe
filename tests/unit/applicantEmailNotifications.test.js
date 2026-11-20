@@ -36,7 +36,7 @@ describe("Applicant Email Notifications (Approval, Shortlist & Rejection)", () =
       expect(VOLUNTEER_REJECTION_EMAIL_SUBJECT).toContain("Pendaftaran Relawan");
       expect(html).toContain("Burhanuddin");
       expect(html).toContain("Relawan Kebaikan");
-      expect(html).toContain("Belum Dapat Disetujui");
+      expect(html).toContain("Ditolak");
       expect(html).toContain("Kuota relawan untuk periode kegiatan saat ini telah terpenuhi");
       expect(html).toContain("tersimpan dalam pangkalan data relawan");
     });
@@ -51,12 +51,11 @@ describe("Applicant Email Notifications (Approval, Shortlist & Rejection)", () =
         department: "Divisi Kreatif & Syiar",
       });
 
-      expect(subject).toContain("Kabar Baik: Seleksi Berkas Lamaran Staff Media & Komunikasi");
+      expect(subject).toContain("Selamat! Lamaran Kerja Staff Media & Komunikasi Diterima");
       expect(html).toContain("Aulia Nurfadilah");
       expect(html).toContain("Staff Media & Komunikasi");
       expect(html).toContain("Divisi Kreatif & Syiar");
-      expect(html).toContain("SHORTLISTED");
-      expect(html).toContain("wawancara kerja");
+      expect(html).toContain("Diterima");
     });
   });
 
@@ -73,7 +72,7 @@ describe("Applicant Email Notifications (Approval, Shortlist & Rejection)", () =
       expect(html).toContain("Bambang Pamungkas");
       expect(html).toContain("Staff Akuntansi & Keuangan");
       expect(html).toContain("Divisi Keuangan");
-      expect(html).toContain("Proses Seleksi Selesai");
+      expect(html).toContain("Ditolak");
       expect(html).toContain("talent pool");
     });
   });

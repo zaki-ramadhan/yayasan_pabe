@@ -601,3 +601,31 @@ export function validateWebUrl(urlInput, options = {}) {
   }
 }
 
+/**
+ * Validasi tautan atau path berkas CV / Resume (Mendukung berkas unggahan internal /api/media/ maupun URL web eksternal).
+ *
+ * @param {string} resumeInput
+ * @returns {{ isValid: boolean, normalizedUrl: string, message: string }}
+ */
+export function validateResumeUrl(resumeInput) {
+  if (!resumeInput || typeof resumeInput !== "string") {
+    return { isValid: false, normalizedUrl: "", message: "Berkas CV / resume tidak boleh kosong." };
+  }
+
+  const trimmed = resumeInput.trim();
+  if (!trimmed) {
+    return { isValid: false, normalizedUrl: "", message: "Berkas CV / resume tidak boleh kosong." };
+  }
+
+  // Internal upload path
+  if (trimmed.startsWith("/api/media/") || trimmed.startsWith("/")) {
+    if (/\s/.test(trimmed)) {
+      return { isValid: false, normalizedUrl: "", message: "Path berkas CV tidak boleh mengandung spasi." };
+    }
+    return { isValid: true, normalizedUrl: trimmed, message: "" };
+  }
+
+  // External web URL
+  return validateWebUrl(trimmed);
+}
+

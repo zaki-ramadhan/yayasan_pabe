@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import {
   Table,
@@ -40,10 +41,21 @@ export function AdminCareerTable({ initialVacancies = [] }) {
   const [deletingId, setDeletingId] = useState(null);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const processedAppIdsRef = useRef(new Set());
   const PAGE_SIZE = 10;
+
+  useEffect(() => {
+    if (Array.isArray(initialVacancies)) {
+      setVacancies(initialVacancies);
+    }
+  }, [initialVacancies]);
 
   useAdminLiveEvent("CAREER_APPLICATION", (payload) => {
     if (!payload?.position) return;
+    if (payload.id) {
+      if (processedAppIdsRef.current.has(payload.id)) return;
+      processedAppIdsRef.current.add(payload.id);
+    }
     setVacancies((prev) =>
       prev.map((v) => {
         const isMatch =
@@ -56,6 +68,24 @@ export function AdminCareerTable({ initialVacancies = [] }) {
       })
     );
     toast.info(`Berkas lamaran baru untuk ${payload.position}: ${payload.fullName}`);
+  });
+
+  useAdminLiveEvent("CAREER_APPLICATION_CANCELLED", (payload) => {
+    if (!payload?.position) return;
+    if (payload.id) {
+      processedAppIdsRef.current.delete(payload.id);
+    }
+    setVacancies((prev) =>
+      prev.map((v) => {
+        const isMatch =
+          (payload.vacancyId && (v.dbId === payload.vacancyId || v.id === payload.vacancyId)) ||
+          v.title.toLowerCase() === payload.position.toLowerCase();
+        if (isMatch) {
+          return { ...v, applicantCount: Math.max(0, (v.applicantCount || 0) - 1) };
+        }
+        return v;
+      })
+    );
   });
 
   const debouncedSearch = useDebounce(search.trim(), 300);
@@ -212,6 +242,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
         onRefresh={refreshList}
         onOpenAdd={handleOpenAdd}
         isLoading={isLoading}
+        isSearching={Boolean(search && search !== debouncedSearch)}
       />
 
       <TableSelectionBar

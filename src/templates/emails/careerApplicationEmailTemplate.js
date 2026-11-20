@@ -24,7 +24,7 @@ export function buildCareerApplicationEmailHtml({
     { label: "Nama Pelamar", value: `<span style="text-transform: uppercase;">${safeName}</span>` },
     { label: "Posisi Dilamar", value: safePosition },
     { label: "Departemen", value: safeDept },
-    { label: "Status Berkas", value: "Berkas Diterima (REVIEWING)", isHighlight: true },
+    { label: "Status Berkas", value: "Menunggu Peninjauan (REVIEWING)", isHighlight: true },
   ];
 
   const contentHtml = `

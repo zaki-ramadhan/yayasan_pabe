@@ -36,9 +36,8 @@ export default function KarierLoading() {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <Skeleton className="h-5 w-44 rounded" />
-                    {i === 1 && <Skeleton className="h-5 w-12 rounded-full" />}
+                    {i === 1 && <Skeleton className="h-4 w-20 rounded" />}
                   </div>
-                  <Skeleton className="h-4 w-32 rounded" />
 
                   <div className="flex items-center gap-3 mt-2">
                     <Skeleton className="h-3.5 w-24 rounded" />
@@ -50,9 +49,9 @@ export default function KarierLoading() {
                     <Skeleton className="h-3.5 w-3/4 rounded" />
                   </div>
 
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                    <Skeleton className="h-3 w-20 rounded" />
-                    <Skeleton className="h-3 w-24 rounded" />
+                  <div className="mt-3 pt-2.5 border-t border-dashed border-slate-200 flex items-center justify-between">
+                    <Skeleton className="h-3.5 w-24 rounded" />
+                    <Skeleton className="h-3.5 w-28 rounded" />
                   </div>
                 </div>
               ))}
@@ -72,7 +71,9 @@ export default function KarierLoading() {
               <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 pt-0.5">
                 <Skeleton className="h-4 w-24 rounded" />
                 <Skeleton className="h-4 w-20 rounded" />
+                <Skeleton className="h-4 w-20 rounded" />
                 <Skeleton className="h-4 w-28 rounded" />
+                <Skeleton className="h-4 w-24 rounded" />
                 <Skeleton className="h-4 w-36 rounded" />
               </div>
             </div>
@@ -104,12 +105,16 @@ export default function KarierLoading() {
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="space-y-1">
-                <Skeleton className="h-5 w-48 rounded" />
-                <Skeleton className="h-4 w-56 rounded" />
+            <div className="pt-3.5 border-t border-slate-200">
+              <div className="rounded-xl border border-slate-800 bg-slate-950 p-4.5 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-3.5 w-28 bg-slate-800 rounded" />
+                  <Skeleton className="h-5 sm:h-6 w-52 bg-slate-800 rounded" />
+                  <Skeleton className="h-4 w-64 max-w-sm bg-slate-800 rounded" />
+                  <Skeleton className="h-3.5 w-36 bg-slate-800 rounded mt-1" />
+                </div>
+                <Skeleton className="h-8.5 w-32 bg-slate-800 rounded-md shrink-0" />
               </div>
-              <Skeleton className="h-10 w-36 rounded-md shrink-0" />
             </div>
           </div>
         </div>

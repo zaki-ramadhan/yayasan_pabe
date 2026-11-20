@@ -41,9 +41,8 @@ export function AdminApplicantDrawer({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl h-[85vh] p-0 overflow-hidden flex flex-col bg-white border border-slate-200">
         <DialogHeader className="border-b border-slate-100">
-          <DialogTitle className="text-base sm:text-lg font-medium text-slate-950">
-            Daftar pelamar: {vacancy?.title || "Lowongan"}{" "}
-            {totalCount > 0 ? `(${applications.length} dari ${totalCount})` : ""}
+          <DialogTitle className="text-base sm:text-lg font-semibold text-slate-950 truncate">
+            Daftar Pelamar: {vacancy?.title || "Lowongan"}
           </DialogTitle>
         </DialogHeader>
 
@@ -52,6 +51,10 @@ export function AdminApplicantDrawer({
           onStatusFilterChange={handleStatusFilterChange}
           sortBy={sortBy}
           onSortChange={handleSortChange}
+          department={vacancy?.department}
+          quota={vacancy?.quota}
+          currentCount={applications.length}
+          totalCount={totalCount}
         />
 
         <div className="flex-1 min-h-0 overflow-y-auto px-5 sm:px-6 divide-y divide-slate-100">
@@ -71,7 +74,9 @@ export function AdminApplicantDrawer({
             ))
           ) : (
             <div className="h-full min-h-[300px] flex items-center justify-center text-sm text-slate-500 font-normal">
-              {statusFilter !== "ALL"
+              {statusFilter === "NEED_REVIEW"
+                ? "Semua berkas sudah diproses (tidak ada yang perlu ditinjau)."
+                : statusFilter !== "ALL"
                 ? "Pelamar tidak ditemukan."
                 : "Belum ada lamaran masuk."}
             </div>

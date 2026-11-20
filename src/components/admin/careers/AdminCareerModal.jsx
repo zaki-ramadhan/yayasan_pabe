@@ -41,6 +41,7 @@ export function AdminCareerModal({
 	const [workplace, setWorkplace] = useState("Kerja di lokasi");
 	const [experience, setExperience] =
 		useState("1 - 3 tahun");
+	const [quota, setQuota] = useState(1);
 	const [deadline, setDeadline] = useState("");
 	const [overview, setOverview] = useState("");
 	const [
@@ -134,6 +135,7 @@ export function AdminCareerModal({
 				vacancyToEdit.experience ||
 					"1 - 3 tahun",
 			);
+			setQuota(vacancyToEdit.quota ? Number(vacancyToEdit.quota) : 1);
 			setDeadline(
 				vacancyToEdit.deadline || "",
 			);
@@ -192,6 +194,7 @@ export function AdminCareerModal({
 			setExperience(
 				"1 - 3 tahun",
 			);
+			setQuota(1);
 			setDeadline("");
 			setOverview(
 				"",
@@ -315,6 +318,7 @@ export function AdminCareerModal({
 								type: effectiveType,
 								workplace,
 								experience,
+								quota: !isNaN(parseInt(quota, 10)) && parseInt(quota, 10) >= 1 ? Math.min(parseInt(quota, 10), 999) : 1,
 								deadline,
 								overview,
 								responsibilities,
@@ -392,6 +396,7 @@ export function AdminCareerModal({
 				contractDuration: initialDuration,
 				workplace: formatWorkplace(vacancyToEdit.workplace || "Kerja di lokasi"),
 				experience: vacancyToEdit.experience || "1 - 3 tahun",
+				quota: vacancyToEdit.quota ? Number(vacancyToEdit.quota) : 1,
 				deadline: vacancyToEdit.deadline || "",
 				overview: vacancyToEdit.overview || "",
 				responsibilities: initialResponsibilities,
@@ -406,6 +411,7 @@ export function AdminCareerModal({
 				contractDuration,
 				workplace,
 				experience,
+				quota: Number(quota) || 1,
 				deadline,
 				overview,
 				responsibilities: responsibilitiesText,
@@ -423,6 +429,7 @@ export function AdminCareerModal({
 		contractDuration,
 		workplace,
 		experience,
+		quota,
 		deadline,
 		overview,
 		responsibilitiesText,
@@ -475,6 +482,8 @@ export function AdminCareerModal({
 				onCreateLocation={handleCreateLocation}
 				experience={experience}
 				onExperienceChange={setExperience}
+				quota={quota}
+				onQuotaChange={setQuota}
 				deadline={deadline}
 				onDeadlineChange={setDeadline}
 				isActive={isActive}
