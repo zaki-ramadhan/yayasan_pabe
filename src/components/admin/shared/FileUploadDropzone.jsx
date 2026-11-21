@@ -1,7 +1,6 @@
 "use client";
 
-import { CloudUploadIcon as UploadCloud } from "@solar-icons/react/line-duotone/cloud-upload";
-import { DocumentAddIcon as FileCheck } from "@solar-icons/react/line-duotone/document-add";
+import { UploadMinimalisticIcon as UploadMinimalistic } from "@solar-icons/react/line-duotone/upload-minimalistic";
 import { DangerIcon as AlertOctagon } from "@solar-icons/react/line-duotone/danger";
 import { cn } from "@/lib/utils";
 import { UploadProgressBar } from "@/components/ui/UploadProgressBar";
@@ -95,13 +94,9 @@ export function FileUploadDropzone({
         />
       ) : (
         <div className="flex flex-col items-center">
-          {isPdf ? (
-            <FileCheck className="w-8 h-8 text-slate-400 mb-2" />
-          ) : (
-            <UploadCloud className="w-8 h-8 text-slate-400 mb-2" />
-          )}
+          <UploadMinimalistic className="w-8 h-8 text-slate-400 mb-3" />
 
-          <p className="text-sm font-medium text-slate-700">
+          <p className="text-base font-medium text-slate-800">
             {multiple
               ? hasFiles
                 ? "Klik atau seret untuk menambah berkas lagi"
@@ -112,7 +107,7 @@ export function FileUploadDropzone({
           </p>
 
           {helperText && (
-            <p className="text-xs text-slate-500 mt-1 max-w-sm leading-relaxed">
+            <p className="text-xs text-slate-500 mt-1 max-w-sm leading-normal">
               {renderResponsiveHelperText(helperText)}
             </p>
           )}

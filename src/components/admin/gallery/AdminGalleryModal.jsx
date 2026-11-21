@@ -178,7 +178,7 @@ export function AdminGalleryModal({
               setUploadProgressText(
                 percent < 100
                   ? `Mengunggah ${mediaLabel} ${i + 1} dari ${total} (${percent}%)...`
-                  : `Memproses ${mediaLabel} ${i + 1} dari ${total}...`
+                  : `Menyiapkan ${mediaLabel} ${i + 1} dari ${total}...`
               );
             },
           });
@@ -190,7 +190,7 @@ export function AdminGalleryModal({
           uploadedUrls.push(cleanYt);
         }
 
-        setUploadProgressText("Menyimpan ke basis data...");
+        setUploadProgressText("Menyimpan dokumentasi galeri...");
 
         const batchPayload = {
           items: uploadedUrls.map((url) => ({
@@ -323,8 +323,8 @@ export function AdminGalleryModal({
         required={!isEditing && !hasValidYoutube}
         helperText={
           isEditing
-            ? "Mendukung JPG, PNG, WebP (Maks. 10MB) • Bisa Ctrl + V. Otomatis dikonversi ke WebP."
-            : "JPG, PNG, WebP (Maks. 10MB) • Video MP4/WebM (Maks. 1 video, 25MB, 60 dtk) • Bisa Ctrl + V"
+            ? "Mendukung JPG, PNG, WebP (Maks. 10MB), bisa Ctrl + V. Otomatis dikonversi ke WebP."
+            : "Mendukung JPG, PNG, WebP (Maks. 10MB) atau Video MP4/WebM (Maks. 1 video, 25MB, 60 dtk), bisa Ctrl + V."
         }
         isUploading={isSubmitting}
         uploadProgressText={uploadProgressText}

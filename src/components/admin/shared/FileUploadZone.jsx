@@ -119,34 +119,41 @@ export function FileUploadZone({
 
       <div className={error ? "rounded-lg ring-1 ring-rose-500/80 p-0.5" : ""}>
         {isManualUrl && !multiple ? (
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              minLength={FIELD_LIMITS.AVATAR_URL.min}
-              maxLength={FIELD_LIMITS.AVATAR_URL.max}
-              placeholder={
-                isPdf
-                  ? "https://... atau /documents/laporan-audit.pdf"
-                  : "https://... atau /img/..."
-              }
-              value={manualInput}
-              onChange={(e) => setManualInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleApplyManual();
+          <div className="space-y-1.5">
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                minLength={FIELD_LIMITS.AVATAR_URL.min}
+                maxLength={FIELD_LIMITS.AVATAR_URL.max}
+                placeholder={
+                  isPdf
+                    ? "https://... atau /documents/laporan-audit.pdf"
+                    : "https://... atau /img/..."
                 }
-              }}
-              className="h-10 text-sm bg-white"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleApplyManual}
-              className="h-10 px-4 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
-            >
-              Terapkan
-            </Button>
+                value={manualInput}
+                onChange={(e) => setManualInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleApplyManual();
+                  }
+                }}
+                className="h-10 text-sm bg-white"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleApplyManual}
+                className="h-10 px-4 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer shrink-0"
+              >
+                Terapkan
+              </Button>
+            </div>
+            <p className="text-xs text-slate-500 font-normal">
+              {isPdf
+                ? "Gunakan tautan langsung ke berkas dokumen PDF publik (.pdf). Tautan halaman web tidak didukung."
+                : "Gunakan tautan langsung ke berkas gambar (.jpg, .png, .webp) atau Unsplash. Tautan halaman web atau Google Drive tidak didukung."}
+            </p>
           </div>
         ) : !multiple && value ? (
           <FileUploadPreview

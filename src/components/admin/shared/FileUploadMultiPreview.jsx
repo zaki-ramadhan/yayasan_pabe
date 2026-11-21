@@ -4,7 +4,6 @@ import Image from "next/image";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { formatBytes } from "@/lib/formatters";
 import { getFileIconAsset, isDocumentFile } from "@/lib/fileIconHelper";
 
@@ -43,11 +42,11 @@ export function FileUploadMultiPreview({
         )}
       </div>
 
-      <div className="flex flex-col gap-2.5 max-h-[300px] overflow-y-auto pr-1">
+      <div className="flex flex-col max-h-[300px] overflow-y-auto divide-y divide-slate-100 pr-1">
         {files.map((item, idx) => (
           <div
             key={item.id || idx}
-            className="flex items-center gap-3.5 p-2.5 rounded-xl border border-slate-200 bg-white shadow-2xs hover:border-slate-300 transition-colors"
+            className="flex items-center gap-3.5 py-2.5 transition-colors"
           >
             {isDocumentFile(item.name || item.previewUrl) ? (
               <Image
@@ -109,23 +108,24 @@ export function FileUploadMultiPreview({
             )}
 
             <div className="flex-1 min-w-0 pr-1">
-              <p className="text-sm font-medium text-slate-800 truncate">
+              <p className="text-sm font-medium text-slate-900 truncate">
                 {item.name}
               </p>
-              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                <Badge variant="secondary">
-                  {formatBytes(item.size)}
-                </Badge>
-                {item.isVideo ? (
-                  <Badge variant="warning">
-                    {item.durationFormatted ? `Video (${item.durationFormatted})` : "Video sorotan"}
-                  </Badge>
-                ) : (
-                  <Badge variant="success">
-                    Foto siap diunggah
-                  </Badge>
-                )}
-              </div>
+              <p className="text-xs text-slate-500 font-normal mt-0.5">
+                {item.isVideo
+                  ? item.size > 0 && item.durationFormatted
+                    ? `${formatBytes(item.size)} (${item.durationFormatted})`
+                    : item.size > 0
+                      ? formatBytes(item.size)
+                      : item.durationFormatted
+                        ? `Video (${item.durationFormatted})`
+                        : "Video"
+                  : item.size > 0
+                    ? formatBytes(item.size)
+                    : isDocumentFile(item.name || item.previewUrl)
+                      ? "Dokumen"
+                      : "Foto"}
+              </p>
             </div>
 
             {!isUploading && onRemoveFile && (

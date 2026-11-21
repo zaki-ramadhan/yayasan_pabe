@@ -106,7 +106,7 @@ export function useFileUploadZone({
     if (!fileList || fileList.length === 0) return;
 
     setInternalIsUploading(true);
-    setInternalProgressText("Membaca dan memvalidasi berkas...");
+    setInternalProgressText("Memeriksa berkas...");
 
     try {
       const validFiles = [];
@@ -152,7 +152,7 @@ export function useFileUploadZone({
             continue;
           }
 
-          setInternalProgressText(`Menganalisis durasi dan pratinjau video (${file.name})...`);
+          setInternalProgressText(`Memeriksa video (${file.name})...`);
           const meta = await extractVideoMetadata(file);
 
           if (meta.duration > MAX_VIDEO_DURATION_SECONDS) {
@@ -291,6 +291,7 @@ export function useFileUploadZone({
         setUploadMeta({
           savingsPercent: data.savingsPercent || 0,
           sizeKb: Math.round((data.size || 0) / 1024),
+          size: data.size || 0,
           mimeType: data.mimeType,
         });
         if (onUploadSuccess) onUploadSuccess(data.url);
@@ -300,8 +301,6 @@ export function useFileUploadZone({
           title: "Berhasil diunggah",
           description: isPdf
             ? "Dokumen PDF berhasil disimpan."
-            : data.savingsPercent
-            ? `Berkas berhasil dioptimasi (hemat ${data.savingsPercent}%).`
             : "Berkas berhasil disimpan.",
         });
       }
@@ -466,6 +465,42 @@ export function useFileUploadZone({
         variant: "warning",
         title: "Tautan tidak boleh kosong",
         description: "Silakan masukkan alamat tautan yang valid.",
+      });
+      return;
+    }
+
+    if (clean.includes("drive.google.com")) {
+      toast({
+        variant: "warning",
+        title: "Tautan Google Drive tidak didukung",
+        description: "Google Drive bukan berkas langsung. Silakan unduh dan unggah langsung berkasnya.",
+      });
+      return;
+    }
+
+    if (!isPdf && (clean.includes("youtube.com") || clean.includes("youtu.be"))) {
+      toast({
+        variant: "warning",
+        title: "Tautan YouTube bukan berkas gambar",
+        description: "Untuk video YouTube, gunakan kolom khusus tautan video YouTube.",
+      });
+      return;
+    }
+
+    if (!clean.startsWith("http://") && !clean.startsWith("https://") && !clean.startsWith("/") && !clean.startsWith("data:")) {
+      toast({
+        variant: "warning",
+        title: "Format tautan tidak valid",
+        description: "Tautan harus diawali dengan http://, https://, atau jalur direktori lokal /",
+      });
+      return;
+    }
+
+    if (isPdf && !clean.toLowerCase().includes(".pdf") && !clean.startsWith("/")) {
+      toast({
+        variant: "warning",
+        title: "Bukan tautan dokumen PDF",
+        description: "Pastikan tautan mengarah langsung ke berkas dokumen berformat .pdf",
       });
       return;
     }

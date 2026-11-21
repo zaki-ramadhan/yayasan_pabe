@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { DocumentTextIcon as FileText } from "@solar-icons/react/line-duotone/document-text";
+import { UploadMinimalisticIcon as UploadMinimalistic } from "@solar-icons/react/line-duotone/upload-minimalistic";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { uploadFileToServer, deleteFileFromServer } from "@/services/uploadService";
 import { formatBytes } from "@/lib/formatters";
@@ -157,7 +157,7 @@ export function CareerResumeUpload({
         />
 
         {isUploaded ? (
-          <div className="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-white shadow-2xs">
+          <div className="flex items-center justify-between py-1">
             <div className="flex items-center gap-3.5 min-w-0 pr-3">
               <Image
                 src={getFileIconAsset(displayFileName || value || "resume.pdf", "pdf")}
@@ -168,10 +168,10 @@ export function CareerResumeUpload({
               />
               <div className="min-w-0">
                 <p className="text-sm font-medium text-slate-900 truncate">
-                  {displayFileName || "Berkas CV terlampir (PDF)"}
+                  {displayFileName || "Berkas resume terlampir"}
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  {displayFileSize > 0 ? formatBytes(displayFileSize) : "Dokumen PDF"}
+                  {displayFileSize > 0 ? formatBytes(displayFileSize) : "Dokumen"}
                 </p>
               </div>
             </div>
@@ -220,9 +220,9 @@ export function CareerResumeUpload({
               />
             ) : (
               <div className="flex flex-col items-center">
-                <FileText className="w-8 h-8 text-slate-400 mb-2" />
-                <p className="text-sm font-medium text-slate-700">
-                  <span className="text-slate-800 font-semibold underline underline-offset-2">
+                <UploadMinimalistic className="w-8 h-8 text-slate-400 mb-3" />
+                <p className="text-base font-medium text-slate-800">
+                  <span className="text-slate-900 underline underline-offset-2">
                     Pilih berkas PDF
                   </span>{" "}
                   atau seret ke sini

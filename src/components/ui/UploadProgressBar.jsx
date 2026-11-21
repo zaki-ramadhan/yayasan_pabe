@@ -23,7 +23,7 @@ export function UploadProgressBar({
   progress = 0,
   isUploading = true,
   uploadText = "",
-  processingText = "Memproses & mengoptimasi berkas...",
+  processingText = "Menyiapkan berkas...",
   isPdf = false,
   onCancel,
   theme = "emerald",
@@ -100,7 +100,7 @@ export function UploadProgressBar({
         <button
           type="button"
           onClick={onCancel}
-          className="mt-2.5 inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-sm font-medium text-slate-500 hover:text-rose-600 hover:bg-rose-50/60 transition-colors cursor-pointer"
+          className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-rose-600 text-white hover:bg-rose-700 transition-colors cursor-pointer shadow-2xs active:scale-95"
           aria-label="Batalkan proses unggah berkas"
         >
           <CloseIcon className="w-3.5 h-3.5" />

@@ -68,7 +68,10 @@ export function AdminGalleryMetadataFields({
       </div>
 
       {setYoutubeUrl && (
-        <FormField label="Tautan video YouTube (opsional)">
+        <FormField
+          label="Tautan video YouTube (opsional)"
+          helperText="Khusus tautan video publik YouTube untuk dokumentasi kegiatan berdurasi panjang."
+        >
           <Input
             type="url"
             inputMode="url"

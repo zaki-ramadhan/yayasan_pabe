@@ -368,7 +368,7 @@ export function AdminArticleModal({
 				identifier={title}
 				onUploadSuccess={trackUpload}
 				label="Foto sampul / banner artikel"
-				helperText="Mendukung JPG, PNG, WebP (Maks. 10MB) • Bisa Ctrl + V. Otomatis dikonversi ke WebP."
+				helperText="Mendukung JPG, PNG, WebP (Maks. 10MB), bisa Ctrl + V. Otomatis dikonversi ke WebP."
 			/>
 
 			<FormField label="Ringkasan singkat">

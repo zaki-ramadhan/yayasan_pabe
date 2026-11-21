@@ -29,7 +29,7 @@ export function CareerApplyFormFields({
       <FormField label="Posisi yang dilamar">
         <Input
           type="text"
-          value={`${job.title} • ${job.location}`}
+          value={`${job.title} (${job.location})`}
           isLocked
           lockedNotice="Posisi lowongan telah disesuaikan dengan pilihan Anda."
           className="h-10 text-sm font-normal"

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
 import { Pen2Icon as Edit2 } from "@solar-icons/react/line-duotone/pen-2";
 import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
 import { ImageFallback } from "@/components/ui/ImageFallback";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { formatBytes } from "@/lib/formatters";
 import { isVideoUrl } from "@/lib/galleryGroupHelper";
 import { getFileIconAsset, isDocumentFile } from "@/lib/fileIconHelper";
 
@@ -26,6 +26,7 @@ export function FileUploadPreview({
   onRemove,
 }) {
   const [failedSrc, setFailedSrc] = useState(null);
+  const [remoteSize, setRemoteSize] = useState(null);
   const activeSrc = previewSrc || value;
 
   // Otomatis arahkan domain *.r2.dev ke proxy internal /api/media/... jika diblokir oleh ISP Indonesia
@@ -33,6 +34,30 @@ export function FileUploadPreview({
     typeof activeSrc === "string" && activeSrc.includes(".r2.dev/")
       ? `/api/media/${activeSrc.split(".r2.dev/")[1]}`
       : activeSrc;
+
+  useEffect(() => {
+    if (!resolvedSrc || typeof resolvedSrc !== "string" || value instanceof File || uploadMeta?.size || uploadMeta?.sizeKb) {
+      setRemoteSize(null);
+      return;
+    }
+    let isMounted = true;
+    const controller = new AbortController();
+
+    fetch(resolvedSrc, { method: "HEAD", signal: controller.signal })
+      .then((res) => {
+        const cl = res.headers.get("content-length");
+        if (cl && isMounted) {
+          const bytes = parseInt(cl, 10);
+          if (bytes > 0) setRemoteSize(bytes);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [resolvedSrc, value, uploadMeta]);
 
   const isError = Boolean(failedSrc && failedSrc === resolvedSrc);
   const isVideo = Boolean(typeof resolvedSrc === "string" && isVideoUrl(resolvedSrc));
@@ -56,8 +81,25 @@ export function FileUploadPreview({
 
   const isDoc = isPdf || isDocumentFile(fileName || resolvedSrc);
 
+  let fileSizeText = "";
+  if (value instanceof File && value.size) {
+    fileSizeText = formatBytes(value.size);
+  } else if (uploadMeta?.size) {
+    fileSizeText = formatBytes(uploadMeta.size);
+  } else if (uploadMeta?.sizeKb) {
+    fileSizeText = formatBytes(uploadMeta.sizeKb * 1024);
+  } else if (remoteSize) {
+    fileSizeText = formatBytes(remoteSize);
+  } else if (isVideo) {
+    fileSizeText = "Video";
+  } else if (isDoc) {
+    fileSizeText = "Dokumen";
+  } else {
+    fileSizeText = "Foto";
+  }
+
   return (
-    <div className="flex items-center gap-3.5 p-3 rounded-xl border border-slate-200 bg-white shadow-2xs">
+    <div className="flex items-center gap-3.5 py-1">
       {!isDoc ? (
         <div
           className={
@@ -119,33 +161,12 @@ export function FileUploadPreview({
       )}
 
       <div className="flex-1 min-w-0 pr-1">
-        <p className="text-sm font-normal text-slate-800 truncate">
+        <p className="text-sm font-medium text-slate-900 truncate">
           {fileName}
         </p>
-        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-          {isVideo ? (
-            <Badge variant="warning">
-              Video dokumentasi
-            </Badge>
-          ) : value instanceof File ? (
-            <Badge variant="secondary">
-              Siap disimpan
-            </Badge>
-          ) : typeof value === "string" && (value.includes(".r2.dev") || value.includes("r2.cloudflarestorage.com") || value.startsWith("/api/media/")) ? (
-            <Badge variant="success">
-              Tersimpan
-            </Badge>
-          ) : (
-            <Badge variant="secondary">
-              Tautan gambar eksternal
-            </Badge>
-          )}
-          {(uploadMeta?.sizeKb || value instanceof File) && (
-            <span className="text-xs text-slate-500 font-normal">
-              {uploadMeta?.sizeKb || Math.round((value.size || 0) / 1024)} KB
-            </span>
-          )}
-        </div>
+        <p className="text-xs text-slate-500 font-normal mt-0.5">
+          {fileSizeText}
+        </p>
       </div>
 
       <div className="flex items-center gap-1 shrink-0">
