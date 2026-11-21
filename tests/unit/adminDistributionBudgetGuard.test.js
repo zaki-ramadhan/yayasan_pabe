@@ -89,7 +89,7 @@ describe("Campaign Disbursement Budget Guard & Validation", () => {
     it("menolak penyaluran saat sisa saldo program Rp 0", () => {
       const check = validateDisbursementAmount(100000, 0);
       expect(check.isValid).toBe(false);
-      expect(check.error).toContain("Program ini belum memiliki saldo donasi terkumpul untuk disalurkan.");
+      expect(check.error).toContain("Program ini belum memiliki dana donasi terkumpul untuk disalurkan.");
     });
 
     it("menolak nominal yang melampaui sisa saldo yang tersedia", () => {

@@ -35,7 +35,7 @@ export function FinancialLedgerDashboard({
             Dashboard Transparansi Keuangan
           </h1>
           <p className="text-sm sm:text-base text-slate-600 font-normal">
-            Ringkasan laporan keseluruhan donasi masuk, penyaluran program amanah, dan saldo kas yayasan.
+            Ringkasan laporan keseluruhan donasi masuk, penyaluran program amanah, dan dana kas yayasan.
           </p>
         </div>
       )}

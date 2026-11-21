@@ -61,7 +61,7 @@ export function validateDisbursementAmount(requestedAmount, remainingBudget) {
   if (budget <= 0) {
     return {
       isValid: false,
-      error: "Program ini belum memiliki saldo donasi terkumpul untuk disalurkan.",
+      error: "Program ini belum memiliki dana donasi terkumpul untuk disalurkan.",
     };
   }
 

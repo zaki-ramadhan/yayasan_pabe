@@ -24,7 +24,7 @@ function ExistingMediaCard({ mediaUrl, index, isUploading, onRemove }) {
       : mediaUrl;
 
   return (
-    <div className="group relative aspect-video rounded-lg overflow-hidden border border-slate-200 bg-slate-900 shadow-2xs">
+    <div className="group relative aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-900 shadow-2xs">
       {isYt && ytThumb ? (
         /* eslint-disable-next-line @next/next/no-img-element */
         <img
@@ -37,7 +37,7 @@ function ExistingMediaCard({ mediaUrl, index, isUploading, onRemove }) {
         <SafeImage
           src={getVideoPosterUrl(mediaUrl)}
           alt={`Dokumentasi tersimpan ${index + 1}`}
-          sizes="160px"
+          sizes="240px"
         />
       ) : hasError ? (
         <ImageFallback alt={`Dokumentasi tersimpan ${index + 1}`} />
@@ -51,31 +51,31 @@ function ExistingMediaCard({ mediaUrl, index, isUploading, onRemove }) {
         />
       )}
 
-      <div className="absolute left-1.5 bottom-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-3xs font-medium pointer-events-none">
-        {isYt ? (
-          <>
-            <YouTubeIcon className="w-3.5 h-3.5 text-red-500 shrink-0" />
-            <span>YouTube</span>
-          </>
-        ) : isVid ? (
-          <>
-            <Video className="w-3 h-3 text-emerald-400" />
-            <span>Video</span>
-          </>
-        ) : (
-          <span>Foto</span>
-        )}
-      </div>
+      {(isYt || isVid) && (
+        <div className="absolute left-2 bottom-2 flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-black/65 backdrop-blur-xs text-white text-3xs font-medium pointer-events-none">
+          {isYt ? (
+            <>
+              <YouTubeIcon className="w-3.5 h-3.5 text-red-500 shrink-0" />
+              <span>YouTube</span>
+            </>
+          ) : (
+            <>
+              <Video className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Video</span>
+            </>
+          )}
+        </div>
+      )}
 
       {!isUploading && onRemove && (
         <button
           type="button"
           onClick={() => onRemove(index)}
-          className="absolute top-1.5 right-1.5 p-1 rounded-md bg-black/70 text-white/90 hover:bg-rose-600 hover:text-white transition-colors cursor-pointer"
+          className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/70 hover:bg-rose-600 text-white transition-all cursor-pointer shadow-xs active:scale-95"
           title="Hapus media ini"
           aria-label="Hapus media"
         >
-          <Trash2 className="w-3.5 h-3.5" />
+          <Trash2 className="w-4 h-4" />
         </button>
       )}
     </div>
@@ -100,15 +100,12 @@ export function AdminDistributionMediaFields({
   return (
     <div className="space-y-4 pt-1">
       {existingMedia.length > 0 && (
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-medium text-slate-800 block select-none">
-              Media dokumentasi tersimpan ({existingMedia.length} berkas)
-            </span>
-            <span className="text-slate-500 text-xs">Klik ikon tong sampah untuk melepas</span>
-          </div>
+        <div className="space-y-2">
+          <span className="text-sm font-medium text-slate-800 block select-none">
+            Media dokumentasi tersimpan ({existingMedia.length} berkas)
+          </span>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-h-[220px] overflow-y-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[260px] overflow-y-auto pr-0.5">
             {existingMedia.map((mediaUrl, index) => (
               <ExistingMediaCard
                 key={`${mediaUrl}-${index}`}
@@ -134,7 +131,10 @@ export function AdminDistributionMediaFields({
         error={error}
       />
 
-      <FormField label="Tautan video YouTube (opsional)">
+      <FormField
+        label="Tautan video YouTube (opsional)"
+        helperText="Khusus tautan video publik YouTube untuk dokumentasi penyaluran berdurasi panjang."
+      >
         <Input
           type="url"
           inputMode="url"

@@ -24,6 +24,7 @@ export function AdminDistributionBudgetInfo({
   inputAmount = 0,
   isEditing = false,
   initialDisbursedAmount = 0,
+  onAdjustAmount,
 }) {
   const budget = useMemo(() => {
     if (!campaign) return null;
@@ -68,8 +69,8 @@ export function AdminDistributionBudgetInfo({
           {hasZeroCollected
             ? "Belum ada dana"
             : isOverBudget
-            ? "Melebihi saldo"
-            : "Saldo aman"}
+            ? "Melebihi dana"
+            : "Dana cukup"}
         </Badge>
       </div>
 
@@ -101,7 +102,7 @@ export function AdminDistributionBudgetInfo({
           )}
         >
           <span className="text-sm text-slate-700 block font-normal leading-none mb-1">
-            Sisa Saldo Tersedia
+            Sisa Dana Tersedia
           </span>
           <span
             className={cn(
@@ -132,14 +133,23 @@ export function AdminDistributionBudgetInfo({
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" aria-hidden="true" />
         )}
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-1">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-1.5">
           <span>
             {hasZeroCollected
               ? "Program donasi ini belum memiliki donasi masuk yang terverifikasi."
               : isOverBudget
-              ? `Pengajuan melebihi saldo aman sebesar ${formatRupiah(requested - remainingBudget)}.`
+              ? `Pengajuan melebihi dana tersedia sebesar ${formatRupiah(requested - remainingBudget)}.`
               : `Batas maksimal alokasi untuk kegiatan ini adalah ${formatRupiah(remainingBudget)}.`}
           </span>
+          {isOverBudget && remainingBudget > 0 && onAdjustAmount && (
+            <button
+              type="button"
+              onClick={() => onAdjustAmount(remainingBudget)}
+              className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-rose-600 text-white hover:bg-rose-700 transition-colors cursor-pointer shrink-0 shadow-2xs sm:ml-auto"
+            >
+              Sesuaikan
+            </button>
+          )}
           {!isOverBudget && requested > 0 && (
             <span className="text-sm text-emerald-700 whitespace-nowrap">
               Estimasi sisa: {formatRupiah(simulatedRemaining)}

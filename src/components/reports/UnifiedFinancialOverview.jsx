@@ -77,7 +77,7 @@ export function UnifiedFinancialOverview({
             subtext="Dana tersalurkan ke program"
           />
           <MetricCell
-            label="Saldo Kas Terkini"
+            label="Dana Kas Terkini"
             value={formatRupiah(netBalance)}
             subtext="Sisa kas siap salur"
           />

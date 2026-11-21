@@ -195,7 +195,7 @@ export function AdminDistributionModal({
 						setUploadProgressText(
 							percent < 100
 								? `Mengunggah ${mediaLabel} ${i + 1} dari ${total} (${percent}%)...`
-								: `Memproses ${mediaLabel} ${i + 1} dari ${total}...`
+								: `Menyiapkan ${mediaLabel} ${i + 1} dari ${total}...`
 						);
 					},
 				});
@@ -208,7 +208,7 @@ export function AdminDistributionModal({
 				...(cleanYt && isYouTubeUrl(cleanYt) ? [cleanYt] : []),
 			];
 
-			setUploadProgressText("Menyimpan ke basis data...");
+			setUploadProgressText("Menyimpan dokumentasi penyaluran...");
 
 			const url =
 				isEditing
@@ -412,6 +412,12 @@ export function AdminDistributionModal({
 					inputAmount={disbursedAmount}
 					isEditing={isEditing}
 					initialDisbursedAmount={distributionToEdit?.disbursedAmount}
+					onAdjustAmount={(amount) => {
+						setDisbursedAmount(amount);
+						if (errors.disbursedAmount) {
+							setErrors((prev) => ({ ...prev, disbursedAmount: "" }));
+						}
+					}}
 				/>
 			)}
 
