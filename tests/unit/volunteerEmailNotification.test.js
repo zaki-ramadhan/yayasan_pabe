@@ -72,6 +72,7 @@ describe("Volunteer Transactional Email & Approval System", () => {
         status: "PENDING",
       });
 
+      vi.spyOn(prisma.volunteer, "findFirst").mockResolvedValueOnce(null);
       vi.spyOn(prisma.user, "findFirst").mockResolvedValueOnce(null);
 
       const result = await registerVolunteer({
