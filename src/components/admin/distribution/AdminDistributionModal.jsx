@@ -3,16 +3,9 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
-import { FormField } from "@/components/ui/FormField";
-import { Input } from "@/components/ui/Input";
-import { AutoResizeTextarea } from "@/components/ui/AutoResizeTextarea";
-import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
-import { DatePicker } from "@/components/ui/DatePicker";
 import { isFormDirty } from "@/lib/formUtils";
-import { sanitizeStandardText } from "@/lib/sanitizer";
 import { uploadFileToServer } from "@/services/uploadService";
 import { isYouTubeUrl } from "@/lib/galleryGroupHelper";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
@@ -21,7 +14,7 @@ import {
 	validateDisbursementAmount,
 } from "@/lib/distributionConstants";
 import { AdminDistributionMediaFields } from "./AdminDistributionMediaFields";
-import { AdminDistributionBudgetInfo } from "./AdminDistributionBudgetInfo";
+import { AdminDistributionDetailFields } from "./AdminDistributionDetailFields";
 
 export function AdminDistributionModal({
 	isOpen,
@@ -365,152 +358,50 @@ export function AdminDistributionModal({
 			submittingText={uploadProgressText || "Menyimpan..."}
 			submitDisabled={!isFormValid || (isEditing && !isDirty)}
 		>
-			<FormField
-				label="Program donasi terkait"
-				required
-				error={errors.campaignId}
-			>
-				<CreatableCombobox
-					options={campaigns.map((c) => ({
-						value: c.id,
-						label: c.title,
-					}))}
-					value={campaignId}
-					onChange={(val) => {
-						setCampaignId(val);
-						if (errors.campaignId) {
-							setErrors((prev) => ({ ...prev, campaignId: "" }));
+			<AdminDistributionDetailFields
+				campaignOptions={campaigns.map((c) => ({
+					value: c.id,
+					label: c.title,
+				}))}
+				campaignId={campaignId}
+				setCampaignId={(val) => {
+					setCampaignId(val);
+					if (errors.campaignId) {
+						setErrors((prev) => ({ ...prev, campaignId: "" }));
+					}
+					if (disbursedAmount > 0) {
+						const newSelected = campaigns.find((c) => c.id === val) || null;
+						if (newSelected) {
+							const newBudget = calculateCampaignDisbursementBudget({
+								collectedAmount: newSelected.collectedAmount || 0,
+								totalDisbursed: newSelected.totalDisbursed || 0,
+								currentDisbursementAmount: isEditing
+									? Number(distributionToEdit?.disbursedAmount) || 0
+									: 0,
+							});
+							const check = validateDisbursementAmount(disbursedAmount, newBudget.remainingBudget);
+							setErrors((prev) => ({
+								...prev,
+								disbursedAmount: check.isValid ? "" : check.error,
+							}));
 						}
-						if (disbursedAmount > 0) {
-							const newSelected = campaigns.find((c) => c.id === val) || null;
-							if (newSelected) {
-								const newBudget = calculateCampaignDisbursementBudget({
-									collectedAmount: newSelected.collectedAmount || 0,
-									totalDisbursed: newSelected.totalDisbursed || 0,
-									currentDisbursementAmount: isEditing
-										? Number(distributionToEdit?.disbursedAmount) || 0
-										: 0,
-								});
-								const check = validateDisbursementAmount(disbursedAmount, newBudget.remainingBudget);
-								setErrors((prev) => ({
-									...prev,
-									disbursedAmount: check.isValid ? "" : check.error,
-								}));
-							}
-						}
-					}}
-					placeholder="Pilih program asal dana penyaluran..."
-					searchPlaceholder="Cari nama program..."
-					allowCreate={false}
-					className="bg-white"
-				/>
-			</FormField>
-
-			{selectedCampaign && (
-				<AdminDistributionBudgetInfo
-					campaign={selectedCampaign}
-					inputAmount={disbursedAmount}
-					isEditing={isEditing}
-					initialDisbursedAmount={distributionToEdit?.disbursedAmount}
-					onAdjustAmount={(amount) => {
-						setDisbursedAmount(amount);
-						if (errors.disbursedAmount) {
-							setErrors((prev) => ({ ...prev, disbursedAmount: "" }));
-						}
-					}}
-				/>
-			)}
-
-			<FormField
-				label="Judul kegiatan penyaluran"
-				required
-				error={errors.title}
-			>
-				<Input
-					type="text"
-					placeholder="Contoh: Penyerahan Santunan Sembako & Biaya Pendidikan Mustahik"
-					value={title}
-					minLength={FIELD_LIMITS.DISTRIBUTION_TITLE.min}
-					maxLength={FIELD_LIMITS.DISTRIBUTION_TITLE.max}
-					onChange={(e) => {
-						setTitle(sanitizeStandardText(e.target.value, FIELD_LIMITS.DISTRIBUTION_TITLE.max));
-						if (errors.title) {
-							setErrors((prev) => ({ ...prev, title: "" }));
-						}
-					}}
-					onBlur={() => setTitle(title.trim())}
-					className="h-10 text-sm font-normal"
-					required
-				/>
-			</FormField>
-
-			<div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-				<FormField
-					label="Nominal dana tersalurkan"
-					required
-					error={errors.disbursedAmount}
-				>
-					<CurrencyInput
-						value={disbursedAmount}
-						onChange={(val) => {
-							setDisbursedAmount(val);
-							if (val > 0 && currentCampaignBudget) {
-								const check = validateDisbursementAmount(val, currentCampaignBudget.remainingBudget);
-								setErrors((prev) => ({
-									...prev,
-									disbursedAmount: check.isValid ? "" : check.error,
-								}));
-							} else if (errors.disbursedAmount) {
-								setErrors((prev) => ({ ...prev, disbursedAmount: "" }));
-							}
-						}}
-						placeholder="0"
-						className="h-10 text-sm font-normal"
-						required
-					/>
-				</FormField>
-
-				<FormField
-					label="Tanggal penyaluran"
-					required
-					error={errors.date}
-				>
-					<DatePicker
-						value={date}
-						onChange={(val) => {
-							setDate(val);
-							if (errors.date) {
-								setErrors((prev) => ({ ...prev, date: "" }));
-							}
-						}}
-						placeholder="Pilih tanggal penyaluran..."
-					/>
-				</FormField>
-			</div>
-
-			<FormField
-				label="Deskripsi berita & rincian penyaluran"
-				required
-				error={errors.content}
-			>
-				<AutoResizeTextarea
-					minRows={4}
-					maxRows={15}
-					minLength={FIELD_LIMITS.DISTRIBUTION_DESCRIPTION.min}
-					maxLength={FIELD_LIMITS.DISTRIBUTION_DESCRIPTION.max}
-					placeholder="Rincian jumlah penerima manfaat, lokasi penyerahan, dan ucapan doa dari mustahik..."
-					value={content}
-					onChange={(e) => {
-						setContent(e.target.value);
-						if (errors.content) {
-							setErrors((prev) => ({ ...prev, content: "" }));
-						}
-					}}
-					onBlur={() => setContent((prev) => prev.trim())}
-					className="w-full text-sm font-normal leading-relaxed border-slate-300"
-					required
-				/>
-			</FormField>
+					}
+				}}
+				selectedCampaign={selectedCampaign}
+				disbursedAmount={disbursedAmount}
+				setDisbursedAmount={setDisbursedAmount}
+				isEditing={isEditing}
+				initialDisbursedAmount={distributionToEdit?.disbursedAmount}
+				currentCampaignBudget={currentCampaignBudget}
+				title={title}
+				setTitle={setTitle}
+				date={date}
+				setDate={setDate}
+				content={content}
+				setContent={setContent}
+				errors={errors}
+				setErrors={setErrors}
+			/>
 
 			<AdminDistributionMediaFields
 				existingMedia={existingMedia}

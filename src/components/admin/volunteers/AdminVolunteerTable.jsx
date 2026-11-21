@@ -24,9 +24,7 @@ import { AdminVolunteerDetailDialog } from "./AdminVolunteerDetailDialog";
 import { AdminVolunteerToolbar } from "./AdminVolunteerToolbar";
 import { AdminVolunteerTableRow } from "./AdminVolunteerTableRow";
 import { AdminVolunteerTableSkeletonRows } from "./AdminVolunteerSkeleton";
-import { VolunteerPrintDialog } from "@/components/volunteer/VolunteerPrintDialog";
-import { AdminVolunteerBulkDownloadDialog } from "./AdminVolunteerBulkDownloadDialog";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { AdminVolunteerDialogs } from "./AdminVolunteerDialogs";
 import { useTableSelection } from "@/hooks/useTableSelection";
 import { usePagination } from "@/hooks/usePagination";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -440,175 +438,39 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
         }}
       />
 
-      <ConfirmDialog
-        isOpen={Boolean(statusChangeToConfirm)}
-        onClose={() => setStatusChangeToConfirm(null)}
-        onConfirm={async () => {
+      <AdminVolunteerDialogs
+        statusChangeToConfirm={statusChangeToConfirm}
+        onCloseStatusChange={() => setStatusChangeToConfirm(null)}
+        onConfirmStatusChange={async () => {
           if (!statusChangeToConfirm) return;
           const { id, targetStatus } = statusChangeToConfirm;
           setStatusChangeToConfirm(null);
           await handleExecuteStatusChange(id, targetStatus);
         }}
-        isLoading={updatingVolunteerId === statusChangeToConfirm?.id}
-        title={
-          statusChangeToConfirm?.targetStatus === "APPROVED" || statusChangeToConfirm?.targetStatus === "ACCEPTED"
-            ? "Terima pendaftaran relawan?"
-            : "Tolak pendaftaran relawan?"
-        }
-        description={
-          statusChangeToConfirm?.targetStatus === "APPROVED" || statusChangeToConfirm?.targetStatus === "ACCEPTED" ? (
-            <>
-              Terima pendaftaran{" "}
-              <strong className="text-slate-900 font-semibold">
-                {statusChangeToConfirm?.name}
-              </strong>
-              ?{" "}
-              <strong className="text-emerald-700 font-semibold">
-                Kartu relawan resmi akan langsung aktif
-              </strong>{" "}
-              dan email pemberitahuan otomatis dikirimkan ke{" "}
-              <strong className="text-slate-900 font-semibold">
-                {statusChangeToConfirm?.email || "email relawan"}
-              </strong>
-              .
-            </>
-          ) : (
-            <>
-              Tandai berkas{" "}
-              <strong className="text-slate-900 font-semibold">
-                {statusChangeToConfirm?.name}
-              </strong>{" "}
-              <strong className="text-slate-900 font-semibold">
-                belum dapat diterima
-              </strong>
-              ? Surat pemberitahuan santun akan dikirimkan ke{" "}
-              <strong className="text-slate-900 font-semibold">
-                {statusChangeToConfirm?.email || "email relawan"}
-              </strong>
-              .
-            </>
-          )
-        }
-        confirmLabel={
-          statusChangeToConfirm?.targetStatus === "APPROVED" || statusChangeToConfirm?.targetStatus === "ACCEPTED"
-            ? "Ya, terima & aktifkan kartu"
-            : "Ya, tolak berkas"
-        }
-        confirmVariant={
-          statusChangeToConfirm?.targetStatus === "APPROVED" || statusChangeToConfirm?.targetStatus === "ACCEPTED" ? "default" : "destructive"
-        }
-        cancelLabel="Batal"
-      />
-
-      <VolunteerPrintDialog
-        isOpen={Boolean(cardVolunteer)}
-        onClose={() => setCardVolunteer(null)}
-        volunteer={cardVolunteer}
-      />
-
-      <AdminVolunteerBulkDownloadDialog
-        isOpen={isBulkDownloadOpen}
-        onClose={() => setIsBulkDownloadOpen(false)}
+        updatingVolunteerId={updatingVolunteerId}
+        cardVolunteer={cardVolunteer}
+        onCloseCardVolunteer={() => setCardVolunteer(null)}
+        isBulkDownloadOpen={isBulkDownloadOpen}
+        onCloseBulkDownload={() => setIsBulkDownloadOpen(false)}
         selectedVolunteers={selection.selectedItems}
-        onComplete={() => selection.clearSelection()}
-      />
-
-      <ConfirmDialog
-        isOpen={Boolean(volunteerToDelete)}
-        onClose={() => setVolunteerToDelete(null)}
-        onConfirm={handleConfirmDelete}
-        isLoading={isDeleting}
-        title="Hapus data relawan"
-        description={
-          <>
-            Hapus berkas pendaftaran relawan atas nama{" "}
-            <strong className="text-slate-900 font-semibold">
-              &ldquo;{volunteerToDelete?.name}&rdquo;
-            </strong>
-            ? Tindakan ini{" "}
-            <strong className="text-slate-900 font-semibold">
-              tidak dapat dibatalkan
-            </strong>
-            .
-          </>
-        }
-        confirmLabel="Hapus sekarang"
-        confirmVariant="destructive"
-      />
-
-      <ConfirmDialog
-        isOpen={isBulkDeleteOpen}
-        onClose={() => setIsBulkDeleteOpen(false)}
-        onConfirm={handleConfirmBulkDelete}
-        isLoading={isBulkDeleting}
-        title={`Hapus ${selection.selectedCount} data relawan`}
-        description={
-          <>
-            Apakah Anda yakin ingin menghapus{" "}
-            <strong className="text-slate-900 font-semibold">
-              {selection.selectedCount} data pendaftar relawan terpilih
-            </strong>
-            ? Tindakan ini{" "}
-            <strong className="text-slate-900 font-semibold">
-              tidak dapat dibatalkan
-            </strong>
-            .
-          </>
-        }
-        confirmLabel="Hapus sekarang"
-        confirmVariant="destructive"
-      />
-
-      <ConfirmDialog
-        isOpen={Boolean(bulkStatusToConfirm)}
-        onClose={() => setBulkStatusToConfirm(null)}
-        onConfirm={async () => {
+        onClearSelection={() => selection.clearSelection()}
+        volunteerToDelete={volunteerToDelete}
+        onCloseDelete={() => setVolunteerToDelete(null)}
+        onConfirmDelete={handleConfirmDelete}
+        isDeleting={isDeleting}
+        isBulkDeleteOpen={isBulkDeleteOpen}
+        onCloseBulkDelete={() => setIsBulkDeleteOpen(false)}
+        onConfirmBulkDelete={handleConfirmBulkDelete}
+        isBulkDeleting={isBulkDeleting}
+        selectedCount={selection.selectedCount}
+        bulkStatusToConfirm={bulkStatusToConfirm}
+        onCloseBulkStatus={() => setBulkStatusToConfirm(null)}
+        onConfirmBulkStatus={async () => {
           const targetStatus = bulkStatusToConfirm;
           setBulkStatusToConfirm(null);
           await handleBulkUpdateStatus(targetStatus);
         }}
-        isLoading={isBulkStatusUpdating}
-        title={
-          bulkStatusToConfirm === "APPROVED" || bulkStatusToConfirm === "ACCEPTED"
-            ? `Terima ${selection.selectedCount} relawan terpilih?`
-            : `Tolak ${selection.selectedCount} relawan terpilih?`
-        }
-        description={
-          bulkStatusToConfirm === "APPROVED" || bulkStatusToConfirm === "ACCEPTED" ? (
-            <>
-              Apakah Anda yakin ingin menerima{" "}
-              <strong className="text-emerald-700 font-semibold">
-                {selection.selectedCount} pendaftar relawan terpilih
-              </strong>
-              ? Surat resmi tanda anggota akan otomatis dikirimkan ke email
-              masing-masing pendaftar.
-            </>
-          ) : (
-            <>
-              Apakah Anda yakin ingin menandai{" "}
-              <strong className="text-slate-900 font-semibold">
-                belum disetujui
-              </strong>{" "}
-              untuk{" "}
-              <strong className="text-slate-900 font-semibold">
-                {selection.selectedCount} pendaftar relawan terpilih
-              </strong>
-              ? Surat pemberitahuan santun akan dikirimkan ke email
-              masing-masing pendaftar.
-            </>
-          )
-        }
-        confirmLabel={
-          bulkStatusToConfirm === "APPROVED" || bulkStatusToConfirm === "ACCEPTED"
-            ? "Ya, terima semua"
-            : "Ya, tolak semua"
-        }
-        confirmVariant={
-          bulkStatusToConfirm === "APPROVED" || bulkStatusToConfirm === "ACCEPTED"
-            ? "default"
-            : "destructive"
-        }
-        cancelLabel="Batal"
+        isBulkStatusUpdating={isBulkStatusUpdating}
       />
     </div>
   );
