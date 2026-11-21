@@ -26,7 +26,7 @@ export function RoutineSummaryItem({ program, index, campaign }) {
       <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
         <Badge variant="secondary" className="gap-1.5">
           <Bell className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-          <span>{formatRoutineSchedule(program)} • {program.reminderTime || "05:00"} WIB</span>
+          <span>{formatRoutineSchedule(program)}, pukul {program.reminderTime || "05:00"} WIB</span>
         </Badge>
 
         <Badge variant="secondary">

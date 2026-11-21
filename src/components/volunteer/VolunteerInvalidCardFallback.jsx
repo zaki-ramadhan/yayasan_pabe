@@ -76,7 +76,7 @@ export function VolunteerInvalidCardFallback({ volunteer = null }) {
       </main>
 
       <footer className="w-full max-w-4xl mx-auto text-center py-2 text-[11px] text-slate-500 font-mono">
-        {ORG_PROFILE.name} • Verifikasi Kartu Relawan
+        {ORG_PROFILE.name} — Verifikasi Kartu Relawan
       </footer>
     </div>
   );

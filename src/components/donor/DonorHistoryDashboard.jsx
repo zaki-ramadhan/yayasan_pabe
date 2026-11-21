@@ -17,7 +17,7 @@ import { safeFetch } from "@/lib/safeFetch";
 import { toast } from "@/hooks/useToast";
 
 const TAB_TRIGGER_3D_CLASS =
-  "text-sm font-medium transition-all cursor-pointer rounded-md px-3.5 sm:px-4 py-1.5 text-slate-600 hover:text-slate-900 data-[state=active]:text-white data-[state=active]:bg-gradient-to-b data-[state=active]:from-slate-700 data-[state=active]:via-slate-800 data-[state=active]:to-slate-900 data-[state=active]:border-t data-[state=active]:border-t-slate-500 data-[state=active]:border-x data-[state=active]:border-x-slate-700 data-[state=active]:border-b-2 data-[state=active]:border-b-slate-950 data-[state=active]:shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_6px_rgba(0,0,0,0.2)]";
+  "text-sm font-medium transition-[color,background-color,box-shadow] duration-150 cursor-pointer rounded-md px-3.5 sm:px-4 py-1.5 text-slate-600 hover:text-slate-900 border border-transparent data-[state=active]:text-white data-[state=active]:bg-gradient-to-b data-[state=active]:from-slate-700 data-[state=active]:via-slate-800 data-[state=active]:to-slate-900 data-[state=active]:border-slate-800 data-[state=active]:border-t-slate-500 data-[state=active]:border-b-slate-950 data-[state=active]:shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_2px_4px_rgba(0,0,0,0.2)]";
 
 export function DonorHistoryDashboard() {
   const router = useRouter();

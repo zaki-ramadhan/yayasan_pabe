@@ -228,7 +228,8 @@ export function AdminProgramTable({
     resetPage();
   };
 
-  const refreshList = async () => {
+  const refreshList = async (options = {}) => {
+    const isSilent = Boolean(typeof options === "object" && options?.silent);
     setIsLoading(true);
     try {
       const res = await safeFetch(`/api/admin/programs?limit=100&mode=${encodeURIComponent(mode)}`);
@@ -237,19 +238,25 @@ export function AdminProgramTable({
         setCampaigns(data.data);
         setError(null);
         selection.clearSelection();
-        toast.success(
-          isZisMode
-            ? "Data program ZIS berhasil diperbarui."
-            : "Data program donasi berhasil diperbarui."
-        );
+        if (!isSilent) {
+          toast.success(
+            isZisMode
+              ? "Data program ZIS berhasil diperbarui."
+              : "Data program donasi berhasil diperbarui."
+          );
+        }
       } else {
         const errMsg = data.message || data.error || "Gagal menyegarkan data program.";
         setError(errMsg);
-        toast.error(errMsg);
+        if (!isSilent) {
+          toast.error(errMsg);
+        }
       }
     } catch {
       setError("Gagal memuat data program.");
-      toast.error("Gagal menyegarkan data program.");
+      if (!isSilent) {
+        toast.error("Gagal menyegarkan data program.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -424,7 +431,7 @@ export function AdminProgramTable({
         campaignToEdit={editingCampaign}
         categories={categories}
         mode={mode}
-        onSuccess={refreshList}
+        onSuccess={() => refreshList({ silent: true })}
       />
 
       <ConfirmDialog

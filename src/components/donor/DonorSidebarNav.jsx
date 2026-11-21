@@ -39,7 +39,7 @@ export function DonorSidebarNav({
       activeIcon: Widget2Bold,
     },
     {
-      label: "Riwayat Donasi",
+      label: "Riwayat Donasi & Zakat",
       href: "/donatur/riwayat",
       icon: BillListLine,
       activeIcon: BillListBold,

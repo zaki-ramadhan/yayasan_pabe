@@ -90,7 +90,7 @@ export function ZakatResultPanel({
           <span>{formatNumber(zakatAmount)}</span>
         </div>
         <p className="text-xs text-slate-500">
-          Kadar {kadarText} • {periodLabel}
+          Kadar {kadarText} ({periodLabel})
         </p>
       </div>
 

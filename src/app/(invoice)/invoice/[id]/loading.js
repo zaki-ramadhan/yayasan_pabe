@@ -64,10 +64,8 @@ export default function InvoiceLoading() {
                 <span className="text-base sm:text-lg font-bold text-slate-900 tracking-tight block">
                   YAYASAN PAYUNG BERKAH
                 </span>
-                <div className="flex items-center justify-center gap-2 text-xs text-slate-600 font-medium">
+                <div className="flex items-center justify-center gap-1.5 text-xs text-slate-600 font-medium">
                   <span>NMID : <strong className="text-slate-900 font-semibold">ID1026604741144</strong></span>
-                  <span className="text-slate-300">•</span>
-                  <span className="px-1.5 py-0.5 rounded bg-slate-100 font-mono text-slate-700">A01</span>
                 </div>
               </div>
 

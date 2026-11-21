@@ -95,7 +95,7 @@ export function RoutineSuccessView({
                   <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
                     <Badge variant="secondary" className="gap-1.5">
                       <Bell className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                      <span>{formatRoutineSchedule(p)} • {p.reminderTime || "05:00"} WIB</span>
+                      <span>{formatRoutineSchedule(p)}, pukul {p.reminderTime || "05:00"} WIB</span>
                     </Badge>
 
                     <Badge variant="secondary">
@@ -129,7 +129,7 @@ export function RoutineSuccessView({
       </main>
 
       <footer className="w-full max-w-5xl mx-auto px-4 py-5 text-center text-xs text-slate-500">
-        <p>© 2026 Yayasan Payung Berkah • Amanah &amp; Transparan</p>
+        <p>© 2026 Yayasan Payung Berkah | Amanah &amp; Transparan</p>
       </footer>
     </div>
   );

@@ -296,10 +296,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                 <TableHead className="w-px text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Tanggal
                 </TableHead>
-                <TableHead className="w-px text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  Status
-                </TableHead>
-                <TableHead className="w-24 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-24 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap pr-4">
                   Aksi
                 </TableHead>
               </TableRow>
@@ -319,7 +316,7 @@ export function AdminTransactionTable({ initialTransactions = [] }) {
                 ))
               ) : (
                 <TableEmptyRow
-                  colSpan={9}
+                  colSpan={8}
                   isFiltered={Boolean(
                     debouncedSearch ||
                     channelFilter !== "ALL" ||

@@ -6,7 +6,7 @@ import { CheckCircleIcon } from "@solar-icons/react/line-duotone/check-circle";
 import { formatRupiah, formatDate, decodeHtmlEntities, formatPaymentChannel } from "@/lib/formatters";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { UserAvatar } from "@/components/ui/Avatar";
-import { Badge, StatusBadge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/Badge";
 import { maskEmail } from "@/lib/security";
 import { isZisTransaction, getTransactionTypeLabel, getCampaignDetailHref } from "@/lib/zisFilter";
 
@@ -127,10 +127,6 @@ export function AdminTransactionTableRow({
 
       <TableCell className="w-px text-sm text-slate-500 py-3 whitespace-nowrap align-middle text-center tabular-nums">
         {formatDate(item.paidAt || item.createdAt)}
-      </TableCell>
-
-      <TableCell className="w-px text-center py-3 whitespace-nowrap align-middle">
-        <StatusBadge status={item.status} />
       </TableCell>
 
       <TableCell className="w-24 text-right py-3 whitespace-nowrap align-middle pr-4">

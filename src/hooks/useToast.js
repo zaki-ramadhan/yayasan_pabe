@@ -21,6 +21,19 @@ function genId() {
 }
 
 const toastTimeouts = new Map();
+const recentToastMap = new Map();
+const TOAST_DEDUPE_WINDOW_MS = 600;
+
+const pruneRecentToastMap = () => {
+  if (recentToastMap.size > 50) {
+    const now = Date.now();
+    for (const [key, timestamp] of recentToastMap.entries()) {
+      if (now - timestamp > 5000) {
+        recentToastMap.delete(key);
+      }
+    }
+  }
+};
 
 const addToRemoveQueue = (toastId) => {
   if (toastTimeouts.has(toastId)) {
@@ -103,6 +116,17 @@ function dispatch(action) {
 }
 
 function toast({ duration = DEFAULT_TOAST_DURATION, ...props }) {
+  const duplicateKey = `${props.variant || "default"}:${props.title || ""}:${props.description || ""}`;
+  const now = Date.now();
+  if (recentToastMap.has(duplicateKey)) {
+    const lastTime = recentToastMap.get(duplicateKey);
+    if (now - lastTime < TOAST_DEDUPE_WINDOW_MS) {
+      return { id: "suppressed-duplicate", dismiss: () => {}, update: () => {} };
+    }
+  }
+  recentToastMap.set(duplicateKey, now);
+  pruneRecentToastMap();
+
   const id = genId();
   let dismissTimer;
 

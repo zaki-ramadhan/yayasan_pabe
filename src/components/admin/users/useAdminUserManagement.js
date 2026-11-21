@@ -95,6 +95,7 @@ export function useAdminUserManagement({ initialData = {} }) {
 
   const handleOpenCreate = () => {
     setEditingUser(null);
+    setPrefillData(null);
     setIsModalOpen(true);
   };
 

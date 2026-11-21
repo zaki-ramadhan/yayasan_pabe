@@ -113,7 +113,7 @@ export function DevInvoiceSandboxBar({ donation, onStatusChange }) {
               Sandbox Testing Simulator
             </span>
             <span className="text-sm text-amber-800 font-normal">
-              Khusus mode pengembangan (Dev Mode) &bull; Status saat ini:{" "}
+              Khusus mode pengembangan (Dev Mode) — Status saat ini:{" "}
               <strong className="font-semibold">{donation.status}</strong>
             </span>
           </div>

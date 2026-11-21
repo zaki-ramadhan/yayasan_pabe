@@ -1,10 +1,12 @@
+import { Suspense } from "react";
 import { getAdminUsers } from "@/services/adminUserService";
 import { AdminUserTable } from "@/components/admin/users/AdminUserTable";
+import { AdminUserSkeleton } from "@/components/admin/users/AdminUserSkeleton";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export const metadata = {
-  title: "Manajemen Pengurus & Hak Akses",
-  description: "Otoritas kendali penuh akun staf yayasan, penugasan peran, dan pengelolaan kredensial.",
+  title: "Kelola Pengurus Yayasan",
+  description: "Otoritas kendali penuh akun pengurus yayasan, penugasan peran, dan pengelolaan kredensial.",
 };
 
 export default async function AdminUsersPage() {
@@ -14,10 +16,12 @@ export default async function AdminUsersPage() {
     <div className="space-y-5">
       <AdminPageHeader
         title="Kelola Pengurus Yayasan"
-        description="Kelola akun staf, peran akses, dan status keaktifan pengurus."
+        description="Kelola akun pengurus yayasan, peran akses, dan status keaktifan."
       />
 
-      <AdminUserTable initialData={usersData} />
+      <Suspense fallback={<AdminUserSkeleton />}>
+        <AdminUserTable initialData={usersData} />
+      </Suspense>
     </div>
   );
 }

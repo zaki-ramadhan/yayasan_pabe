@@ -78,7 +78,6 @@ export function AdminDistributionTable({
       };
       return [newDistribution, ...prev];
     });
-    toast.info(`Penyaluran dana baru dicatat: ${payload.title}`);
   });
 
   const debouncedSearch = useDebounce(search.trim(), 300);
@@ -114,7 +113,8 @@ export function AdminDistributionTable({
     resetPage();
   };
 
-  const refreshList = async () => {
+  const refreshList = async (options = {}) => {
+    const isSilent = Boolean(typeof options === "object" && options?.silent);
     setIsLoading(true);
     try {
       const res = await safeFetch("/api/admin/distributions?limit=100");
@@ -122,12 +122,16 @@ export function AdminDistributionTable({
       if (data.success && data.data) {
         setDistributions(data.data);
         selection.clearSelection();
-        toast.success("Data rekam penyaluran berhasil diperbarui.");
-      } else {
+        if (!isSilent) {
+          toast.success("Data rekam penyaluran berhasil diperbarui.");
+        }
+      } else if (!isSilent) {
         toast.error(data.message || "Gagal menyegarkan data penyaluran.");
       }
     } catch {
-      toast.error("Gagal menyegarkan data penyaluran.");
+      if (!isSilent) {
+        toast.error("Gagal menyegarkan data penyaluran.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -295,7 +299,7 @@ export function AdminDistributionTable({
         onOpenChange={setIsModalOpen}
         campaigns={campaigns}
         distributionToEdit={selectedDistribution}
-        onSuccess={refreshList}
+        onSuccess={() => refreshList({ silent: true })}
       />
 
       <AdminDistributionDeleteDialog

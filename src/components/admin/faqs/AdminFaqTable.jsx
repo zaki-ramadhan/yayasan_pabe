@@ -145,7 +145,8 @@ export function AdminFaqTable({ initialFaqs = [] }) {
     }
   };
 
-  const refreshList = async () => {
+  const refreshList = async (options = {}) => {
+    const isSilent = Boolean(typeof options === "object" && options?.silent);
     setIsLoading(true);
     try {
       const res = await safeFetch("/api/admin/faqs");
@@ -153,12 +154,16 @@ export function AdminFaqTable({ initialFaqs = [] }) {
       if (data.success && data.data) {
         setFaqs(data.data);
         selection.clearSelection();
-        toast.success("Data FAQ berhasil diperbarui.");
-      } else {
+        if (!isSilent) {
+          toast.success("Data FAQ berhasil diperbarui.");
+        }
+      } else if (!isSilent) {
         toast.error(data.message || "Gagal menyegarkan data FAQ.");
       }
     } catch {
-      toast.error("Gagal menyegarkan data FAQ.");
+      if (!isSilent) {
+        toast.error("Gagal menyegarkan data FAQ.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -265,7 +270,7 @@ export function AdminFaqTable({ initialFaqs = [] }) {
         onOpenChange={setIsModalOpen}
         faqToEdit={selectedFaq}
         categories={availableCategories}
-        onSuccess={refreshList}
+        onSuccess={() => refreshList({ silent: true })}
       />
 
       <AdminFaqDeleteDialog

@@ -269,7 +269,7 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
           <div className="relative z-10 p-2 sm:px-2.5 sm:pb-2.5 sm:pt-1">
             <div className="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900/90 border border-slate-700/80 backdrop-blur-md rounded-full text-slate-300 text-xs sm:text-sm shadow-sm select-none text-center">
               <Lock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <span>Program telah selesai · Pengiriman doa telah ditutup</span>
+              <span>Program telah selesai. Pengiriman doa ditutup</span>
             </div>
           </div>
         ) : (

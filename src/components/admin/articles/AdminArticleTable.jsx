@@ -179,7 +179,8 @@ export function AdminArticleTable({
     }
   };
 
-  const refreshList = async () => {
+  const refreshList = async (options = {}) => {
+    const isSilent = Boolean(typeof options === "object" && options?.silent);
     setIsLoading(true);
     try {
       const res = await safeFetch("/api/admin/articles?limit=100");
@@ -187,12 +188,16 @@ export function AdminArticleTable({
       if (data.success && data.data) {
         setArticles(data.data);
         selection.clearSelection();
-        toast.success("Data artikel berhasil diperbarui.");
-      } else {
+        if (!isSilent) {
+          toast.success("Data artikel berhasil diperbarui.");
+        }
+      } else if (!isSilent) {
         toast.error(data.message || "Gagal menyegarkan data artikel.");
       }
     } catch {
-      toast.error("Gagal menyegarkan data artikel.");
+      if (!isSilent) {
+        toast.error("Gagal menyegarkan data artikel.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -294,7 +299,7 @@ export function AdminArticleTable({
         onOpenChange={setIsModalOpen}
         articleToEdit={selectedArticle}
         categories={categories}
-        onSuccess={refreshList}
+        onSuccess={() => refreshList({ silent: true })}
       />
 
       <ConfirmDialog
