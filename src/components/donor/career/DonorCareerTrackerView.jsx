@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   fetchUserCareerApplications,
   cancelCareerApplication,
@@ -21,7 +21,7 @@ export function DonorCareerTrackerView() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const load = async (silent = false) => {
+  const load = useCallback(async (silent = false) => {
     if (!silent) {
       setIsLoading(true);
       setError(null);
@@ -35,11 +35,11 @@ export function DonorCareerTrackerView() {
     if (!silent) {
       setIsLoading(false);
     }
-  };
+  }, [userEmail]);
 
   useEffect(() => {
     load();
-  }, [userEmail]);
+  }, [load]);
 
   useEffect(() => {
     const handleSync = () => {
@@ -53,7 +53,7 @@ export function DonorCareerTrackerView() {
       document.removeEventListener("visibilitychange", handleSync);
       window.removeEventListener("focus", handleSync);
     };
-  }, []);
+  }, [load]);
 
   const handleCancel = async (applicationId) => {
     const res = await cancelCareerApplication(applicationId);

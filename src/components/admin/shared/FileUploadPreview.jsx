@@ -37,7 +37,6 @@ export function FileUploadPreview({
 
   useEffect(() => {
     if (!resolvedSrc || typeof resolvedSrc !== "string" || value instanceof File || uploadMeta?.size || uploadMeta?.sizeKb) {
-      setRemoteSize(null);
       return;
     }
     let isMounted = true;
@@ -56,6 +55,7 @@ export function FileUploadPreview({
     return () => {
       isMounted = false;
       controller.abort();
+      setRemoteSize(null);
     };
   }, [resolvedSrc, value, uploadMeta]);
 

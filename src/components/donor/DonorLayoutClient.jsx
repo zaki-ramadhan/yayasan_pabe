@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { DonorSidebarNav } from "@/components/donor/DonorSidebarNav";
@@ -14,9 +14,9 @@ export function DonorLayoutClient({ children, initialUser }) {
   const router = useRouter();
   const pathname = usePathname();
   const { currentUser: storeUser } = useCurrentUser();
-  const currentUser = storeUser
-    ? { ...initialUser, ...storeUser }
-    : initialUser;
+  const currentUser = useMemo(() => {
+    return storeUser ? { ...initialUser, ...storeUser } : initialUser;
+  }, [initialUser, storeUser]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
