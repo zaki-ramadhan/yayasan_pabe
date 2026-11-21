@@ -1,27 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/Select";
 import { UserAvatar } from "@/components/ui/Avatar";
-import { StatusBadge } from "@/components/ui/Badge";
+import { StatusSelectBadge } from "@/components/ui/StatusSelectBadge";
 import { AdminApplicantContactInfo } from "./AdminApplicantContactInfo";
 import { AdminApplicantStatusDialog } from "./AdminApplicantStatusDialog";
 import { formatDate } from "@/lib/formatters";
 import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
-import { LoaderIcon } from "@solar-icons/react/linear/loader";
 
-const APPLICANT_STATUS_CONFIG = {
-  PENDING: { label: "Menunggu", variant: "warning" },
-  REVIEWED: { label: "Ditinjau", variant: "info" },
-  ACCEPTED: { label: "Diterima", variant: "success" },
-  SHORTLISTED: { label: "Diterima", variant: "success" },
-  REJECTED: { label: "Ditolak", variant: "danger" },
+export const APPLICANT_STATUS_OPTIONS = [
+  { value: "PENDING", label: "Menunggu", color: "amber" },
+  { value: "REVIEWED", label: "Ditinjau", color: "sky" },
+  { value: "ACCEPTED", label: "Diterima", color: "emerald" },
+  { value: "REJECTED", label: "Ditolak", color: "rose" },
+];
+
+const APPLICANT_ALIAS_MAP = {
+  SHORTLISTED: "ACCEPTED",
+  APPROVED: "ACCEPTED",
 };
 
 /**
@@ -34,7 +30,6 @@ export function AdminApplicantItem({
 }) {
   const [pendingStatus, setPendingStatus] = useState(null);
   const waUrl = application.phone ? buildWhatsAppUrl(application.phone) : null;
-  const badgeConfig = APPLICANT_STATUS_CONFIG[application.status] || {};
 
   const handleSelectStatus = (val) => {
     if (!val || val === application.status) return;
@@ -72,38 +67,17 @@ export function AdminApplicantItem({
         </div>
 
         <div className="flex items-center gap-2">
-          <StatusBadge
-            status={application.status}
-            label={badgeConfig.label}
-            variant={badgeConfig.variant}
-          />
-
-          <Select
-            value={application.status === "SHORTLISTED" ? "ACCEPTED" : application.status}
-            onValueChange={handleSelectStatus}
+          <StatusSelectBadge
+            value={application.status}
+            options={APPLICANT_STATUS_OPTIONS}
+            onChange={handleSelectStatus}
+            aliasMap={APPLICANT_ALIAS_MAP}
+            variant="solid"
+            size="sm"
+            isUpdating={isUpdating}
             disabled={isUpdating}
-          >
-            <SelectTrigger className="h-8.5 w-44 text-sm bg-white text-slate-700 font-normal border-slate-200 px-3 whitespace-nowrap">
-              <SelectValue placeholder="Ubah status" />
-            </SelectTrigger>
-            <SelectContent align="end">
-              <SelectItem value="PENDING" className="text-sm text-slate-700 font-normal">
-                Menunggu
-              </SelectItem>
-              <SelectItem value="REVIEWED" className="text-sm text-slate-700 font-normal">
-                Ditinjau
-              </SelectItem>
-              <SelectItem value="ACCEPTED" className="text-sm text-slate-700 font-normal">
-                Diterima
-              </SelectItem>
-              <SelectItem value="REJECTED" className="text-sm text-slate-700 font-normal">
-                Ditolak
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          {isUpdating && (
-            <LoaderIcon className="w-3.5 h-3.5 animate-spin text-slate-400 shrink-0" />
-          )}
+            ariaLabel={`Ubah status lamaran ${application.fullName}`}
+          />
         </div>
       </div>
 

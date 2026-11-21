@@ -77,7 +77,6 @@ export function AdminVolunteerTable({ initialVolunteers = [] }) {
       };
       return [newVolunteer, ...prev];
     });
-    toast.info(`Pendaftar relawan baru dari ${payload.city || "Kota"} masuk: ${payload.fullName || payload.name}`);
   });
 
   const debouncedSearch = useDebounce(search.trim(), 300);

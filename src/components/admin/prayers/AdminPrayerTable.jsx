@@ -134,11 +134,8 @@ export function AdminPrayerTable({
                 <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Waktu kirim
                 </TableHead>
-                <TableHead className="w-28 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-32 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap pr-4">
                   Status moderasi
-                </TableHead>
-                <TableHead className="w-24 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap pr-4">
-                  Aksi
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -147,7 +144,7 @@ export function AdminPrayerTable({
                 <AdminPrayerTableSkeletonRows rows={5} />
               ) : prayers.length === 0 ? (
                 <TableEmptyRow
-                  colSpan={9}
+                  colSpan={8}
                   isFiltered={Boolean(search || statusFilter !== "ALL" || campaignFilter !== "ALL")}
                 />
               ) : (

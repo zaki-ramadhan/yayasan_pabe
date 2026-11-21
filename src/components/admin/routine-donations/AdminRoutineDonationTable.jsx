@@ -32,6 +32,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
   const [frequencyFilter, setFrequencyFilter] = useState("ALL");
   const [selectedItem, setSelectedItem] = useState(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [updatingId, setUpdatingId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -120,6 +121,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
 
   const handleUpdateStatus = async (id, newStatus) => {
     setIsUpdatingStatus(true);
+    setUpdatingId(id);
     try {
       const res = await safeFetch("/api/admin/routine-donations", {
         method: "PATCH",
@@ -147,6 +149,7 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
       toast.error("Terjadi kendala jaringan saat memperbarui status.");
     } finally {
       setIsUpdatingStatus(false);
+      setUpdatingId(null);
     }
   };
 
@@ -223,11 +226,8 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                 <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   Tanggal daftar
                 </TableHead>
-                <TableHead className="w-28 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
+                <TableHead className="w-32 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap pr-4">
                   Status
-                </TableHead>
-                <TableHead className="w-24 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  Aksi
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -240,11 +240,13 @@ export function AdminRoutineDonationTable({ initialRoutineDonations = [] }) {
                     key={item.id}
                     item={item}
                     onViewDetail={(r) => setSelectedItem(r)}
+                    onStatusChange={handleUpdateStatus}
+                    isUpdating={isUpdatingStatus && updatingId === item.id}
                   />
                 ))
               ) : (
                 <TableEmptyRow
-                  colSpan={8}
+                  colSpan={7}
                   isFiltered={Boolean(debouncedSearch || frequencyFilter !== "ALL")}
                 />
               )}

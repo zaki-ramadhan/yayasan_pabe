@@ -39,6 +39,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
   const [isLoading, setIsLoading] = useState(false);
   const [careerToDelete, setCareerToDelete] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [updatingStatusId, setUpdatingStatusId] = useState(null);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
   const processedAppIdsRef = useRef(new Set());
@@ -67,7 +68,6 @@ export function AdminCareerTable({ initialVacancies = [] }) {
         return v;
       })
     );
-    toast.info(`Berkas lamaran baru untuk ${payload.position}: ${payload.fullName}`);
   });
 
   useAdminLiveEvent("CAREER_APPLICATION_CANCELLED", (payload) => {
@@ -138,8 +138,12 @@ export function AdminCareerTable({ initialVacancies = [] }) {
     setIsDrawerOpen(true);
   };
 
-  const handleToggleStatus = async (id, currentStatus) => {
-    const nextStatus = !currentStatus;
+  const handleToggleStatus = async (id, currentStatusOrTarget) => {
+    const nextStatus =
+      typeof currentStatusOrTarget === "boolean"
+        ? !currentStatusOrTarget
+        : currentStatusOrTarget === "ACTIVE";
+    setUpdatingStatusId(id);
     try {
       const res = await safeFetch(`/api/admin/careers/${id}`, {
         method: "PUT",
@@ -148,7 +152,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`Status lowongan berhasil diubah menjadi ${nextStatus ? "Aktif" : "Nonaktif"}.`);
+        toast.success(`Status lowongan berhasil diubah menjadi ${nextStatus ? "Aktif" : "Ditutup"}.`);
         setVacancies((prev) =>
           prev.map((v) => (v.id === id ? { ...v, isActive: nextStatus } : v))
         );
@@ -157,6 +161,8 @@ export function AdminCareerTable({ initialVacancies = [] }) {
       }
     } catch {
       toast.error("Terjadi kendala jaringan saat memperbarui status.");
+    } finally {
+      setUpdatingStatusId(null);
     }
   };
 
@@ -214,7 +220,8 @@ export function AdminCareerTable({ initialVacancies = [] }) {
     }
   };
 
-  const refreshList = async () => {
+  const refreshList = async (options = {}) => {
+    const isSilent = Boolean(typeof options === "object" && options?.silent);
     setIsLoading(true);
     try {
       const res = await safeFetch("/api/admin/careers?limit=100");
@@ -222,12 +229,16 @@ export function AdminCareerTable({ initialVacancies = [] }) {
       if (data.success && data.data) {
         setVacancies(data.data);
         selection.clearSelection();
-        toast.success("Data lowongan berhasil diperbarui.");
-      } else {
+        if (!isSilent) {
+          toast.success("Data lowongan berhasil diperbarui.");
+        }
+      } else if (!isSilent) {
         toast.error(data.message || "Gagal menyegarkan data lowongan.");
       }
     } catch {
-      toast.error("Gagal menyegarkan data lowongan.");
+      if (!isSilent) {
+        toast.error("Gagal menyegarkan data lowongan.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -297,6 +308,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
                   onToggleSelect={selection.toggleSelect}
                   onOpenApplicants={handleOpenApplicants}
                   onToggleStatus={handleToggleStatus}
+                  isUpdatingStatus={updatingStatusId === job.id}
                   onEdit={handleOpenEdit}
                   onDelete={handleDelete}
                   isDeleting={deletingId === job.id}
@@ -329,14 +341,17 @@ export function AdminCareerTable({ initialVacancies = [] }) {
         isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
         vacancyToEdit={selectedVacancy}
-        onSuccess={refreshList}
+        onSuccess={() => refreshList({ silent: true })}
       />
 
-      <AdminApplicantDrawer
-        isOpen={isDrawerOpen}
-        onOpenChange={setIsDrawerOpen}
-        vacancy={drawerVacancy}
-      />
+      {isDrawerOpen && drawerVacancy && (
+        <AdminApplicantDrawer
+          key={drawerVacancy.id}
+          isOpen={isDrawerOpen}
+          onOpenChange={setIsDrawerOpen}
+          vacancy={drawerVacancy}
+        />
+      )}
 
       <ConfirmDialog
         isOpen={Boolean(careerToDelete)}

@@ -8,16 +8,24 @@ import { toast } from "@/hooks/useToast";
  * Custom Hook untuk mengelola state data pelamar karier:
  * pagination, sorting, filter status, dan mutasi status berkas.
  */
-export function useAdminApplicants({ isOpen, vacancyId }) {
+export function useAdminApplicants({ isOpen, vacancy = null, vacancyId }) {
+  const resolvedVacancyId = vacancyId || vacancy?.id;
+  const isClosed = Boolean(
+    vacancy && (vacancy.isActive === false || vacancy.status === "CLOSED")
+  );
+  const initialStatusFilter = isClosed ? "ACCEPTED" : "NEED_REVIEW";
+
   const [applications, setApplications] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(
+    Number(vacancy?.applicantCount) || 0
+  );
   const [sortBy, setSortBy] = useState("newest");
-  const [statusFilter, setStatusFilter] = useState("NEED_REVIEW");
+  const [statusFilter, setStatusFilter] = useState(initialStatusFilter);
 
   const fetchApplications = useCallback(
     async ({
@@ -26,7 +34,7 @@ export function useAdminApplicants({ isOpen, vacancyId }) {
       sortToUse = sortBy,
       statusToUse = statusFilter,
     } = {}) => {
-      if (!vacancyId) return;
+      if (!resolvedVacancyId) return;
       if (append) {
         setIsLoadingMore(true);
       } else {
@@ -34,7 +42,7 @@ export function useAdminApplicants({ isOpen, vacancyId }) {
       }
       try {
         const queryParams = new URLSearchParams({
-          vacancyId,
+          vacancyId: resolvedVacancyId,
           page: String(pageToLoad),
           limit: "15",
           sort: sortToUse,
@@ -61,13 +69,13 @@ export function useAdminApplicants({ isOpen, vacancyId }) {
         setIsLoadingMore(false);
       }
     },
-    [vacancyId, sortBy, statusFilter]
+    [resolvedVacancyId, sortBy, statusFilter]
   );
 
   useEffect(() => {
     let isCancelled = false;
 
-    if (isOpen && vacancyId) {
+    if (isOpen && resolvedVacancyId) {
       Promise.resolve().then(() => {
         if (!isCancelled) {
           fetchApplications({
@@ -83,7 +91,7 @@ export function useAdminApplicants({ isOpen, vacancyId }) {
     return () => {
       isCancelled = true;
     };
-  }, [isOpen, vacancyId, sortBy, statusFilter, fetchApplications]);
+  }, [isOpen, resolvedVacancyId, sortBy, statusFilter, fetchApplications]);
 
   const handleSortChange = (newSort) => {
     setSortBy(newSort);

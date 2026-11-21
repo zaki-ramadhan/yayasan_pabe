@@ -4,9 +4,14 @@ import { UsersGroupTwoRoundedIcon as Users } from "@solar-icons/react/line-duoto
 import { Button } from "@/components/ui/Button";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { StatusBadge } from "@/components/ui/Badge";
+import { StatusSelectBadge } from "@/components/ui/StatusSelectBadge";
 import { formatDeadlineDate } from "@/lib/formatters";
 import { formatWorkplace } from "@/data/careers";
+
+export const CAREER_VACANCY_STATUS_OPTIONS = [
+	{ value: "ACTIVE", label: "Aktif", color: "emerald" },
+	{ value: "CLOSED", label: "Ditutup", color: "slate" },
+];
 
 export function AdminCareerTableRow({
 	job,
@@ -14,6 +19,7 @@ export function AdminCareerTableRow({
 	onToggleSelect,
 	onOpenApplicants,
 	onToggleStatus,
+	isUpdatingStatus = false,
 	onEdit,
 	onDelete,
 	isDeleting,
@@ -103,25 +109,20 @@ export function AdminCareerTableRow({
 				})()}
 			</TableCell>
 
-			<TableCell className="py-3 text-center whitespace-nowrap align-middle">
-				<button
-					type="button"
-					onClick={() =>
-						onToggleStatus(
-							job.id,
-							job.isActive,
-						)
-					} aria-label="Ubah status aktif lowongan"
-					className="cursor-pointer"
-				>
-					<StatusBadge
-						status={
-							job.isActive
-								? "ACTIVE"
-								: "CLOSED"
-						}
-					/>
-				</button>
+			<TableCell
+				className="py-3 text-center whitespace-nowrap align-middle"
+				onClick={(e) => e.stopPropagation()}
+			>
+				<StatusSelectBadge
+					value={job.isActive ? "ACTIVE" : "CLOSED"}
+					options={CAREER_VACANCY_STATUS_OPTIONS}
+					onChange={(val) => onToggleStatus?.(job.id, val)}
+					variant="solid"
+					size="sm"
+					isUpdating={isUpdatingStatus}
+					disabled={isUpdatingStatus}
+					ariaLabel={`Ubah status aktif lowongan: ${job.title}`}
+				/>
 			</TableCell>
 
 			<TableCell className="text-right py-3 whitespace-nowrap align-middle pr-4">

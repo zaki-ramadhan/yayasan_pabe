@@ -3,9 +3,9 @@
 import { CheckIcon as Check } from "@solar-icons/react/linear/check";
 import { CloseIcon as Close } from "@solar-icons/react/linear/close";
 import { cn } from "@/lib/utils";
-import { CAREER_STEPS, getStepStatus, getActiveStepIndex } from "@/lib/careerStepperConfig";
+import { CAREER_STEPS, getStepStatus, getActiveStepIndex, getStepTitle } from "@/lib/careerStepperConfig";
 
-export { getStepStatus, getActiveStepIndex, CAREER_STEPS };
+export { getStepStatus, getActiveStepIndex, getStepTitle, CAREER_STEPS };
 
 /**
  * Stepper horizontal menyamping dengan garis konektor antar-node.
@@ -66,6 +66,7 @@ export function DonorCareerTimeline({
           {CAREER_STEPS.map((step, idx) => {
             const stepState = getStepStatus(idx, status);
             const isChecked = stepState === "completed" || stepState === "active" || stepState === "rejected";
+            const stepTitle = getStepTitle(idx, status);
 
             return (
               <div
@@ -75,7 +76,7 @@ export function DonorCareerTimeline({
                   isChecked ? "opacity-100" : "opacity-45"
                 )}
               >
-                {/* Node Lingkaran: Terceklis = fill up hijau solid */}
+                {/* Status indicator node */}
                 <div
                   className={cn(
                     "rounded-full flex items-center justify-center shrink-0 transition-all",
@@ -99,12 +100,10 @@ export function DonorCareerTimeline({
                 <h4
                   className={cn(
                     "text-sm mt-2 leading-snug font-normal",
-                    isChecked
-                      ? "text-slate-950 font-normal"
-                      : "text-slate-500 font-normal"
+                    isChecked ? "text-slate-900" : "text-slate-500"
                   )}
                 >
-                  {step.title}
+                  {stepTitle}
                 </h4>
               </div>
             );

@@ -50,11 +50,8 @@ export function AdminPrayerSkeleton() {
                 <TableHead className="w-36 py-2.5 text-center whitespace-nowrap">
                   <Skeleton className="h-4 w-20 mx-auto rounded" />
                 </TableHead>
-                <TableHead className="w-28 py-2.5 text-center whitespace-nowrap">
-                  <Skeleton className="h-4 w-16 mx-auto rounded" />
-                </TableHead>
-                <TableHead className="w-24 py-2.5 text-right whitespace-nowrap pr-4">
-                  <Skeleton className="h-4 w-12 ml-auto rounded" />
+                <TableHead className="w-32 py-2.5 text-center whitespace-nowrap pr-4">
+                  <Skeleton className="h-4 w-20 mx-auto rounded" />
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -113,14 +110,8 @@ export function AdminPrayerTableSkeletonRows({ rows = 5 }) {
             </div>
           </TableCell>
 
-          <TableCell className="w-28 text-center py-3 align-top">
-            <Skeleton className="h-5 w-16 mx-auto rounded-md" />
-          </TableCell>
-
-          <TableCell className="w-24 text-right py-3 align-top pr-4">
-            <div className="flex items-center justify-end gap-1">
-              <Skeleton className="h-7 w-7 rounded-md ml-auto" />
-            </div>
+          <TableCell className="w-32 text-center py-3 align-top pr-4">
+            <Skeleton className="h-5 w-20 mx-auto rounded-md" />
           </TableCell>
         </TableRow>
       ))}

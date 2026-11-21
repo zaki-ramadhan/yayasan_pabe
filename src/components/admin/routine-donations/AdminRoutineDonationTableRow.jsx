@@ -3,12 +3,23 @@
 import Link from "next/link";
 import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
-import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
+import { TableRow, TableCell } from "@/components/ui/Table";
 import { UserAvatar } from "@/components/ui/Avatar";
+import { StatusSelectBadge } from "@/components/ui/StatusSelectBadge";
 import { getCampaignDetailHref } from "@/lib/zisFilter";
-import { AdminRoutineDonationStatusBadge } from "./AdminRoutineDonationStatusBadge";
 
-export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
+const ROUTINE_STATUS_OPTIONS = [
+  { value: "ACTIVE", label: "Aktif", color: "emerald" },
+  { value: "PAUSED", label: "Dijeda", color: "amber" },
+  { value: "COMPLETED", label: "Selesai", color: "slate" },
+];
+
+export function AdminRoutineDonationTableRow({
+  item,
+  onViewDetail,
+  onStatusChange,
+  isUpdating = false,
+}) {
   const getFrequencyText = (r) => {
     if (r.frequency === "DAILY") return "Setiap hari";
     if (r.frequency === "WEEKLY") return `Setiap ${r.selectedDay || "pekan"}`;
@@ -17,7 +28,11 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
   };
 
   return (
-    <TableRow key={item.id} className="hover:bg-slate-50/70 transition-colors">
+    <TableRow
+      key={item.id}
+      onClick={() => onViewDetail?.(item)}
+      className="hover:bg-slate-50/70 transition-colors cursor-pointer"
+    >
       <TableCell className="w-[260px] py-3 align-middle">
         <div className="flex items-center gap-2.5">
           <UserAvatar
@@ -51,6 +66,7 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
           <Link
             href={getCampaignDetailHref(item.campaignSlug)}
             target="_blank"
+            onClick={(e) => e.stopPropagation()}
             className="font-normal leading-snug line-clamp-2 overflow-hidden text-slate-800 hover:text-primary hover:underline cursor-pointer transition-colors block"
             aria-label={`Buka program: ${item.programTitle}`}
             style={{
@@ -96,14 +112,19 @@ export function AdminRoutineDonationTableRow({ item, onViewDetail }) {
         {formatDate(item.createdAt)}
       </TableCell>
 
-      <TableCell className="w-28 text-center py-3 align-middle whitespace-nowrap">
-        <AdminRoutineDonationStatusBadge status={item.status} />
-      </TableCell>
-
-      <TableCell className="w-24 text-right py-3 align-middle whitespace-nowrap pr-4">
-        <TableRowActions
-          onView={() => onViewDetail(item)}
-          viewTooltip="Lihat rincian komitmen donasi rutin"
+      <TableCell
+        className="w-32 text-center py-3 align-middle whitespace-nowrap pr-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <StatusSelectBadge
+          value={item.status}
+          options={ROUTINE_STATUS_OPTIONS}
+          onChange={(newVal) => onStatusChange?.(item.id, newVal)}
+          variant="solid"
+          size="sm"
+          isUpdating={isUpdating}
+          disabled={isUpdating}
+          ariaLabel={`Ubah status komitmen donasi rutin ${item.donorName}`}
         />
       </TableCell>
     </TableRow>

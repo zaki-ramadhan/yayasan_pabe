@@ -8,26 +8,15 @@ import {
   DialogFooter,
 } from "@/components/ui/Dialog";
 import { Button } from "@/components/ui/Button";
-import { FormField } from "@/components/ui/FormField";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/Select";
 import { formatRupiah, formatDate, decodeHtmlEntities } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/security";
 import { buildWhatsAppUrl } from "@/lib/whatsappUtils";
 import { ArrowRightUpIcon as ArrowUpRight } from "@solar-icons/react/line-duotone/arrow-right-up";
-import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 
 export function AdminRoutineDonationDetailDialog({
   donation,
   isOpen,
   onClose,
-  onStatusChange,
-  isUpdating = false,
 }) {
   if (!donation) return null;
 
@@ -112,7 +101,7 @@ export function AdminRoutineDonationDetailDialog({
             </div>
           </div>
 
-          <div className="space-y-3 pb-5 border-b border-slate-100">
+          <div className="space-y-3 pb-5">
             <div className="flex items-center justify-between gap-4">
               <span className="text-slate-700 font-normal shrink-0">Frekuensi</span>
               <span className="text-slate-900 text-right">
@@ -142,34 +131,19 @@ export function AdminRoutineDonationDetailDialog({
                 </span>
               </div>
             )}
-          </div>
 
-          <div className="pt-1">
-            <FormField label="Ubah status komitmen">
-              <div className="flex items-center gap-2">
-                <Select
-                  defaultValue={donation.status}
-                  onValueChange={(val) => onStatusChange(donation.id, val)}
-                  disabled={isUpdating}
-                >
-                  <SelectTrigger className="w-full h-9 text-sm font-normal bg-white">
-                    <SelectValue placeholder="Pilih status baru" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ACTIVE" className="text-sm font-normal">
-                      Aktif (Berjalan Normal)
-                    </SelectItem>
-                    <SelectItem value="PAUSED" className="text-sm font-normal">
-                      Dijeda (Sementara Waktu)
-                    </SelectItem>
-                    <SelectItem value="COMPLETED" className="text-sm font-normal">
-                      Selesai (Program Selesai / Ditutup)
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-emerald-600 shrink-0" />}
+            {donation.status && (
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-slate-700 font-normal shrink-0">Status komitmen</span>
+                <span className="text-slate-900 text-right font-medium">
+                  {donation.status === "ACTIVE"
+                    ? "Aktif"
+                    : donation.status === "PAUSED"
+                    ? "Dijeda"
+                    : "Selesai"}
+                </span>
               </div>
-            </FormField>
+            )}
           </div>
         </div>
 

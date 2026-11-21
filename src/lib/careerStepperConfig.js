@@ -30,10 +30,16 @@ export function getStepStatus(stepIndex, appStatus = "PENDING") {
     return "completed";
   }
 
-  // In review
-  if (norm === "REVIEWED" || norm === "PENDING") {
+  // REVIEWED: Sedang aktif ditinjau oleh pengurus
+  if (norm === "REVIEWED") {
     if (stepIndex === 0) return "completed";
     if (stepIndex === 1) return "active";
+    return "upcoming";
+  }
+
+  // PENDING: Baru dikirim, menunggu antrean peninjauan
+  if (norm === "PENDING") {
+    if (stepIndex === 0) return "completed";
     return "upcoming";
   }
 
@@ -49,7 +55,30 @@ export function getActiveStepIndex(status = "PENDING") {
   if (norm === "ACCEPTED" || norm === "SHORTLISTED" || norm === "APPROVED" || norm === "REJECTED") {
     return 2;
   }
-  return 1; // PENDING & REVIEWED sama-sama berada di tahap Ditinjau
+  if (norm === "REVIEWED") {
+    return 1;
+  }
+  return 0; // PENDING: tahap 0 selesai, menunggu peninjauan di tahap 1
+}
+
+/**
+ * Mengembalikan judul dinamis per tahapan sesuai status keputusan pelamar
+ */
+export function getStepTitle(stepIndex, appStatus = "PENDING") {
+  const norm = String(appStatus || "PENDING").toUpperCase();
+
+  if (stepIndex === 0) return "Lamaran Terkirim";
+  if (stepIndex === 1) return "Ditinjau";
+  if (stepIndex === 2) {
+    if (norm === "ACCEPTED" || norm === "SHORTLISTED" || norm === "APPROVED") {
+      return "Diterima";
+    }
+    if (norm === "REJECTED") {
+      return "Ditolak";
+    }
+    return "Keputusan";
+  }
+  return CAREER_STEPS[stepIndex]?.title || "";
 }
 
 /**

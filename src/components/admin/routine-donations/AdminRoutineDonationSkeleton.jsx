@@ -51,11 +51,8 @@ export function AdminRoutineDonationSkeleton() {
                 <TableHead className="w-36 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
                   <Skeleton className="h-4 w-20 mx-auto rounded" />
                 </TableHead>
-                <TableHead className="w-28 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  <Skeleton className="h-4 w-14 rounded mx-auto" />
-                </TableHead>
-                <TableHead className="w-24 text-right font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap">
-                  <Skeleton className="h-4 w-10 rounded ml-auto" />
+                <TableHead className="w-32 text-center font-medium text-slate-600 text-sm py-2.5 whitespace-nowrap pr-4">
+                  <Skeleton className="h-4 w-16 rounded mx-auto" />
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -116,12 +113,8 @@ export function AdminRoutineDonationTableSkeletonRows({ rows = 5 }) {
             <Skeleton className="h-4 w-20 mx-auto rounded" />
           </TableCell>
 
-          <TableCell className="w-28 text-center py-3 align-middle whitespace-nowrap">
-            <Skeleton className="h-5 w-10 rounded-md mx-auto" />
-          </TableCell>
-
-          <TableCell className="w-24 text-right py-3 align-middle whitespace-nowrap pr-4">
-            <Skeleton className="h-7 w-7 rounded-md ml-auto" />
+          <TableCell className="w-32 text-center py-3 align-middle whitespace-nowrap pr-4">
+            <Skeleton className="h-5 w-16 rounded-md mx-auto" />
           </TableCell>
         </TableRow>
       ))}

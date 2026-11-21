@@ -2,22 +2,23 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { EyeIcon as Eye } from "@solar-icons/react/line-duotone/eye";
-import { EyeClosedIcon as EyeOff } from "@solar-icons/react/line-duotone/eye-closed";
 import { HeartIcon as Heart } from "@solar-icons/react/line-duotone/heart";
 import { CopyIcon as Copy } from "@solar-icons/react/line-duotone/copy";
 import { CheckReadIcon as Check } from "@solar-icons/react/line-duotone/check-read";
-import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import { TableCell, TableRow } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { UserAvatar } from "@/components/ui/Avatar";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { StatusSelectBadge } from "@/components/ui/StatusSelectBadge";
 import { formatDate, formatRupiah, formatClockTime } from "@/lib/formatters";
 import { maskEmail } from "@/lib/security";
 import { copyToClipboard } from "@/lib/clipboard";
 import { getCampaignDetailHref } from "@/lib/zisFilter";
 import { toast } from "@/hooks/useToast";
+
+const PRAYER_STATUS_OPTIONS = [
+  { value: "VISIBLE", label: "Ditampilkan", color: "emerald" },
+  { value: "HIDDEN", label: "Disembunyikan", color: "rose" },
+];
 
 export function AdminPrayerTableRow({
   item,
@@ -37,6 +38,13 @@ export function AdminPrayerTableRow({
       setTimeout(() => setCopied(false), 2000);
     } else {
       toast.error("Gagal menyalin nomor invoice.");
+    }
+  };
+
+  const handleStatusChange = (newVal) => {
+    const shouldHide = newVal === "HIDDEN";
+    if (shouldHide !== Boolean(item.isPrayerHidden)) {
+      onToggleHide(item);
     }
   };
 
@@ -163,43 +171,17 @@ export function AdminPrayerTableRow({
         </div>
       </TableCell>
 
-      <TableCell className="w-32 text-center py-3 align-top whitespace-nowrap">
-        {item.isPrayerHidden ? (
-          <Badge variant="danger" className="gap-1 max-w-[140px]" title="Disembunyikan">
-            <EyeOff className="w-3 h-3 text-rose-600 shrink-0" />
-            <span className="truncate">Disembunyikan</span>
-          </Badge>
-        ) : (
-          <Badge variant="success" className="gap-1 max-w-[140px]" title="Ditampilkan">
-            <Eye className="w-3 h-3 text-emerald-600 shrink-0" />
-            <span className="truncate">Ditampilkan</span>
-          </Badge>
-        )}
-      </TableCell>
-
-      <TableCell className="w-24 text-right py-3 align-top pr-4 whitespace-nowrap">
-        <div className="flex items-center justify-end gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            disabled={isToggling}
-            onClick={() => onToggleHide(item)} aria-label={item.isPrayerHidden ? "Tampilkan kembali ke publik" : "Sembunyikan dari feed publik"}
-            className={`h-8 w-8 p-0 cursor-pointer disabled:pointer-events-none disabled:cursor-not-allowed ${
-              item.isPrayerHidden
-                ? "text-rose-700 bg-rose-100/70 hover:bg-rose-200/70"
-                : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
-            }`}
-          >
-            {isToggling ? (
-              <Loader2 className="w-4 h-4 animate-spin text-slate-600" />
-            ) : item.isPrayerHidden ? (
-              <Eye className="w-4 h-4" />
-            ) : (
-              <EyeOff className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
+      <TableCell className="w-32 text-center py-3 align-top whitespace-nowrap pr-4" onClick={(e) => e.stopPropagation()}>
+        <StatusSelectBadge
+          value={item.isPrayerHidden ? "HIDDEN" : "VISIBLE"}
+          options={PRAYER_STATUS_OPTIONS}
+          onChange={handleStatusChange}
+          variant="solid"
+          size="sm"
+          isUpdating={isToggling}
+          disabled={isToggling}
+          ariaLabel={`Ubah status moderasi doa dari ${item.donorName}`}
+        />
       </TableCell>
     </TableRow>
   );
