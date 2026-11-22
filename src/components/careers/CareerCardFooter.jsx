@@ -1,17 +1,14 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Atomic component: Bottom footer row for vacancy card
- * Displays quota, applicant count and post date with dashed separator.
+ * Bottom footer row for vacancy card displaying quota and applicant count.
  * @param {object} props
  * @param {number} [props.applicantCount=0]
- * @param {string} props.postedAt
  * @param {number} [props.quota=1]
  * @param {string} [props.className]
  */
 export function CareerCardFooter({
   applicantCount = 0,
-  postedAt,
   quota = 1,
   className = "",
 }) {

@@ -8,7 +8,7 @@ import { CreatableCombobox } from "@/components/ui/CreatableCombobox";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
 import { sanitizeStandardText } from "@/lib/sanitizer";
-import { validateDisbursementAmount } from "@/lib/distributionBudget";
+import { validateDisbursementAmount } from "@/lib/distributionConstants";
 import { AdminDistributionBudgetInfo } from "./AdminDistributionBudgetInfo";
 
 export function AdminDistributionDetailFields({

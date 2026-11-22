@@ -76,7 +76,6 @@ export function CareerListItem({
 
       <CareerCardFooter
         applicantCount={job.applicantCount}
-        postedAt={job.postedAt}
         quota={job.quota}
       />
     </Card>

@@ -3,23 +3,12 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { FormDialog } from "@/components/ui/FormDialog";
-import { FormField } from "@/components/ui/FormField";
-import { Badge } from "@/components/ui/Badge";
-import { Input } from "@/components/ui/Input";
-import { Checkbox } from "@/components/ui/Checkbox";
 import { USER_ROLES } from "@/services/authService";
 import { validateEmail, validatePhone } from "@/lib/validator";
 import { isFormDirty } from "@/lib/formUtils";
-import {
-  sanitizeName,
-  sanitizeEmail,
-  sanitizePhone,
-  sanitizeStandardText,
-} from "@/lib/sanitizer";
-import { AdminUserGenderSelect } from "./AdminUserGenderSelect";
-import { AdminUserTitleCombobox } from "./AdminUserTitleCombobox";
 import { isInfrastructureEmail } from "@/lib/infrastructureConstants";
-import { FIELD_LIMITS } from "@/constants/fieldValidationLimits";
+import { AdminUserProfileFields } from "./AdminUserProfileFields";
+import { AdminUserAccessFields } from "./AdminUserAccessFields";
 
 /**
  * Modal form untuk menambah atau memperbarui data pengurus yayasan.
@@ -250,275 +239,22 @@ export function AdminUserModal({
         </div>
       )}
 
-      <div className="space-y-3.5">
-        <FormField label="Nama lengkap" required error={errors.name}>
-          <Input
-            type="text"
-            required
-            autoComplete="name"
-            minLength={FIELD_LIMITS.NAME.min}
-            maxLength={FIELD_LIMITS.NAME.max}
-            value={formData.name}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                name: sanitizeName(e.target.value),
-              }));
-              if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
-            }}
-            onBlur={() =>
-              setFormData((prev) => ({ ...prev, name: prev.name.trim() }))
-            }
-            placeholder="Contoh: Drs. H. M. Fauzan, M.Pd"
-          />
-        </FormField>
+      <AdminUserProfileFields
+        formData={formData}
+        setFormData={setFormData}
+        errors={errors}
+        setErrors={setErrors}
+        isEdit={isEdit}
+      />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
-          <AdminUserTitleCombobox
-            value={formData.title}
-            onChange={(val) => {
-              setFormData((prev) => ({
-                ...prev,
-                title: sanitizeStandardText(val, 60),
-              }));
-              if (errors.title) setErrors((prev) => ({ ...prev, title: undefined }));
-            }}
-            error={errors.title}
-          />
-
-          <FormField
-            label={
-              formData.hasLoginAccess
-                ? "Alamat email login"
-                : "Alamat email (opsional)"
-            }
-            required={formData.hasLoginAccess}
-            error={errors.email}
-          >
-            <Input
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              minLength={FIELD_LIMITS.EMAIL.min}
-              maxLength={FIELD_LIMITS.EMAIL.max}
-              spellCheck={false}
-              required={formData.hasLoginAccess}
-              disabled={isEdit && !formData.hasLoginAccess}
-              value={formData.email}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  email: sanitizeEmail(e.target.value),
-                }));
-                if (errors.email)
-                  setErrors((prev) => ({ ...prev, email: undefined }));
-              }}
-              onBlur={() =>
-                setFormData((prev) => ({ ...prev, email: prev.email.trim() }))
-              }
-              placeholder={
-                formData.hasLoginAccess
-                  ? "nama@pabe.or.id"
-                  : "nama@email.com"
-              }
-            />
-          </FormField>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
-          <AdminUserGenderSelect
-            value={formData.gender}
-            onChange={(val) =>
-              setFormData((prev) => ({ ...prev, gender: val }))
-            }
-            error={errors.gender}
-          />
-
-          <FormField label="Nomor WhatsApp (opsional)" error={errors.phone}>
-            <Input
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              minLength={FIELD_LIMITS.PHONE.min}
-              maxLength={FIELD_LIMITS.PHONE.max}
-              value={formData.phone}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  phone: sanitizePhone(e.target.value),
-                }));
-              }}
-              onBlur={() =>
-                setFormData((prev) => ({ ...prev, phone: prev.phone.trim() }))
-              }
-              placeholder="081234567890"
-            />
-          </FormField>
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 space-y-3">
-        <div className="flex items-start gap-3">
-          <Checkbox
-            id="hasLoginAccess"
-            checked={formData.hasLoginAccess && formData.role !== USER_ROLES.SUPER_ADMIN}
-            onCheckedChange={(checked) => {
-              const isChecked = Boolean(checked);
-              setFormData((prev) => ({
-                ...prev,
-                hasLoginAccess: isChecked,
-                role: isChecked ? USER_ROLES.ADMIN : USER_ROLES.ADMIN,
-                password: isChecked
-                  ? prev.password || (!isEdit ? "Pabe2026!" : "")
-                  : "",
-              }));
-              if (!isChecked) {
-                setErrors((prev) => ({
-                  ...prev,
-                  email: undefined,
-                  password: undefined,
-                }));
-              }
-            }}
-            className="mt-0.5 cursor-pointer"
-          />
-          <div className="space-y-0.5 leading-none">
-            <label
-              htmlFor="hasLoginAccess"
-              className="text-sm font-medium text-slate-900 cursor-pointer select-none"
-            >
-              Beri hak akses admin
-            </label>
-            <p className="text-xs text-slate-500 font-normal mt-0.5">
-              Mengelola program donasi, rekam penyaluran, artikel, dan operasional harian.
-            </p>
-          </div>
-        </div>
-
-        {canAssignSuperAdmin && (
-          <div className="flex items-start gap-3 pt-2.5 border-t border-slate-200/80">
-            <Checkbox
-              id="isSuperAdminAccess"
-              checked={formData.hasLoginAccess && formData.role === USER_ROLES.SUPER_ADMIN}
-              onCheckedChange={(checked) => {
-                const isChecked = Boolean(checked);
-                setFormData((prev) => ({
-                  ...prev,
-                  hasLoginAccess: isChecked,
-                  role: isChecked ? USER_ROLES.SUPER_ADMIN : USER_ROLES.ADMIN,
-                  password: isChecked
-                    ? prev.password || (!isEdit ? "Pabe2026!" : "")
-                    : "",
-                }));
-                if (!isChecked) {
-                  setErrors((prev) => ({
-                    ...prev,
-                    email: undefined,
-                    password: undefined,
-                  }));
-                }
-              }}
-              className="mt-0.5 cursor-pointer data-[state=checked]:bg-purple-700 data-[state=checked]:border-purple-700"
-            />
-            <div className="space-y-0.5 leading-none">
-              <label
-                htmlFor="isSuperAdminAccess"
-                className="text-sm font-medium text-slate-900 cursor-pointer select-none flex items-center gap-1.5"
-              >
-                <span>Beri hak akses Super admin</span>
-                <Badge variant="purple">
-                  Otoritas penuh
-                </Badge>
-              </label>
-              <p className="text-sm text-slate-500 font-normal mt-0.5">
-                Memiliki kendali penuh atas sistem, termasuk menambah, mengatur akses, dan menghapus pengurus lain.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {formData.hasLoginAccess && (
-          <div className="pt-3 border-t border-slate-200 space-y-3.5 animate-in fade-in duration-150">
-            {!isEdit ? (
-              <FormField
-                label="Kata sandi awal"
-                required
-                hint="Kata sandi sementara untuk login pertama kali (minimal 6 karakter)."
-                error={errors.password}
-              >
-                <Input
-                  type="text"
-                  required
-                  minLength={FIELD_LIMITS.PASSWORD_SIMPLE.min}
-                  maxLength={FIELD_LIMITS.PASSWORD_SIMPLE.max}
-                  value={formData.password}
-                  onChange={(e) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      password: e.target.value,
-                    }));
-                    if (errors.password)
-                      setErrors((prev) => ({
-                        ...prev,
-                        password: undefined,
-                      }));
-                  }}
-                  onBlur={() => {
-                    const pass = formData.password.trim();
-                    setFormData((prev) => ({ ...prev, password: pass }));
-                    if (!pass) {
-                      setErrors((prev) => ({
-                        ...prev,
-                        password: "Kata sandi awal wajib diisi.",
-                      }));
-                    } else if (pass.length < FIELD_LIMITS.PASSWORD_SIMPLE.min) {
-                      setErrors((prev) => ({
-                        ...prev,
-                        password: `Kata sandi awal minimal ${FIELD_LIMITS.PASSWORD_SIMPLE.min} karakter.`,
-                      }));
-                    }
-                  }}
-                  placeholder="Contoh: Pabe2026!"
-                />
-              </FormField>
-            ) : (
-              <FormField
-                label="Ubah kata sandi (opsional)"
-                error={errors.password}
-              >
-                <Input
-                  type="text"
-                  minLength={FIELD_LIMITS.PASSWORD_SIMPLE.min}
-                  maxLength={FIELD_LIMITS.PASSWORD_SIMPLE.max}
-                  value={formData.password}
-                  onChange={(e) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      password: e.target.value,
-                    }));
-                    if (errors.password)
-                      setErrors((prev) => ({
-                        ...prev,
-                        password: undefined,
-                      }));
-                  }}
-                  onBlur={() => {
-                    const pass = formData.password.trim();
-                    setFormData((prev) => ({ ...prev, password: pass }));
-                    if (pass && pass.length < FIELD_LIMITS.PASSWORD_SIMPLE.min) {
-                      setErrors((prev) => ({
-                        ...prev,
-                        password: `Kata sandi minimal ${FIELD_LIMITS.PASSWORD_SIMPLE.min} karakter jika diisi.`,
-                      }));
-                    }
-                  }}
-                  placeholder="Masukkan kata sandi baru jika ingin mengganti"
-                />
-              </FormField>
-            )}
-          </div>
-        )}
-      </div>
+      <AdminUserAccessFields
+        formData={formData}
+        setFormData={setFormData}
+        errors={errors}
+        setErrors={setErrors}
+        canAssignSuperAdmin={canAssignSuperAdmin}
+        isEdit={isEdit}
+      />
     </FormDialog>
   );
 }
