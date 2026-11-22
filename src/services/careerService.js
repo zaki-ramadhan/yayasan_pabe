@@ -168,6 +168,10 @@ export async function submitJobApplication(payload) {
     throw new Error("Posisi lowongan pekerjaan yang dipilih tidak ditemukan.");
   }
 
+  if (targetVacancy.isActive === false) {
+    throw new Error("Penerimaan berkas untuk lowongan pekerjaan ini telah ditutup.");
+  }
+
   const cleanEmail = emailVal.sanitized.toLowerCase();
 
   // GUARD 1: Anti-Double Job

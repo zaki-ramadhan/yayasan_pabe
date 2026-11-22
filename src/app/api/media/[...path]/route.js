@@ -70,7 +70,25 @@ export async function GET(request, { params }) {
       return new NextResponse("Autentikasi administrator diperlukan untuk mengakses berkas resume pelamar", { status: 401 });
     }
     if (resolvedUser.role !== USER_ROLES.SUPER_ADMIN && resolvedUser.role !== USER_ROLES.ADMIN) {
-      return new NextResponse("Hanya administrator yang berwenang mengakses berkas resume pelamar", { status: 403 });
+      const userEmail = (resolvedUser.email || "").toLowerCase().trim();
+      let isOwner = false;
+      if (userEmail) {
+        try {
+          const { prisma } = await import("@/lib/prisma");
+          const ownedApp = await prisma.jobApplication.findFirst({
+            where: {
+              email: { equals: userEmail, mode: "insensitive" },
+              resumeUrl: { contains: key },
+            },
+            select: { id: true },
+          });
+          if (ownedApp) isOwner = true;
+        } catch {}
+      }
+
+      if (!isOwner) {
+        return new NextResponse("Hanya administrator yang berwenang atau pemilik sah yang dapat mengakses berkas resume ini", { status: 403 });
+      }
     }
   }
 

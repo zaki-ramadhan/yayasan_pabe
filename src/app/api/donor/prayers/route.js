@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDonorPrayers } from "@/services/prayerService";
-import { getAuthenticatedUser } from "@/lib/serverAuth";
+import { requireAuth } from "@/lib/serverAuth";
+import { USER_ROLES } from "@/services/authService";
 import { checkRateLimit } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
@@ -14,19 +15,24 @@ export async function GET(request) {
     });
     if (rateLimitBlocked) return rateLimitBlocked;
 
-    const { user } = await getAuthenticatedUser(request);
+    const { user, errorResponse } = await requireAuth(request);
+    if (errorResponse) return errorResponse;
+
     const { searchParams } = new URL(request.url);
-    const email = searchParams.get("email") || user?.email || "";
-    const name = searchParams.get("name") || user?.name || "";
+    const requestedEmail = searchParams.get("email")?.trim().toLowerCase();
+    const isStaff = Boolean(user.role && user.role !== USER_ROLES.DONOR);
+
+    if (requestedEmail && !isStaff && requestedEmail !== user.email.trim().toLowerCase()) {
+      return NextResponse.json(
+        { success: false, message: "Anda tidak memiliki izin untuk melihat doa donatur lain." },
+        { status: 403 }
+      );
+    }
+
+    const email = (isStaff && requestedEmail) ? requestedEmail : user.email;
+    const name = (isStaff && searchParams.get("name")) ? searchParams.get("name") : (user.name || "");
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
-
-    if (!email && !name) {
-      return NextResponse.json({
-        success: true,
-        data: { prayers: [], total: 0, totalPages: 1, currentPage: 1 },
-      });
-    }
 
     const data = await getDonorPrayers({ userEmail: email, userName: name, page, limit });
     return NextResponse.json({ success: true, data });

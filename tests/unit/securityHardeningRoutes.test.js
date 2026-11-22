@@ -4,6 +4,7 @@ import { PATCH as donationPatchHandler } from "@/app/api/donations/route";
 import { GET as routineGetHandler } from "@/app/api/routine-donations/route";
 import { PATCH as routineDonorPatchHandler } from "@/app/api/donor/routine-donations/route";
 import { DELETE as volunteerDeleteHandler } from "@/app/api/donor/volunteer/route";
+import { GET as donorPrayersGetHandler } from "@/app/api/donor/prayers/route";
 import { POST as aminPostHandler } from "@/app/api/donations/amin/route";
 import * as serverAuth from "@/lib/serverAuth";
 import * as requestOwnership from "@/lib/requestOwnership";
@@ -168,6 +169,74 @@ describe("Security Hardening: Route Handlers Endpoint Protection", () => {
 
       const res = await volunteerDeleteHandler(req);
       expect(res.status).toBe(401);
+    });
+
+    it("menolak pembatalan jika status relawan sudah disetujui/aktif (HTTP 403)", async () => {
+      vi.spyOn(serverAuth, "requireAuth").mockResolvedValueOnce({
+        user: { id: "user-vol-1", email: "relawan@example.com", role: USER_ROLES.DONOR },
+        errorResponse: null,
+      });
+
+      vi.spyOn(prisma.volunteer, "findFirst").mockResolvedValueOnce({
+        id: "vol-approved-1",
+        email: "relawan@example.com",
+        fullName: "Ahmad Relawan",
+        status: "APPROVED",
+      });
+
+      const req = new Request("http://localhost:3000/api/donor/volunteer", {
+        method: "DELETE",
+      });
+
+      const res = await volunteerDeleteHandler(req);
+      expect(res.status).toBe(403);
+      const json = await res.json();
+      expect(json.message).toContain("Status keanggotaan relawan Anda telah aktif");
+    });
+  });
+
+  describe("GET /api/donor/prayers (Anti-IDOR Prayer Protection)", () => {
+    it("menolak akses doa jika pemanggil tidak terautentikasi (HTTP 401)", async () => {
+      vi.spyOn(serverAuth, "requireAuth").mockResolvedValueOnce({
+        user: null,
+        errorResponse: new Response(
+          JSON.stringify({ success: false, message: "Akses tidak sah." }),
+          { status: 401, headers: { "Content-Type": "application/json" } }
+        ),
+      });
+
+      const req = new Request("http://localhost:3000/api/donor/prayers?email=victim@example.com");
+      const res = await donorPrayersGetHandler(req);
+      expect(res.status).toBe(401);
+    });
+
+    it("menolak jika donatur reguler mencoba mengintip doa donatur lain (HTTP 403)", async () => {
+      vi.spyOn(serverAuth, "requireAuth").mockResolvedValueOnce({
+        user: { id: "user-1", email: "attacker@example.com", role: USER_ROLES.DONOR },
+        errorResponse: null,
+      });
+
+      const req = new Request("http://localhost:3000/api/donor/prayers?email=victim@example.com");
+      const res = await donorPrayersGetHandler(req);
+      expect(res.status).toBe(403);
+      const json = await res.json();
+      expect(json.message).toContain("Anda tidak memiliki izin");
+    });
+
+    it("mengizinkan donatur memuat doanya sendiri", async () => {
+      vi.spyOn(serverAuth, "requireAuth").mockResolvedValueOnce({
+        user: { id: "user-1", email: "donor@example.com", role: USER_ROLES.DONOR },
+        errorResponse: null,
+      });
+
+      vi.spyOn(prisma.donation, "findMany").mockResolvedValueOnce([]);
+      vi.spyOn(prisma.donation, "count").mockResolvedValueOnce(0);
+
+      const req = new Request("http://localhost:3000/api/donor/prayers");
+      const res = await donorPrayersGetHandler(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.success).toBe(true);
     });
   });
 

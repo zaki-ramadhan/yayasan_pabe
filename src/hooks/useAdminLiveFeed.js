@@ -97,6 +97,13 @@ export function useAdminLiveFeed({ enabled = true, onEvent } = {}) {
         } catch {}
       });
 
+      es.addEventListener("VOLUNTEER_CANCELLED", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          notifyLiveEvent("VOLUNTEER_CANCELLED", data);
+        } catch {}
+      });
+
       es.addEventListener("DISTRIBUTION_CREATED", (event) => {
         try {
           const data = JSON.parse(event.data);

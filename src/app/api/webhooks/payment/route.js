@@ -24,6 +24,7 @@ export async function POST(request) {
     let invoiceId = payload.order_id || payload.invoiceId || payload.reference;
     let isPaid = false;
     let domainStatus = "PENDING";
+    let parsed = null;
     let rawStatus = (
       payload.transaction_status ||
       payload.status ||
@@ -32,7 +33,7 @@ export async function POST(request) {
     ).toUpperCase();
 
     if (isMidtransPayload) {
-      const parsed = parseMidtransNotification(payload);
+      parsed = parseMidtransNotification(payload);
 
       if (!parsed.isValid) {
         console.error("Midtrans Webhook: Invalid Signature Key for order", parsed.orderId);

@@ -63,17 +63,43 @@ export async function DELETE(request) {
     }
 
     const { prisma } = await import("@/lib/prisma");
-    const result = await prisma.volunteer.deleteMany({
+    const existing = await prisma.volunteer.findFirst({
       where: {
         email: { equals: targetEmail, mode: "insensitive" },
       },
     });
 
-    if (result.count === 0) {
+    if (!existing) {
       return NextResponse.json(
         { success: false, message: "Data pendaftaran relawan tidak ditemukan atau sudah dibatalkan." },
         { status: 404 }
       );
+    }
+
+    if (existing.status === "APPROVED" || existing.status === "ACCEPTED") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Status keanggotaan relawan Anda telah aktif. Pembatalan atau penonaktifan keanggotaan resmi harus melalui konfirmasi pengurus yayasan.",
+        },
+        { status: 403 }
+      );
+    }
+
+    await prisma.volunteer.delete({
+      where: { id: existing.id },
+    });
+
+    try {
+      const { broadcastAdminEvent } = await import("@/lib/sseBroadcast");
+      broadcastAdminEvent("VOLUNTEER_CANCELLED", {
+        id: existing.id,
+        fullName: existing.fullName,
+        email: existing.email || targetEmail,
+        city: existing.city || "",
+      });
+    } catch (sseErr) {
+      console.warn("Peringatan: Gagal broadcast SSE volunteer cancellation:", sseErr?.message);
     }
 
     return NextResponse.json({

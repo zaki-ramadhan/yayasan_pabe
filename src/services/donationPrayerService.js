@@ -71,6 +71,17 @@ export async function updateDonationPrayer({
       include: { campaign: true },
     });
 
+    try {
+      const { broadcastAdminEvent } = await import("@/lib/sseBroadcast");
+      broadcastAdminEvent("PRAYER_UPDATED", {
+        id: updatedDb.id,
+        invoiceId: updatedDb.invoiceId,
+        donorName: updatedDb.isAnonymous ? "Hamba Allah" : updatedDb.donorName,
+        prayer: updatedDb.prayer,
+        isPrayerHidden: updatedDb.isPrayerHidden,
+      });
+    } catch {}
+
     return {
       id: updatedDb.id,
       invoiceId: updatedDb.invoiceId,
