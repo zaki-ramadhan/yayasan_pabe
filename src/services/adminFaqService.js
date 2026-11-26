@@ -109,3 +109,54 @@ export async function deleteAdminFaqsBatch(ids) {
   });
   return { count: result.count };
 }
+
+const MAX_BULK_FAQ_IDS = 100;
+
+/**
+ * Update selected FAQ fields (category, isActive) across multiple records atomically.
+ *
+ * @param {string[]} ids
+ * @param {{ category?: string, isActive?: boolean }} updates
+ * @returns {Promise<{ count: number }>}
+ */
+export async function updateAdminFaqsBatch(ids, updates) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID FAQ tidak boleh kosong.");
+  }
+
+  const validIds = Array.from(
+    new Set(ids.filter((id) => typeof id === "string" && id.trim().length > 0).map((id) => id.trim()))
+  );
+
+  if (validIds.length === 0) {
+    throw new Error("Tidak ada ID FAQ yang valid.");
+  }
+
+  if (validIds.length > MAX_BULK_FAQ_IDS) {
+    throw new Error(`Maksimal ${MAX_BULK_FAQ_IDS} FAQ per pembaruan massal.`);
+  }
+
+  if (!updates || typeof updates !== "object") {
+    throw new Error("Data pembaruan FAQ tidak valid.");
+  }
+
+  const data = {};
+  if (updates.category !== undefined) {
+    const cleanCat = sanitizeInput(String(updates.category || "")).trim();
+    data.category = cleanCat || "Umum";
+  }
+  if (updates.isActive !== undefined) {
+    data.isActive = Boolean(updates.isActive);
+  }
+
+  if (Object.keys(data).length === 0) {
+    throw new Error("Pilih minimal satu kolom untuk diperbarui.");
+  }
+
+  const result = await prisma.faq.updateMany({
+    where: { id: { in: validIds } },
+    data,
+  });
+
+  return { count: result.count };
+}

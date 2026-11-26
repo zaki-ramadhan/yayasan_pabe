@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { Pen2Icon as Edit2 } from "@solar-icons/react/line-duotone/pen-2";
 import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
 import {
   Table,
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/Button";
 import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AdminFaqModal } from "@/components/admin/faqs/AdminFaqModal";
+import { AdminFaqBulkEditModal } from "@/components/admin/faqs/AdminFaqBulkEditModal";
 import { AdminFaqDeleteDialog } from "@/components/admin/faqs/AdminFaqDeleteDialog";
 import { AdminFaqToolbar } from "@/components/admin/faqs/AdminFaqToolbar";
 import { AdminFaqTableRow } from "@/components/admin/faqs/AdminFaqTableRow";
@@ -41,6 +43,7 @@ export function AdminFaqTable({ initialFaqs = [] }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [isBulkEditOpen, setIsBulkEditOpen] = useState(false);
 
   const debouncedSearch = useDebounce(search.trim(), 300);
 
@@ -192,6 +195,17 @@ export function AdminFaqTable({ initialFaqs = [] }) {
       >
         <Button
           type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setIsBulkEditOpen(true)}
+          className="font-medium h-8 text-xs gap-1.5 cursor-pointer bg-white"
+        >
+          <Edit2 className="w-3.5 h-3.5" />
+          <span>Edit {selection.selectedCount} terpilih</span>
+        </Button>
+
+        <Button
+          type="button"
           variant="destructive"
           size="sm"
           onClick={() => setIsBulkDeleteOpen(true)}
@@ -279,6 +293,17 @@ export function AdminFaqTable({ initialFaqs = [] }) {
         onConfirm={handleConfirmDelete}
         faq={deletingFaq}
         isLoading={isDeleting}
+      />
+
+      <AdminFaqBulkEditModal
+        isOpen={isBulkEditOpen}
+        onOpenChange={setIsBulkEditOpen}
+        selectedIds={selection.selectedIds}
+        categories={availableCategories}
+        onSuccess={() => {
+          selection.clearSelection();
+          refreshList();
+        }}
       />
 
       <ConfirmDialog
