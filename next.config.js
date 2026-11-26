@@ -135,7 +135,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://images.unsplash.com https://*.googleusercontent.com https://*.gstatic.com https://*.fbcdn.net https://*.fbsbx.com https://*.facebook.com https://*.cdninstagram.com https://*.r2.dev https://*.midtrans.com",
               "font-src 'self' data:",
-              "connect-src 'self' https://challenges.cloudflare.com https://app.sandbox.midtrans.com https://api.sandbox.midtrans.com https://app.midtrans.com https://api.midtrans.com https://cloudflareinsights.com",
+              "connect-src 'self' https://*.r2.cloudflarestorage.com https://challenges.cloudflare.com https://app.sandbox.midtrans.com https://api.sandbox.midtrans.com https://app.midtrans.com https://api.midtrans.com https://cloudflareinsights.com",
               "frame-src 'self' https://challenges.cloudflare.com https://app.sandbox.midtrans.com https://app.midtrans.com",
               "frame-ancestors 'self'",
             ].join("; "),
