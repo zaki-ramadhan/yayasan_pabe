@@ -235,6 +235,60 @@ export async function deleteAdminVacanciesBatch(ids) {
   return { count: result.count };
 }
 
+const MAX_BULK_VACANCY_IDS = 100;
+
+/**
+ * Update selected vacancy fields (isActive, deadline) across multiple records atomically.
+ *
+ * @param {string[]} ids
+ * @param {{ isActive?: boolean, deadline?: string }} updates
+ * @returns {Promise<{ count: number }>}
+ */
+export async function updateAdminVacanciesBatch(ids, updates) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID lowongan tidak boleh kosong.");
+  }
+
+  const validIds = Array.from(
+    new Set(ids.filter((id) => typeof id === "string" && id.trim().length > 0).map((id) => id.trim()))
+  );
+
+  if (validIds.length === 0) {
+    throw new Error("Tidak ada ID lowongan yang valid.");
+  }
+
+  if (validIds.length > MAX_BULK_VACANCY_IDS) {
+    throw new Error(`Maksimal ${MAX_BULK_VACANCY_IDS} lowongan per pembaruan massal.`);
+  }
+
+  if (!updates || typeof updates !== "object") {
+    throw new Error("Data pembaruan lowongan tidak valid.");
+  }
+
+  const data = {};
+  if (updates.isActive !== undefined) {
+    data.isActive = Boolean(updates.isActive);
+  }
+  if (updates.deadline !== undefined) {
+    const cleanDeadline = sanitizeInput(String(updates.deadline || "")).trim();
+    if (!cleanDeadline) {
+      throw new Error("Batas waktu lamaran tidak boleh kosong.");
+    }
+    data.deadline = cleanDeadline;
+  }
+
+  if (Object.keys(data).length === 0) {
+    throw new Error("Pilih minimal satu kolom untuk diperbarui.");
+  }
+
+  const result = await prisma.jobVacancy.updateMany({
+    where: { id: { in: validIds } },
+    data,
+  });
+
+  return { count: result.count };
+}
+
 /**
  * Mengambil daftar pelamar pekerjaan dengan dukungan filter, sorting, dan paginasi.
  */

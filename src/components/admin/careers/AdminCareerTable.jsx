@@ -3,6 +3,7 @@
 
 import { useState, useMemo, useEffect, useRef } from "react";
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { Pen2Icon as Edit2 } from "@solar-icons/react/line-duotone/pen-2";
 import {
   Table,
   TableContainer,
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/Button";
 import { TableSelectionBar } from "@/components/ui/TableSelectionBar";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AdminCareerModal } from "@/components/admin/careers/AdminCareerModal";
+import { AdminCareerBulkEditModal } from "@/components/admin/careers/AdminCareerBulkEditModal";
 import { AdminApplicantDrawer } from "@/components/admin/careers/AdminApplicantDrawer";
 import { AdminCareerToolbar } from "@/components/admin/careers/AdminCareerToolbar";
 import { AdminCareerTableRow } from "@/components/admin/careers/AdminCareerTableRow";
@@ -42,6 +44,7 @@ export function AdminCareerTable({ initialVacancies = [] }) {
   const [updatingStatusId, setUpdatingStatusId] = useState(null);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [isBulkEditOpen, setIsBulkEditOpen] = useState(false);
   const processedAppIdsRef = useRef(new Set());
   const PAGE_SIZE = 10;
 
@@ -266,6 +269,17 @@ export function AdminCareerTable({ initialVacancies = [] }) {
       >
         <Button
           type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setIsBulkEditOpen(true)}
+          className="font-medium h-8 text-xs gap-1.5 cursor-pointer bg-white"
+        >
+          <Edit2 className="w-3.5 h-3.5" />
+          <span>Edit {selection.selectedCount} terpilih</span>
+        </Button>
+
+        <Button
+          type="button"
           variant="destructive"
           size="sm"
           onClick={() => setIsBulkDeleteOpen(true)}
@@ -405,6 +419,16 @@ export function AdminCareerTable({ initialVacancies = [] }) {
         }
         confirmLabel="Hapus sekarang"
         confirmVariant="destructive"
+      />
+
+      <AdminCareerBulkEditModal
+        isOpen={isBulkEditOpen}
+        onOpenChange={setIsBulkEditOpen}
+        selectedIds={selection.selectedIds}
+        onSuccess={() => {
+          selection.clearSelection();
+          refreshList({ silent: true });
+        }}
       />
     </div>
   );

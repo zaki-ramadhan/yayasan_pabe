@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import {
   getAdminVacancies,
   createAdminVacancy,
+  updateAdminVacanciesBatch,
   deleteAdminVacanciesBatch,
 } from "@/services/adminCareerService";
 
@@ -97,6 +99,39 @@ export async function DELETE(request) {
     return NextResponse.json(
       { success: false, message: error.message || "Gagal menghapus lowongan secara massal." },
       { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request) {
+  const { errorResponse } = await requireAuth(request, [
+    USER_ROLES.SUPER_ADMIN,
+    USER_ROLES.ADMIN,
+  ]);
+  if (errorResponse) return errorResponse;
+
+  try {
+    const body = await request.json();
+    let ids = body?.ids;
+    if (ids && typeof ids === "object" && !Array.isArray(ids)) {
+      ids = Object.values(ids);
+    }
+    ids = Array.isArray(ids) ? ids : [];
+
+    const result = await updateAdminVacanciesBatch(ids, body?.updates);
+
+    revalidatePath("/karir");
+    revalidatePath("/admin/karir");
+
+    return NextResponse.json({
+      success: true,
+      message: `${result.count} lowongan pekerjaan berhasil diperbarui.`,
+      data: result,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message || "Gagal memperbarui lowongan terpilih." },
+      { status: 400 }
     );
   }
 }
