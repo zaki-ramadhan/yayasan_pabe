@@ -5,6 +5,119 @@
 import { safeFetch } from "@/lib/safeFetch";
 import { dataUrlToBlob } from "@/lib/videoHelper";
 
+const DIRECT_UPLOAD_THRESHOLD_BYTES = 4 * 1024 * 1024;
+
+function putFileWithProgress({ url, blob, contentType, onProgress, signal, timeoutMs }) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", url, true);
+    if (contentType) {
+      xhr.setRequestHeader("Content-Type", contentType);
+    }
+    xhr.timeout = timeoutMs;
+
+    if (signal) {
+      signal.addEventListener("abort", () => {
+        try {
+          xhr.abort();
+        } catch {
+        }
+      });
+    }
+
+    if (xhr.upload && typeof onProgress === "function") {
+      xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable && event.total > 0) {
+          const percent = Math.min(100, Math.max(0, Math.round((event.loaded / event.total) * 100)));
+          onProgress(percent);
+        }
+      });
+    }
+
+    xhr.addEventListener("load", () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        if (typeof onProgress === "function") onProgress(100);
+        resolve();
+      } else {
+        reject(new Error(`Gagal mengunggah berkas ke penyimpanan (HTTP ${xhr.status}).`));
+      }
+    });
+
+    xhr.addEventListener("error", () => {
+      reject(
+        new Error(
+          "Koneksi ke penyimpanan R2 terblokir atau terputus. Periksa koneksi internet dan konfigurasi CORS bucket R2."
+        )
+      );
+    });
+
+    xhr.addEventListener("timeout", () => {
+      reject(new Error("Waktu pengunggahan habis (timeout). Berkas terlalu besar atau koneksi lambat."));
+    });
+
+    xhr.addEventListener("abort", () => {
+      reject(new Error("Pengunggahan berkas dibatalkan."));
+    });
+
+    xhr.send(blob);
+  });
+}
+
+async function uploadDirectToR2({ file, context, identifier, posterBlob, onProgress, signal, timeoutMs }) {
+  const presignRes = await safeFetch("/api/upload/presign", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      context,
+      identifier: identifier ? identifier.trim() : "",
+      fileName: file.name || "berkas",
+      contentType: file.type || "application/octet-stream",
+      size: file.size,
+      posterContentType: posterBlob?.type || undefined,
+    }),
+    signal,
+  });
+
+  const presignJson = await presignRes.json();
+  if (!presignRes.ok || !presignJson?.success || !presignJson?.data?.uploadUrl) {
+    throw new Error(presignJson?.message || "Gagal menyiapkan unggahan langsung ke penyimpanan.");
+  }
+
+  const { uploadUrl, posterUploadUrl, key, url, mimeType } = presignJson.data;
+
+  await putFileWithProgress({
+    url: uploadUrl,
+    blob: file,
+    contentType: mimeType,
+    onProgress,
+    signal,
+    timeoutMs,
+  });
+
+  if (posterUploadUrl && posterBlob) {
+    try {
+      await putFileWithProgress({
+        url: posterUploadUrl,
+        blob: posterBlob,
+        contentType: posterBlob.type,
+        signal,
+        timeoutMs: 30000,
+      });
+    } catch {
+      // Poster failure should not block primary video upload
+    }
+  }
+
+  return {
+    url,
+    key,
+    mimeType,
+    size: file.size,
+    originalSize: file.size,
+    savingsPercent: 0,
+  };
+}
+
 /**
  * Mengunggah berkas ke server R2 melalui endpoint /api/upload.
  *
@@ -60,6 +173,27 @@ export async function uploadFileToServer({
     throw new Error("Pengunggahan berkas dibatalkan.");
   }
 
+  const posterBlob =
+    posterDataUrl && typeof posterDataUrl === "string" ? dataUrlToBlob(posterDataUrl) : null;
+
+  const isLargeOrVideo = Boolean(
+    file &&
+    (file.size > DIRECT_UPLOAD_THRESHOLD_BYTES || (file.type && file.type.startsWith("video/")))
+  );
+  const timeoutMs = customTimeoutMs || (isLargeOrVideo ? 180000 : 60000);
+
+  if (isLargeOrVideo && typeof window !== "undefined" && typeof window.XMLHttpRequest === "function") {
+    return uploadDirectToR2({
+      file,
+      context,
+      identifier,
+      posterBlob,
+      onProgress,
+      signal,
+      timeoutMs,
+    });
+  }
+
   const formData = new FormData();
   formData.append("file", file);
   formData.append("context", context);
@@ -68,18 +202,9 @@ export async function uploadFileToServer({
     formData.append("identifier", identifier.trim());
   }
 
-  if (posterDataUrl && typeof posterDataUrl === "string") {
-    const posterBlob = dataUrlToBlob(posterDataUrl);
-    if (posterBlob) {
-      formData.append("poster", posterBlob, "poster.webp");
-    }
+  if (posterBlob) {
+    formData.append("poster", posterBlob, "poster.webp");
   }
-
-  const isLargeOrVideo = Boolean(
-    file &&
-    (file.size > 5 * 1024 * 1024 || (file.type && file.type.startsWith("video/")))
-  );
-  const timeoutMs = customTimeoutMs || (isLargeOrVideo ? 180000 : 60000);
 
   if (typeof window !== "undefined" && typeof window.XMLHttpRequest === "function") {
     return new Promise((resolve, reject) => {
@@ -127,7 +252,9 @@ export async function uploadFileToServer({
         } catch {
           reject(
             new Error(
-              "Gagal memproses unggahan berkas. Silakan coba beberapa saat lagi."
+              xhr.status === 413
+                ? "Ukuran berkas melebihi batas unggahan server (HTTP 413)."
+                : "Gagal memproses unggahan berkas. Silakan coba beberapa saat lagi."
             )
           );
         }

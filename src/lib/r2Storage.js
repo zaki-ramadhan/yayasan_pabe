@@ -5,6 +5,7 @@ import {
   DeleteObjectsCommand,
   ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { validateUploadFile, FILE_UPLOAD_LIMITS } from "./fileValidator";
 import { getStorageContext } from "./storageConstants";
 import { generateR2Key, extractR2Key } from "./r2KeyUtils";
@@ -350,4 +351,96 @@ export async function deleteMultipleFromR2(keysOrUrls) {
       errors: fallbackErrors,
     };
   }
+}
+
+const MIME_TO_EXT = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "application/pdf": "pdf",
+  "video/mp4": "mp4",
+  "video/webm": "webm",
+  "video/quicktime": "mov",
+};
+
+/**
+ * Generate a presigned PUT URL for direct client-to-R2 uploads (bypasses serverless payload limits).
+ *
+ * @param {{
+ *   context: string,
+ *   identifier?: string,
+ *   originalName?: string,
+ *   contentType: string,
+ *   size: number,
+ *   posterContentType?: string
+ * }} options
+ */
+export async function createPresignedUploadUrl({
+  context,
+  identifier = "",
+  originalName = "berkas",
+  contentType,
+  size,
+  posterContentType,
+}) {
+  const resolvedContext = getStorageContext(context);
+  const rawMime = String(contentType || "").toLowerCase().split(";")[0].trim();
+  const normalizedMime = rawMime === "image/jpg" ? "image/jpeg" : rawMime;
+
+  if (!normalizedMime || !resolvedContext.allowedTypes.includes(normalizedMime)) {
+    throw new Error(`Tipe berkas '${normalizedMime || "tidak dikenal"}' tidak diizinkan untuk konteks ini.`);
+  }
+
+  const numericSize = Number(size);
+  if (!Number.isFinite(numericSize) || numericSize <= 0) {
+    throw new Error("Ukuran berkas tidak valid.");
+  }
+
+  if (numericSize > resolvedContext.maxBytes) {
+    const maxMb = Math.round(resolvedContext.maxBytes / (1024 * 1024));
+    throw new Error(`Ukuran berkas melebihi batas maksimal ${maxMb}MB.`);
+  }
+
+  const extension = MIME_TO_EXT[normalizedMime] || "bin";
+  const key = generateR2Key({
+    contextKey: context,
+    identifier,
+    originalName,
+    extension,
+  });
+
+  const client = getR2Client();
+  const command = new PutObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+    ContentType: normalizedMime,
+    CacheControl: "public, max-age=31536000, immutable",
+  });
+
+  const uploadUrl = await getSignedUrl(client, command, { expiresIn: 300 });
+
+  let posterUploadUrl = null;
+  if (normalizedMime.startsWith("video/") && posterContentType) {
+    const cleanPosterMime = String(posterContentType).toLowerCase().split(";")[0].trim();
+    if (["image/jpeg", "image/png", "image/webp"].includes(cleanPosterMime)) {
+      const posterCommand = new PutObjectCommand({
+        Bucket: bucketName,
+        Key: `${key}${VIDEO_POSTER_SUFFIX}`,
+        ContentType: cleanPosterMime,
+        CacheControl: "public, max-age=31536000, immutable",
+      });
+      posterUploadUrl = await getSignedUrl(client, posterCommand, { expiresIn: 300 });
+    }
+  }
+
+  const isBlockedDevDomain = publicUrl.includes(".r2.dev");
+  const finalUrl = isBlockedDevDomain || !publicUrl ? `/api/media/${key}` : `${publicUrl}/${key}`;
+
+  return {
+    uploadUrl,
+    posterUploadUrl,
+    key,
+    url: finalUrl,
+    mimeType: normalizedMime,
+  };
 }
