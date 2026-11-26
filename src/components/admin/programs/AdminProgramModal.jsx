@@ -146,7 +146,7 @@ export function AdminProgramModal({
 				"",
 			);
 			setLocation(
-				"Wilayah Binaan PABE",
+				"Seluruh Indonesia",
 			);
 			setStory(
 				"",

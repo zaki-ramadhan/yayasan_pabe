@@ -77,7 +77,7 @@ export async function getAdminCampaigns({
         endDate: c.endDate ? c.endDate.toISOString() : null,
         status: c.status,
         isFeatured: c.isFeatured,
-        location: c.location || "Nasional",
+        location: c.location || "Seluruh Indonesia",
         bannerUrl: c.bannerUrl || null,
         createdAt: c.createdAt.toISOString(),
       })),
@@ -142,7 +142,7 @@ export async function createAdminCategory(name) {
  */
 export async function createAdminCampaign(payload) {
   const title = sanitizeInput(payload.title || "").trim();
-  const location = sanitizeInput(payload.location || "Indonesia").trim();
+  const location = sanitizeInput(payload.location || "Seluruh Indonesia").trim();
   const story = sanitizeInput(payload.story || "").trim();
   const excerpt = sanitizeInput(payload.excerpt || story.slice(0, 160)).trim();
   const targetAmount = Math.max(0, parseInt(payload.targetAmount, 10) || 0);

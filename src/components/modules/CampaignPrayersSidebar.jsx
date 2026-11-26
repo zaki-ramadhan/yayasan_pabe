@@ -4,8 +4,6 @@
 import { useMemo, useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { LoaderIcon as Loader2 } from "@solar-icons/react/linear/loader";
-import { LockIcon as Lock } from "@solar-icons/react/line-duotone/lock";
-import { ChatRoundDotsIcon as MessageCircle } from "@solar-icons/react/line-duotone/chat-round-dots";
 import { PrayerChatBubble } from "@/components/modules/PrayerChatBubble";
 import { PrayerInputBar } from "@/components/modules/PrayerInputBar";
 import { usePrayersSync } from "@/hooks/usePrayersSync";
@@ -205,9 +203,6 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
 
         <div className="rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden flex flex-col h-[280px]">
           <div className="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-2 bg-slate-50/50">
-            <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1 border border-emerald-100">
-              <MessageCircle className="w-5 h-5" />
-            </div>
             <p className="text-sm font-semibold text-slate-800">Belum ada doa kebaikan</p>
             <p className="text-xs text-slate-500 max-w-[240px] leading-relaxed">
               Jadilah orang baik pertama yang menitipkan doa dan harapan untuk program ini.
@@ -267,8 +262,7 @@ export function CampaignPrayersSidebar({ initialDonors = [], campaignSlug, isZis
 
         {isClosed ? (
           <div className="relative z-10 p-2 sm:px-2.5 sm:pb-2.5 sm:pt-1">
-            <div className="flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900/90 border border-slate-700/80 backdrop-blur-md rounded-full text-slate-300 text-xs sm:text-sm shadow-sm select-none text-center">
-              <Lock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <div className="flex items-center justify-center px-4 py-2.5 bg-slate-900/90 border border-slate-700/80 backdrop-blur-md rounded-full text-slate-300 text-xs sm:text-sm shadow-sm select-none text-center">
               <span>Program telah selesai. Pengiriman doa ditutup</span>
             </div>
           </div>
