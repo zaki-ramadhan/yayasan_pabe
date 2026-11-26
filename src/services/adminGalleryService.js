@@ -135,7 +135,7 @@ export async function createGalleryBatch(items) {
         title: sanitizedTitle || "Dokumentasi Kegiatan",
         category: sanitizedCategory,
         description: sanitizedDesc,
-        activityDate: date || new Date(),
+        activityDate: date,
       };
     });
 
@@ -219,7 +219,9 @@ export async function updateGalleryItem(id, { title, category, description, acti
   const sanitizedDesc = description ? sanitizeInput(decodeHtmlEntities(description.trim())) : null;
 
   let date = existing.activityDate;
-  if (activityDate) {
+  if (activityDate === null || activityDate === "") {
+    date = null;
+  } else if (activityDate) {
     const parsed = new Date(activityDate);
     if (!isNaN(parsed.getTime())) date = parsed;
   }

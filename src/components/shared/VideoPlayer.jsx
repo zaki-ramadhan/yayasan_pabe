@@ -2,12 +2,14 @@
 
 import { useState, useRef, useEffect } from "react";
 import { SafeImage } from "@/components/ui/SafeImage";
+import { VideoThumbnail } from "@/components/shared/VideoThumbnail";
 import { PlayIcon } from "@solar-icons/react/bold/play";
 import { VideocameraIcon } from "@solar-icons/react/line-duotone/videocamera";
 import {
   isYouTubeUrl,
   getYouTubeVideoId,
   getVideoPosterUrl,
+  getStreamingUrl,
 } from "@/lib/galleryGroupHelper";
 
 /**
@@ -23,21 +25,6 @@ import {
  * @param {string} [props.className] - Kelas CSS wadah luar
  * @param {"cover" | "contain"} [props.objectFit="cover"] - Penyesuaian rasio video
  */
-/**
- * Menghasilkan URL streaming aman untuk berkas video lokal/R2.
- * Menambahkan suffix /stream agar IDM atau pengunduh otomatis tidak mendeteksi URL sebagai berkas unduhan .mp4 mentah.
- */
-function getStreamingUrl(url) {
-  if (!url || typeof url !== "string") return url;
-  if (url.startsWith("/api/media/") || url.includes("/api/media/")) {
-    const clean = url.split("?")[0].replace(/\/+$/, "");
-    if (!clean.endsWith("/stream")) {
-      return `${clean}/stream`;
-    }
-  }
-  return url;
-}
-
 export function VideoPlayer({
   src,
   poster,
@@ -169,10 +156,11 @@ export function VideoPlayer({
                 }
               }}
             >
-              <SafeImage
-                src={resolvedPoster}
+              <VideoThumbnail
+                src={src}
+                fallbackPoster={poster}
                 alt={title}
-                className={objectFit === "contain" ? "object-contain" : "object-cover"}
+                objectFit={objectFit}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
 

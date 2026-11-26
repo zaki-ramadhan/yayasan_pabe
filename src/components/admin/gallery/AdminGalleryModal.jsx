@@ -66,7 +66,7 @@ export function AdminGalleryModal({
       setActivityDate(
         itemToEdit.activityDate
           ? itemToEdit.activityDate.slice(0, 10)
-          : new Date().toISOString().split("T")[0]
+          : ""
       );
       const isYt = isYouTubeUrl(itemToEdit.imageUrl || "");
       setSingleImageUrl(isYt ? "" : itemToEdit.imageUrl || "");
@@ -129,7 +129,7 @@ export function AdminGalleryModal({
     try {
       const resolvedDate = activityDate
         ? new Date(activityDate).toISOString()
-        : new Date().toISOString();
+        : null;
       const resolvedTitle = title.trim() || "Dokumentasi kegiatan";
       const resolvedDesc = description.trim() || null;
 

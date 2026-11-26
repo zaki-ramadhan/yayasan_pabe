@@ -56,6 +56,20 @@ export function isDirectVideoUrl(url) {
 export const VIDEO_POSTER_SUFFIX = ".poster.webp";
 
 /**
+ * Append /stream to internal /api/media/ video URLs to prevent download-manager interception.
+ */
+export function getStreamingUrl(url) {
+  if (!url || typeof url !== "string") return url;
+  if (url.startsWith("/api/media/") || url.includes("/api/media/")) {
+    const clean = url.split("?")[0].replace(/\/+$/, "");
+    if (!clean.endsWith("/stream")) {
+      return `${clean}/stream`;
+    }
+  }
+  return url;
+}
+
+/**
  * Menghasilkan URL cover/poster deterministik untuk berkas video langsung atau YouTube.
  * Untuk video langsung (R2), mengembalikan `<url_video>.poster.webp`.
  *

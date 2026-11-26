@@ -3,6 +3,7 @@
 import { VideoFrameIcon as Video } from "@solar-icons/react/line-duotone/video-frame";
 import { PlayIcon as Play } from "@solar-icons/react/line-duotone/play";
 import { SafeImage } from "@/components/ui/SafeImage";
+import { VideoThumbnail } from "@/components/shared/VideoThumbnail";
 import { TableRow, TableCell, TableRowActions } from "@/components/ui/Table";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { Badge } from "@/components/ui/Badge";
@@ -11,7 +12,6 @@ import {
   isVideoUrl,
   isYouTubeUrl,
   getYouTubeThumbnail,
-  getVideoPosterUrl,
 } from "@/lib/galleryGroupHelper";
 
 export function AdminGalleryTableRow({
@@ -22,7 +22,7 @@ export function AdminGalleryTableRow({
   onDelete,
 }) {
   const displayTitle = item.title || "Dokumentasi kegiatan";
-  const displayDate = item.activityDate || item.createdAt;
+  const displayDate = item.activityDate || null;
   const isYt = isYouTubeUrl(item.imageUrl);
   const isVid = isVideoUrl(item.imageUrl);
 
@@ -58,8 +58,8 @@ export function AdminGalleryTableRow({
             </>
           ) : isVid ? (
             <>
-              <SafeImage
-                src={getVideoPosterUrl(item.imageUrl)}
+              <VideoThumbnail
+                src={item.imageUrl}
                 alt={displayTitle}
                 sizes="56px"
               />
@@ -99,7 +99,7 @@ export function AdminGalleryTableRow({
       </TableCell>
 
       <TableCell className="w-36 py-2.5 text-slate-600 text-sm align-middle text-center whitespace-nowrap tabular-nums">
-        {formatDate(displayDate)}
+        {displayDate ? formatDate(displayDate) : "—"}
       </TableCell>
 
       <TableCell className="w-24 text-right py-2.5 align-middle whitespace-nowrap pr-4">

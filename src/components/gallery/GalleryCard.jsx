@@ -5,7 +5,7 @@ import { GalleryCardCarousel } from "./GalleryCardCarousel";
 
 export function GalleryCard({ item }) {
   const displayTitle = decodeHtmlEntities(item.title || "Dokumentasi Kegiatan");
-  const displayDate = item.activityDate || item.createdAt;
+  const displayDate = item.activityDate || null;
   const categoryName = decodeHtmlEntities(item.category || "Umum");
   const images = Array.isArray(item.images) && item.images.length > 0
     ? item.images

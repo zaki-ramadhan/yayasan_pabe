@@ -17,6 +17,7 @@ export function SafeImage({
   loading,
   quality,
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+  onError: onErrorProp,
 }) {
   const [failedSrc, setFailedSrc] = useState(null);
 
@@ -34,7 +35,8 @@ export function SafeImage({
 
   const isUnoptimized =
     typeof resolvedSrc === "string" &&
-    (resolvedSrc.includes("fbcdn.net") ||
+    (resolvedSrc.startsWith("/api/media/") ||
+      resolvedSrc.includes("fbcdn.net") ||
       resolvedSrc.includes("cdninstagram.com") ||
       resolvedSrc.includes("instagram.com") ||
       resolvedSrc.startsWith("http://") ||
@@ -54,7 +56,10 @@ export function SafeImage({
         {...(quality ? { quality } : {})}
         unoptimized={isUnoptimized}
         referrerPolicy="no-referrer"
-        onError={() => setFailedSrc(resolvedSrc)}
+        onError={() => {
+          setFailedSrc(resolvedSrc);
+          onErrorProp?.();
+        }}
         className={cn("object-cover transition-opacity duration-300", className)}
       />
     );
@@ -72,7 +77,10 @@ export function SafeImage({
       {...(quality ? { quality } : {})}
       unoptimized={isUnoptimized}
       referrerPolicy="no-referrer"
-      onError={() => setFailedSrc(resolvedSrc)}
+      onError={() => {
+        setFailedSrc(resolvedSrc);
+        onErrorProp?.();
+      }}
       className={cn("object-cover transition-opacity duration-300", className)}
     />
   );

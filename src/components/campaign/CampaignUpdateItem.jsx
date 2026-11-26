@@ -6,9 +6,10 @@ import { VideoFrameIcon as VideoIcon } from "@solar-icons/react/line-duotone/vid
 import { YouTubeIcon } from "@/components/icons/SocialIcons";
 import { formatRupiah, formatDate } from "@/lib/formatters";
 import { SafeImage } from "@/components/ui/SafeImage";
+import { VideoThumbnail } from "@/components/shared/VideoThumbnail";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/Dialog";
 import { VideoPlayer } from "@/components/shared/VideoPlayer";
-import { isVideoUrl, isYouTubeUrl, getYouTubeThumbnail, getVideoPosterUrl } from "@/lib/galleryGroupHelper";
+import { isVideoUrl, isYouTubeUrl, getYouTubeThumbnail } from "@/lib/galleryGroupHelper";
 
 /**
  * Komponen item pembaruan / bukti penyaluran program donasi.
@@ -83,8 +84,8 @@ export function CampaignUpdateItem({ update }) {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (
-                    <SafeImage
-                      src={getVideoPosterUrl(mediaUrl)}
+                    <VideoThumbnail
+                      src={mediaUrl}
                       alt={`Dokumentasi ${update.title} ${idx + 1}`}
                       sizes="(max-width: 640px) 50vw, 240px"
                       className="group-hover:scale-105 transition-transform duration-300"
