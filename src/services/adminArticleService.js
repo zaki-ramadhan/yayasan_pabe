@@ -1,7 +1,19 @@
 import prisma from "@/lib/prisma";
 import { ARTICLE_CATEGORIES } from "@/data/articles";
 import { sanitizeInput } from "@/lib/security";
-import { deleteFromR2 } from "@/lib/r2Storage";
+import { deleteFromR2, deleteMultipleFromR2 } from "@/lib/r2Storage";
+
+function extractArticleMediaUrls(article) {
+  const urls = [];
+  if (article?.bannerUrl) urls.push(article.bannerUrl);
+  if (article?.content && typeof article.content === "string") {
+    const matches = article.content.matchAll(/(?:src=["']|url\(["']?)([^"')]+)/gi);
+    for (const match of matches) {
+      if (match[1]) urls.push(match[1]);
+    }
+  }
+  return urls;
+}
 
 function slugify(text) {
   return text
@@ -171,16 +183,19 @@ export async function updateAdminArticle(id, payload) {
 export async function deleteAdminArticle(id) {
   const existing = await prisma.article.findUnique({
     where: { id },
-    select: { bannerUrl: true },
+    select: { bannerUrl: true, content: true },
   });
 
-  if (existing?.bannerUrl) {
-    await deleteFromR2(existing.bannerUrl);
-  }
-
-  return prisma.article.delete({
+  const deleted = await prisma.article.delete({
     where: { id },
   });
+
+  const mediaUrls = extractArticleMediaUrls(existing);
+  if (mediaUrls.length > 0) {
+    await deleteMultipleFromR2(mediaUrls).catch(() => {});
+  }
+
+  return deleted;
 }
 
 /**
@@ -193,17 +208,17 @@ export async function deleteAdminArticlesBatch(ids) {
 
   const articlesToDelete = await prisma.article.findMany({
     where: { id: { in: ids } },
-    select: { id: true, bannerUrl: true },
+    select: { id: true, bannerUrl: true, content: true },
   });
-
-  const bannerUrls = articlesToDelete.map((a) => a.bannerUrl).filter(Boolean);
-  if (bannerUrls.length > 0) {
-    await Promise.allSettled(bannerUrls.map((url) => deleteFromR2(url)));
-  }
 
   const result = await prisma.article.deleteMany({
     where: { id: { in: ids } },
   });
+
+  const mediaUrls = articlesToDelete.flatMap(extractArticleMediaUrls);
+  if (mediaUrls.length > 0) {
+    await deleteMultipleFromR2(mediaUrls).catch(() => {});
+  }
 
   return { count: result.count };
 }

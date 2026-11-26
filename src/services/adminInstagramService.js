@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { INSTAGRAM_ACCOUNT } from "@/data/instagramPosts";
 import { parseThousandsToNumber } from "@/lib/formatters";
 import { sanitizeInput } from "@/lib/sanitizer";
+import { deleteFromR2, deleteMultipleFromR2 } from "@/lib/r2Storage";
 
 export async function getAdminInstagramPosts({ search = "", page = 1, limit = 20 } = {}) {
   const safePage = Math.max(1, parseInt(page, 10) || 1);
@@ -223,17 +224,44 @@ export async function updateInstagramPost(id, data) {
     updateData.postedAt = new Date(data.postedAt);
   }
 
-  return prisma.instagramPost.update({
+  let previousImageUrl = null;
+  if (updateData.imageUrl) {
+    const existing = await prisma.instagramPost.findUnique({
+      where: { id },
+      select: { imageUrl: true },
+    });
+    previousImageUrl = existing?.imageUrl || null;
+  }
+
+  const updated = await prisma.instagramPost.update({
     where: { id },
     data: updateData,
   });
+
+  if (previousImageUrl && previousImageUrl !== updated.imageUrl) {
+    await deleteFromR2(previousImageUrl).catch(() => {});
+  }
+
+  return updated;
 }
 
 export async function deleteInstagramPost(id) {
   if (!id) throw new Error("ID postingan tidak valid.");
-  return prisma.instagramPost.delete({
+
+  const existing = await prisma.instagramPost.findUnique({
+    where: { id },
+    select: { imageUrl: true },
+  });
+
+  const deleted = await prisma.instagramPost.delete({
     where: { id },
   });
+
+  if (existing?.imageUrl) {
+    await deleteFromR2(existing.imageUrl).catch(() => {});
+  }
+
+  return deleted;
 }
 
 export async function deleteInstagramPostsBulk(ids) {
@@ -246,10 +274,22 @@ export async function deleteInstagramPostsBulk(ids) {
     throw new Error("Tidak ada ID postingan Instagram yang valid.");
   }
 
-  return prisma.instagramPost.deleteMany({
+  const postsToDelete = await prisma.instagramPost.findMany({
+    where: { id: { in: validIds } },
+    select: { imageUrl: true },
+  });
+
+  const result = await prisma.instagramPost.deleteMany({
     where: {
       id: { in: validIds },
     },
   });
+
+  const imageUrls = postsToDelete.map((p) => p.imageUrl).filter(Boolean);
+  if (imageUrls.length > 0) {
+    await deleteMultipleFromR2(imageUrls).catch(() => {});
+  }
+
+  return result;
 }
 
