@@ -124,7 +124,7 @@ export async function getCampaignUpdates() {
           imageCaptions: u.imageCaptions || [],
           spentAmount: u.spentAmount || u.disbursedAmount || 0,
           beneficiaryCount: u.beneficiaryCount || 0,
-          location: u.location || "Wilayah Binaan PABE",
+          location: u.location || null,
           spentBreakdown: u.spentBreakdown || [],
           campaign: u.campaign,
         };

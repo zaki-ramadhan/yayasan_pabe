@@ -55,10 +55,12 @@ export function CampaignCard({
             <HighlightText text={campaign.title} highlight={highlightQuery} />
           </h3>
 
-          <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-600 min-w-0 truncate">
-            <MapPointIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-            <span className="truncate">{campaign.location || "Wilayah Binaan PABE"}</span>
-          </div>
+          {campaign.location && (
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-600 min-w-0 truncate">
+              <MapPointIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+              <span className="truncate">{campaign.location}</span>
+            </div>
+          )}
         </div>
 
         <div className="space-y-1.5 pt-1">

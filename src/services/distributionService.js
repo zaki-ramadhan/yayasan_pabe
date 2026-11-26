@@ -179,7 +179,7 @@ export async function getDistributionRecords() {
         return {
           id: `DIST-${dateStr.slice(0, 4)}-00${idx + 1}`,
           title: u.title,
-          location: u.campaign?.location || "Wilayah Binaan PABE",
+          location: u.campaign?.location || null,
           date: dateStr,
           beneficiaries: `${formatNumber(beneficiaryEstimated)}+ Orang`,
           value,
