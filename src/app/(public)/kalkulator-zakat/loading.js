@@ -43,6 +43,11 @@ export default function KalkulatorZakatLoading() {
                 <Skeleton className="h-10 w-full rounded-md" />
                 <Skeleton className="h-3.5 w-full rounded" />
               </div>
+              <div className="sm:col-span-2 space-y-2">
+                <Skeleton className="h-4 w-44 rounded" />
+                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-3.5 w-72 max-w-full rounded" />
+              </div>
             </div>
 
             <Skeleton className="h-14 w-full rounded-md bg-emerald-50/70 border border-emerald-200/60" />
