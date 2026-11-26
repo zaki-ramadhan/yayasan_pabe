@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { FormattedNumberInput } from "@/components/ui/FormattedNumberInput";
-import { CurrencyInput } from "@/components/ui/CurrencyInput";
-import {
-  DEFAULT_GOLD_PRICE_PER_GRAM,
-  ZAKAT_GOLD_NISAB_GRAMS,
-} from "@/lib/zakat/constants";
+import { getGoldPriceError, ZAKAT_GOLD_NISAB_GRAMS, ZAKAT_INPUT_LIMITS } from "@/lib/zakat/constants";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
+import { ZakatGoldPriceField } from "../ZakatGoldPriceField";
 import { ZakatHaulCheckbox } from "../ZakatHaulCheckbox";
 import { ZakatFormActions } from "../ZakatFormActions";
 
@@ -30,8 +27,9 @@ export function ZakatEmasForm({
     if (!(Number(values.jumlahGram) > 0)) {
       errs.jumlahGram = "Jumlah gram emas wajib diisi lebih dari 0";
     }
-    if (!(Number(values.hargaPerGram) > 0)) {
-      errs.hargaPerGram = "Harga emas per gram wajib diisi lebih dari 0";
+    const goldErr = getGoldPriceError(values.hargaPerGram);
+    if (goldErr) {
+      errs.hargaPerGram = goldErr;
     }
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
@@ -61,6 +59,7 @@ export function ZakatEmasForm({
         <ZakatFieldGroup
           id="jumlahGram"
           label="Jumlah simpanan emas yang dimiliki"
+          required
           error={errors.jumlahGram}
         >
           <FormattedNumberInput
@@ -68,24 +67,19 @@ export function ZakatEmasForm({
             suffix="gram"
             value={values.jumlahGram}
             onChange={(val) => handleFieldChange("jumlahGram", val)}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_WEIGHT_GRAMS}
             placeholder="0"
             error={errors.jumlahGram}
           />
         </ZakatFieldGroup>
 
-        <ZakatFieldGroup
+        <ZakatGoldPriceField
           id="hargaPerGram"
-          label="Harga acuan emas per gram"
-          helperText="Disesuaikan dengan harga pasar saat perhitungan"
+          value={values.hargaPerGram}
+          onChange={(val) => handleFieldChange("hargaPerGram", val)}
           error={errors.hargaPerGram}
-        >
-          <CurrencyInput
-            id="hargaPerGram"
-            value={values.hargaPerGram || DEFAULT_GOLD_PRICE_PER_GRAM}
-            onChange={(val) => handleFieldChange("hargaPerGram", val)}
-            placeholder="0"
-          />
-        </ZakatFieldGroup>
+        />
       </div>
 
       <ZakatHaulCheckbox

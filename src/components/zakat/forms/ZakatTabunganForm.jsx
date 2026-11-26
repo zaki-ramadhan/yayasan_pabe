@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
+import { getGoldPriceError, ZAKAT_INPUT_LIMITS } from "@/lib/zakat/constants";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
+import { ZakatGoldPriceField } from "../ZakatGoldPriceField";
 import { ZakatHaulCheckbox } from "../ZakatHaulCheckbox";
 import { ZakatFormActions } from "../ZakatFormActions";
 
@@ -25,10 +27,16 @@ export function ZakatTabunganForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const errs = {};
     if (totalAssets <= 0) {
-      setErrors({
-        saldoTabungan: "Masukkan nominal saldo tabungan atau simpanan",
-      });
+      errs.saldoTabungan = "Masukkan nominal saldo tabungan atau simpanan";
+    }
+    const goldErr = getGoldPriceError(values.hargaEmasPerGram);
+    if (goldErr) {
+      errs.hargaEmasPerGram = goldErr;
+    }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
       return;
     }
     setErrors({});
@@ -55,6 +63,7 @@ export function ZakatTabunganForm({
         <ZakatFieldGroup
           id="saldoTabungan"
           label="Saldo tabungan / simpanan uang"
+          required
           helperText="Total saldo rekening tabungan atau uang tunai yang mengendap"
           error={errors.saldoTabungan}
         >
@@ -65,6 +74,8 @@ export function ZakatTabunganForm({
               handleFieldChange("saldoTabungan", val);
               handleFieldChange("uangTunaiTabungan", val);
             }}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -81,6 +92,8 @@ export function ZakatTabunganForm({
               handleFieldChange("bungaBagiHasil", val);
               handleFieldChange("deposito", val);
             }}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -95,9 +108,19 @@ export function ZakatTabunganForm({
               id="utangJatuhTempo"
               value={values.utangJatuhTempo || 0}
               onChange={(val) => handleFieldChange("utangJatuhTempo", val)}
+              min={0}
+              max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
               placeholder="0"
             />
           </ZakatFieldGroup>
+        </div>
+
+        <div className="sm:col-span-2">
+          <ZakatGoldPriceField
+            value={values.hargaEmasPerGram}
+            onChange={(val) => handleFieldChange("hargaEmasPerGram", val)}
+            error={errors.hargaEmasPerGram}
+          />
         </div>
       </div>
 

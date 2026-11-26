@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { FormattedNumberInput } from "@/components/ui/FormattedNumberInput";
+import { getGoldPriceError, ZAKAT_INPUT_LIMITS } from "@/lib/zakat/constants";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
+import { ZakatGoldPriceField } from "../ZakatGoldPriceField";
 import { ZakatFormActions } from "../ZakatFormActions";
 
 export function ZakatPerusahaanForm({
@@ -23,10 +25,20 @@ export function ZakatPerusahaanForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const errs = {};
     if (!hasValidInput) {
-      setErrors({
-        aktivaLancar: "Masukkan nilai aktiva lancar atau laba usaha berjalan",
-      });
+      errs.aktivaLancar = "Masukkan nilai aktiva lancar atau laba usaha berjalan";
+    }
+    const pct = Number(values.persenKepemilikan ?? 100);
+    if (pct < ZAKAT_INPUT_LIMITS.MIN_OWNERSHIP_PERCENT || pct > ZAKAT_INPUT_LIMITS.MAX_OWNERSHIP_PERCENT) {
+      errs.persenKepemilikan = "Persentase kepemilikan harus antara 1% sampai 100%";
+    }
+    const goldErr = getGoldPriceError(values.hargaEmasPerGram);
+    if (goldErr) {
+      errs.hargaEmasPerGram = goldErr;
+    }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
       return;
     }
     setErrors({});
@@ -53,6 +65,7 @@ export function ZakatPerusahaanForm({
         <ZakatFieldGroup
           id="aktivaLancar"
           label="Aktiva lancar perusahaan"
+          required
           helperText="Kas, rekening bank, piutang lancar, dan persediaan"
           error={errors.aktivaLancar}
         >
@@ -60,6 +73,8 @@ export function ZakatPerusahaanForm({
             id="aktivaLancar"
             value={values.aktivaLancar}
             onChange={(val) => handleFieldChange("aktivaLancar", val)}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -73,6 +88,8 @@ export function ZakatPerusahaanForm({
             id="labaUsaha"
             value={values.labaUsaha}
             onChange={(val) => handleFieldChange("labaUsaha", val)}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -86,6 +103,8 @@ export function ZakatPerusahaanForm({
             id="pasivaLancar"
             value={values.pasivaLancar}
             onChange={(val) => handleFieldChange("pasivaLancar", val)}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -94,17 +113,26 @@ export function ZakatPerusahaanForm({
           id="persenKepemilikan"
           label="Persentase kepemilikan saham (%)"
           helperText="Default 100% jika pemilik tunggal / zakat entitas penuh"
+          error={errors.persenKepemilikan}
         >
           <FormattedNumberInput
             id="persenKepemilikan"
             suffix="%"
-            min={1}
-            max={100}
+            min={ZAKAT_INPUT_LIMITS.MIN_OWNERSHIP_PERCENT}
+            max={ZAKAT_INPUT_LIMITS.MAX_OWNERSHIP_PERCENT}
             value={values.persenKepemilikan ?? 100}
             onChange={(val) => handleFieldChange("persenKepemilikan", val)}
             placeholder="100"
           />
         </ZakatFieldGroup>
+
+        <div className="sm:col-span-2">
+          <ZakatGoldPriceField
+            value={values.hargaEmasPerGram}
+            onChange={(val) => handleFieldChange("hargaEmasPerGram", val)}
+            error={errors.hargaEmasPerGram}
+          />
+        </div>
       </div>
 
       <div className="p-3 bg-blue-50/70 border border-blue-200/80 rounded-md text-xs text-blue-900 leading-relaxed">

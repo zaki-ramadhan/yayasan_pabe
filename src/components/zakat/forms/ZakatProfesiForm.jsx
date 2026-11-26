@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
+import { getGoldPriceError, ZAKAT_INPUT_LIMITS } from "@/lib/zakat/constants";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
+import { ZakatGoldPriceField } from "../ZakatGoldPriceField";
 import { ZakatFormActions } from "../ZakatFormActions";
 
 export function ZakatProfesiForm({
@@ -22,10 +24,16 @@ export function ZakatProfesiForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const errs = {};
     if (!hasValidInput) {
-      setErrors({
-        gaji: "Masukkan nominal gaji atau penghasilan tambahan untuk menghitung",
-      });
+      errs.gaji = "Masukkan nominal gaji atau penghasilan tambahan untuk menghitung";
+    }
+    const goldErr = getGoldPriceError(values.hargaEmasPerGram);
+    if (goldErr) {
+      errs.hargaEmasPerGram = goldErr;
+    }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
       return;
     }
     setErrors({});
@@ -44,7 +52,7 @@ export function ZakatProfesiForm({
           Zakat Profesi
         </h2>
         <p className="text-sm text-slate-600 leading-relaxed">
-          Nisab setara 85 gr emas per tahun (± Rp 17.658.502/bulan) dengan kadar 2,5%, ditunaikan saat menerima gaji atau penghasilan.
+          Nisab setara 85 gr emas per tahun (mengikuti harga emas berlaku) dengan kadar 2,5%, ditunaikan saat menerima gaji atau penghasilan.
         </p>
       </div>
 
@@ -52,12 +60,15 @@ export function ZakatProfesiForm({
         <ZakatFieldGroup
           id="gaji"
           label="Gaji atau penghasilan rutin bulanan"
+          required
           error={errors.gaji}
         >
           <CurrencyInput
             id="gaji"
             value={values.gaji}
             onChange={(val) => handleFieldChange("gaji", val)}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -71,9 +82,19 @@ export function ZakatProfesiForm({
             id="penghasilanLain"
             value={values.penghasilanLain}
             onChange={(val) => handleFieldChange("penghasilanLain", val)}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
             placeholder="0"
           />
         </ZakatFieldGroup>
+
+        <div className="sm:col-span-2">
+          <ZakatGoldPriceField
+            value={values.hargaEmasPerGram}
+            onChange={(val) => handleFieldChange("hargaEmasPerGram", val)}
+            error={errors.hargaEmasPerGram}
+          />
+        </div>
       </div>
 
       <div className="p-3 bg-emerald-50/70 border border-emerald-200/80 rounded-md text-xs text-emerald-900 leading-relaxed">

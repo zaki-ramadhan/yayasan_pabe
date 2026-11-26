@@ -8,6 +8,7 @@ import {
   DEFAULT_GOLD_PRICE_PER_GRAM,
   DEFAULT_SILVER_PRICE_PER_GRAM,
   DEFAULT_BERAS_PRICE_PER_KG,
+  ZAKAT_GOLD_NISAB_GRAMS,
 } from "@/lib/zakat/constants";
 import {
   calculateZakatProfesi,
@@ -29,21 +30,22 @@ import { ZakatTabunganForm } from "@/components/zakat/forms/ZakatTabunganForm";
 import { ZakatPertanianForm } from "@/components/zakat/forms/ZakatPertanianForm";
 import { ZakatGuideTable } from "@/components/zakat/ZakatGuideTable";
 
-const INITIAL_PROFESI = { gaji: 0, penghasilanLain: 0 };
+const INITIAL_PROFESI = { gaji: 0, penghasilanLain: 0, hargaEmasPerGram: 0 };
 const INITIAL_EMAS = {
   jumlahGram: 0,
-  hargaPerGram: DEFAULT_GOLD_PRICE_PER_GRAM,
+  hargaPerGram: 0,
   isHaulMet: true,
 };
 const INITIAL_PERAK = {
   jumlahGram: 0,
-  hargaPerGram: DEFAULT_SILVER_PRICE_PER_GRAM,
+  hargaPerGram: 0,
   isHaulMet: true,
 };
 const INITIAL_PERDAGANGAN = {
   asetLancar: 0,
   laba: 0,
   utangJatuhTempo: 0,
+  hargaEmasPerGram: 0,
   isHaulMet: true,
 };
 const INITIAL_PERUSAHAAN = {
@@ -51,19 +53,30 @@ const INITIAL_PERUSAHAAN = {
   labaUsaha: 0,
   pasivaLancar: 0,
   persenKepemilikan: 100,
+  hargaEmasPerGram: 0,
 };
 const INITIAL_TABUNGAN = {
   saldoTabungan: 0,
   bungaBagiHasil: 0,
   utangJatuhTempo: 0,
+  hargaEmasPerGram: 0,
   isHaulMet: true,
 };
 const INITIAL_PERTANIAN = {
   beratPanenKg: 0,
   komoditas: "beras",
   jenisPengairan: "tadah_hujan",
-  hargaPerKg: DEFAULT_BERAS_PRICE_PER_KG,
+  hargaPerKg: 0,
 };
+
+function computeNisabFromGold(hargaEmasPerGram) {
+  const price = Number(hargaEmasPerGram) > 0 ? Number(hargaEmasPerGram) : DEFAULT_GOLD_PRICE_PER_GRAM;
+  const annual = ZAKAT_GOLD_NISAB_GRAMS * price;
+  return {
+    annual,
+    monthly: Math.round(annual / 12),
+  };
+}
 
 export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
   const router = useRouter();
@@ -200,18 +213,30 @@ export function ZakatCalculator({ targetCampaignSlug = "zakat" }) {
     switch (activeMode) {
       case "profesi":
       case "penghasilan":
-        return calculateZakatProfesi(profesi);
+        return calculateZakatProfesi({
+          ...profesi,
+          nisabBulanan: computeNisabFromGold(profesi.hargaEmasPerGram).monthly,
+        });
       case "emas":
         return calculateZakatEmas(emas);
       case "perak":
         return calculateZakatPerak(perak);
       case "perdagangan":
-        return calculateZakatPerdagangan(perdagangan);
+        return calculateZakatPerdagangan({
+          ...perdagangan,
+          nisabTahunan: computeNisabFromGold(perdagangan.hargaEmasPerGram).annual,
+        });
       case "perusahaan":
-        return calculateZakatPerusahaan(perusahaan);
+        return calculateZakatPerusahaan({
+          ...perusahaan,
+          nisabTahunan: computeNisabFromGold(perusahaan.hargaEmasPerGram).annual,
+        });
       case "tabungan":
       case "maal":
-        return calculateZakatTabungan(tabungan);
+        return calculateZakatTabungan({
+          ...tabungan,
+          nisabTahunan: computeNisabFromGold(tabungan.hargaEmasPerGram).annual,
+        });
       case "pertanian":
         return calculateZakatPertanian(pertanian);
       default:

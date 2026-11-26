@@ -4,10 +4,9 @@ import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import {
-  DEFAULT_BERAS_PRICE_PER_KG,
-  DEFAULT_GABAH_PRICE_PER_KG,
   ZAKAT_AGRICULTURE_NISAB_BERAS_KG,
   ZAKAT_AGRICULTURE_NISAB_GABAH_KG,
+  ZAKAT_INPUT_LIMITS,
 } from "@/lib/zakat/constants";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
 import { ZakatFormActions } from "../ZakatFormActions";
@@ -40,9 +39,7 @@ export function ZakatPertanianForm({
   const handleSwitchKomoditas = (type) => {
     if (type === komoditas) return;
     onChange("komoditas", type);
-    const newDefaultPrice =
-      type === "gabah" ? DEFAULT_GABAH_PRICE_PER_KG : DEFAULT_BERAS_PRICE_PER_KG;
-    onChange("hargaPerKg", newDefaultPrice);
+    onChange("hargaPerKg", 0);
     setErrors({});
   };
 
@@ -58,8 +55,13 @@ export function ZakatPertanianForm({
     if (!(Number(values.beratPanenKg) > 0)) {
       errs.beratPanenKg = "Berat hasil panen wajib diisi lebih dari 0 kg";
     }
-    if (!(Number(values.hargaPerKg) > 0)) {
+    const kgPrice = Number(values.hargaPerKg || 0);
+    if (!(kgPrice > 0)) {
       errs.hargaPerKg = "Harga per kg wajib diisi lebih dari 0";
+    } else if (kgPrice < ZAKAT_INPUT_LIMITS.MIN_COMMODITY_PRICE_PER_KG) {
+      errs.hargaPerKg = "Harga per kg minimal Rp 500";
+    } else if (kgPrice > ZAKAT_INPUT_LIMITS.MAX_COMMODITY_PRICE_PER_KG) {
+      errs.hargaPerKg = "Harga per kg maksimal Rp 1.000.000";
     }
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
@@ -168,6 +170,7 @@ export function ZakatPertanianForm({
         <ZakatFieldGroup
           id="beratPanenKg"
           label={`Total berat hasil panen (${isGabah ? "gabah" : "beras"})`}
+          required
           error={errors.beratPanenKg}
         >
           <FormattedNumberInput
@@ -175,6 +178,8 @@ export function ZakatPertanianForm({
             suffix="kg"
             value={values.beratPanenKg}
             onChange={(val) => handleFieldChange("beratPanenKg", val)}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_HARVEST_KG}
             placeholder="0"
             error={errors.beratPanenKg}
           />
@@ -183,14 +188,30 @@ export function ZakatPertanianForm({
         <ZakatFieldGroup
           id="hargaPerKg"
           label={`Harga pasar per kg (${isGabah ? "gabah" : "beras"})`}
-          helperText="Dibutuhkan jika zakat ditunaikan dalam bentuk uang tunai"
+          required
+          helperText={
+            <>
+              Dibutuhkan jika zakat ditunaikan dalam uang tunai. Cek di{" "}
+              <a
+                href="https://panelharga.badanpangan.go.id/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary font-medium hover:underline"
+              >
+                Panel Harga Pangan Bapanas
+              </a>
+              .
+            </>
+          }
           error={errors.hargaPerKg}
         >
           <CurrencyInput
             id="hargaPerKg"
-            value={values.hargaPerKg}
+            value={values.hargaPerKg ?? 0}
             onChange={(val) => handleFieldChange("hargaPerKg", val)}
-            placeholder="0"
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_COMMODITY_PRICE_PER_KG}
+            placeholder={isGabah ? "Contoh: 8.000" : "Contoh: 15.000"}
           />
         </ZakatFieldGroup>
       </div>

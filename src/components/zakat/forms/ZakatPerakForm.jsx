@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FormattedNumberInput } from "@/components/ui/FormattedNumberInput";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import {
-  DEFAULT_SILVER_PRICE_PER_GRAM,
+  ZAKAT_INPUT_LIMITS,
   ZAKAT_SILVER_NISAB_GRAMS,
 } from "@/lib/zakat/constants";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
@@ -30,8 +30,13 @@ export function ZakatPerakForm({
     if (!(Number(values.jumlahGram) > 0)) {
       errs.jumlahGram = "Jumlah gram perak wajib diisi lebih dari 0";
     }
-    if (!(Number(values.hargaPerGram) > 0)) {
+    const silverPrice = Number(values.hargaPerGram || 0);
+    if (!(silverPrice > 0)) {
       errs.hargaPerGram = "Harga perak per gram wajib diisi lebih dari 0";
+    } else if (silverPrice < ZAKAT_INPUT_LIMITS.MIN_SILVER_PRICE_PER_GRAM) {
+      errs.hargaPerGram = "Harga perak minimal Rp 1.000 per gram";
+    } else if (silverPrice > ZAKAT_INPUT_LIMITS.MAX_SILVER_PRICE_PER_GRAM) {
+      errs.hargaPerGram = "Harga perak maksimal Rp 1.000.000 per gram";
     }
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
@@ -61,6 +66,7 @@ export function ZakatPerakForm({
         <ZakatFieldGroup
           id="jumlahGramPerak"
           label="Jumlah simpanan perak yang dimiliki"
+          required
           error={errors.jumlahGram}
         >
           <FormattedNumberInput
@@ -68,6 +74,8 @@ export function ZakatPerakForm({
             suffix="gram"
             value={values.jumlahGram}
             onChange={(val) => handleFieldChange("jumlahGram", val)}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_WEIGHT_GRAMS}
             placeholder="0"
             error={errors.jumlahGram}
           />
@@ -76,14 +84,30 @@ export function ZakatPerakForm({
         <ZakatFieldGroup
           id="hargaPerGramPerak"
           label="Harga acuan perak per gram"
-          helperText="Disesuaikan dengan harga pasar saat perhitungan"
+          required
+          helperText={
+            <>
+              Disesuaikan dengan harga pasar saat ini. Cek referensi di{" "}
+              <a
+                href="https://www.logammulia.com/id"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary font-medium hover:underline"
+              >
+                Logam Mulia Antam
+              </a>
+              .
+            </>
+          }
           error={errors.hargaPerGram}
         >
           <CurrencyInput
             id="hargaPerGramPerak"
-            value={values.hargaPerGram || DEFAULT_SILVER_PRICE_PER_GRAM}
+            value={values.hargaPerGram ?? 0}
             onChange={(val) => handleFieldChange("hargaPerGram", val)}
-            placeholder="0"
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_SILVER_PRICE_PER_GRAM}
+            placeholder="Contoh: 20.000"
           />
         </ZakatFieldGroup>
       </div>

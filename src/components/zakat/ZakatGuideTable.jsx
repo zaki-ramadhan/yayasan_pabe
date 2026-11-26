@@ -1,13 +1,20 @@
-import { formatRupiah } from "@/lib/formatters";
 import { Badge } from "@/components/ui/Badge";
-import { DEFAULT_ANNUAL_NISAB, DEFAULT_MONTHLY_NISAB } from "@/lib/zakat/constants";
+import {
+  Table,
+  TableContainer,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/Table";
 
 const ZAKAT_GUIDE_ROWS = [
   {
     no: 1,
     jenis: "Profesi",
     nishab: "85 gr Emas",
-    nishabNote: `(± ${formatRupiah(DEFAULT_MONTHLY_NISAB)} / bln)`,
+    nishabNote: "Mengikuti harga emas berlaku",
     kadar: "2,5%",
     waktu: "Saat menerima",
   },
@@ -15,7 +22,7 @@ const ZAKAT_GUIDE_ROWS = [
     no: 2,
     jenis: "Emas",
     nishab: "85 gr",
-    nishabNote: `(± ${formatRupiah(DEFAULT_ANNUAL_NISAB)})`,
+    nishabNote: null,
     kadar: "2,5%",
     waktu: "Setelah 1 tahun (haul)",
   },
@@ -63,8 +70,8 @@ const ZAKAT_GUIDE_ROWS = [
 
 export function ZakatGuideTable() {
   return (
-    <section className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-xs">
-      <div className="px-5 py-4 border-b border-slate-200 bg-slate-50/80">
+    <TableContainer>
+      <div className="px-5 py-4 border-b border-slate-200 bg-slate-50/70">
         <h2 className="text-base sm:text-lg font-semibold text-slate-900">
           Tabel panduan perhitungan zakat
         </h2>
@@ -73,53 +80,37 @@ export function ZakatGuideTable() {
         </p>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm border-collapse">
-          <thead>
-            <tr className="bg-slate-100/75 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-700">
-              <th scope="col" className="py-3 px-4 w-12 text-center">No</th>
-              <th scope="col" className="py-3 px-4">Jenis zakat</th>
-              <th scope="col" className="py-3 px-4">Nishab</th>
-              <th scope="col" className="py-3 px-4 text-center">Kadar</th>
-              <th scope="col" className="py-3 px-4">Waktu penunaian</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 text-slate-800">
-            {ZAKAT_GUIDE_ROWS.map((row) => (
-              <tr key={row.no} className="hover:bg-slate-50/60 transition-colors">
-                <td className="py-3 px-4 font-medium text-slate-500 text-center">{row.no}</td>
-                <td className="py-3 px-4 font-semibold text-slate-900">{row.jenis}</td>
-                <td className="py-3 px-4">
-                  <span className="font-medium text-slate-900">{row.nishab}</span>
-                  {row.nishabNote && (
-                    <span className="block text-xs text-slate-600 mt-0.5">{row.nishabNote}</span>
-                  )}
-                </td>
-                <td className="py-3 px-4 text-center">
-                  <Badge variant="success">
-                    {row.kadar}
-                  </Badge>
-                </td>
-                <td className="py-3 px-4 text-slate-700 text-xs sm:text-sm">{row.waktu}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="p-4 sm:p-5 bg-slate-50/70 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs sm:text-sm text-slate-600">
-        <div>
-          <span className="font-semibold text-slate-900">Rekening resmi zakat &amp; donasi:</span>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 font-mono text-xs text-slate-800">
-            <span>Bank BRI: <strong className="font-semibold text-slate-900">0424-01-000858-568</strong></span>
-            <span>Bank Mandiri: <strong className="font-semibold text-slate-900">166-000-3644-119</strong></span>
-          </div>
-        </div>
-        <div className="text-xs text-slate-600">
-          a.n. <strong>Yayasan Payung Berkah</strong>
-        </div>
-      </div>
-    </section>
+      <Table>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="w-14 text-center">No</TableHead>
+            <TableHead>Jenis zakat</TableHead>
+            <TableHead>Nishab</TableHead>
+            <TableHead className="text-center">Kadar</TableHead>
+            <TableHead>Waktu penunaian</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {ZAKAT_GUIDE_ROWS.map((row) => (
+            <TableRow key={row.no}>
+              <TableCell className="text-center text-slate-500 tabular-nums">{row.no}</TableCell>
+              <TableCell className="font-medium text-slate-900">{row.jenis}</TableCell>
+              <TableCell>
+                <span className="font-medium text-slate-900">{row.nishab}</span>
+                {row.nishabNote && (
+                  <span className="block text-xs text-slate-600 mt-0.5">{row.nishabNote}</span>
+                )}
+              </TableCell>
+              <TableCell className="text-center">
+                <Badge variant="success" className="max-w-none whitespace-nowrap">
+                  {row.kadar}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-slate-700">{row.waktu}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
-

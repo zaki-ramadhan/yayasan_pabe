@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
+import { getGoldPriceError, ZAKAT_INPUT_LIMITS } from "@/lib/zakat/constants";
 import { ZakatFieldGroup } from "../ZakatFieldGroup";
+import { ZakatGoldPriceField } from "../ZakatGoldPriceField";
 import { ZakatHaulCheckbox } from "../ZakatHaulCheckbox";
 import { ZakatFormActions } from "../ZakatFormActions";
 
@@ -23,10 +25,16 @@ export function ZakatPerdaganganForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const errs = {};
     if (!hasValidInput) {
-      setErrors({
-        asetLancar: "Masukkan nominal stok barang dagangan atau laba untuk menghitung",
-      });
+      errs.asetLancar = "Masukkan nominal stok barang dagangan atau laba untuk menghitung";
+    }
+    const goldErr = getGoldPriceError(values.hargaEmasPerGram);
+    if (goldErr) {
+      errs.hargaEmasPerGram = goldErr;
+    }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
       return;
     }
     setErrors({});
@@ -53,12 +61,15 @@ export function ZakatPerdaganganForm({
         <ZakatFieldGroup
           id="asetLancar"
           label="Nilai stok barang dagangan &amp; kas lancar"
+          required
           error={errors.asetLancar}
         >
           <CurrencyInput
             id="asetLancar"
             value={values.asetLancar}
             onChange={(val) => handleFieldChange("asetLancar", val)}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -72,6 +83,8 @@ export function ZakatPerdaganganForm({
             id="laba"
             value={values.laba}
             onChange={(val) => handleFieldChange("laba", val)}
+            min={0}
+            max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
             placeholder="0"
           />
         </ZakatFieldGroup>
@@ -86,9 +99,19 @@ export function ZakatPerdaganganForm({
               id="utangJatuhTempo"
               value={values.utangJatuhTempo || 0}
               onChange={(val) => handleFieldChange("utangJatuhTempo", val)}
+              min={0}
+              max={ZAKAT_INPUT_LIMITS.MAX_CURRENCY}
               placeholder="0"
             />
           </ZakatFieldGroup>
+        </div>
+
+        <div className="sm:col-span-2">
+          <ZakatGoldPriceField
+            value={values.hargaEmasPerGram}
+            onChange={(val) => handleFieldChange("hargaEmasPerGram", val)}
+            error={errors.hargaEmasPerGram}
+          />
         </div>
       </div>
 

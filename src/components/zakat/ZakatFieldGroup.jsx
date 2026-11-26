@@ -3,11 +3,12 @@ import { cn } from "@/lib/utils";
 import { FormFieldContext } from "@/components/ui/FormField";
 
 /**
- * Molecule: Wrapper standar input field kalkulator zakat dengan integrasi context error.
+ * Wrapper for zakat calculator fields with FormFieldContext error integration.
  */
 export function ZakatFieldGroup({
   id,
   label,
+  required = false,
   helperText,
   error,
   children,
@@ -31,18 +32,20 @@ export function ZakatFieldGroup({
             )}
           >
             {label}
+            {required && <span className="text-rose-500 ml-0.5">*</span>}
           </label>
         )}
         <div>{children}</div>
-        {error ? (
-          <p className="text-sm text-rose-500 font-medium leading-relaxed" role="alert">
+        {error && (
+          <p className="text-xs sm:text-sm text-rose-600 font-medium leading-relaxed" role="alert">
             {error}
           </p>
-        ) : helperText ? (
-          <p className="text-sm text-slate-600 leading-normal font-normal">
+        )}
+        {helperText && (
+          <p className="text-xs text-slate-500 leading-normal font-normal">
             {helperText}
           </p>
-        ) : null}
+        )}
       </div>
     </FormFieldContext.Provider>
   );
