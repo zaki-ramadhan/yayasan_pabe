@@ -324,7 +324,7 @@ export function AdminGalleryModal({
         helperText={
           isEditing
             ? "Mendukung JPG, PNG, WebP (Maks. 10MB), bisa Ctrl + V. Otomatis dikonversi ke WebP."
-            : "Mendukung JPG, PNG, WebP (Maks. 10MB) atau Video MP4/WebM (Maks. 1 video, 25MB, 60 dtk), bisa Ctrl + V."
+            : "Mendukung JPG, PNG, WebP (Maks. 10MB) atau Video MP4/WebM (Maks. 1 video, 25MB, 2 mnt), bisa Ctrl + V."
         }
         isUploading={isSubmitting}
         uploadProgressText={uploadProgressText}

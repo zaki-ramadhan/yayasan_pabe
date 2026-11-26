@@ -125,7 +125,7 @@ export function AdminDistributionMediaFields({
         files={selectedFiles}
         onFilesChange={onFilesChange}
         label={existingMedia.length > 0 ? "Tambah foto / video baru" : "Foto & video dokumentasi penyaluran"}
-        hint="Pilih foto (JPG, PNG, WebP maks. 8MB) atau video sorotan (MP4, WebM maks. 25MB, durasi < 1 mnt)"
+        hint="Pilih foto (JPG, PNG, WebP maks. 8MB) atau video sorotan (MP4, WebM maks. 25MB, durasi < 2 mnt)"
         isUploading={isUploading}
         uploadProgressText={uploadProgressText}
         error={error}

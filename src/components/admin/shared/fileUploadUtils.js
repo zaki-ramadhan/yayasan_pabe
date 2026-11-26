@@ -4,7 +4,7 @@ import { extractVideoMetadata } from "@/lib/videoHelper";
 export const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 export const MAX_VIDEO_SIZE = 25 * 1024 * 1024; // 25MB
 export const MAX_PDF_SIZE = 15 * 1024 * 1024; // 15MB
-export const MAX_VIDEO_DURATION_SECONDS = 60; // 60s limit
+export const MAX_VIDEO_DURATION_SECONDS = 120; // 120s (2 min) limit
 export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
 
@@ -23,7 +23,7 @@ export function getResolvedHelperText(helperText, isPdf, allowVideo) {
     return "Mendukung format PDF resmi (Maks. 15MB). Disimpan aman di cloud.";
   }
   if (allowVideo) {
-    return "JPG, PNG, WebP (Maks. 10MB), Video MP4/WebM (Maks. 1 video, 25MB, 60 dtk), Bisa tempel via Ctrl + V";
+    return "JPG, PNG, WebP (Maks. 10MB), Video MP4/WebM (Maks. 1 video, 25MB, 2 mnt), Bisa tempel via Ctrl + V";
   }
   return "Mendukung format JPEG, PNG, dan WebP (Maks. 10MB) terkonversi otomatis ke WebP, bisa tempel via Ctrl + V";
 }
@@ -119,8 +119,8 @@ export async function processMultiUploadFiles(fileList, { allowVideo, existingFi
       if (meta.duration > MAX_VIDEO_DURATION_SECONDS) {
         toast({
           variant: "warning",
-          title: "Durasi video melebihi 60 detik",
-          description: `Durasi video ini (${Math.round(meta.duration)} detik) melebihi batas maksimal 60 detik. Disarankan menggunakan tautan YouTube.`,
+          title: "Durasi video melebihi 2 menit",
+          description: `Durasi video ini (${Math.round(meta.duration)} detik) melebihi batas maksimal ${MAX_VIDEO_DURATION_SECONDS} detik (2 menit). Disarankan menggunakan tautan YouTube.`,
         });
         continue;
       }
