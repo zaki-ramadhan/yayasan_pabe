@@ -191,7 +191,7 @@ export function ZakatPertanianForm({
           required
           helperText={
             <>
-              Dibutuhkan jika zakat ditunaikan dalam uang tunai. Cek di{" "}
+              Acuan nilai tunai zakat panen. Cek harga resmi di{" "}
               <a
                 href="https://panelharga.badanpangan.go.id/"
                 target="_blank"

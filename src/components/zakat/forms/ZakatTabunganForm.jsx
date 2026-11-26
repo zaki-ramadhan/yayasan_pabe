@@ -64,7 +64,7 @@ export function ZakatTabunganForm({
           id="saldoTabungan"
           label="Saldo tabungan / simpanan uang"
           required
-          helperText="Total saldo rekening tabungan atau uang tunai yang mengendap"
+          helperText="Total saldo rekening tabungan atau uang tunai yang mengendap."
           error={errors.saldoTabungan}
         >
           <CurrencyInput
@@ -83,7 +83,7 @@ export function ZakatTabunganForm({
         <ZakatFieldGroup
           id="bungaBagiHasil"
           label="Deposito / bagi hasil simpanan"
-          helperText="Bagi hasil atau keuntungan simpanan yang diperoleh"
+          helperText="Bagi hasil atau keuntungan simpanan yang diperoleh."
         >
           <CurrencyInput
             id="bungaBagiHasil"
@@ -102,7 +102,7 @@ export function ZakatTabunganForm({
           <ZakatFieldGroup
             id="utangJatuhTempo"
             label="Utang jatuh tempo (pengurang)"
-            helperText="Kewajiban atau utang pribadi yang jatuh tempo dalam tahun berjalan"
+            helperText="Kewajiban atau utang pribadi yang jatuh tempo dalam tahun berjalan."
           >
             <CurrencyInput
               id="utangJatuhTempo"

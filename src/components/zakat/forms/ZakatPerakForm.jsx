@@ -87,7 +87,7 @@ export function ZakatPerakForm({
           required
           helperText={
             <>
-              Disesuaikan dengan harga pasar saat ini. Cek referensi di{" "}
+              Acuan nishab {ZAKAT_SILVER_NISAB_GRAMS} gr perak. Cek harga resmi di{" "}
               <a
                 href="https://www.logammulia.com/id"
                 target="_blank"

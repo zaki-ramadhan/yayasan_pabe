@@ -77,7 +77,7 @@ export function ZakatPerdaganganForm({
         <ZakatFieldGroup
           id="laba"
           label="Laba usaha / piutang lancar dagang"
-          helperText="Keuntungan atau piutang lancar yang diharapkan tertagih"
+          helperText="Keuntungan atau piutang lancar yang diharapkan tertagih."
         >
           <CurrencyInput
             id="laba"
@@ -93,7 +93,7 @@ export function ZakatPerdaganganForm({
           <ZakatFieldGroup
             id="utangJatuhTempo"
             label="Utang dagang jatuh tempo (pengurang)"
-            helperText="Kewajiban pembayaran dagang yang jatuh tempo dalam periode berjalan"
+            helperText="Kewajiban pembayaran dagang yang jatuh tempo dalam periode berjalan."
           >
             <CurrencyInput
               id="utangJatuhTempo"

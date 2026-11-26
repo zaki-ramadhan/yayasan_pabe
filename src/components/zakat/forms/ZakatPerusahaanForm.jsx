@@ -66,7 +66,7 @@ export function ZakatPerusahaanForm({
           id="aktivaLancar"
           label="Aktiva lancar perusahaan"
           required
-          helperText="Kas, rekening bank, piutang lancar, dan persediaan"
+          helperText="Kas, rekening bank, piutang lancar, dan persediaan."
           error={errors.aktivaLancar}
         >
           <CurrencyInput
@@ -82,7 +82,7 @@ export function ZakatPerusahaanForm({
         <ZakatFieldGroup
           id="labaUsaha"
           label="Laba usaha berjalan"
-          helperText="Laba bersih perusahaan sebelum dividen/pajak"
+          helperText="Laba bersih perusahaan sebelum dividen atau pajak."
         >
           <CurrencyInput
             id="labaUsaha"
@@ -97,7 +97,7 @@ export function ZakatPerusahaanForm({
         <ZakatFieldGroup
           id="pasivaLancar"
           label="Pasiva / kewajiban lancar (pengurang)"
-          helperText="Utang jangka pendek yang jatuh tempo tahun ini"
+          helperText="Utang jangka pendek yang jatuh tempo tahun ini."
         >
           <CurrencyInput
             id="pasivaLancar"
@@ -112,7 +112,7 @@ export function ZakatPerusahaanForm({
         <ZakatFieldGroup
           id="persenKepemilikan"
           label="Persentase kepemilikan saham (%)"
-          helperText="Default 100% jika pemilik tunggal / zakat entitas penuh"
+          helperText="Default 100% jika pemilik tunggal atau zakat entitas penuh."
           error={errors.persenKepemilikan}
         >
           <FormattedNumberInput
