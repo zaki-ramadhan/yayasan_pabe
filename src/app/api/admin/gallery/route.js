@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import {
@@ -67,6 +68,9 @@ export async function POST(request) {
 
     const created = await createGalleryBatch(items);
 
+    revalidatePath("/galeri");
+    revalidatePath("/admin/galeri");
+
     return NextResponse.json(
       {
         success: true,
@@ -106,6 +110,9 @@ export async function DELETE(request) {
     }
 
     const result = await deleteGalleryItemsBatch(ids);
+
+    revalidatePath("/galeri");
+    revalidatePath("/admin/galeri");
 
     return NextResponse.json({
       success: true,

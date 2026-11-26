@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import {
@@ -54,6 +55,9 @@ export async function POST(request) {
     const body = await request.json();
     const created = await createInstagramPost(body);
 
+    revalidatePath("/");
+    revalidatePath("/admin/instagram");
+
     return NextResponse.json({
       success: true,
       data: created,
@@ -90,6 +94,9 @@ export async function DELETE(request) {
     }
 
     const result = await deleteInstagramPostsBulk(ids);
+
+    revalidatePath("/");
+    revalidatePath("/admin/instagram");
 
     await logActivity({
       userId: user?.id,

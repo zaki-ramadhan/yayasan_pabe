@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import {
@@ -19,6 +20,9 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const body = await request.json();
     const updated = await updateInstagramPost(id, body);
+
+    revalidatePath("/");
+    revalidatePath("/admin/instagram");
 
     return NextResponse.json({
       success: true,
@@ -43,6 +47,9 @@ export async function DELETE(request, { params }) {
   try {
     const { id } = await params;
     await deleteInstagramPost(id);
+
+    revalidatePath("/");
+    revalidatePath("/admin/instagram");
 
     return NextResponse.json({
       success: true,

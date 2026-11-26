@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import {
@@ -18,6 +19,11 @@ export async function PUT(request, { params }) {
     const body = await request.json();
 
     const updated = await updateAdminArticle(id, body);
+
+    revalidatePath("/");
+    revalidatePath("/artikel");
+    revalidatePath("/admin/artikel");
+
     return NextResponse.json({
       success: true,
       message: "Artikel berhasil diperbarui.",
@@ -41,6 +47,11 @@ export async function DELETE(request, { params }) {
   try {
     const { id } = await params;
     await deleteAdminArticle(id);
+
+    revalidatePath("/");
+    revalidatePath("/artikel");
+    revalidatePath("/admin/artikel");
+
     return NextResponse.json({
       success: true,
       message: "Artikel berhasil dihapus.",

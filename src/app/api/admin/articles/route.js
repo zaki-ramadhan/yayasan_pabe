@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/serverAuth";
 import { USER_ROLES } from "@/services/authService";
 import {
@@ -59,6 +60,10 @@ export async function POST(request) {
 
     const article = await createAdminArticle(body);
 
+    revalidatePath("/");
+    revalidatePath("/artikel");
+    revalidatePath("/admin/artikel");
+
     await logActivity({
       userId: user?.id,
       userName: user?.name,
@@ -105,6 +110,10 @@ export async function DELETE(request) {
     }
 
     const result = await deleteAdminArticlesBatch(ids);
+
+    revalidatePath("/");
+    revalidatePath("/artikel");
+    revalidatePath("/admin/artikel");
 
     await logActivity({
       userId: user?.id,
