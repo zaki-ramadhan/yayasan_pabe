@@ -1,6 +1,7 @@
 "use client";
 
 import { TrashBinTrashIcon as Trash2 } from "@solar-icons/react/line-duotone/trash-bin-trash";
+import { Pen2Icon as Edit2 } from "@solar-icons/react/line-duotone/pen-2";
 import {
   Table,
   TableContainer,
@@ -18,6 +19,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { AdminGalleryToolbar } from "./AdminGalleryToolbar";
 import { AdminGalleryTableRow } from "./AdminGalleryTableRow";
 import { AdminGalleryModal } from "./AdminGalleryModal";
+import { AdminGalleryBulkEditModal } from "./AdminGalleryBulkEditModal";
 import { AdminGalleryDeleteDialog } from "./AdminGalleryDeleteDialog";
 import { useAdminGallery } from "./useAdminGallery";
 
@@ -54,6 +56,8 @@ export function AdminGalleryTable({
     setIsBulkDeleteOpen,
     isBulkDeleting,
     handleConfirmBulkDelete,
+    isBulkEditOpen,
+    setIsBulkEditOpen,
   } = useAdminGallery({
     initialItems,
     initialPagination,
@@ -82,6 +86,17 @@ export function AdminGalleryTable({
         isAllSelected={selection.allSelected}
         onClearSelection={selection.clearSelection}
       >
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setIsBulkEditOpen(true)}
+          className="h-8 text-xs gap-1.5 cursor-pointer bg-white shadow-2xs"
+        >
+          <Edit2 className="w-3.5 h-3.5" />
+          <span>Edit {selection.selectedCount} terpilih</span>
+        </Button>
+
         <Button
           type="button"
           variant="destructive"
@@ -159,6 +174,17 @@ export function AdminGalleryTable({
         itemToEdit={selectedItem}
         categories={categories}
         onSuccess={() => fetchItems(pagination.page || 1, category, search)}
+      />
+
+      <AdminGalleryBulkEditModal
+        isOpen={isBulkEditOpen}
+        onOpenChange={setIsBulkEditOpen}
+        selectedIds={Array.from(selection.selectedIds)}
+        categories={categories}
+        onSuccess={() => {
+          selection.clearSelection();
+          fetchItems(pagination.page || 1, category, search);
+        }}
       />
 
       <AdminGalleryDeleteDialog

@@ -284,3 +284,85 @@ export async function deleteGalleryItemsBatch(ids) {
 
   return { count: validIds.length };
 }
+
+const MAX_BULK_EDIT_IDS = 100;
+
+/**
+ * Update selected metadata fields across multiple gallery items atomically.
+ *
+ * @param {string[]} ids
+ * @param {{
+ *   title?: string,
+ *   category?: string,
+ *   description?: string|null,
+ *   activityDate?: string|Date|null
+ * }} updates
+ * @returns {Promise<{ count: number }>}
+ */
+export async function updateGalleryItemsBatch(ids, updates) {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Daftar ID dokumentasi tidak boleh kosong.");
+  }
+
+  const validIds = Array.from(
+    new Set(ids.filter((id) => typeof id === "string" && id.trim().length > 0).map((id) => id.trim()))
+  );
+
+  if (validIds.length === 0) {
+    throw new Error("Tidak ada ID dokumentasi yang valid.");
+  }
+
+  if (validIds.length > MAX_BULK_EDIT_IDS) {
+    throw new Error(`Maksimal ${MAX_BULK_EDIT_IDS} dokumentasi per pembaruan massal.`);
+  }
+
+  if (!updates || typeof updates !== "object") {
+    throw new Error("Data pembaruan tidak valid.");
+  }
+
+  const data = {};
+
+  if (updates.title !== undefined) {
+    const cleanTitle = updates.title ? sanitizeInput(decodeHtmlEntities(String(updates.title).trim())) : "";
+    data.title = cleanTitle || "Dokumentasi kegiatan";
+  }
+
+  if (updates.category !== undefined) {
+    const cleanCat = updates.category ? sanitizeInput(decodeHtmlEntities(String(updates.category).trim())) : "";
+    data.category = cleanCat || DEFAULT_GALLERY_CATEGORY;
+  }
+
+  if (updates.description !== undefined) {
+    const rawDesc = updates.description === null ? "" : String(updates.description).trim();
+    data.description = rawDesc ? sanitizeInput(decodeHtmlEntities(rawDesc)) : null;
+  }
+
+  if (updates.activityDate !== undefined) {
+    if (updates.activityDate === null || updates.activityDate === "") {
+      data.activityDate = null;
+    } else {
+      const parsed = new Date(updates.activityDate);
+      if (isNaN(parsed.getTime())) {
+        throw new Error("Format tanggal kegiatan tidak valid.");
+      }
+      data.activityDate = parsed;
+    }
+  }
+
+  if (Object.keys(data).length === 0) {
+    throw new Error("Pilih minimal satu kolom untuk diperbarui.");
+  }
+
+  if (!prisma.galleryItem) {
+    throw new Error(
+      "Model galleryItem belum dimuat ke client Prisma. Jalankan 'pnpm exec prisma generate' lalu restart server 'pnpm dev'."
+    );
+  }
+
+  const result = await prisma.galleryItem.updateMany({
+    where: { id: { in: validIds } },
+    data,
+  });
+
+  return { count: result.count };
+}

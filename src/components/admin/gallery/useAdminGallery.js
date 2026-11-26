@@ -33,6 +33,7 @@ export function useAdminGallery({
   const { clearSelection } = selection;
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [isBulkEditOpen, setIsBulkEditOpen] = useState(false);
 
   const handleOpenCreate = () => {
     setSelectedItem(null);
@@ -189,5 +190,7 @@ export function useAdminGallery({
     setIsBulkDeleteOpen,
     isBulkDeleting,
     handleConfirmBulkDelete,
+    isBulkEditOpen,
+    setIsBulkEditOpen,
   };
 }

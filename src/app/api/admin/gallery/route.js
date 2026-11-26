@@ -5,6 +5,7 @@ import { USER_ROLES } from "@/services/authService";
 import {
   getAdminGalleryItems,
   createGalleryBatch,
+  updateGalleryItemsBatch,
   deleteGalleryItemsBatch,
 } from "@/services/adminGalleryService";
 
@@ -83,6 +84,39 @@ export async function POST(request) {
     return NextResponse.json(
       { success: false, message: error.message || "Gagal menyimpan dokumentasi galeri." },
       { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request) {
+  const { errorResponse } = await requireAuth(request, [
+    USER_ROLES.SUPER_ADMIN,
+    USER_ROLES.ADMIN,
+  ]);
+  if (errorResponse) return errorResponse;
+
+  try {
+    const body = await request.json();
+    let ids = body?.ids;
+    if (ids && typeof ids === "object" && !Array.isArray(ids)) {
+      ids = Object.values(ids);
+    }
+    ids = Array.isArray(ids) ? ids : [];
+
+    const result = await updateGalleryItemsBatch(ids, body?.updates);
+
+    revalidatePath("/galeri");
+    revalidatePath("/admin/galeri");
+
+    return NextResponse.json({
+      success: true,
+      message: `${result.count} dokumentasi kegiatan berhasil diperbarui.`,
+      data: result,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: error.message || "Gagal memperbarui dokumentasi terpilih." },
+      { status: 400 }
     );
   }
 }
